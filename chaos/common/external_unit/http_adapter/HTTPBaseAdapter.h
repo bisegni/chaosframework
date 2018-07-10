@@ -59,7 +59,7 @@ namespace chaos {
                     nc(NULL),
                     uri(),
                     s_type(),
-                    buffer(new chaos::common::data::CDataBuffer(ptr, size, true)){}
+                    buffer(new chaos::common::data::CDataBuffer(ptr, size)){}
                 };
 
                 typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;

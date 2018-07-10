@@ -77,6 +77,21 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
                 hb_message.get());
 }
 
+int MDSMessageChannel::sendEchoMessage(CDataWrapper& data, CDWUniquePtr& result) {
+    int err = 0;
+    CDWUniquePtr message(new CDataWrapper());
+    data.copyAllTo(*message);
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                            NodeDomainAndActionRPC::ACTION_ECHO_TEST,
+                                                                                            message.release());
+    if(request_future->wait()) {
+        result.reset(request_future->detachResult());
+    } else {
+        result.reset();
+        err = request_future->getError();
+    }
+    return err;
+}
 
 //! Send unit server CU states to MDS
 int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
@@ -295,18 +310,12 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
                         std::string ret=datasetTypeToHuman(val->getUInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE));
                         data_set.addCSDataValue(ret,*val);
                     }
-                    
                 }
             }
-            
-            
         } else {
             err = -1;
         }
-        
-        
     }
-    
     return err;
 }
 int MDSMessageChannel::getFullNodeDescription(const std::string& identification_id,

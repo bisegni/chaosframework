@@ -59,6 +59,7 @@ QueryCursor::QueryCursor(const std::string& _query_id,
                          const std::string& _node_id,
                          uint64_t _start_ts,
                          uint64_t _end_ts,
+                         const ChaosStringSet& _meta_tags,
                          uint32_t default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
@@ -69,7 +70,9 @@ page_len(default_page_len),
 phase(QueryPhaseNotStarted),
 start_seq(0),
 runid_seq(0),
+meta_tags(_meta_tags),
 api_error(0){}
+
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
@@ -77,7 +80,7 @@ QueryCursor::QueryCursor(const std::string& _query_id,
                          uint64_t _end_ts,
                          uint64_t _sequid,
                          uint64_t _runid,
-
+                         const ChaosStringSet& _meta_tags,
                          uint32_t default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
@@ -88,6 +91,7 @@ page_len(default_page_len),
 phase(QueryPhaseNotStarted),
 start_seq(_sequid),
 runid_seq(_runid),
+meta_tags(_meta_tags),
 api_error(0){
     if(_sequid>0){
         phase = QueryPhaseStarted;
@@ -153,6 +157,7 @@ int64_t QueryCursor::fetchNewPage() {
             return 0;
     }
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
+                                                                       meta_tags,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,

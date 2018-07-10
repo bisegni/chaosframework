@@ -66,6 +66,21 @@ namespace driver{
             }
             uid=groupName+"/"+datasetName;
             
+//            ChaosUniquePtr<char[]> buff(new char [10024]);
+//            CDWUniquePtr result_uptr;
+//            CDWUniquePtr data_uptr(new CDataWrapper());
+//            data_uptr->addStringValue("echo_key", "echo value");
+//            data_uptr->addBinaryValue("bin_value", buff.get(), 1024);
+//            for(int idx = 0;
+//                idx < 100000000;
+//                idx++) {
+//                int err = mds_message_channel->sendEchoMessage(*data_uptr, result_uptr);
+//                if(!err &&
+//                   result_uptr) {
+//                    DPD_LAPP << result_uptr->getCompliantJSONString();
+//                }
+//            }
+//            DPD_LAPP << "end";
         }
         
         int ChaosDatasetIO::setAgeing(uint64_t secs){ageing=secs;return 0;}
@@ -109,7 +124,7 @@ namespace driver{
         int ChaosDatasetIO::pushDataset(int type) {
             int err = 0;
             //ad producer key
-            CDataWrapper*new_dataset=datasets[type].get();
+            CDWShrdPtr new_dataset = datasets[type];
             uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
             uint64_t tsh = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds();
             
@@ -145,7 +160,7 @@ namespace driver{
             //    DPD_LDBG <<" PUSHING:"<<new_dataset->getJSONString();
             // DirectIOChannelsInfo    *next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
             // serialization->disposeOnDelete = !next_client;
-            ioLiveDataDriver->storeData(uid+chaos::datasetTypeToPostfix(type),new_dataset,(chaos::DataServiceNodeDefinitionType::DSStorageType)storageType,false);
+            ioLiveDataDriver->storeData(uid+chaos::datasetTypeToPostfix(type),new_dataset,(chaos::DataServiceNodeDefinitionType::DSStorageType)storageType);
             
             
             return err;
@@ -430,7 +445,7 @@ namespace driver{
                 
                 query_cursor_map.erase(i++);
             }
-
+            
             DEBUG_CODE(DPD_LDBG << "Shared Manager deinitialized");
             
             DEBUG_CODE(DPD_LDBG << "Deinitialized");

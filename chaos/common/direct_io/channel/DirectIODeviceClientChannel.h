@@ -56,6 +56,7 @@ namespace chaos {
                                                        void *buffer,
                                                        uint32_t buffer_len,
                                                        DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                       const ChaosStringSet& tag_set = ChaosStringSet(),
                                                        bool wait_result = true);
                     
                     //! Send device serialization with priority
@@ -63,6 +64,7 @@ namespace chaos {
                                                 void *buffer,
                                                 uint32_t buffer_len,
                                                 DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                const ChaosStringSet& tag_set = ChaosStringSet(),
                                                 bool wait_result = true);
                     
                     //! Send a request for the last output data
@@ -85,9 +87,10 @@ namespace chaos {
                      \return error
                      */
                     int queryDataCloud(const std::string& key,
-                                       uint64_t start_ts,
-                                       uint64_t end_ts,
-                                       uint32_t page_dimension,
+                                       const ChaosStringSet& meta_tags,
+                                       const uint64_t start_ts,
+                                       const uint64_t end_ts,
+                                       const uint32_t page_dimension,
                                        opcode_headers::SearchSequence& last_sequence,
                                        opcode_headers::QueryResultPage& found_element_page);
                     

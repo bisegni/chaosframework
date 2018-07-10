@@ -126,15 +126,17 @@ namespace chaos{
                 void deinit() throw(CException);
                 
                 void storeHealthData(const std::string& key,
-                                     chaos_data::CDataWrapper & dataToStore,
-                                     DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
+                                     chaos_data::CDWShrdPtr data_to_store,
+                                     DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                     const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException);
                 
                 /*
                  * storeRawData
                  */
-                void storeRawData(const std::string& key,
-                                  chaos_data::SerializationBuffer *serialization,
-                                  DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException);
+                void storeData(const std::string& key,
+                               chaos_data::CDWShrdPtr data_to_store,
+                               DataServiceNodeDefinitionType::DSStorageType storage_type,
+                               const ChaosStringSet& tag_set = ChaosStringSet())  throw(CException);
                 
                 int removeData(const std::string& key,
                                uint64_t start_ts,
@@ -160,11 +162,17 @@ namespace chaos{
                 
                 QueryCursor *performQuery(const std::string& key,
                                           uint64_t start_ts,
-                                          uint64_t end_ts,uint32_t page=DEFAULT_PAGE_LEN);
-
+                                          uint64_t end_ts,
+                                          const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          uint32_t page=DEFAULT_PAGE_LEN);
+                
                 QueryCursor *performQuery(const std::string& key,
                                           uint64_t start_ts,
-                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN);
+                                          uint64_t end_ts,
+                                          uint64_t sequid,
+                                          uint64_t runid,
+                                          const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          uint32_t page=DEFAULT_PAGE_LEN);
                 
                 void releaseQuery(QueryCursor *query_cursor);
             };

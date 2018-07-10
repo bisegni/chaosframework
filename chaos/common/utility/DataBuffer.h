@@ -34,8 +34,6 @@ namespace chaos {
     namespace common {
         namespace utility {
             
-#define CHECK_AND_GROW(m) if(cursor+m>=ChaosBuffer<Allocator>::size) {ChaosBuffer<Allocator>::grow(m);}
-            
             //!
             class DataBuffer {
                 data::Buffer buffer;
@@ -74,6 +72,28 @@ namespace chaos {
                 void writeByte(char byte) {
                     buffer.append(&byte, 1);
                     cursor += 1;
+                }
+                
+                void writeInt8(const int8_t& number) {
+                    buffer.append(&number, sizeof(int8_t));
+                    cursor+=sizeof(int8_t);
+                }
+                
+                int8_t readInt8() {
+                    int8_t result = *(int8_t*)(buffer.data() + cursor);
+                    cursor+=sizeof(int8_t);
+                    return result;
+                }
+                
+                void writeInt16(const int16_t& number) {
+                    buffer.append(&number, sizeof(int16_t));
+                    cursor+=sizeof(int16_t);
+                }
+                
+                int16_t readInt16() {
+                    int16_t result = *(int16_t*)(buffer.data() + cursor);
+                    cursor+=sizeof(int16_t);
+                    return result;
                 }
                 
                 void writeInt32(const int32_t& number) {
@@ -123,6 +143,12 @@ namespace chaos {
                 
                 uint32_t getCursorLocation() {
                     return cursor;
+                }
+                
+                chaos::common::data::BufferSPtr detachBuffer() {
+                    chaos::common::data::BufferSPtr result = ChaosMakeSharedPtr<chaos::common::data::Buffer>();
+                    buffer.swap(*result);
+                    return result;
                 }
             };
         }

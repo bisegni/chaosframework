@@ -188,7 +188,8 @@ SOURCES += main.cpp\
     node/connection_manager/ConnectionEditor.cpp \
     node/connection_manager/model/ControlUnitNodeDataModel.cpp \
     language_editor/LuaLanguageSupport.cpp \
-    language_editor/CLINGLanguageSupport.cpp
+    language_editor/CLINGLanguageSupport.cpp \
+    widget/StorageBurst.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -365,7 +366,8 @@ HEADERS  += \
     node/connection_manager/model/ControlUnitNodeDataModel.h \
     language_editor/LanguageEditorSupport.h \
     language_editor/LuaLanguageSupport.h \
-    language_editor/CLINGLanguageSupport.h
+    language_editor/CLINGLanguageSupport.h \
+    widget/StorageBurst.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -408,7 +410,8 @@ FORMS    += \
     widget/CPopupWidgetContainer.ui \
     widget/ChaosStorageTypeWidget.ui \
     preference/SelectNetworkDomain.ui \
-    node/connection_manager/ConnectionEditor.ui
+    node/connection_manager/ConnectionEditor.ui \
+    widget/StorageBurst.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

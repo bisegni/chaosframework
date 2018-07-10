@@ -38,6 +38,8 @@ private slots:
 
     void on_pushButtonEdit_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     bool data_found;
     QString last_pushbutton_in_error;

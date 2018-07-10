@@ -20,6 +20,7 @@
  */
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
+#include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <string>
@@ -45,7 +46,10 @@ using namespace boost::algorithm;
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
 static void my_free (void *data, void *hint) {
-    free(data);
+    if(hint) {
+        MemoryManagement *tmp = static_cast<MemoryManagement*>(hint);
+        delete(tmp);
+    } else {free(data);};
 }
 
 
@@ -251,7 +255,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
     
-    ChaosUniquePtr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    CDWShrdPtr message_data = CDWShrdPtr(messageInfo->message.release());
     try{
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){
@@ -273,9 +277,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             return;
         }
         
-        //detach buffer from carrier object so we don't need to copy anymore the data
-        callSerialization->disposeOnDelete = false;
-        if((err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL)) == -1) {
+        if((err = zmq_msg_init_data(&message, (void*)message_data->getBSONRawData(), message_data->getBSONRawSize(), my_free,  new MemoryManagement(message_data))) == -1) {
             int32_t sent_error = zmq_errno();
             std::string error_message =zmq_strerror(sent_error);
             ZMQC_LERR << "Error allocating zmq messagecode:" << sent_error << " message:" <<error_message;

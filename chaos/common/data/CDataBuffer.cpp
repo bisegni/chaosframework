@@ -26,45 +26,35 @@
 
 using namespace chaos::common::data;
 CDataBuffer::CDataBuffer():
-    own_buffer(false),
-    buffer_size(0),
-    buffer(NULL) { }
+    internal_buffer(){}
 
 CDataBuffer::CDataBuffer(const char *_buffer,
-                         uint32_t _buffer_size,
-                         bool copy):
-own_buffer(copy) {
-    buffer_size = _buffer_size;
-    if(copy) {
-        buffer = new char[_buffer_size];
-        memcpy(buffer, _buffer, buffer_size);
-    } else {
-        buffer = (char*)_buffer;
-    }
-}
+                         uint32_t _buffer_size):
+internal_buffer(_buffer,
+                _buffer_size){}
+
+CDataBuffer::CDataBuffer(char *buffer,
+                         uint32_t buffer_size,
+                         bool own):
+internal_buffer(buffer,
+                buffer_size,
+                buffer_size,
+                true){}
 
 CDataBuffer::CDataBuffer(const CDataBuffer& cdata_buffer):
-own_buffer(cdata_buffer.own_buffer),
-buffer(cdata_buffer.buffer),
-buffer_size(cdata_buffer.buffer_size){}
+internal_buffer(cdata_buffer.internal_buffer){}
 
-CDataBuffer::~CDataBuffer() {
-    if(own_buffer) delete(buffer);
-}
+CDataBuffer::~CDataBuffer() {}
 
 const char *CDataBuffer::getBuffer() const {
-    return buffer;
+    return internal_buffer.data();
 }
 
-uint32_t CDataBuffer::getBufferSize() const {
-    return buffer_size;
+std::size_t CDataBuffer::getBufferSize() const {
+    return internal_buffer.size();
 }
 
-CDataBuffer *CDataBuffer::newOwnBufferFromBuffer(char * buffer,
-                                                 uint32_t _buffer_size) {
-    CDataBuffer *result = new CDataBuffer();
-    result->own_buffer = true;
-    result->buffer = buffer;
-    result->buffer_size = _buffer_size;
-    return result;
+CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(char * buffer,
+                                                      uint32_t _buffer_size) {
+    return CDBufferUniquePtr(new CDataBuffer(buffer, _buffer_size, true));
 }

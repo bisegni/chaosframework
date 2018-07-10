@@ -61,24 +61,38 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
                                                                 void *buffer,
                                                                 uint32_t buffer_len,
                                                                 DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                                const ChaosStringSet& tag_set,
                                                                 bool wait_result) {
     int err = 0;
     if(key.size() > 250) return -1;
-    DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
-    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderPutOpcode)+key.size());
-    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
-    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->tag = (uint8_t) _put_mode;
-    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len = key.size();
-    //put_opcode_header->key_data
-    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()), key.c_str(), put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len);
+    DataBuffer data_buffer;
+    DirectIODataPackSPtr answer;
+
+    //write mode and tags number
+    data_buffer.writeInt8((int8_t) _put_mode);
+    data_buffer.writeInt16(tag_set.size());
+    //write key
+    data_buffer.writeByte(key.c_str(), (int32_t)key.size());
+    data_buffer.writeByte('\0');
+    //write tags
+    for(ChaosStringSetConstIterator it = tag_set.begin(),
+        end = tag_set.end();
+        it!=end;
+        it++) {
+        data_buffer.writeByte(it->c_str(), (int32_t)it->size());
+        data_buffer.writeByte('\0');
+    }
+    
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
+    BufferSPtr put_opcode_header = data_buffer.detachBuffer();
+    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
     
     //set the header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN(key))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)put_opcode_header->size())
     //set data if the have some
     if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());}
     if(wait_result) {
@@ -96,24 +110,37 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
                                                          void *buffer,
                                                          uint32_t buffer_len,
                                                          DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                         const ChaosStringSet& tag_set,
                                                          bool wait_result) {
     int err = 0;
     if(key.size() > 250) return -1;
+    DataBuffer data_buffer;
     DirectIODataPackSPtr answer;
-    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
-    BufferSPtr put_opcode_header = ChaosMakeSharedPtr<Buffer>((PUT_HEADER_LEN(key)+key.size()));
-    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
+
+    //write mode and tags number
+    data_buffer.writeInt8((int8_t) _put_mode);
+    data_buffer.writeInt16(tag_set.size());
+    //write key
+    data_buffer.writeByte(key.c_str(), (int32_t)key.size());
+    data_buffer.writeByte('\0');
+    //write tags
+    for(ChaosStringSetConstIterator it = tag_set.begin(),
+        end = tag_set.end();
+        it!=end;
+        it++) {
+        data_buffer.writeByte(it->c_str(), (int32_t)it->size());
+        data_buffer.writeByte('\0');
+    }
     
-    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->tag = (uint8_t) _put_mode;
-    put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len = key.size();
-    //put_opcode_header->key_data
-    std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header->data()), key.c_str(), put_opcode_header->data<DirectIODeviceChannelHeaderPutOpcode>()->key_len);
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
+    BufferSPtr put_opcode_header = data_buffer.detachBuffer();
+    BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(buffer, buffer_len, buffer_len, true);
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutHeathData);
     
     //set the header
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN(key))
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)put_opcode_header->size())
     //set data if the have some
     if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());}
     if(wait_result) {
@@ -218,9 +245,10 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
 }
 
 int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
-                                                uint64_t start_ts,
-                                                uint64_t end_ts,
-                                                uint32_t page_dimension,
+                                                const ChaosStringSet& meta_tags,
+                                                const uint64_t start_ts,
+                                                const uint64_t end_ts,
+                                                const uint32_t page_dimension,
                                                 SearchSequence& last_sequence_id,
                                                 QueryResultPage& found_element_page) {
     int err = 0;
@@ -236,7 +264,13 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, last_sequence_id.run_id);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, last_sequence_id.datapack_counter);
-    
+    for(ChaosStringSetConstIterator it = meta_tags.begin(),
+        end = meta_tags.end();
+        it != end;
+        it++) {
+        query_description.appendStringToArray(*it);
+    }
+    query_description.finalizeArrayForKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_META_TAGS);
     //copy the query id on header
     query_data_cloud_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>()->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode

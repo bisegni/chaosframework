@@ -176,14 +176,14 @@ void DataManager::updateConfigurationForDeviceIdKey(const string& device_id, CDa
 /*
  Submit a CDataWrapper on device id KeyDataStorage
  */
-void DataManager::pushDeviceDataByIdKey(const string& device_id, CDataWrapper* deviceCDataWrapper) throw(CException) {
-        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, deviceCDataWrapper);
+void DataManager::pushDeviceDataByIdKey(const string& device_id, CDWShrdPtr dataset) throw(CException) {
+        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(dataset));
 }
 
 /*
  return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
+CDWShrdPtr DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
     return deviceIDKeyDataStorageMap[device_id]->getNewDataPackForDomain(KeyDataStorageDomainOutput);
 }

@@ -1175,8 +1175,8 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
     int err = 0;
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << control_unit_id <<
-                                DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)));
-        
+                                DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)) <<
+                                "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr()))));
         DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
                                             "delete",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",

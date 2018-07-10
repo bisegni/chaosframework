@@ -1,6 +1,7 @@
 #include "ChaosStorageTypeWidget.h"
 #include "CPropertyTextEdit.h"
 #include "CPopupWidgetContainer.h"
+#include "StorageBurst.h"
 #include "ui_ChaosStorageTypeWidget.h"
 #include <QDebug>
 
@@ -205,6 +206,17 @@ void ChaosStorageTypeWidget::on_pushButtonEdit_clicked() {
 
     wc->addWidget(pte_live_time);
     wc->addWidget(pte_history_time);
+    QRect rect = QRect(0,0,parentWidget()->width(),0);
+    wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
+    wc->show();
+}
+
+void ChaosStorageTypeWidget::on_pushButton_clicked() {
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+    StorageBurst *sb = new StorageBurst(wc);
+    sb->setNodeUID(nodeUID());
+    wc->addWidget(sb);
     QRect rect = QRect(0,0,parentWidget()->width(),0);
     wc->setGeometry(rect);
     wc->setWindowModality(Qt::WindowModal);

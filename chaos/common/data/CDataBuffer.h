@@ -23,37 +23,39 @@
 #define __CHAOSFramework__CDataBuffer_h
 
 #include <chaos/common/chaos_types.h>
-
+#include <chaos/common/data/Buffer.hpp>
 #include <stdint.h>
 
 namespace chaos {
     namespace common {
         namespace data {
+            class CDataBuffer;
+            
+            typedef ChaosUniquePtr<chaos::common::data::CDataBuffer> CDBufferUniquePtr;
+            typedef ChaosSharedPtr<chaos::common::data::CDataBuffer> CDBufferShrdPtr;
             
             class CDataBuffer {
-                bool own_buffer;
-                char * buffer;
-                uint32_t buffer_size;
-                
+                Buffer internal_buffer;
+                CDataBuffer(char *buffer,
+                            uint32_t buffer_size,
+                            bool own);
             public:
                 CDataBuffer();
                 CDataBuffer(const char *buffer,
-                            uint32_t buffer_size,
-                            bool copy = false);
+                            uint32_t buffer_size);
                 CDataBuffer(const CDataBuffer& cdata_buffer);
                 
                 ~CDataBuffer();
                 
                 const char *getBuffer() const;
                 
-                uint32_t getBufferSize() const;
+                std::size_t getBufferSize() const;
                 
-                static CDataBuffer *newOwnBufferFromBuffer(char * buffer,
-                                                           uint32_t _buffer_size);
+                static CDBufferUniquePtr newOwnBufferFromBuffer(char * buffer,
+                                                                uint32_t _buffer_size);
             };
             
-            typedef ChaosUniquePtr<chaos::common::data::CDataBuffer> CDBufferUniquePtr;
-            typedef ChaosSharedPtr<chaos::common::data::CDataBuffer> CDBufferShrdPtr;
+            
         }
     }
 }

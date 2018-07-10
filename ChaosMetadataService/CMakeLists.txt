@@ -119,7 +119,8 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/CopyInstance.cpp
                         api/control_unit/RecoverError.cpp
                         api/control_unit/GetCurrentDataset.cpp
-						api/control_unit/GetFullDescription.cpp)
+						api/control_unit/GetFullDescription.cpp
+                        api/control_unit/SendStorageBurst.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp

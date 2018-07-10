@@ -110,7 +110,7 @@ namespace chaos {
                 explicit CDataVariant(const std::string& string_value);
                 explicit CDataVariant(const char * string_value);
                 //! take the ownership of the object
-                explicit CDataVariant(CDataBuffer *buffer_value);
+                explicit CDataVariant(CDBufferUniquePtr buffer_value);
                 explicit CDataVariant(CDataWrapper *buffer_value);
                 
                 CDataVariant(const CDataVariant& to_copy);

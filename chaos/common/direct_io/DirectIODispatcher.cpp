@@ -85,7 +85,6 @@ void DirectIODispatcher::stop() throw(chaos::CException) {
 
 // Deinit the implementation
 void DirectIODispatcher::deinit() throw(chaos::CException) {
-
     if(endpoint_slot_array) {
         DIOD_LDBG_ << "Deallocating all endpoint slot";
         //allocate all endpoint slot
@@ -102,6 +101,8 @@ void DirectIODispatcher::deinit() throw(chaos::CException) {
         free(endpoint_slot_array);
         endpoint_slot_array=NULL;
     }
+    unsigned int tmp;
+    while(!available_endpoint_slot.empty()){available_endpoint_slot.pop(tmp);}
 }
 
 //allocate new endpoint

@@ -1031,13 +1031,13 @@
         <widget class="ChaosStorageTypeWidget" name="widgetStorageType" native="true">
          <property name="minimumSize">
           <size>
-           <width>110</width>
+           <width>130</width>
            <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>130</width>
            <height>20</height>
           </size>
          </property>

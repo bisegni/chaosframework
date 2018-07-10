@@ -67,13 +67,15 @@ namespace chaos{
             chaos::data_service::worker::DataWorker	**device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
-            int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& header,
-                                chaos::common::data::BufferSPtr channel_data,
-                                uint32_t channel_data_len);
+            int consumePutEvent(const std::string& key,
+                                const uint8_t hst_tag,
+                                const ChaosStringSetConstSPtr meta_tag_set,
+                                chaos::common::data::BufferSPtr channel_data);
             
-            int consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode& header,
-                                       chaos::common::data::BufferSPtr channel_data,
-                                       uint32_t channel_data_len);
+            int consumeHealthDataEvent(const std::string& key,
+                                       const uint8_t hst_tag,
+                                       const ChaosStringSetConstSPtr meta_tag_set,
+                                       chaos::common::data::BufferSPtr channel_data);
             
             int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                 uint32_t key_len,
@@ -88,8 +90,9 @@ namespace chaos{
             
             int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                       const std::string& search_key,
-                                      uint64_t search_start_ts,
-                                      uint64_t search_end_ts,
+                                      const ChaosStringSet& meta_tags,
+                                      const uint64_t search_start_ts,
+                                      const uint64_t search_end_ts,
                                       opcode_headers::SearchSequence& last_element_found_seq,
                                       opcode_headers::QueryResultPage& page_element_found);
             

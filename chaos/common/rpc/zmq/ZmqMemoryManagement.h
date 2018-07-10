@@ -18,16 +18,19 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include "LLDataApi.h"
 
-#include "../../common/global.h"
+#ifndef CHAOSFramework_ZmqMemoryManagement_h
+#define CHAOSFramework_ZmqMemoryManagement_h
 
-using namespace chaos;
-using namespace chaos::ui;
+#include <chaos/common/data/CDataWrapper.h>
 
-LLDataApi::LLDataApi() {
-
+namespace chaos {
+    //!keep memory alive untile zmw require to dispose it
+    struct MemoryManagement {
+        chaos::common::data::CDWShrdPtr data;
+        MemoryManagement(chaos::common::data::CDWShrdPtr _data):
+        data(ChaosMoveOperator(_data)){}
+    };
 }
 
-LLDataApi::~LLDataApi() {
-}
+#endif /* CHAOSFramework_ZmqMemoryManagement_h */

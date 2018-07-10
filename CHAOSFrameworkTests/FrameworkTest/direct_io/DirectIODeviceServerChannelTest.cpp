@@ -49,9 +49,10 @@ class DeviceServerHandler:
 public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
 public:
     ~DeviceServerHandler(){}
-    int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
-                        BufferSPtr channel_data,
-                        uint32_t channel_data_len) {
+    int consumePutEvent(const std::string& key,
+                        const uint8_t hst_tag,
+                        const ChaosStringSetConstSPtr meta_tag_set,
+                        chaos::common::data::BufferSPtr channel_data) {
         int err = 0;
         if((++consumePutEvent_counter % 2) == 0) {
             //right result the data need to be savet
@@ -59,7 +60,7 @@ public:
             if(!push_data->hasKey("key") ||
                !push_data->isInt32Value("key")) {
                 err = -1;
-            } else if(header.tag != push_data->getInt32Value("key")) {
+            } else if(hst_tag != push_data->getInt32Value("key")) {
                 err = -1;
             }
         } else {
@@ -69,9 +70,10 @@ public:
         return err;
     };
 
-    int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
-                               BufferSPtr channel_data,
-                               uint32_t channel_data_len) {
+    int consumeHealthDataEvent(const std::string& key,
+                               const uint8_t hst_tag,
+                               const ChaosStringSetConstSPtr meta_tag_set,
+                               chaos::common::data::BufferSPtr channel_data) {
         int err = 0;
         if((++consumeHealthDataEvent_counter % 2) == 0) {
             //right result the data need to be savet
@@ -79,7 +81,7 @@ public:
             if(!push_data->hasKey("key") ||
                !push_data->isInt32Value("key")) {
                 err = -1;
-            } else if(header.tag != push_data->getInt32Value("key")) {
+            } else if(hst_tag != push_data->getInt32Value("key")) {
                 err = -1;
             }
         } else {
@@ -147,8 +149,9 @@ public:
 
     int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                               const std::string& search_key,
-                              uint64_t search_start_ts,
-                              uint64_t search_end_ts,
+                              const ChaosStringSet& meta_tags,
+                              const uint64_t search_start_ts,
+                              const uint64_t search_end_ts,
                               opcode_headers::SearchSequence& last_element_found_seq,
                               opcode_headers::QueryResultPage& result_page) {
         int err = 0;
@@ -346,8 +349,8 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         QueryResultPage results;
         SearchSequence sseq = {1,2};
         int page_dimension = 100;
-        ASSERT_TRUE(client_channel->queryDataCloud("search", std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
-        ASSERT_FALSE(client_channel->queryDataCloud("search", std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
+        ASSERT_TRUE(client_channel->queryDataCloud("search", ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
+        ASSERT_FALSE(client_channel->queryDataCloud("search", ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
         ASSERT_EQ(page_dimension, results.size());
         ASSERT_EQ(sseq.run_id, 2);
         ASSERT_EQ(sseq.datapack_counter, 3);
