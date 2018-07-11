@@ -54,7 +54,7 @@ namespace chaos {
                     ResultPage();
                     ~ResultPage();
                     const bool hasNext() const;
-                    
+                    uint32_t size() const;
                     ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
                 };
                 
@@ -98,7 +98,7 @@ namespace chaos {
                 const bool hasNext();
                 const int32_t getError();
                 ChaosSharedPtr<chaos::common::data::CDataWrapper> next() throw (CException);
-                
+                uint32_t size()const;
                 const uint32_t getPageLen() const;
                 
                 void setPageDimension(uint32_t new_page_len);
