@@ -232,6 +232,7 @@ void ZMQServer::worker() {
                         result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
                     }
                     //create zmq message
+                    CHAOS_ASSERT(result_data_pack.get())
                     err = zmq_msg_init_data(&response, (void*)result_data_pack->getBSONRawData(), result_data_pack->getBSONRawSize(), my_free, new MemoryManagement(ChaosMoveOperator(result_data_pack)));
                     if(err == -1) {
                         //there was an error
