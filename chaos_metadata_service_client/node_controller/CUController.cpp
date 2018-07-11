@@ -54,14 +54,14 @@ using namespace chaos::metadata_service_client;
 #define MDS_TIMEOUT 5000
 #define DBGET LDBG_<<"["<<__PRETTY_FUNCTION__<<"]"
 #define EXECUTE_CHAOS_API(api_name,time_out,...) \
-        DBGET<<" " <<" Executing Api:\""<< # api_name<<"\"" ;\
-        chaos::metadata_service_client::api_proxy::ApiProxyResult apires=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
-        apires->setTimeout(time_out);\
-        apires->wait();\
-        if(apires->getError()){\
-            std::stringstream ss;\
-            ss<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<apires->getErrorMessage();\
-            throw CException(-2,ss.str(),__PRETTY_FUNCTION__);}
+DBGET<<" " <<" Executing Api:\""<< # api_name<<"\"" ;\
+chaos::metadata_service_client::api_proxy::ApiProxyResult apires=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
+apires->setTimeout(time_out);\
+apires->wait();\
+if(apires->getError()){\
+std::stringstream ss;\
+ss<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<apires->getErrorMessage();\
+throw CException(-2,ss.str(),__PRETTY_FUNCTION__);}
 
 CUController::CUController(const std::string& _deviceID,
                            chaos::common::io::IODataDriverShrdPtr _ioLiveDataDriver):
@@ -127,6 +127,7 @@ CUController::~CUController() {
     }
     
     if(ioLiveDataDriver.get()){
+        ioLiveDataDriver->deinit();
         ioLiveDataDriver.reset();
     }
 }
@@ -156,7 +157,7 @@ void CUController::updateChannel() throw(CException) {
     CDataWrapper *tmp_data_handler = NULL;
     CHAOS_ASSERT(deviceChannel)
     LDBG_<<"UPDATING \""<<devId<<"\"";
-            /*
+    /*
      *  if(deviceChannel==NULL){
      LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
      return;
@@ -169,11 +170,11 @@ void CUController::updateChannel() throw(CException) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
-
+    
 }
 
 int CUController::setScheduleDelay(uint64_t microseconds) {
-
+    
     chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(microseconds)));
     DBGET<<chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY<<":"<<microseconds;
@@ -184,7 +185,7 @@ int CUController::setScheduleDelay(uint64_t microseconds) {
 int CUController::setBypass(bool onoff){
     chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, CDataVariant(static_cast<bool>(onoff)));
-
+    
     EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,devId,pg);
     return 0;
 }
@@ -413,7 +414,7 @@ int CUController::setAttributeToValue(const char *attributeName, const char *att
         }
     }
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Sending attribute '"<<attributeName<<"'='"<<attributeValuePack.getJSONString()<<"'";
-
+    
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
@@ -927,10 +928,10 @@ int CUController::fetchAllDataset() {
             end = current_dataset.end();
             (it != end) && (counter<results.size());
             it++) {
-
-        	(*it) = results[counter++];
-
-
+            
+            (*it) = results[counter++];
+            
+            
         }
     }
     return err;
@@ -951,31 +952,31 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDat
 }
 
 int CUController::getPackSeq(uint64_t& seq){
-  CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
-  if(d){
-    seq =d->getInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
-    return 0;
-  }
-  seq=-1;
-  return -1;
+    CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
+    if(d){
+        seq =d->getInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+        return 0;
+    }
+    seq=-1;
+    return -1;
 }
 int CUController::getTimeStamp(uint64_t& live,bool hr){
     CDataWrapper * d = current_dataset[KeyDataStorageDomainOutput].get();
     live =0;
     if(d){
-      if(hr){
-          if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)) {
-            live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
-          } else if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
-              live= d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP)*1000;
-          }
-      } else {
-          if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
-            live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
-          } else if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)){
-              live= d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)*1000;
-          }
-      }
+        if(hr){
+            if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)) {
+                live = d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+            } else if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+                live= d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP)*1000;
+            }
+        } else {
+            if(d->hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+                live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+            } else if(d->hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)){
+                live= d->getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)*1000;
+            }
+        }
         return 0;
     }
     return -1;
@@ -1062,34 +1063,69 @@ cu_prof_t CUController::getProfileInfo(){
 
 //! get datapack between time itervall
 void CUController::executeTimeIntervallQuery(DatasetDomain domain,
+                                             uint64_t      start_ts,
+                                             uint64_t      end_ts,
+                                             QueryCursor** query_cursor,
+                                             uint32_t      page) {
+  executeTimeIntervallQuery(
+      domain,
+      start_ts,
+      end_ts,
+      ChaosStringSet(),
+      query_cursor,
+      page);
+}
+void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t start_ts,
                                              uint64_t end_ts,
+                                             const ChaosStringSet& meta_tags,
                                              QueryCursor **query_cursor,
                                              uint32_t page) {
     if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
         *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
                                                        start_ts,
                                                        end_ts,
+                                                       meta_tags,
                                                        page);
     }
 }
 
-void CUController::executeTimeIntervalQuery(DatasetDomain domain,
-                               uint64_t start_ts,
-                               uint64_t end_ts,
-                                uint64_t seqid,
-                               uint64_t runid,
-                               chaos::common::io::QueryCursor **query_cursor,
-                               uint32_t page_len){
+void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t seqid,
+                                            const uint64_t runid,
+                                            chaos::common::io::QueryCursor **query_cursor,
+                                            const uint32_t page_len){
+executeTimeIntervalQuery(
+    domain,
+    start_ts,
+    end_ts,
+    seqid,
+    runid,
+    ChaosStringSet(),
+    query_cursor,
+    page_len);
+}
+
+void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t seqid,
+                                            const uint64_t runid,
+                                            const ChaosStringSet& meta_tags,
+                                            chaos::common::io::QueryCursor **query_cursor,
+                                            const uint32_t page_len){
     if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
         *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
                                                        start_ts,
                                                        end_ts,
                                                        seqid,
                                                        runid,
+                                                       meta_tags,
                                                        page_len);
     }
-
+    
 }
 //! release a query
 void CUController::releaseQuery(QueryCursor *query_cursor) {

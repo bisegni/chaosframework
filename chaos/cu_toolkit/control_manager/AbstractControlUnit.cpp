@@ -38,6 +38,7 @@
 
 using namespace boost::uuids;
 using namespace chaos::common::data;
+using namespace chaos::common::data::structured;
 using namespace chaos::common::alarm;
 using namespace chaos::common::utility;
 using namespace chaos::common::property;
@@ -191,6 +192,10 @@ void AbstractControlUnit::_initPropertyGroup() {
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32, 0, CDataVariant((int32_t)0));
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64, 0, CDataVariant((int64_t)0));
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, "Set the control unit storage type", DataType::TYPE_INT64, 0, CDataVariant((int64_t)0));
+    //    CDWUniquePtr burst_type_desc(new CDataWrapper());
+    //    burst_type_desc->addInt32Value(DataServiceNodeDefinitionKey::DS_HISTORY_BURST_TYPE, DataServiceNodeDefinitionType::DSStorageBurstTypeUndefined);
+    //    pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_HISTORY_BURST, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_CLUSTER,0, CDataVariant(burst_type_desc.release()));
+    
     pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, "Set the control unit step repeat time in microseconds", DataType::TYPE_INT64, 0, CDataVariant((int64_t)1000000));//set to one seconds
     pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_OPTION, "Specify the restore type operatio to do durint initialization phase", DataType::TYPE_INT32, 0, CDataVariant((int32_t)0));
     pg_abstract_cu.addProperty(ControlUnitPropertyKey::INIT_RESTORE_APPLY, "Specify if the restore operation need to be done as real operation or not", DataType::TYPE_BOOLEAN,0, CDataVariant((bool)false));
@@ -280,56 +285,63 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
     AbstActionDescShrPtr
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_setDatasetAttribute,
-                                                                         ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                                                         "method for set the input element for the dataset");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_setDatasetAttribute,
+                                                                          ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
+                                                                          "method for set the input element for the dataset");
     
     //expose updateConfiguration Methdo to rpc
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::updateConfiguration,
-                                                                         NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
-                                                                         "Update control unit property");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::updateConfiguration,
+                                                                          NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
+                                                                          "Update control unit property");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_init,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_INIT,
-                                                                         "Perform the control unit initialization");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_init,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_INIT,
+                                                                          "Perform the control unit initialization");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_deinit,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_DEINIT
-                                                                         ,
-                                                                         "Perform the control unit deinitialization");
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_start,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_START,
-                                                                         "Start the control unit scheduling");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_deinit,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_DEINIT
+                                                                          ,
+                                                                          "Perform the control unit deinitialization");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_start,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_START,
+                                                                          "Start the control unit scheduling");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_stop,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_STOP,
-                                                                         "Stop the control unit scheduling");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_stop,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_STOP,
+                                                                          "Stop the control unit scheduling");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_recover,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
-                                                                         "Recovery a recoverable state, going to the last state");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_recover,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
+                                                                          "Recovery a recoverable state, going to the last state");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_unitRestoreToSnapshot,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
-                                                                         "Restore contorl unit to a snapshot tag");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_unitRestoreToSnapshot,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
+                                                                          "Restore contorl unit to a snapshot tag");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_getState,
-                                                                         NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
-                                                                         "Get the state of the running control unit");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_getState,
+                                                                          NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
+                                                                          "Get the state of the running control unit");
     
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                         &AbstractControlUnit::_getInfo,
-                                                                         NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
-                                                                         "Get the information about running control unit");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_getInfo,
+                                                                          NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
+                                                                          "Get the information about running control unit");
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_startStorageBurst,
+                                                                          ControlUnitNodeDomainAndActionRPC::ACTION_STORAGE_BURST,
+                                                                          "Execute a storage burst on control unit");
+    action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, DataType::TYPE_STRING, "Tag asosciated to the stored data during burst");
+    action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE, DataType::TYPE_INT32, "The type of burst");
+    action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE, DataType::TYPE_UNDEFINED, "The value of the burst is defined by the type");
     
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
@@ -1383,6 +1395,20 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
     return stateResult;
 }
 
+
+chaos::common::data::CDataWrapper* AbstractControlUnit::_startStorageBurst(CDataWrapper* data,
+                                                                           bool& detachParam) throw (CException) {
+    common::data::structured::DatasetBurstSDWrapper db_sdw;
+    db_sdw.deserialize(data);
+    DatasetBurstShrdPtr burst = ChaosMakeSharedPtr<DatasetBurst>(db_sdw());
+    if(!key_data_storage->addStorageBurst(ChaosMoveOperator(burst))) {
+        ACULERR_ << CHAOS_FORMAT("Error adding new burst execution -> %1%",%data->getJSONString());
+    } else {
+        ACULAPP_ << CHAOS_FORMAT("Succesfull add new burst execution -> %1%",%data->getJSONString());
+    }
+    return NULL;
+}
+
 /*
  Get the current control unit state
  */
@@ -1662,12 +1688,6 @@ void AbstractControlUnit::propertyUpdatedHandler(const std::string& group_name,
     if(group_name.compare("property_abstract_control_unit") == 0) {
         //update property on driver
         key_data_storage->updateConfiguration(property_name, new_value);
-        
-        //TODO
-        //        if(attribute_value_shared_cache->hasAttribute(DOMAIN_SYSTEM, property_name)){
-        //            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, property_name)->setValue(new_value);
-        //        }
-        
         //reflect modification on dataset
         if(property_name.compare(ControlUnitDatapackSystemKey::BYPASS_STATE) == 0) {
             _setBypassState(new_value.asBool());
@@ -1700,7 +1720,7 @@ void AbstractControlUnit::pushOutputDataset() {
     //check if something as changed
     if(!output_attribute_cache.hasChanged()) return;
     
-    CDataWrapper *output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
+    CDWShrdPtr output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
     if(!output_attribute_dataset) return;
     output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *timestamp_acq_cached_value->getValuePtr<uint64_t>());
@@ -1755,7 +1775,7 @@ void AbstractControlUnit::pushOutputDataset() {
         }
     }
     //now we nede to push the outputdataset
-    key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+    key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(output_attribute_dataset));
     
     //update counter
     push_dataset_counter++;
@@ -1770,7 +1790,7 @@ void AbstractControlUnit::pushInputDataset() {
     if(!input_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
-    CDataWrapper *input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
+    CDWShrdPtr input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
     if(input_attribute_dataset) {
         input_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
         //input dataset timestamp is added only when pushed on cache
@@ -1780,7 +1800,7 @@ void AbstractControlUnit::pushInputDataset() {
         fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
         
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, input_attribute_dataset);
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, ChaosMoveOperator(input_attribute_dataset));
     }
     input_attribute_cache.resetChangedIndex();
 }
@@ -1791,21 +1811,18 @@ void AbstractControlUnit::pushCustomDataset() {
     if(!custom_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
-    CDataWrapper *custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
+    CDWShrdPtr custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
     if(custom_attribute_dataset) {
         custom_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
         //input dataset timestamp is added only when pushed on cache
         custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
         custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         
-        //add dataset type
-        //    custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
-        
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
         
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, custom_attribute_dataset);
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, ChaosMoveOperator(custom_attribute_dataset));
     }
 }
 
@@ -1814,35 +1831,29 @@ void AbstractControlUnit::pushSystemDataset() {
     if(!systemm_attribute_cache.hasChanged()) return;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
-    CDataWrapper *system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
+    CDWShrdPtr system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
     if(system_attribute_dataset) {
         system_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
         //input dataset timestamp is added only when pushed on cache
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us/1000);
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
-        //add dataset type
-        //   system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
-        
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
+        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, ChaosMoveOperator(system_attribute_dataset));
     }
     //reset changed index
     systemm_attribute_cache.resetChangedIndex();
 }
 
-CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
-                                                              int32_t dataset_type) {
-    CDataWrapper *attribute_dataset = key_data_storage->getNewDataPackForDomain((KeyDataStorageDomain)dataset_type);
+CDWShrdPtr AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
+                                                           int32_t dataset_type) {
+    CDWShrdPtr attribute_dataset = key_data_storage->getNewDataPackForDomain((KeyDataStorageDomain)dataset_type);
     
     if(attribute_dataset) {
         //fill datapack with
         //! the dataaset can be pushed also in other moment
         attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
-        //add dataset type
-        //   attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, dataset_type);
-        
         //scan all alarm ad create the datapack
         size_t alarm_size = catalog.size();
         for(unsigned int idx = 0;
@@ -1858,23 +1869,21 @@ CDataWrapper *AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& cata
 
 void AbstractControlUnit::pushDevAlarmDataset() {
     GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
-    //get the cdatawrapper for the pack
-    CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
-                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
+    CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
+                                                              DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, attribute_dataset);
+        key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, ChaosMoveOperator(attribute_dataset));
     }
 }
 
 void AbstractControlUnit::pushCUAlarmDataset() {
     GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
-    //get the cdatawrapper for the pack
-    CDataWrapper *attribute_dataset = writeCatalogOnCDataWrapper(catalog,
-                                                                 DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
+    CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
+                                                              DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, attribute_dataset);
+        key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, ChaosMoveOperator(attribute_dataset));
     }
 }
 

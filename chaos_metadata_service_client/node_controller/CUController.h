@@ -47,9 +47,9 @@ namespace chaos {
         
         namespace node_controller {
             //! identify the domain qhere fetch the data
-
-        	typedef chaos::cu::data_manager::KeyDataStorageDomain DatasetDomain;
-
+            
+            typedef chaos::cu::data_manager::KeyDataStorageDomain DatasetDomain;
+            
             //! Controller for a single device instance
             /*!
              This represent a global controller for a single device, identified by DEVICE_ID. The contorlle rpermit to
@@ -169,7 +169,7 @@ namespace chaos {
                  Set the control unit run method scheduling delay
                  */
                 int setScheduleDelay(uint64_t microsecondsDelay);
-
+                
                 //! update the scudiling of device run method
                 /*!
                  Set the control unit bypass
@@ -193,7 +193,7 @@ namespace chaos {
                  * @return 0 on success, negative otherwise
                  */
                 int getPackSeq(uint64_t& seq);
-
+                
                 /*!
                  Get description for attribute name
                  */
@@ -260,7 +260,7 @@ namespace chaos {
                  */
                 int deinitDevice();
                 
-
+                
                 /**
                  * recover the device from an error (recoverable)
                  * @return 0 on success
@@ -410,7 +410,7 @@ namespace chaos {
                 
                 //!return the last fetched dataset for the domain
                 ChaosSharedPtr<chaos::common::data::CDataWrapper> getCurrentDatasetForDomain(DatasetDomain domain);
-
+                
                 //!return the last fetched dataset for the domain
                 int getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret);
                 
@@ -439,7 +439,7 @@ namespace chaos {
                 
                 //! send custom request to device and return a future
                 ChaosUniquePtr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
-                                                                                                         common::data::CDataWrapper *request_date);
+                                                                                                          common::data::CDataWrapper *request_date);
                 
                 //! send custom message to device
                 void sendCustomMessage(const std::string& action,
@@ -448,7 +448,7 @@ namespace chaos {
                 //! Send a request for receive RPC information
                 int checkRPCInformation(chaos::common::data::CDataWrapper **result_information,
                                         uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec
-);
+                                        );
                 
                 //! Send a request for an echo test
                 int echoTest(chaos::common::data::CDataWrapper * const echo_data,
@@ -456,17 +456,35 @@ namespace chaos {
                              uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //! get datapack between time itervall
-                void executeTimeIntervallQuery(DatasetDomain domain,
-                                               uint64_t start_ts,
-                                               uint64_t end_ts,
-                                               chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
+                void executeTimeIntervallQuery(const DatasetDomain              domain,
+                                               const uint64_t                   start_ts,
+                                               const uint64_t                   end_ts,
+                                               chaos::common::io::QueryCursor** query_cursor,
+                                               const uint32_t                   page_len = DEFAULT_PAGE_LEN);
 
-                void executeTimeIntervalQuery(DatasetDomain domain,
-                                               uint64_t start_ts,
-                                               uint64_t end_ts,
-                                               uint64_t seqid,
-                                               uint64_t runid,
-                                              chaos::common::io::QueryCursor **query_cursor,uint32_t page_len=DEFAULT_PAGE_LEN);
+                void executeTimeIntervallQuery(const DatasetDomain              domain,
+                                               const uint64_t                   start_ts,
+                                               const uint64_t                   end_ts,
+                                               const ChaosStringSet&            meta_tags,
+                                               chaos::common::io::QueryCursor** query_cursor,
+                                               const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
+                void executeTimeIntervalQuery(const DatasetDomain              domain,
+                                              const uint64_t                   start_ts,
+                                              const uint64_t                   end_ts,
+                                              const uint64_t                   seqid,
+                                              const uint64_t                   runid,
+                                              chaos::common::io::QueryCursor** query_cursor,
+                                              const uint32_t                   page_len = DEFAULT_PAGE_LEN);
+
+                void executeTimeIntervalQuery(const DatasetDomain              domain,
+                                              const uint64_t                   start_ts,
+                                              const uint64_t                   end_ts,
+                                              const uint64_t                   seqid,
+                                              const uint64_t                   runid,
+                                              const ChaosStringSet&            meta_tags,
+                                              chaos::common::io::QueryCursor** query_cursor,
+                                              const uint32_t                   page_len = DEFAULT_PAGE_LEN);
 
                 //! release a query
                 void releaseQuery(chaos::common::io::QueryCursor *query_cursor);

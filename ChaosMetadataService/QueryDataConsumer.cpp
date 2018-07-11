@@ -149,52 +149,38 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 }
 
 #pragma mark DirectIODeviceServerChannelHandler
-int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& header,
-                                       BufferSPtr channel_data,
-                                       uint32_t channel_data_len) {
+int QueryDataConsumer::consumePutEvent(const std::string& key,
+                                       const uint8_t hst_tag,
+                                       const ChaosStringSetConstSPtr meta_tag_set,
+                                       BufferSPtr channel_data) {
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    const int8_t key_tag = header.tag;
-    const std::string key_to_store = std::string((const char *)GET_PUT_OPCODE_KEY_PTR(&header),
-                                                 header.key_len);
-    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(key_tag);
+
+    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);
     //! if tag is == 1 the datapack is in liveonly
-    bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
-                                  storage_type != DataServiceNodeDefinitionType::DSStorageTypeUndefined);
-    switch(storage_type) {
-        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
-        case DataServiceNodeDefinitionType::DSStorageTypeLive:{
-            //protected access to cached driver
-            CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-            if(cache_slot) {
-                err = cache_slot->resource_pooled->putData(key_to_store,
-                                                           channel_data);
-                DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-            } else {
-                ERR << "Error allocating cache slot";
-            }
-            break;
-        }
-        case DataServiceNodeDefinitionType::DSStorageTypeHistory:
-        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:
-            break;
-            
-        default: {
-            ERR << "Bad storage tag: " << key_tag;
-            break;
+
+    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive) {
+        //protected access to cached driver
+        CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+        if(cache_slot) {
+            err = cache_slot->resource_pooled->putData(key,
+                                                       channel_data);
+            DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+        } else {
+            ERR << "Error allocating cache slot";
         }
     }
     
-    if(send_to_storage_layer) {
+    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
         //compute the index to use for the data worker
         uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use])
         //create storage job information
         auto job = ChaosMakeSharedPtr<DeviceSharedWorkerJob>();
-        job->key = key_to_store;
-        job->key_tag = key_tag;
+        job->key = key;
+        job->key_tag = hst_tag;
         job->data_pack = channel_data;
-        job->data_pack_len = channel_data_len;
+        job->meta_tag = ChaosMoveOperator(meta_tag_set);
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
         }
@@ -202,9 +188,10 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode& hea
     return err;
 }
 
-int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpcode& header,
-                                              BufferSPtr channel_data,
-                                              uint32_t channel_data_len) {
+int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
+                                              const uint8_t hst_tag,
+                                              const ChaosStringSetConstSPtr meta_tag_set,
+                                              BufferSPtr channel_data) {
     int err = 0;
     
     CDataWrapper health_data_pack((char *)channel_data->data());
@@ -217,15 +204,17 @@ int QueryDataConsumer::consumeHealthDataEvent(DirectIODeviceChannelHeaderPutOpco
                                         attribute_reference_wrapper()))) {
         ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
     }
-    return consumePutEvent(header,
-                           channel_data,
-                           channel_data_len);
+    return consumePutEvent(key,
+                           hst_tag,
+                           ChaosMoveOperator(meta_tag_set),
+                           channel_data);
 }
 
 int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                              const std::string& search_key,
-                                             uint64_t search_start_ts,
-                                             uint64_t search_end_ts,
+                                             const ChaosStringSet& meta_tags,
+                                             const uint64_t search_start_ts,
+                                             const uint64_t search_end_ts,
                                              SearchSequence& last_element_found_seq,
                                              QueryResultPage& page_element_found) {
     
@@ -233,6 +222,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     //execute the query
     ObjectStorageDataAccess *obj_storage_da = object_storage_driver->getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
     if((err = obj_storage_da->findObject(search_key,
+                                         meta_tags,
                                          search_start_ts,
                                          search_end_ts,
                                          query_header.field.record_for_page,

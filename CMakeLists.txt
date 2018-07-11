@@ -128,9 +128,6 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
-  MESG("Configure UIToolkit Layer")
-  ADD_SUBDIRECTORY(chaos/ui_toolkit)
-
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
@@ -143,15 +140,19 @@ MESG("Configure Chaos Agent Service")
 ADD_SUBDIRECTORY(ChaosAgent)
 ENDIF()
 
-IF (CHAOS_MDS AND NOT CHAOS_ONLY_DEPENDECY)
-  MESG("Configure Chaos Metadata Service")
-  ADD_SUBDIRECTORY(ChaosMetadataService)
+IF (CHAOS_MDS AND
+    NOT CHAOS_ONLY_DEPENDECY)
+    IF("${CMAKE_CXX_COMPILE_FEATURES}" MATCHES "cxx_std_11")
+        MESG("Configure Chaos Data Service")
+        ADD_SUBDIRECTORY(ChaosMetadataService)
+    ELSE()
+    WARN("Chaos Data Service require a c11 compliant compiler")
+  ENDIF()
 ENDIF()
 
 IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
-
 
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")
@@ -159,14 +160,8 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   ENDIF()
 
   IF(CHAOS_EXAMPLES)
-    MESG("Configure Chaos CLI")
-    ADD_SUBDIRECTORY(example/ChaosCLI)
-
     MESG("Configure Chaos ChaosMDSCmd")
     ADD_SUBDIRECTORY(example/ChaosMDSCmd)
-
-    MESG("Configure Chaos Performance Tester")
-    ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
   ENDIF()
 ENDIF()
 

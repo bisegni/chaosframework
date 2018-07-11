@@ -212,13 +212,15 @@ int AbstractExecutionUnit::performQuery(chaos::common::io::QueryCursor **cursor,
                                         KeyDataStorageDomain dataset_domain,
                                         const uint64_t start_ts,
                                         const uint64_t end_ts,
+                                        const ChaosStringSet& meta_tags,
                                         const uint32_t page_len) {
     CHAOS_ASSERT(key_data_storage.get());
     int err = key_data_storage->performGeneralQuery(cursor,
                                                     node_id,
                                                     dataset_domain,
                                                     start_ts,
-                                                    end_ts);
+                                                    end_ts,
+                                                    meta_tags);
     if(!err || *cursor) {
         (*cursor)->setPageDimension(page_len);
     }

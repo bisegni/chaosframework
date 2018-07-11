@@ -35,23 +35,6 @@ void IODataDriver::deinit() throw(CException) {
     
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-void IODataDriver::storeData(const std::string& key,
-                             CDataWrapper *dataToStore,
-                             DataServiceNodeDefinitionType::DSStorageType storage_type,
-                             bool delete_data_to_store) throw(CException){
-    CHAOS_ASSERT(dataToStore)
-//	boost::mutex::scoped_lock l(iomutex);
-
-    SerializationBuffer* serialization = dataToStore->getBSONData();
-    
-    storeRawData(key, serialization, storage_type);
-    
-    if(delete_data_to_store){delete(dataToStore);}
-}
-
 int IODataDriver::removeData(const std::string& key,
                              uint64_t start_ts,
                              uint64_t end_ts) throw(CException) {

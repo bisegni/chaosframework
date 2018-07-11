@@ -67,6 +67,9 @@ namespace chaos {
                  */
                 void sendHeartBeatForDeviceID(const std::string& identification_id);
                 
+                //!Send echo message to one of mds
+                int sendEchoMessage(CDataWrapper& data, chaos::common::data::CDWUniquePtr& result);
+                
                 //! Send Unit server registration to MDS
                 /*!
                  Perform the registration of the unit server

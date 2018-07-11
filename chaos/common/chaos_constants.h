@@ -623,6 +623,7 @@ namespace chaos {
          store another datapack into the live system[uint64]
          */
         static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
+
     }
     /** @} */ // end of DataServiceNodeDefinitionKey
     
@@ -637,14 +638,14 @@ namespace chaos {
          so every datapack can be considere with different store behaviour
          */
         typedef enum DSStorageType {
-            //!the datapack is store into the storage system and not in live
-            DSStorageTypeHistory,
-            //!the datapack is publish in live shared memory
-            DSStorageTypeLive,
-            //!datapack is published and stored in live and history
-            DSStorageTypeLiveHistory,
             //!no storage behaviour defined
-            DSStorageTypeUndefined
+            DSStorageTypeUndefined = 0,
+            //!the datapack is store into the storage system and not in live
+            DSStorageTypeHistory = 1,
+            //!the datapack is publish in live shared memory
+            DSStorageTypeLive = 2,
+            //!datapack is published and stored in live and history
+            DSStorageTypeLiveHistory = 3
         } DSStorageType;
     }
     /** @} */ // end of DataServiceNodeDefinitionType
@@ -744,12 +745,41 @@ namespace chaos {
         
         //!The key represent an array with the object taht represent, each one, the command description array[object...]
         static const char * const CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION         = "cudk_ds_command_description";
+        /*!
+         Whatever storage type is actually in use, the set of this property will send data to
+         the history engine with the type and value specified by the cdata wrapper seriled in it
+         */
+        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST               = "dsndk_history_burst";
+        //! Is the key used for specify the type f burts function
+        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE          = "dsndk_history_burst_type";
+        //! is the value related to the type
+        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE         = "dsndk_history_burst_value";
+        //! is the tag associated to the burst
+        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_TAG           = "dsndk_history_burst_tag";
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
+    /** @defgroup ControlUnitNodeDefinitionKey List of control unit node type attribute key
+     *  @{
+     */
+    //! Name space for grupping key for the control unit node type
+    namespace ControlUnitNodeDefinitionType {
+        //! define the tipe of hisoty burst function
+        typedef enum DSStorageBurstType {
+            //!no storage behaviour defined
+            DSStorageBurstTypeUndefined = 0,
+            DSStorageBurstTypeNPush,
+            DSStorageBurstTypeMSec
+        } DSStorageBurstType;
+    }
+    /** @} */ // end of ControlUnitNodeDefinitionKey
     namespace ControlUnitNodeDomainAndActionRPC {
         //!Alias associated to thefunction that apply the value changes set to the input dataset attribute
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
+        
+        //! Deinitialization of a control unit, if it is in run, the stop phase
+        //! is started befor deinitialization one
+        static const char * const ACTION_STORAGE_BURST                             = "cunrpc_start_storage_burst";
     }
     
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
@@ -1201,6 +1231,8 @@ namespace chaos {
         static const char * const DPCK_HIGH_RESOLUTION_TIMESTAMP       = "dpck_hr_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
+        //!define the list of tags associated to the datapack
+        static const char * const DPCK_DATASET_TAGS                    = "dpck_ds_tag";
         //! the constant that represent the output dataset type
         static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
         //! the constant that represent the input dataset type
@@ -1215,6 +1247,8 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
+        //!define tags associated to the dataset[array of string]
+        static const char * const DPCK_DATASET_TAG                    = "dpck_ds_tag";
     }
 
 

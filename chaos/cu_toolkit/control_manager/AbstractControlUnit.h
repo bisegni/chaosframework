@@ -206,8 +206,8 @@ namespace chaos{
                     return -1;
                 }
                 
-                chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
-                                                                              int32_t dataset_type);
+                chaos::common::data::CDWShrdPtr writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                                                                           int32_t dataset_type);
                 //check at initilization time ifr need to to a restore or only an apply
                 void checkForRestoreOnInit() throw(CException);
             private:
@@ -426,21 +426,28 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper* data,
+                                                                        bool& detachParam) throw (CException);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper* data,
+                                                             bool& detachParam) throw(CException);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper* data,
+                                                            bool& detachParam) throw(CException);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDataWrapper* _startStorageBurst(chaos::common::data::CDataWrapper* data,
+                                                                      bool& detachParam) throw (CException);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts);

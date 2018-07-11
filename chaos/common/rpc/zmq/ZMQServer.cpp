@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
+#include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/exception.h>
 
@@ -36,7 +37,10 @@ using namespace boost;
 using namespace chaos::common::data;
 
 static void my_free (void *data, void *hint) {
-    free (data);
+    if(hint) {
+        MemoryManagement *tmp = static_cast<MemoryManagement*>(hint);
+        delete(tmp);
+    } else {free(data);};
 }
 
 DEFINE_CLASS_FACTORY(ZMQServer, RpcServer);
@@ -218,7 +222,7 @@ void ZMQServer::worker() {
             } else {
                 if(zmq_msg_size(&request)>0) {
                     ZMQS_LDBG << "Message Received";
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result_data_pack;
+                    CDWShrdPtr result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
                     if(message_data->hasKey("syncrhonous_call") &&
@@ -227,10 +231,8 @@ void ZMQServer::worker() {
                     } else {
                         result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
                     }
-                    //get serailizaiton
-                    ChaosUniquePtr<SerializationBuffer> result(result_data_pack->getBSONData());
                     //create zmq message
-                    err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
+                    err = zmq_msg_init_data(&response, (void*)result_data_pack->getBSONRawData(), result_data_pack->getBSONRawSize(), my_free, new MemoryManagement(ChaosMoveOperator(result_data_pack)));
                     if(err == -1) {
                         //there was an error
                         int32_t sent_error = zmq_errno();
@@ -238,10 +240,6 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
                     } else {
                         //no error on create message
-                        //at this time memory is managed by zmq
-                        result->disposeOnDelete = false;
-                        //ChaosUniquePtr<SerializationBuffer> result(result_data_pack->getBSONData());
-                        //result->disposeOnDelete = false;
                         ZMQS_LDBG << "Send ack";
                         err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
                         if(err == -1) {
@@ -252,14 +250,13 @@ void ZMQServer::worker() {
                             ZMQS_LDBG << "ACK Sent";
                         }
                     }
-                }else {
+                } else {
                     ZMQS_LDBG << "Empty message received";
                 }
             }
             
             err = zmq_msg_close(&request);
             err = zmq_msg_close(&response);
-            
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

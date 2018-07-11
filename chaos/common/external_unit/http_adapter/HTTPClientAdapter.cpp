@@ -246,8 +246,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             } else {
                 //accepted connection ca received data
                 ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
-                                                                   (uint32_t)wm->size,
-                                                                   true));
+                                                                   (uint32_t)wm->size));
                 if((err = ci->class_instance->sendDataToEndpoint(*ci->ext_unit_conn,
                                                                  ChaosMoveOperator(buffer)))) {
                     //weh don't have found the sriealizer

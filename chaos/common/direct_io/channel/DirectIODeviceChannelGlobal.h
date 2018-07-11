@@ -62,6 +62,8 @@ namespace chaos {
                  */
                 namespace DeviceChannelOpcodeQueryDataCloudParam {
                     //!is the timestamp for wich we want to search our key
+                    static const char * const QUERY_PARAM_META_TAGS                     = "qp_data_cloud_meta_tags";
+                    //!is the timestamp for wich we want to search our key
                     static const char * const QUERY_PARAM_STAR_TS_I64                   = "qp_data_cloud_start_ts";
                     //!is the timestamp that close the time offset of the search [packet that are <= are included into the result]
                     static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
@@ -90,12 +92,14 @@ namespace chaos {
                     
                     //! Header for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
-                        //! The 8 bit tag field
+                        //! The tag associated to the
                         uint8_t tag;
-                        //! The 8 bit key length field
+                        //! The lenght of the key
                         uint8_t key_len;
-                        //the pointer to key data
-                        void*   key_data;
+                        //! Thenumber of tags for this dataset, every tag is terminated by '\0'
+                        uint16_t tag_num;
+                        //the pointer to hedaer payload
+                        void*   data;
                     } DirectIODeviceChannelHeaderData,
                     *DirectIODeviceChannelHeaderDataPtr;
                     

@@ -684,7 +684,6 @@
 				OTHER_LDFLAGS = (
 					$inherited,
 					"-lgtest",
-					"-ltcmalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -711,7 +710,6 @@
 				OTHER_LDFLAGS = (
 					$inherited,
 					"-lgtest",
-					"-ltcmalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

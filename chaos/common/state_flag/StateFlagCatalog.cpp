@@ -203,11 +203,11 @@ void StateFlagCatalog::getFlagsForSeverity(StateFlagServerity severity,
 }
 
 #pragma mark Serialization Method
-ChaosUniquePtr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLevel() {
+CDBufferUniquePtr StateFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
     LockableObjectReadLock_t rl;
     catalog_container.getReadLock(rl);
-    ChaosUniquePtr<CDataBuffer> result;
+    CDBufferUniquePtr result;
     char * raw_description = (char*)malloc(catalog_container().size());
     if(raw_description) {
         //retrieve the ordered index
@@ -218,16 +218,16 @@ ChaosUniquePtr<chaos::common::data::CDataBuffer> StateFlagCatalog::getRawFlagsLe
             it++){
             raw_description[(*it)->seq_id] = static_cast<char>((*it)->status_flag->getCurrentLevel());
         }
-        result.reset(CDataBuffer::newOwnBufferFromBuffer(raw_description,
-                                                         (uint32_t)catalog_container().size()));
+        result = CDataBuffer::newOwnBufferFromBuffer(raw_description,
+                                                         (uint32_t)catalog_container().size());
     }
     return result;
 }
 
-void StateFlagCatalog::setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level) {
+void StateFlagCatalog::setApplyRawFlagsValue(CDBufferUniquePtr& raw_level) {
     if(raw_level.get() == NULL) return;
     const char * buffer = raw_level->getBuffer();
-    uint32_t buffer_size = raw_level->getBufferSize();
+    uint32_t buffer_size = (uint32_t)raw_level->getBufferSize();
     
     if(buffer_size != catalog_container().size()) return;
     LockableObjectWriteLock_t wl;
