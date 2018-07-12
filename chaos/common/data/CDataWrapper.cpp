@@ -124,8 +124,8 @@ ChaosUniquePtr<CDataWrapper> CDataWrapper::instanceFromJson(const std::string& j
     return ChaosUniquePtr<CDataWrapper>(new CDataWrapper(json_serialization));
 }
 
-CDataWrapper *CDataWrapper::clone() {
-    return new CDataWrapper(bson.get());
+ChaosUniquePtr<CDataWrapper> CDataWrapper::clone() {
+    return ChaosUniquePtr<CDataWrapper>(new CDataWrapper(bson.get()));
 }
 
 
@@ -259,21 +259,20 @@ void CDataWrapper::addInt64Value(const std::string& key, uint64_t value) {
 }
 
 //get a csdata value
-CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) const{
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::getCSDataValue(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOCUMENT){
         uint32_t document_len = 0;
         const uint8_t *document = NULL;
         bson_iter_document(&element_found,
                            &document_len,
                            &document);
-        return new CDataWrapper((const char *)document,document_len);
+        return ChaosUniquePtr<chaos::common::data::CDataWrapper>(new CDataWrapper((const char *)document,document_len));
     } else {
-        return new CDataWrapper();
+        return ChaosUniquePtr<chaos::common::data::CDataWrapper>(new CDataWrapper());
     }
 }
 std::string CDataWrapper::getJsonValue(const std::string& key) const{
-    ChaosUniquePtr<CDataWrapper> tmp;
-    tmp.reset(getCSDataValue(key));
+    ChaosUniquePtr<CDataWrapper> tmp=getCSDataValue(key);
     if(tmp.get()){
         return tmp->getJSONString();
     }
@@ -1104,14 +1103,14 @@ const char * CMultiTypeDataArrayWrapper::getRawValueAtIndex(const int pos,uint32
 
 }
 
-CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const{
+ChaosUniquePtr<CDataWrapper> CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const{
     // CHAOS_ASSERT(values[pos]->value_type == BSON_TYPE_DOCUMENT);
     if(values[pos]->value_type != BSON_TYPE_DOCUMENT){
         std::stringstream ss;
         ss<<"type at index ["<<pos<<"] is not CDataWrapper, typeid:"<<values[pos]->value_type;
         throw CException(1, ss.str(), __PRETTY_FUNCTION__);
     }
-    return new CDataWrapper((const char *)values[pos]->value.v_doc.data, values[pos]->value.v_doc.data_len);
+    return ChaosUniquePtr<CDataWrapper>(new CDataWrapper((const char *)values[pos]->value.v_doc.data, values[pos]->value.v_doc.data_len));
 }
 
 size_t CMultiTypeDataArrayWrapper::size() const{

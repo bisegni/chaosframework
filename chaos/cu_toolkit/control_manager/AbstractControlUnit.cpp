@@ -1605,14 +1605,13 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                         }
                             
                         case DataType::TYPE_CLUSTER: {
-                            CDataWrapper* str = dataset_attribute_values->getCSDataValue(attr_name);
+                            ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
                                 if(str){
                                     attribute_cache_value->setValue(*str);
-                                    delete str;
                                 }
                             } catch(...){
-                                throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format '%1%'")  %str).c_str(),__PRETTY_FUNCTION__);
+                                throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format ")  ).c_str(),__PRETTY_FUNCTION__);
                             }
                             break;
                         }

@@ -117,7 +117,7 @@ namespace chaos {
                         
                         if(init_parameter.hasKey(INIT_HARDWARE_PARAM) &&
                            init_parameter.isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
-                            driver_init_pack.reset(init_parameter.getCSDataValue(INIT_HARDWARE_PARAM));
+                            driver_init_pack=init_parameter.getCSDataValue(INIT_HARDWARE_PARAM);
                         }
                         future_hepler.init(NULL);
                     }

@@ -19,6 +19,7 @@
  */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/exception/CException.h>
@@ -98,11 +99,11 @@ namespace chaos {
                 explicit CDataWrapper(const char* mem_ser);
                 ~CDataWrapper();
                 static ChaosUniquePtr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
-                CDataWrapper *clone();
+                ChaosUniquePtr<CDataWrapper>clone();
                 //add a csdata value
                 void addCSDataValue(const std::string&, const CDataWrapper&);
                 //get a csdata value
-                CDataWrapper *getCSDataValue(const std::string&) const;
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSDataValue(const std::string&) const;
                 //add a string value
                 //void addStringValue(const char *, const char *);
                 //add a string value
@@ -330,7 +331,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 int64_t getInt64ElementAtIndex(const int) const;
                 bool getBoolElementAtIndex(const int) const;
 
-                CDataWrapper* getCDataWrapperElementAtIndex(const int) const;
+                ChaosUniquePtr<CDataWrapper> getCDataWrapperElementAtIndex(const int) const;
                 std::string getJSONString();
                 std::string getCanonicalJSONString();
                 bool isStringElementAtIndex(const int) const;

@@ -181,14 +181,15 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         //get the action message
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
             //there is a subcommand to submit
-            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE).release());
         }
         
         //get sub command if present
         //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
             //there is a subcommand to submit
-            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
+
+            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD).release();
         }
         
         //check if request has the rigth key to let chaos lib can manage the answer send operation

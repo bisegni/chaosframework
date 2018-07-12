@@ -89,7 +89,7 @@ TEST(CDataWrapperTest, Performance) {
         data_pack.addInt32Value("i32v", (int32_t)0);
         data_pack.addInt64Value("i64v", (int64_t)0);
         data_pack.addDoubleValue("dbv", (double)36.6);
-        cloned.reset(data_pack.clone());
+        cloned.reset(data_pack.clone().release());
         ASSERT_TRUE(cloned->isInt64Value("i64v"));
         ASSERT_TRUE(cloned->isInt32Value("i32v"));
         ASSERT_TRUE(cloned->isBoolValue("bv"));

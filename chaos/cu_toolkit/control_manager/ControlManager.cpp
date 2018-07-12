@@ -505,7 +505,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         LCMDBG_ << "scan " << driver_descriptions->size() << " driver descriptions";
         for( int idx = 0; idx < driver_descriptions->size(); idx++) {
             LCMDBG_ << "scan " << idx << " driver";
-            boost::scoped_ptr<CDataWrapper> driver_desc(driver_descriptions->getCDataWrapperElementAtIndex(idx));
+            ChaosUniquePtr<CDataWrapper> driver_desc=driver_descriptions->getCDataWrapperElementAtIndex(idx);
             CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, LCMERR_, -4, "No driver name found");
             CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, LCMERR_, -5, "No driver version found");
             CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, LCMERR_, -6, "No driver init param name found");
