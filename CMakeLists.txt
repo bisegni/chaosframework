@@ -142,12 +142,12 @@ ENDIF()
 
 IF (CHAOS_MDS AND
     NOT CHAOS_ONLY_DEPENDECY)
-    IF("${CMAKE_CXX_COMPILE_FEATURES}" MATCHES "cxx_std_11")
-        MESG("Configure Chaos Data Service")
-        ADD_SUBDIRECTORY(ChaosMetadataService)
-    ELSE()
-    WARN("Chaos Data Service require a c11 compliant compiler")
-  ENDIF()
+    # IF("${CMAKE_CXX_COMPILE_FEATURES}" MATCHES "cxx_std_11")
+    MESG("Configure Chaos Data Service")
+    ADD_SUBDIRECTORY(ChaosMetadataService)
+    # ELSE()
+    # WARN("Chaos Data Service require a c11 compliant compiler")
+    # ENDIF()
 ENDIF()
 
 IF(NOT CHAOS_ONLY_DEPENDECY)
