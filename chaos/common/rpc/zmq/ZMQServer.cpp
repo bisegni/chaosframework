@@ -232,7 +232,15 @@ void ZMQServer::worker() {
                         result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
                     }
                     //create zmq message
-                    err = zmq_msg_init_data(&response, (void*)result_data_pack->getBSONRawData(), result_data_pack->getBSONRawSize(), my_free, new MemoryManagement(ChaosMoveOperator(result_data_pack)));
+                    if(result_data_pack.get()==NULL){
+                        ZMQS_LERR << "ERROR:"<<message_data->getCompliantJSONString();
+
+                    }
+                    err = zmq_msg_init_data(&response,
+                                            (void*)result_data_pack->getBSONRawData(),
+                                            result_data_pack->getBSONRawSize(),
+                                            my_free,
+                                            new MemoryManagement(result_data_pack));
                     if(err == -1) {
                         //there was an error
                         int32_t sent_error = zmq_errno();
