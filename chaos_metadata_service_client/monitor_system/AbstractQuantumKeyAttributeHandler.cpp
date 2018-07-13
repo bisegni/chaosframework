@@ -90,7 +90,7 @@ QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeCDataWrapperHandler
 void QuantumKeyAttributeCDataWrapperHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {
 	ChaosUniquePtr<CDataWrapper> tmp=value->getCSDataValue(attribute);
-	if(tmp){
+	if(tmp.get()){
 		consumeValue(key,
                  attribute,
                  tmp->getJSONString());

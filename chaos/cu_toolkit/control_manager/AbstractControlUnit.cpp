@@ -1697,7 +1697,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                         case DataType::TYPE_CLUSTER: {
                             ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
-                                if(str){
+                                if(str.get()){
                                     attribute_cache_value->setValue(*str);
                                 }
                             } catch(...){
