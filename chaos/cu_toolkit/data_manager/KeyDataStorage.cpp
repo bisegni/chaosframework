@@ -35,35 +35,6 @@ using namespace chaos::cu::data_manager;
 #define KeyDataStorageLDBG	DBG_LOG(KeyDataStorage)
 #define KeyDataStorageLERR	ERR_LOG(KeyDataStorage)
 
-#pragma mark StorageBurst
-StorageBurst::StorageBurst(DatasetBurstShrdPtr _dataset_burst):
-dataset_burst(_dataset_burst){}
-
-StorageBurst::~StorageBurst(){}
-
-#pragma mark PushStorageBurst
-PushStorageBurst::PushStorageBurst(DatasetBurstShrdPtr _dataset_burst):
-StorageBurst(ChaosMoveOperator(_dataset_burst)),
-current_pushes(0){}
-
-PushStorageBurst::~PushStorageBurst(){}
-
-bool PushStorageBurst::active(void *data  __attribute__((unused))) {
-    return current_pushes++<StorageBurst::dataset_burst->value.asUInt32();
-}
-
-#pragma mark MSecStorageBurst
-MSecStorageBurst::MSecStorageBurst(DatasetBurstShrdPtr _dataset_burst):
-StorageBurst(ChaosMoveOperator(_dataset_burst)),
-timeout_msec(TimingUtil::getTimestampWithDelay(StorageBurst::dataset_burst->value.asInt32(), true)){}
-
-MSecStorageBurst::~MSecStorageBurst(){}
-
-bool MSecStorageBurst::active(void *data) {
-    int64_t *now = static_cast<int64_t*>(data);
-    return timeout_msec>*now;
-}
-
 #pragma mark KeyDataStorage
 KeyDataStorage::KeyDataStorage(const std::string& _key,
                                chaos_io::IODataDriver *_io_data_driver):
@@ -74,6 +45,7 @@ storage_history_time(0),
 storage_history_time_last_push(0),
 storage_live_time(0),
 storage_live_time_last_push(0),
+use_timing_info(true),
 sequence_id(0),
 output_key(key + DataPackPrefixID::OUTPUT_DATASET_POSTFIX),
 input_key(key + DataPackPrefixID::INPUT_DATASET_POSTFIX),
@@ -194,54 +166,33 @@ CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain do
 void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
                                                       CDWShrdPtr dataset,
                                                       DataServiceNodeDefinitionType::DSStorageType storage_type) {
-    ChaosStringSet tags;
-    //check for burt information
-    if(!current_burst.get()) {
-        LQueueBurstReadLock wl = burst_queue.getReadLockObject();
-        if(!burst_queue().empty()){
-            switch(burst_queue().front()->type) {
-                case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeNPush:
-                    current_burst.reset(new PushStorageBurst(ChaosMoveOperator(burst_queue().front())));
-                    break;
-                case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeMSec:
-                    current_burst.reset(new MSecStorageBurst(ChaosMoveOperator(burst_queue().front())));
-                    break;
-                default:
-                    break;
-            }
-            burst_queue().pop();
-        }
-    }
     
     uint64_t now = TimingUtil::getTimeStampInMicroseconds();
     int effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeUndefined;
     
-    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive) {
+    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive ||
+       override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeLive) {
         //live is enbaled
+//        if(use_timing_info) {
         if((now - storage_live_time_last_push) >= storage_live_time) {
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
             storage_live_time_last_push = now;
         }
+//        } else {
+//            effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
+//        }
     }
     
-    if(!current_burst.get()) {
-        if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
-            //history is enabled
+    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory ||
+       override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
+        //history is enabled
+        if(use_timing_info) {
             if((now - storage_history_time_last_push) >= storage_history_time) {
                 effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeHistory;
                 storage_history_time_last_push = now;
             }
-        }
-    } else {
-        storage_history_time_last_push = now;
-        effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeHistory;
-        if(current_burst->dataset_burst->tag.size()) {
-            tags.insert(current_burst->dataset_burst->tag);
-        }
-        //check for storage information
-        if(!current_burst->active(&now)) {
-            //we need to remove it
-            current_burst.reset();
+        } else {
+            effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeHistory;
         }
     }
     
@@ -249,13 +200,15 @@ void KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
         io_data_driver->storeData(key,
                                   ChaosMoveOperator(dataset),
                                   static_cast<DataServiceNodeDefinitionType::DSStorageType>(effective_storage_type),
-                                  tags);
+                                  current_tags());
     }
 }
 
 void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
                                  CDWShrdPtr dataset) {
     CHAOS_ASSERT(io_data_driver.get());
+    LChaosStringSetReadLock wl = current_tags.getReadLockObject();
+    
     //lock for protect the access
     boost::unique_lock<boost::mutex> l(mutex_push_data);
     switch(domain) {
@@ -268,31 +221,36 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
             //input channel need to be push ever either in live and in history
             io_data_driver->storeData(input_key,
                                       ChaosMoveOperator(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                      current_tags());
             break;
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history
             io_data_driver->storeData(system_key,
                                       ChaosMoveOperator(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                      current_tags());
             break;
         case KeyDataStorageDomainCUAlarm:
             //system channel need to be push ever either in live and in history
             io_data_driver->storeData(cu_alarm_key,
                                       ChaosMoveOperator(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                      current_tags());
             break;
         case KeyDataStorageDomainDevAlarm:
             //system channel need to be push ever either in live and in history
             io_data_driver->storeData(dev_alarm_key,
                                       ChaosMoveOperator(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                      current_tags());
             break;
         case KeyDataStorageDomainHealth:
             //system channel need to be push ever either in live and in history
             io_data_driver->storeHealthData(health_key,
                                             ChaosMoveOperator(dataset),
-                                            DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                            DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                            current_tags());
             break;
         case KeyDataStorageDomainCustom:
             pushDataWithControlOnHistoryTime(custom_key,
@@ -415,20 +373,32 @@ void KeyDataStorage::updateConfiguration(const std::string& conf_name,
     KeyDataStorageLAPP << CHAOS_FORMAT("Set value %1% to property %2%", %conf_value.asString()%conf_name);
 }
 
-//!add into the queue a noew storage burst mode
-bool KeyDataStorage::addStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr burst_mode) {
-    if(burst_mode->type == chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined) {
-        KeyDataStorageLERR << "The type is mandatory";
-        return false;
-    }
-    if(!burst_mode->value.isValid()) {
-        KeyDataStorageLERR << "The value is mandatory";
-        return false;
-    }
-    
-    LQueueBurstWriteLock wl = burst_queue.getWriteLockObject();
-    burst_queue().push(burst_mode);
-    return true;
+void KeyDataStorage::setOverrideStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType _override_storage_type) {
+    override_storage_everride = _override_storage_type;
+}
+
+void KeyDataStorage::setTimingConfigurationBehaviour(bool _use_timing_info) {
+    use_timing_info = _use_timing_info;
+}
+
+void KeyDataStorage::addTag(const std::string& tag) {
+    LChaosStringSetWriteLock wl = current_tags.getWriteLockObject();
+    current_tags().insert(tag);
+}
+
+void KeyDataStorage::addTag(const ChaosStringSet& tags) {
+    LChaosStringSetWriteLock wl = current_tags.getWriteLockObject();
+    current_tags().insert(tags.begin(), tags.end());
+}
+
+void KeyDataStorage::removeTag(const std::string& tag) {
+    LChaosStringSetWriteLock wl = current_tags.getWriteLockObject();
+    current_tags().erase(tag);
+}
+
+void KeyDataStorage::removeTag(const ChaosStringSet& tags) {
+    LChaosStringSetWriteLock wl = current_tags.getWriteLockObject();
+    current_tags().erase(tags.begin(), tags.end());
 }
 
 DataServiceNodeDefinitionType::DSStorageType KeyDataStorage::getStorageType() {

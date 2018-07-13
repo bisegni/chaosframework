@@ -35,13 +35,14 @@ protected:
 private slots:
     void updateUIStatus();
     void on_pushButton_clicked(bool clicked);
-
     void on_pushButtonEdit_clicked();
-
-    void on_pushButton_clicked();
+    void on_pushButtonBurst_clicked();
 
 private:
     bool data_found;
+    bool burst_state;
+    QString burst_tag;
+    chaos::common::data::structured::DatasetBurst db;
     QString last_pushbutton_in_error;
     QString last_error_message;
     chaos::DataServiceNodeDefinitionType::DSStorageType storage_type;

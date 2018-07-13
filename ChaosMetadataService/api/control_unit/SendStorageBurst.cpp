@@ -49,10 +49,11 @@ CDataWrapper *SendStorageBurst::execute(CDataWrapper *api_data,
     //check burst information
     DatasetBurstSDWrapper db_sdw;
     db_sdw.deserialize(api_data);
-    CHECK_ASSERTION_THROW_AND_LOG(db_sdw().type != chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined, CU_RNU_ERR, -4, "The type of burst is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG(db_sdw().value.isValid(), CU_RNU_ERR, -5, "The value ofburst is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(db_sdw().tag.size() != 0, CU_RNU_ERR, -4, "The tag of burst is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(db_sdw().type != chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined, CU_RNU_ERR, -5, "The type of burst is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(db_sdw().value.isValid(), CU_RNU_ERR, -6, "The value ofburst is mandatory");
     
-    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -7)
     
     int                 err                 = 0;
     uint64_t            command_id          = 0;
