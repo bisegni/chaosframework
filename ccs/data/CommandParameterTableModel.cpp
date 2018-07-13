@@ -32,7 +32,7 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
     for(int idx = 0;
         idx < attribute_array->size();
         idx++) {
-        QSharedPointer<CDataWrapper> attribute(attribute_array->getCDataWrapperElementAtIndex(idx));
+        QSharedPointer<CDataWrapper> attribute(attribute_array->getCDataWrapperElementAtIndex(idx).release());
         if(attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME) &&
                 attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION) &&
                 attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE) &&

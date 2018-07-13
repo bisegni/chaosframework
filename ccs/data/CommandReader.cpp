@@ -16,7 +16,7 @@ CommandReader::CommandReader(QSharedPointer<chaos::common::data::CDataWrapper> _
         for(int idx = 0;
             idx < param_vector->size();
             idx++) {
-            QSharedPointer<CDataWrapper> param_description(param_vector->getCDataWrapperElementAtIndex(idx));
+            QSharedPointer<CDataWrapper> param_description(param_vector->getCDataWrapperElementAtIndex(idx).release());
             //we have found the description so we nend to cache and return it
             command_parameter_cache.insert(QString::fromStdString(param_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)),
                                            param_description);

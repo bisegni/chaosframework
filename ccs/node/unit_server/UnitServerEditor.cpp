@@ -244,7 +244,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
             for(int i = 0;
                 i < arr->size();
                 i++) {
-                QSharedPointer<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
+                QSharedPointer<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i).release());
                 instance_list.push_back(found_node);
                 fillTableWithInstance(found_node);
             }

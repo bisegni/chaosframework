@@ -127,7 +127,7 @@ void SearchNodeListModel::onApiDone(const QString& tag,
             for(int i = 0;
                 i < arr->size();
                 i++) {
-                result_found.append(QSharedPointer<CDataWrapper>(arr->getCDataWrapperElementAtIndex(i)));
+                result_found.append(QSharedPointer<CDataWrapper>(arr->getCDataWrapperElementAtIndex(i).release()));
             }
         }else{
             qDebug() << "No data found";

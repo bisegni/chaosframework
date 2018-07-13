@@ -41,7 +41,7 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
     for(int idx = 0;
         idx < dataset_array->size();
         idx++) {
-        QSharedPointer<CDataWrapper> element(dataset_array->getCDataWrapperElementAtIndex(idx));
+        QSharedPointer<CDataWrapper> element(dataset_array->getCDataWrapperElementAtIndex(idx).release());
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION) &&
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE) &&
@@ -71,7 +71,7 @@ void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QShared
         idx < attribute_configuration->size();
         idx++){
         //fetch the attribute configuration
-        QSharedPointer<CDataWrapper> attribute(attribute_configuration->getCDataWrapperElementAtIndex(idx));
+        QSharedPointer<CDataWrapper> attribute(attribute_configuration->getCDataWrapperElementAtIndex(idx).release());
 
         //add it to map
         QString attribute_name  = QString::fromStdString(attribute->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
