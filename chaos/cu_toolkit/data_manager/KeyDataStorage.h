@@ -52,38 +52,8 @@ namespace chaos{
                 KeyDataStorageDomainCUAlarm =DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM
             } KeyDataStorageDomain;
             
-            //!define the hasmap for the dataset tags
-            CHAOS_DEFINE_MAP_FOR_TYPE(KeyDataStorageDomain, chaos::common::data::structured::DatasetBurstShrdPtr, MapDatasetBurst);
-            CHAOS_DEFINE_LOCKABLE_OBJECT(MapDatasetBurst, LMapDatasetBurst);
-            
-            CHAOS_DEFINE_QUEUE_FOR_TYPE(chaos::common::data::structured::DatasetBurstShrdPtr, QueueBurst);
-            CHAOS_DEFINE_LOCKABLE_OBJECT(QueueBurst, LQueueBurst);
-            
-            class StorageBurst {
-            public:
-                chaos::common::data::structured::DatasetBurstShrdPtr dataset_burst;
-                StorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
-                virtual ~StorageBurst();
-                virtual bool active(void *data) = 0;
-            };
-            
-            class PushStorageBurst:
-            public StorageBurst {
-                uint32_t current_pushes;
-            public:
-                PushStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
-                virtual ~PushStorageBurst();
-                bool active(void *data);
-            };
-            
-            class MSecStorageBurst:
-            public StorageBurst {
-                int64_t timeout_msec;
-            public:
-                MSecStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
-                virtual ~MSecStorageBurst();
-                bool active(void *data);
-            };
+            //!define tags set
+             CHAOS_DEFINE_LOCKABLE_OBJECT(ChaosStringSet, LChaosStringSet);
             
             //!High level driver for manage the push and query of data sets
             class KeyDataStorage {
@@ -108,15 +78,19 @@ namespace chaos{
                 //!storage type
                 DataServiceNodeDefinitionType::DSStorageType storage_type;
                 
+                //!storage type set programmatically
+                DataServiceNodeDefinitionType::DSStorageType override_storage_everride;
+                
                 //!define the queur for burst information
-                LQueueBurst burst_queue;
-                ChaosUniquePtr<StorageBurst> current_burst;
+                LChaosStringSet current_tags;
                 
                 //history time
                 uint64_t storage_history_time;
                 uint64_t storage_history_time_last_push;
                 uint64_t storage_live_time;
                 uint64_t storage_live_time_last_push;
+                //when tru the timing information set will be used
+                bool use_timing_info;
                 //mutex to protect access to data io driver
                 boost::mutex mutex_push_data;
                 
@@ -141,11 +115,6 @@ namespace chaos{
                  */
                 chaos::common::data::CDWShrdPtr getNewDataPackForDomain(const KeyDataStorageDomain domain);
                 
-                /*
-                 Retrive the data from Live Storage
-                 */
-                //chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
-                
                 //! push a dataset associated to a domain
                 void pushDataSet(KeyDataStorageDomain domain, chaos::common::data::CDWShrdPtr dataset);
                 
@@ -162,8 +131,19 @@ namespace chaos{
                 void updateConfiguration(chaos::common::data::CDataWrapper *configuration);
                 void updateConfiguration(const std::string& conf_name, const chaos::common::data::CDataVariant& conf_value);
                 
-                //!add into the queue a noew storage burst mode
-                bool addStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr burst_mode);
+                //!ovveridethe storage type sy into the driver by remote setting
+                void setOverrideStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType _override_storage_type);
+                
+                //!override the check of the time information on live and history data
+                void setTimingConfigurationBehaviour(bool _use_timing_info = true);
+                
+                //! add a tag for all dataset
+                void addTag(const std::string& tag);
+                void addTag(const ChaosStringSet& tag);
+                
+                //! remove tag to all dataset
+                void removeTag(const std::string& tag);
+                void removeTag(const ChaosStringSet& tag);
                 
                 //!return the current storage type [live, history or both] setting
                 DataServiceNodeDefinitionType::DSStorageType getStorageType();
