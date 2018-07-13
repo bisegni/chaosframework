@@ -1698,7 +1698,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
                                 if(str.get()){
-                                    attribute_cache_value->setValue(*(str.get());
+                                    attribute_cache_value->setValue(*(str.get()));
                                 }
                             } catch(...){
                                 throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format ")  ).c_str(),__PRETTY_FUNCTION__);
