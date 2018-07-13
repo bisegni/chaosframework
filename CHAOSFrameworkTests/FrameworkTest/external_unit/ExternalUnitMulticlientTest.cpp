@@ -22,6 +22,8 @@
 #include <gtest/gtest.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/external_unit/external_unit.h>
+#include <boost/thread.hpp>
+#include <boost/atomic.hpp>
 
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
@@ -30,6 +32,8 @@ using namespace chaos::common::external_unit;
 #define ECHO_TEST_KEY           "message"
 #define NUMBER_OF_CLIENT        100
 #define RUN_NUMBER_OF_SEND_DATA 10
+
+boost::atomic<int64_t> ended(0);
 
 #pragma mark ExternalUnitMulticlientTestDeclare
 class ExternalUnitMulticlientTest:
@@ -139,6 +143,7 @@ void TestClient::run() {
     ASSERT_EQ(connection_event_counter, 1);
     ASSERT_EQ(received_message_counter, RUN_NUMBER_OF_SEND_DATA);
     ASSERT_EQ(disconnection_event_counter, 1);
+    ended++;
 }
 
 void clientRunner(ChaosSharedPtr<TestClient> client) {
@@ -151,4 +156,5 @@ TEST_F(ExternalUnitMulticlientTest, MultithreadingTest) {
         tg.add_thread(new boost::thread(clientRunner, ChaosSharedPtr<TestClient>(new TestClient(idx))));
     }
     tg.join_all();
+    ASSERT_EQ(ended, NUMBER_OF_CLIENT);
 }

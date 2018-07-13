@@ -44,6 +44,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
+#include <chaos/common/data/structured/Dataset.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
@@ -95,6 +96,36 @@ namespace chaos{
                 class SlowCommand;
                 class SlowCommandExecutor;
             }
+            
+            CHAOS_DEFINE_QUEUE_FOR_TYPE(chaos::common::data::structured::DatasetBurstShrdPtr, QueueBurst);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(QueueBurst, LQueueBurst);
+            
+            //!class that defin ethe abstraction of data storage burst
+            class StorageBurst {
+            public:
+                chaos::common::data::structured::DatasetBurstShrdPtr dataset_burst;
+                StorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~StorageBurst();
+                virtual bool active(void *data) = 0;
+            };
+            
+            class PushStorageBurst:
+            public StorageBurst {
+                uint32_t current_pushes;
+            public:
+                PushStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~PushStorageBurst();
+                bool active(void *data);
+            };
+            
+            class MSecStorageBurst:
+            public StorageBurst {
+                int64_t timeout_msec;
+            public:
+                MSecStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~MSecStorageBurst();
+                bool active(void *data);
+            };
             
             //!  Base class for control unit !CHAOS node
             /*!
@@ -227,12 +258,18 @@ namespace chaos{
                 //! control unit load param
                 std::string control_unit_param;
                 //!decode control unit paramete in json if conversion is applicable
-                bool                            is_control_unit_json_param;
-                Json::Reader					json_reader;
-                Json::Value						json_parameter_document;
+                bool            is_control_unit_json_param;
+                Json::Reader    json_reader;
+                Json::Value	    json_parameter_document;
                 
                 //specify the counter updated by the mds on every initilization that will represent the run of work
                 int64_t run_id;
+                
+                //!burst queue
+                LQueueBurst burst_queue;
+                
+                //!current scheduled burst
+                ChaosUniquePtr<StorageBurst> current_burst;
                 
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
@@ -446,8 +483,12 @@ namespace chaos{
                                                             bool& detachParam) throw(CException);
                 
                 //!start a new storicization burst execution
-                chaos::common::data::CDataWrapper* _startStorageBurst(chaos::common::data::CDataWrapper* data,
-                                                                      bool& detachParam) throw (CException);
+                chaos::common::data::CDataWrapper* _submitStorageBurst(chaos::common::data::CDataWrapper* data,
+                                                                       bool& detachParam) throw (CException);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDataWrapper* _datasetTagManagement(chaos::common::data::CDataWrapper* data,
+                                                                         bool& detachParam) throw (CException);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts);
@@ -481,6 +522,7 @@ namespace chaos{
                 void _setBypassState(bool bypass_stage,
                                      bool high_priority = false);
             protected:
+                
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
                 //! Abstract Method that need to be used by the sublcass to define the dataset
@@ -631,6 +673,12 @@ namespace chaos{
                 bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const unsigned int state_variable_ordered_id,
                                               common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
+                
+                /*!
+                 manage the queue of burst information, need to be called by sub control unit classes
+                 to manage the burst
+                 */
+                void manageBurstQueue();
                 
                 //! set the value on the busy flag
                 void setBusyFlag(bool state);

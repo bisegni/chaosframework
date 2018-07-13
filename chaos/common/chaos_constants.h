@@ -779,7 +779,11 @@ namespace chaos {
         
         //! Deinitialization of a control unit, if it is in run, the stop phase
         //! is started befor deinitialization one
-        static const char * const ACTION_STORAGE_BURST                             = "cunrpc_start_storage_burst";
+        static const char * const ACTION_STORAGE_BURST  = "cunrpc_start_storage_burst";
+        
+        static const char * const ACTION_DATASET_TAG_MANAGEMENT  = "cunrpc_dataset_tag_management";
+        static const char * const ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST  = "add";
+        static const char * const ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST  = "remove";
     }
     
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
@@ -832,6 +836,15 @@ namespace chaos {
          and no action are take on the hardware
          */
         static const char * const BYPASS_STATE                            = "cudk_bypass_state";
+        //!represent the bypass state of the control unit
+        /*!
+         Represent in system datase the state of bursting data on a control unit. The burst
+         operation of a CU determinate the force of storage data on history backend for a determinated
+         amount of time or cu cicle
+         */
+        static const char * const BURST_STATE   = "cudk_burst_state";
+        //! repreent the tag associated to the current burst oepration
+        static const char * const BURST_TAG     = "cudk_burst_tag";
     }
     
     /** @defgroup Contorl unit system key

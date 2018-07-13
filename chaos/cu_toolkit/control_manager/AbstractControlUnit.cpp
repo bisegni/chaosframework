@@ -77,6 +77,36 @@ if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), -1
 if(map_variable_catalog.count(t) == 0) {return rv;}\
 AlarmCatalog& catalog = map_variable_catalog[t];
 
+#pragma mark StorageBurst
+StorageBurst::StorageBurst(DatasetBurstShrdPtr _dataset_burst):
+dataset_burst(_dataset_burst){}
+
+StorageBurst::~StorageBurst(){}
+
+#pragma mark PushStorageBurst
+PushStorageBurst::PushStorageBurst(DatasetBurstShrdPtr _dataset_burst):
+StorageBurst(ChaosMoveOperator(_dataset_burst)),
+current_pushes(0){}
+
+PushStorageBurst::~PushStorageBurst(){}
+
+bool PushStorageBurst::active(void *data  __attribute__((unused))) {
+    return ++current_pushes<StorageBurst::dataset_burst->value.asUInt32();
+}
+
+#pragma mark MSecStorageBurst
+MSecStorageBurst::MSecStorageBurst(DatasetBurstShrdPtr _dataset_burst):
+StorageBurst(ChaosMoveOperator(_dataset_burst)),
+timeout_msec(TimingUtil::getTimestampWithDelay(StorageBurst::dataset_burst->value.asInt32(), true)){}
+
+MSecStorageBurst::~MSecStorageBurst(){}
+
+bool MSecStorageBurst::active(void *data) {
+    int64_t *now = static_cast<int64_t*>(data);
+    return timeout_msec>*now;
+}
+
+#pragma mark AbstractControlUnit
 //! Contructor with type and id
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
                                          const std::string& _control_unit_id,
@@ -336,13 +366,19 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                                           NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
                                                                           "Get the information about running control unit");
     action_description = addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                          &AbstractControlUnit::_startStorageBurst,
+                                                                          &AbstractControlUnit::_submitStorageBurst,
                                                                           ControlUnitNodeDomainAndActionRPC::ACTION_STORAGE_BURST,
                                                                           "Execute a storage burst on control unit");
     action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, DataType::TYPE_STRING, "Tag asosciated to the stored data during burst");
     action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE, DataType::TYPE_INT32, "The type of burst");
     action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE, DataType::TYPE_UNDEFINED, "The value of the burst is defined by the type");
     
+    action_description = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                          &AbstractControlUnit::_datasetTagManagement,
+                                                                          ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT,
+                                                                          "Execute a storage burst on control unit");
+    action_description->addParam(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST, DataType::TYPE_ACCESS_ARRAY, "List of tag to be added to the control unit dataset");
+    action_description->addParam(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST, DataType::TYPE_ACCESS_ARRAY, "List of tag to be removed to the control unit dataset");
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
     
@@ -1369,11 +1405,20 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //add bypass state
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BYPASS_STATE, 0, DataType::TYPE_BOOLEAN);
     
+    //add burst operation state
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BURST_STATE, 0, DataType::TYPE_BOOLEAN);
+    
+    //add burst operation tag
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BURST_TAG, 0, DataType::TYPE_STRING);
+    
     //add storage type
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
     
     //add live time
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, 0, DataType::TYPE_INT64);
+    
+    //add history time
+    domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, 0, DataType::TYPE_INT64);
     
     //add history time
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, 0, DataType::TYPE_INT64);
@@ -1396,16 +1441,61 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
 }
 
 
-chaos::common::data::CDataWrapper* AbstractControlUnit::_startStorageBurst(CDataWrapper* data,
-                                                                           bool& detachParam) throw (CException) {
+chaos::common::data::CDataWrapper* AbstractControlUnit::_submitStorageBurst(CDataWrapper* data,
+                                                                            bool& detachParam) throw (CException) {
     common::data::structured::DatasetBurstSDWrapper db_sdw;
     db_sdw.deserialize(data);
     DatasetBurstShrdPtr burst = ChaosMakeSharedPtr<DatasetBurst>(db_sdw());
-    if(!key_data_storage->addStorageBurst(ChaosMoveOperator(burst))) {
-        ACULERR_ << CHAOS_FORMAT("Error adding new burst execution -> %1%",%data->getJSONString());
-    } else {
-        ACULAPP_ << CHAOS_FORMAT("Succesfull add new burst execution -> %1%",%data->getJSONString());
+    
+    if(burst->type == chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined) {
+        ACULERR_ << CHAOS_FORMAT("The type is mandatory for burst %1%", %data->getJSONString());
+        return NULL;
     }
+    if(!burst->value.isValid()) {
+        ACULERR_ << CHAOS_FORMAT("The value is mandatory for burst %1%", %data->getJSONString());
+        return NULL;
+    }
+    
+    LQueueBurstWriteLock wl = burst_queue.getWriteLockObject();
+    burst_queue().push(burst);
+    return NULL;
+}
+
+chaos::common::data::CDataWrapper* AbstractControlUnit::_datasetTagManagement(chaos::common::data::CDataWrapper* data,
+                                                                              bool& detachParam) throw (CException) {
+    CHECK_CDW_THROW_AND_LOG(data, ACULERR_, -1, "No parameter found");
+    if(data->hasKey(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST)) {
+        CHECK_KEY_THROW_AND_LOG(data,
+                                ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST,
+                                ACULERR_,
+                                -2,
+                                CHAOS_FORMAT("The key %1% need to be a vector", %ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST));
+        ChaosStringSet ss;
+        CMultiTypeDataArrayWrapperSPtr vec = data->getVectorValue(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST);
+        for(int idx = 0; idx < vec->size(); idx++) {
+            if(vec->isStringElementAtIndex(idx)) {
+                ss.insert(vec->getStringElementAtIndex(idx));
+            }
+        }
+        key_data_storage->addTag(ss);
+    }
+    
+    if(data->hasKey(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST)) {
+        CHECK_KEY_THROW_AND_LOG(data,
+                                ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST,
+                                ACULERR_,
+                                -3,
+                                CHAOS_FORMAT("The key %1% need to be a vector", %ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST));
+        ChaosStringSet ss;
+        CMultiTypeDataArrayWrapperSPtr vec = data->getVectorValue(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST);
+        for(int idx = 0; idx < vec->size(); idx++) {
+            if(vec->isStringElementAtIndex(idx)) {
+                ss.insert(vec->getStringElementAtIndex(idx));
+            }
+        }
+        key_data_storage->removeTag(ss);
+    }
+    
     return NULL;
 }
 
@@ -1773,6 +1863,8 @@ void AbstractControlUnit::pushOutputDataset() {
                 break;
         }
     }
+    //manage the burst information
+    manageBurstQueue();
     //now we nede to push the outputdataset
     key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(output_attribute_dataset));
     
@@ -1883,6 +1975,47 @@ void AbstractControlUnit::pushCUAlarmDataset() {
     if(attribute_dataset) {
         //push out the system dataset
         key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, ChaosMoveOperator(attribute_dataset));
+    }
+}
+
+void AbstractControlUnit::manageBurstQueue() {
+    if(!current_burst.get()) {
+        LQueueBurstReadLock wl = burst_queue.getReadLockObject();
+        if(!burst_queue().empty()){
+            switch(burst_queue().front()->type) {
+                case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeNPush:
+                    current_burst.reset(new PushStorageBurst(ChaosMoveOperator(burst_queue().front())));
+                    break;
+                case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeMSec:
+                    current_burst.reset(new MSecStorageBurst(ChaosMoveOperator(burst_queue().front())));
+                    break;
+                default:
+                    break;
+            }
+            burst_queue().pop();
+            //set the tag for burst
+            key_data_storage->addTag(current_burst->dataset_burst->tag);
+            key_data_storage->setTimingConfigurationBehaviour(false);
+            key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeHistory);
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::BURST_STATE)->getValuePtr<bool>() = true;
+            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::BURST_TAG)->setStringValue(current_burst->dataset_burst->tag, true, true);
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
+        }
+    } else {
+        
+        if(!current_burst->active(timestamp_acq_cached_value->getValuePtr<int64_t>())) {
+            //remove the tag for the burst
+            key_data_storage->removeTag(current_burst->dataset_burst->tag);
+            key_data_storage->setTimingConfigurationBehaviour(true);
+            key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeUndefined);
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::BURST_STATE)->getValuePtr<bool>() = false;
+            attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::BURST_TAG)->setStringValue("");
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            //we need to remove it
+            current_burst.reset();
+            pushSystemDataset();
+        }
     }
 }
 
