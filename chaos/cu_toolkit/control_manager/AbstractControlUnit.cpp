@@ -1607,8 +1607,8 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                         case DataType::TYPE_CLUSTER: {
                             ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
                             try{
-                                if(str){
-                                    attribute_cache_value->setValue(*str);
+                                if(str.get()){
+                                    attribute_cache_value->setValue(*(str.get());
                                 }
                             } catch(...){
                                 throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format ")  ).c_str(),__PRETTY_FUNCTION__);
