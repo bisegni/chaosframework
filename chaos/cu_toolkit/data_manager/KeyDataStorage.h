@@ -93,8 +93,8 @@ namespace chaos{
                 bool use_timing_info;
                 //mutex to protect access to data io driver
                 boost::mutex mutex_push_data;
-                
-                void pushDataWithControlOnHistoryTime(const std::string& key,
+                // \return 0 if success
+                int pushDataWithControlOnHistoryTime(const std::string& key,
                                                       chaos::common::data::CDWShrdPtr dataset,
                                                       chaos::DataServiceNodeDefinitionType::DSStorageType storage_type);
                 
@@ -116,7 +116,8 @@ namespace chaos{
                 chaos::common::data::CDWShrdPtr getNewDataPackForDomain(const KeyDataStorageDomain domain);
                 
                 //! push a dataset associated to a domain
-                void pushDataSet(KeyDataStorageDomain domain, chaos::common::data::CDWShrdPtr dataset);
+                // \return 0 if success
+                int pushDataSet(KeyDataStorageDomain domain, chaos::common::data::CDWShrdPtr dataset);
                 
                 //! load all dataseet for a restore point
                 int loadRestorePoint(const std::string& restore_point_tag);

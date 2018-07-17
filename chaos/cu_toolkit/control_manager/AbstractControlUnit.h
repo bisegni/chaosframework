@@ -202,22 +202,22 @@ namespace chaos{
                 const std::string& getCUType();
                 
                 //!push output dataset
-                virtual void pushOutputDataset();
+                virtual int pushOutputDataset();
                 
                 //!push system dataset
-                virtual void pushInputDataset();
+                virtual int pushInputDataset();
                 
                 //!push system dataset
-                virtual void pushCustomDataset();
+                virtual int pushCustomDataset();
                 
                 //!push system dataset
-                virtual void pushSystemDataset();
+                virtual int pushSystemDataset();
                 
                 //!push alarm dataset
-                virtual void pushCUAlarmDataset();
+                virtual int pushCUAlarmDataset();
                 
                 //!push alarm dataset
-                virtual void pushDevAlarmDataset();
+                virtual int pushDevAlarmDataset();
                 
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);

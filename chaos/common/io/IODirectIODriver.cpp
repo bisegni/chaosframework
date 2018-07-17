@@ -137,7 +137,7 @@ void IODirectIODriver::deinit() throw(CException) {
     IODataDriver::deinit();
 }
 
-void IODirectIODriver::storeData(const std::string& key,
+int IODirectIODriver::storeData(const std::string& key,
                                     CDWShrdPtr data_to_store,
                                  DataServiceNodeDefinitionType::DSStorageType storage_type,
                                  const ChaosStringSet& tag_set)  throw(CException) {
@@ -153,14 +153,16 @@ void IODirectIODriver::storeData(const std::string& key,
                                                                                           (uint32_t)serialization->getBufferLen(),
                                                                                           storage_type,
                                                                                           tag_set))) {
-            IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%",%next_client->connection->getServerDescription()%err);
+            IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%, data packet size:%3%",%next_client->connection->getServerDescription()%err%serialization->getBufferLen());
+        
         }
     } else {
         DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
     }
+    return err;
 }
 
-void IODirectIODriver::storeHealthData(const std::string& key,
+int IODirectIODriver::storeHealthData(const std::string& key,
                                        CDWShrdPtr data_to_store,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type,
                                        const ChaosStringSet& tag_set) throw(CException) {
@@ -184,7 +186,9 @@ void IODirectIODriver::storeHealthData(const std::string& key,
         }
     }catch(...){
         IODirectIODriver_LERR_ << "Generic exception error";
+        err++;
     }
+    return err;
 }
 
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {

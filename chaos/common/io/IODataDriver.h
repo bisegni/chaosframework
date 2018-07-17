@@ -68,13 +68,14 @@ namespace chaos{
                 /*!
                  * This method cache all object passed to driver
                  * \param storage_type one of values as @DataServiceNodeDefinitionType::DSStorageType
+                 * \return 0 if success, error otherwise
                  */
-                virtual void storeData(const std::string& key,
+                virtual int storeData(const std::string& key,
                                        chaos_data::CDWShrdPtr dataToStore,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type,
                                        const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;
                 
-                virtual void storeHealthData(const std::string& key,
+                virtual int storeHealthData(const std::string& key,
                                              chaos_data::CDWShrdPtr dataToStore,
                                              DataServiceNodeDefinitionType::DSStorageType storage_type,
                                              const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;

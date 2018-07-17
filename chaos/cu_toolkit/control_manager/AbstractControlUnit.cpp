@@ -507,17 +507,35 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
             //init on shared cache the all the dataaset with the default value
             //set first timestamp for simulate the run step
+            int err;
             *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
             attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
-            pushOutputDataset();
+            // if the CU can't push initial dataset is a real problem, we must detect immediately
+            if((err=pushOutputDataset())!=0){
+                throw CException(err,"cannot initialize output dataset",__PRETTY_FUNCTION__);
+            }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
-            pushInputDataset();
+            
+            if((err=pushInputDataset())!=0){
+                throw CException(err,"cannot initialize input dataset",__PRETTY_FUNCTION__);
+            }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
-            pushCustomDataset();
+            
+            if((err=pushCustomDataset())!=0){
+                throw CException(err,"cannot initialize custom dataset",__PRETTY_FUNCTION__);
+            }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
-            pushSystemDataset();
-            pushCUAlarmDataset();
-            pushDevAlarmDataset();
+            
+            if((err=pushSystemDataset())!=0){
+                throw CException(err,"cannot initialize system dataset",__PRETTY_FUNCTION__);
+            }
+            
+            if((err=pushCUAlarmDataset())!=0){
+                throw CException(err,"cannot initialize CU alarm dataset",__PRETTY_FUNCTION__);
+            }
+            if((err=pushDevAlarmDataset())!=0){
+                throw CException(err,"cannot initialize DEV alarm dataset",__PRETTY_FUNCTION__);
+            }
             break;
         }
         
@@ -1801,16 +1819,17 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 }
 
 
-void AbstractControlUnit::pushOutputDataset() {
+int AbstractControlUnit::pushOutputDataset() {
+    int err=0;
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     ChaosSharedPtr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
     
     //check if something as changed
-    if(!output_attribute_cache.hasChanged()) return;
+    if(!output_attribute_cache.hasChanged()) return err;
     
     CDWShrdPtr output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
-    if(!output_attribute_dataset) return;
+    if(!output_attribute_dataset) return err;
     output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *timestamp_acq_cached_value->getValuePtr<uint64_t>());
     output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>());
@@ -1866,19 +1885,21 @@ void AbstractControlUnit::pushOutputDataset() {
     //manage the burst information
     manageBurstQueue();
     //now we nede to push the outputdataset
-    key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(output_attribute_dataset));
+    err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(output_attribute_dataset));
     
     //update counter
     push_dataset_counter++;
     
     //reset chagned attribute into output dataset
     output_attribute_cache.resetChangedIndex();
+    return err;
 }
 
 //push system dataset
-void AbstractControlUnit::pushInputDataset() {
+int AbstractControlUnit::pushInputDataset() {
+    int err=0;
     AttributeCache& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
-    if(!input_attribute_cache.hasChanged()) return;
+    if(!input_attribute_cache.hasChanged()) return err;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDWShrdPtr input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
@@ -1891,15 +1912,17 @@ void AbstractControlUnit::pushInputDataset() {
         fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
         
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, ChaosMoveOperator(input_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, ChaosMoveOperator(input_attribute_dataset));
     }
     input_attribute_cache.resetChangedIndex();
+    return err;
 }
 
 //push system dataset
-void AbstractControlUnit::pushCustomDataset() {
+int AbstractControlUnit::pushCustomDataset() {
+    int err=0;
     AttributeCache& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
-    if(!custom_attribute_cache.hasChanged()) return;
+    if(!custom_attribute_cache.hasChanged()) return err;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDWShrdPtr custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
@@ -1913,13 +1936,15 @@ void AbstractControlUnit::pushCustomDataset() {
         fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
         
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, ChaosMoveOperator(custom_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, ChaosMoveOperator(custom_attribute_dataset));
     }
+    return err;
 }
 
-void AbstractControlUnit::pushSystemDataset() {
-    AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
-    if(!systemm_attribute_cache.hasChanged()) return;
+int AbstractControlUnit::pushSystemDataset() {
+    int err=0;
+    AttributeCache& system_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    if(!system_attribute_cache.hasChanged()) return err;
     //get the cdatawrapper for the pack
     int64_t cur_us = TimingUtil::getTimeStampInMicroseconds();
     CDWShrdPtr system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
@@ -1931,10 +1956,11 @@ void AbstractControlUnit::pushSystemDataset() {
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
         //push out the system dataset
-        key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, ChaosMoveOperator(system_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, ChaosMoveOperator(system_attribute_dataset));
     }
     //reset changed index
-    systemm_attribute_cache.resetChangedIndex();
+    system_attribute_cache.resetChangedIndex();
+    return err;
 }
 
 CDWShrdPtr AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
@@ -1958,24 +1984,29 @@ CDWShrdPtr AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog
     return attribute_dataset;
 }
 
-void AbstractControlUnit::pushDevAlarmDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV, );
+int AbstractControlUnit::pushDevAlarmDataset() {
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmDEV,0 );
+    int err=0;
+
     CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                               DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, ChaosMoveOperator(attribute_dataset));
+        err=key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, ChaosMoveOperator(attribute_dataset));
     }
+    return err;
 }
 
-void AbstractControlUnit::pushCUAlarmDataset() {
-    GET_CAT_OR_EXIT(StateVariableTypeAlarmCU, );
+int AbstractControlUnit::pushCUAlarmDataset() {
+    GET_CAT_OR_EXIT(StateVariableTypeAlarmCU,0 );
+    int err=0;
     CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                               DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, ChaosMoveOperator(attribute_dataset));
+        err=key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, ChaosMoveOperator(attribute_dataset));
     }
+    return err;
 }
 
 void AbstractControlUnit::manageBurstQueue() {

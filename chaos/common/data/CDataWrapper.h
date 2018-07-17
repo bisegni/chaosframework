@@ -173,7 +173,7 @@ namespace chaos {
 
 #define THROW_TYPE_EXC(type)\
 std::stringstream ss;\
-ss<<"cannot get or cast to '" << #type;\
+ss<<"cannot get or cast to '" << #type<<"'";\
 throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
 
                 template<typename T>
