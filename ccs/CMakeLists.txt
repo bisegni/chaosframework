@@ -7,29 +7,30 @@ SET(CMAKE_SYSTEM_VERSION 1)
 
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS "-fPIC")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include precomp_header.h")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include precomp_header.h -w")
 
 MESSAGE(">>Find includes in corresponding build directories")
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 # Set the output folder where your program will be created
-SET(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+SET(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 MESSAGE(">>Instruct CMake to run moc automatically when needed.")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-SET(CMAKE_PREFIX_PATH ../usr/local/lib)
+#SET(CMAKE_PREFIX_PATH /home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/lib)
 
-INCLUDE_DIRECTORIES(../usr/local/include)
-LINK_DIRECTORIES(../usr/local/lib)
+INCLUDE_DIRECTORIES(/home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/include)
+LINK_DIRECTORIES(/home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/lib)
 
-SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-SET(CMAKE_EXE_LINKER_FLAGS "-static")
+#SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+#SET(CMAKE_EXE_LINKER_FLAGS "-static")
 
 #FIND_PACKAGE(chaos_common REQUIRED)
 
@@ -74,7 +75,7 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtCore)
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtWidgets)
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtGui)
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/PrintSupport)
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtPrintSupport)
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtSql)
 
 
@@ -99,9 +100,9 @@ QT5_WRAP_UI(UIS_HDRS
 
 MESSAGE(">>qt5_wrap_cpp")
 qt5_wrap_cpp(ccs_include_moc
-                monitor/handler/healt/HealtHeartbeatHandler.h
-                monitor/handler/healt/HealtStatusHandler.h
-                monitor/handler/system/SystemControlUnitRunScheduleDelay.h
+             monitor/handler/healt/HealtHeartbeatHandler.h
+             monitor/handler/healt/HealtStatusHandler.h
+             monitor/handler/system/SystemControlUnitRunScheduleDelay.h
                 monitor/handler/AbstractAttributeHandler.h
                 monitor/handler/AbstractTSTaggedAttributeHandler.h
                 monitor/handler/MonitorBinaryAttributeHandler.h
@@ -123,12 +124,14 @@ MESSAGE(">>Tell CMake to create the helloworld executable")
 QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS})
 QT5_ADD_RESOURCES(RESOURCES_RCC ${RESOURCES})
 
-FILE(GLOB SRCS *.cpp)
-FILE(GLOB HEADERS *.h)
+#FILE(GLOB SRCS *.cpp)
+#FILE(GLOB HEADERS *.h)
+
+
 
 add_executable(ccs
-    main.cpp
-    search/SearchNodeResult.cpp
+        main.cpp
+        search/SearchNodeResult.cpp
         presenter/PresenterWidget.cpp
         api_async_processor/ApiAsyncProcessor.cpp
         api_async_processor/ApiAsyncRunnable.cpp
@@ -161,8 +164,8 @@ add_executable(ccs
         widget/CLedIndicatorHealt.cpp
         preference/PreferenceMDSHostListModel.cpp
         api_async_processor/ApiHandler.cpp
-        ${SRCS}
-        ${HEADERS}
+        #${SRCS}
+        #${HEADERS}
         ${ccs_include_moc}
         ${UIS_HDRS}
         ${QT5_WRAP_CPP}
@@ -183,9 +186,8 @@ target_link_libraries(ccs
                       boost_program_options
                       boost_regex
                       boost_filesystem
-                      mongoose
-                      jsoncpp
-                      memcached)
+                      #mongoose
+                      jsoncpp)
 
 
 MESSAGE(">>END")
