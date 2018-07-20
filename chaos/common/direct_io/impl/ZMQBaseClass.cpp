@@ -333,9 +333,11 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
 int ZMQBaseClass::stringReceive(void *socket, std::string& received_string) {
     char buffer [256];
     size_t readed_byte = 0;
-    
+    buffer[sizeof(buffer)-1]=0;
+    buffer[0]=0;
+
     //read message and check the error
-    int err = readMessage(socket, buffer, 255, readed_byte);
+    int err = readMessage(socket, buffer, sizeof(buffer)-1, readed_byte);
     if(err) return err;
     
     //we got string so cap it for nullify at the end

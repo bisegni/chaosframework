@@ -119,15 +119,15 @@ CUController::~CUController() {
     
     if(deviceChannel){
         deviceChannel->removeListener(this);
-        NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
+      //  NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
     }
     
     if(mdsChannel){
-        NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
+       // NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
     }
     
     if(ioLiveDataDriver.get()){
-        ioLiveDataDriver->deinit();
+    //    ioLiveDataDriver->deinit();
         ioLiveDataDriver.reset();
     }
 }
@@ -918,7 +918,11 @@ int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::
 
 int CUController::fetchAllDataset() {
     int err = 0;
-    CHAOS_ASSERT(ioLiveDataDriver.get());
+    if(ioLiveDataDriver.get()==NULL){
+            LERR_<<"NO IO DRIVER!!!!!";
+            return -1;
+
+    }
     boost::mutex::scoped_lock lock(trackMutext);
     chaos::common::data::VectorCDWShrdPtr results;
     if((err = ioLiveDataDriver->retriveMultipleData(channel_keys,
@@ -928,8 +932,9 @@ int CUController::fetchAllDataset() {
             end = current_dataset.end();
             (it != end) && (counter<results.size());
             it++) {
-            
-            (*it) = results[counter++];
+            if(results[counter].get()){
+                (*it) = results[counter++];
+            }
             
             
         }
@@ -1144,7 +1149,12 @@ int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag
 
 int CUController::createNewSnapshot(const std::string& snapshot_tag,
                                     const std::vector<std::string>& other_snapped_device) {
-    CHAOS_ASSERT(ioLiveDataDriver.get())
+    
+     if(ioLiveDataDriver.get()==NULL){
+            LERR_<<"NO IO DRIVER!!!!!";
+            return -1;
+
+    }
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(devId);
     return mdsChannel->createNewSnapshot(snapshot_tag,
@@ -1152,8 +1162,12 @@ int CUController::createNewSnapshot(const std::string& snapshot_tag,
 }
 
 int CUController::deleteSnapshot(const std::string& snapshot_tag) {
-    CHAOS_ASSERT(ioLiveDataDriver.get())
-    return mdsChannel->deleteSnapshot(snapshot_tag);
+if(ioLiveDataDriver.get()==NULL){
+            LERR_<<"NO IO DRIVER!!!!!";
+            return -1;
+
+    }
+        return mdsChannel->deleteSnapshot(snapshot_tag);
 }
 
 int CUController::getSnapshotList(ChaosStringVector& snapshot_list) {
