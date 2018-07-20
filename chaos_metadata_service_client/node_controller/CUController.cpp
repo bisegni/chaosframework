@@ -119,15 +119,15 @@ CUController::~CUController() {
     
     if(deviceChannel){
         deviceChannel->removeListener(this);
-      //  NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
+        NetworkBroker::getInstance()->disposeMessageChannel(deviceChannel);
     }
     
     if(mdsChannel){
-       // NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
+        NetworkBroker::getInstance()->disposeMessageChannel(mdsChannel);
     }
     
     if(ioLiveDataDriver.get()){
-    //    ioLiveDataDriver->deinit();
+        ioLiveDataDriver->deinit();
         ioLiveDataDriver.reset();
     }
 }
