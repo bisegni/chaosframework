@@ -2,16 +2,22 @@ cmake_minimum_required(VERSION 2.8.11)
 
 project(ccs)
 
+MESSAGE(">>Find the Qt5 library")
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Core REQUIRED)
+FIND_PACKAGE(Qt5Sql REQUIRED)
+FIND_PACKAGE(Qt5Gui REQUIRED)
+FIND_PACKAGE(Qt5PrintSupport REQUIRED)
+
 SET(CMAKE_SYSTEM_NAME Linux)
 SET(CMAKE_SYSTEM_VERSION 1)
-
+set(QT_USE_QTSQL 1)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS "-fPIC")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include precomp_header.h -w")
 
 MESSAGE(">>Find includes in corresponding build directories")
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 
 # Set the output folder where your program will be created
 SET(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
@@ -24,24 +30,12 @@ MESSAGE(">>Instruct CMake to run moc automatically when needed.")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-#SET(CMAKE_PREFIX_PATH /home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/lib)
-
-INCLUDE_DIRECTORIES(/home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/include)
-LINK_DIRECTORIES(/home/makogo82/baltig/chaos_framework_development_bundle/chaosframework/usr/local/lib)
-
-#SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-#SET(CMAKE_EXE_LINKER_FLAGS "-static")
-
-#FIND_PACKAGE(chaos_common REQUIRED)
-
-
-SET(QT_ROOT_DIR "/home/makogo82/Qt5.7.0/5.7")
-MESSAGE(">>QT ROOT DIR: " ${QT_ROOT_DIR})
-
-SET(QT_INCLUDE_DIR ${QT_ROOT_DIR}/gcc_64/include)
-SET(QT_LIB_DIR ${QT_ROOT_DIR}/gcc_64/lib)
-MESSAGE(">>QT INCLUDE DIR: " ${QT_INCLUDE_DIR})
-MESSAGE(">>QT LIB DIR: " ${QT_LIB_DIR})
+MESSAGE(">>QT Version: " ${Qt5Widgets_VERSION})
+MESSAGE(">>QT WIDGET DIR: " ${Qt5Widgets_INCLUDE_DIRS})
+MESSAGE(">>QT GUI DIR: " ${Qt5Gui_INCLUDE_DIRS})
+MESSAGE(">>QT SQL DIR: " ${Qt5Sql_INCLUDE_DIRS})
+MESSAGE(">>QT SQL DIR: " ${Qt5PrintSupport_INCLUDE_DIRS})
+MESSAGE(">>QT LIB DIR: " ${Qt5Widgets_LIBRARIES})
 
 SET(QT_QMAKE_EXECUTABLE ${QT_ROOT_DIR}/gcc_64/bin/qmake)
 MESSAGE(STATUS "QT_QMAKE_EXECUTABLE: " ${QT_QMAKE_EXECUTABLE})
@@ -56,29 +50,25 @@ SET(QT_LIBRARIES
     ${QT_LIB_DIR}/libQt5PrintSupport.so
     ${QT_LIB_DIR}/libQt5Sql.so)
 
-INCLUDE_DIRECTORIES(${QT_LIB_DIR})
-
-MESSAGE(">>Find the Qt5 library")
-
-FIND_PACKAGE(Qt5Widgets REQUIRED)
-FIND_PACKAGE(Qt5Core REQUIRED)
-FIND_PACKAGE(Qt5Gui REQUIRED)
-FIND_PACKAGE(Qt5PrintSupport REQUIRED)
-
+#INCLUDE_DIRECTORIES(${QT_LIB_DIR})
+INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Qt5Sql_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Qt5PrintSupport_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR_QtCore})
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/include)
+LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib)
 
 #INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
-INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR_QtCore})
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
+
 
 #MESSAGE( STATUS "QT_INCLUDE_DIR:         " ${QT_INCLUDE_DIR})
 
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtCore)
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtWidgets)
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtGui)
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtPrintSupport)
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtSql)
-
-
+# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtCore)
+# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtWidgets)
+# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtGui)
+# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtPrintSupport)
+# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtSql)
 
 
 MESSAGE(">>QT5_WRAP_UI")
@@ -175,6 +165,9 @@ add_executable(ccs
 
 MESSAGE(">>Target libraries")
 target_link_libraries(ccs
+                      Qt5::Core
+                      Qt5::Gui
+                      Qt5::Sql
                       chaos_common
                       chaos_metadata_service_client
                       zmq
@@ -191,6 +184,3 @@ target_link_libraries(ccs
 
 
 MESSAGE(">>END")
-
-
-
