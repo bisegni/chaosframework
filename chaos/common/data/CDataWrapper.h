@@ -255,7 +255,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                                     chaos::DataType::BinarySubtype sub_type,
                                     const char *buff,
                                     int bufLen);
-                ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key) const;
+                CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
                 //return the bson data
                 SerializationBufferUPtr getBSONData() const;
                 const char* getBSONRawData(int& size) const;

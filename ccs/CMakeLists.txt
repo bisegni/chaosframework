@@ -82,7 +82,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib)
 MESSAGE(">>Tell CMake to create the helloworld executable")
 
 QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS})
-QT5_ADD_RESOURCES(RESOURCES_RCC ${RESOURCES})
+QT5_ADD_RESOURCES(RESOURCES_RCC qdarkstyle/style.qrc)
 
 set(sources
     main.cpp
