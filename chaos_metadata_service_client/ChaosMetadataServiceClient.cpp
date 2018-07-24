@@ -202,8 +202,6 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 	}
 
 	if(iopool.size()<poolsize){
-
-
 		chaos::common::io::IODataDriver *result = NULL;
 		    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 		    result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
@@ -222,7 +220,6 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 		        iopool.push_back(shret);
 		        io_pool_req++;
 			    CMSC_LDBG<<"Allocating new iolive channel 0x"<<hex<<result<<dec<<", n:"<<iopool.size()<<" tot iorequest:"<<io_pool_req;
-
 		        return shret;
 		    }
 		    if(iopool.size()){
@@ -232,7 +229,6 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 	}
 	shret=iopool[io_pool_req%iopool.size()];
     CMSC_LDBG<<"Retriving iolive channel 0x"<<hex<<shret.get()<<dec<<", id:"<<io_pool_req%iopool.size() <<" tot iorequest:"<<io_pool_req;
-
 	io_pool_req++;
 	return shret;
 
