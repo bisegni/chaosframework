@@ -1,3 +1,5 @@
+ccs_error
+ccs_autogen
 cov_html
 coverage.info
 *.gcov

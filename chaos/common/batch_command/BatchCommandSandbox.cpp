@@ -428,6 +428,9 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                           cmd_stat);
                                 break;
                             }
+                            default: {
+                                break;
+                            }
                         }
                         command_submitted_queue.pop();
                         cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
