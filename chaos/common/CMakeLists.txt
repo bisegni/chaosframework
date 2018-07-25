@@ -277,8 +277,9 @@ SET(common_lib_src ${common_lib_src}
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
-            	      utility/InetUtility.cpp
-                    utility/FSUtility.cpp)
+                    utility/InetUtility.cpp
+                    utility/FSUtility.cpp
+                    utility/Base64Util.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     batch_command/BatchCommandExecutor.cpp

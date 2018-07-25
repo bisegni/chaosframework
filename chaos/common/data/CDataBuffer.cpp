@@ -58,3 +58,9 @@ CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(char * buffer,
                                                       uint32_t _buffer_size) {
     return CDBufferUniquePtr(new CDataBuffer(buffer, _buffer_size, true));
 }
+
+CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(Buffer& buffer) {
+    size_t size = buffer.size();
+    char * buff = buffer.detach();
+    return CDBufferUniquePtr(new CDataBuffer(buff, (uint32_t)size, true));
+}

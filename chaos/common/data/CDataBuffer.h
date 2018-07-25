@@ -41,6 +41,7 @@ namespace chaos {
                             bool own);
             public:
                 CDataBuffer();
+                CDataBuffer(Buffer& buffer);
                 CDataBuffer(const char *buffer,
                             uint32_t buffer_size);
                 CDataBuffer(const CDataBuffer& cdata_buffer);
@@ -53,6 +54,7 @@ namespace chaos {
                 
                 static CDBufferUniquePtr newOwnBufferFromBuffer(char * buffer,
                                                                 uint32_t _buffer_size);
+                static CDBufferUniquePtr newOwnBufferFromBuffer(Buffer& buffer);
             };
             
             

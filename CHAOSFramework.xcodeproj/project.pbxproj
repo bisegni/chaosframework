@@ -328,6 +328,9 @@
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258D4811DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258D47F1DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.cpp */; };
 		325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */; };
+		325A84C921085ED60036C1CA /* Base64Util.h in Headers */ = {isa = PBXBuildFile; fileRef = 325A84C721085ED60036C1CA /* Base64Util.h */; };
+		325A84CF2108970D0036C1CA /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
+		325A84D0210897120036C1CA /* Base64Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325A84C821085ED60036C1CA /* Base64Util.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
 		325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
@@ -1155,7 +1158,6 @@
 		32FF2A5E1E6579FC00117985 /* AgentRemoveNodeSafety.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A5C1E6579FC00117985 /* AgentRemoveNodeSafety.cpp */; };
 		32FF2A611E65CCEB00117985 /* AlertAgentCheckProcessHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A5F1E65CCEB00117985 /* AlertAgentCheckProcessHandler.cpp */; };
 		32FF2A621E65CCEB00117985 /* AlertAgentCheckProcessHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A601E65CCEB00117985 /* AlertAgentCheckProcessHandler.h */; };
-		32FF2A651E65D17900117985 /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
 		32FF2A661E65D17900117985 /* FSUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FF2A641E65D17900117985 /* FSUtility.h */; };
 		32FF2A691E672CAA00117985 /* DeployWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A671E672CAA00117985 /* DeployWorker.cpp */; };
 		32FF2A731E68654C00117985 /* StartUploadSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A711E68654C00117985 /* StartUploadSession.cpp */; };
@@ -1617,6 +1619,8 @@
 		3258D4801DF0332300D9C8D0 /* GetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
 		325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadInstanceOnUnitServer.cpp; sourceTree = "<group>"; };
 		325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadInstanceOnUnitServer.h; sourceTree = "<group>"; };
+		325A84C721085ED60036C1CA /* Base64Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base64Util.h; sourceTree = "<group>"; };
+		325A84C821085ED60036C1CA /* Base64Util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Base64Util.cpp; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
 		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
 		325C285920B800AB007D2971 /* ShardKeyManagement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShardKeyManagement.h; sourceTree = "<group>"; };
@@ -4220,6 +4224,8 @@
 				32FF2AA81E6D79EC00117985 /* DataBuffer.h */,
 				32FF2AAC1E6D8B6400117985 /* ChaosAllocator.h */,
 				32DF7EFE1E7C180100B7FCDD /* SafeAsyncCall.h */,
+				325A84C821085ED60036C1CA /* Base64Util.cpp */,
+				325A84C721085ED60036C1CA /* Base64Util.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -5642,6 +5648,7 @@
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				3206CE871FA767AC0059A4A4 /* bson-stdint-win32.h in Headers */,
 				3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */,
+				325A84C921085ED60036C1CA /* Base64Util.h in Headers */,
 				322EC1BC1D34F2E10012467C /* StateFlagCatalog.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
@@ -6547,6 +6554,7 @@
 				326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */,
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
+				325A84CF2108970D0036C1CA /* FSUtility.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				32A88BE11CF8228A001DBAF5 /* lstring.c in Sources */,
 				32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */,
@@ -6588,7 +6596,6 @@
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32FC49B31E0AAFBE0087D82C /* AbstractSandbox.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
-				32FF2A651E65D17900117985 /* FSUtility.cpp in Sources */,
 				32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */,
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
@@ -6694,6 +6701,7 @@
 				32A88BF41CF8228A001DBAF5 /* lzio.c in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 				3214E7401DC1081100A67414 /* AlarmDescription.cpp in Sources */,
+				325A84D0210897120036C1CA /* Base64Util.cpp in Sources */,
 				32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */,
 				3206CE7E1FA767AC0059A4A4 /* bson.c in Sources */,
 				32A88BF21CF8228A001DBAF5 /* lvm.c in Sources */,
