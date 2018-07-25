@@ -323,11 +323,11 @@ CDataVariant::operator const CDataBuffer*() const {
     return asCDataBuffer();
 }
 
-ChaosSharedPtr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
+CDBufferShrdPtr CDataVariant::asCDataBufferShrdPtr() {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant);
 }
 
-CDataVariant::operator ChaosSharedPtr<CDataBuffer>() {
+CDataVariant::operator CDBufferShrdPtr() {
     return asCDataBufferShrdPtr();
 }
 

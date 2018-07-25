@@ -20,6 +20,7 @@
  */
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/CException.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -195,4 +196,15 @@ TEST(CDataWrapperTest, SimpleStringException) {
     const char * json = "{\"powerOn\"::true\"}";
     CDataWrapper data;
     ASSERT_THROW(data.setSerializedJsonData(json), chaos::CException);
+}
+
+TEST(CDataWrapperTest, GetVariantValue) {
+    char buffer[256];
+    CDataWrapper data;
+    data.addBinaryValue("bin", buffer, 256);
+    CDataVariant v = data.getVariantValue("bin");
+    CDBufferShrdPtr buff_shrd_ptr = v.asCDataBufferShrdPtr();
+    ASSERT_TRUE(buff_shrd_ptr.get());
+    ASSERT_EQ(buff_shrd_ptr->getBufferSize(), 256);
+    ASSERT_EQ(std::memcmp(buffer, buff_shrd_ptr->getBuffer(), 256), 0);
 }

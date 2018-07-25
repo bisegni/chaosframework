@@ -429,7 +429,7 @@ void CDataWrapper::append(const std::string& key,const std::vector<bool>& val){
 void CDataWrapper::append(const std::string& key,const std::vector<std::string>& val){
     ADD_VECTOR(val,std::string,String);
     finalizeArrayForKey(key);
-
+    
 }
 
 void CDataWrapper::append(const std::string& key,const std::vector<CDataWrapper>& val){
@@ -481,11 +481,11 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, uint32_t& bufLe
     return (const char*)ret;
 }
 
-ChaosUniquePtr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) const{
+CDBufferUniquePtr CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) const{
     uint32_t buf_len = 0;
     const char* buffer = getBinaryValue(key, buf_len);
-    return ChaosUniquePtr<CDataBuffer>(new CDataBuffer(buffer,
-                                                       buf_len));
+    return CDBufferUniquePtr(new CDataBuffer(buffer,
+                                             buf_len));
 }
 
 //check if the key is present in data wrapper
@@ -771,7 +771,7 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
             return CDataVariant(getStringValue(key));
             break;
         case  chaos::DataType::TYPE_BYTEARRAY:
-            return CDataVariant(getBinaryValueAsCDataBuffer(key).release());
+            return CDataVariant(getBinaryValueAsCDataBuffer(key));
             break;
         default:
             return CDataVariant();
@@ -897,7 +897,7 @@ chaos::DataType::DataType CDataWrapper::getValueType(const std::string& key) con
             break;
         default:
             break;
-
+            
     }
     return result;
 }
@@ -992,12 +992,12 @@ array_doc(new bson_t()) {
 }
 
 CMultiTypeDataArrayWrapper::~CMultiTypeDataArrayWrapper() {
-  for(VectorBsonValuesIterator it = values.begin(),
-    end = values.end();
-    it != end;
-    it++) {
-      bson_value_destroy(*it);
-      delete(*it);
+    for(VectorBsonValuesIterator it = values.begin(),
+        end = values.end();
+        it != end;
+        it++) {
+        bson_value_destroy(*it);
+        delete(*it);
     }
     values.clear();
     delete(array_doc);
@@ -1040,8 +1040,8 @@ int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) const{
 
 bool CMultiTypeDataArrayWrapper::getBoolElementAtIndex(const int pos) const{
     return values[pos]->value.v_bool;
-
-
+    
+    
 }
 
 int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
@@ -1100,7 +1100,6 @@ const char * CMultiTypeDataArrayWrapper::getRawValueAtIndex(const int pos,uint32
             break;
     }
     return NULL;
-
 }
 
 ChaosUniquePtr<CDataWrapper> CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) const{

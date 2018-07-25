@@ -146,8 +146,8 @@ namespace chaos {
                 const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
                 operator const chaos::common::data::CDataBuffer *() const;
                 
-                ChaosSharedPtr<CDataBuffer> asCDataBufferShrdPtr();
-                operator ChaosSharedPtr<CDataBuffer>();
+                CDBufferShrdPtr asCDataBufferShrdPtr();
+                operator CDBufferShrdPtr();
                 
                 const chaos::common::data::CDataWrapper *const asCDataWrapper() const;
                 operator const chaos::common::data::CDataWrapper *const() const;
