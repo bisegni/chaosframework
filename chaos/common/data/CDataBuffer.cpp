@@ -64,3 +64,8 @@ CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(Buffer& buffer) {
     char * buff = buffer.detach();
     return CDBufferUniquePtr(new CDataBuffer(buff, (uint32_t)size, true));
 }
+
+CDataBuffer& CDataBuffer::operator=(CDataBuffer const &rhs) {
+    internal_buffer = rhs.internal_buffer;
+    return *this;
+};

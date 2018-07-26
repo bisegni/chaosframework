@@ -296,13 +296,12 @@ ENDIF()
 
 SET( CMAKE_CHAOS  $ENV{CHAOS_CMAKE_FLAGS})
 
-ADD_DEFINITIONS(-O2)
+#ADD_DEFINITIONS(-O2)
 
 if (CHAOS_DEBUG)
   add_definitions(-DDEBUG -g)
   SET(CMAKE_BUILD_TYPE Debug)
 ENDIF()
-
 
 #set(FrameworkLib $ENV{CHAOS_LINK_LIBRARY})
 #separate_arguments(FrameworkLib)

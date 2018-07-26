@@ -149,7 +149,7 @@ namespace chaos {
             
             backward::StackTrace st;
             void* error_addr = 0;
-#ifdef REG_RIP // x86_64
+#if defined(REG_RIP)// x86_64
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_RIP]);
 #elif defined(REG_EIP) // x86_32
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_EIP]);
@@ -160,7 +160,6 @@ namespace chaos {
 #elif defined(__ppc__) || defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__)
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.regs->nip);
 #else
-#    warning ":/ sorry, ain't know no nothing none not of your architecture!"
 #endif
             if (error_addr) {
                 st.load_from(error_addr, 32);

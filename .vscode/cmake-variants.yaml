@@ -27,9 +27,39 @@ useCompilationCommmand:
       short: LLVM Comp
       long: Generater llvm compilaiton comands files
       settings:
-        CMAKE_EXPORT_COMPILE_COMMANDS: YES
+        CMAKE_EXPORT_COMPILE_COMMANDS: ON
     'no':
       short: no LLVM Comp
       long: do nothings
       settings:
-        CMAKE_EXPORT_COMPILE_COMMANDS: NO
+        CMAKE_EXPORT_COMPILE_COMMANDS: OFF
+
+architectureTests:
+  default: yes
+  description: eneble the compilation of architecture tests
+  choices: 
+    'yes':
+      short: Compile Tests
+      long: Add test compilation
+      settings:
+        CHAOS_ARCHITECTURE_TEST: ON
+    'no':
+      short: No Tests
+      long: do nothings
+      settings:
+        CHAOS_ARCHITECTURE_TEST: OFF
+
+verboseMakefile:
+  default: yes
+  description: eneble the compilation of architecture tests
+  choices: 
+    'yes':
+      short: verbose makefile
+      long: Make a verbose compilation
+      settings:
+        CMAKE_VERBOSE_MAKEFILE:BOOL: ON
+    'no':
+      short: No verbosity
+      long: Makefile will emit the default verbosity in compilation
+      settings:
+        CMAKE_VERBOSE_MAKEFILE:BOOL: OFF
