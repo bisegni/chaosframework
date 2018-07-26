@@ -465,6 +465,9 @@ void CDataWrapper::addVariantValue(const std::string& key,
                            variant_value.asCDataBuffer()->getBuffer(),
                            (uint32_t)variant_value.asCDataBuffer()->getBufferSize());
             break;
+        default:{
+            break;
+        }
     }
 }
 

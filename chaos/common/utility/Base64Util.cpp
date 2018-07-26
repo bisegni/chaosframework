@@ -32,7 +32,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace boost::archive::iterators;
 
-typedef base64_from_binary<transform_width<const char *,6,8>> base64_enc;
+typedef base64_from_binary<transform_width<const char *,6,8> > base64_enc;
 typedef transform_width<binary_from_base64<const char *>, 8, 6> base64_dec;
 typedef insert_linebreaks<base64_enc, 72> base64_enc_formatted;
 

@@ -10,7 +10,6 @@ find_package(Git REQUIRED)
 #clear var
 unset(CMAKE_CXX_COMPILER_WORKS CACHE)
 unset(CMAKE_CXX_COMPILER_WORKS)
-
 #specify option
 option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)

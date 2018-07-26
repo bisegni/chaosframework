@@ -7,8 +7,9 @@
 //
 
 #include "NodeMonitorHandlerTest.h"
-
+#include <chaos/common/utility/Base64Util.h>
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::node_monitor;
 
@@ -120,7 +121,8 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
                 it++) {
                 if(dataset_key_values.count(*it)){
                     CDataVariant attr_variant = dataset_key_values[*it];
-                    output_line.append(CHAOS_FORMAT("%1%=%2% ", %*it%attr_variant.asString()));
+                    CDBufferShrdPtr buf = attr_variant.asCDataBufferShrdPtr();
+                    output_line.append(CHAOS_FORMAT("%1%=%2% ", %*it%Base64Util::encode(buf->getBuffer(), buf->getBufferSize())));
                 }
             }
             std::cout << node_uid << " DPCK_DATASET_TYPE_OUTPUT " <<output_line<< std::endl;

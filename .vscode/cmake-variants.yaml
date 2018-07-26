@@ -1,0 +1,35 @@
+buildType:
+  default: debug
+  description: build types
+  choices: 
+    debug:
+      short: Debug
+      long: Build with debug information
+      buildType: debug
+    release:
+      short: Release
+      long: Build with optimization
+      buildType: Release
+    asan:
+      short: Asan
+      long: Instrument with Address Sanitizer
+      buildType: Asan
+    tsan:
+      short: Tsan
+      long: Instrument with Thread Sanitizer
+      buildType: Tsan
+      
+useCompilationCommmand:
+  default: yes
+  description: enable llvm compilaiton comands files
+  choices: 
+    'yes':
+      short: LLVM Comp
+      long: Generater llvm compilaiton comands files
+      settings:
+        CMAKE_EXPORT_COMPILE_COMMANDS: YES
+    'no':
+      short: no LLVM Comp
+      long: do nothings
+      settings:
+        CMAKE_EXPORT_COMPILE_COMMANDS: NO
