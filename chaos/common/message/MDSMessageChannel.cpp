@@ -344,7 +344,10 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
 /*!
  Return the besta available data service at the monent within the configuraiton for data driver
  */
-int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisec_to_wait) {
+int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefinition,
+                                                      uint32_t number_of_result,
+                                                      const ChaosStringSet& filter_out,
+                                                      uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1000;
     //send request and wait the response

@@ -58,10 +58,7 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
     }
     ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_conf(conf);
     updateConfiguration(auto_conf.get());
-
-
 }
-
 
 void ManagedDirectIODataDriver::deinit() throw(CException) {
     if(mds_channel) {

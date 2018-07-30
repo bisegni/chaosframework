@@ -155,9 +155,12 @@ namespace chaos {
 										   uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
-                 Return the besta available data service at the monent within the configuraiton for data driver
+                 Return the best available data service at the monent within the configuraiton for data driver
                  */
-                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisec_to_wait=5000);
+                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition,
+                                                   uint32_t number_of_result = 3,
+                                                   const ChaosStringSet& filter_out = ChaosStringSet(),
+                                                   uint32_t millisec_to_wait=5000);
                 
                 //!Create a new snapshot
                 /*!

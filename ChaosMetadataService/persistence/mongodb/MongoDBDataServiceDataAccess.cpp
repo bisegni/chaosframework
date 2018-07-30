@@ -376,50 +376,55 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<ChaosSharedPtr
 
 int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
                                                       std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
-                                                      unsigned int number_of_result) {
+                                                      unsigned int number_of_result,
+                                                      const ChaosStringSet& filter_out_dio_addr) {
     int err = 0;
     SearchResult paged_result;
     
     //almost we need toreturn one data service
     if(number_of_result == 0) return 0;
     try{
-        mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone <<
-                                  NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
-                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
-        //filter on sequence
-        mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
-                                         NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
-                                         NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
-                                         NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
-                                         DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
-        
-        
-        DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
-                                            "findOne",
-                                            DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                                    "Projection",
-                                                                    query.toString(),
-                                                                    projection.toString()));)
-        
+        mongo::BSONArrayBuilder filter_out_dio_addr_arr;
+        for(ChaosStringSetIterator it = filter_out_dio_addr.begin(),
+                                    end = filter_out_dio_addr.end();
+                                    it != end;
+                                    it++) {
+            filter_out_dio_addr_arr << *it;
+        }
+        mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone << 
+                                    NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE << 
+                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))) <<
+                                    NodeDefinitionKey::NODE_DIRECT_IO_ADDR << BSON("$nin" << filter_out_dio_addr_arr.arr()));
+      //filter on sequence
+        mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 << 
+                                            NodeDefinitionKey::NODE_RPC_ADDR << 1 << 
+                                            NodeDefinitionKey::NODE_RPC_DOMAIN << 1 << 
+                                            NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 << 
+                                            DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
+
+        DEBUG_CODE(MDBDSDA_DBG << log_message("getBestNDataService",
+                                                "findOne",
+                                                DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                        "Projection",
+                                                                        query.toString(),
+                                                                        projection.toString()));)
+
         //perform the search for the query page
         connection->findN(paged_result,
-                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                          query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << 1 <<
-                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << 1)),
-                          number_of_result);
+                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                            query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << 1 << NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << 1)),
+                            number_of_result);
         //fill reuslt
-        if(paged_result.size()>0) {
+        if (paged_result.size() > 0) {
             //has been found
-            for(SearchResultIterator it = paged_result.begin(),
-                end = paged_result.end();
+            for (SearchResultIterator it  = paged_result.begin(),
+                                    end = paged_result.end();
                 it != end;
                 it++) {
-                //add element to result
-                best_available_data_service.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
+            //add element to result
+            best_available_data_service.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
-           
         }
-        
     } catch (const mongo::DBException &e) {
         MDBDSDA_ERR << e.what();
         err = -1;
@@ -432,14 +437,16 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
 }
 
 int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
-                                                      std::vector<std::string >&  best_available_data_service,
-                                                      unsigned int number_of_result) {
+                                                      ChaosStringVector&  data_service_uid_list,
+                                                      unsigned int number_of_result,
+                                                      const ChaosStringSet& filter_out_dio_addr) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(ds_zone,
                                   best_available_server,
-                                  number_of_result))) {
+                                  number_of_result,
+                                  filter_out_dio_addr))) {
         return err;
     }
     
@@ -452,7 +459,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
            (*it)->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)){
             //get info
             if((*it)->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-                best_available_data_service.push_back((*it)->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+                data_service_uid_list.push_back((*it)->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             }
         }
     }
@@ -460,14 +467,16 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
 }
 
 int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(const std::string& ds_zone,
-                                                              std::vector<std::string>&  best_available_data_service_endpoint,
-                                                              unsigned int number_of_result) {
+                                                              ChaosStringVector&  data_service_endpoint_list,
+                                                              unsigned int number_of_result,
+                                                              const ChaosStringSet& filter_out_dio_addr) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(ds_zone,
                                   best_available_server,
-                                  number_of_result))) {
+                                  number_of_result,
+                                  filter_out_dio_addr))) {
         return err;
     }
     
@@ -483,7 +492,7 @@ int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(const std::string&
             std::string direct_io_addr = (*it)->getStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
             int direct_io_endpoint = (*it)->getInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT);
             //add complete address
-            best_available_data_service_endpoint.push_back(boost::str(boost::format("%1%|%2%") % direct_io_addr % direct_io_endpoint));
+            data_service_endpoint_list.push_back(boost::str(boost::format("%1%|%2%") % direct_io_addr % direct_io_endpoint));
         }
     }
     return err;

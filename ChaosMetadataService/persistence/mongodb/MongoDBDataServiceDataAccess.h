@@ -78,22 +78,25 @@ namespace chaos {
                     //inherited method
                     int searchAssociationForUID(const std::string& ds_unique_id,
                                                 std::vector<ChaosSharedPtr<common::data::CDataWrapper> >& node_associated);
-                    
+                    //inherited method
                     int searchAllDataAccess(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  node_associated,
                                             uint32_t last_unique_id,
                                             uint32_t page_length);
-                    
+                    //inherited method
                     int getBestNDataService(const std::string& ha_zone,
                                             std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
-                                            unsigned int number_of_result = 3);
-                    
+                                            unsigned int number_of_result = 3,
+                                            const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
+                    //inherited method
                     int getBestNDataService(const std::string& ha_zone,
-                                            std::vector<std::string >&  best_available_data_service,
-                                            unsigned int number_of_result = 3);
-                    
+                                            std::vector<std::string >&  data_service_uid_list,
+                                            unsigned int number_of_result = 3,
+                                            const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
+                    //inherited method
                     int getBestNDataServiceEndpoint(const std::string& ha_zone,
-                                                    std::vector<std::string >&  best_available_data_service_endpoint,
-                                                    unsigned int number_of_result =3);
+                                                    std::vector<std::string >&  data_service_endpoint_list,
+                                                    unsigned int number_of_result =3,
+                                                    const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
                 };
                 
                 

@@ -53,6 +53,4 @@ AbstractApiGroup("control_unit"){
     addApi<SendStorageBurst>();
 }
 
-ControlUnitGroup::~ControlUnitGroup() {
-
-}
+ControlUnitGroup::~ControlUnitGroup() {}

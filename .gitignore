@@ -84,3 +84,4 @@ moc_*.cpp
 ccs_automoc.cpp
 ccs/ccs
 ccs/qt_build*
+*/compile_commands.json
