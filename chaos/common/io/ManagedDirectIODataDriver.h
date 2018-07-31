@@ -42,6 +42,8 @@ namespace chaos{
             class ManagedDirectIODataDriver:
             public IODirectIODriver {
                 message::MDSMessageChannel *mds_channel;
+            protected:
+                void evictionHandler(const ChaosStringSet& evicted_urls);
             public:
                 ManagedDirectIODataDriver();
                 ~ManagedDirectIODataDriver();

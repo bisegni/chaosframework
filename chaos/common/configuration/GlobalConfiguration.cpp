@@ -70,7 +70,11 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->zero_tokens(), "Enable the logging metric on file");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value(boost::filesystem::current_path().string()), "Specify the path of metric logs");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
-        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
+        
+        addOption(InitOption::OPT_DATA_DRIVER_DEAD_URL_TIMEOUT, po::value< int32_t >()->default_value(120), "Specify the time in seconds after which a server identified by an url is considered dead");
+        addOption(InitOption::OPT_DATA_DRIVER_REMOVE_DEAD_URL, po::value< bool >()->default_value(false), "Specify if the dead server need to evicted by the driver itself");
+        addOption(InitOption::OPT_DATA_DRIVER_EVICT_CHECK_TIME, po::value< int32_t >()->default_value(30), "Specifythe intervall for checking the dead server in seconds");
+        
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");

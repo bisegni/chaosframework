@@ -35,7 +35,11 @@ using namespace chaos::common::network;
 
 ManagedDirectIODataDriver::ManagedDirectIODataDriver():
 IODirectIODriver("ManagedDirectIODataDriver"),
-mds_channel(NULL){}
+mds_channel(NULL){
+    setEvictionHandler(ChaosBind(&ManagedDirectIODataDriver::evictionHandler,
+                                 this,
+                                 ChaosBindPlaceholder(_1)));
+}
 
 ManagedDirectIODataDriver::~ManagedDirectIODataDriver() {}
 
@@ -80,4 +84,8 @@ void ManagedDirectIODataDriver::storeLogEntries(const std::string& key,
     } else {
         DEBUG_CODE(DBG << "No available socket->loose log");
     }
+}
+
+void ManagedDirectIODataDriver::evictionHandler(const ChaosStringSet& evicted_urls) {
+    INFO << "URL eviction handler";
 }

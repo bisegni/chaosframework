@@ -110,8 +110,12 @@ namespace chaos {
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
         //! use the interface name to determinate the ip where publish itself
         static const char * const   OPT_PUBLISHING_INTERFACE            = "publishing-interface";
-        //! Specify the ip where publish the framework
-        static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
+        //! Specify the timeout to considere a server as dead in seconds
+        static const char * const   OPT_DATA_DRIVER_DEAD_URL_TIMEOUT    = "data-driver-dead-url-timeout";
+        //! Specify if the data driver need to evic dead server
+        static const char * const   OPT_DATA_DRIVER_REMOVE_DEAD_URL     = "data-driver-remove-dead-url";
+        //! Specify if intervall for check the dead server in seconds
+        static const char * const   OPT_DATA_DRIVER_EVICT_CHECK_TIME    = "data-driver-evict-check-time";
         //! Enable the calibration of the local timestsamp with a remote NTP server
         static const char * const   OPT_TIME_CALIBRATION                = "time-calibration";
         //! Specify the bound of offset after wich the calibration work

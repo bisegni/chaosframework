@@ -46,7 +46,6 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
     
     int err = 0;
     int32_t numner_or_result = 3;
-    ChaosStringSet filter_out_set;
     const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
     std::vector<ChaosSharedPtr<CDataWrapper> > data_services;
@@ -56,25 +55,12 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
        api_data->isInt32Value("count")) {
         numner_or_result = api_data->getInt32Value("count");
     }
-    //check for filter out element
-    if(api_data &&
-       api_data->hasKey("filter_out") &&
-       api_data->isVectorValue("filter_out")) {
-        CMultiTypeDataArrayWrapperSPtr filter_out_vec = api_data->getVectorValue("filter_out");
-        for(int idx = 0;
-            idx < filter_out_vec->size();
-            idx ++) {
-            if(filter_out_vec->isStringElementAtIndex(idx) == false) continue;
-            filter_out_set.insert(filter_out_vec->getStringElementAtIndex(idx));
-        }
-    }
     
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -1)
     
     if((err = ds_da->getBestNDataService(ha_zone_name,
                                          data_services,
-                                         numner_or_result,
-                                         filter_out_set))) {
+                                         numner_or_result))) {
         LOG_AND_TROW(GBE_ERR, err, "Error fetching best available data service")
     }
     

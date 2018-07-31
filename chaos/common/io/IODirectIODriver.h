@@ -26,6 +26,7 @@
 #include <map>
 #include <string>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -37,59 +38,59 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/ObjectSlot.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/URLServiceFeeder.h>
+#include <chaos/common/async_central/async_central.h>
 
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 
-namespace chaos_data = chaos::common::data;
-namespace chaos_utility = chaos::common::utility;
-namespace chaos_direct_io = chaos::common::direct_io;
-namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
 namespace chaos{
     namespace common {
         namespace io {
-            
-            /*!
-             Struct for initialization of the io driver
-             */
-            typedef struct IODirectIODriverInitParam {
-                chaos_direct_io::DirectIOClient			*client_instance;
-                chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
-            } IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
-            
-            
-            typedef struct IODData {
-                void *data_ptr;
-                uint32_t data_len;
-            } IODData;
-            
             typedef struct IODirectIODriverClientChannels {
-                chaos_direct_io::DirectIOClientConnection			*connection;
-                chaos_dio_channel::DirectIODeviceClientChannel		*device_client_channel;
-                chaos_dio_channel::DirectIOSystemAPIClientChannel	*system_client_channel;
+                chaos::common::direct_io::DirectIOClientConnection			        *connection;
+                chaos::common::direct_io::channel::DirectIODeviceClientChannel		*device_client_channel;
+                chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel	*system_client_channel;
             } IODirectIODriverClientChannels;
             
+            //!define the info for the evition management of the url
+            struct OfflineUrlEvicInfo {
+                const uint32_t url_index;
+                const std::string url;
+                const int64_t evict_ts;
+                
+                OfflineUrlEvicInfo(uint32_t _url_index, const std::string& _url, int64_t timeout):
+                url_index(_url_index),
+                url(_url),
+                evict_ts(chaos::common::utility::TimingUtil::getTimestampWithDelay(timeout, true)){}
+            };
             
+            CHAOS_DEFINE_MAP_FOR_TYPE(uint32_t, ChaosSharedPtr<OfflineUrlEvicInfo>, MapUrlEvition);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapUrlEvition, LMapUrlEvition);
             /*!
              */
             DECLARE_CLASS_FACTORY(IODirectIODriver, IODataDriver),
             public chaos::common::utility::NamedService,
             public common::network::URLServiceFeederHandler,
-            private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
-            protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+            protected chaos::common::direct_io::DirectIOClientConnectionEventHandler,
+            protected chaos::common::async_central::TimerHandler {
+            public:
+                //!define the handler for received the eviction event
+                typedef ChaosFunction<void(const ChaosStringSet&/*evicted url*/)> EvictionUrlHandler;
+            private:
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IODirectIODriver)
-                IODirectIODriverInitParam init_parameter;
                 std::set<std::string> registered_server;
                 
-                uint16_t	current_endpoint_p_port;
-                uint16_t	current_endpoint_s_port;
-                uint16_t	current_endpoint_index;
+                const bool evict_dead_url;
+                const int32_t dead_url_timeout;
+                LMapUrlEvition map_url_eviction;
                 
-                chaos_dio_channel::DirectIODeviceServerChannel				*device_server_channel;
-                chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
+                chaos::common::direct_io::DirectIOClient    *client_instance;
+                chaos::common::utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
                 
                 WaitSemaphore wait_get_answer;
                 ChaosSharedMutex mutext_feeder;
@@ -98,23 +99,32 @@ namespace chaos{
                 ChaosSharedMutex                    map_query_future_mutex;
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
-                std::string uuid;
+                const std::string uuid;
                 bool shutting_down;
+                EvictionUrlHandler eviction_handler;
             protected:
                 ChaosSharedMutex push_mutex;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
+                //!inherited by @chaos::common::async_central::TimerHandler
+                void timeout();
+                //!inherited by @common::network::URLServiceFeederHandler
                 void disposeService(void *service_ptr);
+                 //!inherited by @common::network::URLServiceFeederHandler
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);
-                void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
-                                 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
+                 //!inherited by @chaos::common::direct_io::DirectIOClientConnectionEventHandler
+                void handleEvent(chaos::common::direct_io::DirectIOClientConnection *client_connection,
+                                 chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
             public:
-                
                 IODirectIODriver(const std::string& alias);
                 virtual ~IODirectIODriver();
                 
-                void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);
-                
                 void addServerURL(const std::string& url);
+                
+                void removeServerURL(const std::string& url);
+                
+                void setEvictionHandler(EvictionUrlHandler _handler);
+                
+                const std::string& getUUID() const;
                 /*
                  * Init method
                  */
@@ -126,7 +136,7 @@ namespace chaos{
                 void deinit() throw(CException);
                 
                 int storeHealthData(const std::string& key,
-                                     chaos_data::CDWShrdPtr data_to_store,
+                                     chaos::common::data::CDWShrdPtr data_to_store,
                                      DataServiceNodeDefinitionType::DSStorageType storage_type,
                                      const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException);
                 
@@ -134,7 +144,7 @@ namespace chaos{
                  * storeRawData
                  */
                 int storeData(const std::string& key,
-                               chaos_data::CDWShrdPtr data_to_store,
+                               chaos::common::data::CDWShrdPtr data_to_store,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                const ChaosStringSet& tag_set = ChaosStringSet())  throw(CException);
                 
@@ -153,12 +163,12 @@ namespace chaos{
                 int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
                                                    const std::string& key,
                                                    uint32_t dataset_type,
-                                                   chaos_data::CDWShrdPtr& cdw_shrd_ptr);
+                                                   chaos::common::data::CDWShrdPtr& cdw_shrd_ptr);
                 
                 /*
                  * updateConfiguration
                  */
-                chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+                chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*);
 
                 QueryCursor* performQuery(const std::string& key,
                                           uint64_t           start_ts,

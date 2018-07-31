@@ -376,25 +376,16 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<ChaosSharedPtr
 
 int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
                                                       std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
-                                                      unsigned int number_of_result,
-                                                      const ChaosStringSet& filter_out_dio_addr) {
+                                                      unsigned int number_of_result) {
     int err = 0;
     SearchResult paged_result;
     
     //almost we need toreturn one data service
     if(number_of_result == 0) return 0;
     try{
-        mongo::BSONArrayBuilder filter_out_dio_addr_arr;
-        for(ChaosStringSetIterator it = filter_out_dio_addr.begin(),
-                                    end = filter_out_dio_addr.end();
-                                    it != end;
-                                    it++) {
-            filter_out_dio_addr_arr << *it;
-        }
         mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone << 
                                     NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE << 
-                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))) <<
-                                    NodeDefinitionKey::NODE_DIRECT_IO_ADDR << BSON("$nin" << filter_out_dio_addr_arr.arr()));
+                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
       //filter on sequence
         mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 << 
                                             NodeDefinitionKey::NODE_RPC_ADDR << 1 << 
@@ -438,15 +429,13 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
 
 int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
                                                       ChaosStringVector&  data_service_uid_list,
-                                                      unsigned int number_of_result,
-                                                      const ChaosStringSet& filter_out_dio_addr) {
+                                                      unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(ds_zone,
                                   best_available_server,
-                                  number_of_result,
-                                  filter_out_dio_addr))) {
+                                  number_of_result))) {
         return err;
     }
     
@@ -468,15 +457,13 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
 
 int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(const std::string& ds_zone,
                                                               ChaosStringVector&  data_service_endpoint_list,
-                                                              unsigned int number_of_result,
-                                                              const ChaosStringSet& filter_out_dio_addr) {
+                                                              unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
     if((err = getBestNDataService(ds_zone,
                                   best_available_server,
-                                  number_of_result,
-                                  filter_out_dio_addr))) {
+                                  number_of_result))) {
         return err;
     }
     

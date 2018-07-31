@@ -157,8 +157,7 @@ namespace chaos {
                  */
                 virtual int getBestNDataService(const std::string&                                        ds_zone,
                                                 std::vector<ChaosSharedPtr<common::data::CDataWrapper> >& best_available_data_service,
-                                                unsigned int                                              numerb_of_result = 3,
-                                                const ChaosStringSet&                                     filter_out_dio_addr       = ChaosStringSet()) = 0;
+                                                unsigned int                                              numerb_of_result = 3) = 0;
 
                 /**
                  * @brief Get the Best N Data Service object, the best dataservice
@@ -173,8 +172,7 @@ namespace chaos {
                  */
                 virtual int getBestNDataService(const std::string&    ds_zone,
                                                 ChaosStringVector&    data_service_uid_list,
-                                                unsigned int          numerb_of_result = 3,
-                                                const ChaosStringSet& filter_out_dio_addr       = ChaosStringSet()) = 0;
+                                                unsigned int          numerb_of_result = 3) = 0;
 
                 /** @brief Get the Best N Data Service object, the best dataservice
                  * all got from those have a good metrics (minus cpu usage and other resources)
@@ -188,8 +186,7 @@ namespace chaos {
                  */
                 virtual int getBestNDataServiceEndpoint(const std::string&    ds_zone,
                                                         ChaosStringVector&    data_service_endpoint_list,
-                                                        unsigned int          numerb_of_result = 3,
-                                                        const ChaosStringSet& filter_out_dio_addr       = ChaosStringSet()) = 0;
+                                                        unsigned int          numerb_of_result = 3) = 0;
                 };
                 
             }

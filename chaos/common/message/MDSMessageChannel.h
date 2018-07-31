@@ -159,7 +159,6 @@ namespace chaos {
                  */
                 int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition,
                                                    uint32_t number_of_result = 3,
-                                                   const ChaosStringSet& filter_out = ChaosStringSet(),
                                                    uint32_t millisec_to_wait=5000);
                 
                 //!Create a new snapshot

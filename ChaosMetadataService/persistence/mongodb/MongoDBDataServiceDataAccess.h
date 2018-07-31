@@ -85,18 +85,15 @@ namespace chaos {
                     //inherited method
                     int getBestNDataService(const std::string& ha_zone,
                                             std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
-                                            unsigned int number_of_result = 3,
-                                            const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
+                                            unsigned int number_of_result = 3);
                     //inherited method
                     int getBestNDataService(const std::string& ha_zone,
                                             std::vector<std::string >&  data_service_uid_list,
-                                            unsigned int number_of_result = 3,
-                                            const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
+                                            unsigned int number_of_result = 3);
                     //inherited method
                     int getBestNDataServiceEndpoint(const std::string& ha_zone,
                                                     std::vector<std::string >&  data_service_endpoint_list,
-                                                    unsigned int number_of_result =3,
-                                                    const ChaosStringSet& filter_out_dio_addr = ChaosStringSet());
+                                                    unsigned int number_of_result =3);
                 };
                 
                 

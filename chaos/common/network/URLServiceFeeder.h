@@ -86,7 +86,8 @@ namespace chaos {
                 virtual ~URLServiceFeeder();
                 
                 //!Add a new URL Object and return the associated index
-                virtual uint32_t addURL(const URL& new_url, uint32_t priority = 0);
+                virtual uint32_t addURL(const URL& new_url,
+                                        uint32_t priority = 0);
                 
                 //!Remove an url with the index
                 /*!
@@ -95,7 +96,18 @@ namespace chaos {
                  \param idx index of the service
                  \param deallocate_service if true perform the service deallocation
                  */
-                virtual void removeURL(uint32_t idx, bool dispose_service = false);
+                virtual void removeURL(uint32_t idx,
+                                       bool dispose_service = false);
+                
+                //!Remove an url with the index
+                /*!
+                 The remove operation can be perfored with
+                 the deallocation of the service
+                 \param url the url to remove
+                 \param deallocate_service if true perform the service deallocation
+                 */
+                virtual void removeURL(const URL& url,
+                                       bool dispose_service = false);
                 
                 //!return the url string from index
                 std::string getURLForIndex(uint32_t idx);

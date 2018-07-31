@@ -240,10 +240,18 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 	}
 	//delete service instance
     if(dispose_service) {handler->disposeService(service_list[idx]->service);}
+    service_list[idx]->service = NULL;
 	removeFromOnlineQueue(idx);
 	available_url.insert(idx);
     //remove index url association
     mapping_url_index.removebyRightKey(idx);
+}
+
+void URLServiceFeeder::removeURL(const URL& url, bool dispose_service) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
+    if(mapping_url_index.hasLeftKey(url.getURL()) == false) return;
+    wl.unlock();
+    removeURL(mapping_url_index.findByLeftKey(url.getURL()), dispose_service);
 }
 
 //!return the url string from index

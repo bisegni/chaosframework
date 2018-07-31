@@ -346,14 +346,15 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
  */
 int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefinition,
                                                       uint32_t number_of_result,
-                                                      const ChaosStringSet& filter_out,
                                                       uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1000;
     //send request and wait the response
+    CDWUniquePtr data(new CDataWrapper());
+    data->addInt32Value("count", number_of_result);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                     "getBestEndpoints",
-                                                                                    NULL);
+                                                                                    data.release());
     future->setTimeout(millisec_to_wait);
     if(future->wait()) {
         if((err = future->getError()) == ErrorCode::EC_NO_ERROR) {
