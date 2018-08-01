@@ -331,17 +331,17 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //unlock the condition for end start method
     //endWaithCondition.notify_one();
     //waitCloseSemaphore.unlock();
+    waitCloseSemaphore.unlock();
+    sleep(1);
     if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
         LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: "<< signalNumber;
-        
-        throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
+
+        exit(1);
+        //throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
     } else {
         LAPP_ << "CATCH SIGNAL "<< signalNumber;
-        if(signalNumber == SIGINT || signalNumber == SIGTERM){
-            waitCloseSemaphore.unlock();
-        } else {
-            LAPP_ << "EXITING THROUGH SIGNAL '"<<signalNumber<<"' ....";
-            exit(0);
-        }
+            
+        //exit(0);
+        
     }
 }
