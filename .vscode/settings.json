@@ -54,7 +54,13 @@
         "__hash_table": "cpp",
         "hash_map": "cpp",
         "hash_set": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "hashtable": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "algorithm": "cpp",
+        "*.ii": "cpp",
+        "*.inc": "cpp"
     },
     "cmake.configureOnOpen": true,
     "C_Cpp.configurationWarnings": "Disabled",

@@ -202,30 +202,19 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 	}
 
 	if(iopool.size()<poolsize){
-		chaos::common::io::IODataDriver *result = NULL;
-		    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
-		    result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
-
-		    if(result) {
-		        if(impl_name.compare("IODirectIODriver") == 0) {
-		            //set the information
-		        	chaos::common::io::IODirectIODriverInitParam init_param;
-		            std::memset(&init_param, 0, sizeof(chaos::common::io::IODirectIODriverInitParam));
-		            init_param.client_instance = NULL;
-		            init_param.endpoint_instance = NULL;
-		            ((chaos::common::io::IODirectIODriver*)result)->setDirectIOParam(init_param);
-		        }
-		        result->init(NULL);
-		        shret.reset(result);
-		        iopool.push_back(shret);
-		        io_pool_req++;
-			    CMSC_LDBG<<"Allocating new iolive channel 0x"<<hex<<result<<dec<<", n:"<<iopool.size()<<" tot iorequest:"<<io_pool_req;
-		        return shret;
-		    }
-		    if(iopool.size()){
-		    	return iopool[0];
-		    }
-		    return shret;
+		chaos::common::io::IODataDriver *result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver");
+        if(result) {
+            result->init(NULL);
+            shret.reset(result);
+            iopool.push_back(shret);
+            io_pool_req++;
+            CMSC_LDBG<<"Allocating new iolive channel 0x"<<hex<<result<<dec<<", n:"<<iopool.size()<<" tot iorequest:"<<io_pool_req;
+            return shret;
+        }
+        if(iopool.size()){
+            return iopool[0];
+        }
+        return shret;
 	}
 	shret=iopool[io_pool_req%iopool.size()];
     CMSC_LDBG<<"Retriving iolive channel 0x"<<hex<<shret.get()<<dec<<", id:"<<io_pool_req%iopool.size() <<" tot iorequest:"<<io_pool_req;

@@ -2,9 +2,19 @@
     "configurations": [
         {
             "name": "Mac",
-            "compileCommands":"${workspaceFolder}/Build/compile_commands.json",
+            "compileCommands":"${workspaceFolder}/build/compile_commands.json",
             "includePath": [
-                "${workspaceRoot}/usr/local/include/**"
+                "${workspaceRoot}/chaos/**",
+                "${workspaceRoot}/chaos_metadata_service/**",
+                "${workspaceRoot}/chaos_micro_unit_toolkit/**",
+                "${workspaceRoot}/chaos_service_common/**",
+                "${workspaceRoot}/ChaosAgetnt/**",
+                "${workspaceRoot}/ChaosDataExport/**",
+                "${workspaceRoot}/CHAOSFrameworkTests/**",
+                "${workspaceRoot}/ChaosMetadataService/**",
+                "${workspaceRoot}/ChaosMetadataServiceClient/**",
+                "${workspaceRoot}/ChaosMetadataServiceClientTest/**",
+                "${workspaceRoot}/ChaosMicroUnitToolkitTest/**"
             ],
             "defines": [],
             "macFrameworkPath": [
@@ -17,7 +27,17 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": false,
                 "path": [
-                    "${workspaceRoot}/usr/local/include/**"
+                    "${workspaceRoot}/chaos/**",
+                    "${workspaceRoot}/chaos_metadata_service/**",
+                    "${workspaceRoot}/chaos_micro_unit_toolkit/**",
+                    "${workspaceRoot}/chaos_service_common/**",
+                    "${workspaceRoot}/ChaosAgetnt/**",
+                    "${workspaceRoot}/ChaosDataExport/**",
+                    "${workspaceRoot}/CHAOSFrameworkTests/**",
+                    "${workspaceRoot}/ChaosMetadataService/**",
+                    "${workspaceRoot}/ChaosMetadataServiceClient/**",
+                    "${workspaceRoot}/ChaosMetadataServiceClientTest/**",
+                    "${workspaceRoot}/ChaosMicroUnitToolkitTest/**"
                 ]
             },
             "configurationProvider": "vector-of-bool.cmake-tools"

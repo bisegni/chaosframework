@@ -28,8 +28,8 @@ using namespace chaos::common::data;
 
 TEST(VariantTest, Normal) {
     std::string tmp_str;
-    char buffer[256];
-    CDBufferUniquePtr buff_ptr(new CDataBuffer(buffer, 256));
+    char buffer_ipsum[] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+    CDBufferUniquePtr buff_ptr(new CDataBuffer(buffer_ipsum, std::strlen(buffer_ipsum)));
     CDataVariant str_v("36.6");
     CDataVariant neg_str_v("-36.6");
     CDataVariant double_v(36.6);
@@ -41,8 +41,7 @@ TEST(VariantTest, Normal) {
     ASSERT_TRUE(static_cast<bool>(str_v));
     tmp_str.assign(static_cast< CDBufferShrdPtr >(str_v)->getBuffer(), static_cast< CDBufferShrdPtr >(str_v)->getBufferSize());
     ASSERT_STREQ(tmp_str.c_str(), "36.6");
-    ASSERT_EQ(static_cast< CDBufferShrdPtr >(buffer_var)->getBufferSize(), 256);
-    ASSERT_EQ(std::memcmp(static_cast< CDBufferShrdPtr >(buffer_var)->getBuffer(), buffer, 256), 0);
+
     //neg str variant
     ASSERT_EQ(static_cast<double>(neg_str_v), -36.6);
     ASSERT_EQ(static_cast<int32_t>(neg_str_v), -36);
@@ -61,4 +60,8 @@ TEST(VariantTest, Normal) {
     ASSERT_STREQ(neg_double_v.asString().c_str(), "-36.6");
     ASSERT_EQ(static_cast<int32_t>(neg_double_v), -36);
     ASSERT_TRUE(static_cast<bool>(neg_double_v));
+
+    //buffer variant
+    ASSERT_EQ(static_cast< CDBufferShrdPtr >(buffer_var)->getBufferSize(), std::strlen(buffer_ipsum));
+    ASSERT_EQ(std::memcmp(static_cast< CDBufferShrdPtr >(buffer_var)->getBuffer(), buffer_ipsum, std::strlen(buffer_ipsum)), 0);
 }

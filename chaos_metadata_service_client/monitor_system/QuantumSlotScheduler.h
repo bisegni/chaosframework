@@ -176,7 +176,6 @@ mutex_ ## queue_name.unlock();
                 friend class MonitorManager;
                 std::vector<std::string>                data_driver_endpoint;
                 chaos::common::network::NetworkBroker   *network_broker;
-                std::string                             data_driver_impl;
                 
                 boost::mutex                            mutex_condition_fetch;
                 boost::condition_variable               condition_fetch;
