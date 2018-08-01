@@ -72,9 +72,16 @@ ExternalProject_Add(
    LOG_CONFIGURE ON
    LOG_BUILD ON)
 
+   find_package(libmongocxx REQUIRED)
+   find_package(libbsoncxx REQUIRED)
+   include_directories(${LIBMONGOCXX_INCLUDE_DIR})
+   include_directories(${LIBBSONCXX_INCLUDE_DIR})
    include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
    include_directories("${CMAKE_INSTALL_PREFIX}/include/bsoncxx/v_noabi")
+   include_directories("${CMAKE_INSTALL_PREFIX}/include/libmongoc-1.0")
+   include_directories("${CMAKE_INSTALL_PREFIX}/include/libbson-1.0")
    include_directories("${CMAKE_INSTALL_PREFIX}/lib")
+
 # ENDIF()
 
 INCLUDE_DIRECTORIES(chaos/common ../)
@@ -259,7 +266,8 @@ SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cp
                         object_storage/mongodb/ShardKeyManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	object_storage/mongodb_3/MongoDBObjectStorageDataAccess.cpp
-                        object_storage/mongodb_3/NewMongoDBObjectStorageDriver.cpp)
+                        object_storage/mongodb_3/NewMongoDBObjectStorageDriver.cpp
+                        object_storage/mongodb_3/ShardKeyManagement.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -306,6 +314,7 @@ SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongoclient)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

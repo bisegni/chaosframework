@@ -29,7 +29,7 @@
 
 #include <mongocxx/pool.hpp>
 
-//#include "ShardKeyManagement.h"
+#include "ShardKeyManagement.h"
 
 namespace chaos {
     namespace data_service {
@@ -42,7 +42,8 @@ namespace chaos {
                 public data_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class NewMongoDBObjectStorageDriver;
                     mongocxx::pool& pool_ref;
-                    //mongodb::ShardKeyManagementent shrd_key_manager;
+                    ShardKeyManagement shrd_key_manager;
+
                 protected:
                     MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccess();
