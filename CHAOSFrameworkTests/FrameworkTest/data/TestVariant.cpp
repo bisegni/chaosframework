@@ -64,4 +64,6 @@ TEST(VariantTest, Normal) {
     //buffer variant
     ASSERT_EQ(static_cast< CDBufferShrdPtr >(buffer_var)->getBufferSize(), std::strlen(buffer_ipsum));
     ASSERT_EQ(std::memcmp(static_cast< CDBufferShrdPtr >(buffer_var)->getBuffer(), buffer_ipsum, std::strlen(buffer_ipsum)), 0);
+    ASSERT_STREQ(buffer_var.asString().c_str(), buffer_ipsum);
+    ASSERT_EQ(static_cast<bool>(buffer_var), true);
 }
