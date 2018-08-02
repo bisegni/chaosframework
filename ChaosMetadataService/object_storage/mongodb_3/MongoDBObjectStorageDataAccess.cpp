@@ -72,68 +72,63 @@ pool_ref(_pool_ref){}
 
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
-int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
-                                               const CDataWrapper& stored_object) {
-    int err = 0;
-    
+int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key,
+                                               const ChaosStringSetConstSPtr meta_tags,
+                                               const CDataWrapper&           stored_object) {
+  int err = 0;
+
+  try {
+    //get client the connection
+    auto client = pool_ref.acquire();
+
+    //access to database
+    auto db = (*client)[MONGODB_DB_NAME];
+    //access a collection
+    mongocxx::collection coll = db[MONGODB_DAQ_COLL_NAME];
+
+    int buffer_size = 0;
+
+    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
+
+    auto now_in_ms_bson = bsoncxx::types::b_date(std::chrono::milliseconds(now_in_ms));
+
+    const char* buffer = stored_object.getBSONRawData(buffer_size);
+
+    // basic::document builds a BSON document.
+    auto builder = builder::basic::document{};
+    builder.append(bsoncxx::builder::basic::kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
+    builder.append(bsoncxx::builder::basic::kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+
+    bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, buffer_size);
+    builder.append(bsoncxx::builder::concatenate(zone_pack.view()));
+
+    bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
+    builder.append(bsoncxx::builder::basic::kvp(MONGODB_DAQ_DATA_FIELD, view_daq_data));
+
+    bsoncxx::document::view view = builder.view();
     try {
-        //get client the connection
-        auto client  = pool_ref.acquire();
+      coll.insert_one(builder.view());
 
-        //access to database
-        auto db = (*client)[MONGODB_DB_NAME];
-        //access a collection 
-        mongocxx::collection coll = db[MONGODB_DAQ_COLL_NAME];
-        
-        int buffer_size = 0;
+    } catch (const mongocxx::bulk_write_exception& e) {
+      // We can compare the error_code to a known server side error code number
+      if (e.code().value() != 11000) {
+        return EXIT_FAILURE;
+      }
 
-        const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
-
-        auto now_in_ms_bson = bsoncxx::types::b_date(std::chrono::milliseconds(now_in_ms));
-
-        const char *buffer = stored_object.getBSONRawData(buffer_size);
-
-        // basic::document builds a BSON document.
-        auto builder = builder::basic::document{};
-        builder.append(bsoncxx::builder::basic::kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-        builder.append(bsoncxx::builder::basic::kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-
-        bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms,buffer_size);
-        builder.append(bsoncxx::builder::concatenate(zone_pack.view()));
-
-        bsoncxx::document::value buffer_stream = bsoncxx::builder::stream::document{} << MONGODB_DAQ_DATA_FIELD << buffer << bsoncxx::builder::stream::finalize;
-
-        builder.append(bsoncxx::builder::concatenate(buffer_stream.view()));
-
-        bsoncxx::document::view view = builder.view();
-        
-        coll.insert_one(view);
-        
-        try {
-            coll.insert_one(builder.view());
-
-        } catch (const mongocxx::bulk_write_exception& e) {
-
-            // We can compare the error_code to a known server side error code number
-            if (e.code().value() != 11000) {
-                return EXIT_FAILURE;
-            }
-
-            std::cout << e.what() << std::endl;
-            if (e.raw_server_error()) {
-                std::cout << "Raw server error:" << std::endl;
-                std::cout << bsoncxx::to_json(*(e.raw_server_error())) << std::endl;
-            }
-            std::cout << std::endl;
-        }
-
-    } catch (const mongocxx::logic_error& e) {
-        ERR << e.what();
-        err = e.code().value();
+      std::cout << e.what() << std::endl;
+      if (e.raw_server_error()) {
+        std::cout << "Raw server error:" << std::endl;
+        std::cout << bsoncxx::to_json(*(e.raw_server_error())) << std::endl;
+      }
+      std::cout << std::endl;
     }
 
+  } catch (const mongocxx::logic_error& e) {
+    ERR << e.what();
+    err = e.code().value();
+  }
 
-    return err;
+  return err;
 }
 
 int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
@@ -167,15 +162,16 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     return err;
 }
 
-int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
-                                               uint64_t timestamp_from,
-                                               uint64_t timestamp_to,
-                                               const uint32_t page_len,
-                                               object_storage::abstraction::VectorObject& found_object_page,
-                                               SearchSequence& last_record_found_seq) {
-    int err = 0;
-    std::vector<mongo::BSONObj> object_found;
-    return err;
+int MongoDBObjectStorageDataAccess::findObject(const std::string&                                          key,
+                                               const ChaosStringSet&                                       meta_tags,
+                                               const uint64_t                                              timestamp_from,
+                                               const uint64_t                                              timestamp_to,
+                                               const uint32_t                                              page_len,
+                                               abstraction::VectorObject&                                  found_object_page,
+                                               common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+  int                         err = 0;
+  std::vector<mongo::BSONObj> object_found;
+  return err;
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,

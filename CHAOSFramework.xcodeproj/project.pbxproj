@@ -457,6 +457,7 @@
 		326933EA1D5089420033D9E9 /* publishing.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933E81D5089420033D9E9 /* publishing.h */; };
 		326933EE1D5089590033D9E9 /* trigger_system.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933EC1D5089590033D9E9 /* trigger_system.h */; };
 		326933F21D5089C20033D9E9 /* dataset_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933F01D5089C20033D9E9 /* dataset_event.h */; };
+		326955CF2112FDA400563FE9 /* ShardKeyManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326955CE2112FDA400563FE9 /* ShardKeyManagement.cpp */; };
 		326ACF7F1E01525D00AD011E /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6A1E01525D00AD011E /* CacheDriver.cpp */; };
 		326ACF801E01525D00AD011E /* CacheDriverMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */; };
 		326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6E1E01525D00AD011E /* CacheDriverSharedMetricIO.cpp */; };
@@ -565,12 +566,12 @@
 		3277A22F20973A0100FD7307 /* CPPScriptVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A22D20973A0100FD7307 /* CPPScriptVM.h */; };
 		3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */; };
 		3277A236209C4AFD00FD7307 /* ClingRootInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */; };
-		3278855620EB91CE004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */; };
-		3278855920EB97BC004D1A34 /* SendStorageBurst.h in Headers */ = {isa = PBXBuildFile; fileRef = 3278855720EB97BC004D1A34 /* SendStorageBurst.h */; };
-		3278855A20EB97BC004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */; };
 		3278449820D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */; };
 		3278449B20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */; };
 		3278449F20D7CF2400554408 /* MongoDBCXXDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278449E20D7CF2400554408 /* MongoDBCXXDriver.cpp */; };
+		3278855620EB91CE004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */; };
+		3278855920EB97BC004D1A34 /* SendStorageBurst.h in Headers */ = {isa = PBXBuildFile; fileRef = 3278855720EB97BC004D1A34 /* SendStorageBurst.h */; };
+		3278855A20EB97BC004D1A34 /* SendStorageBurst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */; };
 		32788D7F1F277207009BBB1E /* OpcodeDriverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */; };
 		32788D831F27766A009BBB1E /* OpcodeExternalCommandMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -1795,6 +1796,8 @@
 		326933E81D5089420033D9E9 /* publishing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = publishing.h; sourceTree = "<group>"; };
 		326933EC1D5089590033D9E9 /* trigger_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_system.h; sourceTree = "<group>"; };
 		326933F01D5089C20033D9E9 /* dataset_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataset_event.h; sourceTree = "<group>"; };
+		326955CD2112FDA400563FE9 /* ShardKeyManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShardKeyManagement.h; sourceTree = "<group>"; };
+		326955CE2112FDA400563FE9 /* ShardKeyManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShardKeyManagement.cpp; sourceTree = "<group>"; };
 		326ACF681E01525D00AD011E /* cache_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
 		326ACF691E01525D00AD011E /* cache_system_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cache_system_types.h; sourceTree = "<group>"; };
 		326ACF6A1E01525D00AD011E /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
@@ -1933,16 +1936,16 @@
 		3277A22D20973A0100FD7307 /* CPPScriptVM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPPScriptVM.h; sourceTree = "<group>"; };
 		3277A233209C4AFD00FD7307 /* ClingRootInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClingRootInterpreter.cpp; sourceTree = "<group>"; };
 		3277A234209C4AFD00FD7307 /* ClingRootInterpreter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClingRootInterpreter.h; sourceTree = "<group>"; };
-		3278855420EB91CE004D1A34 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
-		3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
-		3278855720EB97BC004D1A34 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
-		3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
 		3278449620D7A1B200554408 /* NewMongoDBObjectStorageDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewMongoDBObjectStorageDriver.h; sourceTree = "<group>"; };
 		3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NewMongoDBObjectStorageDriver.cpp; sourceTree = "<group>"; };
 		3278449920D7A2B800554408 /* MongoDBObjectStorageDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDBObjectStorageDataAccess.h; sourceTree = "<group>"; };
 		3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBObjectStorageDataAccess.cpp; sourceTree = "<group>"; };
 		3278449D20D7CF2400554408 /* MongoDBCXXDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MongoDBCXXDriver.h; sourceTree = "<group>"; };
 		3278449E20D7CF2400554408 /* MongoDBCXXDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBCXXDriver.cpp; sourceTree = "<group>"; };
+		3278855420EB91CE004D1A34 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
+		3278855520EB91CE004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
+		3278855720EB97BC004D1A34 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
+		3278855820EB97BC004D1A34 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
 		32788D7D1F277207009BBB1E /* OpcodeDriverWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeDriverWrapper.h; sourceTree = "<group>"; };
 		32788D811F27766A009BBB1E /* OpcodeExternalCommandMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpcodeExternalCommandMapper.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClient.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4442,6 +4445,8 @@
 		3278449520D7A16200554408 /* mongodb_3 */ = {
 			isa = PBXGroup;
 			children = (
+				326955CE2112FDA400563FE9 /* ShardKeyManagement.cpp */,
+				326955CD2112FDA400563FE9 /* ShardKeyManagement.h */,
 				3278449720D7A1B200554408 /* NewMongoDBObjectStorageDriver.cpp */,
 				3278449620D7A1B200554408 /* NewMongoDBObjectStorageDriver.h */,
 				3278449A20D7A2B800554408 /* MongoDBObjectStorageDataAccess.cpp */,
@@ -6458,6 +6463,7 @@
 				326ACF7F1E01525D00AD011E /* CacheDriver.cpp in Sources */,
 				3283B8931C7F35C30019255B /* SearchLogEntry.cpp in Sources */,
 				32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */,
+				326955CF2112FDA400563FE9 /* ShardKeyManagement.cpp in Sources */,
 				32B419341B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32990B221E51E77F00A4AF8F /* AgentProcessController.cpp in Sources */,
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,

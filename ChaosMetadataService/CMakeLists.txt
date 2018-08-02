@@ -62,7 +62,7 @@ ExternalProject_Add(
    mongo-cxx-driver
    DEPENDS mongo-c-driver
    GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
-   GIT_TAG r3.3.0
+   GIT_TAG r3.2.0
    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
@@ -72,8 +72,8 @@ ExternalProject_Add(
    LOG_CONFIGURE ON
    LOG_BUILD ON)
 
-   find_package(libmongocxx REQUIRED)
-   find_package(libbsoncxx REQUIRED)
+#    find_package(libmongocxx REQUIRED)
+#    find_package(libbsoncxx REQUIRED)
    include_directories(${LIBMONGOCXX_INCLUDE_DIR})
    include_directories(${LIBBSONCXX_INCLUDE_DIR})
    include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
