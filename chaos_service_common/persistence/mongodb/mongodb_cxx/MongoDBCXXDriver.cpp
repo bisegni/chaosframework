@@ -26,16 +26,16 @@ using namespace chaos::service_common::persistence::mongodb::mongodb_cxx;
 
 mongocxx::instance BaseMongoDBDiver::drv_instance = {};
 
-BaseMongoDBDiver::BaseMongoDBDiver() {
-    
-}
+BaseMongoDBDiver::BaseMongoDBDiver() {}
 
-BaseMongoDBDiver::~BaseMongoDBDiver() {
-    
-}
+BaseMongoDBDiver::~BaseMongoDBDiver() {}
 
-void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list) {
-    std::string host_composed_url = "localhost:27017";
+void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list,
+                                const std::string& user,
+                                const std::string& password,
+                                const std::string& database) {
+    std::string host_composed_url;
+    std::string uri_string = "mongodb://";
     if(url_list.size()) {
         for(ChaosStringVectorConstIterator it = url_list.begin(),
             end = url_list.end();
@@ -46,7 +46,21 @@ void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list) {
         }
         host_composed_url.resize(host_composed_url.size()-1);
     }
-    mongocxx::uri uri{CHAOS_FORMAT("mongodb://%1%/?minPoolSize=%2%&maxPoolSize=%3%",%""%100%100)};
+    if(user.size() &&
+       password.size()) {
+        //has authentication
+        uri_string.append(user);
+        uri_string.append(":");
+        uri_string.append(password);
+        uri_string.append("@");
+    }
+    
+    uri_string.append("%1%/");
+    if(database.size()) {
+        uri_string.append(database);
+    }
+    uri_string.append("?minPoolSize=%2%&maxPoolSize=%3%");
+    mongocxx::uri uri{CHAOS_FORMAT(uri_string,%host_composed_url%100%100)};
     pool_unique_ptr.reset(new mongocxx::pool());
 }
 

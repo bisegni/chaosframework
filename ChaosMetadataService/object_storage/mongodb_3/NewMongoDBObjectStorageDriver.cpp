@@ -49,6 +49,9 @@ void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CExcepti
     //call sublcass
     AbstractPersistenceDriver::init(init_data);
     ChaosStringVector url_list = ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list;
+    const std::string user = ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param["user"];
+    const std::string password = ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param["pwd"];
+    const std::string database = ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param["db"];
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     
     if(obj_stoarge_kvp.count("mongodb_oswc")) {
@@ -68,7 +71,7 @@ void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CExcepti
     if(obj_stoarge_kvp.count("minPoolSize")) {
     }
     //initilize pool
-    BaseMongoDBDiver::initPool(url_list);
+    BaseMongoDBDiver::initPool(url_list, user, password, database);
     
     //register the data access implementations
     registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess(BaseMongoDBDiver::getPool()));

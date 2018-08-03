@@ -35,7 +35,10 @@ namespace chaos {
                         static mongocxx::instance       drv_instance;
                         ChaosUniquePtr<mongocxx::pool>  pool_unique_ptr;
                     protected:
-                        void initPool(const ChaosStringVector& url_list);
+                        void initPool(const ChaosStringVector& url_list,
+                                      const std::string& user,
+                                      const std::string& password,
+                                      const std::string& database);
                         mongocxx::pool& getPool();
                     public:
                         BaseMongoDBDiver();
