@@ -61,7 +61,7 @@ void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list,
     }
     uri_string.append("?minPoolSize=%2%&maxPoolSize=%3%");
     mongocxx::uri uri{CHAOS_FORMAT(uri_string,%host_composed_url%100%100)};
-    pool_unique_ptr.reset(new mongocxx::pool());
+    pool_unique_ptr.reset(new mongocxx::pool(uri));
 }
 
 mongocxx::pool& BaseMongoDBDiver::getPool() {
