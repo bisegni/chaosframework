@@ -92,7 +92,6 @@ namespace chaos{
                 chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
                 
                 WaitSemaphore wait_get_answer;
-                ChaosSharedMutex mutext_feeder;
                 
                 //query future management
                 ChaosSharedMutex                    map_query_future_mutex;
@@ -102,6 +101,7 @@ namespace chaos{
                 bool shutting_down;
             protected:
                 ChaosSharedMutex push_mutex;
+                ChaosSharedMutex mutext_feeder;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);

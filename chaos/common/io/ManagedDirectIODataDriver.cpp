@@ -43,7 +43,7 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
     IODirectIODriver::init(init_parameter);
     mds_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
     if(mds_channel == NULL) {throw CException(-1, "Error creating mds channel", __PRETTY_FUNCTION__);}
-    
+
     //try to fetch best endpoint
     int err = 0;
     data::CDataWrapper *conf = NULL;
@@ -73,9 +73,9 @@ void ManagedDirectIODataDriver::deinit() throw(CException) {
 void ManagedDirectIODataDriver::storeLogEntries(const std::string& key,
                                                 ChaosStringVector log_entries) throw(CException) {
     int err = 0;
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    boost::shared_lock<boost::shared_mutex> wl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    
+
     if(next_client) {
         if((err = (int)next_client->system_client_channel->pushLogEntries(key, log_entries))) {
             ERR << "Error storing log entries into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
