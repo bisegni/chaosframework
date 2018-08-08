@@ -24,7 +24,7 @@
 
 //define the general plugin
 #include <cstring>
-
+#include <cstdlib>
 OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginLibrary)
 CLOSE_PLUGIN_CLASS_DEFINITION
 
