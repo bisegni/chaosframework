@@ -58,6 +58,10 @@ namespace chaos {
                 PluginInfo info;
 
             public:
+                AbstractPlugin(){}
+                
+                virtual ~AbstractPlugin(){}
+                
                 virtual int init(const char * init_data = NULL) {return 0;}
                 
                 virtual void deinit() {}
@@ -78,7 +82,6 @@ namespace chaos {
             template <typename T>
             class PluginInstancer {
             public:
-                
                 //! Return the instance of the plugin
                 /*!
                     This method return an instance of the plugin with his information filled.
@@ -97,8 +100,6 @@ namespace chaos {
                     return instance;
                 }
             };
-            
-            
         }
     }
 }
