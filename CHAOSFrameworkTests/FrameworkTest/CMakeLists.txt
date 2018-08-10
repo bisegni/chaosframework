@@ -18,7 +18,7 @@ set_target_properties(ExamplePlugin PROPERTIES PREFIX "" SUFFIX ".chaos_extensio
 
 TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common ${PluginTestLib})
 
-INSTALL_TARGETS(/bin ExamplePlugin)
+INSTALL_TARGETS(/lib ExamplePlugin)
 
 
 #tests EXECUTABLE
