@@ -203,7 +203,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
     
     BufferSPtr mget_opcode_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderMultiGetOpcode));
     mget_opcode_header->data<DirectIODeviceChannelHeaderMultiGetOpcode>()->field.number_of_key = TO_LITTEL_ENDNS_NUM(uint16_t, keys.size());
-    
+    results.clear();
     for(ChaosStringVectorConstIterator it = keys.begin(),
         end = keys.end();
         it != end;

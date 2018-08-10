@@ -316,7 +316,7 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
     int err = 0;
     int option_result = 0;
     size_t size_int = sizeof(int);
-    
+    more_to_read=false;
     //we heva received the message now check the size aspected
     if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int))) {
         err = zmq_errno();
