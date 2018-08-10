@@ -35,7 +35,6 @@ namespace chaos {
              Define the postifx of the allocator "c" function, exported by the ddl.
              */
 #define PLUGIN_DISCOVER_POSTFIX   "_discover"
-            
             class PluginDiscover {
                 friend chaos::common::plugin::PluginDiscover* getInspector();
                 std::vector<std::string> names;
