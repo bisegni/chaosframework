@@ -95,10 +95,10 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
         map_connection().insert(MapConnectionInfoPair(conn_ptr->connection_identifier, ci));
         ci->ext_unit_conn = conn_ptr;
         mg_connection *conn =  mg_connect_ws(&mgr,
-                                  HTTPClientAdapter::ev_handler,
-                                  ci->endpoint_url.c_str(),
-                                  "ChaosExternalUnit",
-                                  web_socket_option);
+                                             HTTPClientAdapter::ev_handler,
+                                             ci->endpoint_url.c_str(),
+                                             "ChaosExternalUnit",
+                                             web_socket_option);
         ci->ext_unit_conn->online = true;
         conn->user_data = new ConnectionMetadata(conn_ptr->connection_identifier, this);
     } catch(chaos::CException& ex) {
@@ -158,10 +158,10 @@ void HTTPClientAdapter::performReconnection() {
            cur_ts >= it->second->next_reconnection_retry_ts) {
             //try to reconnect
             mg_connection * conn = mg_connect_ws(&mgr,
-                                                HTTPClientAdapter::ev_handler,
-                                                it->second->endpoint_url.c_str(),
-                                                "ChaosExternalUnit",
-                                                web_socket_option);
+                                                 HTTPClientAdapter::ev_handler,
+                                                 it->second->endpoint_url.c_str(),
+                                                 "ChaosExternalUnit",
+                                                 web_socket_option);
             if(conn) {
                 it->second->ext_unit_conn->online = true;
                 conn->user_data = new ConnectionMetadata(it->second->ext_unit_conn->connection_identifier, this);
@@ -194,7 +194,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
     LMapConnectionInfoReadLock wlm = conn_metadata->class_instance->map_connection.getReadLockObject();
     MapConnectionInfoIterator conn_it = conn_metadata->class_instance->map_connection().find(conn_metadata->conn_uuid);
     if(conn_it == conn_metadata->class_instance->map_connection().end()) return;
-
+    
     ConnectionInfo& conn_info = *conn_it->second;
     switch (event) {
         case MG_EV_CONNECT: {
@@ -241,7 +241,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             conn_info.next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
             break;
         }
-
+            
         case MG_EV_POLL:{
             //execute opcode for connection
             conn_metadata->class_instance->consumeOpcode(conn_metadata->conn_uuid);
@@ -253,54 +253,54 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
 void HTTPClientAdapter::consumeOpcode(const std::string& conn_uuid) {
     //consume opcode queue
     bool to_delete = false;
+    struct mg_connection *real_con = NULL;
     MapConnectionInfoIterator it = map_connection().find(conn_uuid);
     if(it == map_connection().end()) return;
     OpcodeShrdPtrQueue& queue_ref = it->second->opcode_queue;
+    
+    //!fine real connection
+    for (real_con = mg_next(&mgr, NULL); real_con != NULL; real_con = mg_next(&mgr, real_con)) {
+        if(!real_con->user_data) continue;
+        ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(real_con->user_data);
+        if(conn_metadata->conn_uuid.compare(conn_uuid) == 0) {break;}
+    }
     while(queue_ref.empty() == false) {
         OpcodeShrdPtr op = queue_ref.front();
         queue_ref.pop();
-        
-        //find real connection
-        //find real connection
-        struct mg_connection *real_con = NULL;
-        for (real_con = mg_next(&mgr, NULL); real_con != NULL; real_con = mg_next(&mgr, real_con)) {
-            ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(real_con->user_data);
-            if(conn_metadata->conn_uuid.compare(conn_uuid) == 0) {break;}
-        }
-        if(real_con == NULL) continue;
-        
-        switch(op->op_type) {
-            case OpcodeInfoTypeSend:{
-                switch (op->data_opcode) {
-                    case EUCMessageOpcodeWhole:
-                        mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseStartFragment:
-                        mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseContinueFragment:
-                        mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseEndFragment:
-                        mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
+        if(real_con) {
+            switch(op->op_type) {
+                case OpcodeInfoTypeSend:{
+                    switch (op->data_opcode) {
+                        case EUCMessageOpcodeWhole:
+                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                            break;
+                        case EUCPhaseStartFragment:
+                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                            break;
+                        case EUCPhaseContinueFragment:
+                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                            break;
+                        case EUCPhaseEndFragment:
+                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                            break;
+                    }
+                    break;
                 }
-                break;
+                    
+                case OpcodeInfoTypeCloseConnection:{
+                    DBG<<" HTTPClientAdapter Close Connection";
+                    to_delete = true;
+                    break;
+                }
+                default:{break;}
             }
-                
-            case OpcodeInfoTypeCloseConnection:{
-                DBG<<" HTTPClientAdapter Close Connection";
-                to_delete = true;
-                break;
-            }
-            default:{break;}
         }
-        //check if we need to delete the connection
-        if(to_delete) {
-            real_con->flags |= MG_F_CLOSE_IMMEDIATELY;
-            real_con->user_data = NULL;
-            //!remove from active connection map
-            map_connection().erase(it);
-        }
+    }
+    //check if we need to delete the connection
+    if(to_delete) {
+        real_con->flags |= MG_F_CLOSE_IMMEDIATELY;
+        real_con->user_data = NULL;
+        //!remove from active connection map
+        map_connection().erase(it);
     }
 }
