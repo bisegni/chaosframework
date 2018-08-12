@@ -37,35 +37,56 @@ namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
+
+                /**
+                 * @brief websocket http client implementation for external unit
+                 * 
+                 */
                 class HTTPClientAdapter:
                 public HTTPBaseAdapter,
                 public AbstractClientAdapter {
-                    struct ConnectionInfo {
-                        std::string endpoint_url;
-                        uint64_t next_reconnection_retry_ts;
-                        ChaosSharedMutex smux;
+                    /**
+                     * @brief tag the conenction to be identified with the 
+                     * connection virtualization within the http adapter instance
+                     */
+                    struct ConnectionMetadata {
+                        std::string conn_uuid;
                         HTTPClientAdapter *class_instance;
-                        struct mg_connection *conn;
+                        ConnectionMetadata(const std::string& _conn_uuid, 
+                                            HTTPClientAdapter *_class_instance):
+                        conn_uuid(_conn_uuid),
+                        class_instance(_class_instance){}
+                    };
+
+                    /**
+                     * @brief Identify the conenction requested to 
+                     * the adapter
+                     */
+                    struct ConnectionInfo {
+                        ChaosSharedMutex smux;
+                        const std::string endpoint_url;
+                        uint64_t next_reconnection_retry_ts;
                         ChaosSharedPtr<ExternalUnitConnection> ext_unit_conn;
-                        
-                        ConnectionInfo():
+                        //!opocode sent to real connection
+                        OpcodeShrdPtrQueue opcode_queue;
+                        ConnectionInfo(const std::string& _endpoint_url):
+                        endpoint_url(_endpoint_url),
                         next_reconnection_retry_ts(0),
-                        class_instance(NULL),
-                        conn(NULL),
                         ext_unit_conn(){}
                     };
                     
                     typedef ChaosSharedPtr<ConnectionInfo> ConnectionInfoShrdPtr;
                     
-                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapReconnectionInfo);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapReconnectionInfo, LMapReconnectionInfo);
+                    //!associate connection identifier to the connection info
+                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapConnectionInfo);
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnectionInfo, LMapConnectionInfo);
                     
                     bool run;
                     struct mg_mgr mgr;
                     uint32_t poll_counter;
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use
-                    LMapReconnectionInfo map_connection;
+                    LMapConnectionInfo map_connection;
                     
                     void poller();
                     void performReconnection();
@@ -75,6 +96,12 @@ namespace chaos {
                     static void checkAcceptResponse(struct websocket_message *wm,
                                                     bool& is_accept_response,
                                                     int& accept_result);
+                    /**
+                     * @brief Consume opcode for a specific connection uuid
+                     * 
+                     * @param conn_uuid a connection uuid
+                     */
+                    void consumeOpcode(const std::string& conn_uuid);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
                                              chaos::common::data::CDBufferUniquePtr data,
