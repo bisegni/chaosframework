@@ -101,7 +101,7 @@ namespace chaos {
                      * 
                      * @param conn_uuid a connection uuid
                      */
-                    void consumeOpcode(const std::string& conn_uuid);
+                    void consumeOpcode(struct mg_connection *conn);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
                                              chaos::common::data::CDBufferUniquePtr data,

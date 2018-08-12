@@ -188,7 +188,6 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                                    void *event_data) {
     if(!conn->user_data) return;
     ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
-    CHAOS_ASSERT(conn_metadata);
     
     //get connection info
     LMapConnectionInfoReadLock wlm = conn_metadata->class_instance->map_connection.getReadLockObject();
@@ -239,67 +238,61 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             conn_info.ext_unit_conn->accepted_state = -1;
             //set retry timeout after five seconds
             conn_info.next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
+            delete(conn_metadata);
             break;
         }
             
         case MG_EV_POLL:{
             //execute opcode for connection
-            conn_metadata->class_instance->consumeOpcode(conn_metadata->conn_uuid);
+            conn_metadata->class_instance->consumeOpcode(conn);
             break;
         }
     }
 }
 
-void HTTPClientAdapter::consumeOpcode(const std::string& conn_uuid) {
+void HTTPClientAdapter::consumeOpcode(struct mg_connection *conn) {
     //consume opcode queue
     bool to_delete = false;
-    struct mg_connection *real_con = NULL;
-    MapConnectionInfoIterator it = map_connection().find(conn_uuid);
+    ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
+    MapConnectionInfoIterator it = map_connection().find(conn_metadata->conn_uuid);
     if(it == map_connection().end()) return;
     OpcodeShrdPtrQueue& queue_ref = it->second->opcode_queue;
     
-    //!fine real connection
-    for (real_con = mg_next(&mgr, NULL); real_con != NULL; real_con = mg_next(&mgr, real_con)) {
-        if(!real_con->user_data) continue;
-        ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(real_con->user_data);
-        if(conn_metadata->conn_uuid.compare(conn_uuid) == 0) {break;}
-    }
     while(queue_ref.empty() == false) {
         OpcodeShrdPtr op = queue_ref.front();
         queue_ref.pop();
-        if(real_con) {
-            switch(op->op_type) {
-                case OpcodeInfoTypeSend:{
-                    switch (op->data_opcode) {
-                        case EUCMessageOpcodeWhole:
-                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                            break;
-                        case EUCPhaseStartFragment:
-                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                            break;
-                        case EUCPhaseContinueFragment:
-                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                            break;
-                        case EUCPhaseEndFragment:
-                            mg_send_websocket_frame(real_con, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                            break;
-                    }
-                    break;
+        switch(op->op_type) {
+            case OpcodeInfoTypeSend:{
+                switch (op->data_opcode) {
+                    case EUCMessageOpcodeWhole:
+                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                        break;
+                    case EUCPhaseStartFragment:
+                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                        break;
+                    case EUCPhaseContinueFragment:
+                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                        break;
+                    case EUCPhaseEndFragment:
+                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                        break;
                 }
-                    
-                case OpcodeInfoTypeCloseConnection:{
-                    DBG<<" HTTPClientAdapter Close Connection";
-                    to_delete = true;
-                    break;
-                }
-                default:{break;}
+                break;
             }
+                
+            case OpcodeInfoTypeCloseConnection:{
+                DBG<<" HTTPClientAdapter Close Connection";
+                to_delete = true;
+                break;
+            }
+            default:{break;}
         }
     }
     //check if we need to delete the connection
     if(to_delete) {
-        real_con->flags |= MG_F_CLOSE_IMMEDIATELY;
-        real_con->user_data = NULL;
+        conn->flags |= MG_F_CLOSE_IMMEDIATELY;
+        delete(conn->user_data);
+        conn->user_data = NULL;
         //!remove from active connection map
         map_connection().erase(it);
     }
