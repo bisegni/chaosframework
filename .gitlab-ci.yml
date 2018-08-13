@@ -108,7 +108,7 @@ build_framework_centos7:
     - cd ccs
     - /Qt/5.9.3/gcc_64/bin/qmake
     - make -j $NPROC
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
+    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
     key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
@@ -117,7 +117,7 @@ build_framework_centos7:
     paths:
         - chaos
         - CHAOSFrameworkTests
-        - 'chaos-distrib-x86_64-centos7'
+        - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
     - tags
@@ -134,13 +134,13 @@ build_framework_centos7_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:latest
   script:
-    - export PPROF_PATH=chaos-distrib-x86_64-centos7/bin/pprof
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-centos7/bin/TestFramework
+    - chaos-distrib-x86_64-Linux/bin/TestFramework
   artifacts:
     paths:
-        - 'chaos-distrib-x86_64-centos7'
+        - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
     - tags
@@ -160,7 +160,7 @@ framework_centos7_deploy:
     - build_framework_centos7_test
   script:
     - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
-    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-centos7
+    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
     - ls -la
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
     - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
@@ -184,14 +184,14 @@ build_framework_x86_64_c98:
     - make clean
     - make  -j $NPROC
     - make install
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
+    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
     key: x86_64_c98_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
     paths:
-        - 'chaos-distrib-x86_64-Linux-c98'
+        - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
     - tags
@@ -208,10 +208,10 @@ build_framework_x86_64_c98_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
-    - export PPROF_PATH=chaos-distrib-x86_64-Linux-c98/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98/lib
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux-c98/bin/TestFramework
+    - chaos-distrib-x86_64-Linux/bin/TestFramework
   only:
     - tags
     - web
@@ -256,7 +256,7 @@ llvm_build_framework_x86_64:
     - make clean
     - make  -j $NPROC
     - make install
-    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
+    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
   cache:
     key: llvm_x86_64_$CI_BUILD_REF_NAME
     paths:
@@ -265,7 +265,7 @@ llvm_build_framework_x86_64:
     paths:
         - chaos
         - CHAOSFrameworkTests
-        - 'chaos-distrib-x86_64-Linux-llvm'
+        - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
     - tags
@@ -282,10 +282,10 @@ llvm_build_framework_x86_64_test:
   dependencies:
     - llvm_build_framework_x86_64
   script:
-    - export PPROF_PATH=chaos-distrib-x86_64-Linux-llvm/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm/lib
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux-llvm/bin/TestFramework
+    - chaos-distrib-x86_64-Linux/bin/TestFramework
   only:
     - tags
     - web
