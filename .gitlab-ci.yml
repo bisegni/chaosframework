@@ -135,7 +135,7 @@ build_framework_centos7_test:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:latest
   script:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7/lib
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework
   artifacts:
