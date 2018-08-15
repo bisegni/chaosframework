@@ -76,6 +76,7 @@ namespace chaos {
                     };
                     
                     typedef ChaosSharedPtr<ConnectionInfo> ConnectionInfoShrdPtr;
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
                     
                     //!associate connection identifier to the connection info
                     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapConnectionInfo);
@@ -87,6 +88,7 @@ namespace chaos {
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use
                     LMapConnectionInfo map_connection;
+                    LOpcodeShrdPtrQueue close_queue_opcode;
                     
                     void poller();
                     void performReconnection();
