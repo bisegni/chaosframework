@@ -115,11 +115,7 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
         return -1;
     }
     try{
-#if __cplusplus >= 201103L
-        ConnectionInfoShrdPtr ci = ChaosMakeSharedPtr<ConnectionInfo>(endpoint_url);
-#else
         ConnectionInfoShrdPtr ci = ConnectionInfoShrdPtr(new ConnectionInfo(endpoint_url));
-#endif
         ci->ext_unit_conn = ChaosMakeSharedPtr<ExternalUnitConnection>(this,
                                                                        endpoint,
                                                                        ChaosMoveOperator(serializer));
