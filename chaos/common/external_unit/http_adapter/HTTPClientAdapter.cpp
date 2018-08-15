@@ -116,14 +116,13 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
     }
     try{
         ConnectionInfoShrdPtr ci = ConnectionInfoShrdPtr(new ConnectionInfo(endpoint_url));
-        ci->ext_unit_conn = ChaosMakeSharedPtr<ExternalUnitConnection>(this,
-                                                                       endpoint,
-                                                                       ChaosMoveOperator(serializer));
+        ci->ext_unit_conn = ChaosSharedPtr<ExternalUnitConnection>(new ExternalUnitConnection(this,
+                                                                                              endpoint,
+                                                                                              ChaosMoveOperator(serializer)));
         
         
         
         //!associate id to connection
-        
         map_connection().insert(MapConnectionInfoPair(ci->ext_unit_conn->connection_identifier, ci));
         
         mg_connection *conn =  mg_connect_ws(&mgr,
@@ -285,7 +284,6 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
 void HTTPClientAdapter::consumeOpcode(struct mg_connection *conn) {
     //consume opcode queue
     bool can_work = true;
-    bool to_rm_from_map = false;
     ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
     MapConnectionInfoIterator it = map_connection().find(conn_metadata->conn_uuid);
     if(it == map_connection().end()) return;
