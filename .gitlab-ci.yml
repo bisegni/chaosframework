@@ -62,6 +62,7 @@ build_framework_x86_64:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_x86_64_test:
   dependencies:
@@ -90,6 +91,7 @@ build_framework_x86_64_test:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_centos7:
   tags:
@@ -122,6 +124,7 @@ build_framework_centos7:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_centos7_test:
   dependencies:
@@ -145,6 +148,7 @@ build_framework_centos7_test:
   only:
     - tags
     - web
+  retry: 2
 
 framework_centos7_deploy:
   allow_failure: true
@@ -169,6 +173,7 @@ framework_centos7_deploy:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_x86_64_c98:
   tags:
@@ -196,6 +201,7 @@ build_framework_x86_64_c98:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_x86_64_c98_test:
   dependencies:
@@ -215,6 +221,7 @@ build_framework_x86_64_c98_test:
   only:
     - tags
     - web
+  retry: 2
 
 build_framework_arm:
   tags:
@@ -241,6 +248,7 @@ build_framework_arm:
   only:
     - tags
     - web
+  retry: 2
 
 llvm_build_framework_x86_64:
   tags:
@@ -270,6 +278,7 @@ llvm_build_framework_x86_64:
   only:
     - tags
     - web
+  retry: 2
 
 llvm_build_framework_x86_64_test:
   tags:
@@ -289,6 +298,7 @@ llvm_build_framework_x86_64_test:
   only:
     - tags
     - web
+  retry: 2
 
 exp_llvm_scan_coverity:
   tags:
@@ -313,7 +323,8 @@ exp_llvm_scan_coverity:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   only:
     - schedules
-
+  retry: 2
+  
 pages:
   stage: publish
   dependencies:
