@@ -105,10 +105,10 @@ build_framework_centos7:
     - make clean
     - make  -j $NPROC
     - make install
-    - cd ccs
-    - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j $NPROC
-    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
+#    - cd ccs
+#    - /Qt/5.9.3/gcc_64/bin/qmake
+#    - make -j $NPROC
+#    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
     key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
