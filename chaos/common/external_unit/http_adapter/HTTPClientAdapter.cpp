@@ -283,16 +283,14 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
 
 void HTTPClientAdapter::consumeOpcode(struct mg_connection *conn) {
     //consume opcode queue
-    bool can_work = true;
+    CHAOS_ASSERT(conn);
     ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
     MapConnectionInfoIterator it = map_connection().find(conn_metadata->conn_uuid);
     if(it == map_connection().end()) return;
-    OpcodeShrdPtrQueue& queue_ref = it->second->opcode_queue;
     
-    while(queue_ref.empty() == false) {
-        OpcodeShrdPtr op = queue_ref.front();
-        queue_ref.pop();
-        if(can_work == false){continue;}
+    while(it->second->opcode_queue.empty() == false) {
+        OpcodeShrdPtr op = it->second->opcode_queue.front();
+        it->second->opcode_queue.pop();
         switch(op->op_type) {
             case OpcodeInfoTypeSend: {
                 switch (op->data_opcode) {
