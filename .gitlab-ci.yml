@@ -15,23 +15,6 @@ before_script:
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
 
-# codequality:
-#   image: docker:stable
-#   stage: quality
-#   variables:
-#     DOCKER_DRIVER: overlay2
-#   allow_failure: true
-#   services:
-#     - docker:stable-dind
-#   script:
-#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-#     - docker run --env SOURCE_CODE="$PWD" --volume "$PWD"/chaos:/code --volume /var/run/docker.sock:/var/run/docker.sock "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-#   artifacts:
-#     paths: [codeclimate.json]
-#   only:
-#     - tags
-#     - web
-
 build_framework_x86_64:
   tags:
     - chaos
@@ -324,7 +307,7 @@ exp_llvm_scan_coverity:
   only:
     - schedules
   retry: 2
-  
+
 pages:
   stage: publish
   dependencies:
