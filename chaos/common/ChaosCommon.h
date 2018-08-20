@@ -88,7 +88,7 @@ namespace chaos {
 #endif
     }
     
-#include <csignal>
+//#include <csignal>
 #ifndef CHAOS_NO_BACKTRACE
     class SignalHandling {
     public:

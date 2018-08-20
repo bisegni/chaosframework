@@ -119,10 +119,19 @@ build_framework_x86_64_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
-    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
-    - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework
+  - apt-get update
+  - apt-get -y install lcov
+  - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+  - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+  - export HEAPCHECK=normal
+  - chaos-distrib-x86_64-Linux/bin/TestFramework
+  - lcov -c -d chaos --output-file coverage.info
+  - genhtml coverage.info --output-directory coverage_html
+  artifacts:
+    paths:
+        - 'coverage_html'
+    expire_in: 1 hour
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   only:
     - tags
     - web
