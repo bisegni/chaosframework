@@ -145,7 +145,7 @@ namespace chaos {
         bool loaded() const { return _loaded; }
         
         static void handleSignal(int, siginfo_t* info, void* _ctx) {
-            ucontext_t *uctx = (ucontext_t*) _ctx;
+//            ucontext_t *uctx = (ucontext_t*) _ctx;
             
             backward::StackTrace st;
             void* error_addr = 0;
