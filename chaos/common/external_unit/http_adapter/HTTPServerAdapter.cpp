@@ -66,7 +66,7 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     const std::string http_port_str = boost::lexical_cast<std::string>(InetUtility::scanForLocalFreePort(boost::lexical_cast<int>(setting.publishing_port)));
     root_connection = mg_bind(&mgr, http_port_str.c_str(), HTTPServerAdapter::eventHandler);
     if(root_connection == NULL) {throw CException(-1, "Error creating http connection", __PRETTY_FUNCTION__);}
-    root_connection->user_data = this;
+    root_connection->user_data = new ConnectionMetadata<HTTPServerAdapter>("", this);
     
     mg_set_protocol_http_websocket(root_connection);
     s_http_server_opts.document_root = "";  // Serve current directory
@@ -256,8 +256,8 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
             if((err = sendDataToEndpoint(*conn_it->second->external_connection,
                                          ChaosMoveOperator(request->buffer)))) {
                 //add error message to the queue
-//                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
-//                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+                //                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
+                //                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
             }
             break;
         }
@@ -303,30 +303,26 @@ void HTTPServerAdapter::consumeConenctionMessageQueue(mg_connection *nc) {
 }
 
 void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
+    ConnectionMetadata<HTTPServerAdapter> *connection_metadata = static_cast< ConnectionMetadata<HTTPServerAdapter>* >(nc->user_data);
     switch (ev) {
         case MG_EV_ACCEPT:{
             //new conenction has been accepted
             break;
         }
         case MG_EV_HTTP_REQUEST: {
-            HTTPServerAdapter *adapter = static_cast<HTTPServerAdapter*>(nc->user_data);
-            if(!adapter->run) return;
             mg_printf(nc, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
             mg_printf_http_chunk(nc, "!CHAOS Control External gateway not support http get or post");
             mg_send_http_chunk(nc, "", 0); /* Send empty chunk, the end of response */
-
+            
             break;
         }
         case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
-            HTTPServerAdapter *adapter = static_cast<HTTPServerAdapter*>(nc->user_data);
-            if(!adapter->run) return;
-            adapter->manageWSHandshake(nc,
-                                       static_cast<http_message*>(ev_data));
+            connection_metadata->class_instance->manageWSHandshake(nc,
+                                                                   static_cast<http_message*>(ev_data));
             
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
-            ConnectionMetadata<HTTPServerAdapter> *connection_metadata = static_cast< ConnectionMetadata<HTTPServerAdapter>* >(nc->user_data);
             websocket_message *message = static_cast<websocket_message*>(ev_data);
             ServerWorkRequest *req = new ServerWorkRequest(connection_metadata->conn_uuid,
                                                            (const char *)message->data,
@@ -336,7 +332,6 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
             
         case MG_EV_CLOSE:{
-            ConnectionMetadata<HTTPServerAdapter> *connection_metadata = static_cast< ConnectionMetadata<HTTPServerAdapter>* >(nc->user_data);
             LMapConnectionWriteLock wconnl = connection_metadata->class_instance->map_connection.getWriteLockObject();
             connection_metadata->class_instance->map_connection().erase(connection_metadata->conn_uuid);
             delete(connection_metadata);
@@ -345,8 +340,9 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
             
         case MG_EV_POLL:
-            ConnectionMetadata<HTTPServerAdapter> *connection_metadata = static_cast< ConnectionMetadata<HTTPServerAdapter>* >(nc->user_data);
-            connection_metadata->class_instance->consumeConenctionMessageQueue(nc);
+            if(connection_metadata->conn_uuid.compare("") != 0) {
+                connection_metadata->class_instance->consumeConenctionMessageQueue(nc);
+            }
             break;
     }
 }
