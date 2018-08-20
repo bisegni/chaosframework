@@ -29,19 +29,44 @@ namespace chaos{
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-
+                
+                struct ServerWorkRequest {
+                    const WorkRequestType r_type;
+                    const std::string connection_uuid;
+                    ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
+                    
+                    ServerWorkRequest():
+                    r_type(WorkRequestTypeUnspecified),
+                    buffer(){}
+                    
+                    ServerWorkRequest(const std::string& _connection_uuid,
+                                      const char *ptr,
+                                      uint32_t size):
+                    r_type(WorkRequestTypeWSFrame),
+                    connection_uuid(_connection_uuid),
+                    buffer(new chaos::common::data::CDataBuffer(ptr, size)){}
+                };
+                
+                struct RemoteConnectionInfo {
+                    ChaosSharedPtr<ExternalUnitConnection> external_connection;
+                    OpcodeShrdPtrQueue message_queue;
+                    
+                    RemoteConnectionInfo(ChaosSharedPtr<ExternalUnitConnection> _external_connection):
+                    external_connection(_external_connection){}
+                };
+                
+                typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;
                 //!External gateway root class
                 class HTTPServerAdapter:
                 public AbstractServerAdapter,
                 protected CObjectProcessingQueue< ServerWorkRequest >,
                 public HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
-                    CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
+                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<RemoteConnectionInfo>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
 
                     //!contains all connection
                     LMapConnection  map_connection;
-                    chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
 
                     bool run;
                     HTTPServerAdapterSetting setting;
@@ -55,10 +80,12 @@ namespace chaos{
                     static void eventHandler(mg_connection *nc,
                                              int ev,
                                              void *ev_data);
-                    void  manageWSHandshake(ServerWorkRequest& wr);
+                    void  manageWSHandshake(mg_connection *nc,
+                                            http_message *message);
                     void sendWSJSONAcceptedConnection(mg_connection *nc,
                                                       bool accepted,
                                                       bool close_connection);
+                    void consumeConenctionMessageQueue(mg_connection *nc);
                 protected:
                     void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,

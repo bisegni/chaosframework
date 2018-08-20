@@ -38,60 +38,47 @@ namespace chaos {
         namespace external_unit {
             namespace http_adapter {
 
-                struct ServerWorkRequest {
-                    WorkRequestType r_type;
-                    mg_connection *nc;
-                    std::string uri;
-                    //!serialization type issuead on the beginning of the http request
-                    std::string s_type;
-                    ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
-
-                    ServerWorkRequest():
-                    r_type(WorkRequestTypeUnspecified),
-                    nc(NULL),
-                    uri(),
-                    s_type(),
-                    buffer(){}
-
-                    ServerWorkRequest(const char *ptr,
-                                      uint32_t size):
-                    r_type(WorkRequestTypeUnspecified),
-                    nc(NULL),
-                    uri(),
-                    s_type(),
-                    buffer(new chaos::common::data::CDataBuffer(ptr, size)){}
+                /**
+                 * @brief tag the conenction to be identified with the
+                 * connection virtualization within the http adapter instance
+                 */
+                template<typename T>
+                struct ConnectionMetadata {
+                    std::string conn_uuid;
+                    T *class_instance;
+                    ConnectionMetadata(const std::string& _conn_uuid,
+                                       T *_class_instance):
+                    conn_uuid(_conn_uuid),
+                    class_instance(_class_instance){}
                 };
-
-                typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;
-
+                
+                //!opcode list
+                typedef enum {
+                    OpcodeInfoTypeSend,
+                    OpcodeInfoTypeCloseConnection,
+                    OpcodeInfoTypeCloseConnectionForEndpoint
+                } OpcodeInfoType;
+                
+                typedef struct Opcode {
+                    //! context sensitive identifier associated to the operation
+                    std::string identifier;
+                    //! operation type
+                    OpcodeInfoType op_type;
+                    //!data to sent
+                    chaos::common::data::CDBufferUniquePtr data;
+                    //! send data opcode
+                    EUCMessageOpcode data_opcode;
+                    //some opcode need to notify the termination
+                    chaos::WaitSemaphore wait_termination_semaphore;
+                } Opcode;
+                
+                typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;
+                typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;
+                CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
+                
                 class HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
                 protected:
-                    //structure for manage command executed in other thread
-
-                    //!opcode list
-                    typedef enum {
-                        OpcodeInfoTypeSend,
-                        OpcodeInfoTypeCloseConnection,
-                        OpcodeInfoTypeCloseConnectionForEndpoint
-                    } OpcodeInfoType;
-
-                    typedef struct Opcode {
-                        //! context sensitive identifier associated to the operation
-                        std::string identifier;
-                        //! operation type
-                        OpcodeInfoType op_type;
-                        //!data to sent
-                        chaos::common::data::CDBufferUniquePtr data;
-                        //! send data opcode
-                        EUCMessageOpcode data_opcode;
-                        //some opcode need to notify the termination
-                        chaos::WaitSemaphore wait_termination_semaphore;
-                    } Opcode;
-
-                    typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;
-                    typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
                     //!operation posted during poll execution to send with the nex one
                     LOpcodeShrdPtrQueue post_evt_op_queue;
 

@@ -72,16 +72,16 @@ void HTTPClientAdapter::poller() {
         
         //check connection close opcode
         {
-            LOpcodeShrdPtrQueueWriteLock wlm = close_queue_opcode.getWriteLockObject();
-            while(close_queue_opcode().empty() == false) {
-                OpcodeShrdPtr op = close_queue_opcode().front();
-                close_queue_opcode().pop();
+            LOpcodeShrdPtrQueueWriteLock wlm = post_evt_op_queue.getWriteLockObject();
+            while(post_evt_op_queue().empty() == false) {
+                OpcodeShrdPtr op = post_evt_op_queue().front();
+                post_evt_op_queue().pop();
                 {
                     //close real connection
                     struct mg_connection *c = NULL;
                     for (c = mg_next(&mgr, NULL); c != NULL; c = mg_next(&mgr, c)) {
                         if(!c->user_data) continue;
-                        ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(c->user_data);
+                        ConnectionMetadata<HTTPClientAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPClientAdapter> * >(c->user_data);
                         if(conn_metadata->conn_uuid.compare(op->identifier) == 0) {
                             DBG<<" HTTPClientAdapter Close Connection";
                             c->flags |= MG_F_CLOSE_IMMEDIATELY;
@@ -131,7 +131,7 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
                                              "ChaosExternalUnit",
                                              web_socket_option);
         ci->ext_unit_conn->online = true;
-        conn->user_data = new ConnectionMetadata(ci->ext_unit_conn->connection_identifier, this);
+        conn->user_data = new ConnectionMetadata<HTTPClientAdapter>(ci->ext_unit_conn->connection_identifier, this);
     } catch(chaos::CException& ex) {
         return -2;
     }
@@ -155,11 +155,11 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
 
 int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint *target_endpoint) {
     //remove endpoint from coon abstraction
-    LOpcodeShrdPtrQueueWriteLock wlm = close_queue_opcode.getWriteLockObject();
+    LOpcodeShrdPtrQueueWriteLock wlm = post_evt_op_queue.getWriteLockObject();
     OpcodeShrdPtr op(new Opcode());
     op->identifier = target_endpoint->getConnectionIdentifier();
     op->op_type = OpcodeInfoTypeCloseConnection;
-    close_queue_opcode().push(op);
+    post_evt_op_queue().push(op);
     wlm->unlock();
     op->wait_termination_semaphore.wait();
     return 0;
@@ -167,11 +167,11 @@ int HTTPClientAdapter::removeConnectionsFromEndpoint(ExternalUnitClientEndpoint 
 
 int HTTPClientAdapter::closeConnection(const std::string& connection_identifier) {
     //remove endpoint from coon abstraction
-    LOpcodeShrdPtrQueueWriteLock wlm = close_queue_opcode.getWriteLockObject();
+    LOpcodeShrdPtrQueueWriteLock wlm = post_evt_op_queue.getWriteLockObject();
     OpcodeShrdPtr op(new Opcode());
     op->identifier = connection_identifier;
     op->op_type = OpcodeInfoTypeCloseConnection;
-    close_queue_opcode().push(op);
+    post_evt_op_queue().push(op);
     wlm->unlock();
     op->wait_termination_semaphore.wait();
     return 0;
@@ -195,7 +195,7 @@ void HTTPClientAdapter::performReconnection() {
                                                  web_socket_option);
             if(conn) {
                 it->second->ext_unit_conn->online = true;
-                conn->user_data = new ConnectionMetadata(it->second->ext_unit_conn->connection_identifier, this);
+                conn->user_data = new ConnectionMetadata<HTTPClientAdapter>(it->second->ext_unit_conn->connection_identifier, this);
             } else {
                 //retry to reconnect
                 it->second->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
@@ -218,7 +218,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                                    int event,
                                    void *event_data) {
     if(!conn->user_data) return;
-    ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
+    ConnectionMetadata<HTTPClientAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPClientAdapter> * >(conn->user_data);
     
     //get connection info
     LMapConnectionInfoReadLock wlm = conn_metadata->class_instance->map_connection.getReadLockObject();
@@ -284,7 +284,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
 void HTTPClientAdapter::consumeOpcode(struct mg_connection *conn) {
     //consume opcode queue
     CHAOS_ASSERT(conn);
-    ConnectionMetadata *conn_metadata = static_cast<ConnectionMetadata*>(conn->user_data);
+    ConnectionMetadata<HTTPClientAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPClientAdapter> *>(conn->user_data);
     MapConnectionInfoIterator it = map_connection().find(conn_metadata->conn_uuid);
     if(it == map_connection().end()) return;
     

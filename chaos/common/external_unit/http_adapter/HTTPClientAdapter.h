@@ -46,19 +46,6 @@ namespace chaos {
                 public HTTPBaseAdapter,
                 public AbstractClientAdapter {
                     /**
-                     * @brief tag the conenction to be identified with the 
-                     * connection virtualization within the http adapter instance
-                     */
-                    struct ConnectionMetadata {
-                        std::string conn_uuid;
-                        HTTPClientAdapter *class_instance;
-                        ConnectionMetadata(const std::string& _conn_uuid, 
-                                            HTTPClientAdapter *_class_instance):
-                        conn_uuid(_conn_uuid),
-                        class_instance(_class_instance){}
-                    };
-
-                    /**
                      * @brief Identify the conenction requested to 
                      * the adapter
                      */
@@ -88,7 +75,6 @@ namespace chaos {
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use
                     LMapConnectionInfo map_connection;
-                    LOpcodeShrdPtrQueue close_queue_opcode;
                     
                     void poller();
                     void performReconnection();
