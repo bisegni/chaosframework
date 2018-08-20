@@ -76,7 +76,7 @@ build_framework_x86_64_test:
     - web
   retry: 2
 
-build_ubuntu_16_04_llvm6:
+build_ubuntu_16_04_gcc5:
   tags:
     - chaos
     - docker
@@ -86,7 +86,7 @@ build_ubuntu_16_04_llvm6:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
     - tools/chaos_clean.sh
-    - cmake  -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
+    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
     - make clean
     - make  -j $NPROC
     - make install
@@ -108,9 +108,9 @@ build_ubuntu_16_04_llvm6:
     - web
   retry: 2
 
-build_framework_x86_64_test:
+build_ubuntu_16_04_gcc5_test:
   dependencies:
-    - build_ubuntu_16_04_llvm6
+    - build_ubuntu_16_04_gcc5
   tags:
     - chaos
     - docker
