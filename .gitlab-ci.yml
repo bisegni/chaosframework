@@ -122,6 +122,7 @@ build_ubuntu_16_04_gcc5_test:
   - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
   - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
   - export HEAPCHECK=normal
+  - chaos-distrib-x86_64-Linux/bin/TestFramework
   artifacts:
     paths:
         - 'chaos-distrib-x86_64-Linux'
