@@ -298,11 +298,6 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                         }
                         break;
                     }
-                        
-                    case OpcodeInfoTypeCloseConnection: {
-                        break;
-                    }
-                        
                     default:{break;}
                 }
                 op->wait_termination_semaphore.unlock();
