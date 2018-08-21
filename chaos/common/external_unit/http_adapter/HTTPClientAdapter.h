@@ -70,7 +70,6 @@ namespace chaos {
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnectionInfo, LMapConnectionInfo);
                     
                     bool run;
-                    struct mg_mgr mgr;
                     uint32_t poll_counter;
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use
@@ -84,12 +83,6 @@ namespace chaos {
                     static void checkAcceptResponse(struct websocket_message *wm,
                                                     bool& is_accept_response,
                                                     int& accept_result);
-                    /**
-                     * @brief Consume opcode for a specific connection uuid
-                     * 
-                     * @param conn_uuid a connection uuid
-                     */
-                    void consumeOpcode(struct mg_connection *conn);
                 protected:
                     int sendDataToConnection(const std::string& connection_identifier,
                                              chaos::common::data::CDBufferUniquePtr data,

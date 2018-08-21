@@ -47,13 +47,6 @@ namespace chaos{
                     buffer(new chaos::common::data::CDataBuffer(ptr, size)){}
                 };
                 
-                struct RemoteConnectionInfo {
-                    ChaosSharedPtr<ExternalUnitConnection> external_connection;
-                    OpcodeShrdPtrQueue message_queue;
-                    
-                    RemoteConnectionInfo(ChaosSharedPtr<ExternalUnitConnection> _external_connection):
-                    external_connection(_external_connection){}
-                };
                 
                 typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;
                 //!External gateway root class
@@ -62,7 +55,7 @@ namespace chaos{
                 protected CObjectProcessingQueue< ServerWorkRequest >,
                 public HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
-                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<RemoteConnectionInfo>, MapConnection);
+                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
 
                     //!contains all connection
@@ -71,7 +64,6 @@ namespace chaos{
                     bool run;
                     HTTPServerAdapterSetting setting;
 
-                    struct mg_mgr mgr;
                     struct mg_connection *root_connection;
                     struct mg_serve_http_opts s_http_server_opts;
 
@@ -80,12 +72,17 @@ namespace chaos{
                     static void eventHandler(mg_connection *nc,
                                              int ev,
                                              void *ev_data);
-                    void  manageWSHandshake(mg_connection *nc,
-                                            http_message *message);
-                    void sendWSJSONAcceptedConnection(mg_connection *nc,
-                                                      bool accepted,
-                                                      bool close_connection);
+                    void manageWSHandshake(mg_connection *nc,
+                                           http_message *message);
+                    OpcodeShrdPtr composeAcceptOpcode(const std::string& connection_uuid,
+                                                      bool accepted);
+                    OpcodeShrdPtr composeCloseOpcode(const std::string& connection_uuid);
+                    
                     void consumeConenctionMessageQueue(mg_connection *nc);
+                    int _sendDataToConnectionQueue(const std::string& conn_uuid,
+                                                   chaos::common::data::CDBufferUniquePtr data,
+                                                   const EUCMessageOpcode opcode);
+                    void executeOpcodeOnConnection(OpcodeShrdPtr op, mg_connection *nc);
                 protected:
                     void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,

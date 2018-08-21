@@ -76,9 +76,12 @@ namespace chaos {
                 typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;
                 CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
                 
+                /*!
+                 */
                 class HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
                 protected:
+                    struct mg_mgr mgr;
                     //!operation posted during poll execution to send with the nex one
                     LOpcodeShrdPtrQueue post_evt_op_queue;
 
@@ -90,6 +93,20 @@ namespace chaos {
 
                     virtual int closeConnection(const std::string& connection_identifier) = 0;
 
+                    //!find conneciton by uuid
+                    template<typename T>
+                    struct mg_connection* findConnection(const std::string& conenction_uuid) {
+                        struct mg_connection *c = NULL;
+                        for (c = mg_next(&mgr, NULL); c != NULL; c = mg_next(&mgr, c)) {
+                            if(!c->user_data) continue;
+                            ConnectionMetadata<T> *conn_metadata = static_cast<ConnectionMetadata<T> * >(c->user_data);
+                            if(conn_metadata->conn_uuid.compare(conenction_uuid) == 0) {
+                                break;
+                            }
+                        }
+                        return c;
+                    }
+                    
                     void sendHTTPJSONError(mg_connection *nc,
                                            int status_code,
                                            const int error_code,
@@ -102,6 +119,21 @@ namespace chaos {
                         mg_printf(nc, "%s", json_error.c_str());
                     }
 
+                    OpcodeShrdPtr composeJSONErrorResposneOpcode(const std::string& connection_uuid,
+                                                                 const int error_code,
+                                                                 const std::string& error_message) {
+                        chaos::common::data::CDataWrapper err_data_pack;
+                        err_data_pack.addInt32Value("error_code", error_code);
+                        err_data_pack.addStringValue("error_message", error_message);
+                        const std::string json_error = err_data_pack.getCompliantJSONString();
+                        OpcodeShrdPtr op(new Opcode());
+                        op->identifier = connection_uuid;
+                        op->op_type = OpcodeInfoTypeSend;
+                        op->data = chaos::common::data::CDBufferUniquePtr(new chaos::common::data::CDataBuffer(json_error.c_str(), (uint32_t)json_error.size()));
+                        op->data_opcode = EUCMessageOpcodeWhole;
+                        return op;
+                    }
+                    
                     void sendWSJSONError(mg_connection *nc,
                                          const int error_code,
                                          const std::string& error_message,

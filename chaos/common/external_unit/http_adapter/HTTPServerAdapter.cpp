@@ -93,72 +93,91 @@ void HTTPServerAdapter::poller() {
         
         //consume opcode queue
         {
-            LOpcodeShrdPtrQueueReadLock wconnl = post_evt_op_queue.getReadLockObject();
+            LOpcodeShrdPtrQueueReadLock post_queue_lock = post_evt_op_queue.getReadLockObject();
             while(post_evt_op_queue().empty() == false) {
                 OpcodeShrdPtr op = post_evt_op_queue().front();
                 post_evt_op_queue().pop();
-                wconnl->unlock();
-                
-                switch(op->op_type) {
-                    case OpcodeInfoTypeCloseConnection:{
-                        //!op->identifier now is the identifier of the external connection
-                        //search real connection
-                        struct mg_connection *c = NULL;
-                        for (c = mg_next(&mgr, NULL); c != NULL; c = mg_next(&mgr, c)) {
-                            if(!c->user_data) continue;
-                            ConnectionMetadata<HTTPServerAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPServerAdapter> * >(c->user_data);
-                            if(conn_metadata->conn_uuid.compare(op->identifier) == 0) {
-                                break;
+                post_queue_lock->unlock();
+                {
+                    LMapConnectionWriteLock map_connection_lock = map_connection.getWriteLockObject();
+                    switch(op->op_type) {
+                        case OpcodeInfoTypeCloseConnection: {
+                            struct mg_connection *target_connection = findConnection<HTTPServerAdapter>(op->identifier);
+                            if(target_connection) {
+                                executeOpcodeOnConnection(op, target_connection);
                             }
-                        }
-                        if(c) {
-                            ConnectionMetadata<HTTPServerAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPServerAdapter> * >(c->user_data);
-                            LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
+                            //erase connection
                             map_connection().erase(op->identifier);
-                            c->flags |= MG_F_CLOSE_IMMEDIATELY;
-                            delete(conn_metadata);
-                            c->user_data = NULL;
                         }
-                        break;
-                    }
-                        
-                    case OpcodeInfoTypeCloseConnectionForEndpoint:{
-                        LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
-                        for(MapConnectionIterator it = map_connection().begin(),
-                            end = map_connection().end();
-                            it != end;) {
-                            //!op->identifier now is the identifier of the enpoint
-                            if(it->second->external_connection->getEndpointIdentifier().compare(op->identifier) == 0) {
-                                //connection below to the endpoint that need to be removed
-                                struct mg_connection *c = NULL;
-                                for (c = mg_next(&mgr, NULL); c != NULL; c = mg_next(&mgr, c)) {
-                                    if(!c->user_data) continue;
-                                    ConnectionMetadata<HTTPServerAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPServerAdapter> * >(c->user_data);
-                                    if(conn_metadata->conn_uuid.compare(it->second->external_connection->connection_identifier) == 0) {
-                                        break;
-                                    }
-                                }
-                                
-                                
-                                if(c) {
-                                    c->flags |= MG_F_CLOSE_IMMEDIATELY;
-                                }
-                                //remove connection
-                                map_connection().erase(it++);
-                            } else {
-                                ++it;
+                        case OpcodeInfoTypeSend: {
+                            struct mg_connection *target_connection = findConnection<HTTPServerAdapter>(op->identifier);
+                            if(target_connection) {
+                                executeOpcodeOnConnection(op, target_connection);
                             }
+                            break;
                         }
-                        break;
+                        case OpcodeInfoTypeCloseConnectionForEndpoint:{
+                            for(MapConnectionIterator it = map_connection().begin(),
+                                end = map_connection().end();
+                                it != end;) {
+                                //!op->identifier now is the identifier of the enpoint
+                                if(it->second->getEndpointIdentifier().compare(op->identifier) == 0) {
+                                    //connection below to the endpoint that need to be removed
+                                    const std::string connection_uuid = it->second->connection_identifier;
+                                    struct mg_connection *taget_connection = findConnection<HTTPServerAdapter>(connection_uuid);
+                                    op->identifier = connection_uuid;
+                                    op->op_type = OpcodeInfoTypeCloseConnection;
+                                    executeOpcodeOnConnection(op, taget_connection);
+                                    map_connection().erase(it++);
+                                } else {
+                                    ++it;
+                                }
+                            }
+                            break;
+                        }
                     }
-                    default:{break;}
                 }
                 op->wait_termination_semaphore.unlock();
-                wconnl->lock();
+                post_queue_lock->lock();
             }
         }
     }
     INFO << "Leaving thread poller";
+}
+
+void HTTPServerAdapter::executeOpcodeOnConnection(OpcodeShrdPtr op,  mg_connection *target_connection) {
+    switch(op->op_type) {
+        case OpcodeInfoTypeCloseConnection:{
+            //!op->identifier now is the identifier of the external connection
+            //search real connection
+            ConnectionMetadata<HTTPServerAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPServerAdapter> * >(target_connection->user_data);
+            target_connection->flags |= MG_F_SEND_AND_CLOSE;
+            delete(conn_metadata);
+            target_connection->user_data = NULL;
+            break;
+        }
+            
+        case OpcodeInfoTypeSend:{
+            switch (op->data_opcode) {
+                case EUCMessageOpcodeWhole:
+                    mg_send_websocket_frame(target_connection, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                    break;
+                case EUCPhaseStartFragment:
+                    mg_send_websocket_frame(target_connection, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                    break;
+                    
+                case EUCPhaseContinueFragment:
+                    mg_send_websocket_frame(target_connection, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                    break;
+                    
+                case EUCPhaseEndFragment:
+                    mg_send_websocket_frame(target_connection, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                    break;
+            }
+            break;
+        }
+        default:{break;}
+    }
 }
 
 const std::string HTTPServerAdapter::getSerializationType(http_message *http_message) {
@@ -189,56 +208,65 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
     mg_sock_addr_to_str(&nc->sa, addr, sizeof(addr),
                         MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
     INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %uri%addr);
-    LMapEndpointReadLock wl = map_endpoint.getReadLockObject();
+    //lock global queue
+    LOpcodeShrdPtrQueueWriteLock wl_global_queue = post_evt_op_queue.getWriteLockObject();
     MapEndpointIterator endpoint_it = map_endpoint().find(uri);
     if(endpoint_it == map_endpoint().end()) {
-        sendWSJSONError(nc,
-                        -1,
-                        CHAOS_FORMAT("No endpoint found for '%1%'", %uri),
-                        false);
-        sendWSJSONAcceptedConnection(nc,
-                                     false,
-                                     true);
+        const std::string conn_uuid = UUIDUtil::generateUUIDLite();
+        nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
+        post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
+                                                                -1,
+                                                                CHAOS_FORMAT("No endpoint found for '%1%'", %uri)));
+        
+        post_evt_op_queue().push(composeAcceptOpcode(conn_uuid, false));
+        post_evt_op_queue().push(composeCloseOpcode(conn_uuid));
+        
         return;
     }
     
     //check if endpoint can accept more connection
     if(endpoint_it->second->canAcceptMoreConnection() == false) {
-        //write error for no more connection accepted by endpoint
-        sendWSJSONError(nc,
-                        -2,
-                        CHAOS_FORMAT("No more connection accepted by endpoint '%1%'", %uri),
-                        false);
-        sendWSJSONAcceptedConnection(nc,
-                                     false,
-                                     true);
+        const std::string conn_uuid = UUIDUtil::generateUUIDLite();
+        nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
+        post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
+                                                                -1,
+                                                                CHAOS_FORMAT("No more connection accepted by endpoint '%1%'", %uri)));
+        
+        post_evt_op_queue().push(composeAcceptOpcode(conn_uuid, false));
+        post_evt_op_queue().push(composeCloseOpcode(conn_uuid));
     } else {
         //get instance for serializer
         ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitManager::getInstance()->getNewSerializationInstanceForType(s_type);
         if(!serializer.get()) {
-            //write error for no more connection accepted by endpoint
-            sendWSJSONError(nc,
-                            -3,
-                            CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %s_type),
-                            false);
-            sendWSJSONAcceptedConnection(nc,
-                                         false,
-                                         true);
+            const std::string conn_uuid = UUIDUtil::generateUUIDLite();
+            nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
+            post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
+                                                                    -1,
+                                                                    CHAOS_FORMAT("Unable to find the serialization plugin for '%1%'", %uri)));
+            
+            post_evt_op_queue().push(composeAcceptOpcode(conn_uuid, false));
+            post_evt_op_queue().push(composeCloseOpcode(conn_uuid));
         } else {
             //we can create a new connection
             ChaosSharedPtr<ExternalUnitConnection> conn_ptr(new ExternalUnitConnection(this,
                                                                                        endpoint_it->second,
                                                                                        ChaosMoveOperator(serializer)));
-            
             ChaosUniquePtr< ConnectionMetadata<HTTPServerAdapter> > connection_metadata = ChaosUniquePtr< ConnectionMetadata<HTTPServerAdapter> >(new ConnectionMetadata<HTTPServerAdapter>(conn_ptr->connection_identifier, this));
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
-            map_connection().insert(MapConnectionPair(conn_ptr->connection_identifier,
-                                                      ChaosSharedPtr<RemoteConnectionInfo>(new RemoteConnectionInfo(conn_ptr))));
-            //all is gone well so we need to associate the connection metadata to the real connection
+            std::pair<MapConnectionIterator,bool> conn_pair =  map_connection().insert(MapConnectionPair(conn_ptr->connection_identifier,
+                                                                                                         conn_ptr));
             nc->user_data = connection_metadata.release();
-            sendWSJSONAcceptedConnection(nc,
-                                         true,
-                                         false);
+            if(conn_pair.second) {
+                //all is gone well so we need to associate the connection metadata to the real connection
+                post_evt_op_queue().push(composeAcceptOpcode(conn_ptr->connection_identifier, true));
+            } else {
+                post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_ptr->connection_identifier,
+                                                                        -1,
+                                                                        CHAOS_FORMAT("Errore registering the new connection for '%1%'", %uri)));
+                
+                post_evt_op_queue().push(composeAcceptOpcode(conn_ptr->connection_identifier, false));
+                post_evt_op_queue().push(composeCloseOpcode(conn_ptr->connection_identifier));
+            }
         }
     }
 }
@@ -253,7 +281,7 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
             if(conn_it == map_connection().end()) {
                 return;
             }
-            if((err = sendDataToEndpoint(*conn_it->second->external_connection,
+            if((err = sendDataToEndpoint(*conn_it->second,
                                          ChaosMoveOperator(request->buffer)))) {
                 //add error message to the queue
                 //                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
@@ -262,43 +290,6 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
             break;
         }
         default:{break;}
-    }
-}
-
-void HTTPServerAdapter::consumeConenctionMessageQueue(mg_connection *nc) {
-    ConnectionMetadata<HTTPServerAdapter> *connection_metadata = static_cast< ConnectionMetadata<HTTPServerAdapter>* >(nc->user_data);
-    CHAOS_ASSERT(connection_metadata)
-    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-    MapConnectionIterator conn_it = map_connection().find(connection_metadata->conn_uuid);
-    if(conn_it == map_connection().end()) {
-        return;
-    }
-    while(conn_it->second->message_queue.empty() == false) {
-        OpcodeShrdPtr op = conn_it->second->message_queue.front();
-        conn_it->second->message_queue.pop();
-        switch(op->op_type) {
-            case OpcodeInfoTypeSend:{
-                switch (op->data_opcode) {
-                    case EUCMessageOpcodeWhole:
-                        mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseStartFragment:
-                        mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                        
-                    case EUCPhaseContinueFragment:
-                        mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                        
-                    case EUCPhaseEndFragment:
-                        mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                }
-                break;
-            }
-            default:{break;}
-        }
-        op->wait_termination_semaphore.unlock();
     }
 }
 
@@ -317,8 +308,7 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
             break;
         }
         case MG_EV_WEBSOCKET_HANDSHAKE_REQUEST: {
-            connection_metadata->class_instance->manageWSHandshake(nc,
-                                                                   static_cast<http_message*>(ev_data));
+            connection_metadata->class_instance->manageWSHandshake(nc, static_cast<http_message*>(ev_data));
             
             break;
         }
@@ -332,29 +322,37 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
             
         case MG_EV_CLOSE:{
-            LMapConnectionWriteLock wconnl = connection_metadata->class_instance->map_connection.getWriteLockObject();
-            connection_metadata->class_instance->map_connection().erase(connection_metadata->conn_uuid);
-            delete(connection_metadata);
-            nc->user_data = NULL;
+            if(connection_metadata) {
+                LMapConnectionWriteLock wconnl = connection_metadata->class_instance->map_connection.getWriteLockObject();
+                connection_metadata->class_instance->map_connection().erase(connection_metadata->conn_uuid);
+                delete(connection_metadata);
+                nc->user_data = NULL;
+            }
             break;
         }
             
-        case MG_EV_POLL:
-            if(connection_metadata->conn_uuid.compare("") != 0) {
-                connection_metadata->class_instance->consumeConenctionMessageQueue(nc);
-            }
-            break;
+        case MG_EV_POLL: break;
     }
 }
 
-void HTTPServerAdapter::sendWSJSONAcceptedConnection(mg_connection *nc,
-                                                     bool accepted,
-                                                     bool close_connection) {
+OpcodeShrdPtr HTTPServerAdapter::composeAcceptOpcode(const std::string& connection_uuid,
+                                                     bool accepted) {
     chaos::common::data::CDataWrapper err_data_pack;
     err_data_pack.addInt32Value("accepted_connection", accepted);
     const std::string accepted_json = err_data_pack.getCompliantJSONString();
-    mg_send_websocket_frame(nc, WEBSOCKET_OP_TEXT, accepted_json.c_str(), accepted_json.size());
-    if(close_connection){mg_send_websocket_frame(nc, WEBSOCKET_OP_CLOSE, NULL, 0);}
+    OpcodeShrdPtr op(new Opcode());
+    op->identifier = connection_uuid;
+    op->op_type = OpcodeInfoTypeSend;
+    op->data = CDBufferUniquePtr(new CDataBuffer(accepted_json.c_str(), (uint32_t)accepted_json.size()));
+    op->data_opcode = EUCMessageOpcodeWhole;
+    return op;
+}
+
+OpcodeShrdPtr HTTPServerAdapter::composeCloseOpcode(const std::string& connection_uuid) {
+    OpcodeShrdPtr op(new Opcode());
+    op->identifier = connection_uuid;
+    op->op_type = OpcodeInfoTypeCloseConnection;
+    return op;
 }
 
 int HTTPServerAdapter::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
@@ -367,48 +365,50 @@ int HTTPServerAdapter::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
 int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) {
     //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
+    LMapConnectionWriteLock mcwl = map_connection.getWriteLockObject();
     MapEndpointIterator me_it = map_endpoint().find(endpoint.getIdentifier());
     if(me_it == map_endpoint().end()) return 0;
     //at this point no new conneciton can be associated to the endpoint
     me_it->second = NULL;
     map_endpoint().erase(me_it);
-    //set opcode to remove all connection to this endpoint
-    OpcodeShrdPtr op(new Opcode());
-    //    map_endpoint().erase(endpoint.getIdentifier());
-    {
-        LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
-        op->identifier = endpoint.getIdentifier();
-        op->op_type = OpcodeInfoTypeCloseConnectionForEndpoint;
-        post_evt_op_queue().push(op);
+
+    //scan all conenciton and push opcode for close it
+    for(MapConnectionIterator it = map_connection().begin(),
+        end = map_connection().end();
+        it != end;
+        it++) {
+        //!op->identifier now is the identifier of the enpoint
+        if(it->second->getEndpointIdentifier().compare(endpoint.getIdentifier()) == 0) {
+            //connection below to the endpoint that need to be removed
+            closeConnection(it->second->connection_identifier);
+        }
     }
-    //we need to wait that opcode has terminated
-    op->wait_termination_semaphore.wait();
-    
     return 0;
 }
 
 int HTTPServerAdapter::sendDataToConnection(const std::string& connection_identifier,
                                             chaos::common::data::CDBufferUniquePtr data,
                                             const EUCMessageOpcode opcode) {
-    LMapConnectionReadLock wconnl = map_connection.getReadLockObject();
-    MapConnectionIterator conn_it = map_connection().find(connection_identifier);
-    if(conn_it == map_connection().end()) {
-        return 0;
-    }
+    return _sendDataToConnectionQueue(connection_identifier,
+                                      ChaosMoveOperator(data),
+                                      opcode);
+}
+
+int HTTPServerAdapter::_sendDataToConnectionQueue(const std::string& conn_uuid,
+                                                  chaos::common::data::CDBufferUniquePtr data,
+                                                  const EUCMessageOpcode opcode) {
+    LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
     OpcodeShrdPtr op(new Opcode());
-    op->identifier = connection_identifier;
+    op->identifier = conn_uuid;
     op->op_type = OpcodeInfoTypeSend;
     op->data = ChaosMoveOperator(data);
     op->data_opcode = opcode;
-    conn_it->second->message_queue.push(op);
+    post_evt_op_queue().push(op);
     return 0;
 }
 
 int HTTPServerAdapter::closeConnection(const std::string& connection_identifier) {
     LOpcodeShrdPtrQueueWriteLock wconnl = post_evt_op_queue.getWriteLockObject();
-    OpcodeShrdPtr op(new Opcode());
-    op->identifier = connection_identifier;
-    op->op_type = OpcodeInfoTypeCloseConnection;
-    post_evt_op_queue().push(op);
+    post_evt_op_queue().push(composeCloseOpcode(connection_identifier));
     return 0;
 }

@@ -244,7 +244,9 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                 if(is_accept_response) {
                     conn_info.ext_unit_conn->accepted_state = accept_result;
                 } else {
-                    conn_metadata->class_instance->sendWSJSONError(conn, -2, "Accept response is not well formed!");
+                    conn_info.ext_unit_conn->accepted_state = accept_result;
+                    std::string json_string((const char *)wm->data, wm->size);
+                    DBG << json_string;
                 }
             } else {
                 //accepted connection can received data
@@ -275,47 +277,37 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             
         case MG_EV_POLL:{
             //execute opcode for connection
-            conn_metadata->class_instance->consumeOpcode(conn);
+            while(conn_info.opcode_queue.empty() == false) {
+                OpcodeShrdPtr op = conn_info.opcode_queue.front();
+                conn_info.opcode_queue.pop();
+                switch(op->op_type) {
+                    case OpcodeInfoTypeSend: {
+                        switch (op->data_opcode) {
+                            case EUCMessageOpcodeWhole:
+                                mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                            case EUCPhaseStartFragment:
+                                mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                            case EUCPhaseContinueFragment:
+                                mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                            case EUCPhaseEndFragment:
+                                mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
+                                break;
+                        }
+                        break;
+                    }
+                        
+                    case OpcodeInfoTypeCloseConnection: {
+                        break;
+                    }
+                        
+                    default:{break;}
+                }
+                op->wait_termination_semaphore.unlock();
+            }
             break;
         }
-    }
-}
-
-void HTTPClientAdapter::consumeOpcode(struct mg_connection *conn) {
-    //consume opcode queue
-    CHAOS_ASSERT(conn);
-    ConnectionMetadata<HTTPClientAdapter> *conn_metadata = static_cast<ConnectionMetadata<HTTPClientAdapter> *>(conn->user_data);
-    MapConnectionInfoIterator it = map_connection().find(conn_metadata->conn_uuid);
-    if(it == map_connection().end()) return;
-    
-    while(it->second->opcode_queue.empty() == false) {
-        OpcodeShrdPtr op = it->second->opcode_queue.front();
-        it->second->opcode_queue.pop();
-        switch(op->op_type) {
-            case OpcodeInfoTypeSend: {
-                switch (op->data_opcode) {
-                    case EUCMessageOpcodeWhole:
-                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseStartFragment:
-                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseContinueFragment:
-                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT|WEBSOCKET_DONT_FIN, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                    case EUCPhaseEndFragment:
-                        mg_send_websocket_frame(conn, WEBSOCKET_OP_TEXT, op->data->getBuffer(), op->data->getBufferSize());
-                        break;
-                }
-                break;
-            }
-                
-            case OpcodeInfoTypeCloseConnection: {
-                break;
-            }
-                
-            default:{break;}
-        }
-        op->wait_termination_semaphore.unlock();
     }
 }
