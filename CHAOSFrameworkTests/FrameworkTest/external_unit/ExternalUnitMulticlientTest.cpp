@@ -151,6 +151,7 @@ void clientRunner(ChaosSharedPtr<TestClient> client) {
 }
 
 TEST_F(ExternalUnitMulticlientTest, MultithreadingTest) {
+    ended = 0;
     boost::thread_group tg;
     for(int idx = 0; idx < NUMBER_OF_CLIENT; idx++) {
         tg.add_thread(new boost::thread(clientRunner, ChaosSharedPtr<TestClient>(new TestClient(idx))));
