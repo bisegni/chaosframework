@@ -63,14 +63,7 @@ build_ubuntu_14_04_gcc48_test:
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
     - lcov -c -d chaos --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
-    - /tmp/sonar-scanner/bin/sonar-scanner \
-       -Dsonar.branch.name=$CI_COMMIT_REF_NAME \
-       -Dsonar.projectKey=chaosframework \
-       -Dsonar.organization=bisegni-github \
-       -Dsonar.sources=. \
-       -Dsonar.cfamily.build-wrapper-output=bw-output \
-       -Dsonar.host.url=https://sonarcloud.io \
-       -Dsonar.login=f58d1a11f4584e740bc33f3d1cd81291d8c19e56
+    - /tmp/sonar-scanner/bin/sonar-scanner -Dsonar.branch.name=$CI_COMMIT_REF_NAME -Dsonar.projectKey=chaosframework -Dsonar.organization=bisegni-github -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=f58d1a11f4584e740bc33f3d1cd81291d8c19e56
   artifacts:
     paths:
         - 'coverage_html'
