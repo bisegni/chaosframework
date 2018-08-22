@@ -57,7 +57,7 @@ IF (CHAOS_ONLY_DEPENDECY OR
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
-     GIT_TAG master
+     GIT_TAG release-1.8.0
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
      SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
@@ -90,7 +90,7 @@ IF (USE_GPT)
     ExternalProject_Add(
     google_pt
     GIT_REPOSITORY https://github.com/gperftools/gperftools.git
-    GIT_TAG master
+    GIT_TAG perftools-1.6
     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
