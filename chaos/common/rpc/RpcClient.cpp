@@ -79,8 +79,8 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
         DELETE_OBJ_POINTER(submission_result)
         return;
     }
-    
-    RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
+    //Print just when not ok, otherwise to many 
+    //RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
     
     if(submission_result->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
         int err=submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
