@@ -28,7 +28,7 @@ uint32_t future_to_counter = 0;
 uint32_t promises_counter = 0;
 using namespace chaos::common::data;
 
-#define NUMBER_OF_TEST 1000000
+#define NUMBER_OF_TEST 1000
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
