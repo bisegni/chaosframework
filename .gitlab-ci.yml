@@ -186,7 +186,7 @@ build_ubuntu_18_04_gcc73_test:
   only:
     - tags
     - web
-    retry: 2
+  retry: 2
 
 
 build_framework_centos7:
