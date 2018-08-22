@@ -15,23 +15,19 @@ before_script:
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
 
-build_framework_x86_64:
+build_ubuntu_14_04_gcc48:
   tags:
     - chaos
     - docker
     - linux
     - fast
   stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
-    - make  -j $NPROC
-    - make install
-    - cd ccs
-    - /Qt/5.9.3/gcc_64/bin/qmake
-    - make -j $NPROC
+    - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
     key: x86_64_$CI_BUILD_REF_NAME
     paths:
@@ -40,6 +36,7 @@ build_framework_x86_64:
     paths:
         - chaos
         - CHAOSFrameworkTests
+        - bw-output
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
@@ -47,16 +44,16 @@ build_framework_x86_64:
     - web
   retry: 2
 
-build_framework_x86_64_test:
+build_ubuntu_14_04_gcc48_test:
   dependencies:
-    - build_framework_x86_64
+    - build_ubuntu_14_04_gcc48
   tags:
     - chaos
     - docker
     - linux
     - fast
   stage: test
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - apt-get update
     - apt-get -y install lcov
@@ -66,6 +63,14 @@ build_framework_x86_64_test:
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
     - lcov -c -d chaos --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
+    - /tmp/sonar-scanner/bin/sonar-scanner \
+       -Dsonar.branch.name=$CI_COMMIT_REF_NAME \
+       -Dsonar.projectKey=chaosframework \
+       -Dsonar.organization=bisegni-github \
+       -Dsonar.sources=. \
+       -Dsonar.cfamily.build-wrapper-output=bw-output \
+       -Dsonar.host.url=https://sonarcloud.io \
+       -Dsonar.login=f58d1a11f4584e740bc33f3d1cd81291d8c19e56
   artifacts:
     paths:
         - 'coverage_html'
@@ -271,14 +276,14 @@ framework_centos7_deploy:
     - web
   retry: 2
 
-build_framework_x86_64_c98:
+build_ubuntu_14_04_gcc48_c98:
   tags:
     - chaos
     - docker
     - linux
     - fast
   stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON -DCMAKE_BUILD_TYPE=PROFILE .
@@ -299,16 +304,16 @@ build_framework_x86_64_c98:
     - web
   retry: 2
 
-build_framework_x86_64_c98_test:
+build_ubuntu_14_04_gcc48_c98_test:
   dependencies:
-    - build_framework_x86_64_c98
+    - build_ubuntu_14_04_gcc48_c98
   tags:
     - chaos
     - docker
     - linux
     - fast
   stage: test
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
@@ -424,7 +429,7 @@ exp_llvm_scan_coverity:
 pages:
   stage: publish
   dependencies:
-    - build_framework_x86_64_test
+    - build_ubuntu_14_04_gcc48_test
   script:
     - mv coverage_html public
     - ls -la
