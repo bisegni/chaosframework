@@ -41,6 +41,8 @@ using namespace chaos::common::external_unit::http_adapter;
 #define DBG     DBG_LOG(HTTPServerAdapter)
 #define ERR     ERR_LOG(HTTPServerAdapter)
 
+#define LOCK_POST_EVENT_QUEUE LOpcodeShrdPtrQueueWriteLock wl_global_queue = post_evt_op_queue.getWriteLockObject()
+
 HTTPServerAdapter::HTTPServerAdapter():
 run(false),
 root_connection(0){}
@@ -209,9 +211,9 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
                         MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
     INFO << CHAOS_FORMAT("Received new connection for endoint %1% from %2%", %uri%addr);
     //lock global queue
-    LOpcodeShrdPtrQueueWriteLock wl_global_queue = post_evt_op_queue.getWriteLockObject();
     MapEndpointIterator endpoint_it = map_endpoint().find(uri);
     if(endpoint_it == map_endpoint().end()) {
+        LOpcodeShrdPtrQueueWriteLock wl_global_queue = post_evt_op_queue.getWriteLockObject();
         const std::string conn_uuid = UUIDUtil::generateUUIDLite();
         nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
         post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
@@ -226,6 +228,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
     
     //check if endpoint can accept more connection
     if(endpoint_it->second->canAcceptMoreConnection() == false) {
+        LOCK_POST_EVENT_QUEUE;
         const std::string conn_uuid = UUIDUtil::generateUUIDLite();
         nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
         post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
@@ -238,6 +241,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
         //get instance for serializer
         ChaosUniquePtr<serialization::AbstractExternalSerialization> serializer = ExternalUnitManager::getInstance()->getNewSerializationInstanceForType(s_type);
         if(!serializer.get()) {
+            LOCK_POST_EVENT_QUEUE;
             const std::string conn_uuid = UUIDUtil::generateUUIDLite();
             nc->user_data = new ConnectionMetadata<HTTPServerAdapter>(conn_uuid, this);
             post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_uuid,
@@ -257,9 +261,11 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
                                                                                                          conn_ptr));
             nc->user_data = connection_metadata.release();
             if(conn_pair.second) {
+                LOCK_POST_EVENT_QUEUE;
                 //all is gone well so we need to associate the connection metadata to the real connection
                 post_evt_op_queue().push(composeAcceptOpcode(conn_ptr->connection_identifier, true));
             } else {
+                LOCK_POST_EVENT_QUEUE;
                 post_evt_op_queue().push(composeJSONErrorResposneOpcode(conn_ptr->connection_identifier,
                                                                         -1,
                                                                         CHAOS_FORMAT("Errore registering the new connection for '%1%'", %uri)));
@@ -365,12 +371,11 @@ int HTTPServerAdapter::registerEndpoint(ExternalUnitServerEndpoint& endpoint) {
 int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) {
     //lock for write conenction and endpoint
     LMapEndpointWriteLock wl = map_endpoint.getWriteLockObject();
-    LMapConnectionWriteLock mcwl = map_connection.getWriteLockObject();
+    LMapConnectionReadLock mcwl = map_connection.getReadLockObject();
     MapEndpointIterator me_it = map_endpoint().find(endpoint.getIdentifier());
     if(me_it == map_endpoint().end()) return 0;
     //at this point no new conneciton can be associated to the endpoint
     me_it->second = NULL;
-    map_endpoint().erase(me_it);
 
     //scan all conenciton and push opcode for close it
     for(MapConnectionIterator it = map_connection().begin(),
@@ -383,6 +388,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
             closeConnection(it->second->connection_identifier);
         }
     }
+    map_endpoint().erase(me_it);
     return 0;
 }
 

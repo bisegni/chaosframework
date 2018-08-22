@@ -50,7 +50,7 @@ namespace chaos {
                      * the adapter
                      */
                     struct ConnectionInfo {
-                        ChaosSharedMutex smux;
+                        ChaosSharedMutex smutex;
                         const std::string endpoint_url;
                         uint64_t next_reconnection_retry_ts;
                         ChaosSharedPtr<ExternalUnitConnection> ext_unit_conn;
@@ -70,6 +70,8 @@ namespace chaos {
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnectionInfo, LMapConnectionInfo);
                     
                     bool run;
+                    
+                    ChaosAtomic<uint32_t> message_broadcasted;
                     uint32_t poll_counter;
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use

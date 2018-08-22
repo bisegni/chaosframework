@@ -59,7 +59,7 @@ namespace chaos {
                     OpcodeInfoTypeCloseConnectionForEndpoint
                 } OpcodeInfoType;
                 
-                typedef struct Opcode {
+                struct Opcode {
                     //! context sensitive identifier associated to the operation
                     std::string identifier;
                     //! operation type
@@ -70,7 +70,10 @@ namespace chaos {
                     EUCMessageOpcode data_opcode;
                     //some opcode need to notify the termination
                     chaos::WaitSemaphore wait_termination_semaphore;
-                } Opcode;
+                    
+                    Opcode(){}
+                    virtual ~Opcode(){}
+                };
                 
                 typedef ChaosSharedPtr<Opcode> OpcodeShrdPtr;
                 typedef std::queue<OpcodeShrdPtr> OpcodeShrdPtrQueue;

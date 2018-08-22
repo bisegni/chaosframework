@@ -63,6 +63,10 @@ TEST(FutureHelperTests, Base) {
     //boost::thread_group threads;
     CDWComsumerPromise pq;
     CDWComsumerFuture fq;
+    future_counter = 0;
+    future_excpt_counter = 0;
+    future_to_counter = 0;
+    promises_counter = 0;
     ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
     MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(5000,30000));
     MessageRequestDomainFutureHelper::Future        new_shared_future;

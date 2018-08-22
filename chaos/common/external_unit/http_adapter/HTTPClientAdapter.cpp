@@ -35,9 +35,9 @@ using namespace chaos::common::utility;
 using namespace chaos::common::external_unit::http_adapter;
 
 static const char *web_socket_option="Content-Type: application/bson-json\r\n";
-
 HTTPClientAdapter::HTTPClientAdapter():
-run(false){
+run(false),
+message_broadcasted(0){
     if(GlobalConfiguration::getInstance()->hasOption(chaos::InitOption::OPT_REST_POLL_TIME_US)){
         rest_poll_time=GlobalConfiguration::getInstance()->getOption<uint32_t>(chaos::InitOption::OPT_REST_POLL_TIME_US);
     } else {
@@ -149,6 +149,7 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
     op->op_type = OpcodeInfoTypeSend;
     op->data = ChaosMoveOperator(data);
     op->data_opcode = opcode;
+    ChaosWriteLock conn_wl(conn_it->second->smutex);
     conn_it->second->opcode_queue.push(op);
     return 0;
 }
@@ -225,26 +226,26 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
     MapConnectionInfoIterator conn_it = conn_metadata->class_instance->map_connection().find(conn_metadata->conn_uuid);
     if(conn_it == conn_metadata->class_instance->map_connection().end()) return;
     
-    ConnectionInfo& conn_info = *conn_it->second;
+    ConnectionInfoShrdPtr conn_info = conn_it->second;
     switch (event) {
         case MG_EV_CONNECT: {
             DBG<<" HTTP Client Connection event";
             int status = *((int *) event_data);
-            conn_info.ext_unit_conn->online = (status==0);
+            conn_info->ext_unit_conn->online = (status==0);
             break;
         }
         case MG_EV_WEBSOCKET_FRAME: {
             int err = 0;
             struct websocket_message *wm = (struct websocket_message *) event_data;
-            if(conn_info.ext_unit_conn->accepted_state <= 0) {
+            if(conn_info->ext_unit_conn->accepted_state <= 0) {
                 bool is_accept_response = false;
                 int accept_result = -1;
                 //check accepted state
                 checkAcceptResponse(wm, is_accept_response, accept_result);
                 if(is_accept_response) {
-                    conn_info.ext_unit_conn->accepted_state = accept_result;
+                    conn_info->ext_unit_conn->accepted_state = accept_result;
                 } else {
-                    conn_info.ext_unit_conn->accepted_state = accept_result;
+                    conn_info->ext_unit_conn->accepted_state = accept_result;
                     std::string json_string((const char *)wm->data, wm->size);
                     DBG << json_string;
                 }
@@ -252,10 +253,12 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                 //accepted connection can received data
                 ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
                                                                    (uint32_t)wm->size));
-                if((err = conn_metadata->class_instance->sendDataToEndpoint(*conn_info.ext_unit_conn,
+                if((err = conn_metadata->class_instance->sendDataToEndpoint(*conn_info->ext_unit_conn,
                                                                             ChaosMoveOperator(buffer)))) {
                     //weh don't have found the sriealizer
-                    conn_metadata->class_instance->sendWSJSONError(conn, err, "Error sending data to endpoint");
+                    ERR<< CHAOS_FORMAT("Error forwading data from connection uuid %1%", %conn_info->ext_unit_conn->connection_identifier);
+                } else {
+                    conn_metadata->class_instance->message_broadcasted++;
                 }
             }
             break;
@@ -266,20 +269,21 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
             //in this case concnretion info need to be put into  reconnection_queue
             //!beause conenciton need to be reopend
             //reset real connection
-            CHAOS_ASSERT(conn_info.ext_unit_conn.get());
-            conn_info.ext_unit_conn->online = false;
-            conn_info.ext_unit_conn->accepted_state = -1;
+            CHAOS_ASSERT(conn_info->ext_unit_conn.get());
+            conn_info->ext_unit_conn->online = false;
+            conn_info->ext_unit_conn->accepted_state = -1;
             //set retry timeout after five seconds
-            conn_info.next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
+            conn_info->next_reconnection_retry_ts = TimingUtil::getTimestampWithDelay(5000, true);
             delete(conn_metadata);
             break;
         }
             
         case MG_EV_POLL:{
             //execute opcode for connection
-            while(conn_info.opcode_queue.empty() == false) {
-                OpcodeShrdPtr op = conn_info.opcode_queue.front();
-                conn_info.opcode_queue.pop();
+            ChaosWriteLock conn_wl(conn_info->smutex);
+            while(conn_info->opcode_queue.empty() == false) {
+                OpcodeShrdPtr op = conn_info->opcode_queue.front();
+                conn_info->opcode_queue.pop();
                 switch(op->op_type) {
                     case OpcodeInfoTypeSend: {
                         switch (op->data_opcode) {
