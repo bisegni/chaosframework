@@ -4,6 +4,8 @@ include(config/CMakeChaos.txt)
 project(chaosframework)
 include(ExternalProject)
 #include(CTest)
+#enable_testing()
+
 #find git
 find_package(Git REQUIRED)
 
@@ -94,7 +96,7 @@ IF (USE_GPT)
     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
-    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
+    CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_BINARY_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
     LOG_DOWNLOAD ON
     LOG_CONFIGURE ON
     LOG_BUILD ON)

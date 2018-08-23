@@ -88,7 +88,7 @@ namespace chaos {
 #endif
     }
     
-#include <csignal>
+//#include <csignal>
 #ifndef CHAOS_NO_BACKTRACE
     class SignalHandling {
     public:
@@ -145,19 +145,23 @@ namespace chaos {
         bool loaded() const { return _loaded; }
         
         static void handleSignal(int, siginfo_t* info, void* _ctx) {
-            ucontext_t *uctx = (ucontext_t*) _ctx;
             
             backward::StackTrace st;
             void* error_addr = 0;
 #if defined(REG_RIP)// x86_64
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_RIP]);
 #elif defined(REG_EIP) // x86_32
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_EIP]);
 #elif defined(__arm__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.arm_pc);
 #elif defined(__aarch64__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.pc);
 #elif defined(__ppc__) || defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.regs->nip);
 #else
 #endif

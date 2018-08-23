@@ -95,7 +95,7 @@ client_id(_client_id){
 
 TestClient::~TestClient(){}
 void TestClient::handleNewConnection(const std::string& connection_identifier){current_connection = connection_identifier; connection_event_counter++;}
-void TestClient::handleDisconnection(const std::string& connection_identifier){disconnection_event_counter++;}
+void TestClient::handleDisconnection(const std::string& connection_identifier){current_connection.clear(); disconnection_event_counter++;}
 int TestClient::handleReceivedeMessage(const std::string& connection_identifier,
                                              chaos::common::data::CDWUniquePtr message) {
     if(message->hasKey(ECHO_TEST_KEY) &&
@@ -151,6 +151,7 @@ void clientRunner(ChaosSharedPtr<TestClient> client) {
 }
 
 TEST_F(ExternalUnitMulticlientTest, MultithreadingTest) {
+    ended = 0;
     boost::thread_group tg;
     for(int idx = 0; idx < NUMBER_OF_CLIENT; idx++) {
         tg.add_thread(new boost::thread(clientRunner, ChaosSharedPtr<TestClient>(new TestClient(idx))));

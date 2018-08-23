@@ -28,7 +28,7 @@ uint32_t future_to_counter = 0;
 uint32_t promises_counter = 0;
 using namespace chaos::common::data;
 
-#define NUMBER_OF_TEST 1000000
+#define NUMBER_OF_TEST 1000
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
@@ -63,6 +63,10 @@ TEST(FutureHelperTests, Base) {
     //boost::thread_group threads;
     CDWComsumerPromise pq;
     CDWComsumerFuture fq;
+    future_counter = 0;
+    future_excpt_counter = 0;
+    future_to_counter = 0;
+    promises_counter = 0;
     ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
     MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(5000,30000));
     MessageRequestDomainFutureHelper::Future        new_shared_future;
