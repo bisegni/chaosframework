@@ -114,6 +114,8 @@ deviceChannel(NULL),devId(_deviceID) {
 }
 
 CUController::~CUController() {
+    boost::mutex::scoped_lock lock(trackMutext);
+
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<devId;
     stopTracking();
     
@@ -950,7 +952,7 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDat
     if(value){
         chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
         current_dataset[domain].reset(tmp);
-        free(value);
+        delete [] value;
         return current_dataset[domain];
     }
     return current_dataset[domain];
