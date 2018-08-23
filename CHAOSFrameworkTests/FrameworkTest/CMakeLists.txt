@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(TestFramework)
-
+#find_package(GTest REQUIRED)
 IF( CHAOS_SANITIZER MATCHES ${PROJECT_NAME} )
   MESG("ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
@@ -59,8 +59,7 @@ if(UNIX AND NOT APPLE)
       LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib/x86_64-linux-gnu)
 endif()
 ADD_EXECUTABLE(TestFramework ${TestFrameworkSource})
-
-
+#gtest_discover_tests(TestFramework)
 add_dependencies(TestFramework ExamplePlugin)
 
 IF(BUILD_FORCE_STATIC)

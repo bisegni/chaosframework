@@ -25,8 +25,6 @@
 
 using namespace chaos::common::direct_io;
 
-static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
-
 #define DIOCCMC_INFO INFO_LOG(DirectIOClientConnectionMetricCollector)
 #define DIOCCMC_DBG_ DBG_LOG(DirectIOClientConnectionMetricCollector)
 #define DIOCCMC_ERR_ ERR_LOG(DirectIOClientConnectionMetricCollector)

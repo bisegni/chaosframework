@@ -11,7 +11,7 @@
             "osx": {
                 "program": "${workspaceFolder}/build/build-x86_64-Darwin/TestFramework", 
             },
-            "args": ["--gtest_filter=PluginTest.*"],
+            "args": ["--gtest_filter=ExternalUnitTest.Echo"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
