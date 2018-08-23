@@ -90,7 +90,7 @@ IF (USE_GPT)
     ExternalProject_Add(
     google_pt
     GIT_REPOSITORY https://github.com/gperftools/gperftools.git
-    GIT_TAG perftools-1.6
+    GIT_TAG master
     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
