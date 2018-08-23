@@ -77,7 +77,8 @@ build_ubuntu_14_04_gcc48_test:
       -Dsonar.host.url=https://sonarcloud.io
       -Dsonar.login=369dba58f43885fc41db2f9076a67b36aa5b2584
       -Dsonar.cfamily.threads=$NPROC
-      -Dsonar.test.reportPath=build/repost_test.xml
+      -Dsonar.test.reportPath=repost_test.xml
+      -Dsonar.cfamily.gcov.reportsPath=chaos
   artifacts:
     paths:
         - 'coverage_html'
