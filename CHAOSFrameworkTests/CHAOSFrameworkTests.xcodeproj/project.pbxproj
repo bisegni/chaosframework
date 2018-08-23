@@ -81,6 +81,7 @@
 		325A84CC2108630C0036C1CA /* Base64Test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Base64Test.cpp; sourceTree = "<group>"; };
 		326274AE20B421C800BB0C91 /* DirectIOSystemServerChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemServerChannelTest.cpp; sourceTree = "<group>"; };
 		32639FE81F6AAD990049089C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		326C4E1E212AAEEF00DBCD8F /* TestTimer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestTimer; sourceTree = BUILT_PRODUCTS_DIR; };
 		3270978C209B440E00599038 /* ScriptClingTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptClingTest.h; sourceTree = "<group>"; };
 		3277A2302097586400FD7307 /* ScriptClingTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptClingTest.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
@@ -122,7 +123,6 @@
 		32EBC21A1E92507B00785AAC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32EBC2201E9250F900785AAC /* TimerTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimerTask.cpp; sourceTree = "<group>"; };
 		32EBC2211E9250F900785AAC /* TimerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerTask.h; sourceTree = "<group>"; };
-		32F842552010B315004D582D /* TestTimer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = TestTimer; path = /Users/bisegni/sources/chaos/chaos_development/chaosframework/CHAOSFrameworkTests/../usr/local/bin/TestTimer; sourceTree = "<absolute>"; };
 		32F842582010B315004D582D /* FrameworkTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrameworkTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F8425C20162B54004D582D /* FutureHelperTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FutureHelperTest.h; sourceTree = "<group>"; };
 		32F8425D20162B54004D582D /* FutureHelperTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FutureHelperTest.cpp; sourceTree = "<group>"; };
@@ -267,6 +267,7 @@
 				32639FE71F6AAD990049089C /* FrameworkTest */,
 				32F842582010B315004D582D /* FrameworkTest */,
 				3296E0752119E9100021C16B /* ExamplePlugin.chaos_extension */,
+				326C4E1E212AAEEF00DBCD8F /* TestTimer */,
 			);
 			sourceTree = "<group>";
 		};
@@ -411,7 +412,7 @@
 			);
 			name = TestTimer;
 			productName = TestTimer;
-			productReference = 32F842552010B315004D582D /* TestTimer */;
+			productReference = 326C4E1E212AAEEF00DBCD8F /* TestTimer */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -664,6 +665,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				COMPILER_INDEX_STORE_ENABLE = NO;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../usr/local/bin";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -717,6 +719,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
+				COMPILER_INDEX_STORE_ENABLE = NO;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../usr/local/bin";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

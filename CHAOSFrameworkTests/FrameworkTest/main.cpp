@@ -25,9 +25,9 @@
 #include <csignal>
 
 int main(int argc,  char ** argv) {
-    char const * dummy_option[1] = {"--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
+    char const * dummy_option[2] = {"--log-on-console","--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
-    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(1, dummy_option);
+    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(2, dummy_option);
 
     chaos::common::log::LogManager::getInstance()->init();
     ::testing::InitGoogleTest(&argc, argv);
