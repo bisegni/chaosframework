@@ -65,7 +65,7 @@ build_ubuntu_14_04_gcc48_test:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_output=xml:report_test.xml --gtest_repeat=10 --gtest_break_on_failure
     - lcov -c -d chaos --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
     - /tmp/sonar-scanner/bin/sonar-scanner
@@ -75,8 +75,9 @@ build_ubuntu_14_04_gcc48_test:
       -Dsonar.sources=chaos,ChaosMetadataService,chaos_metadata_service_client,chaos_micro_unit_toolkit,chaos_service_common,ccs
       -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.host.url=https://sonarcloud.io
-      -Dsonar.login=f58d1a11f4584e740bc33f3d1cd81291d8c19e56
+      -Dsonar.login=369dba58f43885fc41db2f9076a67b36aa5b2584
       -Dsonar.cfamily.threads=$NPROC
+      -Dsonar.test.reportPath=build/repost_test.xml
   artifacts:
     paths:
         - 'coverage_html'

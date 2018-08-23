@@ -4,6 +4,8 @@ include(config/CMakeChaos.txt)
 project(chaosframework)
 include(ExternalProject)
 #include(CTest)
+#enable_testing()
+
 #find git
 find_package(Git REQUIRED)
 
