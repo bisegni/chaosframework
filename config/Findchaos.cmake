@@ -30,13 +30,19 @@ ELSE()
   SET(BUILD_SHARED_LIBRARIES ON)
 ENDIF()
 
-IF(DEFINED PROJECT_NAME)
+IF ( CHAOS_SANITIZER)
+  IF(DEFINED PROJECT_NAME)
+    SET(FrameworkLib asan ${FrameworkLib})
 
-IF( CHAOS_SANITIZER MATCHES ${PROJECT_NAME} )
-  MESG("ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address")
-  set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
-  SET(FrameworkLib ${FrameworkLib} asan)
+    IF( ${CHAOS_SANITIZER} STREQUAL ${PROJECT_NAME} )
+      MESG("ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
+
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address")
+      set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+
+    ENDIF()
+
+  ENDIF()
 ENDIF()
-ENDIF()
+

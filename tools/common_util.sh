@@ -12,6 +12,7 @@ export LC_ALL="en_US.UTF-8"
 export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
 export CHAOS_MDS_OPT=""
 export CHAOS_DEBUG_CMD=""
+export CHAOS_RUN_ENV="" ## envirnoment to apply to run appliction i.e checkers
 export CHAOS_EXTERNAL_MDS=""
 if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
     CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
