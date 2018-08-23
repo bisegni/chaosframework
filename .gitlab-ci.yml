@@ -73,12 +73,12 @@ build_ubuntu_14_04_gcc48_test:
       -Dsonar.projectKey=chaosframework
       -Dsonar.organization=bisegni-github
       -Dsonar.sources=chaos,ChaosMetadataService,chaos_metadata_service_client,chaos_micro_unit_toolkit,chaos_service_common,ccs
-      -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.host.url=https://sonarcloud.io
       -Dsonar.login=369dba58f43885fc41db2f9076a67b36aa5b2584
+      -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.cfamily.threads=$NPROC
-      -Dsonar.test.reportPath=repost_test.xml
       -Dsonar.cfamily.gcov.reportsPath=chaos
+      -Dsonar.cxx.xunit.reportPath=repost_test.xml
   artifacts:
     paths:
         - 'coverage_html'
