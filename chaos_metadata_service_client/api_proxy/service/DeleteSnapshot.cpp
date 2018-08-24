@@ -30,7 +30,7 @@ API_PROXY_CD_DEFINITION(DeleteSnapshot,
                         "deleteSnapshot")
 
 ApiProxyResult DeleteSnapshot::execute(const std::string& snapshot_name) {
-    common::data::CDataWrapper *message = new common::data::CDataWrapper();
+    cCDWUNiquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);
 }

@@ -21,6 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/unit_server/GetDescription.h>
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::unit_server;
 
@@ -29,7 +30,7 @@ API_PROXY_CD_DEFINITION(GetDescription,
                         "getDescription")
 
 ApiProxyResult GetDescription::execute(const std::string& unitserver_unique_id) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, unitserver_unique_id);
     return callApi(message);
 }

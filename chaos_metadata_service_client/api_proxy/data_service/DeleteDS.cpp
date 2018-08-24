@@ -29,9 +29,7 @@ API_PROXY_CD_DEFINITION(DeleteDS,
                         "data_service",
                         "delete")
 
-/*!
 
- */
 ApiProxyResult DeleteDS::execute(const std::string& ds_unique_id) {
 
     common::data::CDataWrapper *message = new common::data::CDataWrapper();

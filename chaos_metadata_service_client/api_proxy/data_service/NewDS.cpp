@@ -28,9 +28,6 @@ API_PROXY_CD_DEFINITION(NewDS,
                         "data_service",
                         "new")
 
-/*!
-
- */
 ApiProxyResult NewDS::execute(const std::string& ds_unique_id,
                               const std::string& direct_io_address,
                               int32_t direct_io_endpoint) {

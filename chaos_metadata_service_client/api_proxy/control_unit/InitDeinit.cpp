@@ -28,12 +28,9 @@ API_PROXY_CD_DEFINITION(InitDeinit,
                         "control_unit",
                         "initDeinit")
 
-/*!
-
- */
 ApiProxyResult InitDeinit::execute(const std::string& cu_unique_id,
                                    bool init) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
     message->addBoolValue("init", init);
     return callApi(message);

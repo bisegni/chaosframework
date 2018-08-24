@@ -29,7 +29,7 @@ API_PROXY_CD_DEFINITION(DeleteUS,
                         "deleteUS")
 
 ApiProxyResult DeleteUS::execute(const std::string& new_unit_server_uid) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, new_unit_server_uid);
     return callApi(message);
 }

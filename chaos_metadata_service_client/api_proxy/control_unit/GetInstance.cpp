@@ -28,11 +28,9 @@ API_PROXY_CD_DEFINITION(GetInstance,
                         "control_unit",
                         "getInstance")
 
-/*!
 
- */
 ApiProxyResult GetInstance::execute(const std::string& control_unit_uid) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
     //message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, unit_server_uid);
     return callApi(message);

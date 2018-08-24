@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(CreateNewSnapshot,
 
 ApiProxyResult CreateNewSnapshot::execute(const std::string& snapshot_name,
                                           const SnapshotNodeList& node_list) {
-    common::data::CDataWrapper *message = new common::data::CDataWrapper();
+    CDWUNiquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     
     for(SnapshotNodeListConstIterator it = node_list.begin();

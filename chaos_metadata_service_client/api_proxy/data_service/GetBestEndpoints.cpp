@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/data_service/GetBestEndpoints.h>
 
-using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::data_service;
 
@@ -29,11 +29,8 @@ API_PROXY_CD_DEFINITION(GetBestEndpoints,
                         "data_service",
                         "getBestEndpoints")
 
-/*!
- 
- */
 ApiProxyResult GetBestEndpoints::execute(int number_of_result) {
-    common::data::CDataWrapper *message = new common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addInt32Value("count", number_of_result);
     return callApi(message);
 }

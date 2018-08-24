@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(GetVariable,
                         "getVariable")
 
 ApiProxyResult GetVariable::execute(const std::string& variable_name) {
-    CDataWrapper *message = new CDataWrapper();
+    CDWUNiquePtr message(new CDataWrapper());
     message->addStringValue("variable_name", variable_name);
     return callApi(message);
 }

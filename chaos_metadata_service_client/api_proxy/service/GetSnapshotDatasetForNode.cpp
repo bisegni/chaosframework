@@ -32,7 +32,7 @@ API_PROXY_CD_DEFINITION(GetSnapshotDatasetForNode,
 
 ApiProxyResult GetSnapshotDatasetForNode::execute(const std::string& snapshot_name,
                                                   const std::string& node_uid) {
-    CDataWrapper *message = new CDataWrapper();
+    CDWUNiquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);

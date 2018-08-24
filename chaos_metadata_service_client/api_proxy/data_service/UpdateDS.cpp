@@ -29,9 +29,7 @@ API_PROXY_CD_DEFINITION(UpdateDS,
                         "data_service",
                         "update")
 
-/*!
 
- */
 ApiProxyResult UpdateDS::execute(const std::string& ds_unique_id,
                                  const std::string& direct_io_address,
                                  int32_t direct_io_endpoint) {

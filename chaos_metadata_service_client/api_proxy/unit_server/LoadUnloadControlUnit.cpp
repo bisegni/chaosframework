@@ -29,7 +29,7 @@ API_PROXY_CD_DEFINITION(LoadUnloadControlUnit,
 
 ApiProxyResult LoadUnloadControlUnit::execute(const std::string& cu_instance_uid,
                                               const bool load_unload) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_instance_uid);
     message->addBoolValue("load", load_unload);
     return callApi(message);

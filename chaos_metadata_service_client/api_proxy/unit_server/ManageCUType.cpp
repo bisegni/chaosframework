@@ -32,7 +32,7 @@ API_PROXY_CD_DEFINITION(ManageCUType,
 ApiProxyResult ManageCUType::execute(const std::string& unit_server_uid,
                                      const std::string& control_unit_type,
                                      uint32_t operation) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_uid);
     message->addStringValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS, control_unit_type);
     message->addInt32Value("operation", operation);

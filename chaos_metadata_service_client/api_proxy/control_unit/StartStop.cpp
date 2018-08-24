@@ -28,12 +28,10 @@ API_PROXY_CD_DEFINITION(StartStop,
                         "control_unit",
                         "startStop")
 
-/*!
 
- */
 ApiProxyResult StartStop::execute(const std::string& cu_unique_id,
                                    bool start) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
     message->addBoolValue("start", start);
     return callApi(message);
