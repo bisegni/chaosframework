@@ -434,25 +434,25 @@ namespace chaos {
                 
                 //! send custom request to device
                 int sendCustomRequest(const std::string& action,
-                                      common::data::CDataWrapper * const param,
-                                      common::data::CDataWrapper**const result);
+                                      chaos::common::data::CDWUniquePtr param,
+                                      chaos::common::data::CDWUniquePtr& result);
                 
                 //! send custom request to device and return a future
                 ChaosUniquePtr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
-                                                                                                          common::data::CDataWrapper *request_date);
+                                                                                                          chaos::common::data::CDWUniquePtr  request_date);
                 
                 //! send custom message to device
                 void sendCustomMessage(const std::string& action,
-                                       common::data::CDataWrapper * const param);
+                                       chaos::common::data::CDWUniquePtr param);
                 
                 //! Send a request for receive RPC information
-                int checkRPCInformation(chaos::common::data::CDataWrapper **result_information,
+                int checkRPCInformation(chaos::common::data::CDWUniquePtr& result_information,
                                         uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec
                                         );
                 
                 //! Send a request for an echo test
-                int echoTest(chaos::common::data::CDataWrapper * const echo_data,
-                             chaos::common::data::CDataWrapper **echo_data_result,
+                int echoTest(chaos::common::data::CDWUniquePtr echo_data,
+                             chaos::common::data::CDWUniquePtr& echo_data_result,
                              uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //! get datapack between time itervall

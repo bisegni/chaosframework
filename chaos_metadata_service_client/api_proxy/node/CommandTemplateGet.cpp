@@ -40,5 +40,5 @@ ApiProxyResult CommandTemplateGet::execute(const std::string& template_name,
     message->addStringValue("template_name", template_name);
     message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_uid);
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

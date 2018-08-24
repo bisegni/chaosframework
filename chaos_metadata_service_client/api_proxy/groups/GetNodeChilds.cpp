@@ -37,7 +37,7 @@ ApiProxyResult GetNodeChilds::execute(const std::string& node_domain,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     if(node_path.size()){pack->addStringValue("node_path", node_path);}
     pack->addStringValue("group_domain", node_domain);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ChaosUniquePtr<GetNodeChildsHelper> GetNodeChilds::getHelper(CDataWrapper *api_result) {
