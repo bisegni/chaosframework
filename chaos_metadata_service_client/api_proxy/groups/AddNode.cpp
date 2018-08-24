@@ -34,7 +34,7 @@ ApiProxyResult AddNode::execute(const std::string& node_domain,
                                 const std::string& node_name,
                                 const std::string& node_parent_path) {
     
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
+    CDWUniquePtr pack(new CDataWrapper());
     
     pack->addStringValue("node_name", node_name);
     pack->addStringValue("node_domain", node_domain);

@@ -50,7 +50,7 @@ GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+        CDWUniquePtr tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
         
         SnapshotInformationPtr snapshot_information(new SnapshotInformation());
         if(tmp_desc->hasKey("snap_name")) {

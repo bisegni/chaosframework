@@ -36,16 +36,16 @@ API_PROXY_CD_DEFINITION(UpdateProperty,
  */
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
                                        const NodePropertyGroupList& node_property_groups_list) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> update_property_pack(new CDataWrapper());
+    CDWUniquePtr update_property_pack(new CDataWrapper());
     //scan all property group
     for(NodePropertyGroupListConstIterator it = node_property_groups_list.begin();
         it != node_property_groups_list.end();
         it++) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> property_group(new CDataWrapper());
+        CDWUniquePtr property_group(new CDataWrapper());
         
         //scan all property
         for(ParameterSetterListIterator it_p = (*it)->group_property_list.begin();
@@ -59,7 +59,7 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
     message->addCSDataValue("property", *update_property_pack);
     
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }
 
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
@@ -72,12 +72,12 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
 
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
                                        chaos::common::property::PropertyGroupVector& node_property_group_vector) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, node_property_group_vector));
     pg_sdw.serialization_key = "property";
     pg_sdw.serialize()->copyAllTo(*message);
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

@@ -36,7 +36,7 @@ ApiProxyResult UpdateBindType::execute(const ScriptBaseDescription& sbd,
                                        ScriptInstance& scr_inst) {
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
     ScriptInstanceSDWrapper iwd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptInstance, scr_inst));
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
+    CDWUniquePtr api_data(new CDataWrapper());
     api_data->addCSDataValue("script_base_description", *swd.serialize());
     api_data->addCSDataValue("script_instance", *iwd.serialize());
     return callApi(api_data);
@@ -48,7 +48,7 @@ ApiProxyResult UpdateBindType::execute(const chaos::service_common::data::script
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
     StdVectorSDWrapper<ScriptInstance, ScriptInstanceSDWrapper> ni_list_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(std::vector<ScriptInstance>, scr_inst_vec));
     ni_list_wrapper.serialization_key = "vector_script_instance";
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
+    CDWUniquePtr api_data(new CDataWrapper());
     api_data->addCSDataValue("script_base_description", *swd.serialize());
     api_data->appendAllElement(*ni_list_wrapper.serialize());
     return callApi(api_data);

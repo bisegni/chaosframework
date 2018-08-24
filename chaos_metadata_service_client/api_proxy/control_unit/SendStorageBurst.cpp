@@ -41,7 +41,7 @@ ApiProxyResult SendStorageBurst::execute(const std::string& cu_uid,
 ApiProxyResult SendStorageBurst::execute(const ChaosStringSet& cu_set,
                                          chaos::common::data::structured::DatasetBurst& dataset_burst) {
     DatasetBurstSDWrapper db_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(DatasetBurst, dataset_burst));
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
+    CDWUniquePtr message(new chaos::common::data::CDataWrapper());
     for(ChaosStringSetIterator it = cu_set.begin(),
         end = cu_set.end();
         it != end;

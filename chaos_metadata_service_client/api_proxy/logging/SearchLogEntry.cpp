@@ -36,7 +36,7 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
                                        const uint64_t end_ts,
                                        const uint64_t last_sequence_id,
                                        const uint32_t page_length) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
+    CDWUniquePtr pack(new CDataWrapper());
     pack->addStringValue("search_string", search_string);
     if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(start_ts){pack->addInt64Value("start_ts", start_ts);}
