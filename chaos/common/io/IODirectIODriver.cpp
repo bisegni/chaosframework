@@ -200,7 +200,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
     if(!next_client) return NULL;
     
     uint32_t size =0;
-    int err = (int)next_client->device_client_channel->requestLastOutputData(key, (void**)&result, size);
+    int err = (int)next_client->device_client_channel->requestLastOutputData(key, &result, size);
     if(err) {
         IODirectIODriver_LERR_ << "Error retriving data from data service "<<next_client->connection->getServerDescription()<< " with code:" << err;
     } else {

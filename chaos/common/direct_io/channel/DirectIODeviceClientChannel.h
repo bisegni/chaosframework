@@ -69,7 +69,7 @@ namespace chaos {
                     
                     //! Send a request for the last output data
                     int requestLastOutputData(const std::string& key,
-                                              void **result, uint32_t &size);
+                                              char **result, uint32_t &size);
                     
                     //! Send a request for the last output data for a set of key
                     int requestLastOutputData(const ChaosStringVector& keys,

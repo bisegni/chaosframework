@@ -302,7 +302,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
     {
         get_counter = 0;
         consumeGetEvent_counter = 0;
-        void *result = NULL;
+        char *result = NULL;
         uint32_t size = 0;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));

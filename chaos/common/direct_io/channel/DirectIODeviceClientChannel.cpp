@@ -156,7 +156,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
 
 //! Send device serialization with priority
 int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
-                                                       void **result,
+                                                       char **result,
                                                        uint32_t &size) {
     int err = 0;
     DirectIODataPackSPtr answer;
