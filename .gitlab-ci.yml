@@ -438,7 +438,7 @@ exp_llvm_scan_coverity:
 pages:
   stage: publish
   dependencies:
-    - build_ubuntu_14_04_gcc48_test
+    - build_ubuntu_14_04_gcc49_test
   script:
     - mv coverage_html public
     - ls -la
