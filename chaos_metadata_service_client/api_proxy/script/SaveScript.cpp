@@ -32,7 +32,7 @@ ApiProxyResult SaveScript::execute(const Script& script_to_insert,
     ScriptSDWrapper sh(script_to_insert);
     ChaosUniquePtr<common::data::CDataWrapper> data_pack = sh.serialize();
     if(import){data_pack->addBoolValue("import", import);}
-    return callApi(data_pack.release());
+    return callApi(data_pack);
 }
 
 ApiProxyResult  SaveScript::execute( chaos::common::data::CDataWrapper* data_pack,

@@ -41,7 +41,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
     if(last_sequence_id) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain.size()) {pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, domain);}
     pack->addInt32Value("page_length", page_length);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
@@ -60,7 +60,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
         pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
     }
     pack->addInt32Value("page_length", page_length);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ChaosUniquePtr<GetLogForSourceUIDHelper> GetLogForSourceUID::getHelper(CDataWrapper *api_result) {

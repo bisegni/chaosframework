@@ -29,9 +29,6 @@ API_PROXY_CD_DEFINITION(CreateNewSnapshot,
                         "service",
                         "createNewSnapshot")
 
-/*!
- 
- */
 ApiProxyResult CreateNewSnapshot::execute(const std::string& snapshot_name,
                                           const SnapshotNodeList& node_list) {
     common::data::CDataWrapper *message = new common::data::CDataWrapper();

@@ -37,7 +37,7 @@ ApiProxyResult GetLogDomainForSourceUID::execute() {
 ApiProxyResult GetLogDomainForSourceUID::execute(const std::string& source) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ApiProxyResult GetLogDomainForSourceUID::execute(const std::vector<std::string>& source) {
@@ -50,7 +50,7 @@ ApiProxyResult GetLogDomainForSourceUID::execute(const std::vector<std::string>&
         }
         pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
     }
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ChaosUniquePtr<GetLogDomainForSourceUIDHelper> GetLogDomainForSourceUID::getHelper(CDataWrapper *api_result) {

@@ -37,5 +37,5 @@ ApiProxyResult NodeOperation::execute(const std::string& node_uid,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addInt32Value("node_operation", op);
-    return callApi(pack.release());
+    return callApi(pack);
 }

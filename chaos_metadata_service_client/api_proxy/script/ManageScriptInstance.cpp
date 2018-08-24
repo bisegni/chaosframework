@@ -37,7 +37,7 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
     api_data->addStringValue("script_name", script_name);
     api_data->addStringValue("instance_name", instance_name);
     api_data->addBoolValue("create", create);
-    return callApi(api_data.release());
+    return callApi(api_data);
 }
 
 ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
@@ -55,5 +55,5 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
     }
     api_data->finalizeArrayForKey("instance_name");
     api_data->addBoolValue("create", create);
-    return callApi(api_data.release());
+    return callApi(api_data);
 }

@@ -35,5 +35,5 @@ API_PROXY_CD_DEFINITION(CheckAgentHostedProcess,
 ApiProxyResult CheckAgentHostedProcess::execute(const std::string& agent_uid) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
-    return callApi(pack.release());
+    return callApi(pack);
 }

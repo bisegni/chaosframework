@@ -50,7 +50,7 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
         pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
     }
     pack->addInt32Value("page_length", page_length);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ChaosUniquePtr<SearchLogEntryHelper> SearchLogEntry::getHelper(CDataWrapper *api_result) {

@@ -50,5 +50,5 @@ ApiProxyResult SendStorageBurst::execute(const ChaosStringSet& cu_set,
     }
     message->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     db_sdw.serialize()->copyAllTo(*message);
-    return callApi(message.release());
+    return callApi(message);
 }

@@ -39,7 +39,7 @@ ApiProxyResult RemoveNodeAssociation::execute(const std::string& agent_uid,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->addStringValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, associated_node_uid);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ApiProxyResult RemoveNodeAssociation::execute(const std::string& agent_uid,
@@ -51,5 +51,5 @@ ApiProxyResult RemoveNodeAssociation::execute(const std::string& agent_uid,
     assoc_vec_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> multiple_assoc_pack = assoc_vec_sd_wrap.serialize();
     pack->appendAllElement(*multiple_assoc_pack);
-    return callApi(pack.release());
+    return callApi(pack);
 }

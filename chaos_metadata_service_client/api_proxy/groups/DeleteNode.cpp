@@ -39,5 +39,5 @@ ApiProxyResult DeleteNode::execute(const std::string& node_domain,
     pack->addStringValue("node_name", node_name);
     pack->addStringValue("node_domain", node_domain);
     pack->addStringValue("node_parent_path", node_parent_path);
-    return callApi(pack.release());
+    return callApi(pack);
 }

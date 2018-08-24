@@ -41,7 +41,7 @@ ApiProxyResult GetProcessLogEntries::execute(const std::string& node_uid,
     api_data->addInt32Value("number_of_entries", number_of_entries);
     api_data->addBoolValue("asc_ordered", asc);
     api_data->addInt64Value("start_seq", start_seq);
-    return callApi(api_data.release());
+    return callApi(api_data);
 }
 
 void GetProcessLogEntries::deserialize(CDataWrapper *api_result,

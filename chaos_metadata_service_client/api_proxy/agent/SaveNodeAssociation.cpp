@@ -39,7 +39,7 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
     
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->addCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, *assoc_pack);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
@@ -48,7 +48,7 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
 
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->addCSDataValue(AgentNodeDefinitionKey::NODE_ASSOCIATED, node_association);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
@@ -59,6 +59,6 @@ ApiProxyResult SaveNodeAssociation::execute(const std::string& agent_uid,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> multiple_assoc_pack = associationList_sd_wrap.serialize();
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
     pack->appendAllElement(*multiple_assoc_pack);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 

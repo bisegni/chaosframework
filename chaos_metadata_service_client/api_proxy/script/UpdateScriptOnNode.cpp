@@ -36,7 +36,7 @@ ApiProxyResult UpdateScriptOnNode::execute(const std::string& target_node,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, target_node);
     api_data->appendAllElement(*swd.serialize());
-    return callApi(api_data.release());
+    return callApi(api_data);
 }
 
 ApiProxyResult UpdateScriptOnNode::execute(const ChaosStringVector& instance_names,
@@ -51,5 +51,5 @@ ApiProxyResult UpdateScriptOnNode::execute(const ChaosStringVector& instance_nam
     }
     api_data->finalizeArrayForKey(NodeDefinitionKey::NODE_UNIQUE_ID);
     api_data->appendAllElement(*swd.serialize());
-    return callApi(api_data.release());
+    return callApi(api_data);
 }

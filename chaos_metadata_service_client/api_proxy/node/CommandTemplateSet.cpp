@@ -56,6 +56,5 @@ ApiProxyResult CommandTemplateSet::execute(const TemplateList& template_configur
         message->appendCDataWrapperToArray(*template_element);
     }
     message->finalizeArrayForKey("template_list");
-    //call api
-    return callApi(message.release());
+    return callApi(message);
 }

@@ -29,9 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy::groups;
 API_PROXY_CD_DEFINITION(AddNode,
                         "groups",
                         "addNode")
-/*!
- 
- */
+
 ApiProxyResult AddNode::execute(const std::string& node_domain,
                                 const std::string& node_name,
                                 const std::string& node_parent_path) {
@@ -42,5 +40,5 @@ ApiProxyResult AddNode::execute(const std::string& node_domain,
     pack->addStringValue("node_domain", node_domain);
     if(node_parent_path.size()){pack->addStringValue("node_parent_path", node_parent_path);}
     
-    return callApi(pack.release());
+    return callApi(pack);
 }

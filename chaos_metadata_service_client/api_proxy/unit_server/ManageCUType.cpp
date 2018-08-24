@@ -29,9 +29,6 @@ API_PROXY_CD_DEFINITION(ManageCUType,
                         "unit_server",
                         "manageCUType")
 
-/*!
- 
- */
 ApiProxyResult ManageCUType::execute(const std::string& unit_server_uid,
                                      const std::string& control_unit_type,
                                      uint32_t operation) {

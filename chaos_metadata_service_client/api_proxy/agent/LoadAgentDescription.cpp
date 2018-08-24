@@ -37,7 +37,7 @@ ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addBoolValue("load_related_data", load_related_data);
-    return callApi(pack.release());
+    return callApi(pack);
 }
 
 void LoadAgentDescription::deserialize(CDataWrapper *api_result,

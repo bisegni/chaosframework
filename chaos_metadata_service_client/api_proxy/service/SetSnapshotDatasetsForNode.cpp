@@ -29,9 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(SetSnapshotDatasetsForNode,
                         "service",
                         "setSnapshotDatasetsForNode")
-/*!
- 
- */
+
 ApiProxyResult SetSnapshotDatasetsForNode::execute(const std::string& snapshot_name,
                                                    const std::string& node_uid,
                                                    const std::string& dataset_key,
@@ -55,7 +53,7 @@ ApiProxyResult SetSnapshotDatasetsForNode::execute(const std::string& snapshot_n
     	message->appendCDataWrapperToArray(*(i->get()));
     }
     message->finalizeArrayForKey("dataset");
-    return callApi(message.release());
+    return callApi(message);
 }
 
 DatasetValueShrdPtr SetSnapshotDatasetsForNode::createDatasetValue(const std::string& dataset_key,

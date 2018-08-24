@@ -35,5 +35,5 @@ ApiProxyResult SearchScript::execute(const std::string& search_string,
     api_data->addStringValue("search_string", search_string);
     api_data->addInt64Value("last_sequence_id", start_sequence_id);
     api_data->addInt32Value("page_lenght", page_lenght);
-    return callApi(api_data.release());
+    return callApi(api_data);
 }

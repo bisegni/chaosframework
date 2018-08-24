@@ -29,9 +29,6 @@ API_PROXY_CD_DEFINITION(GetSetFullUnitServer,
                         "unit_server",
                         "GetSetFullUnitServer");
 
-/*!
- 
- */
 ApiProxyResult GetSetFullUnitServer::execute(const std::string& unit_server_uid, int reset, const chaos::common::data::CDataWrapper* usdesc) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_uid);

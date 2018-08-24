@@ -29,9 +29,6 @@ API_PROXY_CD_DEFINITION(RestoreSnapshot,
                         "service",
                         "restoreSnapshot")
 
-/*!
- 
- */
 ApiProxyResult RestoreSnapshot::execute(const std::string& snapshot_name) {
     common::data::CDataWrapper *message = new common::data::CDataWrapper();
     message->addStringValue("snapshot_name", snapshot_name);

@@ -39,7 +39,7 @@ ApiProxyResult UpdateBindType::execute(const ScriptBaseDescription& sbd,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addCSDataValue("script_base_description", *swd.serialize());
     api_data->addCSDataValue("script_instance", *iwd.serialize());
-    return callApi(api_data.release());
+    return callApi(api_data);
 }
 
 
@@ -51,5 +51,5 @@ ApiProxyResult UpdateBindType::execute(const chaos::service_common::data::script
     ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addCSDataValue("script_base_description", *swd.serialize());
     api_data->appendAllElement(*ni_list_wrapper.serialize());
-    return callApi(api_data.release());
+    return callApi(api_data);
 }

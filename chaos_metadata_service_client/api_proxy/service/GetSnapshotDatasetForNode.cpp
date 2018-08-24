@@ -29,9 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(GetSnapshotDatasetForNode,
                         "service",
                         "getSnapshotDatasetForNode")
-/*!
- 
- */
+
 ApiProxyResult GetSnapshotDatasetForNode::execute(const std::string& snapshot_name,
                                                   const std::string& node_uid) {
     CDataWrapper *message = new CDataWrapper();

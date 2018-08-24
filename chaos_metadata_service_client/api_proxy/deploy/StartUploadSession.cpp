@@ -34,5 +34,5 @@ API_PROXY_CD_DEFINITION(StartUploadSession,
 
 ApiProxyResult StartUploadSession::execute(const std::string& agent_uid) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
-    return callApi(pack.release());
+    return callApi(pack);
 }
