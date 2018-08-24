@@ -101,7 +101,7 @@ namespace chaos {
                  */
                 ChaosUniquePtr<MessageRequestFuture> _sendRequestWithFuture(const std::string& action_domain,
                                                                            const std::string& action_name,
-                                                                           chaos::common::data::CDataWrapper *request_pack,
+                                                                           chaos::common::data::CDWUniquePtr request_pack,
                                                                            std::string& used_remote_address);
             protected:
                 
@@ -165,7 +165,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& action_domain,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * const message_pack,
+                                 chaos::common::data::CDWUniquePtr message_pack,
                                  bool on_this_thread = false);
                 //!send an rpc request to a remote node
                 /*!
@@ -178,7 +178,7 @@ namespace chaos {
                  */
                 ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
                                                                                       const std::string& action_name,
-                                                                                      chaos::common::data::CDataWrapper *request_pack,
+                                                                                      chaos::common::data::CDWUniquePtr request_pack,
                                                                                       int32_t request_timeout = 1000);
             };
         }

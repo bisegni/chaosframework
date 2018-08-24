@@ -73,8 +73,8 @@ chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
     return request_result.get();
 }
 
-chaos::common::data::CDataWrapper *MessageRequestFuture::detachResult() {
-    return request_result.release();
+CDWUniquePtr MessageRequestFuture::detachResult() {
+    return request_result;
 }
 
 uint32_t const & MessageRequestFuture::getRequestID() {

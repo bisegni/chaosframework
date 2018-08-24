@@ -68,7 +68,8 @@ namespace chaos {
                 void sendHeartBeatForDeviceID(const std::string& identification_id);
                 
                 //!Send echo message to one of mds
-                int sendEchoMessage(CDataWrapper& data, chaos::common::data::CDWUniquePtr& result);
+                int sendEchoMessage(CDWUniquePtr data,
+                                    chaos::common::data::CDWUniquePtr& result);
                 
                 //! Send Unit server registration to MDS
                 /*!
@@ -77,7 +78,7 @@ namespace chaos {
                  \param requestCheck flasg the message has request if it is true
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
-                int sendNodeRegistration(CDataWrapper& node_description,
+                int sendNodeRegistration(CDWUniquePtr node_description,
                                          bool requestCheck = false,
                                          uint32_t millisec_to_wait = 5000);
                 
@@ -88,7 +89,7 @@ namespace chaos {
                  \param requestCheck flasg the message has request if it is true
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
-                int sendNodeLoadCompletion(CDataWrapper& node_information,
+                int sendNodeLoadCompletion(CDWUniquePtr node_information,
                                            bool requestCheck = false,
                                            uint32_t millisec_to_wait = 5000);
                 
@@ -100,12 +101,12 @@ namespace chaos {
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
                 
-                int sendUnitServerCUStates(CDataWrapper& deviceDataset,
+                int sendUnitServerCUStates(CDWUniquePtr deviceDataset,
                                            bool requestCheck = false,
                                            uint32_t millisec_to_wait=5000);
                 
                 //!sendNode heartbeat
-                int sentNodeHealthStatus(CDataWrapper& node_health_data,
+                int sentNodeHealthStatus(CDWUniquePtr node_health_data,
                                          bool request_check = false,
                                          uint32_t millisec_to_wait=5000);
                 
@@ -139,7 +140,7 @@ namespace chaos {
                  \return error code
                  */
                 int getLastDatasetForDevice(const std::string& identificationID,
-                                            CDataWrapper** deviceDefinition,
+                                            CDWUniquePtr& device_definition,
                                             uint32_t millisec_to_wait=5000);
 
                 //! Get full node description
@@ -151,13 +152,14 @@ namespace chaos {
 				\return error code
 				*/
 			   int getFullNodeDescription(const std::string& identificationID,
-										   CDataWrapper** deviceDefinition,
+										   CDWUniquePtr& device_definition,
 										   uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
                  */
-                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisec_to_wait=5000);
+                int getDataDriverBestConfiguration(CDWUniquePtr& device_definition,
+                                                   uint32_t millisec_to_wait=5000);
                 
                 //!Create a new snapshot
                 /*!
@@ -229,16 +231,16 @@ namespace chaos {
                 //! retrieve a dataset related to a snapshot name of a given cu
                 int loadSnapshotNodeDataset(const std::string& snapname,
                 						const std::string& cu_name,
-                                              chaos::common::data::CDataWrapper&data_set,
+                                              chaos::common::data::CDWUniquePtr& data_set,
                                               uint32_t millisec_to_wait=5000);
                 //! create or update a variable
                 int setVariable(const std::string& variable_name,
-                                chaos::common::data::CDataWrapper& variable_value,
+                                chaos::common::data::CDWUniquePtr variable_value,
                                 uint32_t millisec_to_wait=5000);
                 
                 //! retrieve a variable value
                 int getVariable(const std::string& variable_name,
-                                chaos::common::data::CDataWrapper **variable_value,
+                                chaos::common::data::CDWUniquePtr& variable_value,
                                 uint32_t millisec_to_wait=5000);
                 
                 //!remove a variable
@@ -246,8 +248,9 @@ namespace chaos {
                                    uint32_t millisec_to_wait=5000);
                 
                 //!remove a variable
-                int searchVariable(const std::string& variable_name,ChaosStringVector& variable_found,
-                                                   uint32_t millisec_to_wait=5000);
+                int searchVariable(const std::string& variable_name,
+                                   ChaosStringVector& variable_found,
+                                   uint32_t millisec_to_wait=5000);
                 //! Search snapshot for node
                 /*!
                  \param node_uid tha unique id of the node
@@ -274,7 +277,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& action_domain,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper *message_pack);
+                                 chaos::common::data::CDWUniquePtr message_pack);
                 
                 //! call an rpc mds function without data
                 void callMethod(const std::string& action_domain,
@@ -286,7 +289,7 @@ namespace chaos {
                  */
                 ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
                                                                                       const std::string& action_name,
-                                                                                      chaos::common::data::CDataWrapper *request_pack,
+                                                                                      chaos::common::data::CDWUniquePtr request_pack,
                                                                                       int32_t request_timeout = 1000);
                 
             };

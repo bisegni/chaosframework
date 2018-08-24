@@ -87,7 +87,7 @@ namespace chaos{
                 chaos::common::data::CDataWrapper *getResult();
                 
                 
-                chaos::common::data::CDataWrapper *detachResult();
+                chaos::common::data::CDWUniquePtr detachResult();
                 
                 int getError() const;
                 
@@ -96,7 +96,7 @@ namespace chaos{
                 const std::string &getErrorMessage() const;
                 
                 //!return the ownership of the message to the caller
-                chaos::common::data::CDataWrapper *detachMessageData();
+                //chaos::common::data::CDWUniquePtr detachMessageData();
             };
             
         }

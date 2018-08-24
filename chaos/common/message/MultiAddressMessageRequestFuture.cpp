@@ -48,7 +48,7 @@ message_pack(ChaosMoveOperator(_message_pack)){
     //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       message_pack.get(),
+                                                                       ChaosMoveOperator(message_pack),
                                                                        last_used_address);
 }
 
@@ -67,7 +67,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       message_pack.get(),
+                                                                       ChaosMoveOperator(message_pack),
                                                                        last_used_address);
     if(current_future.get()) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
@@ -78,7 +78,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //retrasmission of the datapack
         current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
-                                                                           message_pack.get(),
+                                                                           ChaosMoveOperator(message_pack),
                                                                            last_used_address);
     }
 }
@@ -133,7 +133,7 @@ bool MultiAddressMessageRequestFuture::wait() {
 }
 
 //! try to get the result waiting for a determinate period of time
-chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
+CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
     if(current_future.get())
         return current_future->getResult();
     else
@@ -141,11 +141,11 @@ chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult()
 }
 
 
-chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachResult() {
+CDWUniquePtr MultiAddressMessageRequestFuture::detachResult() {
     if(current_future.get())
         return current_future->detachResult();
     else
-        return NULL;
+        return CDWUniquePtr();
 }
 
 int MultiAddressMessageRequestFuture::getError() const {
@@ -169,6 +169,6 @@ const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
         return ErrorRpcCoce::EC_REQUEST_FUTURE_NOT_AVAILABLE;
 }
 
-chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachMessageData() {
-    return message_pack.release();
-}
+//CDWUniquePtr MultiAddressMessageRequestFuture::detachMessageData() {
+//    return message_pack;
+//}

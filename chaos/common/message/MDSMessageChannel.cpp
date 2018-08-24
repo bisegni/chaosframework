@@ -74,18 +74,16 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
-                hb_message.get());
+                ChaosMoveOperator(hb_message));
 }
 
-int MDSMessageChannel::sendEchoMessage(CDataWrapper& data, CDWUniquePtr& result) {
+int MDSMessageChannel::sendEchoMessage(CDWUniquePtr data, CDWUniquePtr& result) {
     int err = 0;
-    CDWUniquePtr message(new CDataWrapper());
-    data.copyAllTo(*message);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                             NodeDomainAndActionRPC::ACTION_ECHO_TEST,
-                                                                                            message.release());
+                                                                                            ChaosMoveOperator(data));
     if(request_future->wait()) {
-        result.reset(request_future->detachResult());
+        result = ChaosMoveOperator(request_future->detachResult());
     } else {
         result.reset();
         err = request_future->getError();
@@ -94,19 +92,18 @@ int MDSMessageChannel::sendEchoMessage(CDataWrapper& data, CDWUniquePtr& result)
 }
 
 //! Send unit server CU states to MDS
-int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
+int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {
-    int size_bson = 0;
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(deviceDataset.getBSONRawData(size_bson)));
-    data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
+    //ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(device_dataset->getBSONRawData()));
+    device_dataset->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     if(requestCheck){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                 ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                                                                                                data.release());
+                                                                                                ChaosMoveOperator(device_dataset));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -116,7 +113,7 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                    data.get());
+                    data);
     }
     return last_error_code;
 }
@@ -253,9 +250,8 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
  \return if the infromation is found, a CDataWrapper for dataset desprition is returned
  */
 int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification_id,
-                                               CDataWrapper** deviceDefinition,
+                                               CDWUniquePtr& device_definition,
                                                uint32_t millisec_to_wait) {
-    if(!deviceDefinition) return -1000;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     
@@ -267,7 +263,7 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
         DECODE_ERROR(request_future)
         if((last_error_code == ErrorCode::EC_NO_ERROR) &&
            request_future->getResult()) {
-            *deviceDefinition = request_future->detachResult();
+            device_definition = request_future->detachResult();
         }
     }
     return last_error_code;
