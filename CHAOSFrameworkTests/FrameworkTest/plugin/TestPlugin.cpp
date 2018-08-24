@@ -32,14 +32,14 @@ using namespace chaos::cu::control_manager::script::api::plugin;
 TEST(PluginTest, General) {
     PluginLoader loader("ExamplePlugin.chaos_extension");
     ASSERT_TRUE(loader.loaded());
-    
+
     ChaosUniquePtr<PluginDiscover> discover(loader.getDiscover());
-    
+
     ASSERT_GT(discover->getNamesSize(), 0);
     for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
-        
+
         const char * registeredName = discover->getNameForIndex(idx);
-        
+
         ChaosUniquePtr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
         ASSERT_TRUE(inspector.get());
         ASSERT_EQ(inspector->getInputAttributeByNamesSize(registeredName), 0);
@@ -66,8 +66,7 @@ TEST(PluginTest, General) {
             ASSERT_TRUE(test_out);
             ASSERT_EQ(test_in.size()+5, test_out_size);
             ASSERT_NO_THROW(plugin->deinit());
-            delete(test_out);
+            delete [](test_out);
         }
     }
 }
-

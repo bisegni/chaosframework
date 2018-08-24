@@ -52,7 +52,7 @@ int EUTestApiPLugin::execute(const char *in_data,
                              uint32_t *out_data_size){
     std::string in_str(in_data, in_data_size);
     std::string ou_str = "[out]" + in_str;
-    *out_data = (char*)std::malloc(ou_str.size()+1);
+    *out_data = (char*)new char [ou_str.size()+1];
     std::strcpy(*out_data,
                 ou_str.c_str());
     *out_data_size = (uint32_t) ou_str.size();
