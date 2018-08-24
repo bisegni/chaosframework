@@ -424,7 +424,7 @@ int KeyDataStorage::performLiveFetch(const KeyDataStorageDomain dataset_domain,
     if(raw_data) {
         found_dataset.reset(new CDataWrapper(raw_data));
     }
-    free(raw_data);
+    delete[](raw_data);
     return err;
 }
 

@@ -172,7 +172,7 @@ namespace driver{
             char*ptr=ioLiveDataDriver->retriveRawData(dsname+chaos::datasetTypeToPostfix(type),&dim);
             if(ptr){
                 tmp.reset(new chaos::common::data::CDataWrapper(ptr));
-                free(ptr);
+                delete[](ptr);
             }
             
             return tmp;
@@ -184,7 +184,7 @@ namespace driver{
             char*ptr=ioLiveDataDriver->retriveRawData(uid+chaos::datasetTypeToPostfix(type),&dim);
             if(ptr){
                 tmp.reset(new chaos::common::data::CDataWrapper(ptr));
-                free(ptr);
+                delete[](ptr);
             }
             
             return tmp;
