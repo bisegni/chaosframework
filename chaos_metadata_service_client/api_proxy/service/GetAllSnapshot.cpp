@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(GetAllSnapshot,
                         "getAllSnapshot")
 
 ApiProxyResult GetAllSnapshot::execute(const std::string& query_filter) {
-    CDWUNiquePtr message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_query_filter", query_filter);
     return callApi(message);
 }

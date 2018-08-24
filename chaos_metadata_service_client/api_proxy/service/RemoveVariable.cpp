@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(RemoveVariable,
                         "removeVariable")
 
 ApiProxyResult RemoveVariable::execute(const std::string& variable_name) {
-    CDWUNiquePtr message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("variable_name", variable_name);
     return callApi(message);
 }

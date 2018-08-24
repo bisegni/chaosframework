@@ -43,7 +43,7 @@ ApiProxy::~ApiProxy() {}
 
 //! execute an api call
 
-ApiProxyResult ApiProxy::callApi(const chaos::common::data::CDWUniquePtr& api_message) {
+ApiProxyResult ApiProxy::callApi(chaos::common::data::CDWUniquePtr api_message) {
     CHAOS_ASSERT(mn_message)
     return  mn_message->sendRequestWithFuture(group_name,
                                               api_name,

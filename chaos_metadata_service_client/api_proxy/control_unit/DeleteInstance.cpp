@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/control_unit/DeleteInstance.h>
 
-
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 

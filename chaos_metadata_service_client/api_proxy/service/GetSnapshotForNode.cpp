@@ -31,7 +31,7 @@ API_PROXY_CD_DEFINITION(GetSnapshotForNode,
                         "getSnapshotForNode")
 
 ApiProxyResult GetSnapshotForNode::execute(const std::string& snapshot_name) {
-    CDWUNiquePtr message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);
 }
