@@ -82,13 +82,13 @@ void ExecutionPoolManager::timeout() {
     if(eu_uid_list.size() == 0 &&
        execution_pool_list.size() == 0) return;
     
-    CDataWrapper hb_message;
+    CDWUniquePtr hb_message(new CDataWrapper());
     //collect proc stat
     const ProcInfo cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
     const double total_cpu_usage = cur_proc_stat.sys_time+cur_proc_stat.usr_time;
     
     //ad current unit server alias
-    hb_message.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT,
+    hb_message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT,
                               unit_server_alias);
     /*if(eu_uid_list.size()) {
         // make heart beat for the managed eu uid
@@ -112,13 +112,13 @@ void ExecutionPoolManager::timeout() {
             end = execution_pool_list.end();
             it != end;
             it++) {
-            hb_message.appendStringToArray(*it);
+            hb_message->appendStringToArray(*it);
         }
-        hb_message.finalizeArrayForKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST);
+        hb_message->finalizeArrayForKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST);
     }
     
     //send message to mds
     mds_message_channel->sendMessage("script",
                                      "executionPoolHeartbeat",
-                                     &hb_message);
+                                     ChaosMoveOperator(hb_message));
 }

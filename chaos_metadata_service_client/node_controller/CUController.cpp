@@ -90,10 +90,9 @@ deviceChannel(NULL),devId(_deviceID) {
     if(!ioLiveDataDriver.get()) throw CException(-3,
                                                  "Invalid data io driver found",
                                                  __PRETTY_FUNCTION__);
-    CDataWrapper *tmp_data_handler = NULL;
-    if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> best_available_da_ptr(tmp_data_handler);
-        ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
+    CDWUniquePtr tmp_data_handler;
+    if(!mdsChannel->getDataDriverBestConfiguration(tmp_data_handler, millisecToWait)){
+        ioLiveDataDriver->updateConfiguration(tmp_data_handler.get());
     }
     
     channel_keys.resize(DPCK_LAST_DATASET_INDEX + 1);

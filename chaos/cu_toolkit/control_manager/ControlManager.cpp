@@ -591,9 +591,9 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 }
 
 CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException) {
-    chaos_data::CDataWrapper unit_server_status;
-    unit_server_status.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias.size()?unit_server_alias:"No Server Defined");
-    unit_server_status.addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
+    CDWUniquePtr unit_server_status(new CDataWrapper());
+    unit_server_status->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias.size()?unit_server_alias:"No Server Defined");
+    unit_server_status->addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
     
     map<string, ChaosSharedPtr<WorkUnitManagement> >::iterator iter;
@@ -606,10 +606,10 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
         item.addInt32Value(cu_state_key.c_str(), (uint32_t)iter->second->work_unit_instance->getServiceState());
         LCMDBG_ << "[Action] Get CU managment state, \""<<iter->first<<"\" ="<<iter->second->getCurrentState();
         LCMDBG_ << "[Action] Get CU state, \""<<iter->first<<"\" ="<<(uint32_t)iter->second->work_unit_instance->getServiceState();
-        unit_server_status.appendCDataWrapperToArray(item);
+        unit_server_status->appendCDataWrapperToArray(item);
     }
-    unit_server_status.finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CU_STATES);
-    mds_channel->sendUnitServerCUStates(unit_server_status);
+    unit_server_status->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CU_STATES);
+    mds_channel->sendUnitServerCUStates(ChaosMoveOperator(unit_server_status));
     
     return NULL;
 }
@@ -683,23 +683,23 @@ void ControlManager::timeout() {
 
 //!prepare and send registration pack to the metadata server
 void ControlManager::sendUnitServerRegistration() {
-    chaos_data::CDataWrapper unit_server_registration_pack;
+    CDWUniquePtr unit_server_registration_pack(new CDataWrapper());
     //set server alias
-    unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias);
-    unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
+    unit_server_registration_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias);
+    unit_server_registration_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
     if(unit_server_key.size()) {
         //the key need to be forwarded
-        unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_SECURITY_KEY, unit_server_key);
+        unit_server_registration_pack->addStringValue(NodeDefinitionKey::NODE_SECURITY_KEY, unit_server_key);
     }
     
     //add control unit alias
     for(MapCUAliasInstancerIterator iter = map_cu_alias_instancer.begin();
         iter != map_cu_alias_instancer.end();
         iter++) {
-        unit_server_registration_pack.appendStringToArray(iter->first);
+        unit_server_registration_pack->appendStringToArray(iter->first);
     }
-    unit_server_registration_pack.finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
-    mds_channel->sendNodeRegistration(unit_server_registration_pack);
+    unit_server_registration_pack->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
+    mds_channel->sendNodeRegistration(ChaosMoveOperator(unit_server_registration_pack));
 }
 
 // Server registration ack message
