@@ -306,10 +306,10 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         uint32_t size = 0;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
-        free(result);result=NULL;
+        delete[](result);result=NULL;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
-        free(result);result=NULL;
+        delete[](result);result=NULL;
         ASSERT_TRUE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_FALSE(client_channel->requestLastOutputData("requestLastOutputData", &result, size));
         ASSERT_TRUE(result && size);
@@ -317,7 +317,7 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         ASSERT_TRUE(result_cdw->hasKey("key"));
         ASSERT_TRUE(result_cdw->isStringValue("key"));
         ASSERT_STREQ(result_cdw->getStringValue("key").c_str(), "string");
-        free(result);result=NULL;
+        delete[](result);result=NULL;
     }
     for(int idx=0; idx < 100; idx++)
     {
