@@ -25,7 +25,7 @@
 #include <csignal>
 
 int main(int argc,  char ** argv) {
-    char const * dummy_option[2] = {"--log-on-console","--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
+    char const * dummy_option[] = {"--log-on-console","--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
     chaos::GlobalConfiguration::getInstance()->parseStartupParameters(2, dummy_option);
 
