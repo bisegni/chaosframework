@@ -15,7 +15,7 @@ before_script:
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
 
-build_ubuntu_14_04_gcc48:
+build_ubuntu_14_04_gcc49:
   tags:
     - chaos
     - docker
@@ -25,7 +25,7 @@ build_ubuntu_14_04_gcc48:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -CHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
@@ -49,9 +49,9 @@ build_ubuntu_14_04_gcc48:
     - web
   retry: 2
 
-build_ubuntu_14_04_gcc48_test:
+build_ubuntu_14_04_gcc49_test:
   dependencies:
-    - build_ubuntu_14_04_gcc48
+    - build_ubuntu_14_04_gcc49
   tags:
     - chaos
     - docker
