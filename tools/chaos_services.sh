@@ -72,7 +72,7 @@ start_mds(){
     else
         info_mesg "starting MDS..." "($CHAOS_LIVE_SERVERS)($CHAOS_DB_SERVERS)"
         
-        run_proc "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.std.out 2>&1 &" "$MDS_EXEC"
+        run_proc "$CHAOS_SERVICE_ENV $CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.std.out 2>&1 &" "$MDS_EXEC"
         #    echo "$CHAOS_PREFIX/bin/$MDS_EXEC --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT $CHAOS_MDS_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log" >> $CHAOS_PREFIX/log/$MDS_EXEC.std.out
         
         if execute_command_until_ok "grep \"Data Service published\" $CHAOS_PREFIX/log/$MDS_EXEC.$MYPID.log" 120;then
@@ -104,7 +104,7 @@ start_ui(){
         info_mesg "starting " "webui.."
         # check_proc_then_kill "$CHAOS_PREFIX/bin/$UI_EXEC"
         
-        run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.$MYPID.log > $CHAOS_PREFIX/log/$UI_EXEC.$MYPID.std.out 2>&1 &" "$UI_EXEC"
+        run_proc "$CHAOS_SERVICE_ENV $CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.$MYPID.log > $CHAOS_PREFIX/log/$UI_EXEC.$MYPID.std.out 2>&1 &" "$UI_EXEC"
     fi
     #   echo "$CHAOS_PREFIX/bin/$UI_EXEC --conf-file $CHAOS_PREFIX/etc/webui.cfg $port $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/webui.log" >> $CHAOS_PREFIX/log/$UI_EXEC.std.out
 }
@@ -115,7 +115,7 @@ start_agent(){
         
     else
         info_mesg "starting " "agent"
-        run_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/agent.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
+        run_proc "$CHAOS_SERVICE_ENV $CHAOS_PREFIX/bin/$AGENT_EXEC --conf-file  $CHAOS_PREFIX/etc/agent.cfg $CHAOS_OVERALL_OPT --log-on-file --log-file $CHAOS_PREFIX/log/agent.$MYPID.log > $CHAOS_PREFIX/log/$AGENT_EXEC.$MYPID.std.out 2>&1 &" "$AGENT_EXEC"
     fi
 }
 

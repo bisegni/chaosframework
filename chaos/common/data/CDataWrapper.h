@@ -61,12 +61,12 @@ namespace chaos {
                     buffer = 0L;
                     disposeOnDelete = true;
                     if(iBuff && iSize){
-                        buffer = (char*)malloc(iSize);
+                        buffer = (char*)new char[iSize];
                         std::memcpy(buffer, iBuff, iSize);
                     }
                 }
                 ~SerializationBuffer(){
-                    if(disposeOnDelete && buffer) free(buffer);
+                    if(disposeOnDelete && buffer) delete [](buffer);
                 }
                 size_t getBufferLen(){return bSize;};
                 const char *getBufferPtr(){return buffer;};

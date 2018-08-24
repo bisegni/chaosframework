@@ -12,8 +12,11 @@ export LC_ALL="en_US.UTF-8"
 export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
 export CHAOS_MDS_OPT=""
 export CHAOS_DEBUG_CMD=""
-export CHAOS_RUN_ENV="" ## envirnoment to apply to run appliction i.e checkers
+## CHAOS_RUN_ENV="" ## environment to apply to run appliction i.e checkers
+## CHAOS_SERVICE_ENV ## environment to apply to services (mds,webui,agent)
 export CHAOS_EXTERNAL_MDS=""
+
+
 if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
     CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
 fi
@@ -537,25 +540,33 @@ test_services(){
 	return 1
     fi
 }
-start_services(){
-
-    if $tools/chaos_services.sh start mds; then
-	ok_mesg "chaos start MDS/CDS"
+services(){
+	command_line="$1"
+	if $tools/chaos_services.sh $command_line mds; then
+	ok_mesg "chaos $command_line MDS/CDS"
 
     else
-	nok_mesg "chaos start MDS/CDS"
+	nok_mesg "chaos $command_line MDS/CDS"
 	return 1
     fi
 
     
-    if $tools/chaos_services.sh start webui; then
-	ok_mesg "chaos start WEBUI, sleeping 10s"
+    if $tools/chaos_services.sh $command_line webui; then
+	ok_mesg "chaos $command_line WEBUI, sleeping 10s"
 	sleep 10
     else
-	nok_mesg "chaos start WEBUI"
+	nok_mesg "chaos $command_line WEBUI"
 	return 1
     fi
     return 0
+}
+stop_services(){
+	services "stop"
+}
+
+start_services(){
+	services "start"
+    
 }
 start_mds(){
     if $tools/chaos_services.sh start mds; then

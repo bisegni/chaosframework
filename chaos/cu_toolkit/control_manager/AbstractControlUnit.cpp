@@ -369,7 +369,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                                           &AbstractControlUnit::_submitStorageBurst,
                                                                           ControlUnitNodeDomainAndActionRPC::ACTION_STORAGE_BURST,
                                                                           "Execute a storage burst on control unit");
-    action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, DataType::TYPE_STRING, "Tag asosciated to the stored data during burst");
+    action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, DataType::TYPE_STRING, "Tag associated to the stored data during burst");
     action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE, DataType::TYPE_INT32, "The type of burst");
     action_description->addParam(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE, DataType::TYPE_UNDEFINED, "The value of the burst is defined by the type");
     
@@ -1473,7 +1473,7 @@ chaos::common::data::CDataWrapper* AbstractControlUnit::_submitStorageBurst(CDat
         ACULERR_ << CHAOS_FORMAT("The value is mandatory for burst %1%", %data->getJSONString());
         return NULL;
     }
-    
+    ACULDBG_<<"Enabling burst:"<<data->getCompliantJSONString();
     LQueueBurstWriteLock wl = burst_queue.getWriteLockObject();
     burst_queue().push(burst);
     return NULL;
@@ -2025,6 +2025,7 @@ void AbstractControlUnit::manageBurstQueue() {
             }
             burst_queue().pop();
             //set the tag for burst
+            ACULDBG_<<"===Start Burst tag:'"<<current_burst->dataset_burst->tag<<"' ====";
             key_data_storage->addTag(current_burst->dataset_burst->tag);
             key_data_storage->setTimingConfigurationBehaviour(false);
             key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeHistory);
@@ -2037,6 +2038,8 @@ void AbstractControlUnit::manageBurstQueue() {
         
         if(!current_burst->active(timestamp_acq_cached_value->getValuePtr<int64_t>())) {
             //remove the tag for the burst
+            ACULDBG_<<"=== End Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
+
             key_data_storage->removeTag(current_burst->dataset_burst->tag);
             key_data_storage->setTimingConfigurationBehaviour(true);
             key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeUndefined);

@@ -95,6 +95,8 @@ CDataWrapper *SendStorageBurst::execute(CDataWrapper *api_data,
         batch_data->addStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, chaos::ControlUnitNodeDomainAndActionRPC::ACTION_STORAGE_BURST);
         batch_data->addCSDataValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *burst_ser);
         //launch the batch command
+        CU_RNU_DBG<<"Sending Command:"<<batch_data->getCompliantJSONString();
+
         command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::node::SendRpcCommand)),
                                                        batch_data.release());
     }

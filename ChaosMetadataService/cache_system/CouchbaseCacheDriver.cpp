@@ -315,7 +315,7 @@ int CouchbaseCacheDriver::updateConfig() {
         CCDLDBG_ << "session params:"<<create_options.v.v3.connstr;
     }
     
-    lcb_U32 newval = 2000000; // Set to 4 seconds
+    lcb_U32 newval = COUCHBASE_DEFAULT_TIMEOUT; 
     if((last_err=lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_OP_TIMEOUT, &newval))!=LCB_SUCCESS){
         CCDLERR_<< "Cannot set OP Timeout -> " << lcb_strerror(NULL, last_err);
         return -2;

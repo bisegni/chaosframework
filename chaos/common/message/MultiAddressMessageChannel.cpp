@@ -154,12 +154,12 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
                                              CDataWrapper *message_pack,
                                              bool on_this_thread) {
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
-    if(service) {
+    if(service ) {
         MessageChannel::sendMessage(service->ip_port,
                                     action_domain,
                                     action_name,
                                     message_pack);
-        DEBUG_CODE(MAMC_DBG << "Sent message to:" << service->ip_port;)
+        DEBUG_CODE(MAMC_DBG << "Sent message dom:'"<<action_domain<<"' action:'"<<action_name<<"' port:'" << service->ip_port<<"'" " msg:"<<(message_pack?message_pack->getCompliantJSONString():"NULL");)
     }
     
 }
@@ -172,12 +172,13 @@ ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWit
     ChaosUniquePtr<MessageRequestFuture> result;
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
     bool has_been_found_a_server = (service!=NULL);
-    if(has_been_found_a_server) {
+    if(has_been_found_a_server ) {
         result = MessageChannel::sendRequestWithFuture((used_remote_address = service->ip_port),
                                                        action_domain,
                                                        action_name,
                                                        request_pack);
-        DEBUG_CODE(MAMC_DBG << "Sent request to:" << used_remote_address;)
+        DEBUG_CODE(MAMC_DBG << "Sent Future message dom:'"<<action_domain<<"' action:'"<<action_name<<"' port:'" << service->ip_port<<"'" " msg:"<<(request_pack?request_pack->getCompliantJSONString():"NULL");)
+
     } else {
         used_remote_address.clear();
     }

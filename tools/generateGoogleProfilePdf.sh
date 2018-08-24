@@ -17,5 +17,10 @@ for heapf in $heapls;do
 	else
 	    echo "## error processing $heapf"
 	fi
+	if google-pprof $2/$pname "$heapf" --inuse_objects --lines --heapcheck  --edgefraction=1e-10 --nodefraction=1e-10 --web > $pname.$ppid.svg;then
+	    echo "* generated $pname.$ppid.svg"
+	else
+	    echo "## error processing $heapf"
+	fi
     fi
 done

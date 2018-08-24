@@ -123,7 +123,7 @@ bool AttributeValue::setStringValue(const std::string& value,
     CHAOS_ASSERT(value_buffer)
     std::strncpy(static_cast<char*>(value_buffer),
                  value.c_str(),
-                 size-1);
+                 size);
     return true;
 }
 
