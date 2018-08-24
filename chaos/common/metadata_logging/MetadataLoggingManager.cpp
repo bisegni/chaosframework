@@ -127,9 +127,9 @@ void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
     
     //detach the entry from the queue
     element_policy.elementHasBeenDetached = true;
-    
+    CDWUniquePtr lentry_uptr(log_entry);
     if(message_channel) {
-        if((err = sendLogEntry(log_entry))) {
+        if((err = sendLogEntry(ChaosMoveOperator(lentry_uptr)))) {
             MLM_ERR << "Error forwarding log entry with code:" << err;
             //log entry need to be resubmitted or stored on disk (in future version)
             //delete(log_entry);
@@ -144,14 +144,14 @@ void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
     }
 }
 
-int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_entry) {
+int MetadataLoggingManager::sendLogEntry(CDWUniquePtr log_entry) {
     CHAOS_ASSERT(getServiceState() == 1);
 
     int err = 0;
     //send message to mds and wait for ack
     ChaosUniquePtr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
                                                                                                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
-                                                                                                        log_entry,
+                                                                                                        ChaosMoveOperator(log_entry),
                                                                                                         2000);
     //wait for ack
     if(log_future->wait()) {

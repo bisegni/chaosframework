@@ -74,7 +74,7 @@ chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
 }
 
 CDWUniquePtr MessageRequestFuture::detachResult() {
-    return request_result;
+    return ChaosMoveOperator(request_result);
 }
 
 uint32_t const & MessageRequestFuture::getRequestID() {

@@ -142,18 +142,18 @@ namespace chaos {
                 int getLastDatasetForDevice(const std::string& identificationID,
                                             CDWUniquePtr& device_definition,
                                             uint32_t millisec_to_wait=5000);
-
+                
                 //! Get full node description
-			   /*!
-				Return the full description of the node
-				\param identificationID id for wich we need to get the network address information
-				\param deviceDefinition this is the handle to the pointer representing the description
-				\param millisec_to_wait delay after wich the wait is interrupt
-				\return error code
-				*/
-			   int getFullNodeDescription(const std::string& identificationID,
-										   CDWUniquePtr& device_definition,
-										   uint32_t millisec_to_wait=5000);
+                /*!
+                 Return the full description of the node
+                 \param identificationID id for wich we need to get the network address information
+                 \param deviceDefinition this is the handle to the pointer representing the description
+                 \param millisec_to_wait delay after wich the wait is interrupt
+                 \return error code
+                 */
+                int getFullNodeDescription(const std::string& identificationID,
+                                           CDWUniquePtr& device_definition,
+                                           uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
@@ -230,12 +230,12 @@ namespace chaos {
                 
                 //! retrieve a dataset related to a snapshot name of a given cu
                 int loadSnapshotNodeDataset(const std::string& snapname,
-                						const std::string& cu_name,
-                                              chaos::common::data::CDWUniquePtr& data_set,
-                                              uint32_t millisec_to_wait=5000);
+                                            const std::string& cu_name,
+                                            chaos::common::data::CDataWrapper& data_set,
+                                            uint32_t millisec_to_wait=5000);
                 //! create or update a variable
                 int setVariable(const std::string& variable_name,
-                                chaos::common::data::CDWUniquePtr variable_value,
+                                chaos::common::data::CDataWrapper& variable_value,
                                 uint32_t millisec_to_wait=5000);
                 
                 //! retrieve a variable value
@@ -288,9 +288,9 @@ namespace chaos {
                  \param request_pack is the data to forward to the rpc request, memory is internally managed by roc subsystem
                  */
                 ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
-                                                                                      const std::string& action_name,
-                                                                                      chaos::common::data::CDWUniquePtr request_pack,
-                                                                                      int32_t request_timeout = 1000);
+                                                                                       const std::string& action_name,
+                                                                                       chaos::common::data::CDWUniquePtr request_pack = chaos::common::data::CDWUniquePtr(),
+                                                                                       int32_t request_timeout = 1000);
                 
             };
         }

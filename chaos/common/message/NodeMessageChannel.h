@@ -77,7 +77,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& node_id,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * const message_pack);
+                                 chaos::common::data::CDWUniquePtr message_pack);
                 /*!
                  \brief send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
                  been received the method return with a NULL pointer
@@ -88,15 +88,15 @@ namespace chaos {
                  \param on_this_thread notify when the message need to be sent synCronusly or in async  way
                  \return the answer of the request, a null value mean that the wait time is expired
                  */
-                common::data::CDataWrapper* sendRequest(const std::string& node_id,
-                                                        const std::string& action_name,
-                                                        chaos::common::data::CDataWrapper *request_pack,
-                                                        int32_t millisec_to_wait=-1);
+                chaos::common::data::CDWUniquePtr sendRequest(const std::string& node_id,
+                                                              const std::string& action_name,
+                                                              chaos::common::data::CDWUniquePtr request_pack,
+                                                              int32_t millisec_to_wait=-1);
                 
                 //!send an rpc request to a remote node
                 ChaosUniquePtr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
                                                                           const std::string& action_name,
-                                                                          chaos::common::data::CDataWrapper *request_pack);
+                                                                          chaos::common::data::CDWUniquePtr request_pack);
                 
                 //!Send a request for receive RPC information
                 /*!
@@ -106,7 +106,7 @@ namespace chaos {
                 ChaosUniquePtr<MessageRequestFuture> checkRPCInformation(const std::string& node_id);
                 
                 //!Send a request for an echo test
-                ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
+                ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDWUniquePtr echo_data);
                 
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
