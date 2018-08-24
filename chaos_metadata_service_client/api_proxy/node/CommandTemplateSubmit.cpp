@@ -35,7 +35,7 @@ API_PROXY_CD_DEFINITION(CommandTemplateSubmit,
  
  */
 ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& submission_task_list) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     for(TemplateSubmissionListConstIterator it = submission_task_list.begin();
         it != submission_task_list.end();
         it++) {
@@ -53,5 +53,5 @@ ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& subm
     }
     message->finalizeArrayForKey("submission_task");
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

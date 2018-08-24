@@ -36,11 +36,11 @@ API_PROXY_CD_DEFINITION(ForwardNodeRpcMessage,
 ApiProxyResult ForwardNodeRpcMessage::execute(const std::string& node_uid,
                                               const std::string& action_name,
                                               const CDWUniquePtr& message_data) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     if(message_data.get()) {
         message->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_data);
     }
-    return callApi(message.release());
+    return callApi(message);
 }
