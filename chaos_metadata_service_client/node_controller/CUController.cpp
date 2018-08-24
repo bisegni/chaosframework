@@ -155,23 +155,12 @@ void CUController::deviceAvailabilityChanged(const std::string& device_id,
 
 void CUController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
-    CDataWrapper *tmp_data_handler = NULL;
+    CDWUniquePtr tmp_data_handler;
     CHAOS_ASSERT(deviceChannel)
     LDBG_<<"UPDATING \""<<devId<<"\"";
-    /*
-     *  if(deviceChannel==NULL){
-     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Device Channel not still ready...";
-     return;
-     
-     }
-     */
-    err = mdsChannel->getLastDatasetForDevice(devId, &tmp_data_handler, millisecToWait);
-    if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) return;
-    
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> lastDeviceDefinition(tmp_data_handler);
-    
-    datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
-    
+    err = mdsChannel->getLastDatasetForDevice(devId, tmp_data_handler, millisecToWait);
+    if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler.get()) return;
+    datasetDB.addAttributeToDataSetFromDataWrapper(*tmp_data_handler);
 }
 
 int CUController::setScheduleDelay(uint64_t microseconds) {
@@ -286,11 +275,11 @@ int CUController::getType(std::string& control_unit_type) {
 int CUController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;
-    CDataWrapper initConf;
-    datasetDB.fillDataWrapperWithDataSetDescription(initConf);
+    CDWUniquePtr init_conf(new CDataWrapper());
+    datasetDB.fillDataWrapperWithDataSetDescription(*init_conf);
     
     //initialize the devica with the metadataserver data
-    err = deviceChannel->initDevice(&initConf, millisecToWait);
+    err = deviceChannel->initDevice(ChaosMoveOperator(init_conf), millisecToWait);
     //configure the live data with the same server where the device write
     return err;
 }
@@ -346,16 +335,16 @@ uint64_t CUController::getState(CUStateKey::ControlUnitState& deviceState) {
 }
 
 int CUController::getChannelsNum(){
-    return channel_keys.size();
+    return (int)channel_keys.size();
 }
 int CUController::setAttributeValue(string& attributeName, int32_t attributeValue) {
     return setAttributeValue(attributeName.c_str(), attributeValue);
 }
 
 int CUController::setAttributeValue(const char *attributeName, int32_t attributeValue) {
-    CDataWrapper attributeValuePack;
-    attributeValuePack.addInt32Value(attributeName, attributeValue);
-    return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
+    CDWUniquePtr attr_value_pack(new CDataWrapper());
+    attr_value_pack->addInt32Value(attributeName, attributeValue);
+    return deviceChannel->setAttributeValue(ChaosMoveOperator(attr_value_pack), millisecToWait);
 }
 
 int CUController::setAttributeValue(string& attributeName, double attributeValue) {
@@ -363,9 +352,9 @@ int CUController::setAttributeValue(string& attributeName, double attributeValue
 }
 
 int CUController::setAttributeValue(const char *attributeName, double attributeValue) {
-    CDataWrapper attributeValuePack;
-    attributeValuePack.addDoubleValue(attributeName, attributeValue);
-    return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
+    CDWUniquePtr attr_value_pack(new CDataWrapper());
+    attr_value_pack->addDoubleValue(attributeName, attributeValue);
+    return deviceChannel->setAttributeValue(ChaosMoveOperator(attr_value_pack), millisecToWait);
 }
 
 int CUController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
@@ -598,7 +587,8 @@ int CUController::getCommandState(CommandState& command_state) {
 }
 
 int CUController::killCurrentCommand() {
-    return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
+    CDWUniquePtr result;
+    return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, CDWUniquePtr(), result, millisecToWait);
 }
 
 int CUController::flushCommandStateHistory() {
