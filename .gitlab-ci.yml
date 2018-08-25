@@ -78,7 +78,7 @@ build_ubuntu_14_04_gcc49_test:
       -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.cfamily.threads=$NPROC
       -Dsonar.cfamily.gcov.reportsPath=.
-      -Dsonar.cxx.xunit.reportPath=repost_test.xml
+      -Dsonar.cxx.xunit.reportPath=report_test.xml
   artifacts:
     paths:
         - 'coverage_html'
