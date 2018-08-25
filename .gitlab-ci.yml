@@ -61,13 +61,14 @@ build_ubuntu_14_04_gcc49_test:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
     - apt-get update
-    - apt-get -y install lcov
+    - apt-get -y install lcov gcovr
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_output=xml:report_test.xml --gtest_repeat=10 --gtest_break_on_failure
     - lcov -c -d chaos --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
+    - gcovr -k -r chaos --object-directory=chaos
     - /tmp/sonar-scanner/bin/sonar-scanner
       -Dsonar.branch.name=$CI_COMMIT_REF_NAME
       -Dsonar.projectKey=chaosframework
@@ -82,8 +83,8 @@ build_ubuntu_14_04_gcc49_test:
   artifacts:
     paths:
         - 'coverage_html'
-    expire_in: 1 hour
-  coverage: '/^TOTAL.*\s+(\d+\%)$/'
+    expire_in: 2 hour
+  coverage: '/Code coverage: \d+\.\d+/'
   only:
     - tags
     - web
