@@ -39,7 +39,6 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
-message_data(NULL),
 us_can_start(false),
 phase(USAP_ACK_US){
     list_autoload_cu_current = list_autoload_cu.end();
@@ -66,7 +65,7 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                             UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                             UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK);
-    message_data = data;
+    message_data.reset(new CDataWrapper(data->getBSONRawData()));
 }
 
 // inherited method
@@ -93,7 +92,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
                     sendMessage(*request,
-                                message_data);
+                                ChaosMoveOperator(message_data));
                     break;
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
@@ -161,7 +160,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*request,
-                                autoload_pack.get());
+                                ChaosMoveOperator(autoload_pack));
                     break;
                 }
                     

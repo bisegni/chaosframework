@@ -72,7 +72,7 @@ void SubmitBatchCommand::acquireHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        command_instance.get());
+                        ChaosMoveOperator(command_instance));
             BC_END_RUNNING_PROPERTY
             break;
         }

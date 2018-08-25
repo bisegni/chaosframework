@@ -97,23 +97,23 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::createRequest(const std::string& re
 }
 
 void MDSBatchCommand::sendRequest(RequestInfo& request_info,
-                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+                                  CDWUniquePtr message) throw (chaos::CException) {
     CHAOS_ASSERT(message_channel)
     
     request_info.request_future = message_channel->sendRequestWithFuture(request_info.remote_address,
                                                                          request_info.remote_domain,
                                                                          request_info.remote_action,
-                                                                         message);
+                                                                         ChaosMoveOperator(message));
     request_info.phase = MESSAGE_PHASE_SENT;
 }
 
 void MDSBatchCommand::sendMessage(RequestInfo& request_info,
-                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+                                  CDWUniquePtr message) throw (chaos::CException) {
     CHAOS_ASSERT(message_channel)
     message_channel->sendMessage(request_info.remote_address,
                                  request_info.remote_domain,
                                  request_info.remote_action,
-                                 message);
+                                 ChaosMoveOperator(message));
     request_info.phase = MESSAGE_PHASE_COMPLETED;
 }
 
