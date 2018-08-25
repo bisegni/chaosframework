@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(CommandTemplateSet,
                         "system",
                         "commandTemplateSet")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateSet::execute(const TemplateList& template_configurations) {
     CDWUniquePtr message(new CDataWrapper());
     for(TemplateListConstIterator it = template_configurations.begin();

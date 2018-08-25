@@ -30,9 +30,6 @@ API_PROXY_CD_DEFINITION(ForwardNodeRpcMessage,
                         "system",
                         "forwardNodeRpcMessage")
 
-/*!
- 
- */
 ApiProxyResult ForwardNodeRpcMessage::execute(const std::string& node_uid,
                                               const std::string& action_name,
                                               const CDWUniquePtr& message_data) {

@@ -32,9 +32,7 @@ API_PROXY_CD_DEFINITION(GetPropertyDefaultValues,
 
 ApiProxyResult GetPropertyDefaultValues::execute(const std::string& node_unique_id) {
     CDWUniquePtr message(new CDataWrapper());
-    //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
-    //call api
     return callApi(message);
 }
 

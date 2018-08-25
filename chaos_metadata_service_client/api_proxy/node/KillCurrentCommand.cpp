@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(KillCurrentCommand,
                         "system",
                         "killCurrentCommand")
 
-/*!
- 
- */
 ApiProxyResult KillCurrentCommand::execute(const std::string& node_uid) {
     CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);

@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(CommandTemplateSearch,
                         "system",
                         "commandTemplateSearch")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateSearch::execute(const CommandUIDList& uid_list) {
     CDWUniquePtr message(new CDataWrapper());
     for(CommandUIDListConstIterator it = uid_list.begin();
@@ -42,6 +39,5 @@ ApiProxyResult CommandTemplateSearch::execute(const CommandUIDList& uid_list) {
         message->appendStringToArray(*it);
     }
     message->finalizeArrayForKey("cmd_uid_fetch_list");
-    //call api
     return callApi(message);
 }

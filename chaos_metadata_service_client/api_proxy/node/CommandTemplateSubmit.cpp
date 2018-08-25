@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(CommandTemplateSubmit,
                         "system",
                         "commandTemplateSubmit")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& submission_task_list) {
     CDWUniquePtr message(new CDataWrapper());
     for(TemplateSubmissionListConstIterator it = submission_task_list.begin();

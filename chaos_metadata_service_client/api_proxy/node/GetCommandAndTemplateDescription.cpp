@@ -30,9 +30,6 @@ API_PROXY_CD_DEFINITION(GetCommandAndTemplateDescription,
                         "system",
                         "getCommandAndTemplateDescription")
 
-/*!
- 
- */
 ApiProxyResult GetCommandAndTemplateDescription::execute(const std::string& template_name,
                                            const std::string& command_uid) {
     CDWUniquePtr message(new CDataWrapper());

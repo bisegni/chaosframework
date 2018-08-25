@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(CommandTemplateDelete,
                         "system",
                         "commandTemplateDelete")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateDelete::execute(const std::string& template_name,
                                            const std::string& command_uid) {
     CDWUniquePtr message(new CDataWrapper());

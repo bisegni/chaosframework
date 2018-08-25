@@ -31,9 +31,6 @@ API_PROXY_CD_DEFINITION(UpdateProperty,
                         "system",
                         "updateProperty")
 
-/*!
- 
- */
 ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
                                        const NodePropertyGroupList& node_property_groups_list) {
     CDWUniquePtr message(new CDataWrapper());
