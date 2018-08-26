@@ -84,7 +84,7 @@ build_ubuntu_14_04_gcc49_test:
     paths:
         - 'coverage_html'
     expire_in: 2 hour
-  coverage: /lines[\.]+\: (\d+\.\d+)\%/
+  coverage: /^TOTAL.*\s+(\d+\%)$/
   only:
     - tags
     - web
