@@ -88,13 +88,14 @@ void MessageChannel::sendMessage(const std::string& remote_host,
                                  const std::string& node_id,
                                  const std::string& action_name,
                                  CDWUniquePtr message_pack) {
-    CDataWrapper *data_pack = new CDataWrapper();
+    CDWUniquePtr data_pack(new CDataWrapper());
     //add the action and dommain name
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
-    if(message_pack.get())data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);
+    if(message_pack.get()){data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);}
     //send the request
-    broker->submitMessage(remote_host.c_str(), data_pack);
+    broker->submitMessage(remote_host,
+                          ChaosMoveOperator(data_pack));
 }
 
 /*
@@ -144,7 +145,7 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const
     CHAOS_ASSERT(broker)
     uint32_t new_request_id = 0;
     ChaosUniquePtr<MessageRequestFuture> result;
-    CDataWrapper *data_pack = new CDataWrapper();
+    CDWUniquePtr data_pack(new CDataWrapper());
     
     //lock lk(waith_asnwer_mutex);
     if(request_pack.get())data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *request_pack);
@@ -161,7 +162,7 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
-                           data_pack,
+                           ChaosMoveOperator(data_pack),
                            message_request_domain->getDomainID(),
                            new_request_id);
     return result;

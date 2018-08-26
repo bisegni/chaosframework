@@ -47,7 +47,7 @@ TEST_F(RPCTest, SendEcho) {
     ChaosUniquePtr<MessageRequestFuture> future = msg_chnl->sendRequestWithFuture("localhost:8888",
                                                                                   chaos::NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                   chaos::NodeDomainAndActionRPC::ACTION_ECHO_TEST,
-                                                                                  pack.get());
+                                                                                  ChaosMoveOperator(pack));
     ASSERT_TRUE(future->wait(1000000));
     
     ASSERT_TRUE(future->getResult());
@@ -64,7 +64,7 @@ TEST_F(RPCTest, ActionResult) {
     ChaosUniquePtr<MessageRequestFuture> future = msg_chnl->sendRequestWithFuture("localhost:8888",
                                                                                   "test_rpc",
                                                                                   "actionWithResult",
-                                                                                  pack.get());
+                                                                                  ChaosMoveOperator(pack));
     ASSERT_TRUE(future->wait(1000000));
     
     ASSERT_TRUE(future->getResult());
@@ -72,7 +72,7 @@ TEST_F(RPCTest, ActionResult) {
     future = msg_chnl->sendRequestWithFuture("localhost:8888",
                                              "test_rpc",
                                              "actionWithNoResult",
-                                             pack.get());
+                                             ChaosMoveOperator(pack));
     ASSERT_TRUE(future->wait(1000000));
     
     ASSERT_FALSE(future->getResult());

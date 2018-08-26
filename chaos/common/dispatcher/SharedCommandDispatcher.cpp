@@ -190,7 +190,7 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
 void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *actionDescription,
                                                    ElementManagingPolicy &policy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    CDataWrapper            *responsePack = NULL;
+    //CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
@@ -302,29 +302,30 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
         
         if( needAnswer && remoteActionResult.get() ) {
             //we need to construct the response pack
-            responsePack = new CDataWrapper();
+            CDWUniquePtr response_pack(new CDataWrapper());
             
             //fill answer with data for remote ip and request id
             remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answer_id);
             //set the answer host ip as remote ip where to send the answere
-            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answer_ip);
+            response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answer_ip);
             
             //check this only if we have a destinantion
             if(answer_domain.size() && answer_action.size()){
                 //set the domain for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answer_domain);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answer_domain);
                 
                 //set the name of the action for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answer_action);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answer_action);
             }
             
             //add the action message
-            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
+            response_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!submitMessage(answer_ip, responsePack, false)){
-                //the response has not been sent
-                DELETE_OBJ_POINTER(responsePack);
+            if(!submitMessage(answer_ip,
+                              ChaosMoveOperator(response_pack),
+                              false)){
+
             }
         }
     } catch (CException& ex) {

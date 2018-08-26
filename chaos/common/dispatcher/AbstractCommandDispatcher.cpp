@@ -103,13 +103,13 @@ void AbstractCommandDispatcher::stop() throw(CException) {
 void AbstractCommandDispatcher::deinit()  throw(CException) {}
 
 bool AbstractCommandDispatcher::submitMessage(const string& server_port,
-                                              chaos::common::data::CDataWrapper* message,
+                                              CDWUniquePtr message,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(message && rpc_forwarder_ptr)
     if(!message && server_port.size()) return false;
     common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = server_port;
-    nfi->setMessage(message);
+    nfi->setMessage(ChaosMoveOperator(message));
     return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
 }
 
