@@ -198,8 +198,7 @@ void AgentRegister::timeout() {
         case AgentRegisterStateRegistering: {
             //send the rigstration pack
             if(((reg_retry_counter++)%max_reg_retry_counter) == 0) {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> reg = getAgentRegistrationPack();
-                mds_message_channel->sendNodeRegistration(*reg);
+                mds_message_channel->sendNodeRegistration(ChaosMoveOperator(getAgentRegistrationPack()));
                 HealtManager::getInstance()->addNewNode(agent_uid);
                 HealtManager::getInstance()->addNodeMetricValue(agent_uid,
                                                                 NodeHealtDefinitionKey::NODE_HEALT_STATUS,
