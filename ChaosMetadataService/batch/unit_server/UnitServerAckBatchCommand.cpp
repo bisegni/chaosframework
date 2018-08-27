@@ -62,10 +62,11 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     
     unit_server_uid = data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     
-    request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+    message_data.reset(new CDataWrapper(data->getBSONRawData()));
+    destination_address = message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+    request = createRequest(destination_address,
                             UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                             UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK);
-    message_data.reset(new CDataWrapper(data->getBSONRawData()));
 }
 
 // inherited method
@@ -224,7 +225,7 @@ int UnitServerAckCommand::prepareInstance() {
         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
     } else {
         USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
-        request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+        request = createRequest(destination_address,
                                 UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                 UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
         //prepare auto init and autostart message into autoload pack
