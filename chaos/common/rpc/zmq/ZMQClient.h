@@ -17,6 +17,7 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/pool/ResourcePool.h>
 #include <chaos/common/chaos_types.h>
@@ -37,6 +38,8 @@ namespace chaos {
     
     //define the pool my for every endpoint
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr< ZMQSocketPool >, SocketMap)
+    
+    CHAOS_DEFINE_LOCKABLE_OBJECT(uint64_t, LUint64);
     
     /*
      Class that implemnt !CHAOS RPC messaggin gusing ZMQ
@@ -69,7 +72,7 @@ namespace chaos {
         
         //timer handler
         void timeout();
-        static boost::atomic_uint64_t seq_id;
+        LUint64 seq_id;
 
     public:
         
