@@ -22,10 +22,10 @@ RESOURCES = theme/theme.qrc \
 INCLUDEPATH += $$PWD/../usr/local/include
 
 LIBS +=     -lchaos_metadata_service_client
-
+LIBS += -L$$PWD/../usr/local/lib
 unix:!macx {
-    LIBS += -L$$PWD/../usr/local/lib -L"/usr/lib/x86_64-linux-gnu/mesa/"
-    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
+    LIBS += -L"/usr/lib/x86_64-linux-gnu/mesa/"
+    LIBS += -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
 }
 
 macx:{
