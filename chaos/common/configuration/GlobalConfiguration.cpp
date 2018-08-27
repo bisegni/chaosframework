@@ -410,38 +410,6 @@ void GlobalConfiguration::addOptionZeroTokens(const char* name,
     }
 }
 
-
-//void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
-//                                          const std::string& kv_string,
-//                                          const std::string& regex) {
-//    //no cache server provided
-//    std::string tmp = kv_string;
-//    if(regex.size() &&
-//       !regex_match(tmp, boost::regex(regex.c_str()))) {
-//        throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
-//    }
-//    std::vector<std::string> kvtokens;
-//    std::vector<std::string> kv_splitted;
-//    algorithm::split(kvtokens,
-//                     kv_string,
-//                     algorithm::is_any_of("|"),
-//                     algorithm::token_compress_on);
-//    for (int idx = 0;
-//         idx < kvtokens.size();
-//         idx++) {
-//        //clear previosly pair
-//        kv_splitted.clear();
-//
-//        //get new pair
-//        algorithm::split(kv_splitted,
-//                         kvtokens[idx],
-//                         algorithm::is_any_of("="),
-//                         algorithm::token_compress_on);
-//        // add key/value pair
-//        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
-//    }
-//}
-
 void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
                                           const std::vector<std::string>& kv_vector,
                                           const std::string& regex) {
@@ -472,7 +440,6 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
         // add key/value pair
         kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
     }
-    
 }
 
 /**
@@ -481,6 +448,7 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
 chaos_data::CDataWrapper *GlobalConfiguration::getConfiguration(){
     return configuration.get();
 }
+
 void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
     configuration->copyAllTo(*conf);
 }
