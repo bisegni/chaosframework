@@ -39,7 +39,6 @@ namespace chaos {
             public:
                 Random();
                 explicit Random(std::int64_t min, std::int64_t max);
-                explicit Random(std::int32_t min, std::int32_t max);
                 ~Random();
                 
                 std::int64_t rand() const;

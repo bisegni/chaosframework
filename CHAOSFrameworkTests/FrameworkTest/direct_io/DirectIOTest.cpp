@@ -9,6 +9,7 @@
 #include "DirectIOTest.h"
 #include <chaos/common/global.h>
 
+#include <chaos/common/utility/Random.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::direct_io;
@@ -83,6 +84,7 @@ TEST_F(DirectIOTest, Echo) {
 }
 
 void echoClientEchoMultiThreadingSameChannel(DirectIOSystemAPIClientChannel *client_channel) {
+    chaos::common::utility::Random rnd(1,1000);
     std::string message_string_echo = "test_echo";
     
     for(int idx  = 0; idx < 1000; idx++) {
@@ -99,7 +101,7 @@ void echoClientEchoMultiThreadingSameChannel(DirectIOSystemAPIClientChannel *cli
         const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
         ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
         
-        boost::this_thread::sleep_for(boost::chrono::microseconds(10));
+        boost::this_thread::sleep_for(boost::chrono::microseconds(rnd.rand()));
     }
 }
 
@@ -126,6 +128,7 @@ TEST_F(DirectIOTest, EchoMultiThreadingSameChannel) {
 }
 
 void echoClientEchoMultiThreadingDifferentChannel(chaos::common::direct_io::DirectIOClientConnection *connection) {
+    chaos::common::utility::Random rnd(1,1000);
     std::string message_string_echo = "test_echo";
     DirectIOSystemAPIClientChannel *client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
     ASSERT_TRUE(client_channel);
@@ -142,7 +145,7 @@ void echoClientEchoMultiThreadingDifferentChannel(chaos::common::direct_io::Dire
         
         const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
         ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
-        boost::this_thread::sleep_for(boost::chrono::microseconds(10));
+        boost::this_thread::sleep_for(boost::chrono::microseconds(rnd.rand()));
     }
     if(client_channel){
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
