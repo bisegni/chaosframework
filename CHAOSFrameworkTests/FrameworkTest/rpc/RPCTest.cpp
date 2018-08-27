@@ -104,6 +104,7 @@ TEST_F(RPCTest, SendMessage) {
                          ChaosMoveOperator(pack));
     while(rpc_handler.actionWithResultCounter != 1 &&
           rpc_handler.actionWithNoResultCounter != 1) {
+        sleep(1);
         if(retry++ > 10){break;}
     }
     ASSERT_LE(retry, 10);
