@@ -220,11 +220,15 @@ void ZMQServer::worker() {
                 std::string error_message = zmq_strerror(sent_error);
                 ZMQS_LERR << "Error receiving message with code:" << sent_error << " message:" <<error_message;
             } else {
+                uint64_t seq_id=0;
                 if(zmq_msg_size(&request)>0) {
-                    ZMQS_LDBG << "Message Received";
                     CDWShrdPtr result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
+                    if(message_data->hasKey("seq_id")){
+                        seq_id=message_data->getInt64Value("seq_id");
+                    } 
+                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
                         result_data_pack.reset(command_handler->executeCommandSync(message_data.release()));
@@ -236,6 +240,7 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "ERROR:"<<message_data->getCompliantJSONString();
 
                     }
+                    result_data_pack->addInt64Value("seq_id",seq_id);
                     err = zmq_msg_init_data(&response,
                                             (void*)result_data_pack->getBSONRawData(),
                                             result_data_pack->getBSONRawSize(),
@@ -248,14 +253,14 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
                     } else {
                         //no error on create message
-                        ZMQS_LDBG << "Send ack";
+                     //   ZMQS_LDBG << "Send ack";
                         err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
                         if(err == -1) {
                             int32_t sent_error = zmq_errno();
                             std::string error_message = zmq_strerror(sent_error);
                             ZMQS_LERR << "Error sending ack with code:" << sent_error << " message:" <<error_message;
                         }else {
-                            ZMQS_LDBG << "ACK Sent";
+                            ZMQS_LDBG << "ACK "<<seq_id<<" Sent";
                         }
                     }
                 } else {

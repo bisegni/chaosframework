@@ -69,6 +69,8 @@ namespace chaos {
         
         //timer handler
         void timeout();
+        static boost::atomic_uint64_t seq_id;
+
     public:
         
         /*
