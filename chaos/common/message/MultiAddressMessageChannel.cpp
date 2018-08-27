@@ -126,7 +126,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     ChaosUniquePtr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
-                                                                            NULL);
+                                                                            CDWUniquePtr());
     while(--retry>0) {
         if(request->wait(2000)) {
             retry = 0;
