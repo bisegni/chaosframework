@@ -82,6 +82,85 @@ TEST_F(DirectIOTest, Echo) {
     }
 }
 
+void echoClientEchoMultiThreadingSameChannel(DirectIOSystemAPIClientChannel *client_channel) {
+    std::string message_string_echo = "test_echo";
+    
+    for(int idx  = 0; idx < 1000; idx++) {
+        BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
+        BufferSPtr message_buffer_echo;
+        
+        message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
+        
+        ASSERT_EQ(client_channel->echo(message_buffer, message_buffer_echo), 0);
+        
+        ASSERT_TRUE(message_buffer_echo);
+        ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
+        
+        const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
+        ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
+        
+        boost::this_thread::sleep_for(boost::chrono::microseconds(10));
+    }
+}
+
+TEST_F(DirectIOTest, EchoMultiThreadingSameChannel) {
+    DirectIOEchoHandler handler;
+    DirectIOSystemAPIClientChannel *client_channel = NULL;
+    
+    //register echo handler
+    server_channel->setHandler(&handler);
+    
+    client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
+    ASSERT_TRUE(client_channel);
+    
+    boost::thread_group tg;
+    for(int idx = 0; idx < 10; idx++) {
+        tg.add_thread(new boost::thread(echoClientEchoMultiThreadingSameChannel, client_channel));
+    }
+    tg.join_all();
+    
+    if(client_channel){
+        ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
+        client_channel = NULL;
+    }
+}
+
+void echoClientEchoMultiThreadingDifferentChannel(chaos::common::direct_io::DirectIOClientConnection *connection) {
+    std::string message_string_echo = "test_echo";
+    DirectIOSystemAPIClientChannel *client_channel = (DirectIOSystemAPIClientChannel*)connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
+    ASSERT_TRUE(client_channel);
+    for(int idx  = 0; idx < 1000; idx++) {
+        BufferSPtr message_buffer = ChaosMakeSharedPtr<Buffer>();
+        BufferSPtr message_buffer_echo;
+        
+        message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
+        
+        ASSERT_EQ(client_channel->echo(message_buffer, message_buffer_echo), 0);
+        
+        ASSERT_TRUE(message_buffer_echo);
+        ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
+        
+        const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
+        ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
+        boost::this_thread::sleep_for(boost::chrono::microseconds(10));
+    }
+    if(client_channel){
+        ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
+        client_channel = NULL;
+    }
+}
+
+TEST_F(DirectIOTest, EchoMultiThreadingDifferentChannel) {
+    DirectIOEchoHandler handler;
+    //register echo handler
+    server_channel->setHandler(&handler);
+    boost::thread_group tg;
+    for(int idx = 0; idx < 10; idx++) {
+        tg.add_thread(new boost::thread(echoClientEchoMultiThreadingDifferentChannel, connection));
+    }
+    tg.join_all();
+}
+
 TEST_F(DirectIOTest, SendCicle) {
     DirectIOEchoHandler handler;
     DirectIOSystemAPIClientChannel *client_channel = NULL;

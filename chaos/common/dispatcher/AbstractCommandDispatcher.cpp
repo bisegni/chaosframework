@@ -105,7 +105,7 @@ void AbstractCommandDispatcher::deinit()  throw(CException) {}
 bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               CDWUniquePtr message,
                                               bool onThisThread)  throw(CException) {
-    CHAOS_ASSERT(message && rpc_forwarder_ptr)
+    CHAOS_ASSERT(message.get() && rpc_forwarder_ptr)
     if(!message && server_port.size()) return false;
     common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = server_port;

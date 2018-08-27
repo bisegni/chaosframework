@@ -1007,6 +1007,8 @@
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
+		32D6F6FA21341EBC0028F390 /* Random.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6F6F821341EBC0028F390 /* Random.h */; };
+		32D6F6FB21341EBC0028F390 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D6F6F921341EBC0028F390 /* Random.cpp */; };
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
 		32D745EC1C723BDD00F4D719 /* GetLogForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */; };
 		32D745ED1C723BDD00F4D719 /* GetLogForSourceUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */; };
@@ -2494,6 +2496,8 @@
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
 		32D6C8991815294700E9689B /* DirectIOForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOForwarder.h; sourceTree = "<group>"; };
+		32D6F6F821341EBC0028F390 /* Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
+		32D6F6F921341EBC0028F390 /* Random.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkUnitManagement.cpp; sourceTree = "<group>"; };
 		32D72CA9197D196D00512B89 /* WorkUnitManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkUnitManagement.h; sourceTree = "<group>"; };
 		32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogForSourceUID.cpp; sourceTree = "<group>"; };
@@ -4226,6 +4230,8 @@
 				32DF7EFE1E7C180100B7FCDD /* SafeAsyncCall.h */,
 				325A84C821085ED60036C1CA /* Base64Util.cpp */,
 				325A84C721085ED60036C1CA /* Base64Util.h */,
+				32D6F6F921341EBC0028F390 /* Random.cpp */,
+				32D6F6F821341EBC0028F390 /* Random.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -5621,6 +5627,7 @@
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
 				3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */,
 				329603251876B45000CDCADA /* BatchCommandException.h in Headers */,
+				32D6F6FA21341EBC0028F390 /* Random.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,
 				32FF2A661E65D17900117985 /* FSUtility.h in Headers */,
 				326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */,
@@ -6678,6 +6685,7 @@
 				32A862181D58C79900A7D707 /* AbstractEvent.cpp in Sources */,
 				3277A235209C4AFD00FD7307 /* ClingRootInterpreter.cpp in Sources */,
 				32CB75081FCE9DE6006DF3D0 /* InetUtility.cpp in Sources */,
+				32D6F6FB21341EBC0028F390 /* Random.cpp in Sources */,
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
