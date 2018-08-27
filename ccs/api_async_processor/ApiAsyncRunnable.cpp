@@ -20,7 +20,7 @@ void ApiAsyncRunnable::run() {
                                                                               async_result->getErrorDomain())));
         } else {
             //we have good answer
-            emit asyncApiResult(tag, QSharedPointer<CDataWrapper>(async_result->detachResult()));
+            emit asyncApiResult(tag, QSharedPointer<CDataWrapper>(async_result->detachResult()->release()));
         }
     } else {
         //no data
