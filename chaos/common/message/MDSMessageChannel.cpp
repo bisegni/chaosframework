@@ -342,8 +342,7 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDWUniquePtr& device_defin
     int err = ErrorCode::EC_NO_ERROR;
     //send request and wait the response
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                                    "getBestEndpoints",
-                                                                                    NULL);
+                                                                                    "getBestEndpoints");
     future->setTimeout(millisec_to_wait);
     if(future->wait()) {
         if((err = future->getError()) == ErrorCode::EC_NO_ERROR) {

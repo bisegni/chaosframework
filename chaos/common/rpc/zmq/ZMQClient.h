@@ -39,8 +39,6 @@ namespace chaos {
     //define the pool my for every endpoint
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr< ZMQSocketPool >, SocketMap)
     
-    CHAOS_DEFINE_LOCKABLE_OBJECT(uint64_t, LUint64);
-    
     /*
      Class that implemnt !CHAOS RPC messaggin gusing ZMQ
      
@@ -72,7 +70,7 @@ namespace chaos {
         
         //timer handler
         void timeout();
-        LUint64 seq_id;
+        ChaosAtomic<uint64_t> seq_id;
 
     public:
         

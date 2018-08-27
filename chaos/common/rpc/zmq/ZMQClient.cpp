@@ -246,19 +246,16 @@ void ZMQClient::timeout() {
 void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     int			err = 0;
-    uint64_t    loc_seq_id;
+    uint64_t    loc_seq_id = 0;
     zmq_msg_t	reply;
     zmq_msg_t	message;
     zmq_msg_init (&reply);
     
-    LUint64WriteLock wl = seq_id.getWriteLockObject();
-    loc_seq_id = ++seq_id();
-    wl->unlock();
     //get remote ip
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
-    messageInfo->message->addInt64Value("seq_id", loc_seq_id);
+    messageInfo->message->addInt64Value("seq_id", (loc_seq_id = ++seq_id));
     CDWShrdPtr message_data = CDWShrdPtr(messageInfo->message.release());
     try{
         socket_info = getSocketForNFI(messageInfo);
