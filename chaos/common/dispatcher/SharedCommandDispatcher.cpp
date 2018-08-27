@@ -329,7 +329,6 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             }
         }
     } catch (CException& ex) {
-        DELETE_OBJ_POINTER(responsePack);
         //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
