@@ -4590,12 +4590,12 @@
 		    		{	  "ds_attr_name": "WIDTH",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "640"
+					    "ds_default_value": "320"
 					},
 		    		{	  "ds_attr_name": "HEIGHT",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "480"
+					    "ds_default_value": "240"
 					},{	  "ds_attr_name": "OFFSETX",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
@@ -4635,12 +4635,12 @@
 		    		{	  "ds_attr_name": "WIDTH",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "640"
+					    "ds_default_value": "320"
 					},
 		    		{	  "ds_attr_name": "HEIGHT",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "480"
+					    "ds_default_value": "240"
 					},{	  "ds_attr_name": "OFFSETX",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
