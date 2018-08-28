@@ -26,7 +26,9 @@
 #include <boost/generator_iterator.hpp>
 #include <boost/random/random_device.hpp>
 
-#include <stdint.h>
+#if __cplusplus < 201103L
+#include <cstdint.h>
+#endif
 
 namespace chaos {
     namespace common {
