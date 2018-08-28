@@ -125,10 +125,6 @@ bool MultiAddressMessageRequestFuture::wait() {
             }
         }
     }
-    
-    //retry logic
-    //parent_mn_message_channel->service_feeder.checkForAliveService();
-    
     return working == false;
 }
 
@@ -168,7 +164,3 @@ const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
     else
         return ErrorRpcCoce::EC_REQUEST_FUTURE_NOT_AVAILABLE;
 }
-
-//CDWUniquePtr MultiAddressMessageRequestFuture::detachMessageData() {
-//    return message_pack;
-//}

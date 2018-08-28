@@ -36,7 +36,3 @@ Random::~Random() {}
 CInt64 Random::rand() const {
     return rnd_gen_int64(rd);
 }
-
-Random::operator CInt64() const {
-    return rand();
-}

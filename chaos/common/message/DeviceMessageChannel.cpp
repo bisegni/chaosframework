@@ -422,7 +422,6 @@ int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
 //------------------------------------
 ChaosUniquePtr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                         CDWUniquePtr request_data) {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
     return sendRequestWithFuture(device_network_address->node_id,
                                  action_name,
                                  MOVE(request_data));
@@ -430,14 +429,7 @@ ChaosUniquePtr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWit
 
 //! Send a request for receive RPC information
 ChaosUniquePtr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
     return NodeMessageChannel::checkRPCInformation(device_network_address->node_id);
-}
-
-//! Send a request for an echo test
-ChaosUniquePtr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDWUniquePtr echo_data) {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
-    return NodeMessageChannel::echoTest(MOVE(echo_data));
 }
 
 void DeviceMessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {

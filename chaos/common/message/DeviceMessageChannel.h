@@ -109,6 +109,8 @@ namespace chaos {
                 void fireToListener(unsigned int fire_code,
                                     chaos::common::utility::AbstractListener *listener_to_fire);
             public:
+                using NodeMessageChannel::echoTest;
+                
                 const std::string& getDeviceID() const;
                 //!Update the network address of the node
                 /*!
@@ -250,9 +252,6 @@ namespace chaos {
                 
                 //! Send a request for receive RPC information
                 ChaosUniquePtr<MessageRequestFuture> checkRPCInformation();
-                
-                //! Send a request for an echo test
-                ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDWUniquePtr echo_data);
             };
         }
     }
