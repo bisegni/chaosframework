@@ -76,7 +76,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
                                 node_rpc_domain,
                                 rpc_action);
         sendMessage(*request,
-                    rpc_message.get());
+                    MOVE(rpc_message));
     }
 }
 

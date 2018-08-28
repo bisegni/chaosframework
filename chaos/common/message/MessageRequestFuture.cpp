@@ -30,7 +30,7 @@ using namespace chaos::common::message;
 MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
                                            MessageRequestDomainFutureHelper::Future& _message_future):
 request_id(_request_id),
-message_future(ChaosMoveOperator(_message_future)),
+message_future(MOVE(_message_future)),
 request_result(),
 error_code(0),
 error_message("no data"),
@@ -73,8 +73,8 @@ chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
     return request_result.get();
 }
 
-chaos::common::data::CDataWrapper *MessageRequestFuture::detachResult() {
-    return request_result.release();
+CDWUniquePtr MessageRequestFuture::detachResult() {
+    return MOVE(request_result);
 }
 
 uint32_t const & MessageRequestFuture::getRequestID() {

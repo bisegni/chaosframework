@@ -36,7 +36,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
                     ChaosUniquePtr<RequestInfo> request;
-                    chaos::common::data::CDataWrapper *update_property_pack;
+                    chaos::common::data::CDWUniquePtr update_property_pack;
                 public:
                     UpdatePropertyCommand();
                     ~UpdatePropertyCommand();

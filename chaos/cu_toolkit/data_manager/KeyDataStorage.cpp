@@ -198,7 +198,7 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
     
     if(effective_storage_type) {
         err=io_data_driver->storeData(key,
-                                  ChaosMoveOperator(dataset),
+                                  MOVE(dataset),
                                   static_cast<DataServiceNodeDefinitionType::DSStorageType>(effective_storage_type),
                                   current_tags());
     }
@@ -215,47 +215,47 @@ int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
     switch(domain) {
         case KeyDataStorageDomainOutput:
             err=pushDataWithControlOnHistoryTime(output_key,
-                                             ChaosMoveOperator(dataset),
+                                             MOVE(dataset),
                                              storage_type);
             break;
         case KeyDataStorageDomainInput:
             //input channel need to be push ever either in live and in history
             err=io_data_driver->storeData(input_key,
-                                      ChaosMoveOperator(dataset),
+                                      MOVE(dataset),
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
                                       current_tags());
             break;
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(system_key,
-                                      ChaosMoveOperator(dataset),
+                                      MOVE(dataset),
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
                                       current_tags());
             break;
         case KeyDataStorageDomainCUAlarm:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(cu_alarm_key,
-                                      ChaosMoveOperator(dataset),
+                                      MOVE(dataset),
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
                                       current_tags());
             break;
         case KeyDataStorageDomainDevAlarm:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(dev_alarm_key,
-                                      ChaosMoveOperator(dataset),
+                                      MOVE(dataset),
                                       DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
                                       current_tags());
             break;
         case KeyDataStorageDomainHealth:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeHealthData(health_key,
-                                            ChaosMoveOperator(dataset),
+                                            MOVE(dataset),
                                             DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
                                             current_tags());
             break;
         case KeyDataStorageDomainCustom:
             err=pushDataWithControlOnHistoryTime(custom_key,
-                                             ChaosMoveOperator(dataset),
+                                             MOVE(dataset),
                                              storage_type);
             break;
     }
@@ -280,7 +280,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(output_key, ChaosMoveOperator(dataset)));dataset.reset();
+            restore_point_map[restore_point_tag].insert(make_pair(output_key, MOVE(dataset)));dataset.reset();
         }
     }
     
@@ -293,7 +293,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(input_key, ChaosMoveOperator(dataset)));dataset.reset();
+            restore_point_map[restore_point_tag].insert(make_pair(input_key, MOVE(dataset)));dataset.reset();
             
         }
     }
@@ -307,7 +307,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(custom_key, ChaosMoveOperator(dataset)));dataset.reset();
+            restore_point_map[restore_point_tag].insert(make_pair(custom_key, MOVE(dataset)));dataset.reset();
         }
     }
     
@@ -320,7 +320,7 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
         return err;
     } else {
         if(dataset){
-            restore_point_map[restore_point_tag].insert(make_pair(system_key, ChaosMoveOperator(dataset)));dataset.reset();
+            restore_point_map[restore_point_tag].insert(make_pair(system_key, MOVE(dataset)));dataset.reset();
         }
     }
     

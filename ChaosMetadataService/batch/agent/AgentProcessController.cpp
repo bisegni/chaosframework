@@ -116,7 +116,7 @@ void AgentProcessController::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        message_data.get());
+                        MOVE(message_data));
         }
             
         case MESSAGE_PHASE_SENT:

@@ -10,6 +10,7 @@
 #define RPCTest_hpp
 
 #include <gtest/gtest.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -18,6 +19,8 @@
 class RpcHandler:
 public chaos::DeclareAction {
 public:
+    ChaosAtomic<uint32_t> actionWithResultCounter;
+    ChaosAtomic<uint32_t> actionWithNoResultCounter;
     RpcHandler();
 protected:
     chaos::common::data::CDataWrapper *actionWithResult(chaos::common::data::CDataWrapper *action_data, bool& detach);

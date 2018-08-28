@@ -92,8 +92,8 @@ namespace chaos {
 
                 UnitConnection(ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter,
                                ChaosUniquePtr<T> _unit_proxy):
-                connection_adapter(ChaosMoveOperator(_protocol_adapter)),
-                unit_proxy(ChaosMoveOperator(_unit_proxy)){}
+                connection_adapter(MOVE(_protocol_adapter)),
+                unit_proxy(MOVE(_unit_proxy)){}
             };
         }
     }

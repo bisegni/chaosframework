@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 27/08/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -18,21 +18,25 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#include <chaos/common/utility/Random.h>
 
-#include <chaos_metadata_service_client/api_proxy/data_service/GetAssociationByDS.h>
+using namespace chaos::common::utility;
 
-using namespace chaos::common::data;
-using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::data_service;
+boost::random_device Random::rd;
 
-API_PROXY_CD_DEFINITION(GetAssociationByDS,
-                        "data_service",
-                        "getAssociation")
+Random::Random():
+rnd_gen_int64(){}
 
+Random::Random(CInt64 min,
+               CInt64 max):
+rnd_gen_int64(min, max){}
 
-ApiProxyResult GetAssociationByDS::execute(const std::string& ds_unique_id) {
+Random::~Random() {}
 
-    CDWUniquePtr message(new CDataWrapper());
-    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, ds_unique_id);
-    return callApi(message);
+CInt64 Random::rand() const {
+    return rnd_gen_int64(rd);
+}
+
+Random::operator CInt64() const {
+    return rand();
 }

@@ -31,11 +31,9 @@ API_PROXY_CD_DEFINITION(GetPropertyDefaultValues,
                         "getPropertyDefaultValues")
 
 ApiProxyResult GetPropertyDefaultValues::execute(const std::string& node_unique_id) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    //add node uid
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
-    //call api
-    return callApi(message.release());
+    return callApi(message);
 }
 
 void GetPropertyDefaultValues::deserialize(CDataWrapper& serialization,

@@ -33,5 +33,5 @@ void AbstractClientAdapter::deinit() throw (chaos::CException) {}
 
 int AbstractClientAdapter::sendDataToEndpoint(ExternalUnitConnection& connection,
                                         chaos::common::data::CDBufferUniquePtr received_data) {
-    return connection.sendDataToEndpoint(ChaosMoveOperator(received_data));
+    return connection.sendDataToEndpoint(MOVE(received_data));
 }

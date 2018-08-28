@@ -124,7 +124,7 @@ void IDSTControlUnitBatchCommand::acquireHandler() {
                 
                 //send message for action
                 sendMessage(*request,
-                            message.get());
+                            MOVE(message));
                 BC_END_RUNNING_PROPERTY
                 break;
             }

@@ -177,7 +177,7 @@ void DataManager::updateConfigurationForDeviceIdKey(const string& device_id, CDa
  Submit a CDataWrapper on device id KeyDataStorage
  */
 void DataManager::pushDeviceDataByIdKey(const string& device_id, CDWShrdPtr dataset) throw(CException) {
-        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(dataset));
+        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(dataset));
 }
 
 /*

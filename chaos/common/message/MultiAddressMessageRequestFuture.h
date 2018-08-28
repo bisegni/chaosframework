@@ -49,7 +49,7 @@ namespace chaos{
                 std::string last_used_address;
                 std::string action_domain;
                 std::string action_name;
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> message_pack;
+                chaos::common::data::CDWUniquePtr message_pack;
                 
                 //! point to the current future
                 ChaosUniquePtr<MessageRequestFuture> current_future;
@@ -62,7 +62,7 @@ namespace chaos{
                 MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
                                                  const std::string &_action_domain,
                                                  const std::string &_action_name,
-                                                 chaos::common::data::CDataWrapper *_message_pack,
+                                                 chaos::common::data::CDWUniquePtr _message_pack,
                                                  int32_t _timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 inline void retryOfflineServer();
                 inline void switchOnOtherServer();
@@ -87,7 +87,7 @@ namespace chaos{
                 chaos::common::data::CDataWrapper *getResult();
                 
                 
-                chaos::common::data::CDataWrapper *detachResult();
+                chaos::common::data::CDWUniquePtr detachResult();
                 
                 int getError() const;
                 
@@ -96,7 +96,7 @@ namespace chaos{
                 const std::string &getErrorMessage() const;
                 
                 //!return the ownership of the message to the caller
-                chaos::common::data::CDataWrapper *detachMessageData();
+                //chaos::common::data::CDWUniquePtr detachMessageData();
             };
             
         }

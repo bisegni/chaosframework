@@ -61,7 +61,7 @@ namespace chaos {
                 MessageRequestDomainFutureHelper::Future message_future;
 
                     //! the result for the request
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> request_result;
+                chaos::common::data::CDWUniquePtr request_result;
                 
                     //!error code
                 int32_t error_code;
@@ -92,7 +92,7 @@ namespace chaos {
                 chaos::common::data::CDataWrapper *getResult();
 
                 
-                chaos::common::data::CDataWrapper *detachResult();
+                chaos::common::data::CDWUniquePtr detachResult();
 
                     //!return the request id
                 uint32_t const & getRequestID();

@@ -17,6 +17,7 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/pool/ResourcePool.h>
 #include <chaos/common/chaos_types.h>
@@ -69,7 +70,7 @@ namespace chaos {
         
         //timer handler
         void timeout();
-        static boost::atomic_uint64_t seq_id;
+        ChaosAtomic<uint64_t> seq_id;
 
     public:
         

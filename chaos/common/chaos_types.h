@@ -37,6 +37,13 @@
 
 
 #if __cplusplus >= 201103L
+
+#define CInt64  std::int64_t
+#define CUint64 std::uint64_t
+#define CInt32  std::int32_t
+#define CUint32 std::uint32_t
+#define CDouble double
+
 #ifndef FORCE_BOOST_SHPOINTER
 #define ChaosSharedPtr      std::shared_ptr
 #define ChaosMakeSharedPtr  std::make_shared
@@ -85,7 +92,15 @@ using ChaosFunction = std::function< R >;
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
+
 #else
+#include <stdint.h>
+#define CInt64  int64_t
+#define CUint64 uint64_t
+#define CInt32  int32_t
+#define CUint32 uint32_t
+#define CDouble double
+
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
@@ -108,6 +123,9 @@ using ChaosFunction = std::function< R >;
 #define ChaosBind boost::bind
 #define ChaosBindPlaceholder(x) x
 #endif
+
+//define accelerator
+#define MOVE(x) ChaosMoveOperator(x)
 
 #define  CHAOS_DEFINE_STACK_FOR_TYPE(t1, n)\
 typedef std::stack< t1 >                   n;

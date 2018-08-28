@@ -29,7 +29,7 @@ namespace chaos {
     struct MemoryManagement {
         chaos::common::data::CDWShrdPtr data;
         MemoryManagement(chaos::common::data::CDWShrdPtr _data):
-        data(ChaosMoveOperator(_data)){}
+        data(MOVE(_data)){}
     };
 }
 

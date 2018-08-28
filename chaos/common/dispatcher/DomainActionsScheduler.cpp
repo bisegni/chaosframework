@@ -250,29 +250,31 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         
         if( needAnswer && remoteActionResult.get() ) {
             //we need to construct the response pack
-            responsePack = new CDataWrapper();
+            CDWUniquePtr response_pack(new CDataWrapper());
             
             //fill answer with data for remote ip and request id
             remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
             //set the answer host ip as remote ip where to send the answere
-            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
+            response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
             
             //check this only if we have a destinantion
             if(answerDomain.size() && answerAction.size()){
                 //set the domain for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
                 
                 //set the name of the action for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
             }
             
             //add the action message
-            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
+            response_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
+            if(!dispatcher->submitMessage(answerIP,
+                                          MOVE(response_pack),
+                                          false)){
                 //the response has not been sent
-                DELETE_OBJ_POINTER(responsePack);
+                
             }
         }
     } catch (CException& ex) {

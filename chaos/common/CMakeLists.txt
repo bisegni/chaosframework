@@ -279,7 +279,8 @@ SET(common_lib_src ${common_lib_src}
                     utility/ProcStat.cpp
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
-                    utility/Base64Util.cpp)
+                    utility/Base64Util.cpp
+                    utility/Random.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     batch_command/BatchCommandExecutor.cpp

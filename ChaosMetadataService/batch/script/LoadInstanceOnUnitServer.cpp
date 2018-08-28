@@ -260,7 +260,7 @@ bool LoadInstanceOnUnitServer::loadScriptInstance() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        load_datapack.get());
+                        MOVE(load_datapack));
             result = true;
             break;
         }

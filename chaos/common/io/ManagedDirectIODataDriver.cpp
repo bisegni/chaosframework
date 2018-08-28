@@ -46,8 +46,8 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
 
     //try to fetch best endpoint
     int err = 0;
-    data::CDataWrapper *conf = NULL;
-    if((err = mds_channel->getDataDriverBestConfiguration(&conf)) || (conf == NULL)) {
+    CDWUniquePtr conf;
+    if((err = mds_channel->getDataDriverBestConfiguration(conf)) || (conf.get() == NULL)) {
         NetworkBroker::getInstance()->disposeMessageChannel(mds_channel);
         mds_channel = NULL;
         throw CException(err, "Error fetching best endpoint from mds channel", __PRETTY_FUNCTION__);
@@ -56,10 +56,7 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
         throw CException(err, "No valid DS returned: "+conf->getJSONString(), __PRETTY_FUNCTION__);
 
     }
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> auto_conf(conf);
-    updateConfiguration(auto_conf.get());
-
-
+    updateConfiguration(conf.get());
 }
 
 

@@ -108,7 +108,7 @@ void AgentLoggingNodeManagement::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
-                        message_data.get());
+                        MOVE(message_data));
         }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

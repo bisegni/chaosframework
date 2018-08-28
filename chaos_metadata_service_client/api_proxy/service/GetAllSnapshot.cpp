@@ -29,11 +29,9 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(GetAllSnapshot,
                         "service",
                         "getAllSnapshot")
-/*!
- 
- */
+
 ApiProxyResult GetAllSnapshot::execute(const std::string& query_filter) {
-    CDataWrapper *message = new CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_query_filter", query_filter);
     return callApi(message);
 }
@@ -52,7 +50,7 @@ GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
+        CDWUniquePtr tmp_desc(snapshot_desc_list->getCDataWrapperElementAtIndex(idx));
         
         SnapshotInformationPtr snapshot_information(new SnapshotInformation());
         if(tmp_desc->hasKey("snap_name")) {

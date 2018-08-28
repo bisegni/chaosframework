@@ -31,15 +31,12 @@ API_PROXY_CD_DEFINITION(CommandTemplateSet,
                         "system",
                         "commandTemplateSet")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateSet::execute(const TemplateList& template_configurations) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     for(TemplateListConstIterator it = template_configurations.begin();
         it != template_configurations.end();
         it++) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> template_element(new CDataWrapper());
+        CDWUniquePtr template_element(new CDataWrapper());
         template_element->addStringValue("template_name", (*it)->template_name);
         template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
         //! scan all parameter configuration
@@ -56,6 +53,5 @@ ApiProxyResult CommandTemplateSet::execute(const TemplateList& template_configur
         message->appendCDataWrapperToArray(*template_element);
     }
     message->finalizeArrayForKey("template_list");
-    //call api
-    return callApi(message.release());
+    return callApi(message);
 }

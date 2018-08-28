@@ -55,7 +55,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPackSPtr data_pa
         case opcode::SystemAPIChannelOpcodeEcho: {
             synchronous_answer = ChaosMakeSharedPtr<DirectIODataPack>();
             BufferSPtr answer_channel_data;
-            err =  handler->consumeEchoEvent(ChaosMoveOperator(data_pack->channel_data),
+            err =  handler->consumeEchoEvent(MOVE(data_pack->channel_data),
                                              answer_channel_data);
             
             if(!err &&

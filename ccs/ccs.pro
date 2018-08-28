@@ -11,24 +11,21 @@ PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
 
 QMAKE_CXXFLAGS += -std=c++11
-QMAKE_MAC_SDK = macosx10.12
+#QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
 RESOURCES = theme/theme.qrc \
     resources.qrc
 
-INCLUDEPATH += $$PWD/../
+#INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
 
-
-LIBS += -L$$PWD/../usr/local/lib -L"/usr/lib/x86_64-linux-gnu/mesa/"
-
-
 LIBS +=     -lchaos_metadata_service_client
-
+LIBS += -L$$PWD/../usr/local/lib
 unix:!macx {
-    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
+    LIBS += -L"/usr/lib/x86_64-linux-gnu/mesa/"
+    LIBS += -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
 }
 
 macx:{

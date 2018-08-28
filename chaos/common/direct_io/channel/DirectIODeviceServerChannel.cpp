@@ -68,7 +68,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
 
             err = handler->consumePutEvent(key,
                                            hst_tag,
-                                           ChaosMoveOperator(meta_tag_set),
+                                           MOVE(meta_tag_set),
                                            data_pack->channel_data);
             break;
         }
@@ -94,7 +94,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             }
             err = handler->consumeHealthDataEvent(key,
                                                   hst_tag,
-                                                  ChaosMoveOperator(meta_tag_set),
+                                                  MOVE(meta_tag_set),
                                                   data_pack->channel_data);
             break;
         }

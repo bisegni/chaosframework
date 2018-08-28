@@ -347,18 +347,17 @@ bool WorkUnitManagement::smNeedToSchedule() {
     
 }
 
-int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
+int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& data_to_send) {
     // dataToSend can't be sent because it is porperty of the CU
     //so we need to copy it
-    ChaosUniquePtr<SerializationBuffer> serBuf(dataToSend.getBSONData());
-    CDataWrapper mdsPack(serBuf->getBufferPtr());
+    CDWUniquePtr mds_pack(new CDataWrapper(data_to_send.getBSONRawData()));
     //add action for metadata server
     //add local ip and port
     
     int err = 0;
     
     //register CU from mds
-    if((err = mds_channel->sendNodeRegistration(mdsPack))) {
+    if((err = mds_channel->sendNodeRegistration(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";
@@ -369,11 +368,11 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_uid) {
     
     int err = 0;
-    CDataWrapper mdsPack;
-    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
-    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+    CDWUniquePtr mds_pack(new CDataWrapper());
+    mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
+    mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
     //register CU from mds
-    if((err = mds_channel->sendNodeLoadCompletion(mdsPack))) {
+    if((err = mds_channel->sendNodeLoadCompletion(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding load completion message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";

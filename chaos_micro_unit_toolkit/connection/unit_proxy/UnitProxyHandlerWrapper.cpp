@@ -33,7 +33,7 @@ UnitProxyHandlerWrapper::UnitProxyHandlerWrapper(UnitProxyHandler _handler,
                                                  ChaosUniquePtr<AbstractUnitProxy> _base_unit):
 handler(_handler),
 user_data(_user_data),
-base_unit(ChaosMoveOperator(_base_unit)),
+base_unit(MOVE(_base_unit)),
 run(false),
 connecting(false),
 retry_time(RETRY_TIME){assert(base_unit.get());}
