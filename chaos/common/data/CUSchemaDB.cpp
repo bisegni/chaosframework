@@ -524,6 +524,8 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDeviceID;
     string attributeName;
     string attributeDescription;
+    CDWUniquePtr elementDescription;
+    CMultiTypeDataArrayWrapperSPtr elementsDescriptions;
     
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -538,12 +540,12 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             
             //get the entity for device
             entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
-            CMultiTypeDataArrayWrapperSPtr elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+            elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
             
             for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
                 
                 //next element in dataset
-                CDWUniquePtr elementDescription=elementsDescriptions->getCDataWrapperElementAtIndex(idx);
+                elementDescription.reset(elementsDescriptions->getCDataWrapperElementAtIndex(idx));
                 //attribute name
                 
                 if(!elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME))

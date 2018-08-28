@@ -50,7 +50,6 @@ namespace chaos {
                     
                     //!Put an object within the object persistence layer
                     virtual int pushObject(const std::string& key,
-                                           const ChaosStringSetConstSPtr meta_tags,
                                            const chaos::common::data::CDataWrapper& stored_object) = 0;
                     
                     //!Retrieve an object from the object persistence layer
@@ -69,7 +68,6 @@ namespace chaos {
                     
                     //!search object into object persistence layer
                     virtual int findObject(const std::string& key,
-                                           const ChaosStringSet& meta_tags,
                                            const uint64_t timestamp_from,
                                            const uint64_t timestamp_to,
                                            const uint32_t page_len,

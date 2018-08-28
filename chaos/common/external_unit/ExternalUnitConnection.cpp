@@ -39,7 +39,7 @@ online(false),
 accepted_state(-1),
 adapter(_adapter),
 endpoint(_endpoint),
-serializer_adapter(MOVE(_serializer_adapter)) {
+serializer_adapter(ChaosMoveOperator(_serializer_adapter)) {
     CHAOS_ASSERT(adapter && endpoint && serializer_adapter.get());
     endpoint->addConnection(*this);
 }
@@ -51,7 +51,7 @@ ExternalUnitConnection::~ExternalUnitConnection() {
 int ExternalUnitConnection::sendDataToEndpoint(chaos::common::data::CDBufferUniquePtr reecived_data) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dmessage = serializer_adapter->deserialize(*reecived_data);
     if(!dmessage.get()) return -1;
-    return endpoint->handleReceivedeMessage(connection_identifier, MOVE(dmessage));
+    return endpoint->handleReceivedeMessage(connection_identifier, ChaosMoveOperator(dmessage));
 }
 
 int ExternalUnitConnection::sendData(chaos::common::data::CDWUniquePtr data,

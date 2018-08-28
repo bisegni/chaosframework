@@ -21,7 +21,6 @@
 #ifndef __CHAOSFramework__AbstractDirectIODispatcher__
 #define __CHAOSFramework__AbstractDirectIODispatcher__
 
-#include <chaos/common/chaos_types.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/utility/StartableService.h>
@@ -34,7 +33,10 @@ namespace chaos {
 	namespace common {
 		namespace direct_io {
             class DirectIOServer;
-
+			//boost::function2<void, void*, uint32_t> delegate = priority_service?
+           // boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
+           // boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
+			//! Default dispatcher for the direct io system
 			class DirectIODispatcher:
 			public common::direct_io::DirectIOHandler,
 			public utility::StartableService {
@@ -44,9 +46,9 @@ namespace chaos {
 					bool enable;
 					DirectIOServerEndpoint *endpoint;
 				};
-                
-				//! available endpoint slot
-                ChaosSharedMutex slot_mutex;
+
+				
+				//! available endpoint slotc
 				EndpointFastDelegation * * endpoint_slot_array;
 				
 				//!available index queue

@@ -182,10 +182,10 @@ namespace chaos {
                                          VectorStateFlag& found_flag);
                 
                 //!get data buffer describing all flag with own level
-                chaos::common::data::CDBufferUniquePtr getRawFlagsLevel();
+                ChaosUniquePtr<chaos::common::data::CDataBuffer> getRawFlagsLevel();
                 
                 //!set the falg value base on array description
-                void setApplyRawFlagsValue(chaos::common::data::CDBufferUniquePtr& raw_level);
+                void setApplyRawFlagsValue(ChaosUniquePtr<chaos::common::data::CDataBuffer>& raw_level);
                 
                 //!return the number of status flag in the catalog
                 const size_t size() const;

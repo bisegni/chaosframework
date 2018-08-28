@@ -234,7 +234,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_OPTION(string, logSyslogSrv, InitOption::OPT_LOG_SYSLOG_SERVER);
     configuration->addStringValue(InitOption::OPT_LOG_SYSLOG_SERVER, logSyslogSrv);
     
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, logSyslogSrvPort, InitOption::OPT_LOG_SYSLOG_SERVER_PORT, 0);
+    CHECK_AND_DEFINE_OPTION(uint32_t, logSyslogSrvPort, InitOption::OPT_LOG_SYSLOG_SERVER_PORT);
     configuration->addInt32Value(InitOption::OPT_LOG_SYSLOG_SERVER_PORT, logSyslogSrvPort);
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE);
@@ -410,6 +410,38 @@ void GlobalConfiguration::addOptionZeroTokens(const char* name,
     }
 }
 
+
+//void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
+//                                          const std::string& kv_string,
+//                                          const std::string& regex) {
+//    //no cache server provided
+//    std::string tmp = kv_string;
+//    if(regex.size() &&
+//       !regex_match(tmp, boost::regex(regex.c_str()))) {
+//        throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+//    }
+//    std::vector<std::string> kvtokens;
+//    std::vector<std::string> kv_splitted;
+//    algorithm::split(kvtokens,
+//                     kv_string,
+//                     algorithm::is_any_of("|"),
+//                     algorithm::token_compress_on);
+//    for (int idx = 0;
+//         idx < kvtokens.size();
+//         idx++) {
+//        //clear previosly pair
+//        kv_splitted.clear();
+//
+//        //get new pair
+//        algorithm::split(kv_splitted,
+//                         kvtokens[idx],
+//                         algorithm::is_any_of("="),
+//                         algorithm::token_compress_on);
+//        // add key/value pair
+//        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+//    }
+//}
+
 void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
                                           const std::vector<std::string>& kv_vector,
                                           const std::string& regex) {
@@ -440,6 +472,7 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
         // add key/value pair
         kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
     }
+    
 }
 
 /**
@@ -448,7 +481,6 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
 chaos_data::CDataWrapper *GlobalConfiguration::getConfiguration(){
     return configuration.get();
 }
-
 void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
     configuration->copyAllTo(*conf);
 }

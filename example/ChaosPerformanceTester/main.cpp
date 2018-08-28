@@ -24,6 +24,9 @@
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
+#include <chaos/ui_toolkit/ChaosUIToolkit.h>
+#include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <stdio.h>
 #include <chaos/common/bson/bson.h>
 
@@ -35,6 +38,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::network;
+using namespace chaos::ui;
 using namespace boost;
 using namespace boost::posix_time;
 using namespace boost::date_time;

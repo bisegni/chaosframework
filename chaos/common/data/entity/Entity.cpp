@@ -100,6 +100,7 @@ int32_t Entity::getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys)
 }
 
 int32_t Entity::getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
+	int32_t error = 0;
 	vector<uint32_t> keys;
 	keys.push_back(keyID);
 	return database->searchPropertyForEntity(entityID, keys, propertys);

@@ -35,8 +35,6 @@
 namespace chaos{
     namespace metadata_service {
         struct setting {
-            //!define the availability zone that own the metadata service instance(the default zone is "default")
-            std::string                         ha_zone_name;
             //!identify the number of the sandbox to use in the batch system
             unsigned int                        batch_sandbox_size;
             unsigned int                        cron_job_scheduler_repeat_time;
@@ -59,10 +57,10 @@ namespace chaos{
             chaos::common::network::NetworkBroker *network_broker_service;
             
             //! batch executor engine
-            chaos::common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
+            common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
             
             //! persistence driver instance
-            chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
+            common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
         };
         
     }

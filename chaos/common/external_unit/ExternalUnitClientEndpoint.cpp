@@ -37,7 +37,7 @@ int ExternalUnitClientEndpoint::sendMessage(const std::string& connection_identi
     LExternalUnitConnectionReadLock rl = current_connection.getReadLockObject();
     if(current_connection() == NULL) return -1;
     //send data to the coneection
-    return current_connection()->sendData(MOVE(message),
+    return current_connection()->sendData(ChaosMoveOperator(message),
                                           opcode);
 }
 
@@ -75,17 +75,17 @@ int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifi
                                           const std::string& message,
                                           const std::string& domain) {
     return sendMessage(current_connection()->connection_identifier,
-                       MOVE(encodeError(code,
-                                        message,
-                                        domain)));
+                       ChaosMoveOperator(encodeError(code,
+                                                     message,
+                                                     domain)));
 }
 
 int ExternalUnitClientEndpoint::sendError(const std::string& connection_identifier,
                                           const chaos::CException& ex) {
     return sendMessage(current_connection()->connection_identifier,
-                       MOVE(encodeError(ex.errorCode,
-                                        ex.errorMessage,
-                                        ex.errorDomain)));
+                       ChaosMoveOperator(encodeError(ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain)));
 }
 
 const bool ExternalUnitClientEndpoint::isOnline() {

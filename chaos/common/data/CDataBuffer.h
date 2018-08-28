@@ -23,107 +23,37 @@
 #define __CHAOSFramework__CDataBuffer_h
 
 #include <chaos/common/chaos_types.h>
-#include <chaos/common/data/Buffer.hpp>
+
 #include <stdint.h>
 
 namespace chaos {
     namespace common {
         namespace data {
-            class CDataBuffer;
-            
-            //!type def for shamrt pointer
-            typedef ChaosUniquePtr<chaos::common::data::CDataBuffer> CDBufferUniquePtr;
-            //!type def for shamrt pointer
-            typedef ChaosSharedPtr<chaos::common::data::CDataBuffer> CDBufferShrdPtr;
             
             class CDataBuffer {
-                //!internal buffer engine
-                Buffer internal_buffer;
-                /**
-                 * @brief Construct a new CDataBuffer object
-                 * 
-                 * @param buffer 
-                 * @param buffer_size 
-                 * @param own 
-                 */
-                CDataBuffer(char *buffer,
-                            uint32_t buffer_size,
-                            bool own);
+                bool own_buffer;
+                char * buffer;
+                uint32_t buffer_size;
+                
             public:
-                /**
-                 * @brief Construct a new CDataBuffer object
-                 * 
-                 */
                 CDataBuffer();
-
-                /**
-                 * @brief Construct a new CDataBuffer object
-                 * 
-                 * @param buffer 
-                 */
-                explicit CDataBuffer(Buffer& buffer);
-
-                /**
-                 * @brief Construct a new CDataBuffer object
-                 * 
-                 * @param buffer 
-                 * @param buffer_size 
-                 */
                 CDataBuffer(const char *buffer,
-                            uint32_t buffer_size);
+                            uint32_t buffer_size,
+                            bool copy = false);
+                CDataBuffer(const CDataBuffer& cdata_buffer);
                 
-                /**
-                 * @brief Construct a new CDataBuffer object
-                 * 
-                 * @param cdata_buffer 
-                 */
-                explicit CDataBuffer(const CDataBuffer& cdata_buffer);
-                
-                /**
-                 * @brief Destroy the CDataBuffer object
-                 * 
-                 */
                 ~CDataBuffer();
-                /**
-                 * @brief Get the Buffer object
-                 * 
-                 * @return const char* 
-                 */
+                
                 const char *getBuffer() const;
                 
-                /**
-                 * @brief Get the Buffer Size object
-                 * 
-                 * @return std::size_t 
-                 */
-                std::size_t getBufferSize() const;
+                uint32_t getBufferSize() const;
                 
-                /**
-                 * @brief 
-                 * 
-                 * @param buffer 
-                 * @param _buffer_size 
-                 * @return CDBufferUniquePtr 
-                 */
-                static CDBufferUniquePtr newOwnBufferFromBuffer(char * buffer,
-                                                                uint32_t _buffer_size);
-
-                /**
-                 * @brief 
-                 * 
-                 * @param buffer 
-                 * @return CDBufferUniquePtr 
-                 */
-                static CDBufferUniquePtr newOwnBufferFromBuffer(Buffer& buffer);
-
-                /**
-                 * @brief 
-                 * 
-                 * @param rhs 
-                 * @return CDataBuffer& 
-                 */
-                CDataBuffer& operator=(CDataBuffer const &rhs);
+                static CDataBuffer *newOwnBufferFromBuffer(char * buffer,
+                                                           uint32_t _buffer_size);
             };
+            
+            typedef ChaosUniquePtr<chaos::common::data::CDataBuffer> CDBufferUniquePtr;
+            typedef ChaosSharedPtr<chaos::common::data::CDataBuffer> CDBufferShrdPtr;
         }
     }
 }

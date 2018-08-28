@@ -33,9 +33,9 @@ API_PROXY_CD_DEFINITION(GetAgentForNode,
                         "getAgentForNode");
 
 ApiProxyResult GetAgentForNode::execute(const std::string& node_uid) {
-    CDWUniquePtr pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
-    return callApi(pack);
+    return callApi(pack.release());
 }
 
 std::string GetAgentForNode::deserialize(CDataWrapper& api_result) {

@@ -83,8 +83,8 @@ void ControlUnitCommandTemplateEditor::onApiDone(const QString& tag,
             showInformation(tr("Error"), tr("Template Fetch"), QString("The  temaplte '%1%' has not been found").arg(ui->lineEditTemplateName->text()));
             return;
         }
-        setCommandDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description").release()));
-        setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description").release()));
+        setCommandDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
+        setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")));
     }
     PresenterWidget::onApiDone(tag,
                                api_result);

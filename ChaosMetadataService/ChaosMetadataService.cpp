@@ -170,7 +170,7 @@ void ChaosMetadataService::start()  throw(CException) {
     //lock o monitor for waith the end
     try {
         ChaosCommon<ChaosMetadataService>::start();
-        std::vector<std::string> bestEndpoints;
+        
         //start batch system
         api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
         data_consumer.start( __PRETTY_FUNCTION__);
@@ -183,17 +183,10 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //register this process on persistence database
         persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-
-        ds_da->registerNode(setting.ha_zone_name,
-                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
+        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
                             api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
                             0);
-
-       /* ds_da->registerNode(setting.ha_zone_name,
-                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
-                            0);
-    */
+        
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                    0,
@@ -222,7 +215,7 @@ void ChaosMetadataService::timeout() {
     ds_da->updateNodeStatistic(NetworkBroker::getInstance()->getRPCUrl(),
                                NetworkBroker::getInstance()->getDirectIOUrl(),
                                0,
-                               service_proc_stat,setting.ha_zone_name);
+                               service_proc_stat);
     
 }
 

@@ -30,45 +30,68 @@ NodeMessageChannel::NodeMessageChannel(NetworkBroker *msgBroker,
                                        MessageRequestDomainSHRDPtr _new_message_request_domain):
 MessageChannel(msgBroker,
                _new_message_request_domain),
-nodeAddress(_nodeAddress){CHAOS_ASSERT(nodeAddress.get())}
+nodeAddress(_nodeAddress){
+    CHAOS_ASSERT(nodeAddress.get())
+}
 
-NodeMessageChannel::~NodeMessageChannel(){}
+NodeMessageChannel::~NodeMessageChannel(){
+}
 
+//
 void NodeMessageChannel::setNewAddress(CNodeNetworkAddress *_nodeAddress) {
     nodeAddress.reset(_nodeAddress);
 }
 
+//! get the rpc published host and port
 void NodeMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {
     MessageChannel::getRpcPublishedHostAndPort(rpc_published_host_port);
 }
 
+/*!
+ \brief send a message
+ \param node_id id of the remote node within a network broker interface
+ \param action_name the name of the action to call
+ \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
+ \param on_this_thread notify when the message need to be sent synCronusly or in async  way
+ */
 void NodeMessageChannel::sendMessage(const std::string& node_id,
                                      const std::string& action_name,
-                                     CDWUniquePtr message_pack) {
+                                     CDataWrapper *message_pack) {
     MessageChannel::sendMessage(nodeAddress->ip_port,
                                 node_id,
                                 action_name,
-                                MOVE(message_pack));
+                                message_pack);
 }
 
-CDWUniquePtr NodeMessageChannel::sendRequest(const std::string& node_id,
+/*!
+ \brief send a synCronus request and can wait for a determinated number of milliseconds the answer. If it has not
+ been received the method return with a NULL pointer
+ \param node_id id of the node into remote chaos rpc system
+ \param action_name name of the actio to call
+ \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
+ \param millisec_to_wait waith the response for onli these number of millisec then return
+ \param on_this_thread notify when the message need to be sent synCronusly or in async  way
+ \return the answer of the request, a null value mean that the wait time is expired
+ */
+CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
                                               const std::string& action_name,
-                                              CDWUniquePtr request_pack,
+                                              CDataWrapper *request_pack,
                                               int32_t millisec_to_wait) {
     return MessageChannel::sendRequest(nodeAddress->ip_port,
                                        node_id,
                                        action_name,
-                                       MOVE(request_pack),
+                                       request_pack,
                                        millisec_to_wait);
 }
 
+//!send an rpc request to a remote node
 ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(const std::string& node_id,
                                                                               const std::string& action_name,
-                                                                              CDWUniquePtr request_pack) {
+                                                                              CDataWrapper *request_pack) {
     return MessageChannel::sendRequestWithFuture(nodeAddress->ip_port,
                                                  node_id,
                                                  action_name,
-                                                 MOVE(request_pack));
+                                                 request_pack);
 }
 
 //! Send a request for receive RPC information
@@ -78,9 +101,9 @@ ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(con
 }
 
 //! Send a request for an echo test
-ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDWUniquePtr echo_data) {
+ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
     return MessageChannel::echoTest(nodeAddress->ip_port,
-                                    MOVE(echo_data));
+                                    echo_data);
 }
 
 //! return last sendxxx error code

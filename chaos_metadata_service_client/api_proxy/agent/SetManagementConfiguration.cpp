@@ -34,5 +34,5 @@ API_PROXY_CD_DEFINITION(SetManagementConfiguration,
 
 ApiProxyResult SetManagementConfiguration::execute(AgentManagementSetting& agent_man_setting) {
     AgentManagementSettingSDWrapper a_set_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentManagementSetting, agent_man_setting));
-    return callApi(a_set_sdw.serialize());
+    return callApi(a_set_sdw.serialize().release());
 }

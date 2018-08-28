@@ -31,10 +31,14 @@ API_PROXY_CD_DEFINITION(CommandTemplateGet,
                         "system",
                         "commandTemplateGet")
 
+/*!
+ 
+ */
 ApiProxyResult CommandTemplateGet::execute(const std::string& template_name,
                                               const std::string& command_uid) {
-    CDWUniquePtr message(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue("template_name", template_name);
     message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_uid);
-    return callApi(message);
+    //call api
+    return callApi(message.release());
 }

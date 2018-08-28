@@ -11,21 +11,23 @@ PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
 
 QMAKE_CXXFLAGS += -std=c++11
-#QMAKE_MAC_SDK = macosx10.12
+QMAKE_MAC_SDK = macosx10.12
 
 TARGET = ccs
 TEMPLATE = app
 RESOURCES = theme/theme.qrc \
     resources.qrc
 
-#INCLUDEPATH += $$PWD/../
+INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
 
+LIBS += -L$$PWD/../usr/local/lib -L"/usr/lib/x86_64-linux-gnu/mesa/"
+
+
 LIBS +=     -lchaos_metadata_service_client
-LIBS += -L$$PWD/../usr/local/lib
+
 unix:!macx {
-    LIBS += -L"/usr/lib/x86_64-linux-gnu/mesa/"
-    LIBS += -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
+    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
 }
 
 macx:{
@@ -186,8 +188,7 @@ SOURCES += main.cpp\
     node/connection_manager/ConnectionEditor.cpp \
     node/connection_manager/model/ControlUnitNodeDataModel.cpp \
     language_editor/LuaLanguageSupport.cpp \
-    language_editor/CLINGLanguageSupport.cpp \
-    widget/StorageBurst.cpp
+    language_editor/CLINGLanguageSupport.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -364,8 +365,7 @@ HEADERS  += \
     node/connection_manager/model/ControlUnitNodeDataModel.h \
     language_editor/LanguageEditorSupport.h \
     language_editor/LuaLanguageSupport.h \
-    language_editor/CLINGLanguageSupport.h \
-    widget/StorageBurst.h
+    language_editor/CLINGLanguageSupport.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -408,8 +408,7 @@ FORMS    += \
     widget/CPopupWidgetContainer.ui \
     widget/ChaosStorageTypeWidget.ui \
     preference/SelectNetworkDomain.ui \
-    node/connection_manager/ConnectionEditor.ui \
-    widget/StorageBurst.ui
+    node/connection_manager/ConnectionEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

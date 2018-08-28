@@ -4,14 +4,13 @@ include(config/CMakeChaos.txt)
 project(chaosframework)
 include(ExternalProject)
 #include(CTest)
-#enable_testing()
-
 #find git
 find_package(Git REQUIRED)
 
 #clear var
 unset(CMAKE_CXX_COMPILER_WORKS CACHE)
 unset(CMAKE_CXX_COMPILER_WORKS)
+
 #specify option
 option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
@@ -23,9 +22,7 @@ option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
-if(NOT QMAKE_PATH)
-  set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
-ENDIF()
+set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
 
 EXECUTE_PROCESS(
 COMMAND ./version.sh
@@ -45,12 +42,12 @@ CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POS
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
 #########
 
-#IF(CHAOS_ARCHITECTURE_TEST)
-#    SET (CMAKE_BUILD_TYPE Debug)
-#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
-#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
-#    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
-#ENDIF()
+IF(CHAOS_ARCHITECTURE_TEST)
+    SET (CMAKE_BUILD_TYPE Debug)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
 
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
@@ -59,7 +56,7 @@ IF (CHAOS_ONLY_DEPENDECY OR
   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
-     GIT_TAG release-1.8.0
+     GIT_TAG master
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
      SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
@@ -96,7 +93,7 @@ IF (USE_GPT)
     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/gpt-prefix"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/gpt-src"
-    CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_BINARY_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./autogen.sh COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ext_dep/gpt-src/./configure --prefix=${CMAKE_INSTALL_PREFIX}
     LOG_DOWNLOAD ON
     LOG_CONFIGURE ON
     LOG_BUILD ON)
@@ -129,6 +126,9 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
+  MESG("Configure UIToolkit Layer")
+  ADD_SUBDIRECTORY(chaos/ui_toolkit)
+
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
@@ -141,19 +141,15 @@ MESG("Configure Chaos Agent Service")
 ADD_SUBDIRECTORY(ChaosAgent)
 ENDIF()
 
-IF (CHAOS_MDS AND
-    NOT CHAOS_ONLY_DEPENDECY)
-    # IF("${CMAKE_CXX_COMPILE_FEATURES}" MATCHES "cxx_std_11")
-    MESG("Configure Chaos Data Service")
-    ADD_SUBDIRECTORY(ChaosMetadataService)
-    # ELSE()
-    # WARN("Chaos Data Service require a c11 compliant compiler")
-    # ENDIF()
+IF (CHAOS_MDS AND NOT CHAOS_ONLY_DEPENDECY)
+  MESG("Configure Chaos Metadata Service")
+  ADD_SUBDIRECTORY(ChaosMetadataService)
 ENDIF()
 
 IF(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
+
 
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")
@@ -161,8 +157,14 @@ IF(NOT CHAOS_ONLY_DEPENDECY)
   ENDIF()
 
   IF(CHAOS_EXAMPLES)
+    MESG("Configure Chaos CLI")
+    ADD_SUBDIRECTORY(example/ChaosCLI)
+
     MESG("Configure Chaos ChaosMDSCmd")
     ADD_SUBDIRECTORY(example/ChaosMDSCmd)
+
+    MESG("Configure Chaos Performance Tester")
+    ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
   ENDIF()
 ENDIF()
 

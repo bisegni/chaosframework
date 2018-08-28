@@ -41,7 +41,7 @@ int ExternalUnitServerEndpoint::sendMessage(const std::string& connection_identi
     }while(rl->owns_lock() == false);
     if(map_connection().count(connection_identifier) == 0) return -1;
     //send data to the coneection
-    return map_connection()[connection_identifier]->sendData(MOVE(message),
+    return map_connection()[connection_identifier]->sendData(ChaosMoveOperator(message),
                                                              opcode);
 }
 
@@ -84,7 +84,7 @@ int ExternalUnitServerEndpoint::sendError(const std::string& connection_identifi
                                     const std::string& message,
                                     const std::string& domain) {
     return sendMessage(connection_identifier,
-                       MOVE(encodeError(code,
+                       ChaosMoveOperator(encodeError(code,
                                                      message,
                                                      domain)));
 }
@@ -92,7 +92,7 @@ int ExternalUnitServerEndpoint::sendError(const std::string& connection_identifi
 int ExternalUnitServerEndpoint::sendError(const std::string& connection_identifier,
                                     const chaos::CException& ex) {
     return sendMessage(connection_identifier,
-                       MOVE(encodeError(ex.errorCode,
+                       ChaosMoveOperator(encodeError(ex.errorCode,
                                                      ex.errorMessage,
                                                      ex.errorDomain)));
 }

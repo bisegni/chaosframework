@@ -506,11 +506,11 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
  Submit a message specifing the destination
  */
 bool NetworkBroker::submitMessage(const string& host,
-                                  CDWUniquePtr message) {
-    CHAOS_ASSERT(rpc_client)
+                                  CDataWrapper *message) {
+    CHAOS_ASSERT(message && rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
-    nfi->setMessage(MOVE(message));
+    nfi->setMessage(message);
     //add answer id to datawrapper
     return rpc_client->submitMessage(nfi, false);
 }
@@ -534,16 +534,16 @@ chaos::common::data::CDataWrapper *NetworkBroker::submitInterProcessMessage(chao
  Submite a new request to send to the remote host
  */
 bool NetworkBroker::submiteRequest(const string& host,
-                                   CDWUniquePtr request,
+                                   CDataWrapper *request,
                                    std::string sender_node_id,
                                    uint32_t sender_request_id) {
-    CHAOS_ASSERT(rpc_client)
+    CHAOS_ASSERT(request && rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
     NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
     nfi->destinationAddr = host;
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
-    nfi->setMessage(MOVE(request));
+    nfi->setMessage(request);
     return rpc_client->submitMessage(nfi, false);
 }
 

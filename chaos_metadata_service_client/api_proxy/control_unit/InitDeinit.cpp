@@ -21,7 +21,6 @@
 
 #include <chaos_metadata_service_client/api_proxy/control_unit/InitDeinit.h>
 
-using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
@@ -29,9 +28,12 @@ API_PROXY_CD_DEFINITION(InitDeinit,
                         "control_unit",
                         "initDeinit")
 
+/*!
+
+ */
 ApiProxyResult InitDeinit::execute(const std::string& cu_unique_id,
                                    bool init) {
-    CDWUniquePtr message(new CDataWrapper());
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
     message->addBoolValue("init", init);
     return callApi(message);

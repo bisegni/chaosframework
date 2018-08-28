@@ -29,9 +29,11 @@ NodeMonitor::NodeMonitor(const std::string &node_id,
 	node_id(node_id),
 	monitor_duration(monitor_duration),
 	monitor_quantum_slot(monitor_quantum_slot){
-}
+    }
 
-NodeMonitor::~NodeMonitor(){}
+
+NodeMonitor::~NodeMonitor(){
+    }
 
 void NodeMonitor::registerConsumer() {
     //register this class with monitor system has handler

@@ -178,21 +178,21 @@ int HealtManager::sayHello() throw (chaos::CException) {
 void HealtManager::start() throw (chaos::CException) {
     AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
     //say hello to mds
-    //    int32_t retry =HELLO_PHASE_RETRY;
-    //    while(retry--){
-    //        try{
-    //            if(sayHello()==0){
-    //                HM_INFO << "Found ("<<retry<<")";
-    //                //add timer to publish all node healt very 5 second
-    //
-    //                return;
-    //            }
-    //        } catch(chaos::CException& ex) {
-    //            DECODE_CHAOS_EXCEPTION(ex);
-    //        }
-    //        HM_INFO << "Retry hello again ("<<retry<<")";
-    //    }
-    //    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
+//    int32_t retry =HELLO_PHASE_RETRY;
+//    while(retry--){
+//        try{
+//            if(sayHello()==0){
+//                HM_INFO << "Found ("<<retry<<")";
+//                //add timer to publish all node healt very 5 second
+//
+//                return;
+//            }
+//        } catch(chaos::CException& ex) {
+//            DECODE_CHAOS_EXCEPTION(ex);
+//        }
+//        HM_INFO << "Retry hello again ("<<retry<<")";
+//    }
+//    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
 }
 
 void HealtManager::stop() throw (chaos::CException) {
@@ -201,10 +201,10 @@ void HealtManager::stop() throw (chaos::CException) {
 }
 
 void HealtManager::deinit() throw (chaos::CException) {
-    //    if(mds_message_channel) {
-    //        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
-    //        mds_message_channel = NULL;
-    //    }
+//    if(mds_message_channel) {
+//        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
+//        mds_message_channel = NULL;
+//    }
 }
 
 const ProcInfo& HealtManager::getLastProcInfo() {
@@ -410,9 +410,9 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
-CDWShrdPtr HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
-                                             uint64_t push_timestamp) {
-    CDWShrdPtr node_data_pack = ChaosMakeSharedPtr<CDataWrapper>();
+CDataWrapper*  HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
+                                                 uint64_t push_timestamp) {
+    CDataWrapper *node_data_pack = new CDataWrapper();
     int64_t cur_ts_usec = TimingUtil::getTimeStampInMicroseconds();
     if(node_data_pack) {
         //add device unique id
@@ -441,7 +441,7 @@ CDWShrdPtr HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
         //scan all metrics
         BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, node_health_set.map_metric) {
             //add metric to cdata wrapper
-            map_metric_element.second->addMetricToCD(node_data_pack.get());
+            map_metric_element.second->addMetricToCD(node_data_pack);
         }
     }
     return node_data_pack;
@@ -480,15 +480,15 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
     boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
     //update infromation abour process
     updateProcInfo();
-    
+
     //send datapack
-    CDWShrdPtr data_pack = prepareNodeDataPack(*heath_set,
-                                               publish_ts);
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(prepareNodeDataPack(*heath_set,
+                                                                                    publish_ts));
     if(data_pack.get()) {
         //store data on cache
         SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,
-                                                                                          MOVE(data_pack),
-                                                                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                        *data_pack,
+                                        DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }

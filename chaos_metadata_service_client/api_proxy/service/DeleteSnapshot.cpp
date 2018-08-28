@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/service/DeleteSnapshot.h>
 
-using namespace chaos::common::data;
+using namespace chaos;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::service;
 
@@ -29,8 +29,11 @@ API_PROXY_CD_DEFINITION(DeleteSnapshot,
                         "service",
                         "deleteSnapshot")
 
+/*!
+ 
+ */
 ApiProxyResult DeleteSnapshot::execute(const std::string& snapshot_name) {
-    CDWUniquePtr message(new CDataWrapper());
+    common::data::CDataWrapper *message = new common::data::CDataWrapper();
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);
 }

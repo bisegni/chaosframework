@@ -603,7 +603,6 @@ namespace chaos {
      */
     //! This is the collection of the key to configura history and live channel
     namespace DataServiceNodeDefinitionKey {
-        static const char * const DS_HA_ZONE                                        = "dsndk_ha_zone";
         static const char * const DS_DIRECT_IO_FULL_ADDRESS_LIST                    = "dsndk_direct_io_full";
         //!lis the endpoitwhere is published the direct io[uint32_t]
         static const char * const DS_DIRECT_IO_ENDPOINT                             = "dsndk_direct_io_ep";
@@ -623,7 +622,6 @@ namespace chaos {
          store another datapack into the live system[uint64]
          */
         static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
-
     }
     /** @} */ // end of DataServiceNodeDefinitionKey
     
@@ -638,14 +636,14 @@ namespace chaos {
          so every datapack can be considere with different store behaviour
          */
         typedef enum DSStorageType {
-            //!no storage behaviour defined
-            DSStorageTypeUndefined = 0,
             //!the datapack is store into the storage system and not in live
-            DSStorageTypeHistory = 1,
+            DSStorageTypeHistory,
             //!the datapack is publish in live shared memory
-            DSStorageTypeLive = 2,
+            DSStorageTypeLive,
             //!datapack is published and stored in live and history
-            DSStorageTypeLiveHistory = 3
+            DSStorageTypeLiveHistory,
+            //!no storage behaviour defined
+            DSStorageTypeUndefined
         } DSStorageType;
     }
     /** @} */ // end of DataServiceNodeDefinitionType
@@ -745,45 +743,12 @@ namespace chaos {
         
         //!The key represent an array with the object taht represent, each one, the command description array[object...]
         static const char * const CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION         = "cudk_ds_command_description";
-        /*!
-         Whatever storage type is actually in use, the set of this property will send data to
-         the history engine with the type and value specified by the cdata wrapper seriled in it
-         */
-        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST               = "dsndk_history_burst";
-        //! Is the key used for specify the type f burts function
-        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE          = "dsndk_history_burst_type";
-        //! is the value related to the type
-        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE         = "dsndk_history_burst_value";
-        //! is the tag associated to the burst
-        static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_TAG           = "dsndk_history_burst_tag";
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
-    /** @defgroup ControlUnitNodeDefinitionKey List of control unit node type attribute key
-     *  @{
-     */
-    //! Name space for grupping key for the control unit node type
-    namespace ControlUnitNodeDefinitionType {
-        //! define the tipe of hisoty burst function
-        typedef enum DSStorageBurstType {
-            //!no storage behaviour defined
-            DSStorageBurstTypeUndefined = 0,
-            DSStorageBurstTypeNPush,
-            DSStorageBurstTypeMSec
-        } DSStorageBurstType;
-    }
-    /** @} */ // end of ControlUnitNodeDefinitionKey
     namespace ControlUnitNodeDomainAndActionRPC {
         //!Alias associated to thefunction that apply the value changes set to the input dataset attribute
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
-        
-        //! Deinitialization of a control unit, if it is in run, the stop phase
-        //! is started befor deinitialization one
-        static const char * const ACTION_STORAGE_BURST  = "cunrpc_start_storage_burst";
-        
-        static const char * const ACTION_DATASET_TAG_MANAGEMENT  = "cunrpc_dataset_tag_management";
-        static const char * const ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST  = "add";
-        static const char * const ACTION_DATASET_TAG_MANAGEMENT_REMOVE_LIST  = "remove";
     }
     
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
@@ -836,15 +801,6 @@ namespace chaos {
          and no action are take on the hardware
          */
         static const char * const BYPASS_STATE                            = "cudk_bypass_state";
-        //!represent the bypass state of the control unit
-        /*!
-         Represent in system datase the state of bursting data on a control unit. The burst
-         operation of a CU determinate the force of storage data on history backend for a determinated
-         amount of time or cu cicle
-         */
-        static const char * const BURST_STATE   = "cudk_burst_state";
-        //! repreent the tag associated to the current burst oepration
-        static const char * const BURST_TAG     = "cudk_burst_tag";
     }
     
     /** @defgroup Contorl unit system key
@@ -1244,8 +1200,6 @@ namespace chaos {
         static const char * const DPCK_HIGH_RESOLUTION_TIMESTAMP       = "dpck_hr_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
-        //!define the list of tags associated to the datapack
-        static const char * const DPCK_DATASET_TAGS                    = "dpck_ds_tag";
         //! the constant that represent the output dataset type
         static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
         //! the constant that represent the input dataset type
@@ -1260,8 +1214,6 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
-        //!define tags associated to the dataset[array of string]
-        static const char * const DPCK_DATASET_TAG                    = "dpck_ds_tag";
     }
 
 

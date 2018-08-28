@@ -31,9 +31,12 @@ API_PROXY_CD_DEFINITION(CommandGet,
                         "system",
                         "commandGet")
 
+/*!
+ 
+ */
 ApiProxyResult CommandGet::execute(const std::string& command_unique_id) {
-    CDWUniquePtr message(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, command_unique_id);
     //call api
-    return callApi(message);
+    return callApi(message.release());
 }

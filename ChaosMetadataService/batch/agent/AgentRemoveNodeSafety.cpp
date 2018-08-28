@@ -152,7 +152,7 @@ bool AgentRemoveNodeSafety::processStopOperationPhases() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
-                        MOVE(message_data));
+                        message_data.get());
         }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

@@ -54,7 +54,7 @@ std::string RemoteMessage::getErrorDomain() const {
 
 AbstractUnitProxy::AbstractUnitProxy(const std::string& _authorization_key,
                                      ChaosUniquePtr<connection_adapter::AbstractConnectionAdapter>& _protocol_adapter):
-connection_adapter(MOVE(_protocol_adapter)),
+connection_adapter(ChaosMoveOperator(_protocol_adapter)),
 unit_state(UnitStateUnknown),
 authorization_key(_authorization_key){assert(connection_adapter.get());}
 

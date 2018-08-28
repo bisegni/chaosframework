@@ -55,7 +55,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
     
     if(data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE) &&
        data->isCDataWrapperValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) {
-        rpc_message=data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
+        rpc_message.reset(data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     }
     
     if(getDataAccess<mds_data_access::NodeDataAccess>()->isNodeAlive(node_uid, node_alive)) {
@@ -76,7 +76,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
                                 node_rpc_domain,
                                 rpc_action);
         sendMessage(*request,
-                    MOVE(rpc_message));
+                    rpc_message.get());
     }
 }
 

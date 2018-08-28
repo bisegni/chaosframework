@@ -31,8 +31,11 @@ API_PROXY_CD_DEFINITION(ClearCommandQueue,
                         "system",
                         "clearCommandQueue")
 
+/*!
+ 
+ */
 ApiProxyResult ClearCommandQueue::execute(const std::string& node_uid) {
-    CDWUniquePtr message(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
-    return callApi(message);
+    return callApi(message.release());
 }

@@ -29,41 +29,24 @@ namespace chaos{
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-                
-                struct ServerWorkRequest {
-                    const WorkRequestType r_type;
-                    const std::string connection_uuid;
-                    ChaosUniquePtr<chaos::common::data::CDataBuffer> buffer;
-                    
-                    ServerWorkRequest():
-                    r_type(WorkRequestTypeUnspecified),
-                    buffer(){}
-                    
-                    ServerWorkRequest(const std::string& _connection_uuid,
-                                      const char *ptr,
-                                      uint32_t size):
-                    r_type(WorkRequestTypeWSFrame),
-                    connection_uuid(_connection_uuid),
-                    buffer(new chaos::common::data::CDataBuffer(ptr, size)){}
-                };
-                
-                
-                typedef ChaosSharedPtr<ServerWorkRequest> ServerWorkRequestShrdPtr;
+
                 //!External gateway root class
                 class HTTPServerAdapter:
                 public AbstractServerAdapter,
                 protected CObjectProcessingQueue< ServerWorkRequest >,
                 public HTTPBaseAdapter {
                     friend class ExternalUnitConnection;
-                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
+                    CHAOS_DEFINE_MAP_FOR_TYPE(uintptr_t, ChaosSharedPtr<ExternalUnitConnection>, MapConnection);
                     CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnection, LMapConnection);
 
                     //!contains all connection
                     LMapConnection  map_connection;
+                    chaos::common::utility::Bimap<uintptr_t, std::string> map_m_conn_ext_conn;
 
                     bool run;
                     HTTPServerAdapterSetting setting;
 
+                    struct mg_mgr mgr;
                     struct mg_connection *root_connection;
                     struct mg_serve_http_opts s_http_server_opts;
 
@@ -72,17 +55,10 @@ namespace chaos{
                     static void eventHandler(mg_connection *nc,
                                              int ev,
                                              void *ev_data);
-                    void manageWSHandshake(mg_connection *nc,
-                                           http_message *message);
-                    OpcodeShrdPtr composeAcceptOpcode(const std::string& connection_uuid,
-                                                      bool accepted);
-                    OpcodeShrdPtr composeCloseOpcode(const std::string& connection_uuid);
-                    
-                    void consumeConenctionMessageQueue(mg_connection *nc);
-                    int _sendDataToConnectionQueue(const std::string& conn_uuid,
-                                                   chaos::common::data::CDBufferUniquePtr data,
-                                                   const EUCMessageOpcode opcode);
-                    void executeOpcodeOnConnection(OpcodeShrdPtr op, mg_connection *nc);
+                    void  manageWSHandshake(ServerWorkRequest& wr);
+                    void sendWSJSONAcceptedConnection(mg_connection *nc,
+                                                      bool accepted,
+                                                      bool close_connection);
                 protected:
                     void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,

@@ -31,24 +31,23 @@ boost::str(boost::format("%1%-%2%(%3%)") % e % m % d)
 #define MAMRF_DBG DBG_LOG(MultiAddressMessageRequestFuture)
 #define MAMRF_ERR ERR_LOG(MultiAddressMessageRequestFuture)
 
-using namespace chaos::common::data;
 using namespace chaos::common::message;
 //!private destructor
 MultiAddressMessageRequestFuture::MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
                                                                    const std::string& _action_domain,
                                                                    const std::string& _action_name,
-                                                                   CDWUniquePtr _message_pack,
+                                                                   chaos::common::data::CDataWrapper *_message_pack,
                                                                    int32_t _timeout_in_milliseconds):
 timeout_in_milliseconds(_timeout_in_milliseconds),
 parent_mn_message_channel(_parent_mn_message_channel),
 action_domain(_action_domain),
 action_name(_action_name),
-message_pack(MOVE(_message_pack)){
+message_pack(_message_pack){
     CHAOS_ASSERT(parent_mn_message_channel);
     //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack),
+                                                                       message_pack.get(),
                                                                        last_used_address);
 }
 
@@ -67,7 +66,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack),
+                                                                       message_pack.get(),
                                                                        last_used_address);
     if(current_future.get()) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
@@ -78,7 +77,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //retrasmission of the datapack
         current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
-                                                                           MOVE(message_pack),
+                                                                           message_pack.get(),
                                                                            last_used_address);
     }
 }
@@ -133,7 +132,7 @@ bool MultiAddressMessageRequestFuture::wait() {
 }
 
 //! try to get the result waiting for a determinate period of time
-CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
+chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
     if(current_future.get())
         return current_future->getResult();
     else
@@ -141,11 +140,11 @@ CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
 }
 
 
-CDWUniquePtr MultiAddressMessageRequestFuture::detachResult() {
+chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachResult() {
     if(current_future.get())
         return current_future->detachResult();
     else
-        return CDWUniquePtr();
+        return NULL;
 }
 
 int MultiAddressMessageRequestFuture::getError() const {
@@ -169,6 +168,6 @@ const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
         return ErrorRpcCoce::EC_REQUEST_FUTURE_NOT_AVAILABLE;
 }
 
-//CDWUniquePtr MultiAddressMessageRequestFuture::detachMessageData() {
-//    return message_pack;
-//}
+chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachMessageData() {
+    return message_pack.release();
+}

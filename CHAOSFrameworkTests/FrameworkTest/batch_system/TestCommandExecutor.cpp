@@ -83,12 +83,9 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
             killed_count++;
             break;
         }
-        case BatchCommandEventType::EVT_FATAL_FAULT:{
+        case BatchCommandEventType::EVT_FATAL_FAULT:
+            
             break;
-        }
-        default:{
-            break;
-        }
     }
 }
 

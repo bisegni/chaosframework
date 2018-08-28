@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(RecoverError,
  
  */
 ApiProxyResult RecoverError::execute(const std::vector<std::string>& cu_uids) {
-    CDWUniquePtr message(new chaos::common::data::CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
     
     //compose data pack
     for(std::vector<std::string>::const_iterator it = cu_uids.begin();
@@ -44,5 +44,5 @@ ApiProxyResult RecoverError::execute(const std::vector<std::string>& cu_uids) {
     }
     message->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     //call api
-    return callApi(message);
+    return callApi(message.release());
 }

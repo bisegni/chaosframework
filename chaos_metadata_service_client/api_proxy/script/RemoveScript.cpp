@@ -30,5 +30,5 @@ API_PROXY_CD_DEFINITION(RemoveScript, "script", "removeScript")
 
 ApiProxyResult RemoveScript::execute(ScriptBaseDescription& description) {
     ScriptBaseDescriptionSDWrapper sdwrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, description));
-    return callApi(sdwrap.serialize());
+    return callApi(sdwrap.serialize().release());
 }

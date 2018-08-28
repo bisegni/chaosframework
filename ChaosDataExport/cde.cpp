@@ -27,8 +27,9 @@
 #include <chaos/common/additional_lib/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
-#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
-
+#include <chaos/ui_toolkit/ChaosUIToolkit.h>
+#include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
 
 #include <chaos/common/bson/bson.h>
@@ -41,9 +42,7 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
-
-using namespace chaos::metadata_service_client;
-using namespace chaos::metadata_service_client::node_controller;
+using namespace chaos::ui;
 using namespace boost;
 
 #define OPT_CU_ID           "device-id"
@@ -54,7 +53,6 @@ using namespace boost;
 #define OPT_PAGE_LENGHT     "page-lenght"
 #define OPT_START_TIME      "start-time"
 #define OPT_END_TIME		"end-time"
-#define OPT_TAGS            "tags"
 
 
 void sendBackOnRow() {
@@ -81,9 +79,7 @@ int computePercent(uint64_t done, uint64_t all) {
     return result;
 }
 
-chaos::common::data::SerializationBuffer *getCSVDecoding(CUController& controller,
-                                                         const std::vector<std::string>& output_element_name,
-                                                         CDataWrapper& data_pack) {
+chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& controller, const std::vector<std::string>& output_element_name, CDataWrapper& data_pack) {
     chaos::common::data::SerializationBuffer *result = NULL;
     std::stringstream csv_lin;
     chaos::common::data::RangeValueInfo attribute_info;
@@ -170,7 +166,6 @@ int main(int argc, const char* argv[]) {
     uint32_t page_len;
     string start_time;
     string end_time;
-    ChaosStringVector meta_tags;
     std::string err_str;
     std::ostream	*destination_stream = NULL;
     std::ofstream	destination_file;
@@ -180,6 +175,7 @@ int main(int argc, const char* argv[]) {
     
     int rett=0;
     int retry = 0;
+    uint32_t cicle_number = 0;
     //clear buffer
     memset(buf, 0, 255);
     
@@ -190,25 +186,24 @@ int main(int argc, const char* argv[]) {
     try{
         //std::cout << "\x1B[?25l";
         //! [UIToolkit Attribute Init]
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 30, &page_len);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<ChaosStringVector>(OPT_TAGS, "Meta tags list", &meta_tags);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 30, &page_len);
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
-        ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+        ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
-        if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
+        if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
             throw CException(-1, "invalid device identification string", "check param");
         }
         
         //get the timestamp for query boundary
-        if(ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
             //try to check if the string is a number
             try {
                 start_ts = lexical_cast<uint64_t>(start_time);
@@ -221,7 +216,7 @@ int main(int argc, const char* argv[]) {
             std::cout << "Set start data to:"<< start_time << std::endl;
         }
         
-        if(ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
             //try to check if the string is a number
             try {
                 end_ts = lexical_cast<uint64_t>(end_time);
@@ -261,22 +256,14 @@ int main(int argc, const char* argv[]) {
         
         //we can allocate the channel
         std::cout << "Acquiring controller" << std::endl;
-        CUController *controller = NULL;
-        ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id, &controller);
+        DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
         
-        ChaosStringSet search_tags;
+        
         chaos::common::io::QueryCursor *query_cursor = NULL;
-        for(ChaosStringVectorIterator it = meta_tags.begin(),
-            end = meta_tags.end();
-            it != end;
-            it++) {
-            search_tags.insert(*it);
-        }
-        controller->executeTimeIntervallQuery(chaos::cu::data_manager::KeyDataStorageDomainOutput,
+        controller->executeTimeIntervallQuery(DatasetDomainOutput,
                                               start_ts,
                                               end_ts,
-                                              search_tags,
                                               &query_cursor,
                                               page_len);
         
@@ -311,18 +298,18 @@ int main(int argc, const char* argv[]) {
                 ChaosSharedPtr<CDataWrapper> q_result(query_cursor->next());
                 if(q_result.get()) {
                     retry = 0;
-                    SerializationBufferUPtr ser;
+                    ChaosUniquePtr<chaos::common::data::SerializationBuffer> ser;
                     //get serialization buffer by type
                     switch (dest_type) {
                             //BSON
                         case 0:{
-                            ser = q_result->getBSONData();
+                            ser.reset(q_result->getBSONData());
                             break;
                         }
                             //JSON
                         case 1:{
                             std::string ser_str = q_result->getJSONString();
-                            //ser = ChaosMakeSharedPtr<SerializationBuffer>(ser_str.c_str(), ser_str.size()));
+                            ser.reset(new SerializationBuffer(ser_str.c_str(), ser_str.size()));
                             break;
                         }
                             //CSV
@@ -346,7 +333,7 @@ int main(int argc, const char* argv[]) {
         }
         destination_stream->flush();
         std::cout << "Releasing controller" << std::endl;
-        ChaosMetadataServiceClient::getInstance()->deleteCUController(controller);
+        HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
     } catch (CException& e) {
         std::cout << "\x1B[?25h";
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
@@ -359,7 +346,7 @@ int main(int argc, const char* argv[]) {
     
     try {
         //! [UIToolkit Deinit]
-        ChaosMetadataServiceClient::getInstance()->deinit();
+        ChaosUIToolkit::getInstance()->deinit();
         //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cout << "\x1B[?25h";

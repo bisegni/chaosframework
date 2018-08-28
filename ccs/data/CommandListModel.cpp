@@ -22,7 +22,7 @@ void CommandListModel::updateData(const QSharedPointer<CDataWrapper>& _dataset) 
         for(int idx = 0;
             idx < command_array->size();
             idx++){
-            QSharedPointer<CDataWrapper> command_description(command_array->getCDataWrapperElementAtIndex(idx).release());
+            QSharedPointer<CDataWrapper> command_description(command_array->getCDataWrapperElementAtIndex(idx));
             if(command_description->hasKey(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)&&
                     command_description->hasKey(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)&&
                     command_description->hasKey(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)){

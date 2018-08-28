@@ -158,7 +158,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="usesScrollButtons">
       <bool>true</bool>
@@ -613,13 +613,8 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
-            <item>
-             <property name="text">
-              <string>Not Set</string>
-             </property>
-            </item>
             <item>
              <property name="text">
               <string>History</string>
@@ -633,6 +628,11 @@
             <item>
              <property name="text">
               <string>History &amp; Live</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Not Set</string>
              </property>
             </item>
            </widget>

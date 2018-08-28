@@ -43,7 +43,7 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), false);
     //send pack
-    return client_instance()->sendPriorityData(MOVE(data_pack));
+    return client_instance()->sendPriorityData(ChaosMoveOperator(data_pack));
 }
 
 int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
@@ -57,7 +57,7 @@ int DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::Dir
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), true);
     //send pack
-    int err = client_instance()->sendPriorityData(MOVE(data_pack),
+    int err = client_instance()->sendPriorityData(ChaosMoveOperator(data_pack),
                                                   synchronous_answer);
     if(!err &&
        synchronous_answer) {
@@ -77,7 +77,7 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), false);
     //send pack
-    return client_instance()->sendServiceData(MOVE(data_pack));
+    return client_instance()->sendServiceData(ChaosMoveOperator(data_pack));
 }
 
 int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
@@ -91,7 +91,7 @@ int DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::Dire
     DirectIOForwarderPtrLOWriteLock wl = client_instance.getWriteLockObject();
     completeChannnelDataPack(data_pack.get(), true);
     //send pack
-    int err = client_instance()->sendServiceData(MOVE(data_pack),
+    int err = client_instance()->sendServiceData(ChaosMoveOperator(data_pack),
                                                  synchronous_answer);
     if(!err &&
        synchronous_answer) {

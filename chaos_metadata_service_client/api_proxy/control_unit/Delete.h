@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework__Delete_h
 #define __CHAOSFramework__Delete_h
 
+
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
 
 #include <boost/shared_ptr.hpp>
@@ -51,5 +52,6 @@ namespace chaos {
         }
     }
 }
+
 
 #endif /* Delete_h */

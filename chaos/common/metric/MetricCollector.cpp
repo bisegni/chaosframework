@@ -57,10 +57,7 @@ stat_intervall(update_time_in_sec*1000){
     }
     if(!on_console &&
        !on_file) {
-           MC_INFO<< "% No metric output selected for collector, redirecting to default. To redirect output use options:'"<<InitOption::OPT_LOG_METRIC_ON_FILE<<"' and '"<<InitOption::OPT_LOG_METRIC_ON_FILE_PATH<<"'" ;
-        addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(collector_name)));
-        // per una cavolata non parte l'MDS
-        //throw CException(-1, "No metric output selected for collector", __PRETTY_FUNCTION__);
+        throw CException(-1, "No metric backdend selected for collector", __PRETTY_FUNCTION__);
     }
 }
 

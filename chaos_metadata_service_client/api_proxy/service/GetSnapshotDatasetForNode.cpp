@@ -29,10 +29,12 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(GetSnapshotDatasetForNode,
                         "service",
                         "getSnapshotDatasetForNode")
-
+/*!
+ 
+ */
 ApiProxyResult GetSnapshotDatasetForNode::execute(const std::string& snapshot_name,
                                                   const std::string& node_uid) {
-    CDWUniquePtr message(new CDataWrapper());
+    CDataWrapper *message = new CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);
@@ -49,7 +51,7 @@ void GetSnapshotDatasetForNode::getAsMap(chaos::common::data::CDataWrapper& api_
     for(int idx = 0;
         idx < snapshot_list->size();
         idx++) {
-        CDWUniquePtr snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> snapshot_dataset_element(snapshot_list->getCDataWrapperElementAtIndex(idx));
         const std::string dataset_name = snapshot_dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME);
         CDWShrdPtr saved_dataset(snapshot_dataset_element->getCSDataValue("dataset_value"));
         

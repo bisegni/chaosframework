@@ -42,7 +42,7 @@ namespace chaos {
             
             class SendHealthStatAsyncJob:
             public chaos::common::async_central::AsyncRunnable {
-                
+
             protected:
                 void run();
             public:
@@ -50,7 +50,7 @@ namespace chaos {
                 ~SendHealthStatAsyncJob();
             };
             
-            //retry for 12h
+	  //retry for 12h
 #define HELLO_PHASE_RETRY            12*3600
             struct ProcInfo {
                 double usr_time;
@@ -164,8 +164,8 @@ namespace chaos {
                 
                 //! timer handler for check what slot needs to be fired
                 void timeout();
-                chaos::common::data::CDWShrdPtr prepareNodeDataPack(NodeHealtSet& node_health_set,
-                                                                    uint64_t push_timestamp);
+                chaos::common::data::CDataWrapper* prepareNodeDataPack(NodeHealtSet& node_health_set,
+                                                                       uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
                 int sayHello() throw (chaos::CException);
@@ -272,7 +272,7 @@ namespace chaos {
                 //!publish health information for a node
                 /*!
                  \param node_uid the node identification id for which we need to
-                 publish the healt data.
+                                    publish the healt data.
                  */
                 void publishNodeHealt(const std::string& node_uid);
             };

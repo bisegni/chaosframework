@@ -1,7 +1,3 @@
-.scannerwork
-asan_leak_suppression.txt
-ccs_error
-ccs_autogen
 cov_html
 coverage.info
 *.gcov
@@ -79,6 +75,7 @@ example/build-UIToolkitTest-Desktop-Debug/*
 ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
+*.json
 /.project
 .idea/
 *.cpp_parameters

@@ -74,7 +74,7 @@ namespace chaos {
                 void log(const std::string& log_message);
             public:
                 CronJob(chaos::common::data::CDataWrapper *job_parameter);
-                virtual ~CronJob();
+                ~CronJob();
             };
         }
     }

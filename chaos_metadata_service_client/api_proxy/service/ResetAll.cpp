@@ -28,6 +28,9 @@ API_PROXY_CD_DEFINITION(ResetAll,
                         "service",
                         "resetAll")
 
+/*!
+ 
+ */
 ApiProxyResult ResetAll::execute() {
     return callApi();
 }

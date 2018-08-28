@@ -181,15 +181,14 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         //get the action message
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
             //there is a subcommand to submit
-            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE).release());
+            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         }
         
         //get sub command if present
         //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
             //there is a subcommand to submit
-
-            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD).release();
+            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
         }
         
         //check if request has the rigth key to let chaos lib can manage the answer send operation
@@ -250,31 +249,29 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         
         if( needAnswer && remoteActionResult.get() ) {
             //we need to construct the response pack
-            CDWUniquePtr response_pack(new CDataWrapper());
+            responsePack = new CDataWrapper();
             
             //fill answer with data for remote ip and request id
             remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
             //set the answer host ip as remote ip where to send the answere
-            response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
+            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
             
             //check this only if we have a destinantion
             if(answerDomain.size() && answerAction.size()){
                 //set the domain for the answer
-                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
+                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
                 
                 //set the name of the action for the answer
-                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
+                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
             }
             
             //add the action message
-            response_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
+            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!dispatcher->submitMessage(answerIP,
-                                          MOVE(response_pack),
-                                          false)){
+            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
                 //the response has not been sent
-                
+                DELETE_OBJ_POINTER(responsePack);
             }
         }
     } catch (CException& ex) {

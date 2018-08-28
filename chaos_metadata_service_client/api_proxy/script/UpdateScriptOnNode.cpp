@@ -33,15 +33,15 @@ API_PROXY_CD_DEFINITION(UpdateScriptOnNode, "script", "updateScriptOnNode")
 ApiProxyResult UpdateScriptOnNode::execute(const std::string& target_node,
                                            const ScriptBaseDescription& sbd) {
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
-    CDWUniquePtr api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, target_node);
     api_data->appendAllElement(*swd.serialize());
-    return callApi(api_data);
+    return callApi(api_data.release());
 }
 
 ApiProxyResult UpdateScriptOnNode::execute(const ChaosStringVector& instance_names,
                                            const ScriptBaseDescription& sbd) {
-    CDWUniquePtr api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     ScriptBaseDescriptionSDWrapper swd(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(ScriptBaseDescription, const_cast<ScriptBaseDescription&>(sbd)));
     for(ChaosStringVectorConstIterator it = instance_names.begin(),
         end = instance_names.end();
@@ -51,5 +51,5 @@ ApiProxyResult UpdateScriptOnNode::execute(const ChaosStringVector& instance_nam
     }
     api_data->finalizeArrayForKey(NodeDefinitionKey::NODE_UNIQUE_ID);
     api_data->appendAllElement(*swd.serialize());
-    return callApi(api_data);
+    return callApi(api_data.release());
 }

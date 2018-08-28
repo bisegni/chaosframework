@@ -21,7 +21,6 @@
 
 #include <chaos_metadata_service_client/api_proxy/control_unit/GetInstance.h>
 
-using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
@@ -29,9 +28,11 @@ API_PROXY_CD_DEFINITION(GetInstance,
                         "control_unit",
                         "getInstance")
 
+/*!
 
+ */
 ApiProxyResult GetInstance::execute(const std::string& control_unit_uid) {
-    CDWUniquePtr message(new CDataWrapper());
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
     //message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, unit_server_uid);
     return callApi(message);

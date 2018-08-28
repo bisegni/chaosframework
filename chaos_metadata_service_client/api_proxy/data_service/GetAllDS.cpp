@@ -29,7 +29,9 @@ API_PROXY_CD_DEFINITION(GetAllDS,
                         "data_service",
                         "getAllDS")
 
+/*!
 
+ */
 ApiProxyResult GetAllDS::execute() {
-    return callApi();
+    return callApi(NULL);
 }

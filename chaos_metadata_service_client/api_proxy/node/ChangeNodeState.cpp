@@ -20,8 +20,6 @@
  */
 
 #include <chaos_metadata_service_client/api_proxy/node/ChangeNodeState.h>
-
-using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
@@ -32,7 +30,7 @@ API_PROXY_CD_DEFINITION(ChangeNodeState, "system", "changeNodeState")
  */
 ApiProxyResult ChangeNodeState::execute(const std::string& node_uid,
                                         int to_state) {
-    CDWUniquePtr message(new CDataWrapper());
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     message->addInt32Value("to_state", to_state);
     return callApi(message);

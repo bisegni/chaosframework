@@ -31,9 +31,9 @@ API_PROXY_CD_DEFINITION(SearchScript, "script", "searchScript")
 ApiProxyResult SearchScript::execute(const std::string& search_string,
                                      const uint64_t start_sequence_id,
                                      const uint32_t page_lenght) {
-    CDWUniquePtr api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addStringValue("search_string", search_string);
     api_data->addInt64Value("last_sequence_id", start_sequence_id);
     api_data->addInt32Value("page_lenght", page_lenght);
-    return callApi(api_data);
+    return callApi(api_data.release());
 }

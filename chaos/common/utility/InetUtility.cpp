@@ -124,6 +124,7 @@ void InetUtility::checkInterfaceName(std::vector<InterfaceInfo>& interface_infos
 }
 
 bool InetUtility::checkWellFormedHostPort(std::string host_port) {
+   bool ret=false;
    boost::system::error_code ec;
    boost::asio::ip::address::from_string( host_port, ec );
    if ( ec )
@@ -132,6 +133,7 @@ bool InetUtility::checkWellFormedHostPort(std::string host_port) {
 }
 
 bool InetUtility::checkWellFormedHostNamePort(std::string host_port) {
+    bool ret=false;
     int pos=host_port.find(":");
     if(pos == std::string::npos){
       return false;

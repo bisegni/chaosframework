@@ -11,7 +11,6 @@
 
 namespace chaos {
     namespace metadata_service {
-#define OPT_HA_ZONE_NAME                   "ha-zone-name"
 #define OPT_BATCH_SANDBOX_SIZE          "batch-sandbox-size"
 #define OPT_PERSITENCE_IMPL				"persistence-impl"
 #define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence-servers"

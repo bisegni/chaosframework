@@ -73,11 +73,13 @@ SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/CommandTemplateSubmit.cpp
                             api_proxy/node/CommandInstanceSubmit.cpp
                             api_proxy/node/UpdateProperty.cpp
-			                api_proxy/node/GetPropertyDefaultValues.cpp
-			                api_proxy/node/UpdatePropertyDefaultValues.cpp
+			    api_proxy/node/GetPropertyDefaultValues.cpp
+			    api_proxy/node/UpdatePropertyDefaultValues.cpp
                             api_proxy/node/GetCommandAndTemplateDescription.cpp
-                            api_proxy/node/KillCurrentCommand.cpp
-			                api_proxy/node/ClearCommandQueue.cpp)
+			    api_proxy/node/KillCurrentCommand.cpp
+			    api_proxy/node/ClearCommandQueue.cpp
+
+			    )
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp
@@ -97,8 +99,7 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
                             api_proxy/control_unit/InitDeinit.cpp
                             api_proxy/control_unit/StartStop.cpp
                             api_proxy/control_unit/CopyInstance.cpp
-                            api_proxy/control_unit/RecoverError.cpp
-                            api_proxy/control_unit/SendStorageBurst.cpp)
+                            api_proxy/control_unit/RecoverError.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp

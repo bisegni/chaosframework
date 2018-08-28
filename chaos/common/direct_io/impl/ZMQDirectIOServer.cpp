@@ -150,7 +150,6 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
 //! Stop the implementation
 void ZMQDirectIOServer::stop() throw(chaos::CException) {
     run_server = false;
-    DirectIOServer::stop();
     ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
     zmq_ctx_shutdown(zmq_context);
     zmq_ctx_term(zmq_context);
@@ -160,6 +159,7 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
     ZMQDIO_SRV_LAPP_ << "Join on all thread";
     server_threads_group.join_all();
     ZMQDIO_SRV_LAPP_ << "All thread stopped";
+    DirectIOServer::stop();
 }
 
 //! Deinit the implementation
@@ -314,19 +314,16 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                 //keep track if the cleint want the answer
                 send_synchronous_answer = data_pack_received->header.dispatcher_header.fields.synchronous_answer;
                 //call handler
-                if((err = DirectIOHandlerPtrCaller(handler_impl, delegate)(MOVE(data_pack_received),
-                                                                           data_pack_answer)) == 0) {
-                    if(send_synchronous_answer &&
-                       data_pack_answer) {
-                        
-                        if((err = sendDatapack(worker_socket,
-                                               identity,
-                                               MOVE(data_pack_answer)))){
-                            ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error sending answer with code %1%", %err);
-                        }
+                err = DirectIOHandlerPtrCaller(handler_impl, delegate)(ChaosMoveOperator(data_pack_received),
+                                                                       data_pack_answer);
+                if(send_synchronous_answer &&
+                   data_pack_answer) {
+                    
+                    if((err = sendDatapack(worker_socket,
+                                           identity,
+                                           ChaosMoveOperator(data_pack_answer)))){
+                        ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
                     }
-                } else {
-                    ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error dispatching received message with code %1%", %err);
                 }
             }
         } catch (CException& ex) {

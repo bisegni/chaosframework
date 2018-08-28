@@ -39,6 +39,7 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
+message_data(NULL),
 us_can_start(false),
 phase(USAP_ACK_US){
     list_autoload_cu_current = list_autoload_cu.end();
@@ -62,11 +63,10 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     
     unit_server_uid = data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     
-    message_data.reset(new CDataWrapper(data->getBSONRawData()));
-    destination_address = message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
-    request = createRequest(destination_address,
+    request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                             UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                             UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK);
+    message_data = data;
 }
 
 // inherited method
@@ -93,7 +93,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
                     sendMessage(*request,
-                                MOVE(message_data));
+                                message_data);
                     break;
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
@@ -161,7 +161,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*request,
-                                MOVE(autoload_pack));
+                                autoload_pack.get());
                     break;
                 }
                     
@@ -225,7 +225,7 @@ int UnitServerAckCommand::prepareInstance() {
         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
     } else {
         USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
-        request = createRequest(destination_address,
+        request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                 UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                 UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
         //prepare auto init and autostart message into autoload pack

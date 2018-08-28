@@ -260,7 +260,7 @@ namespace chaos {
                     size_type ns (size_ + s);
                     
                     if (capacity_ < ns)
-                        capacity (ns + (ns/2));
+                        capacity (ns);
                     
                     std::memcpy (data_ + size_, d, s);
                     size_ = ns;

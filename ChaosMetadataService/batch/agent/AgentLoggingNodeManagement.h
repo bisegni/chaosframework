@@ -35,7 +35,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     std::string managed_node;
                     ChaosUniquePtr<RequestInfo> request;
-                    chaos::common::data::CDWUniquePtr message_data;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data;
 
                 public:
                     AgentLoggingNodeManagement();

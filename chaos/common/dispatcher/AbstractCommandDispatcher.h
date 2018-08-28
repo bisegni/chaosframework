@@ -131,7 +131,7 @@ namespace chaos{
          \return boolean value to informa is the mesage has been submitted
          */
         bool submitMessage(const string& server_port,
-                           chaos::common::data::CDWUniquePtr message,
+                           chaos::common::data::CDataWrapper* message,
                            bool onThisThread = false) throw(CException);
         
         //! Action registration

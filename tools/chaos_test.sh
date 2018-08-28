@@ -26,20 +26,11 @@ export CHAOS_RUNOUTPREFIX=""
 export CHAOS_RUNTYPE=""
 export CHAOS_TEST_REPORT=""
 export CHAOS_TEST_DEBUG=""
-export GOOGLE_PROFILE=""
 usage(){
-    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-m <mdsserver> ] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-s:stop on error\n-v:enable callgrind\n-g:activate debug log\n-p <normal|strict|draconian>:activate google heap check\n"
+    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-m <mdsserver> ] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-s:stop on error\n-v:enable callgrind\n-g:activate debug log"
 }
-while getopts m:t:d:r:kvgp: opt; do
+while getopts m:t:d:r:kvg opt; do
     case $opt in
-	p)
-	    if [ -z "$LD_PRELOAD" ];then
-		error_mesg "To enable GOOGLE Profiling you have to define LD_PRELOAD pointing to a tcmalloc.so location"
-		exit 1
-	    fi
-	    info_mesg "google heap check enabled " "$OPTARG"
-	    GOOGLE_PROFILE="HEAPCHECK=$OPTARG LD_PRELOAD=$LD_PRELOAD"
-	    ;;
 	t) 
 	if [ ! -f "$OPTARG" ]; then
 	    error_mesg "test list $OPTARG not found"

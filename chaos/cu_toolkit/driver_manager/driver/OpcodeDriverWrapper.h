@@ -43,7 +43,7 @@ namespace chaos {
                     }
                     
                     int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {
-                        return opcode_ext_cmd_mapper->asyncMessageReceived(MOVE(message));
+                        return opcode_ext_cmd_mapper->asyncMessageReceived(ChaosMoveOperator(message));
                     }
                     
                     
@@ -67,7 +67,7 @@ namespace chaos {
                     int sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                        chaos::common::data::CDWShrdPtr& message_response,
                                        uint32_t timeout = REMOTE_DRIVER_DEFAULT_TIMEOUT) {
-                        return ExtDriverImpl::sendRawRequest(MOVE(message_data),
+                        return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
                                                              message_response,
                                                              timeout);
                     }
@@ -77,21 +77,21 @@ namespace chaos {
                                           chaos::common::data::CDWUniquePtr opcode_parameter,
                                           chaos::common::data::CDWShrdPtr& message_response,uint32_t timeout=REMOTE_DRIVER_DEFAULT_TIMEOUT) {
                         return ExtDriverImpl::sendOpcodeRequest(opcode,
-                                                                MOVE(opcode_parameter),
+                                                                ChaosMoveOperator(opcode_parameter),
                                                                 message_response,
                                                                 timeout);
                     }
                     
                     //!Inherited by RemoteIODriverProtocol::sendRawMessage
                     int sendRawMessage(chaos::common::data::CDWUniquePtr message_data) {
-                        return ExtDriverImpl::sendRawMessage(MOVE(message_data));
+                        return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
                     }
                     
                     //!Inherited by RemoteIODriverProtocol::sendOpcodeMessage
                     int sendOpcodeMessage(const std::string opcode,
                                           chaos::common::data::CDWUniquePtr opcode_message) {
                         return ExtDriverImpl::sendOpcodeMessage(opcode,
-                                                                MOVE(opcode_message));
+                                                                ChaosMoveOperator(opcode_message));
                     }
                     //!Inherited by RemoteIODriverProtocol::sendInitRequest
                     int sendInitRequest() {

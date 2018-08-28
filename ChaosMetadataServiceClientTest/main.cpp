@@ -60,7 +60,6 @@ int main(int argc, const char *argv[]){
     uint32_t operation;
     std::string device_id;
     AlertLogHandlerImpl alert_log_handler;
-    ChaosStringVector attr_list;
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
                                                                                                      "Specify the operation to do[0-monitor a device id, 1-search node id]",
                                                                                                      &operation);
@@ -68,10 +67,6 @@ int main(int argc, const char *argv[]){
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>("device-id",
                                                                                                         "Specify the device",
                                                                                                         &device_id);
-    
-    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<ChaosStringVector>("attribute-list",
-                                                                                                              "Specify the attribute list to show in realtime",
-                                                                                                              &attr_list);
     
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("qm",
                                                                                                      "Specify the quantum multiplier to use",
@@ -112,7 +107,7 @@ int main(int argc, const char *argv[]){
                 std::cout << "Start node monitor library test" << std::endl;
                 {
                     ChaosUniquePtr<NodeMonitorHandlerTest> nmt;
-                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit, attr_list));
+                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
                     sleep(wait_seconds);
                     //nmt[0].reset();
                     nmt.reset();

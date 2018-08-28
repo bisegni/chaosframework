@@ -41,7 +41,7 @@ void AttributeScanner::updateData(const ChaosSharedPtr<chaos::common::data::CDat
         idx < SingleTypeBinaryPlotAdapter<double>::getChannelNumber();
         idx++) {
         //clear all achnnel data
-        graph_vector[idx]->data()->clear();
+        graph_vector[idx]->clearData();
         SingleTypeBinaryPlotAdapter<double>::iterOnChannel(idx);
     }
     global_lock.unlock();
@@ -115,17 +115,13 @@ BufferPlot::BufferPlot(QWidget *parent):
     ui->widgetBufferPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
     ui->widgetBufferPlot->legend->setFont(QFont(QFont().family(), 8));
 
-    QSharedPointer<QCPAxisTickerFixed> f_x_ticker(new QCPAxisTickerFixed());
-    f_x_ticker->setTickStep(1.0); // tick step shall be 1.0
-    f_x_ticker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-    ui->widgetBufferPlot->xAxis->setTicker(f_x_ticker);
+    ui->widgetBufferPlot->xAxis->setTickLabelType(QCPAxis::ltNumber);
     ui->widgetBufferPlot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    ui->widgetBufferPlot->xAxis->setAutoTickStep(true);
 
-    QSharedPointer<QCPAxisTickerFixed> f_y_ticker(new QCPAxisTickerFixed());
-    f_y_ticker->setTickStep(1.0); // tick step shall be 1.0
-    f_y_ticker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-    ui->widgetBufferPlot->yAxis->setTicker(f_y_ticker);
+    ui->widgetBufferPlot->yAxis->setTickLabelType(QCPAxis::ltNumber);
     ui->widgetBufferPlot->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    ui->widgetBufferPlot->yAxis->setAutoTickStep(true);
 
     ui->widgetBufferPlot->axisRect()->setupFullAxesBox();
     ui->widgetBufferPlot->legend->setVisible(true);

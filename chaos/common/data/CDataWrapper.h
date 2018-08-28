@@ -19,7 +19,6 @@
  */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
-#pragma GCC diagnostic ignored "-Wignored-attributes"
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/exception/CException.h>
@@ -45,7 +44,7 @@ namespace chaos {
             class CMultiTypeDataArrayWrapper;
             typedef ChaosUniquePtr<CMultiTypeDataArrayWrapper> CMultiTypeDataArrayWrapperUPtr;
             typedef ChaosSharedPtr<CMultiTypeDataArrayWrapper> CMultiTypeDataArrayWrapperSPtr;
-
+            
             /*!
              Class for contain the serialization buffer
              the class deallocation will dealloc all the
@@ -61,21 +60,17 @@ namespace chaos {
                     buffer = 0L;
                     disposeOnDelete = true;
                     if(iBuff && iSize){
-                        buffer = (char*)new char[iSize];
+                        buffer = (char*)malloc(iSize);
                         std::memcpy(buffer, iBuff, iSize);
                     }
                 }
                 ~SerializationBuffer(){
-                    if(disposeOnDelete && buffer) delete [](buffer);
+                    if(disposeOnDelete && buffer) free(buffer);
                 }
                 size_t getBufferLen(){return bSize;};
                 const char *getBufferPtr(){return buffer;};
             };
-            typedef ChaosUniquePtr<SerializationBuffer> SerializationBufferUPtr;
             typedef ChaosSharedPtr<struct _bson_t> ChaosBsonShrdPtr;
-            typedef ChaosSharedPtr<struct _bson_value_t> ChaosBsonValuesShrdPtr;
-
-
             /*!
              Class that wrap the serializaiton system for data storage
              */
@@ -99,11 +94,11 @@ namespace chaos {
                 explicit CDataWrapper(const char* mem_ser);
                 ~CDataWrapper();
                 static ChaosUniquePtr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
-                ChaosUniquePtr<CDataWrapper>clone();
+                CDataWrapper *clone();
                 //add a csdata value
                 void addCSDataValue(const std::string&, const CDataWrapper&);
                 //get a csdata value
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSDataValue(const std::string&) const;
+                CDataWrapper *getCSDataValue(const std::string&) const;
                 //add a string value
                 //void addStringValue(const char *, const char *);
                 //add a string value
@@ -170,12 +165,12 @@ namespace chaos {
                 bool getBoolValue(const std::string&) const;
                 //get a json value
                 std::string getJsonValue(const std::string&) const;
-
+                
 #define THROW_TYPE_EXC(type)\
 std::stringstream ss;\
-ss<<"cannot get or cast to '" << #type<<"'";\
+ss<<"cannot get or cast to '" << #type;\
 throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
-
+                
                 template<typename T>
                 int setValue(const std::string& key,const T& val){
                     bson_iter_t it;
@@ -255,9 +250,9 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                                     chaos::DataType::BinarySubtype sub_type,
                                     const char *buff,
                                     int bufLen);
-                CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
+                ChaosUniquePtr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key) const;
                 //return the bson data
-                SerializationBufferUPtr getBSONData() const;
+                SerializationBuffer* getBSONData() const;
                 const char* getBSONRawData(int& size) const;
                 const char* getBSONRawData() const;
                 const int getBSONRawSize() const;
@@ -312,14 +307,14 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 chaos::DataType::DataType getValueType(const std::string& key) const;
                 bool isEmpty() const;
             };
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(bson_value_t*, VectorBsonValues);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(bson_value_t, VectorBsonValues);
             /*!
              Class to read the and arry of multivalue
              */
             class CMultiTypeDataArrayWrapper {
                 friend class CDataWrapper;
                 const ChaosBsonShrdPtr document_shrd_ptr;
-                bson_t *array_doc;
+                bson_t array_doc;
                 VectorBsonValues values;
                 CMultiTypeDataArrayWrapper(const ChaosBsonShrdPtr& _document_shrd_ptr,
                                            const std::string& key);
@@ -330,8 +325,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 int32_t getInt32ElementAtIndex(const int) const;
                 int64_t getInt64ElementAtIndex(const int) const;
                 bool getBoolElementAtIndex(const int) const;
-
-                ChaosUniquePtr<CDataWrapper> getCDataWrapperElementAtIndex(const int) const;
+                
+                CDataWrapper* getCDataWrapperElementAtIndex(const int) const;
                 std::string getJSONString();
                 std::string getCanonicalJSONString();
                 bool isStringElementAtIndex(const int) const;
@@ -339,31 +334,31 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 bool isInt32ElementAtIndex(const int) const;
                 bool isInt64ElementAtIndex(const int) const;
                 bool isBoolElementAtIndex(const int) const;
-
+                
                 bool isCDataWrapperElementAtIndex(const int) const;
                 template<class T>
                 T getElementAtIndex(const int pos) const{
-                    if(values[pos]->value_type == BSON_TYPE_DOUBLE){
-                        return static_cast<T>(values[pos]->value.v_double);
+                    if(values[pos].value_type == BSON_TYPE_DOUBLE){
+                        return static_cast<T>(values[pos].value.v_double);
                     }
-                    if(values[pos]->value_type == BSON_TYPE_INT32){
-                        return static_cast<T>(values[pos]->value.v_int32);
+                    if(values[pos].value_type == BSON_TYPE_INT32){
+                        return static_cast<T>(values[pos].value.v_int32);
                     }
-                    if(values[pos]->value_type == BSON_TYPE_INT64){
-                        return static_cast<T>(values[pos]->value.v_int64);
+                    if(values[pos].value_type == BSON_TYPE_INT64){
+                        return static_cast<T>(values[pos].value.v_int64);
                     }
-                    if(values[pos]->value_type == BSON_TYPE_BOOL){
-                        return static_cast<T>(values[pos]->value.v_bool);
+                    if(values[pos].value_type == BSON_TYPE_BOOL){
+                        return static_cast<T>(values[pos].value.v_bool);
                     }
                     std::stringstream ss;
-                    ss<<"type at index ["<<pos<<"] cannot convert, typeid:"<<values[pos]->value_type;
+                    ss<<"type at index ["<<pos<<"] cannot convert, typeid:"<<values[pos].value_type;
                     throw CException(1, ss.str(), __PRETTY_FUNCTION__);
                     return 0;
                 }
                 const char * getRawValueAtIndex(const int key,uint32_t& size) const;
                 size_t size() const;
             };
-
+            
 #define CDW_GET_SRT_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getStringValue(k):d)
 #define CDW_GET_BOOL_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getBoolValue(k):d)
 #define CDW_GET_INT32_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getInt32Value(k):d)
@@ -371,11 +366,11 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
 #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getDoubleValue(k):d)
 #define CDW_CHECK_AND_SET(chk, cdw, t, k, v) if(chk){cdw->t(k,v);}
 #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) ((c)->hasKey(k)?(c)->t(k):d)
-
+            
             typedef ChaosUniquePtr<chaos::common::data::CDataWrapper> CDWUniquePtr;
             typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> CDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWShrdPtr, VectorCDWShrdPtr);
-
+            
             typedef std::pair<std::string, CDWShrdPtr> PairStrCDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(PairStrCDWShrdPtr, VectorStrCDWShrdPtr);
         }

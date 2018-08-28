@@ -1,6 +1,6 @@
 #include "CreateEditDataService.h"
 #include "ui_CreateEditDataService.h"
-#include <QtGui/QIntValidator>
+
 CreateEditDataService::CreateEditDataService() :
     QDialog(NULL),
     current_row(-1),

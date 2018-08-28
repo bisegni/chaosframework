@@ -97,29 +97,29 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::createRequest(const std::string& re
 }
 
 void MDSBatchCommand::sendRequest(RequestInfo& request_info,
-                                  CDWUniquePtr message) throw (chaos::CException) {
+                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
     CHAOS_ASSERT(message_channel)
     
     request_info.request_future = message_channel->sendRequestWithFuture(request_info.remote_address,
                                                                          request_info.remote_domain,
                                                                          request_info.remote_action,
-                                                                         MOVE(message));
+                                                                         message);
     request_info.phase = MESSAGE_PHASE_SENT;
 }
 
 void MDSBatchCommand::sendMessage(RequestInfo& request_info,
-                                  CDWUniquePtr message) throw (chaos::CException) {
+                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
     CHAOS_ASSERT(message_channel)
     message_channel->sendMessage(request_info.remote_address,
                                  request_info.remote_domain,
                                  request_info.remote_action,
-                                 MOVE(message));
+                                 message);
     request_info.phase = MESSAGE_PHASE_COMPLETED;
 }
 
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node_uid,
                                                          const std::string& rpc_action,
-                                                         CDWUniquePtr message) throw (chaos::CException) {
+                                                         chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
     CDataWrapper *tmp_ptr = NULL;
     int err = 0;
     bool alive = false;
@@ -146,7 +146,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
             new_request->phase = MESSAGE_PHASE_TIMEOUT;
         } else {
             sendRequest(*new_request,
-                        MOVE(message));
+                        message);
         }
     }catch(...){
         throw CException(-1, "erroro using bson", __PRETTY_FUNCTION__);
@@ -156,7 +156,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
 
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node_uid,
                                                          const std::string& rpc_action,
-                                                         CDWUniquePtr message) throw (chaos::CException) {
+                                                         chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
     CDataWrapper *tmp_ptr = NULL;
     int err = 0;
     bool alive = false;
@@ -183,7 +183,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node
         new_request->phase = MESSAGE_PHASE_TIMEOUT;
     } else {
         sendMessage(*new_request,
-                    MOVE(message));
+                    message);
     }
     return new_request;
 }

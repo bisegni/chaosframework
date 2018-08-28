@@ -44,9 +44,8 @@ void ExternalEchoEndpoint::handleDisconnection(const std::string& connection_ide
 
 int ExternalEchoEndpoint::handleReceivedeMessage(const std::string& connection_identifier,
                                                  chaos::common::data::CDWUniquePtr message) {
-    message_counter++;
     INFO << CHAOS_FORMAT("Received connection from %1% with data '%2%'", %connection_identifier%message->getJSONString());
     message->addStringValue("ExternalEchoEndpoint", "echo answer");
-    sendMessage(connection_identifier, MOVE(message));
+    sendMessage(connection_identifier, ChaosMoveOperator(message));
     return 0;
 }

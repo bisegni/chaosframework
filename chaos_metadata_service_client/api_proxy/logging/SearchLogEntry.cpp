@@ -36,7 +36,7 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
                                        const uint64_t end_ts,
                                        const uint64_t last_sequence_id,
                                        const uint32_t page_length) {
-    CDWUniquePtr pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue("search_string", search_string);
     if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(start_ts){pack->addInt64Value("start_ts", start_ts);}
@@ -50,7 +50,7 @@ ApiProxyResult SearchLogEntry::execute(const std::string& search_string,
         pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
     }
     pack->addInt32Value("page_length", page_length);
-    return callApi(pack);
+    return callApi(pack.release());
 }
 
 ChaosUniquePtr<SearchLogEntryHelper> SearchLogEntry::getHelper(CDataWrapper *api_result) {

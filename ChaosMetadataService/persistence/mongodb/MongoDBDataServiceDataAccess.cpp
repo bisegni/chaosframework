@@ -93,21 +93,17 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
     return err;
 }
 
-int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_zone,
-                                               const std::string& ds_unique_id,
+int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
                                                const std::string& ds_direct_io_addr,
                                                uint32_t endpoint) {
     int err = 0;
-    CHAOS_ASSERT(node_data_access)
-
     try {
         //now update proprietary fields
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
         
         mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
-                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
-                                                    DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone));
+                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint));
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("registerNode",
                                             "update",
@@ -137,8 +133,7 @@ int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_zone,
 int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_unique_id,
                                                       const std::string& ds_direct_io_addr,
                                                       const uint32_t endpoint,
-                                                      const ProcStat& process_resuorce_usage,
-                                                      const std::string& ds_zone) {
+                                                      const ProcStat& process_resuorce_usage) {
     CHAOS_ASSERT(node_data_access)
     int err = 0;
     try {
@@ -146,10 +141,8 @@ int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_uniq
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
         
-        mongo::BSONObj update = BSON("$set" << BSON(
-                                         NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
-                                         DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
-                                         DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone<<
+        mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
+                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
                                                     NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME <<(long long )process_resuorce_usage.uptime <<
 													NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << process_resuorce_usage.usr_time <<
 													NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << process_resuorce_usage.sys_time <<
@@ -374,17 +367,15 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<ChaosSharedPtr
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
-                                                      std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
+int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
-    SearchResult paged_result;
+    SearchResult            paged_result;
     
     //almost we need toreturn one data service
     if(number_of_result == 0) return 0;
     try{
-        mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone <<
-                                  NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
+        mongo::Query query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
                                     NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
         //filter on sequence
         mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
@@ -431,14 +422,12 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
-                                                      std::vector<std::string >&  best_available_data_service,
+int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
-    if((err = getBestNDataService(ds_zone,
-                                  best_available_server,
+    if((err = getBestNDataService(best_available_server,
                                   number_of_result))) {
         return err;
     }
@@ -459,14 +448,12 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(const std::string& ds_zone,
-                                                              std::vector<std::string>&  best_available_data_service_endpoint,
+int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(std::vector<std::string>&  best_available_data_service_endpoint,
                                                               unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
-    if((err = getBestNDataService(ds_zone,
-                                  best_available_server,
+    if((err = getBestNDataService(best_available_server,
                                   number_of_result))) {
         return err;
     }

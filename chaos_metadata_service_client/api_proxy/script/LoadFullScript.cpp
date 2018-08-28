@@ -31,5 +31,5 @@ API_PROXY_CD_DEFINITION(LoadFullScript, "script", "loadFullScript")
 ApiProxyResult LoadFullScript::execute(const chaos::service_common::data::script::ScriptBaseDescription& sbd) {
     ScriptBaseDescriptionSDWrapper script_description_sdw;
     script_description_sdw() = sbd;
-    return callApi(script_description_sdw.serialize());
+    return callApi(script_description_sdw.serialize().release());
 }

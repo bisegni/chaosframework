@@ -35,7 +35,7 @@ API_PROXY_CD_DEFINITION(GetCurrentDataset,
  
  */
 ApiProxyResult GetCurrentDataset::execute(const std::string& cu_unique_id) {
-    CDWUniquePtr message(new CDataWrapper());
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
     return callApi(message);
 }

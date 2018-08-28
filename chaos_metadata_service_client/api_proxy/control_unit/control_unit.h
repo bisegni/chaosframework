@@ -21,6 +21,7 @@
 
 #ifndef __CHAOSFramework__21F26AF_8477_485A_A08A_39F56D3644AE_control_unit_h
 #define __CHAOSFramework__21F26AF_8477_485A_A08A_39F56D3644AE_control_unit_h
+
 #include <chaos_metadata_service_client/api_proxy/control_unit/Delete.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/StartStop.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/InitDeinit.h>
@@ -28,7 +29,6 @@
 #include <chaos_metadata_service_client/api_proxy/control_unit/CopyInstance.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/RecoverError.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/DeleteInstance.h>
-#include <chaos_metadata_service_client/api_proxy/control_unit/SendStorageBurst.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/GetCurrentDataset.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/SearchInstancesByUS.h>
 #include <chaos_metadata_service_client/api_proxy/control_unit/SetInstanceDescription.h>

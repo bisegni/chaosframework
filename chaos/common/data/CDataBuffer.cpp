@@ -26,46 +26,45 @@
 
 using namespace chaos::common::data;
 CDataBuffer::CDataBuffer():
-    internal_buffer(){}
+    own_buffer(false),
+    buffer_size(0),
+    buffer(NULL) { }
 
 CDataBuffer::CDataBuffer(const char *_buffer,
-                         uint32_t _buffer_size):
-internal_buffer(_buffer,
-                _buffer_size){}
-
-CDataBuffer::CDataBuffer(char *buffer,
-                         uint32_t buffer_size,
-                         bool own):
-internal_buffer(buffer,
-                buffer_size,
-                buffer_size,
-                true){}
+                         uint32_t _buffer_size,
+                         bool copy):
+own_buffer(copy) {
+    buffer_size = _buffer_size;
+    if(copy) {
+        buffer = new char[_buffer_size];
+        memcpy(buffer, _buffer, buffer_size);
+    } else {
+        buffer = (char*)_buffer;
+    }
+}
 
 CDataBuffer::CDataBuffer(const CDataBuffer& cdata_buffer):
-internal_buffer(cdata_buffer.internal_buffer){}
+own_buffer(cdata_buffer.own_buffer),
+buffer(cdata_buffer.buffer),
+buffer_size(cdata_buffer.buffer_size){}
 
-CDataBuffer::~CDataBuffer() {}
+CDataBuffer::~CDataBuffer() {
+    if(own_buffer) delete(buffer);
+}
 
 const char *CDataBuffer::getBuffer() const {
-    return internal_buffer.data();
+    return buffer;
 }
 
-std::size_t CDataBuffer::getBufferSize() const {
-    return internal_buffer.size();
+uint32_t CDataBuffer::getBufferSize() const {
+    return buffer_size;
 }
 
-CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(char * buffer,
-                                                      uint32_t _buffer_size) {
-    return CDBufferUniquePtr(new CDataBuffer(buffer, _buffer_size, true));
+CDataBuffer *CDataBuffer::newOwnBufferFromBuffer(char * buffer,
+                                                 uint32_t _buffer_size) {
+    CDataBuffer *result = new CDataBuffer();
+    result->own_buffer = true;
+    result->buffer = buffer;
+    result->buffer_size = _buffer_size;
+    return result;
 }
-
-CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(Buffer& buffer) {
-    size_t size = buffer.size();
-    char * buff = buffer.detach();
-    return CDBufferUniquePtr(new CDataBuffer(buff, (uint32_t)size, true));
-}
-
-CDataBuffer& CDataBuffer::operator=(CDataBuffer const &rhs) {
-    internal_buffer = rhs.internal_buffer;
-    return *this;
-};

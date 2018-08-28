@@ -106,13 +106,13 @@ namespace chaos{
 				/*
 				 Submit a CDataWrapper on device id KeyDataStorage
 				 */
-				void pushDeviceDataByIdKey(const std::string& device_id, chaos_data::CDWShrdPtr dataset) throw(CException);
+				void pushDeviceDataByIdKey(const std::string &device_id, chaos_data::CDataWrapper*) throw(CException);
 				
 				/*
 				 return a new instance of CDataWrapper filled with a mandatory data
 				 according to key
 				 */
-				chaos_data::CDWShrdPtr getNewDataWrapperForDeviceIdKey(const std::string &device_id);
+				chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(const std::string &device_id);
 				
 				/*
 				 Configure the datamanager

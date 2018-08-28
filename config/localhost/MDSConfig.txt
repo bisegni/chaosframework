@@ -2048,6 +2048,153 @@
 			}
 		    ]
 		},
+
+
+		{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "LABVIEW/REMOTE/QUADRUPOLE/TEST",
+		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start":true,
+		    "auto_init":true,
+		    "storage_type": 2,
+		    "storage_ageing": 0,
+		    "default_schedule_delay": 1000000,	
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ChaosPowerSupplyRemoteClientDriver",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam":"{\"uri\":\"ws://localhost:8877/powersupply/soft\"}"
+			}
+		    ],
+		    "AttrDesc": [
+			{
+			    "ds_attr_name": "polFromSet",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "polSwSign",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "stbyOnPol",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "zeroOnStby",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "unit",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "A"
+			},
+			{
+			    "ds_attr_name": "scale",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "1",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "minimumWorkingValue",
+			    "ds_max_range": "700",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "maximumWorkingValue",
+			    "ds_max_range": "100",
+			    "ds_min_range": "0",
+			    "ds_default_value": "20"
+			},
+			{
+			    "ds_attr_name": "warningThreshold",
+			    "ds_max_range": "10",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0.5"
+			},
+			{
+			    "ds_attr_name": "warningThresholdTimeout",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1000"
+			},
+			{
+			    "ds_attr_name": "warningThresholdTimeout",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1000"
+			},
+			{
+			    "ds_attr_name": "setTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "60000"
+			},
+			{
+			    "ds_attr_name": "getTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
+			    "ds_attr_name": "conversionFactor",
+			    "ds_max_range": "",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1.0"
+			},
+			{
+			    "ds_attr_name": "resolution",
+			    "ds_max_range": "",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0.001"
+			},
+			{
+			    "ds_attr_name": "current",
+			    "ds_max_range": "700",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "rampDownRate",
+			    "ds_max_range": "28",
+			    "ds_min_range": "1",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "rampUpRate",
+			    "ds_max_range": "28",
+			    "ds_min_range": "1",
+			    "ds_default_value": "1"
+			}
+		    ]
+		},
+
+
+
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "MEA/QUADRUPOLE/TEST002",
@@ -4561,98 +4708,27 @@
 					    "ds_default_value": "0"
 					}
 				    ]
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "FLAME/CAMERA/LASER001",
-		    "cu_type": "RTCameraBase",
-		    "cu_param": "{\"FRAMEBUFFER_ENCODING\":\"CV_8UC3\"}",
-		    "auto_load": true,
-		    "auto_start": false,
-		    "auto_init": true,
-		    "storage_type": 1,
-		    "storage_ageing": 1,
-  		    "default_schedule_delay": 1000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "ShapeSim",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":100.0,\"colb\":255}}"
-			}
-		    ],
-		    "AttrDesc": [
-		    		    		{	  "ds_attr_name": "TRIGGER_MODE",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "0"
-					},
-
-		    		{	  "ds_attr_name": "WIDTH",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "640"
-					},
-		    		{	  "ds_attr_name": "HEIGHT",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "480"
-					},{	  "ds_attr_name": "OFFSETX",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "0"
-					},	{	  "ds_attr_name": "OFFSETY",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "480"
-					}
-		    ]
-		},
-		{
-		    "unit_server_alias": "TEST",
-		    "cu_id": "FLAME/CAMERA/LASER002",
-		    "cu_type": "RTCameraBase",
-		    "cu_param": "{\"FRAMEBUFFER_ENCODING\":\"CV_8UC3\"}",
-		    "auto_load": true,
-		    "auto_start": false,
-		    "auto_init": true,
-		    "storage_type": 1,
-		    "storage_ageing": 1,
-  		    "default_schedule_delay": 10000000,	
-		    "DriverDescription": [
-			{
-			    "DriverDescriptionName": "ShapeSim",
-			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":100.0,\"colr\":255}}"
-			}
-		    ],
-		    "AttrDesc": [
-		    		    		{	  "ds_attr_name": "TRIGGER_MODE",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "0"
-					},
-
-		    		{	  "ds_attr_name": "WIDTH",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "640"
-					},
-		    		{	  "ds_attr_name": "HEIGHT",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "480"
-					},{	  "ds_attr_name": "OFFSETX",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "0"
-					},	{	  "ds_attr_name": "OFFSETY",
-					    "ds_max_range": "1024",
-					    "ds_min_range": "0",
-					    "ds_default_value": "480"
-					}
-		    ]
 		}
 	    ]   
+	},{
+	    "unit_server_alias": "IMA",
+	    "private_key": null,
+	    "public_key": null,
+	    "cu_desc": [
+		{
+		    "unit_server_alias": "IMA",
+		    "cu_id": "IMA/ACCELEROMETER/DAQ",
+		    "cu_type": "",
+		    "cu_param": "",
+		    "auto_load": true,
+		    "auto_start": true,
+		    "auto_init": true,
+		    "storage_type": 2,
+		    "storage_ageing": 36000,
+		    "DriverDescription": [],
+		    "AttrDesc": []
+		}
+	    ]
 	},{
 	    "unit_server_alias": "BENCHMARK_UNIT_0",
 	    "private_key": null,

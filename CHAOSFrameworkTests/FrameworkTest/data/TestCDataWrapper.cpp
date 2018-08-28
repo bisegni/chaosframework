@@ -20,7 +20,6 @@
  */
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
@@ -61,7 +60,7 @@ TEST(CDataWrapperTest, MemoryLeaks) {
     data_pack.appendStringToArray("array_lement");
     data_pack.finalizeArrayForKey("array");
     const std::string json_serialization = data_pack.getJSONString();
-    for (; idx < 1000; idx++) {
+    for (; idx < 1000000; idx++) {
         bson_deserialized = CDWUniquePtr(new CDataWrapper(data_pack.getBSONRawData(), data_pack.getBSONRawSize()));
         ASSERT_TRUE(bson_deserialized.get());
         json_deserialized = CDataWrapper::instanceFromJson(json_serialization);
@@ -78,19 +77,18 @@ TEST(CDataWrapperTest, MemoryLeaks) {
         ASSERT_EQ(array_ptr->getInt64ElementAtIndex(1), 2);
         ASSERT_EQ(array_ptr->getDoubleElementAtIndex(2), 3.0);
         ASSERT_STREQ(array_ptr->getStringElementAtIndex(3).c_str(), "array_lement");
-        array_ptr.reset();
     }
 }
 TEST(CDataWrapperTest, Performance) {
     int idx = 0;
     CDataWrapper data_pack;
     CDWUniquePtr cloned;
-    for (; idx < 1000; idx++) {
+    for (; idx < 1000000; idx++) {
         data_pack.addBoolValue("bv", (int32_t)0);
         data_pack.addInt32Value("i32v", (int32_t)0);
         data_pack.addInt64Value("i64v", (int64_t)0);
         data_pack.addDoubleValue("dbv", (double)36.6);
-        cloned.reset(data_pack.clone().release());
+        cloned.reset(data_pack.clone());
         ASSERT_TRUE(cloned->isInt64Value("i64v"));
         ASSERT_TRUE(cloned->isInt32Value("i32v"));
         ASSERT_TRUE(cloned->isBoolValue("bv"));
@@ -109,7 +107,6 @@ TEST(CDataWrapperTest, TestJsonDouble) {
     for(int cnt=0;cnt<p->size();cnt++){
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
-    p.reset();
 }
 TEST(CDataWrapperTest, TestEmptyBSONToJSON) {
     CDataWrapper bson_a((const char*)NULL, 0);
@@ -179,7 +176,6 @@ TEST(CDataWrapperTest, TestConcatenation) {
         ASSERT_EQ( test_var[cnt], p->getDoubleElementAtIndex(cnt));
     }
     ASSERT_STREQ("{ \"empty\" : {  }, \"notempty\" : { \"double_key\" : [ 1.0, 2.1000000000000000888, -1.0, -0.9000000000000000222 ], \"string_vector\" : [ \"ciao\", \"come stai\" ] }, \"empty2\" : {  }, \"pieno\" : { \"ts1\" : 1, \"ts2\" : 2, \"ts3\" : 3, \"ts4\" : 4, \"double_key\" : -2.0, \"ts5\" : 5, \"ts6\" : 6, \"string_empty\" : \"\", \"int_key\" : 3, \"string_key\" : \"this is a long text that try to do some space on bson\", \"bool_key\" : true, \"bool_key1\" : false } }", dconcat.getCompliantJSONString().c_str());
-    p.reset();
 }
 TEST(CDataWrapperTest, DateToLong) {
     const char * json = "{  \"ndk_heartbeat\" : { \"$date\" : { \"$numberLong\" : \"1511968737899\" } } }";
@@ -196,15 +192,4 @@ TEST(CDataWrapperTest, SimpleStringException) {
     const char * json = "{\"powerOn\"::true\"}";
     CDataWrapper data;
     ASSERT_THROW(data.setSerializedJsonData(json), chaos::CException);
-}
-
-TEST(CDataWrapperTest, GetVariantValue) {
-    char buffer[256];
-    CDataWrapper data;
-    data.addBinaryValue("bin", buffer, 256);
-    CDataVariant v = data.getVariantValue("bin");
-    CDBufferShrdPtr buff_shrd_ptr = v.asCDataBufferShrdPtr();
-    ASSERT_TRUE(buff_shrd_ptr.get());
-    ASSERT_EQ(buff_shrd_ptr->getBufferSize(), 256);
-    ASSERT_EQ(std::memcmp(buffer, buff_shrd_ptr->getBuffer(), 256), 0);
 }

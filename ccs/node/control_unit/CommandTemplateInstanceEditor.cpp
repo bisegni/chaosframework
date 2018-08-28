@@ -97,8 +97,8 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
             return;
         }
 
-        configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description").release()),
-                             QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description").release()));
+        configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
+                             QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     } else if(tag.compare(TAG_CMD_INSTANCE_SUBMIT) == 0) {
         //instance has bee saved so we can close the panel
         if(close_after_submition) {closeTab();}

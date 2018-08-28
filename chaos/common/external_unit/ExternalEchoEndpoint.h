@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 #define __CHAOSFramework_E6EB27EC_C56A_4A03_BF1C_03373F140079_ExternalEchoEndpoint_h
 
-#include <chaos/common/chaos_types.h>
 #include <chaos/common/external_unit/ExternalUnitServerEndpoint.h>
 
 namespace chaos{
@@ -31,7 +30,7 @@ namespace chaos{
             
             class ExternalEchoEndpoint:
             public ExternalUnitServerEndpoint {
-                ChaosAtomic<uint32_t> message_counter;
+                unsigned int message_counter;
             protected:
                 //!inherited method by @ExternalUnitEndpoint
                 void handleNewConnection(const std::string& connection_identifier);

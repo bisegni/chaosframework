@@ -66,11 +66,11 @@ void RegistrationAckBatchCommand::acquireHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             CU_RACK_DBG << "Send ack to control unit:" << cu_id << " on ip:" << unit_server_addr;
-            CDWUniquePtr message(new CDataWrapper());
-            message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
-            message->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
+            CDataWrapper message;
+            message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+            message.addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
             sendMessage(*request,
-                        MOVE(message));
+                        &message);
             BC_END_RUNNING_PROPERTY
         }
         default:

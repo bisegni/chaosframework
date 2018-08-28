@@ -39,7 +39,8 @@ using namespace chaos::metadata_service::batch::agent;
 DEFINE_MDS_COMAMND_ALIAS(AgentAckCommand)
 
 AgentAckCommand::AgentAckCommand():
-MDSBatchCommand(){}
+MDSBatchCommand(),
+message_data(NULL){}
 
 AgentAckCommand::~AgentAckCommand() {}
 
@@ -65,7 +66,7 @@ void AgentAckCommand::setHandler(CDataWrapper *data) {
     request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                             AgentNodeDomainAndActionRPC::RPC_DOMAIN_,
                             AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK);
-    message_data.reset(new CDataWrapper(data->getBSONRawData()));
+    message_data = data;
 }
 
 // inherited method
@@ -78,7 +79,7 @@ void AgentAckCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        MOVE(message_data));
+                        message_data);
         }
             
         case MESSAGE_PHASE_SENT:

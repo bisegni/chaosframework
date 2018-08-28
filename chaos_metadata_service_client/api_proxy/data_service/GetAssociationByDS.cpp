@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/data_service/GetAssociationByDS.h>
 
-using namespace chaos::common::data;
+using namespace chaos;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::data_service;
 
@@ -29,10 +29,12 @@ API_PROXY_CD_DEFINITION(GetAssociationByDS,
                         "data_service",
                         "getAssociation")
 
+/*!
 
+ */
 ApiProxyResult GetAssociationByDS::execute(const std::string& ds_unique_id) {
 
-    CDWUniquePtr message(new CDataWrapper());
+    common::data::CDataWrapper *message = new common::data::CDataWrapper();
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, ds_unique_id);
     return callApi(message);
 }

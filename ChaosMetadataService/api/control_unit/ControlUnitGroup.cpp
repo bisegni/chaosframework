@@ -31,7 +31,6 @@
 #include "CopyInstance.h"
 #include "RecoverError.h"
 #include "Delete.h"
-#include "SendStorageBurst.h"
 using namespace chaos::metadata_service::api::control_unit;
 DEFINE_CLASS_FACTORY_NO_ALIAS(ControlUnitGroup, chaos::metadata_service::api::AbstractApiGroup);
 
@@ -50,7 +49,6 @@ AbstractApiGroup("control_unit"){
     addApi<CopyInstance>();
     addApi<RecoverError>();
     addApi<Delete>();
-    addApi<SendStorageBurst>();
 }
 
 ControlUnitGroup::~ControlUnitGroup() {

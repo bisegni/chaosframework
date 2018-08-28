@@ -21,7 +21,6 @@
 
 #include <chaos_metadata_service_client/api_proxy/script/SaveScript.h>
 
-using namespace chaos::common::data;
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::script;
@@ -31,14 +30,14 @@ API_PROXY_CD_DEFINITION(SaveScript, "script", "saveScript")
 ApiProxyResult SaveScript::execute(const Script& script_to_insert,
                                    const bool& import) {
     ScriptSDWrapper sh(script_to_insert);
-    CDWUniquePtr data_pack = sh.serialize();
+    ChaosUniquePtr<common::data::CDataWrapper> data_pack = sh.serialize();
     if(import){data_pack->addBoolValue("import", import);}
-    return callApi(data_pack);
+    return callApi(data_pack.release());
 }
 
-ApiProxyResult  SaveScript::execute(CDWUniquePtr data_pack,
-                                    const bool& import  ){
-    if(import){data_pack->addBoolValue("import", import);}
-    return callApi(data_pack);
-    
+ApiProxyResult  SaveScript::execute( chaos::common::data::CDataWrapper* data_pack,
+                                                              const bool& import  ){
+	 if(import){data_pack->addBoolValue("import", import);}
+	 return callApi(data_pack);
+
 }

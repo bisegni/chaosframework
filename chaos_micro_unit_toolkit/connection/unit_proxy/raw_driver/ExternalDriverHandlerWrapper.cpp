@@ -41,9 +41,9 @@ ExternalDriverHandlerWrapper::ExternalDriverHandlerWrapper(UnitProxyHandler hand
 UnitProxyHandlerWrapper(handler,
                         user_data,
 #if __cplusplus >= 201103L
-                        MOVE(_u_proxy)
+                        ChaosMoveOperator(_u_proxy)
 #else
-                        MOVE(ChaosUniquePtr<AbstractUnitProxy>(_u_proxy))
+                        ChaosMoveOperator(ChaosUniquePtr<AbstractUnitProxy>(_u_proxy))
 #endif
                         ),
 unit_state(base_unit->getUnitState()),

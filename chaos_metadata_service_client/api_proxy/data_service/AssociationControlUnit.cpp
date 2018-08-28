@@ -22,7 +22,6 @@
 #include <chaos_metadata_service_client/api_proxy/data_service/AssociationControlUnit.h>
 
 using namespace chaos;
-using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::data_service;
 
@@ -30,10 +29,14 @@ API_PROXY_CD_DEFINITION(AssociationControlUnit,
                         "data_service",
                         "associateControlUnit")
 
+/*!
+
+ */
 ApiProxyResult AssociationControlUnit::execute(const std::string& ds_unique_id,
                                                std::vector<std::string> control_unit_to_associate,
                                                bool associate) {
-    CDWUniquePtr message(new CDataWrapper());
+
+    common::data::CDataWrapper *message = new common::data::CDataWrapper();
     message->addStringValue(NodeDefinitionKey::NODE_PARENT, ds_unique_id);
     message->addBoolValue("associate", associate);
     for(std::vector<std::string>::iterator it = control_unit_to_associate.begin();

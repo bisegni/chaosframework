@@ -20,7 +20,6 @@
  */
 
 #include "GetFullDescription.h"
-#include "../../ChaosMetadataService.h"
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -51,7 +50,6 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     int                 err         = 0;
     bool                presence    = false;
     CDataWrapper        *result     = NULL;
-    const   std::string ha_zone     = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     const   std::string cu_uid      = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     bool 	return_all=false;
     if( api_data->hasKey("all")){
@@ -67,6 +65,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         return dataset.release();
 
      }
+
     
     //get default control unit node description
     if((err = cu_da->checkPresence(cu_uid, presence))) {
@@ -140,9 +139,7 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     if(associated_ds.size() == 0) {
         CU_GCD_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best tree of them";
         //no we need to get tbest tree available cds to retun publishable address
-        if((err = ds_da->getBestNDataService(ha_zone,
-                                             associated_ds,
-                                             3))) {
+        if((err = ds_da->getBestNDataService(associated_ds, 3))) {
             LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching %2% best available data service for inititializing the control unit:%1%") % cu_uid % 3));
         }
     }

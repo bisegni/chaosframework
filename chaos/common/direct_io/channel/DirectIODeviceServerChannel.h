@@ -51,10 +51,9 @@ namespace chaos {
                          \param channel_data the data sent by the device
                          \synchronous_answer possible async answer (not used for now)
                          */
-                        virtual int consumePutEvent(const std::string& key,
-                                                    const uint8_t hst_tag,
-                                                    const ChaosStringSetConstSPtr meta_tag_set,
-                                                    data::BufferSPtr channel_data)
+                        virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
+                                                    data::BufferSPtr channel_data,
+                                                    uint32_t channel_data_len)
                         {return -1;};
                         
                         //! Receive the CDataWrapper forwarded by the channel that contains the helath data
@@ -63,10 +62,9 @@ namespace chaos {
                          \param header the header of the channel api
                          \param channel_data contains the health data
                          */
-                        virtual int consumeHealthDataEvent(const std::string& key,
-                                                           const uint8_t hst_tag,
-                                                           const ChaosStringSetConstSPtr meta_tag_set,
-                                                           data::BufferSPtr channel_data)
+                        virtual int consumeHealthDataEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode& header,
+                                                           data::BufferSPtr channel_data,
+                                                           uint32_t channel_data_len)
                         {return -1;};
                         
                         //! Receive the key of the live data channel to read
@@ -75,8 +73,8 @@ namespace chaos {
                          in synchronous way the ansert to the client
                          \param key_data the data of the key
                          \param key_len the size of the key data
-                         \param result_header the ehader that specify information of the result
-                         \param result_value the values of the result
+                         \param result_header
+                         \param result_value
                          */
                         virtual int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                                     uint32_t key_len,
@@ -89,11 +87,11 @@ namespace chaos {
                          Receive the keys set to fetch from the live cache and fill the synchronous_answer to return
                          in synchronous way the result of the answre
                          \param header header containing the information where send the answer
-                         \param keys the set of key to retrieve
+                         \param key_data the data of the key
+                         \param key_len the size of the key data
                          \param result_header
-                         \param result_header is the merory that contains the bson document answer for each key in sequence,
-                         \param result_value is the size of memory allocated into result_value pointer
-                         \param result_value
+                         \param result_value is the merory that contains the bson document answer for each key in sequence,
+                         \param result_value_size is the size of memory allocated into result_value pointer
                          if a key is not found in live an empy bson document is add.
                          */
                         virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
@@ -106,17 +104,17 @@ namespace chaos {
                         //! Execute a paged query into a time intervall
                         /*!
                          Execute a paged query in sinchronous way
-                         \param query_header of the request containing the naswer information
+                         \param header of the request containing the naswer information
                          \param search_key the key that we need to query
                          \param search_start_ts the start of the time that delimit the lower time stamp of result
                          \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
+                         \param last_sequence_id is an in-out parameter, at in it specific the last found element, in output it need to be filled with the sequence information of the last item found
                          \param
                          */
                         virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                                           const std::string& search_key,
-                                                          const ChaosStringSet& meta_tags,
-                                                          const uint64_t search_start_ts,
-                                                          const uint64_t search_end_ts,
+                                                          uint64_t search_start_ts,
+                                                          uint64_t search_end_ts,
                                                           opcode_headers::SearchSequence& last_element_found_seq,
                                                           opcode_headers::QueryResultPage& result_page)
                         {return -1;};

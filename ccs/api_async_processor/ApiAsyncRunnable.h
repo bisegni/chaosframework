@@ -5,12 +5,6 @@
 #include <QRunnable>
 #include <QSharedPointer>
 
-//#include <chaos/common/data/CDataWrapper.h>
-//#include <chaos/common/chaos_types.h>
-//#include <chaos/common/message/MultiAddressMessageRequestFuture.h>
-
-//#include <chaos_metadata_service_client/api_proxy/api.h>
-
 class ApiAsyncRunnable :
         public QObject,
         public QRunnable {

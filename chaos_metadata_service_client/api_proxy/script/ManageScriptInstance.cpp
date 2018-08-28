@@ -32,19 +32,19 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
                                              const std::string& script_name,
                                              const std::string& instance_name,
                                              const bool create) {
-    CDWUniquePtr api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     api_data->addStringValue("instance_name", instance_name);
     api_data->addBoolValue("create", create);
-    return callApi(api_data);
+    return callApi(api_data.release());
 }
 
 ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
                                              const std::string& script_name,
                                              const ChaosStringVector& instance_names,
                                              const bool create) {
-    CDWUniquePtr api_data(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
     api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     for(ChaosStringVectorConstIterator it = instance_names.begin(),
@@ -55,5 +55,5 @@ ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
     }
     api_data->finalizeArrayForKey("instance_name");
     api_data->addBoolValue("create", create);
-    return callApi(api_data);
+    return callApi(api_data.release());
 }

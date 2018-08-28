@@ -1,5 +1,4 @@
 #include "ApiAsyncRunnable.h"
-
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -21,7 +20,7 @@ void ApiAsyncRunnable::run() {
                                                                               async_result->getErrorDomain())));
         } else {
             //we have good answer
-            emit asyncApiResult(tag, QSharedPointer<CDataWrapper>(async_result->detachResult().release()));
+            emit asyncApiResult(tag, QSharedPointer<CDataWrapper>(async_result->detachResult()));
         }
     } else {
         //no data

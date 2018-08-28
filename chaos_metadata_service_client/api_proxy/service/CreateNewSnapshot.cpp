@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/service/CreateNewSnapshot.h>
 
-using namespace chaos::common::data;
+using namespace chaos;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::service;
 
@@ -29,9 +29,12 @@ API_PROXY_CD_DEFINITION(CreateNewSnapshot,
                         "service",
                         "createNewSnapshot")
 
+/*!
+ 
+ */
 ApiProxyResult CreateNewSnapshot::execute(const std::string& snapshot_name,
                                           const SnapshotNodeList& node_list) {
-    CDWUniquePtr message(new CDataWrapper());
+    common::data::CDataWrapper *message = new common::data::CDataWrapper();
     message->addStringValue("snapshot_name", snapshot_name);
     
     for(SnapshotNodeListConstIterator it = node_list.begin();

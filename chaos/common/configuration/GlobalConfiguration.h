@@ -49,10 +49,12 @@ namespace chaos {
     using namespace std;
     
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
-t x = z;\
+t x;\
 if(hasOption(y)){\
 x = getOption<t>(y);\
-}
+}else{\
+x = z;\
+}\
 
 #define CHECK_OPTION_WITH_DEFAULT(t,x,y,z)\
 if(hasOption(y)){\

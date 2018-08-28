@@ -56,7 +56,6 @@ namespace chaos {
                 public:
                     //inhertied method
                     int pushObject(const std::string& key,
-                                   const ChaosStringSetConstSPtr meta_tags,
                                    const chaos::common::data::CDataWrapper& stored_object);
                     
                     //inhertied method
@@ -73,9 +72,8 @@ namespace chaos {
                                      uint64_t end_timestamp);
                     //inhertied method
                     int findObject(const std::string& key,
-                                   const ChaosStringSet& meta_tags,
-                                   const uint64_t timestamp_from,
-                                   const uint64_t timestamp_to,
+                                   uint64_t timestamp_from,
+                                   uint64_t timestamp_to,
                                    const uint32_t page_len,
                                    object_storage::abstraction::VectorObject& found_object_page,
                                    common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);

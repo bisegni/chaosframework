@@ -20,7 +20,7 @@
  */
 
 #include "ProcessHello.h"
-#include "../../ChaosMetadataService.h"
+
 #define H_NW_INFO INFO_LOG(ProcessHello)
 #define H_NW_DBG  DBG_LOG(ProcessHello)
 #define H_NW_ERR  ERR_LOG(ProcessHello)
@@ -32,13 +32,17 @@ using namespace chaos::metadata_service::persistence::data_access;
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
 ProcessHello::ProcessHello():
-AbstractApi("processHello"){}
+AbstractApi("processHello"){
 
-ProcessHello::~ProcessHello() {}
+}
+
+ProcessHello::~ProcessHello() {
+
+}
 
 chaos::common::data::CDataWrapper *ProcessHello::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
-    const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
+    bool presence = false;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
     CHECK_CDW_THROW_AND_LOG(api_data, H_NW_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, H_NW_ERR, -2, "The ndk_unique_id key is mandatory")
@@ -47,11 +51,22 @@ chaos::common::data::CDataWrapper *ProcessHello::execute(chaos::common::data::CD
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -4);
 
     const std::string h_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+//    if((err = n_da->checkNodePresence(presence, h_uid))) {
+//        LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error fetching the presence of the healt process:%1%") % h_uid));
+//    }else if(presence) {
+//            //update found node
+//        if((err = n_da->updateNode(*api_data))) {
+//            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
+//        }
+//    }else {            //create new node
+//        if((err = n_da->insertNewNode(*api_data))) {
+//            LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error creating the node for the healt process:%1%") % h_uid));
+//        }
+//    }
 
     ResultVector best_available_server;
         //no we need to get tbest tree available cds to retun publishable address
-    if((err = ds_da->getBestNDataService(ha_zone_name,
-                                         best_available_server))) {
+    if((err = ds_da->getBestNDataService(best_available_server))) {
         LOG_AND_TROW(H_NW_ERR, err, boost::str(boost::format("Error fetching %2% best available data service to return to the healt process:%1%") % h_uid % 3));
     }
 

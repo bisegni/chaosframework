@@ -295,7 +295,7 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
         //delete the slot
         set_slots_index_key_slot.erase(it);
     }
-    delete[](data_found);
+    if(data_found) {free(data_found);}
 }
 
 void QuantumSlotScheduler::fetchValue(ChaosSharedPtr<IODataDriver> data_driver) {

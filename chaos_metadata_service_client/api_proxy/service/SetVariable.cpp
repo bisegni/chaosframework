@@ -29,10 +29,12 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(SetVariable,
                         "service",
                         "setVariable")
-
+/*!
+ 
+ */
 ApiProxyResult SetVariable::execute(const std::string& variable_name,
                                     chaos::common::data::CDataWrapper& variable_value) {
-    CDWUniquePtr message(new CDataWrapper());
+    CDataWrapper *message = new CDataWrapper();
     message->addStringValue("variable_name", variable_name);
     message->addCSDataValue("variable_value", variable_value);
     return callApi(message);

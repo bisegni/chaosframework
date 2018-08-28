@@ -34,10 +34,10 @@ API_PROXY_CD_DEFINITION(LoadAgentDescription,
 
 ApiProxyResult LoadAgentDescription::execute(const std::string& node_uid,
                                              const bool load_related_data) {
-    CDWUniquePtr pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     pack->addBoolValue("load_related_data", load_related_data);
-    return callApi(pack);
+    return callApi(pack.release());
 }
 
 void LoadAgentDescription::deserialize(CDataWrapper *api_result,

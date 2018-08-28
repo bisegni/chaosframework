@@ -33,9 +33,9 @@ API_PROXY_CD_DEFINITION(ListNodeForAgent,
                         AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE);
 
 ApiProxyResult ListNodeForAgent::execute(const std::string& agent_uid) {
-    CDWUniquePtr pack(new CDataWrapper());
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, agent_uid);
-    return callApi(pack);
+    return callApi(pack.release());
 }
 
 void ListNodeForAgent::deserialize(CDataWrapper *api_result,

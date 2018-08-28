@@ -29,44 +29,81 @@ using namespace chaos::cu::driver_manager::driver;
 using namespace chaos::cu::control_manager::script::api::plugin;
 
 
-TEST(PluginTest, General) {
-    PluginLoader loader("ExamplePlugin.chaos_extension");
-    ASSERT_TRUE(loader.loaded());
+//TEST(TestPlugin, General) {
+//    ChaosUniquePtr<AbstractPlugin> plugin;
+//    PluginLoader loader("PluginLibrary.chaos_extension");
+//    ASSERT_TRUE(loader.loaded());
+//    
+//    ChaosUniquePtr<PluginDiscover> discover(loader.getDiscover());
+//    
+//    ASSERT_GT(discover->getNamesSize(), 0);
+//    for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
+//        
+//        const char * registeredName = discover->getNameForIndex(idx);
+//
+//        ChaosUniquePtr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
+//        ASSERT_TRUE(inspector.get());
+//        size_t numberOfAttributes = inspector->getInputAttributeByNamesSize(registeredName);
+//        std::string subclass = inspector->getSubclass();
+//        if(subclass.compare("chaos::common::plugin::AbstractPlugin") == 0) {
+//            plugin = loader.newInstance<AbstractPlugin>(registeredName);
+//            ASSERT_TRUE(plugin.get());
+//        }
+//    }
+//}
+//int main(int argc, char ** argv) {
+//    chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
+//    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+//    ChaosUniquePtr<AbstractPlugin> plugin;
+//    std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;
+//    PluginLoader loader("PluginLibrary.chaos_extension");
+//    if(loader.loaded()) {
+//        ChaosUniquePtr<PluginDiscover> discover(loader.getDiscover());
+//
+//        std::cout << "Registered plugin names: " << discover->getNamesSize() << std::endl;
+//        for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
+//
+//            const char * registeredName = discover->getNameForIndex(idx);
+//
+//            std::cout << "Found plugin: " << registeredName << std::endl;
+//            ChaosUniquePtr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
+//
+//            size_t numberOfAttributes = inspector->getInputAttributeByNamesSize(registeredName);
+//            if(numberOfAttributes) {
+//                std::cout << "Plugin has " << numberOfAttributes <<  " attribute" << std::endl;
+//                for(int idx = 0; idx < numberOfAttributes; idx++) {
+//                    std::cout << "Attribute: " << inspector->getInputAttributeForNameAndIndex(registeredName, idx) << " for plugin: " << registeredName << std::endl;
+//                }
+//            }
+//            std::string subclass = inspector->getSubclass();
+//            if(subclass.compare("chaos::common::plugin::AbstractPlugin") == 0) {
+//                plugin = loader.newInstance<AbstractPlugin>(registeredName);
+//                if(plugin.get()) {
+//                    std::cout << "Create instance for:" << plugin->getName() << "-" << plugin->getType() << "-" << plugin->getVersion() << std::endl;
+//                }
+//            }
+//        }
+//    }else {
+//        std::cerr << "Plugin not found" << std::endl;
+//        return EXIT_FAILURE;
+//    }
+//    std::cout << "----------------------------------End general plugin test-----------------------------------" << std::endl;
+//    std::cout << std::endl;
+//    std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
+//    char *out_mem = NULL;
+//    uint32_t out_size = 0;
+//    chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__);
+//    PluginManager pl_man("/Users/bisegni/source/chaos_development/chaosframework/chaos-distrib-x86_64-Darwin/bin");
+//    pl_man.init(NULL);
+//    ChaosUniquePtr<EUAbstractApiPlugin> pi = pl_man.getPluginInstanceBySubclassAndName<EUAbstractApiPlugin>("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin", "EUPluginAlgotest");
+//    pi->execute("test_str", strlen("test_str"), &out_mem, &out_size);
+//    std::cout << out_mem << std::endl;
+//    std::cout << pi->getApiName() << std::endl;
+//    free(out_mem);
+//    pl_man.deinit();
+//    chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__);
+//    std::cout << "----------------------------------End driver plugin test----------------------------------" << std::endl;
+//
+//    return EXIT_SUCCESS;
+//}
 
-    ChaosUniquePtr<PluginDiscover> discover(loader.getDiscover());
-
-    ASSERT_GT(discover->getNamesSize(), 0);
-    for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
-
-        const char * registeredName = discover->getNameForIndex(idx);
-
-        ChaosUniquePtr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
-        ASSERT_TRUE(inspector.get());
-        ASSERT_EQ(inspector->getInputAttributeByNamesSize(registeredName), 0);
-        std::string subclass = inspector->getSubclass();
-        if(subclass.compare("chaos::common::plugin::AbstractPlugin") == 0) {
-            ChaosUniquePtr<AbstractPlugin> plugin;
-            plugin = loader.newInstance<AbstractPlugin>(registeredName);
-            ASSERT_TRUE(plugin.get());
-            ASSERT_EQ(plugin->init(), 0);
-            ASSERT_NO_THROW(plugin->deinit());
-        } else if(subclass.compare("chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin") == 0) {
-            ChaosUniquePtr<chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin> plugin;
-            std::string test_in = "test in data";
-            char * test_out = NULL;
-            uint32_t test_out_size = 0;
-            plugin = loader.newInstance<chaos::cu::control_manager::script::api::plugin::EUAbstractApiPlugin>(registeredName);
-            ASSERT_TRUE(plugin.get());
-            ASSERT_EQ(plugin->init(), 0);
-            ASSERT_EQ(plugin->execute(test_in.c_str(),
-                                      test_in.size(),
-                                      &test_out,
-                                      &test_out_size),
-                      0);
-            ASSERT_TRUE(test_out);
-            ASSERT_EQ(test_in.size()+5, test_out_size);
-            ASSERT_NO_THROW(plugin->deinit());
-            delete [](test_out);
-        }
-    }
-}

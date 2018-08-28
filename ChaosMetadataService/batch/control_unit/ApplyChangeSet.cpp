@@ -50,7 +50,7 @@ void ApplyChangeSet::setHandler(CDataWrapper *data) {
     request = createRequest(data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR),
                             data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN),
                             ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET);
-    message.reset(new CDataWrapper(data->getBSONRawData()));
+    message = data;
 }
 
 // inherited method
@@ -61,7 +61,7 @@ void ApplyChangeSet::acquireHandler() {
             
             //send message for action
             sendMessage(*request,
-                        MOVE(message));
+                        message);
             BC_END_RUNNING_PROPERTY
             break;
         }

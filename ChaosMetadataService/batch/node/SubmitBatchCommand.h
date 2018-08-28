@@ -23,6 +23,7 @@
 #define __CHAOSFramework__SubmitBatchCommand__
 
 #include "../mds_service_batch.h"
+
 namespace chaos {
     namespace metadata_service{
         namespace batch {
@@ -35,7 +36,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
                     ChaosUniquePtr<RequestInfo> request;
-                    chaos::common::data::CDWUniquePtr command_instance;
+                    ChaosUniquePtr<chaos::common::data::CDataWrapper> command_instance;
                 public:
                     SubmitBatchCommand();
                     ~SubmitBatchCommand();

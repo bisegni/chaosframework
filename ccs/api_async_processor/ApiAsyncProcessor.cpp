@@ -1,6 +1,6 @@
 #include "ApiAsyncProcessor.h"
 #include "ApiAsyncRunnable.h"
-ApiAsyncProcessor::ApiAsyncProcessor():QObject(0L){}
+ApiAsyncProcessor::ApiAsyncProcessor():QObject(NULL){}
 ApiAsyncProcessor::~ApiAsyncProcessor() {}
 
 void ApiAsyncProcessor::submitApiResult(const QString& tag,

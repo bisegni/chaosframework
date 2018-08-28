@@ -270,7 +270,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submitMessage(const string& serverAndPort,
-								   chaos::common::data::CDWUniquePtr message);
+								   chaos::common::data::CDataWrapper *message);
 				
 				//!message request
 				/*!
@@ -280,7 +280,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submiteRequest(const string& serverAndPort,
-                                    chaos::common::data::CDWUniquePtr request,
+                                    chaos::common::data::CDataWrapper *request,
                                     std::string sender_node_id,
                                     uint32_t sender_request_id);
 				

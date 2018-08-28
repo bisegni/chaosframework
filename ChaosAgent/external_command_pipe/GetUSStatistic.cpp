@@ -59,8 +59,8 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request = mds_message_channel.sendRequestWithFuture(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN,
                                                                                                         "loadAgentDescription",
-                                                                                                        MOVE(api_data),
-                                                                                                         RpcConfigurationKey::GlobalRPCTimeoutinMSec);
+                                                                                                        api_data.release(),
+                                                                                                        5000);
     if(request->wait() == false ||
        request->getError() != 0) {
         return 2;

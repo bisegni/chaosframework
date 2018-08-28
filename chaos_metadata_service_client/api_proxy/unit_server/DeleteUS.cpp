@@ -21,7 +21,6 @@
 
 #include <chaos_metadata_service_client/api_proxy/unit_server/DeleteUS.h>
 
-using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::unit_server;
 
@@ -29,8 +28,11 @@ API_PROXY_CD_DEFINITION(DeleteUS,
                         "unit_server",
                         "deleteUS")
 
+/*!
+
+ */
 ApiProxyResult DeleteUS::execute(const std::string& new_unit_server_uid) {
-    CDWUniquePtr message(new CDataWrapper());
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, new_unit_server_uid);
     return callApi(message);
 }
