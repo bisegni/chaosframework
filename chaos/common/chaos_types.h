@@ -38,6 +38,12 @@
 
 #if __cplusplus >= 201103L
 
+#define CInt64  std::int64_t
+#define CUint64 std::uint64_t
+#define CInt32  std::int32_t
+#define CUint32 std::uint32_t
+#define CDouble double
+
 #ifndef FORCE_BOOST_SHPOINTER
 #define ChaosSharedPtr      std::shared_ptr
 #define ChaosMakeSharedPtr  std::make_shared
@@ -89,6 +95,12 @@ using ChaosFunction = std::function< R >;
 
 #else
 #include <stdint.h>
+#define CInt64  int64_t
+#define CUint64 uint64_t
+#define CInt32  int32_t
+#define CUint32 uint32_t
+#define CDouble double
+
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
@@ -113,7 +125,7 @@ using ChaosFunction = std::function< R >;
 #endif
 
 //define number
-#define <stdint.h>  int64_t
+#define CInt64  int64_t
 #define CUint64 uint64_t
 #define CInt32  int32_t
 #define CUint32 uint32_t
