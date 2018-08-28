@@ -26,7 +26,7 @@
 #include <boost/generator_iterator.hpp>
 #include <boost/random/random_device.hpp>
 
-#include <chaos/common/chaos_types.h>
+#include <stdint.h>
 
 namespace chaos {
     namespace common {
