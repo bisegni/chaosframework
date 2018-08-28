@@ -254,7 +254,6 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     //get remote ip
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
-    uint64_t sqid=++seq_id;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
     messageInfo->message->addInt64Value("seq_id", (loc_seq_id = ++seq_id));
     CDWShrdPtr message_data = CDWShrdPtr(messageInfo->message.release());
