@@ -26,9 +26,7 @@
 #include <boost/generator_iterator.hpp>
 #include <boost/random/random_device.hpp>
 
-#if __cplusplus < 201103L
-#include <cstdint.h>
-#endif
+#include <chaos/common/chaos_types.h>
 
 namespace chaos {
     namespace common {
@@ -39,14 +37,14 @@ namespace chaos {
              */
             class Random {
                 static boost::random_device rd;
-                boost::random::uniform_int_distribution<std::int64_t> rnd_gen_int64;
+                boost::random::uniform_int_distribution<CInt64> rnd_gen_int64;
             public:
                 Random();
-                explicit Random(std::int64_t min, std::int64_t max);
+                explicit Random(CInt64 min, CInt64 max);
                 ~Random();
                 
-                std::int64_t rand() const;
-                operator std::int64_t() const;
+                CInt64 rand() const;
+                operator CInt64() const;
             };
         }
     }

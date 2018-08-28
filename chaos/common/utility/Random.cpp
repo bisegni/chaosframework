@@ -27,16 +27,16 @@ boost::random_device Random::rd;
 Random::Random():
 rnd_gen_int64(){}
 
-Random::Random(std::int64_t min,
-               std::int64_t max):
+Random::Random(CInt64 min,
+               CInt64 max):
 rnd_gen_int64(min, max){}
 
 Random::~Random() {}
 
-std::int64_t Random::rand() const {
+CInt64 Random::rand() const {
     return rnd_gen_int64(rd);
 }
 
-Random::operator std::int64_t() const {
+Random::operator CInt64() const {
     return rand();
 }

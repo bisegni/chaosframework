@@ -88,7 +88,7 @@ using ChaosFunction = std::function< R >;
 #define ChaosMoveOperator(x) std::move(x)
 
 #else
-#include <cstdint.h>
+#include <stdint.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
@@ -113,7 +113,7 @@ using ChaosFunction = std::function< R >;
 #endif
 
 //define number
-#define CInt64  int64_t
+#define <stdint.h>  int64_t
 #define CUint64 uint64_t
 #define CInt32  int32_t
 #define CUint32 uint32_t
