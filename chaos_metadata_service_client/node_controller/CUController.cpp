@@ -534,7 +534,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
                                            result_data,
                                            millisecToWait);
     if(err == ErrorCode::EC_NO_ERROR
-       && result_data
+       && result_data.get()
        && result_data->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
         //fill the command id
         command_id = result_data->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
