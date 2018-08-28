@@ -26,6 +26,8 @@
 #include <boost/generator_iterator.hpp>
 #include <boost/random/random_device.hpp>
 
+#include <cstdint>
+
 namespace chaos {
     namespace common {
         namespace utility {
