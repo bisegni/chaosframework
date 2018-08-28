@@ -47,6 +47,6 @@ ApiProxyResult ApiProxy::callApi(const chaos::common::data::CDWUniquePtr& api_me
     CHAOS_ASSERT(mn_message)
     return  mn_message->sendRequestWithFuture(group_name,
                                               api_name,
-                                              ChaosMoveOperator(const_cast<chaos::common::data::CDWUniquePtr&>(api_message)),
+                                              MOVE(const_cast<chaos::common::data::CDWUniquePtr&>(api_message)),
                                               timeout_in_milliseconds);
 }

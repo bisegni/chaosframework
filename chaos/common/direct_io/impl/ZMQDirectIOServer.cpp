@@ -314,14 +314,14 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
                 //keep track if the cleint want the answer
                 send_synchronous_answer = data_pack_received->header.dispatcher_header.fields.synchronous_answer;
                 //call handler
-                if((err = DirectIOHandlerPtrCaller(handler_impl, delegate)(ChaosMoveOperator(data_pack_received),
+                if((err = DirectIOHandlerPtrCaller(handler_impl, delegate)(MOVE(data_pack_received),
                                                                            data_pack_answer)) == 0) {
                     if(send_synchronous_answer &&
                        data_pack_answer) {
                         
                         if((err = sendDatapack(worker_socket,
                                                identity,
-                                               ChaosMoveOperator(data_pack_answer)))){
+                                               MOVE(data_pack_answer)))){
                             ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error sending answer with code %1%", %err);
                         }
                     }

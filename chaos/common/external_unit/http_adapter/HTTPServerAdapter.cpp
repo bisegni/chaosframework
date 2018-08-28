@@ -254,7 +254,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
             //we can create a new connection
             ChaosSharedPtr<ExternalUnitConnection> conn_ptr(new ExternalUnitConnection(this,
                                                                                        endpoint_it->second,
-                                                                                       ChaosMoveOperator(serializer)));
+                                                                                       MOVE(serializer)));
             ChaosUniquePtr< ConnectionMetadata<HTTPServerAdapter> > connection_metadata = ChaosUniquePtr< ConnectionMetadata<HTTPServerAdapter> >(new ConnectionMetadata<HTTPServerAdapter>(conn_ptr->connection_identifier, this));
             LMapConnectionWriteLock wconnl = map_connection.getWriteLockObject();
             std::pair<MapConnectionIterator,bool> conn_pair =  map_connection().insert(MapConnectionPair(conn_ptr->connection_identifier,
@@ -288,7 +288,7 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
                 return;
             }
             if((err = sendDataToEndpoint(*conn_it->second,
-                                         ChaosMoveOperator(request->buffer)))) {
+                                         MOVE(request->buffer)))) {
                 //add error message to the queue
                 //                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
                 //                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
@@ -396,7 +396,7 @@ int HTTPServerAdapter::sendDataToConnection(const std::string& connection_identi
                                             chaos::common::data::CDBufferUniquePtr data,
                                             const EUCMessageOpcode opcode) {
     return _sendDataToConnectionQueue(connection_identifier,
-                                      ChaosMoveOperator(data),
+                                      MOVE(data),
                                       opcode);
 }
 
@@ -407,7 +407,7 @@ int HTTPServerAdapter::_sendDataToConnectionQueue(const std::string& conn_uuid,
     OpcodeShrdPtr op(new Opcode());
     op->identifier = conn_uuid;
     op->op_type = OpcodeInfoTypeSend;
-    op->data = ChaosMoveOperator(data);
+    op->data = MOVE(data);
     op->data_opcode = opcode;
     post_evt_op_queue().push(op);
     return 0;

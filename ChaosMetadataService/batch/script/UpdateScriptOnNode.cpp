@@ -173,7 +173,7 @@ bool UpdateScriptOnNode::loadScriptInstance() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        ChaosMoveOperator(script_update_data_pack));
+                        MOVE(script_update_data_pack));
             result = true;
             break;
         }

@@ -53,7 +53,7 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSP
     
     //increment packet size
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendPriorityData(ChaosMoveOperator(data_pack));
+    return wrapped_connection->sendPriorityData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack,
                                                               DirectIODataPackSPtr& asynchronous_answer) {
@@ -63,7 +63,7 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSP
     
     //increment packet size
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendPriorityData(ChaosMoveOperator(data_pack),
+    return wrapped_connection->sendPriorityData(MOVE(data_pack),
                                                 asynchronous_answer);
 }
 
@@ -76,7 +76,7 @@ int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::dire
     
     //increment packet size
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendServiceData(ChaosMoveOperator(data_pack));
+    return wrapped_connection->sendServiceData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                              chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) {
@@ -86,6 +86,6 @@ int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::dire
     
     //increment packet size
     shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    return wrapped_connection->sendServiceData(ChaosMoveOperator(data_pack),
+    return wrapped_connection->sendServiceData(MOVE(data_pack),
                                                asynchronous_answer);
 }

@@ -323,7 +323,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
             if(!submitMessage(answer_ip,
-                              ChaosMoveOperator(response_pack),
+                              MOVE(response_pack),
                               false)){
 
             }

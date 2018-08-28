@@ -271,7 +271,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
             if(!dispatcher->submitMessage(answerIP,
-                                          ChaosMoveOperator(response_pack),
+                                          MOVE(response_pack),
                                           false)){
                 //the response has not been sent
                 

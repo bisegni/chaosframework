@@ -43,12 +43,12 @@ timeout_in_milliseconds(_timeout_in_milliseconds),
 parent_mn_message_channel(_parent_mn_message_channel),
 action_domain(_action_domain),
 action_name(_action_name),
-message_pack(ChaosMoveOperator(_message_pack)){
+message_pack(MOVE(_message_pack)){
     CHAOS_ASSERT(parent_mn_message_channel);
     //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       ChaosMoveOperator(message_pack),
+                                                                       MOVE(message_pack),
                                                                        last_used_address);
 }
 
@@ -67,7 +67,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       ChaosMoveOperator(message_pack),
+                                                                       MOVE(message_pack),
                                                                        last_used_address);
     if(current_future.get()) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
@@ -78,7 +78,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //retrasmission of the datapack
         current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
-                                                                           ChaosMoveOperator(message_pack),
+                                                                           MOVE(message_pack),
                                                                            last_used_address);
     }
 }

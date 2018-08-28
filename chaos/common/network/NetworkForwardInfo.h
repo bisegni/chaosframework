@@ -61,11 +61,11 @@ namespace chaos {
                 ~NetworkForwardInfo(){}
 				
                 void setMessage(chaos::common::data::CDWUniquePtr _message) {
-                    message = ChaosMoveOperator(_message);
+                    message = MOVE(_message);
                 }
                 
 				chaos::common::data::CDWUniquePtr detachMessage() {
-					return ChaosMoveOperator(message);
+					return MOVE(message);
 				}
                 
                 bool hasMessage() {

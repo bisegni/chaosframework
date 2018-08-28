@@ -158,7 +158,7 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
         MessageChannel::sendMessage(service->ip_port,
                                     action_domain,
                                     action_name,
-                                    ChaosMoveOperator(message_pack));
+                                    MOVE(message_pack));
         DEBUG_CODE(MAMC_DBG << "Sent message to:" << service->ip_port;)
     }
     
@@ -176,7 +176,7 @@ ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWit
         result = MessageChannel::sendRequestWithFuture((used_remote_address = service->ip_port),
                                                        action_domain,
                                                        action_name,
-                                                       ChaosMoveOperator(request_pack));
+                                                       MOVE(request_pack));
         DEBUG_CODE(MAMC_DBG << "Sent request to:" << used_remote_address;)
 
     } else {
@@ -193,7 +193,7 @@ ChaosUniquePtr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sen
     return ChaosUniquePtr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
                                                                                                  action_domain,
                                                                                                  action_name,
-                                                                                                 ChaosMoveOperator(request_pack),
+                                                                                                 MOVE(request_pack),
                                                                                                  request_timeout));
 }
 

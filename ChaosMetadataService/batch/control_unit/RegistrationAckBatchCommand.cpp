@@ -70,7 +70,7 @@ void RegistrationAckBatchCommand::acquireHandler() {
             message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
             message->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
             sendMessage(*request,
-                        ChaosMoveOperator(message));
+                        MOVE(message));
             BC_END_RUNNING_PROPERTY
         }
         default:

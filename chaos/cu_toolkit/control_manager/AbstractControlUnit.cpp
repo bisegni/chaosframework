@@ -85,7 +85,7 @@ StorageBurst::~StorageBurst(){}
 
 #pragma mark PushStorageBurst
 PushStorageBurst::PushStorageBurst(DatasetBurstShrdPtr _dataset_burst):
-StorageBurst(ChaosMoveOperator(_dataset_burst)),
+StorageBurst(MOVE(_dataset_burst)),
 current_pushes(0){}
 
 PushStorageBurst::~PushStorageBurst(){}
@@ -96,7 +96,7 @@ bool PushStorageBurst::active(void *data  __attribute__((unused))) {
 
 #pragma mark MSecStorageBurst
 MSecStorageBurst::MSecStorageBurst(DatasetBurstShrdPtr _dataset_burst):
-StorageBurst(ChaosMoveOperator(_dataset_burst)),
+StorageBurst(MOVE(_dataset_burst)),
 timeout_msec(TimingUtil::getTimestampWithDelay(StorageBurst::dataset_burst->value.asInt32(), true)){}
 
 MSecStorageBurst::~MSecStorageBurst(){}
@@ -1885,7 +1885,7 @@ int AbstractControlUnit::pushOutputDataset() {
     //manage the burst information
     manageBurstQueue();
     //now we nede to push the outputdataset
-    err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, ChaosMoveOperator(output_attribute_dataset));
+    err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(output_attribute_dataset));
     
     //update counter
     push_dataset_counter++;
@@ -1912,7 +1912,7 @@ int AbstractControlUnit::pushInputDataset() {
         fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
         
         //push out the system dataset
-        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, ChaosMoveOperator(input_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, MOVE(input_attribute_dataset));
     }
     input_attribute_cache.resetChangedIndex();
     return err;
@@ -1936,7 +1936,7 @@ int AbstractControlUnit::pushCustomDataset() {
         fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
         
         //push out the system dataset
-        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, ChaosMoveOperator(custom_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, MOVE(custom_attribute_dataset));
     }
     return err;
 }
@@ -1956,7 +1956,7 @@ int AbstractControlUnit::pushSystemDataset() {
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
         //push out the system dataset
-        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, ChaosMoveOperator(system_attribute_dataset));
+        err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, MOVE(system_attribute_dataset));
     }
     //reset changed index
     system_attribute_cache.resetChangedIndex();
@@ -1992,7 +1992,7 @@ int AbstractControlUnit::pushDevAlarmDataset() {
                                                               DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        err=key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, ChaosMoveOperator(attribute_dataset));
+        err=key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, MOVE(attribute_dataset));
     }
     return err;
 }
@@ -2004,7 +2004,7 @@ int AbstractControlUnit::pushCUAlarmDataset() {
                                                               DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
     if(attribute_dataset) {
         //push out the system dataset
-        err=key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, ChaosMoveOperator(attribute_dataset));
+        err=key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, MOVE(attribute_dataset));
     }
     return err;
 }
@@ -2015,10 +2015,10 @@ void AbstractControlUnit::manageBurstQueue() {
         if(!burst_queue().empty()){
             switch(burst_queue().front()->type) {
                 case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeNPush:
-                    current_burst.reset(new PushStorageBurst(ChaosMoveOperator(burst_queue().front())));
+                    current_burst.reset(new PushStorageBurst(MOVE(burst_queue().front())));
                     break;
                 case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeMSec:
-                    current_burst.reset(new MSecStorageBurst(ChaosMoveOperator(burst_queue().front())));
+                    current_burst.reset(new MSecStorageBurst(MOVE(burst_queue().front())));
                     break;
                 default:
                     break;

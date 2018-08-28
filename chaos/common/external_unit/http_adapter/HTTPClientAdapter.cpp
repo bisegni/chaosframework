@@ -118,7 +118,7 @@ int HTTPClientAdapter::addNewConnectionForEndpoint(ExternalUnitClientEndpoint *e
         ConnectionInfoShrdPtr ci = ConnectionInfoShrdPtr(new ConnectionInfo(endpoint_url));
         ci->ext_unit_conn = ChaosSharedPtr<ExternalUnitConnection>(new ExternalUnitConnection(this,
                                                                                               endpoint,
-                                                                                              ChaosMoveOperator(serializer)));
+                                                                                              MOVE(serializer)));
         
         
         
@@ -147,7 +147,7 @@ int HTTPClientAdapter::sendDataToConnection(const std::string& connection_identi
     OpcodeShrdPtr op(new Opcode());
     op->identifier = connection_identifier;
     op->op_type = OpcodeInfoTypeSend;
-    op->data = ChaosMoveOperator(data);
+    op->data = MOVE(data);
     op->data_opcode = opcode;
     ChaosWriteLock conn_wl(conn_it->second->smutex);
     conn_it->second->opcode_queue.push(op);
@@ -254,7 +254,7 @@ void HTTPClientAdapter::ev_handler(struct mg_connection *conn,
                 ChaosUniquePtr<CDataBuffer> buffer(new CDataBuffer((const char *)wm->data,
                                                                    (uint32_t)wm->size));
                 if((err = conn_metadata->class_instance->sendDataToEndpoint(*conn_info->ext_unit_conn,
-                                                                            ChaosMoveOperator(buffer)))) {
+                                                                            MOVE(buffer)))) {
                     //weh don't have found the sriealizer
                     ERR<< CHAOS_FORMAT("Error forwading data from connection uuid %1%", %conn_info->ext_unit_conn->connection_identifier);
                 } else {

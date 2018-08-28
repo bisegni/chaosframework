@@ -609,7 +609,7 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
         unit_server_status->appendCDataWrapperToArray(item);
     }
     unit_server_status->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CU_STATES);
-    mds_channel->sendUnitServerCUStates(ChaosMoveOperator(unit_server_status));
+    mds_channel->sendUnitServerCUStates(MOVE(unit_server_status));
     
     return NULL;
 }
@@ -699,7 +699,7 @@ void ControlManager::sendUnitServerRegistration() {
         unit_server_registration_pack->appendStringToArray(iter->first);
     }
     unit_server_registration_pack->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS);
-    mds_channel->sendNodeRegistration(ChaosMoveOperator(unit_server_registration_pack));
+    mds_channel->sendNodeRegistration(MOVE(unit_server_registration_pack));
 }
 
 // Server registration ack message

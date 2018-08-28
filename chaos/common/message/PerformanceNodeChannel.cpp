@@ -60,7 +60,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
     CDWUniquePtr init_session_result = sendRequest(node_network_address->ip_port,
                                                    PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                    PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
-                                                   ChaosMoveOperator(init_performance_session_param),
+                                                   MOVE(init_performance_session_param),
                                                    ms_timeout);
     err = getLastErrorCode();
     if(err == ErrorCode::EC_NO_ERROR) {
@@ -114,7 +114,7 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
         CDWUniquePtr init_session_result = sendRequest(node_network_address->ip_port,
                                                        PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                        PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
-                                                       ChaosMoveOperator(init_performance_session_param),
+                                                       MOVE(init_performance_session_param),
                                                        ms_timeout);
         
         

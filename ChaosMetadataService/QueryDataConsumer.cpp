@@ -180,7 +180,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         job->key = key;
         job->key_tag = hst_tag;
         job->data_pack = channel_data;
-        job->meta_tag = ChaosMoveOperator(meta_tag_set);
+        job->meta_tag = MOVE(meta_tag_set);
         if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
         }
@@ -206,7 +206,7 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
     }
     return consumePutEvent(key,
                            hst_tag,
-                           ChaosMoveOperator(meta_tag_set),
+                           MOVE(meta_tag_set),
                            channel_data);
 }
 

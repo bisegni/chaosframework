@@ -78,7 +78,7 @@ void AgentAckCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        ChaosMoveOperator(message_data));
+                        MOVE(message_data));
         }
             
         case MESSAGE_PHASE_SENT:

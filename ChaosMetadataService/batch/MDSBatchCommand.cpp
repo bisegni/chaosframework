@@ -103,7 +103,7 @@ void MDSBatchCommand::sendRequest(RequestInfo& request_info,
     request_info.request_future = message_channel->sendRequestWithFuture(request_info.remote_address,
                                                                          request_info.remote_domain,
                                                                          request_info.remote_action,
-                                                                         ChaosMoveOperator(message));
+                                                                         MOVE(message));
     request_info.phase = MESSAGE_PHASE_SENT;
 }
 
@@ -113,7 +113,7 @@ void MDSBatchCommand::sendMessage(RequestInfo& request_info,
     message_channel->sendMessage(request_info.remote_address,
                                  request_info.remote_domain,
                                  request_info.remote_action,
-                                 ChaosMoveOperator(message));
+                                 MOVE(message));
     request_info.phase = MESSAGE_PHASE_COMPLETED;
 }
 
@@ -146,7 +146,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
             new_request->phase = MESSAGE_PHASE_TIMEOUT;
         } else {
             sendRequest(*new_request,
-                        ChaosMoveOperator(message));
+                        MOVE(message));
         }
     }catch(...){
         throw CException(-1, "erroro using bson", __PRETTY_FUNCTION__);
@@ -183,7 +183,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node
         new_request->phase = MESSAGE_PHASE_TIMEOUT;
     } else {
         sendMessage(*new_request,
-                    ChaosMoveOperator(message));
+                    MOVE(message));
     }
     return new_request;
 }

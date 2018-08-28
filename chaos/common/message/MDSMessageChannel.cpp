@@ -74,16 +74,16 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
-                ChaosMoveOperator(hb_message));
+                MOVE(hb_message));
 }
 
 int MDSMessageChannel::sendEchoMessage(CDWUniquePtr data, CDWUniquePtr& result) {
     int err = 0;
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                             NodeDomainAndActionRPC::ACTION_ECHO_TEST,
-                                                                                            ChaosMoveOperator(data));
+                                                                                            MOVE(data));
     if(request_future->wait()) {
-        result = ChaosMoveOperator(request_future->detachResult());
+        result = MOVE(request_future->detachResult());
     } else {
         result.reset();
         err = request_future->getError();
@@ -103,7 +103,7 @@ int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
     if(requestCheck){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                 ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                                                                                                ChaosMoveOperator(device_dataset));
+                                                                                                MOVE(device_dataset));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -113,7 +113,7 @@ int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                    ChaosMoveOperator(device_dataset));
+                    MOVE(device_dataset));
     }
     return last_error_code;
 }
@@ -134,7 +134,7 @@ int MDSMessageChannel::sendNodeRegistration(CDWUniquePtr node_description,
     if(requestCheck){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                 MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                                                                                                ChaosMoveOperator(node_description));
+                                                                                                MOVE(node_description));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -144,7 +144,7 @@ int MDSMessageChannel::sendNodeRegistration(CDWUniquePtr node_description,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                    ChaosMoveOperator(node_description));
+                    MOVE(node_description));
     }
     return last_error_code;
 }
@@ -161,7 +161,7 @@ int MDSMessageChannel::sentNodeHealthStatus(CDWUniquePtr node_health_data,
     if(request_check){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                 MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_HEALTH_STATUS,
-                                                                                                ChaosMoveOperator(node_health_data));
+                                                                                                MOVE(node_health_data));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -171,7 +171,7 @@ int MDSMessageChannel::sentNodeHealthStatus(CDWUniquePtr node_health_data,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
-                    ChaosMoveOperator(node_health_data));
+                    MOVE(node_health_data));
     }
     return last_error_code;
 }
@@ -193,7 +193,7 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDWUniquePtr node_information,
     if(requestCheck){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                 MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
-                                                                                                ChaosMoveOperator(node_information));
+                                                                                                MOVE(node_information));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -203,7 +203,7 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDWUniquePtr node_information,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
-                    ChaosMoveOperator(node_information));
+                    MOVE(node_information));
     }
     return last_error_code;
 }
@@ -222,7 +222,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                             "getNodeDescription",
-                                                                                            ChaosMoveOperator(data));
+                                                                                            MOVE(data));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -256,7 +256,7 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
                                                                                             "getFullDescription",
-                                                                                            ChaosMoveOperator(data));
+                                                                                            MOVE(data));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -282,7 +282,7 @@ int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
         
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                                 "getSnapshotDatasetForNode",
-                                                                                                ChaosMoveOperator(message));
+                                                                                                MOVE(message));
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -321,7 +321,7 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
     data->addBoolValue("all",true);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("control_unit",
                                                                                             "getFullDescription",
-                                                                                            ChaosMoveOperator(data));
+                                                                                            MOVE(data));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -371,7 +371,7 @@ int MDSMessageChannel::createNewSnapshot(const std::string& snapshot_name,
     message->finalizeArrayForKey("node_list");
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "createNewSnapshot",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         err = request_future->getError();
@@ -388,7 +388,7 @@ int MDSMessageChannel::restoreSnapshot(const std::string& snapshot_name,
     message->addStringValue("snapshot_name", snapshot_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "restoreSnapshot",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         err = request_future->getError();
@@ -405,7 +405,7 @@ int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
     message->addStringValue("snapshot_name", snapshot_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "deleteSnapshot",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         err = request_future->getError();
@@ -484,7 +484,7 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "getNodesForSnapshot",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -519,7 +519,7 @@ int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "getSnapshotForNode",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -555,7 +555,7 @@ int MDSMessageChannel::setVariable(const std::string& variable_name,
                             variable_value);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "setVariable",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -575,7 +575,7 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "searchVariable",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     
     if(request_future->wait()) {
@@ -612,7 +612,7 @@ int MDSMessageChannel::getVariable(const std::string& variable_name,
                             variable_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "getVariable",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -632,7 +632,7 @@ int MDSMessageChannel::removeVariable(const std::string& variable_name,
                             variable_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "removeVariable",
-                                                                                           ChaosMoveOperator(message));
+                                                                                           MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -659,7 +659,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
     message->addInt32Value("result_page_length", page_length);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("system",
                                                                                             "nodeSearch",
-                                                                                            ChaosMoveOperator(message));
+                                                                                            MOVE(message));
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
@@ -693,7 +693,7 @@ ChaosUniquePtr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestW
                                                                                           int32_t request_timeout) {
     return MultiAddressMessageChannel::sendRequestWithFuture(action_domain,
                                                              action_name,
-                                                             ChaosMoveOperator(request_pack),
+                                                             MOVE(request_pack),
                                                              request_timeout);
 }
 
@@ -702,7 +702,7 @@ void MDSMessageChannel::sendMessage(const std::string& action_domain,
                                     chaos::common::data::CDWUniquePtr request_pack) {
     return MultiAddressMessageChannel::sendMessage(action_domain,
                                                    action_name,
-                                                   ChaosMoveOperator(request_pack));
+                                                   MOVE(request_pack));
 }
 
 void MDSMessageChannel::callMethod(const std::string& action_domain,

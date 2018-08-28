@@ -96,7 +96,7 @@ void AgentCheckAgentProcess::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
-                        ChaosMoveOperator(message_data));
+                        MOVE(message_data));
         }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

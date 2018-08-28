@@ -61,7 +61,7 @@ void ApplyChangeSet::acquireHandler() {
             
             //send message for action
             sendMessage(*request,
-                        ChaosMoveOperator(message));
+                        MOVE(message));
             BC_END_RUNNING_PROPERTY
             break;
         }

@@ -510,7 +510,7 @@ bool NetworkBroker::submitMessage(const string& host,
     CHAOS_ASSERT(rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
-    nfi->setMessage(ChaosMoveOperator(message));
+    nfi->setMessage(MOVE(message));
     //add answer id to datawrapper
     return rpc_client->submitMessage(nfi, false);
 }
@@ -543,7 +543,7 @@ bool NetworkBroker::submiteRequest(const string& host,
     nfi->destinationAddr = host;
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
-    nfi->setMessage(ChaosMoveOperator(request));
+    nfi->setMessage(MOVE(request));
     return rpc_client->submitMessage(nfi, false);
 }
 

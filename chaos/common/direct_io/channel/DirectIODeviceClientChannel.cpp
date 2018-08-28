@@ -96,12 +96,12 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
     //set data if the have some
     if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());}
     if(wait_result) {
-        if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
+        if((err = sendPriorityData(MOVE(data_pack), answer))) {
             //error getting last value
             DIODCCLERR_ << "Error storing value for key:" << key << " with error:" <<err;
         }
     } else {
-        err = sendPriorityData(ChaosMoveOperator(data_pack));
+        err = sendPriorityData(MOVE(data_pack));
     }
     return err;
 }
@@ -144,12 +144,12 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
     //set data if the have some
     if(buffer_len){DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());}
     if(wait_result) {
-        if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
+        if((err = sendPriorityData(MOVE(data_pack), answer))) {
             //error getting last value
             DIODCCLERR_ << "Error storing value for key:" << key << " with error:" <<err;
         }
     } else {
-        err = sendPriorityData(ChaosMoveOperator(data_pack));
+        err = sendPriorityData(MOVE(data_pack));
     }
     return err;
 }
@@ -171,7 +171,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
     
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     //send data with synchronous answer flag
-    if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
+    if((err = sendPriorityData(MOVE(data_pack), answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for key:" << key << " with error:" <<err;
         *result = NULL;
@@ -218,7 +218,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, mget_opcode_header, sizeof(DirectIODeviceChannelHeaderMultiGetOpcode))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     //send data with synchronous answer flag
-    if((err = sendPriorityData(ChaosMoveOperator(data_pack), answer))) {
+    if((err = sendPriorityData(MOVE(data_pack), answer))) {
         //error getting last value
         DIODCCLERR_ << "Error getting last value for multikey set with error:" << err;
         return err;
@@ -281,7 +281,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
-    if((err = sendServiceData(ChaosMoveOperator(data_pack), answer))) {
+    if((err = sendServiceData(MOVE(data_pack), answer))) {
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing query for key %1%",%key);
     } else {
@@ -332,7 +332,7 @@ int DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
                                               query_description.getBSONRawSize());
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
-    if((err = sendServiceData(ChaosMoveOperator(data_pack)))) {
+    if((err = sendServiceData(MOVE(data_pack)))) {
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing delete operation for key %1%",%key);
     }

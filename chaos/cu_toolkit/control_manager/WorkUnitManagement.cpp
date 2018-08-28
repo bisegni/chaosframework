@@ -357,7 +357,7 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& data_to_send) {
     int err = 0;
     
     //register CU from mds
-    if((err = mds_channel->sendNodeRegistration(ChaosMoveOperator(mds_pack)))) {
+    if((err = mds_channel->sendNodeRegistration(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";
@@ -372,7 +372,7 @@ int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_
     mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
     mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
     //register CU from mds
-    if((err = mds_channel->sendNodeLoadCompletion(ChaosMoveOperator(mds_pack)))) {
+    if((err = mds_channel->sendNodeLoadCompletion(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding load completion message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";

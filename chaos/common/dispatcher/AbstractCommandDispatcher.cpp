@@ -109,7 +109,7 @@ bool AbstractCommandDispatcher::submitMessage(const string& server_port,
     if(!message.get() && server_port.size()) return false;
     common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = server_port;
-    nfi->setMessage(ChaosMoveOperator(message));
+    nfi->setMessage(MOVE(message));
     return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
 }
 

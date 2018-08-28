@@ -93,7 +93,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
                     sendMessage(*request,
-                                ChaosMoveOperator(message_data));
+                                MOVE(message_data));
                     break;
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
@@ -161,7 +161,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*request,
-                                ChaosMoveOperator(autoload_pack));
+                                MOVE(autoload_pack));
                     break;
                 }
                     

@@ -76,7 +76,7 @@ void UpdatePropertyCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        ChaosMoveOperator(update_property_pack));
+                        MOVE(update_property_pack));
             BC_END_RUNNING_PROPERTY
         }
             

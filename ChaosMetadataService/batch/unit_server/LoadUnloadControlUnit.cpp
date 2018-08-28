@@ -128,7 +128,7 @@ void LoadUnloadControlUnit::acquireHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        ChaosMoveOperator(load_unload_pack));
+                        MOVE(load_unload_pack));
             BC_END_RUNNING_PROPERTY
             break;
         }

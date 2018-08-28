@@ -51,7 +51,7 @@ int DirectIOSystemAPIClientChannel::echo(chaos::common::data::BufferSPtr message
     DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeEcho);
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, message, (uint32_t)message->size());
-    if((err = (int)sendServiceData(ChaosMoveOperator(data_pack), answer))) {
+    if((err = (int)sendServiceData(MOVE(data_pack), answer))) {
         //error getting last value
         DIOSCC_ERR << "Error on echo api execution with error:" <<err;
     } else if(answer) {
@@ -98,7 +98,7 @@ int DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::
         DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_send_buffer, (uint32_t)producer_key.size());
     }
     //send data with synchronous answer flag
-    if((err = (int)sendServiceData(ChaosMoveOperator(data_pack), answer))) {
+    if((err = (int)sendServiceData(MOVE(data_pack), answer))) {
         //error getting last value
         DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
     } else {
@@ -165,7 +165,7 @@ int DirectIOSystemAPIClientChannel::pushLogEntries(const std::string& node_name,
     
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
     //send data with synchronous answer flag
-    if((err = (int)sendPriorityData(ChaosMoveOperator(data_pack)))) {
+    if((err = (int)sendPriorityData(MOVE(data_pack)))) {
         //error getting last value
         DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
     }

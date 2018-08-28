@@ -120,5 +120,5 @@ void ExecutionPoolManager::timeout() {
     //send message to mds
     mds_message_channel->sendMessage("script",
                                      "executionPoolHeartbeat",
-                                     ChaosMoveOperator(hb_message));
+                                     MOVE(hb_message));
 }

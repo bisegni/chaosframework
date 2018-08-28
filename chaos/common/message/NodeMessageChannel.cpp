@@ -48,7 +48,7 @@ void NodeMessageChannel::sendMessage(const std::string& node_id,
     MessageChannel::sendMessage(nodeAddress->ip_port,
                                 node_id,
                                 action_name,
-                                ChaosMoveOperator(message_pack));
+                                MOVE(message_pack));
 }
 
 CDWUniquePtr NodeMessageChannel::sendRequest(const std::string& node_id,
@@ -58,7 +58,7 @@ CDWUniquePtr NodeMessageChannel::sendRequest(const std::string& node_id,
     return MessageChannel::sendRequest(nodeAddress->ip_port,
                                        node_id,
                                        action_name,
-                                       ChaosMoveOperator(request_pack),
+                                       MOVE(request_pack),
                                        millisec_to_wait);
 }
 
@@ -68,7 +68,7 @@ ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(c
     return MessageChannel::sendRequestWithFuture(nodeAddress->ip_port,
                                                  node_id,
                                                  action_name,
-                                                 ChaosMoveOperator(request_pack));
+                                                 MOVE(request_pack));
 }
 
 //! Send a request for receive RPC information
@@ -80,7 +80,7 @@ ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(con
 //! Send a request for an echo test
 ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDWUniquePtr echo_data) {
     return MessageChannel::echoTest(nodeAddress->ip_port,
-                                    ChaosMoveOperator(echo_data));
+                                    MOVE(echo_data));
 }
 
 //! return last sendxxx error code

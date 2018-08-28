@@ -95,7 +95,7 @@ void MessageChannel::sendMessage(const std::string& remote_host,
     if(message_pack.get()){data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);}
     //send the request
     broker->submitMessage(remote_host,
-                          ChaosMoveOperator(data_pack));
+                          MOVE(data_pack));
 }
 
 /*
@@ -109,7 +109,7 @@ CDWUniquePtr MessageChannel::sendRequest(const std::string& remote_host,
     ChaosUniquePtr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
                                                                               node_id,
                                                                               action_name,
-                                                                              ChaosMoveOperator(request_pack)));
+                                                                              MOVE(request_pack)));
     
     
     
@@ -162,7 +162,7 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
-                           ChaosMoveOperator(data_pack),
+                           MOVE(data_pack),
                            message_request_domain->getDomainID(),
                            new_request_id);
     return result;
@@ -180,7 +180,7 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::checkRPCInformation(const s
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,
                                  NodeDomainAndActionRPC::ACTION_CHECK_DOMAIN,
-                                 ChaosMoveOperator(data_pack));
+                                 MOVE(data_pack));
 }
 
 ChaosUniquePtr<MessageRequestFuture> MessageChannel::echoTest(const std::string& remote_host,
@@ -188,5 +188,5 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::echoTest(const std::string&
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,
                                  NodeDomainAndActionRPC::ACTION_ECHO_TEST,
-                                 ChaosMoveOperator(echo_data));
+                                 MOVE(echo_data));
 }

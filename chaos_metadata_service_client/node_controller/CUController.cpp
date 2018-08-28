@@ -279,7 +279,7 @@ int CUController::initDevice() {
     datasetDB.fillDataWrapperWithDataSetDescription(*init_conf);
     
     //initialize the devica with the metadataserver data
-    err = deviceChannel->initDevice(ChaosMoveOperator(init_conf), millisecToWait);
+    err = deviceChannel->initDevice(MOVE(init_conf), millisecToWait);
     //configure the live data with the same server where the device write
     return err;
 }
@@ -344,7 +344,7 @@ int CUController::setAttributeValue(string& attributeName, int32_t attributeValu
 int CUController::setAttributeValue(const char *attributeName, int32_t attributeValue) {
     CDWUniquePtr attr_value_pack(new CDataWrapper());
     attr_value_pack->addInt32Value(attributeName, attributeValue);
-    return deviceChannel->setAttributeValue(ChaosMoveOperator(attr_value_pack), millisecToWait);
+    return deviceChannel->setAttributeValue(MOVE(attr_value_pack), millisecToWait);
 }
 
 int CUController::setAttributeValue(string& attributeName, double attributeValue) {
@@ -354,7 +354,7 @@ int CUController::setAttributeValue(string& attributeName, double attributeValue
 int CUController::setAttributeValue(const char *attributeName, double attributeValue) {
     CDWUniquePtr attr_value_pack(new CDataWrapper());
     attr_value_pack->addDoubleValue(attributeName, attributeValue);
-    return deviceChannel->setAttributeValue(ChaosMoveOperator(attr_value_pack), millisecToWait);
+    return deviceChannel->setAttributeValue(MOVE(attr_value_pack), millisecToWait);
 }
 
 int CUController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
@@ -407,7 +407,7 @@ int CUController::setAttributeToValue(const char *attributeName, const char *att
     }
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Sending attribute '"<<attributeName<<"'='"<<attributeValuePack->getJSONString()<<"'";
     
-    return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack), noWait, millisecToWait);
+    return deviceChannel->setAttributeValue(MOVE(attributeValuePack), noWait, millisecToWait);
 }
 
 int CUController::setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
@@ -459,7 +459,7 @@ int CUController::setAttributeToValue(const char *attributeName, DataType::DataT
             break;
         }
     }
-    return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack), noWait, millisecToWait);
+    return deviceChannel->setAttributeValue(MOVE(attributeValuePack), noWait, millisecToWait);
 }
 
 int CUController::submitSlowControlCommand(string commandAlias,
@@ -490,7 +490,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
     //err = deviceChannel->setAttributeValue(local_command_pack, false, millisecToWait);
     local_command_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, devId);
     err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                           ChaosMoveOperator(local_command_pack),
+                                           MOVE(local_command_pack),
                                            result_data,
                                            millisecToWait);
     if(err == ErrorCode::EC_NO_ERROR &&
@@ -530,7 +530,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
     //forward the request
     local_command_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, devId);
     err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                           ChaosMoveOperator(local_command_pack),
+                                           MOVE(local_command_pack),
                                            result_data,
                                            millisecToWait);
     if(err == ErrorCode::EC_NO_ERROR
@@ -556,7 +556,7 @@ int CUController::setSlowCommandFeatures(features::Features& features, bool lock
     if(execution_channel) local_command_pack->addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
     
     return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
-                                            ChaosMoveOperator(local_command_pack),
+                                            MOVE(local_command_pack),
                                             result,
                                             millisecToWait);
 }
@@ -566,7 +566,7 @@ int CUController::setSlowCommandLockOnFeatures(bool lock_features) {
     CDWUniquePtr result;
     local_command_pack->addBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
     return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
-                                            ChaosMoveOperator(local_command_pack),
+                                            MOVE(local_command_pack),
                                             result,
                                             millisecToWait);
 }
@@ -577,7 +577,7 @@ int CUController::getCommandState(CommandState& command_state) {
     int err = ErrorCode::EC_NO_ERROR;
     local_command_pack->addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
     err = deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE,
-                                           ChaosMoveOperator(local_command_pack),
+                                           MOVE(local_command_pack),
                                            result_data,
                                            millisecToWait);
     if(err == ErrorCode::EC_NO_ERROR &&
@@ -610,7 +610,7 @@ int CUController::sendCustomRequest(const std::string& action,
                                     CDWUniquePtr param,
                                     CDWUniquePtr& result) {
     return deviceChannel->sendCustomRequest(action,
-                                            ChaosMoveOperator(param),
+                                            MOVE(param),
                                             result,
                                             millisecToWait);
 }
@@ -618,7 +618,7 @@ int CUController::sendCustomRequest(const std::string& action,
 void CUController::sendCustomMessage(const std::string& action,
                                      CDWUniquePtr param) {
     deviceChannel->sendCustomMessage(action,
-                                     ChaosMoveOperator(param));
+                                     MOVE(param));
 }
 
 int CUController::checkRPCInformation(CDWUniquePtr& result_information,
@@ -641,7 +641,7 @@ int CUController::echoTest(CDWUniquePtr echo_data,
                            CDWUniquePtr& echo_data_result,
                            uint32_t timeout) {
     int err = -1;
-    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->echoTest(ChaosMoveOperator(echo_data));
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->echoTest(MOVE(echo_data));
     if(result.get() == NULL) return err;
     if(result->wait(timeout)) {
         err = result->getError();
@@ -657,7 +657,7 @@ int CUController::echoTest(CDWUniquePtr echo_data,
 ChaosUniquePtr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                common::data::CDWUniquePtr request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,
-                                                      ChaosMoveOperator(request_date));
+                                                      MOVE(request_date));
 }
 
 int CUController::setAttributeValue(string& attributeName, string& attributeValue) {
@@ -689,26 +689,26 @@ int CUController::setAttributeValue(string& attributeName, const char* attribute
             
         case DataType::TYPE_INT64:
             attributeValuePack->addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
             
         case DataType::TYPE_INT32:
             attributeValuePack->addInt32Value(attrname, boost::lexical_cast<int32_t>(attributeValue));
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
             
         case DataType::TYPE_DOUBLE:
             attributeValuePack->addDoubleValue(attrname, boost::lexical_cast<double>(attributeValue));
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
             
         case DataType::TYPE_BYTEARRAY:
             attributeValuePack->addBinaryValue(attrname,attributeValue,size);
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
         case DataType::TYPE_CLUSTER:{
             attributeValuePack->addJsonValue(attrname,attributeValue);
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
         }
         case DataType::TYPE_STRING:
             attributeValuePack->addStringValue(attrname,attributeValue);
-            return deviceChannel->setAttributeValue(ChaosMoveOperator(attributeValuePack),millisecToWait);
+            return deviceChannel->setAttributeValue(MOVE(attributeValuePack),millisecToWait);
         default:
             break;
     };
