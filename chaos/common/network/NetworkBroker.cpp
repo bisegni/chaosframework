@@ -507,7 +507,7 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
  */
 bool NetworkBroker::submitMessage(const string& host,
                                   CDWUniquePtr message) {
-    CHAOS_ASSERT(message && rpc_client)
+    CHAOS_ASSERT(rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
     nfi->setMessage(ChaosMoveOperator(message));
@@ -537,7 +537,7 @@ bool NetworkBroker::submiteRequest(const string& host,
                                    CDWUniquePtr request,
                                    std::string sender_node_id,
                                    uint32_t sender_request_id) {
-    CHAOS_ASSERT(request && rpc_client)
+    CHAOS_ASSERT(rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
     NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
     nfi->destinationAddr = host;
