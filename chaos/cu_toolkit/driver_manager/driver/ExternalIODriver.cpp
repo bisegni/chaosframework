@@ -47,7 +47,7 @@ int ExternalIODriver<ExtDriverImpl>::getDeviceList(ChaosStringSet& hosted_device
     CDWUniquePtr ds_req_msg(new CDataWrapper());
     ds_req_msg->addStringValue("mtype", "cat");
     if((err = sendRawRequest(MessageTypeMetadataGetDeviceList,
-                             ChaosMoveOperator(ds_req_msg),
+                             MOVE(ds_req_msg),
                              answer,
                              timeout))) {
         return err;
@@ -91,7 +91,7 @@ int ExternalIODriver<ExtDriverImpl>::getDeviceDescription(const int32_t& device_
         ds_req_msg->addStringValue("mtype", "dev");
         ds_req_msg->addInt32Value("index", device_index);
         if((err = sendRawRequest(MessageTypeMetadataGetDeviceDataset,
-                                 ChaosMoveOperator(ds_req_msg),
+                                 MOVE(ds_req_msg),
                                  answer,
                                  timeout))) {
             return err;
@@ -158,7 +158,7 @@ int ExternalIODriver<ExtDriverImpl>::updateVariable(const uint32_t device_index,
     ds_req_msg->addInt32Value("v_type", (int32_t)var_type);
     ds_req_msg->addInt32Value("v_index", (int32_t)var_index);
     if((err = sendRawRequest(MessageTypeVariableRead,
-                             ChaosMoveOperator(ds_req_msg),
+                             MOVE(ds_req_msg),
                              answer,
                              timeout))) {
         return err;
@@ -191,7 +191,7 @@ int ExternalIODriver<ExtDriverImpl>::writeVariable(const uint32_t device_index,
     ds_req_msg->addVariantValue("v_value", value);
     if(wait_confirmation) {
         if((err = sendRawRequest(MessageTypeVariableWrite,
-                                 ChaosMoveOperator(ds_req_msg),
+                                 MOVE(ds_req_msg),
                                  answer,
                                  timeout))) {
             return err;
@@ -211,7 +211,7 @@ int ExternalIODriver<ExtDriverImpl>::writeVariable(const uint32_t device_index,
         }
     } else {
         err = sendRawMessage(MessageTypeVariableWrite,
-                             ChaosMoveOperator(ds_req_msg));
+                             MOVE(ds_req_msg));
     }
     
     return AR_ERROR_OK;
@@ -330,7 +330,7 @@ int ExternalIODriver<ExtDriverImpl>::sendRawRequest(MessageType message_type,
                                      CDWShrdPtr& message_response,
                                      uint32_t timeout) {
     message_data->addInt32Value("type", (int32_t)message_type);
-    return ExtDriverImpl::sendRawRequest(ChaosMoveOperator(message_data),
+    return ExtDriverImpl::sendRawRequest(MOVE(message_data),
                                                   message_response,
                                                   timeout);
 }
@@ -338,7 +338,7 @@ template <typename ExtDriverImpl>
 int ExternalIODriver<ExtDriverImpl>::sendRawMessage(MessageType message_type,
                                      CDWUniquePtr message_data) {
     message_data->addInt32Value("type", (int32_t)message_type);
-    return ExtDriverImpl::sendRawMessage(ChaosMoveOperator(message_data));
+    return ExtDriverImpl::sendRawMessage(MOVE(message_data));
 }
 template <typename ExtDriverImpl>
 int ExternalIODriver<ExtDriverImpl>::asyncMessageReceived(chaos::common::data::CDWUniquePtr message) {

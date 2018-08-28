@@ -26,8 +26,6 @@
 
 using namespace chaos::common::data::cache;
 
-const int initial_pool_size = 64;
-
 DataCache::DataCache(){
     hashpower = 16;
     primary_hashtable = NULL;
@@ -128,7 +126,7 @@ int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen
 
 //! delete item
 int DataCache::deleteItem(const char *key) {
-    boost::unique_lock<boost::shared_mutex>(mc_mutex);
+    boost::unique_lock<boost::shared_mutex> ul(mc_mutex);
     item *it = do_item_get(key, strlen(key));
     if(!it) {
         return -1;
@@ -321,7 +319,7 @@ int DataCache::start_assoc_maintenance_thread() {
 }
 
 void DataCache::stop_assoc_maintenance_thread() {
-    boost::unique_lock<boost::mutex>(mc_mutex);
+    boost::unique_lock<boost::shared_mutex> ul(mc_mutex);
     do_run_maintenance_thread = 0;
     pthread_cond_signal(&maintenance_cond);
     

@@ -106,7 +106,7 @@ int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackSPtr data_pack,
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(MOVE(data_pack),
                                                                                                                               synchronous_answer);
     }
     return err;
@@ -118,7 +118,7 @@ int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPackSPtr data_pack,
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(MOVE(data_pack),
                                                                                                                              synchronous_answer);
     }
     return err;

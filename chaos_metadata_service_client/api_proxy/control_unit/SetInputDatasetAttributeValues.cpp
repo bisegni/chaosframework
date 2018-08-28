@@ -40,24 +40,21 @@ API_PROXY_CD_DEFINITION(SetInputDatasetAttributeValues,
                         "control_unit",
                         "setInputDatasetAttributeValues")
 
-/*!
- 
- */
 ApiProxyResult SetInputDatasetAttributeValues::execute(const std::vector< ChaosSharedPtr<ControlUnitInputDatasetChangeSet> >& change_set) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new chaos::common::data::CDataWrapper());
+    CDWUniquePtr message(new chaos::common::data::CDataWrapper());
     
     //compose package
     for(std::vector< ChaosSharedPtr<ControlUnitInputDatasetChangeSet> >::const_iterator it = change_set.begin();
         it != change_set.end();
         it++) {
         //add change for the contorl unit change set
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_changes(new CDataWrapper());
+        CDWUniquePtr cu_changes(new CDataWrapper());
         cu_changes->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->cu_uid);
         
         for(std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> >::iterator it_change = (*it)->change_set.begin();
             it_change != (*it)->change_set.end();
             it_change++) {
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> change(new CDataWrapper());
+            CDWUniquePtr change(new CDataWrapper());
             //wrape the chagne
             change->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, (*it_change)->attribute_name);
             change->addStringValue("change_value", (*it_change)->value);
@@ -74,5 +71,5 @@ ApiProxyResult SetInputDatasetAttributeValues::execute(const std::vector< ChaosS
     message->finalizeArrayForKey("attribute_set_values");
 
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

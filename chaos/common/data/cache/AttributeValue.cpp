@@ -114,12 +114,16 @@ bool AttributeValue::setStringValue(const std::string& value,
     if(enlarge_memory == true &&
        !grow((uint32_t)value.size()+1)) return false;
     
-    if(value.size()==0)
+    if(value.size()==0) {
+        std::memset(static_cast<char*>(value_buffer),
+                    0,
+                    size);
         return true;
+    }
     CHAOS_ASSERT(value_buffer)
     std::strncpy(static_cast<char*>(value_buffer),
                  value.c_str(),
-                 size-1);
+                 size);
     return true;
 }
 

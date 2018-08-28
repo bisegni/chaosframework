@@ -115,7 +115,7 @@ void RestoreSnapshotBatch::ccHandler() {
             switch(restore_request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*restore_request,
-                                restore_message.release());
+                                MOVE(restore_message));
                     
                 }
                     

@@ -123,19 +123,19 @@ namespace chaos{
                  \param message the message to send(the ownership of the memory belong to the caller)
                  */
                 void sendRequest(RequestInfo& request_info,
-                                 chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                                 chaos::common::data::CDWUniquePtr message) throw (chaos::CException);
                 
                 //! send a message toa remote rpc action
                 void sendMessage(RequestInfo& request_info,
-                                 chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                                 chaos::common::data::CDWUniquePtr message) throw (chaos::CException);
                 
                 ChaosUniquePtr<RequestInfo> sendRequest(const std::string& node_uid,
                                                         const std::string& rpc_action,
-                                                        chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                                                        chaos::common::data::CDWUniquePtr message) throw (chaos::CException);
                 
                 ChaosUniquePtr<RequestInfo> sendMessage(const std::string& node_uid,
                                                         const std::string& rpc_action,
-                                                        chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                                                        chaos::common::data::CDWUniquePtr message) throw (chaos::CException);
                 
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
                 

@@ -12,10 +12,11 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/batch_command/batch_command.h>.h>
+#include <chaos/common/message/MultiAddressMessageRequestFuture.h>
+#include <chaos/common/batch_command/batch_command.h>
 #include <chaos/common/data/CDataWrapperKeyValueSetter.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
-#include <chaos/common/data/structured/DatasetAttribute.h>
+#include <chaos/common/data/structured/Dataset.h>
 
 #include <chaos_metadata_service_client/monitor_system/monitor_system.h>
 #include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>

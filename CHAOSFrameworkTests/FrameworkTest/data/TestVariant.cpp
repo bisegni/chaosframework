@@ -19,30 +19,35 @@
  * permissions and limitations under the Licence.
  */
 
+
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/data/CDataBuffer.h>
 #include <gtest/gtest.h>
 
 using namespace chaos::common::data;
 
 TEST(VariantTest, Normal) {
     std::string tmp_str;
+    char buffer[256];
+    CDBufferUniquePtr buff_ptr(new CDataBuffer(buffer, 256));
     CDataVariant str_v("36.6");
     CDataVariant neg_str_v("-36.6");
     CDataVariant double_v(36.6);
     CDataVariant neg_double_v(-36.6);
-    
+    CDataVariant buffer_var(ChaosMoveOperator(buff_ptr));
     //str variant
     ASSERT_EQ(static_cast<double>(str_v), 36.6);
     ASSERT_EQ(static_cast<int32_t>(str_v), 36);
     ASSERT_TRUE(static_cast<bool>(str_v));
-    tmp_str.assign(static_cast< ChaosSharedPtr<CDataBuffer> >(str_v)->getBuffer(), static_cast< ChaosSharedPtr<CDataBuffer> >(str_v)->getBufferSize());
+    tmp_str.assign(static_cast< CDBufferShrdPtr >(str_v)->getBuffer(), static_cast< CDBufferShrdPtr >(str_v)->getBufferSize());
     ASSERT_STREQ(tmp_str.c_str(), "36.6");
-    
+    ASSERT_EQ(static_cast< CDBufferShrdPtr >(buffer_var)->getBufferSize(), 256);
+    ASSERT_EQ(std::memcmp(static_cast< CDBufferShrdPtr >(buffer_var)->getBuffer(), buffer, 256), 0);
     //neg str variant
     ASSERT_EQ(static_cast<double>(neg_str_v), -36.6);
     ASSERT_EQ(static_cast<int32_t>(neg_str_v), -36);
     ASSERT_TRUE(static_cast<bool>(neg_str_v));
-    tmp_str.assign(static_cast< ChaosSharedPtr<CDataBuffer> >(neg_str_v)->getBuffer(), static_cast< ChaosSharedPtr<CDataBuffer> >(neg_str_v)->getBufferSize());
+    tmp_str.assign(static_cast< CDBufferShrdPtr >(neg_str_v)->getBuffer(), static_cast< CDBufferShrdPtr >(neg_str_v)->getBufferSize());
     ASSERT_STREQ(tmp_str.c_str(), "-36.6");
     
     //double variant

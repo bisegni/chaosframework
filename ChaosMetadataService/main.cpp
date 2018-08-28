@@ -29,10 +29,14 @@ using namespace chaos::metadata_service;
 
 int main(int argc, const char * argv[]) {
     try {
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_HA_ZONE_NAME,
+                                                                                                        "Set the zone where mds need to be attached",
+                                                                                                        "default",
+                                                                                                        &ChaosMetadataService::getInstance()->setting.ha_zone_name);
         //archiver
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_ARCHIVER_LOG_METRIC,
-                                                                                                 "Enable log metric for archiver",
-                                                                                                 &ChaosMetadataService::getInstance()->setting.worker_setting.log_metric);
+                                                                                                   "Enable log metric for archiver",
+                                                                                                   &ChaosMetadataService::getInstance()->setting.worker_setting.log_metric);
         
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_ARCHIVER_LOG_METRIC_UPDATE_INTERVAL,
                                                                                                      "Specify the archiver log interval in second",

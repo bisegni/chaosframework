@@ -41,7 +41,7 @@ using namespace chaos::cu::driver_manager::driver;
  ------------------------------------------------------*/
 AbstractDriver::AbstractDriver(BaseBypassShrdPtr custom_bypass_driver):
 accessor_count(0),
-bypass_driver(ChaosMoveOperator(custom_bypass_driver)),
+bypass_driver(MOVE(custom_bypass_driver)),
 o_exe(this),
 is_json_param(false),
 driver_need_to_deinitialize(false),

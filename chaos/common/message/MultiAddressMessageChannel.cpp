@@ -126,7 +126,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     ChaosUniquePtr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
-                                                                            NULL);
+                                                                            CDWUniquePtr());
     while(--retry>0) {
         if(request->wait(2000)) {
             retry = 0;
@@ -151,14 +151,14 @@ void MultiAddressMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_pub
 //! send a message
 void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
                                              const std::string& action_name,
-                                             CDataWrapper *message_pack,
+                                             CDWUniquePtr message_pack,
                                              bool on_this_thread) {
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
-    if(service) {
+    if(service ) {
         MessageChannel::sendMessage(service->ip_port,
                                     action_domain,
                                     action_name,
-                                    message_pack);
+                                    MOVE(message_pack));
         DEBUG_CODE(MAMC_DBG << "Sent message to:" << service->ip_port;)
     }
     
@@ -167,17 +167,18 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
 //!send an rpc request to a remote node
 ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWithFuture(const std::string& action_domain,
                                                                                         const std::string& action_name,
-                                                                                        CDataWrapper *request_pack,
+                                                                                        CDWUniquePtr request_pack,
                                                                                         std::string& used_remote_address) {
     ChaosUniquePtr<MessageRequestFuture> result;
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
     bool has_been_found_a_server = (service!=NULL);
-    if(has_been_found_a_server) {
+    if(has_been_found_a_server ) {
         result = MessageChannel::sendRequestWithFuture((used_remote_address = service->ip_port),
                                                        action_domain,
                                                        action_name,
-                                                       request_pack);
+                                                       MOVE(request_pack));
         DEBUG_CODE(MAMC_DBG << "Sent request to:" << used_remote_address;)
+
     } else {
         used_remote_address.clear();
     }
@@ -187,12 +188,12 @@ ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWit
 //!send an rpc request to a remote node
 ChaosUniquePtr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                                    const std::string& action_name,
-                                                                                                   CDataWrapper *request_pack,
+                                                                                                   CDWUniquePtr request_pack,
                                                                                                    int32_t request_timeout) {
     return ChaosUniquePtr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
                                                                                                  action_domain,
                                                                                                  action_name,
-                                                                                                 request_pack,
+                                                                                                 MOVE(request_pack),
                                                                                                  request_timeout));
 }
 

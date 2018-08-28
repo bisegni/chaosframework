@@ -428,6 +428,9 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                           cmd_stat);
                                 break;
                             }
+                            default: {
+                                break;
+                            }
                         }
                         command_submitted_queue.pop();
                         cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
@@ -809,7 +812,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     
     //
     {
-        DEBUG_CODE(SCSLDBG_ << "Try to lock for command enqueue for:\"" << command_impl->command_alias.c_str()) << "\"";
+        DEBUG_CODE(SCSLDBG_ << CHAOS_FORMAT("Try to lock for command enqueue for: \"%1%\"", %command_impl->command_alias));
         boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
         
         //get the assigned id

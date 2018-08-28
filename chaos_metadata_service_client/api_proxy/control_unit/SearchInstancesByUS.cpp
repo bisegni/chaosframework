@@ -20,6 +20,7 @@
  */
 #include <chaos_metadata_service_client/api_proxy/control_unit/SearchInstancesByUS.h>
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
@@ -27,14 +28,12 @@ API_PROXY_CD_DEFINITION(SearchInstancesByUS,
                         "control_unit",
                         "searchInstancesByUS")
 
-/*!
 
- */
 ApiProxyResult SearchInstancesByUS::execute(std::string unit_server_uid,
                                             std::vector<std::string> control_unit_implementation,
                                             uint32_t last_node_sequence_id,
                                             uint32_t result_page_length) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, unit_server_uid);
     if(control_unit_implementation.size()) {
         for(std::vector<std::string>::iterator it = control_unit_implementation.begin();

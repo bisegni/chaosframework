@@ -63,7 +63,7 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
     for(int idx = 0;
         idx < dataset_array->size();
         idx++) {
-        QSharedPointer<CDataWrapper> element(dataset_array->getCDataWrapperElementAtIndex(idx));
+        QSharedPointer<CDataWrapper> element(dataset_array->getCDataWrapperElementAtIndex(idx).release());
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION) &&
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE) &&

@@ -277,8 +277,10 @@ SET(common_lib_src ${common_lib_src}
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
-            	      utility/InetUtility.cpp
-                    utility/FSUtility.cpp)
+                    utility/InetUtility.cpp
+                    utility/FSUtility.cpp
+                    utility/Base64Util.cpp
+                    utility/Random.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     batch_command/BatchCommandExecutor.cpp
@@ -350,16 +352,13 @@ IF (CLING_VIRTUAL_MACHINE)
 ENDIF()
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
-IF(CERN_ROOT)
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} Tree Core)
+IF(CLING_VIRTUAL_MACHINE)
+  MESSAGE(STATUS "LINKING clingIntepreter")
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib} clingInterpreter )
 ELSE()
-  IF(CLING_VIRTUAL_MACHINE)
-    MESSAGE(STATUS "LINKING clingIntepreter")
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} clingInterpreter)
-  ELSE()
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib})
-  ENDIF()
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
 ENDIF()
+
 
 
 FILE(GLOB files "external_unit/*.h")

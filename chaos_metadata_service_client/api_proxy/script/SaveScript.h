@@ -43,8 +43,8 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const chaos::service_common::data::script::Script& script_to_insert,
                                            const bool& import = false);
-                    ApiProxyResult execute( chaos::common::data::CDataWrapper* script_to_insert,
-                                                               const bool& import = false);
+                    ApiProxyResult execute( chaos::common::data::CDWUniquePtr script_to_insert,
+                                           const bool& import = false);
                 };
                 
             }

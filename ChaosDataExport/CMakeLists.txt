@@ -12,6 +12,6 @@ ENDIF()
 ADD_EXECUTABLE(ChaosDataExport ${chaos_cde_src})
 
 
-TARGET_LINK_LIBRARIES(ChaosDataExport chaos_uitoolkit chaos_common ${FrameworkLib})
+TARGET_LINK_LIBRARIES(ChaosDataExport chaos_metadata_service_client chaos_common ${FrameworkLib})
 
 INSTALL_TARGETS(/bin ChaosDataExport)

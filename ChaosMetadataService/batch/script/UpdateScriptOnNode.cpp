@@ -173,7 +173,7 @@ bool UpdateScriptOnNode::loadScriptInstance() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        script_update_data_pack.get());
+                        MOVE(script_update_data_pack));
             result = true;
             break;
         }

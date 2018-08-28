@@ -54,10 +54,10 @@ chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::da
         LOG_AND_TROW(USRA_ERR, err, "Error checking node presence")
     } else if(presence){
         if((err = n_da->getNodeDescription(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), &result))) {
-            LOG_AND_TROW(USRA_ERR, err, "Error fetching node decription")
+            LOG_AND_TROW(USRA_ERR, err, "Error fetching node  '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' decription")
         }
     } else {
-        LOG_AND_TROW(USRA_ERR, -3, "Node not found")
+        LOG_AND_TROW(USRA_ERR, -3, "Node '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' not found")
     }
     return result;
 }

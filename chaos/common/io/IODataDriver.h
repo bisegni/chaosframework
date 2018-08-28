@@ -68,15 +68,17 @@ namespace chaos{
                 /*!
                  * This method cache all object passed to driver
                  * \param storage_type one of values as @DataServiceNodeDefinitionType::DSStorageType
+                 * \return 0 if success, error otherwise
                  */
-                void storeData(const std::string& key,
-                               chaos_data::CDataWrapper *dataToStore,
-                               DataServiceNodeDefinitionType::DSStorageType storage_type,
-                               bool delete_data_to_store = true) throw(CException);
+                virtual int storeData(const std::string& key,
+                                       chaos_data::CDWShrdPtr dataToStore,
+                                       DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                       const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;
                 
-                virtual void storeHealthData(const std::string& key,
-                                             chaos_data::CDataWrapper& dataToStore,
-                                             DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) = 0;
+                virtual int storeHealthData(const std::string& key,
+                                             chaos_data::CDWShrdPtr dataToStore,
+                                             DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                             const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;
                 
                 //!remove data between the time intervall (extreme included) operation is not undoable
                 virtual int removeData(const std::string& key,
@@ -96,13 +98,6 @@ namespace chaos{
                  */
                 virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key)  throw(CException);
                 
-                
-                /*!
-                 * This method store a buffer into live cached
-                 */
-                virtual void storeRawData(const std::string& key,
-                                          chaos_data::SerializationBuffer *serialization,
-                                          DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) = 0;
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
@@ -135,13 +130,31 @@ namespace chaos{
                 
                 //! perform a query since and
                 virtual QueryCursor *performQuery(const std::string& key,
-                                                  uint64_t start_ts,
-                                                  uint64_t end_ts,uint32_t page_len=DEFAULT_PAGE_LEN) = 0;
+                                                  const uint64_t start_ts,
+                                                  const uint64_t end_ts,
+                                                  const ChaosStringSet& meta_tags,
+                                                  const uint32_t page_len=DEFAULT_PAGE_LEN) = 0;
+
+                virtual QueryCursor* performQuery(const std::string&    key,
+                                                  const uint64_t        start_ts,
+                                                  const uint64_t        end_ts,
+                                                  const uint32_t        page_len = DEFAULT_PAGE_LEN) = 0;
 
                 virtual QueryCursor *performQuery(const std::string& key,
-                                          uint64_t start_ts,
-                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN)=0;
-                
+                                                  const uint64_t start_ts,
+                                                  const uint64_t end_ts,
+                                                  const uint64_t sequid,
+                                                  const uint64_t runid,
+                                                  const ChaosStringSet& meta_tags,
+                                                  const  uint32_t page=DEFAULT_PAGE_LEN)=0;
+
+                virtual QueryCursor* performQuery(const std::string&    key,
+                                                  const uint64_t        start_ts,
+                                                  const uint64_t        end_ts,
+                                                  const uint64_t        sequid,
+                                                  const uint64_t        runid,
+                                                  const uint32_t        page = DEFAULT_PAGE_LEN) = 0;
+
                 virtual void releaseQuery(QueryCursor *query) = 0;
             };
             

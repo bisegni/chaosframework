@@ -44,6 +44,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
+#include <chaos/common/data/structured/Dataset.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
@@ -95,6 +96,36 @@ namespace chaos{
                 class SlowCommand;
                 class SlowCommandExecutor;
             }
+            
+            CHAOS_DEFINE_QUEUE_FOR_TYPE(chaos::common::data::structured::DatasetBurstShrdPtr, QueueBurst);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(QueueBurst, LQueueBurst);
+            
+            //!class that defin ethe abstraction of data storage burst
+            class StorageBurst {
+            public:
+                chaos::common::data::structured::DatasetBurstShrdPtr dataset_burst;
+                StorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~StorageBurst();
+                virtual bool active(void *data) = 0;
+            };
+            
+            class PushStorageBurst:
+            public StorageBurst {
+                uint32_t current_pushes;
+            public:
+                PushStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~PushStorageBurst();
+                bool active(void *data);
+            };
+            
+            class MSecStorageBurst:
+            public StorageBurst {
+                int64_t timeout_msec;
+            public:
+                MSecStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~MSecStorageBurst();
+                bool active(void *data);
+            };
             
             //!  Base class for control unit !CHAOS node
             /*!
@@ -171,22 +202,22 @@ namespace chaos{
                 const std::string& getCUType();
                 
                 //!push output dataset
-                virtual void pushOutputDataset();
+                virtual int pushOutputDataset();
                 
                 //!push system dataset
-                virtual void pushInputDataset();
+                virtual int pushInputDataset();
                 
                 //!push system dataset
-                virtual void pushCustomDataset();
+                virtual int pushCustomDataset();
                 
                 //!push system dataset
-                virtual void pushSystemDataset();
+                virtual int pushSystemDataset();
                 
                 //!push alarm dataset
-                virtual void pushCUAlarmDataset();
+                virtual int pushCUAlarmDataset();
                 
                 //!push alarm dataset
-                virtual void pushDevAlarmDataset();
+                virtual int pushDevAlarmDataset();
                 
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
@@ -206,8 +237,8 @@ namespace chaos{
                     return -1;
                 }
                 
-                chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
-                                                                              int32_t dataset_type);
+                chaos::common::data::CDWShrdPtr writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                                                                           int32_t dataset_type);
                 //check at initilization time ifr need to to a restore or only an apply
                 void checkForRestoreOnInit() throw(CException);
             private:
@@ -227,12 +258,18 @@ namespace chaos{
                 //! control unit load param
                 std::string control_unit_param;
                 //!decode control unit paramete in json if conversion is applicable
-                bool                            is_control_unit_json_param;
-                Json::Reader					json_reader;
-                Json::Value						json_parameter_document;
+                bool            is_control_unit_json_param;
+                Json::Reader    json_reader;
+                Json::Value	    json_parameter_document;
                 
                 //specify the counter updated by the mds on every initilization that will represent the run of work
                 int64_t run_id;
+                
+                //!burst queue
+                LQueueBurst burst_queue;
+                
+                //!current scheduled burst
+                ChaosUniquePtr<StorageBurst> current_burst;
                 
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
@@ -426,21 +463,32 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper* data,
+                                                                        bool& detachParam) throw (CException);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper* data,
+                                                             bool& detachParam) throw(CException);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper* data,
+                                                            bool& detachParam) throw(CException);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDataWrapper* _submitStorageBurst(chaos::common::data::CDataWrapper* data,
+                                                                       bool& detachParam) throw (CException);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDataWrapper* _datasetTagManagement(chaos::common::data::CDataWrapper* data,
+                                                                         bool& detachParam) throw (CException);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts);
@@ -474,6 +522,7 @@ namespace chaos{
                 void _setBypassState(bool bypass_stage,
                                      bool high_priority = false);
             protected:
+                
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
                 //! Abstract Method that need to be used by the sublcass to define the dataset
@@ -624,6 +673,12 @@ namespace chaos{
                 bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const unsigned int state_variable_ordered_id,
                                               common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
+                
+                /*!
+                 manage the queue of burst information, need to be called by sub control unit classes
+                 to manage the burst
+                 */
+                void manageBurstQueue();
                 
                 //! set the value on the busy flag
                 void setBusyFlag(bool state);

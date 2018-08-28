@@ -20,6 +20,7 @@
  */
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
+#include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <string>
@@ -45,7 +46,10 @@ using namespace boost::algorithm;
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
 static void my_free (void *data, void *hint) {
-    free(data);
+    if(hint) {
+        MemoryManagement *tmp = static_cast<MemoryManagement*>(hint);
+        delete(tmp);
+    } else {free(data);};
 }
 
 
@@ -242,6 +246,7 @@ void ZMQClient::timeout() {
 void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     int			err = 0;
+    uint64_t    loc_seq_id = 0;
     zmq_msg_t	reply;
     zmq_msg_t	message;
     zmq_msg_init (&reply);
@@ -250,8 +255,8 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
     messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
-    
-    ChaosUniquePtr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    messageInfo->message->addInt64Value("seq_id", (loc_seq_id = ++seq_id));
+    CDWShrdPtr message_data = CDWShrdPtr(messageInfo->message.release());
     try{
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){
@@ -273,9 +278,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             return;
         }
         
-        //detach buffer from carrier object so we don't need to copy anymore the data
-        callSerialization->disposeOnDelete = false;
-        if((err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL)) == -1) {
+        if((err = zmq_msg_init_data(&message, (void*)message_data->getBSONRawData(), message_data->getBSONRawSize(), my_free,  new MemoryManagement(message_data))) == -1) {
             int32_t sent_error = zmq_errno();
             std::string error_message =zmq_strerror(sent_error);
             ZMQC_LERR << "Error allocating zmq messagecode:" << sent_error << " message:" <<error_message;
@@ -287,12 +290,12 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             }
             //err = 0;
         } else {
-            ZMQC_LDBG << "Try to send message";
+            ZMQC_LDBG << "Try to send message seq_id:"<<loc_seq_id;
             err = zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);
             if(err == -1) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message = zmq_strerror(sent_error);
-                ZMQC_LERR << "Error sending message with code:" << sent_error << " message:" <<error_message;
+                ZMQC_LERR << "Error sending message seq_id:"<<loc_seq_id<<" with code:" << sent_error << " message:" <<error_message<<" @"<<messageInfo->destinationAddr;
                 if(messageInfo->is_request) {
                     forwadSubmissionResultError(messageInfo,
                                                 ErrorRpcCoce::EC_RPC_SENDING_DATA,
@@ -304,13 +307,13 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                 deleteSocket(socket_info);
                 socket_info = NULL;
             }else{
-                ZMQC_LDBG << "Message sent now wait for ack";
+                ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent now wait for ack";
                 //ok get the answer
                 err = zmq_recvmsg(socket_info->resource_pooled, &reply, 0);
                 if(err == -1) {
                     int32_t sent_error = zmq_errno();
                     std::string error_message = zmq_strerror(sent_error);
-                    ZMQC_LERR << "Error receiving ack for message message with code:" << sent_error << " message:" <<error_message;
+                    ZMQC_LERR << "Error receiving ack for message seq_id:"<<loc_seq_id<<" with code:" << sent_error << " message:" <<error_message<<" @"<<messageInfo->destinationAddr;
                     if(messageInfo->is_request) {
                         forwadSubmissionResultError(messageInfo,
                                                     ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA,
@@ -321,28 +324,39 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     deleteSocket(socket_info);
                     socket_info = NULL;
                 } else {
+                     CDataWrapper*tmp=NULL;
+                     uint64_t rid_ack=0;
                     //decode result of the posting message operation
+                     if(zmq_msg_size(&reply)>0){
+                          tmp=new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply)));
+                          if(tmp->hasKey("seq_id")){
+                              rid_ack=tmp->getInt64Value("seq_id");
+                              if(rid_ack!=loc_seq_id){
+                                  ZMQC_LERR<<"MISMATCH request id:"<<loc_seq_id<<" to:@"<<messageInfo->destinationAddr<<" ack id:"<<rid_ack <<" from @"<<messageInfo->sender_node_id;
+                              }
+                          }
+
+                     }
                     if(messageInfo->is_request) {
-                        if(zmq_msg_size(&reply)>0){
+                        if(tmp){
                             if(RpcClient::syncrhonous_call) {
-                                forwadSubmissionResult(messageInfo,
-                                                       new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                                forwadSubmissionResult(messageInfo,tmp);
                             } else {
-                                ZMQC_LDBG << "ACK Received for request";
+                                ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for request:"<<loc_seq_id;
                                 //there is a reply so we need to check if all ok or in case answer to request
                                 forwadSubmissionResultError(messageInfo->sender_node_id,
                                                             messageInfo->sender_request_id,
-                                                            new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                                                            tmp);
                             }
                         } else {
-                            ZMQC_LDBG << "Bad ACK received";
+                            ZMQC_LDBG << "Bad ACK received for request:"<<loc_seq_id<<" @"<<messageInfo->sender_node_id;
                             forwadSubmissionResultError(messageInfo,
                                                         ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA,
                                                         "bad ack received",
                                                         __PRETTY_FUNCTION__);
                         }
                     } else {
-                        ZMQC_LDBG << "ACK Received for message";
+                        ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for message:"<<loc_seq_id;
                     }
                 }
             }

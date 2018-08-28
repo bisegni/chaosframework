@@ -37,7 +37,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     std::string node_uid;
                     ChaosUniquePtr<RequestInfo> request;
-                    chaos::common::data::CDataWrapper *message_data;
+                    chaos::common::data::CDWUniquePtr message_data;
                 public:
                     AgentAckCommand();
                     ~AgentAckCommand();

@@ -22,13 +22,15 @@
 #include <gtest/gtest.h>
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
+#include <csignal>
 
 int main(int argc,  char ** argv) {
-    char const * dummy_option[1] = {"--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
+    char const * dummy_option[] = {"--log-on-console","--direct-io-client-kv-param=ZMQ_RCVTIMEO:600000"};
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
-    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(1, dummy_option);
+    chaos::GlobalConfiguration::getInstance()->parseStartupParameters(2, dummy_option);
 
     chaos::common::log::LogManager::getInstance()->init();
     ::testing::InitGoogleTest(&argc, argv);
+
     return RUN_ALL_TESTS();
 }

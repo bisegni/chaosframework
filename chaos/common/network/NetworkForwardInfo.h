@@ -40,7 +40,7 @@ namespace chaos {
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> message;
+                chaos::common::data::CDWUniquePtr message;
 				//! tag returned in all handler call used by emitter
 				int64_t tag;
 				//! the ndoe id of the sender channel
@@ -60,12 +60,12 @@ namespace chaos {
 
                 ~NetworkForwardInfo(){}
 				
-                void setMessage(chaos::common::data::CDataWrapper *_message) {
-                    message.reset(_message);
+                void setMessage(chaos::common::data::CDWUniquePtr _message) {
+                    message = MOVE(_message);
                 }
                 
-				chaos::common::data::CDataWrapper *detachMessage() {
-					return message.release();
+				chaos::common::data::CDWUniquePtr detachMessage() {
+					return MOVE(message);
 				}
                 
                 bool hasMessage() {

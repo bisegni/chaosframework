@@ -68,7 +68,7 @@ void EmbeddedLFCacheTest::cacheGarbage(chaos::common::data::cache::KeyGroupCache
     } while (threadWriteExecution);
 }
 
-TEST_F(EmbeddedLFCacheTest, EmbeddedLFCacheTest) {
+//TEST_F(EmbeddedLFCacheTest, EmbeddedLFCacheTest) {
 //    boost::thread_group tWriterGroup;
 //    boost::thread_group tGarbageGroup;
 //    boost::thread_group tReadersGroup;
@@ -98,6 +98,6 @@ TEST_F(EmbeddedLFCacheTest, EmbeddedLFCacheTest) {
 //    //deinit all cache
 //    ASSERT_NO_THROW(dsCache->stop(););
 //    ASSERT_NO_THROW(dsCache->deinit(););
-}
+//}
 
 

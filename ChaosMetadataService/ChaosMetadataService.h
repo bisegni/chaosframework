@@ -45,7 +45,7 @@ namespace chaos {
         public ChaosCommon<ChaosMetadataService>,
         public chaos::common::async_central::TimerHandler,
         public ServerDelegator {
-            friend class common::utility::Singleton<ChaosMetadataService>;
+            friend class chaos::common::utility::Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
             
@@ -53,9 +53,9 @@ namespace chaos {
             ApiSubserviceAccessor api_subsystem_accessor;
             
             //!persistence driver instance
-            common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
+            chaos::common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
             //! CDS data consumer that respond to data api
-            common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
+            chaos::common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
             
             //keep track of process resource usage
             ProcStat service_proc_stat;

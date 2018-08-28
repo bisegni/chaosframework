@@ -316,7 +316,7 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
     int err = 0;
     int option_result = 0;
     size_t size_int = sizeof(int);
-    
+    more_to_read=false;
     //we heva received the message now check the size aspected
     if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int))) {
         err = zmq_errno();
@@ -333,9 +333,11 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
 int ZMQBaseClass::stringReceive(void *socket, std::string& received_string) {
     char buffer [256];
     size_t readed_byte = 0;
-    
+    buffer[sizeof(buffer)-1]=0;
+    buffer[0]=0;
+
     //read message and check the error
-    int err = readMessage(socket, buffer, 255, readed_byte);
+    int err = readMessage(socket, buffer, sizeof(buffer)-1, readed_byte);
     if(err) return err;
     
     //we got string so cap it for nullify at the end
@@ -532,7 +534,7 @@ int ZMQBaseClass::sendDatapack(void *socket,
     }
     //read the direct io datapack with zmq messages
     return sendDatapack(socket,
-                        ChaosMoveOperator(data_pack));
+                        MOVE(data_pack));
 }
 
 int ZMQBaseClass::sendDatapack(void *socket,

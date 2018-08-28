@@ -41,6 +41,7 @@
 
 using namespace chaos;
 using namespace chaos::common::io;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
 using namespace std;
@@ -136,56 +137,58 @@ void IODirectIODriver::deinit() throw(CException) {
     IODataDriver::deinit();
 }
 
-void IODirectIODriver::storeRawData(const std::string& key,
-                                    chaos::common::data::SerializationBuffer *serialization,
-                                    DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) {
-    CHAOS_ASSERT(serialization)
+int IODirectIODriver::storeData(const std::string& key,
+                                    CDWShrdPtr data_to_store,
+                                 DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                 const ChaosStringSet& tag_set)  throw(CException) {
     int err = 0;
+    CHAOS_ASSERT(data_to_store)
     ChaosReadLock rl(mutext_feeder);
-    //if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected)
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    serialization->disposeOnDelete = !next_client;
+    SerializationBufferUPtr serialization = data_to_store->getBSONData();
     if(next_client) {
-        //free the packet
         serialization->disposeOnDelete = false;
         if((err = (int)next_client->device_client_channel->storeAndCacheDataOutputChannel(key,
                                                                                           (void*)serialization->getBufferPtr(),
                                                                                           (uint32_t)serialization->getBufferLen(),
-                                                                                          storage_type))) {
-            IODirectIODriver_LERR_ << "Error storing data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+                                                                                          storage_type,
+                                                                                          tag_set))) {
+            IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%, data packet size:%3%",%next_client->connection->getServerDescription()%err%serialization->getBufferLen());
+        
         }
     } else {
-        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
     }
-    delete(serialization);
+    return err;
 }
 
-
-void IODirectIODriver::storeHealthData(const std::string& key,
-                                       chaos_data::CDataWrapper& dataToStore,
-                                       DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException) {
+int IODirectIODriver::storeHealthData(const std::string& key,
+                                       CDWShrdPtr data_to_store,
+                                       DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                       const ChaosStringSet& tag_set) throw(CException) {
     int err = 0;
+    CHAOS_ASSERT(data_to_store)
     try{
         ChaosReadLock rl(mutext_feeder);
         IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-        
-        ChaosUniquePtr<chaos::common::data::SerializationBuffer> serialization(dataToStore.getBSONData());
-        
-        if(next_client &&
-           serialization.get()) {
+        SerializationBufferUPtr serialization = data_to_store->getBSONData();
+        if(next_client) {
             serialization->disposeOnDelete = false;
             if((err = (int)next_client->device_client_channel->storeAndCacheHealthData(key,
                                                                                        (void*)serialization->getBufferPtr(),
                                                                                        (uint32_t)serialization->getBufferLen(),
-                                                                                       storage_type))) {
-                IODirectIODriver_LERR_ << "Error storing health data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+                                                                                       storage_type,
+                                                                                       tag_set))) {
+                IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%",%next_client->connection->getServerDescription()%err);
             }
         } else {
-            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
+            DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
         }
     }catch(...){
         IODirectIODriver_LERR_ << "Generic exception error";
+        err++;
     }
+    return err;
 }
 
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
@@ -197,7 +200,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
     if(!next_client) return NULL;
     
     uint32_t size =0;
-    int err = (int)next_client->device_client_channel->requestLastOutputData(key, (void**)&result, size);
+    int err = (int)next_client->device_client_channel->requestLastOutputData(key, &result, size);
     if(err) {
         IODirectIODriver_LERR_ << "Error retriving data from data service "<<next_client->connection->getServerDescription()<< " with code:" << err;
     } else {
@@ -279,6 +282,7 @@ void IODirectIODriver::addServerURL(const std::string& url) {
 
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
     //lock the feeder access
+    chaos::common::data::CDataWrapper*ret=NULL;
     ChaosWriteLock rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
@@ -299,8 +303,13 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
             //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
         }
+        if(numerbOfserverAddressConfigured>0){
+            ret=newConfigration;
+        }
+    } else {
+         IODirectIODriver_LERR_<<"DS list not present:"<<newConfigration->getJSONString();
     }
-    return NULL;
+    return ret;
 }
 
 void IODirectIODriver::disposeService(void *service_ptr) {
@@ -389,14 +398,27 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 }
 
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
-                                            uint64_t start_ts,
-                                            uint64_t end_ts,
-                                            uint32_t page_len) {
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint32_t page_len) {
+  return performQuery(key,
+                      start_ts,
+                      end_ts,
+                      ChaosStringSet(),
+                      page_len);
+}
+
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const ChaosStringSet& meta_tags,
+                                            const uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
                                      connectionFeeder,
                                      key,
                                      start_ts,
                                      end_ts,
+                                     meta_tags,
                                      page_len);
     if(q) {
         //add query to map
@@ -407,12 +429,28 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
     }
     return q;
 }
-QueryCursor *IODirectIODriver::performQuery(const std::string& key,
-                                            uint64_t start_ts,
-                                            uint64_t end_ts,
-                                            uint64_t sequid,
-                                            uint64_t runid,
 
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t sequid,
+                                            const uint64_t runid,
+                                            uint32_t page_len) {
+  return performQuery(key,
+                      start_ts,
+                      end_ts,
+                      sequid,
+                      runid,
+                      ChaosStringSet(),
+                      page_len);
+}
+
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
+                                            const uint64_t start_ts,
+                                            const uint64_t end_ts,
+                                            const uint64_t sequid,
+                                            const uint64_t runid,
+                                            const ChaosStringSet& meta_tags,
                                             uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
                                      connectionFeeder,
@@ -421,6 +459,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                      end_ts,
                                      sequid,
                                      runid,
+                                     meta_tags,
                                      page_len);
     if(q) {
         //add query to map

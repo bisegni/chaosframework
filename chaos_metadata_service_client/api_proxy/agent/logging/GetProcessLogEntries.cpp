@@ -36,12 +36,12 @@ ApiProxyResult GetProcessLogEntries::execute(const std::string& node_uid,
                                              const int32_t number_of_entries,
                                              const bool asc,
                                              const uint64_t start_seq) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> api_data(new CDataWrapper());
+    CDWUniquePtr api_data(new CDataWrapper());
     api_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     api_data->addInt32Value("number_of_entries", number_of_entries);
     api_data->addBoolValue("asc_ordered", asc);
     api_data->addInt64Value("start_seq", start_seq);
-    return callApi(api_data.release());
+    return callApi(api_data);
 }
 
 void GetProcessLogEntries::deserialize(CDataWrapper *api_result,

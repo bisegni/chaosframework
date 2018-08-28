@@ -168,6 +168,7 @@ namespace chaos{
                                  chaos::cu::data_manager::KeyDataStorageDomain dataset_domain,
                                  const uint64_t start_ts,
                                  const uint64_t end_ts,
+                                 const ChaosStringSet& meta_tags,
                                  const uint32_t page_len);
                 
                 //! release a cursor

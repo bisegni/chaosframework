@@ -7,8 +7,9 @@
 //
 
 #include "NodeMonitorHandlerTest.h"
-
+#include <chaos/common/utility/Base64Util.h>
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::node_monitor;
 
@@ -54,11 +55,12 @@ std::string getDatasetDesc(int dataset_type){
 }
 
 NodeMonitorHandlerTest::NodeMonitorHandlerTest(const std::string& _node_uid,
-                                               chaos::metadata_service_client::node_monitor::ControllerType _controller_type):
+                                               chaos::metadata_service_client::node_monitor::ControllerType _controller_type,
+                                               const ChaosStringVector& _attribute_to_show):
 node_uid(_node_uid),
 controller_type(_controller_type),
-last_ts(-1){
-    setSignalOnChange(false);
+attribute_to_show(_attribute_to_show){
+    setSignalOnChange(true);
     ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid,
                                                                        controller_type,
                                                                        this);
@@ -107,15 +109,24 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
     LAPP_ << boost::str(boost::format("%2% updatedDS: dataset type %1%")%getDatasetDesc(dataset_type)%node_uid);
     switch (dataset_type) {
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT: {
+            std::string output_line;
             if(dataset_key_values.count(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
                 CDataVariant variant = dataset_key_values[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
-                LAPP_ << node_uid << " DPCK_DATASET_TYPE_OUTPUT " <<variant.asInt64();
-                if(last_ts == -1) {
-                    last_ts = variant.asInt64();
-                } else {
-                    assert(last_ts == variant.asInt64());
+                output_line.append(CHAOS_FORMAT("%1%=%2% ", %chaos::DataPackCommonKey::DPCK_TIMESTAMP%variant.asInt64()));
+            }
+            
+            for(ChaosStringVectorConstIterator it = attribute_to_show.begin(),
+                end = attribute_to_show.end();
+                it != end;
+                it++) {
+                if(dataset_key_values.count(*it)){
+                    CDataVariant attr_variant = dataset_key_values[*it];
+                    CDBufferShrdPtr buf = attr_variant.asCDataBufferShrdPtr();
+                    output_line.append(CHAOS_FORMAT("%1%=%2% ", %*it%Base64Util::encode(buf->getBuffer(), buf->getBufferSize())));
                 }
             }
+            std::cout << node_uid << " DPCK_DATASET_TYPE_OUTPUT " <<output_line<< std::endl;
+            
             break;
         }
             

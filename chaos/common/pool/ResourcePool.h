@@ -196,7 +196,6 @@ delete(x);
                  Performa a new resource allocation and push new one on pool queue
                  */
                 inline void _pushNewResourceinPool() {
-                    bool success = false;
                     uint32_t alive_for_ms = 0;
                     
                     //create temporare autoPtr for safe operation in case of exception

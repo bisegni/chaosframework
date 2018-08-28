@@ -86,7 +86,7 @@ void PerformanceManagment::stop() throw(chaos::CException) {
 }
 
 DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
-	boost::unique_lock<boost::mutex>(mutext_client_connection);
+	boost::unique_lock<boost::mutex> ul(mutext_client_connection);
 	if(!global_performance_connection) {
 		global_performance_connection = network_broker->getSharedDirectIOClientInstance();
 		//if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);

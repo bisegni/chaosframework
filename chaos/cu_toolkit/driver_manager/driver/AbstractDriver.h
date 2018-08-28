@@ -177,6 +177,7 @@ namespace chaos{
 						\return the managment state of the message
                      */
                     virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) = 0;
+                    std::string getUid(){return driver_uuid;}
                 };
                 
                 

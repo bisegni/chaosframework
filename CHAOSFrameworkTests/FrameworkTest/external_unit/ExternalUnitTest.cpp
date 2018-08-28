@@ -92,6 +92,34 @@ TEST_F(ExternalUnitTest, InitDeinitCicle) {
     ASSERT_NO_THROW(ExternalUnitManager::getInstance()->init(NULL));
 }
 
+TEST_F(ExternalUnitTest, WrongEndpoint) {
+    int retry = 0;
+    
+    ExternalUnitManager::getInstance()->initilizeConnection(*this,
+                                                            "http",
+                                                            "application/bson-json",
+                                                            "ws://localhost:8080/badendpoint");
+    while(ExternalUnitClientEndpoint::isOnline() == false){
+        ASSERT_LE(retry++, 1000);
+        usleep(500000);
+    }
+    while(ExternalUnitClientEndpoint::getAcceptedState() != -1){
+        ASSERT_LE(retry++, 1000);
+        usleep(500000);
+    }
+
+    while(ExternalUnitClientEndpoint::isOnline() == true){
+        ASSERT_LE(retry++, 1000);
+        usleep(500000);
+    }
+    
+    ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), false);
+    ASSERT_EQ(ExternalUnitClientEndpoint::getAcceptedState(), -1);
+    ExternalUnitManager::getInstance()->releaseConnection(*this,
+                                                          "http");
+
+}
+
 TEST_F(ExternalUnitTest, Echo) {
     int retry = 0;
     CDWUniquePtr message(new CDataWrapper());
@@ -103,7 +131,7 @@ TEST_F(ExternalUnitTest, Echo) {
                                                             "ws://localhost:8080/echo");
     while(ExternalUnitClientEndpoint::isOnline() == false ||
           ExternalUnitClientEndpoint::getAcceptedState() != 1) {
-        ASSERT_LE(retry++, 10);
+        ASSERT_LE(retry++, 1000);
         usleep(500000);
     }
     ASSERT_EQ(ExternalUnitClientEndpoint::isOnline(), true);

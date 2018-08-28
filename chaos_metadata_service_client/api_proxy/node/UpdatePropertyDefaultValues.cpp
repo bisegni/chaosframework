@@ -40,12 +40,12 @@ ApiProxyResult UpdatePropertyDefaultValues::execute(const std::string& node_uniq
 
 ApiProxyResult UpdatePropertyDefaultValues::execute(const std::string& node_unique_id,
                                                     const chaos::common::property::PropertyGroupVector& node_property_group_vector) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     PropertyGroupVectorSDWrapper pg_sdw(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyGroupVector, const_cast<chaos::common::property::PropertyGroupVector&>(node_property_group_vector)));
     pg_sdw.serialization_key = "property";
     pg_sdw.serialize()->copyAllTo(*message);
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

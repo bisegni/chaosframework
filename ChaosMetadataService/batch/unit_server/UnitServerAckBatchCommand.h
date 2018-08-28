@@ -48,9 +48,10 @@ namespace chaos {
                     UnitServerAckPhase phase;
                     
                     bool us_can_start;
+                    std::string destination_address;
                     ChaosUniquePtr<RequestInfo> request;
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> autoload_pack;
-                    chaos::common::data::CDataWrapper *message_data;
+                    chaos::common::data::CDWUniquePtr autoload_pack;
+                    chaos::common::data::CDWUniquePtr message_data;
                     
                     AutoloadCUList          list_autoload_cu;
                     AutoloadCUListIterator  list_autoload_cu_current;

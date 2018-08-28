@@ -113,6 +113,7 @@ int EUSearch::newSearch(const common::script::ScriptInParam& input_parameter,
                                             static_cast<KeyDataStorageDomain>(input_parameter[1].asInt32()),
                                             input_parameter[2].asInt64(),//start_ts
                                             input_parameter[3].asInt64(),//end_ts;
+                                            ChaosStringSet(),
                                             DEFAULT_PAGE_LEN);
         CHAOS_ASSERT(!err &&
                      cursor != NULL);
@@ -145,6 +146,7 @@ int EUSearch::newSearchSinceSeconds(const common::script::ScriptInParam& input_p
                                             static_cast<KeyDataStorageDomain>(input_parameter[1].asInt32()),
                                             start_ts,//start_ts
                                             end_ts,//end_ts;
+                                            ChaosStringSet(),
                                             DEFAULT_PAGE_LEN);
         CHAOS_ASSERT(!err &&
                      cursor != NULL);
@@ -271,6 +273,7 @@ int EUSearch::runAlgoSearchSinceSeconds(const common::script::ScriptInParam& inp
                                         search_domain,
                                         start_ts,
                                         end_ts,
+                                        ChaosStringSet(),
                                         DEFAULT_PAGE_LEN);
     CHAOS_ASSERT(!err &&
                  cursor != NULL);

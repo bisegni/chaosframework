@@ -34,12 +34,10 @@ ChaosUniquePtr<SetInstanceDescriptionHelper> SetInstanceDescription::getNewHelpe
     return ChaosUniquePtr<SetInstanceDescriptionHelper>(new SetInstanceDescriptionHelper());
 }
 
-/*!
 
- */
 ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api_data) {
     chaos::common::data::CDataWrapper instance_description;
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
         //add the control unit unique id
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, api_data.control_unit_uid);
         // set the type for control unit
@@ -96,7 +94,7 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
 }
 
 ApiProxyResult SetInstanceDescription::execute(const std::string& uid,chaos::common::data::CDataWrapper& instance_description){
-	 chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+	 CDWUniquePtr message(new CDataWrapper());
 	        //add the control unit unique id
 	message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, uid);
 	        // set the type for control unit
@@ -131,7 +129,7 @@ SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
 void SetInstanceDescriptionHelper::addDriverDescription(const std::string& driver_name,
                                                         const std::string& driver_version,
                                                         const std::string& driver_init_parameter) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> dd(new CDataWrapper());
+    CDWUniquePtr dd(new CDataWrapper());
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, driver_name);
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, driver_version);
     dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, driver_init_parameter);
@@ -148,7 +146,7 @@ void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribu
                                                       const std::string& attribute_default_value,
                                                       const std::string& attribute_max_range,
                                                       const std::string& attribute_min_range) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> attr(new CDataWrapper());
+    CDWUniquePtr attr(new CDataWrapper());
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attribute_name);
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, attribute_default_value);
     if(attribute_max_range.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, attribute_max_range);

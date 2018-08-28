@@ -47,7 +47,7 @@ namespace chaos {
                         for (int idx = 0;
                              idx < flags_vec->size();
                              idx++) {
-                            ChaosUniquePtr<chaos::common::data::CDataWrapper> status_flag_element_obj_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
+                            ChaosSharedPtr<chaos::common::data::CDataWrapper> status_flag_element_obj_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
                             if(!status_flag_element_obj_ser->hasKey(NodeStateFlagDefinitionKey::NODE_SF_COMPOSED_NAME) ||
                                !status_flag_element_obj_ser->hasKey(NodeStateFlagDefinitionKey::NODE_SF_CATALOG_FLAG)) continue;
                             

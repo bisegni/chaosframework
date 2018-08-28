@@ -47,7 +47,9 @@ QueryCursor::ResultPage::~ResultPage() {}
 const bool QueryCursor::ResultPage::hasNext() const {
     return current_fetched < found_element_page.size();
 }
-
+uint32_t QueryCursor::ResultPage::size() const {
+    return found_element_page.size();
+}
 ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
     return found_element_page[current_fetched++];
@@ -69,7 +71,28 @@ page_len(default_page_len),
 phase(QueryPhaseNotStarted),
 start_seq(0),
 runid_seq(0),
+meta_tags(ChaosStringSet()),
 api_error(0){}
+
+QueryCursor::QueryCursor(const std::string& _query_id,
+                         URLServiceFeeder& _connection_feeder,
+                         const std::string& _node_id,
+                         uint64_t _start_ts,
+                         uint64_t _end_ts,
+                         const ChaosStringSet& _meta_tags,
+                         uint32_t default_page_len):
+query_id(_query_id),
+connection_feeder(_connection_feeder),
+node_id(_node_id),
+start_ts(_start_ts),
+end_ts(_end_ts),
+page_len(default_page_len),
+phase(QueryPhaseNotStarted),
+start_seq(0),
+runid_seq(0),
+meta_tags(_meta_tags),
+api_error(0){}
+
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
@@ -77,7 +100,6 @@ QueryCursor::QueryCursor(const std::string& _query_id,
                          uint64_t _end_ts,
                          uint64_t _sequid,
                          uint64_t _runid,
-
                          uint32_t default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
@@ -88,6 +110,34 @@ page_len(default_page_len),
 phase(QueryPhaseNotStarted),
 start_seq(_sequid),
 runid_seq(_runid),
+meta_tags(ChaosStringSet()),
+api_error(0){
+    if(_sequid>0){
+        phase = QueryPhaseStarted;
+        result_page.last_record_found_seq.run_id=_runid;
+        result_page.last_record_found_seq.datapack_counter=_sequid-1;
+    }
+}
+
+QueryCursor::QueryCursor(const std::string& _query_id,
+                         URLServiceFeeder& _connection_feeder,
+                         const std::string& _node_id,
+                         uint64_t _start_ts,
+                         uint64_t _end_ts,
+                         uint64_t _sequid,
+                         uint64_t _runid,
+                         const ChaosStringSet& _meta_tags,
+                         uint32_t default_page_len):
+query_id(_query_id),
+connection_feeder(_connection_feeder),
+node_id(_node_id),
+start_ts(_start_ts),
+end_ts(_end_ts),
+page_len(default_page_len),
+phase(QueryPhaseNotStarted),
+start_seq(_sequid),
+runid_seq(_runid),
+meta_tags(_meta_tags),
 api_error(0){
     if(_sequid>0){
         phase = QueryPhaseStarted;
@@ -101,6 +151,10 @@ QueryCursor::~QueryCursor() {}
 const std::string& QueryCursor::queryID() const {
     return query_id;
 }
+uint32_t  QueryCursor::size()const{
+    return result_page.size();
+}
+
 const int32_t QueryCursor::getError(){return (int32_t)api_error;}
 const bool QueryCursor::hasNext() {
     switch(phase) {
@@ -153,6 +207,7 @@ int64_t QueryCursor::fetchNewPage() {
             return 0;
     }
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
+                                                                       meta_tags,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,

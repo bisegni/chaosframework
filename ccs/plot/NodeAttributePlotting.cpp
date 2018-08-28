@@ -27,7 +27,7 @@ void PlotInfo::updatedDS(const std::string& control_unit_uid,
     double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
     double key_for_old = key-plotting_class_ref.plot_ageing;
     graph->addData(key, last_received_value = dataset_key_values[attribute_name.toStdString()].asDouble());
-    graph->removeDataBefore(key_for_old);
+    graph->data()->removeBefore(key_for_old);
     plotting_class_ref.lock_read_write_for_plot.unlock();
 }
 
@@ -38,7 +38,7 @@ void PlotInfo::noDSDataFound(const std::string& control_unit_uid,
     double key = (QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
     double key_for_old = key-plotting_class_ref.plot_ageing;
     graph->addData(key, last_received_value);
-    graph->removeDataBefore(key_for_old);
+    graph->data()->removeBefore(key_for_old);
     plotting_class_ref.lock_read_write_for_plot.unlock();
 }
 
@@ -66,21 +66,27 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->lineEditTimeInterval->setValidator(new QIntValidator(60, 600));
     ui->lineEditRangeFrom->setValidator(new QIntValidator());
     ui->lineEditRangeTo->setValidator(new QIntValidator());
-
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
     ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
     ui->qCustomPlotTimed->legend->setFont(QFont(QFont().family(), 8));
 
-    ui->qCustomPlotTimed->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    QSharedPointer<QCPAxisTickerDateTime> dt_tick(new QCPAxisTickerDateTime());
+    dt_tick->setDateTimeFormat("hh:mm:ss");
+    dt_tick->setTickCount(5);
+    dt_tick->setTickStepStrategy(QCPAxisTickerDateTime::tssReadability);
+    ui->qCustomPlotTimed->xAxis->setTicker(dt_tick);
     ui->qCustomPlotTimed->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
-    ui->qCustomPlotTimed->xAxis->setDateTimeFormat("hh:mm:ss");
+    ui->qCustomPlotTimed->xAxis->setTickLabelColor(QColor("lightGray"));
     ui->qCustomPlotTimed->xAxis->setLabel("Time");
-    ui->qCustomPlotTimed->xAxis->setAutoTickStep(true);
 
-    ui->qCustomPlotTimed->yAxis->setTickLabelType(QCPAxis::ltNumber);
+    QSharedPointer<QCPAxisTickerFixed> f_tick(new QCPAxisTickerFixed());
+    f_tick->setTickStep(1.0); // tick step shall be 1.0
+    f_tick->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
+    ui->qCustomPlotTimed->yAxis->setTicker(f_tick);
     ui->qCustomPlotTimed->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    ui->qCustomPlotTimed->yAxis->setTickLabelColor(QColor("lightGray"));
     ui->qCustomPlotTimed->yAxis->setRange(0.0, 100.0);
-    ui->qCustomPlotTimed->xAxis->setLabel("Value");
+    ui->qCustomPlotTimed->yAxis->setLabel("Value");
 
     ui->qCustomPlotTimed->axisRect()->setupFullAxesBox();
     ui->qCustomPlotTimed->legend->setVisible(true);
@@ -164,29 +170,32 @@ void NodeAttributePlotting::moveLegend() {
 }
 
 void NodeAttributePlotting::onMouseMoveGraph(QMouseEvent *event) {
-    int x = this->ui->qCustomPlotTimed->xAxis->pixelToCoord(event->pos().x());
-    int y = this->ui->qCustomPlotTimed->yAxis->pixelToCoord(event->pos().y());
 
-    if (ui->qCustomPlotTimed->selectedGraphs().count()>0) {
-        QCPGraph* graph = this->ui->qCustomPlotTimed->selectedGraphs().first();
-        QCPData data = graph->data()->lowerBound(x).value();
+    // make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
+    if (ui->qCustomPlotTimed->xAxis->selectedParts().testFlag(QCPAxis::spAxis) || ui->qCustomPlotTimed->xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+        ui->qCustomPlotTimed->xAxis2->selectedParts().testFlag(QCPAxis::spAxis) || ui->qCustomPlotTimed->xAxis2->selectedParts().testFlag(QCPAxis::spTickLabels))
+    {
+      ui->qCustomPlotTimed->xAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+      ui->qCustomPlotTimed->xAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+    }
+    // make left and right axes be selected synchronously, and handle axis and tick labels as one selectable object:
+    if (ui->qCustomPlotTimed->yAxis->selectedParts().testFlag(QCPAxis::spAxis) || ui->qCustomPlotTimed->yAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+        ui->qCustomPlotTimed->yAxis2->selectedParts().testFlag(QCPAxis::spAxis) || ui->qCustomPlotTimed->yAxis2->selectedParts().testFlag(QCPAxis::spTickLabels))
+    {
+      ui->qCustomPlotTimed->yAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+      ui->qCustomPlotTimed->yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+    }
 
-        double dbottom = graph->valueAxis()->range().lower;        //Yaxis bottom value
-        double dtop = graph->valueAxis()->range().upper;           //Yaxis top value
-        long ptop = graph->valueAxis()->axisRect()->top();         //graph top margin
-        long pbottom = graph->valueAxis()->axisRect()->bottom();   //graph bottom position
-        // result for Y axis
-        double valueY = (event->pos().y() - ptop) / (double)(pbottom - ptop)*(double)(dbottom - dtop) + dtop;
-
-        //or shortly for X-axis
-        double valueX = (event->pos().x() - graph->keyAxis()->axisRect()->left());  //graph width in pixels
-        double ratio = (double)(graph->keyAxis()->axisRect()->right() - graph->keyAxis()->axisRect()->left()) / (double)(graph->keyAxis()->range().lower - graph->keyAxis()->range().upper);    //ratio px->graph width
-        //and result for X-axis
-        valueX=-valueX / ratio + graph->keyAxis()->range().lower;
-
-
-        qDebug()<<"calculated:"<<valueX<<valueY;
-        ui->qCustomPlotTimed->setToolTip(QString("%1 , %2").arg(valueX).arg(valueY));
+    // synchronize selection of graphs with selection of corresponding legend items:
+    for (int i=0; i<ui->qCustomPlotTimed->graphCount(); ++i)
+    {
+      QCPGraph *graph = ui->qCustomPlotTimed->graph(i);
+      QCPPlottableLegendItem *item = ui->qCustomPlotTimed->legend->itemWithPlottable(graph);
+      if (item->selected() || graph->selected())
+      {
+        item->setSelected(true);
+        graph->setSelection(QCPDataSelection(graph->data()->dataRange()));
+      }
     }
 }
 

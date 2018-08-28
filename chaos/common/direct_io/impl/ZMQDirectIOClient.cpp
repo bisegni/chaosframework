@@ -130,9 +130,7 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     DEBUG_CODE(ZMQDIOLDBG_ << "Release the connection for: " << connection_to_release->getServerDescription() <<" ptr:"<<std::hex<<(uint64_t)connection_to_release;)
     map_connections.deregisterElementKey(conn->getUniqueUUID());
     delete(connection_to_release);
-    
 }
-
 
 void ZMQDirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
     if(!element.element) return;

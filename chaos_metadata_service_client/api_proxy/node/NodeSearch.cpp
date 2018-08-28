@@ -20,20 +20,20 @@
  */
 
 #include <chaos_metadata_service_client/api_proxy/node/NodeSearch.h>
+
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
 API_PROXY_CD_DEFINITION(NodeSearch, "system", "nodeSearch")
 
-/*!
 
- */
 ApiProxyResult NodeSearch::execute(const std::string& unique_id_filter,
                                    unsigned int node_type_filter,
                                    bool alive_only,
                                    unsigned int last_node_sequence_id,
                                    unsigned int page_length) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("unique_id_filter", unique_id_filter);
     message->addInt32Value("node_type_filter", node_type_filter);
     message->addInt32Value("last_node_sequence_id", last_node_sequence_id);

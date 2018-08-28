@@ -1,6 +1,7 @@
 #include "ChaosStorageTypeWidget.h"
 #include "CPropertyTextEdit.h"
 #include "CPopupWidgetContainer.h"
+#include "StorageBurst.h"
 #include "ui_ChaosStorageTypeWidget.h"
 #include <QDebug>
 
@@ -59,6 +60,13 @@ ChaosStorageTypeWidget::ChaosStorageTypeWidget(QWidget *parent) :
             SIGNAL(clicked(bool)),
             SLOT(on_pushButton_clicked(bool)));
 
+    ui->pushButtonBurst->addState(CStateVisiblePushButton::StateInfo("Disabled", Qt::lightGray));
+    ui->pushButtonBurst->addState(CStateVisiblePushButton::StateInfo("Enable", Qt::green));
+    //ui->pushButtonBurst->setCheckable(true);
+    connect(ui->pushButtonLiveAndHistory,
+            SIGNAL(clicked(bool)),
+            SLOT(on_pushButton_clicked(bool)));
+
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);
@@ -99,6 +107,18 @@ void ChaosStorageTypeWidget::updatedDS(const std::string& control_unit_uid,
             storage_type = static_cast<chaos::DataServiceNodeDefinitionType::DSStorageType>(dataset_key_values[chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE].asInt32());
         } else {
             storage_type = DSStorageTypeUndefined;
+        }
+
+        if(dataset_key_values.count(chaos::ControlUnitDatapackSystemKey::BURST_STATE) &&
+                dataset_key_values.count(chaos::ControlUnitDatapackSystemKey::BURST_TAG) ) {
+            burst_state = dataset_key_values[chaos::ControlUnitDatapackSystemKey::BURST_STATE].asBool();
+            if(burst_state) {
+                db.tag = dataset_key_values[chaos::ControlUnitDatapackSystemKey::BURST_TAG].asString();
+                qDebug() << "Start burst:" << QString::fromStdString(db.tag);
+            } else {
+                qDebug() << "End burst";
+                db.tag.clear();
+            }
         }
     }
     QMetaObject::invokeMethod(this,
@@ -154,6 +174,10 @@ void ChaosStorageTypeWidget::updateUIStatus() {
         ui->pushButtonUndefined->setButtonState(storage_type == DSStorageTypeUndefined);
     }
     ui->pushButtonUndefined->setChecked(storage_type == DSStorageTypeUndefined);
+
+    //ui->pushButtonBurst->setChecked(true);
+    ui->pushButtonBurst->setButtonState(burst_state);
+    ui->pushButtonBurst->setToolTip(burst_tag);
 }
 
 void ChaosStorageTypeWidget::on_pushButton_clicked(bool clicked) {
@@ -205,6 +229,17 @@ void ChaosStorageTypeWidget::on_pushButtonEdit_clicked() {
 
     wc->addWidget(pte_live_time);
     wc->addWidget(pte_history_time);
+    QRect rect = QRect(0,0,parentWidget()->width(),0);
+    wc->setGeometry(rect);
+    wc->setWindowModality(Qt::WindowModal);
+    wc->show();
+}
+
+void ChaosStorageTypeWidget::on_pushButtonBurst_clicked() {
+    CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);
+    StorageBurst *sb = new StorageBurst(wc);
+    sb->setNodeUID(nodeUID());
+    wc->addWidget(sb);
     QRect rect = QRect(0,0,parentWidget()->width(),0);
     wc->setGeometry(rect);
     wc->setWindowModality(Qt::WindowModal);

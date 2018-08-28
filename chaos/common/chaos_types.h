@@ -37,6 +37,13 @@
 
 
 #if __cplusplus >= 201103L
+
+#define CInt64  std::int64_t
+#define CUint64 std::uint64_t
+#define CInt32  std::int32_t
+#define CUint32 std::uint32_t
+#define CDouble double
+
 #ifndef FORCE_BOOST_SHPOINTER
 #define ChaosSharedPtr      std::shared_ptr
 #define ChaosMakeSharedPtr  std::make_shared
@@ -85,7 +92,15 @@ using ChaosFunction = std::function< R >;
 #endif
 #define ChaosUniquePtr std::unique_ptr
 #define ChaosMoveOperator(x) std::move(x)
+
 #else
+#include <stdint.h>
+#define CInt64  int64_t
+#define CUint64 uint64_t
+#define CInt32  int32_t
+#define CUint32 uint32_t
+#define CDouble double
+
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread/future.hpp>
@@ -108,6 +123,9 @@ using ChaosFunction = std::function< R >;
 #define ChaosBind boost::bind
 #define ChaosBindPlaceholder(x) x
 #endif
+
+//define accelerator
+#define MOVE(x) ChaosMoveOperator(x)
 
 #define  CHAOS_DEFINE_STACK_FOR_TYPE(t1, n)\
 typedef std::stack< t1 >                   n;
@@ -133,8 +151,8 @@ typedef typename std::vector< t >::iterator         n ## Iterator;\
 typedef typename std::vector< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_QUEUE_FOR_TYPE(t, n)\
-typedef std::queue< t >                   n;\
-typedef std::queue< t >::iterator         n ## Iterator;
+typedef std::queue< t >                   n;
+//typedef std::queue< t >::iterator         n ## Iterator;
 //typedef std::queue< t >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_DEQUE_FOR_TYPE(t, n)\
@@ -173,7 +191,16 @@ typedef boost::ptr_map< t1, t2 >::const_iterator   n ## ConstIterator;
 dynamic_cast<element_type*>(&map.at(element_key));
 
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, ChaosStringVector)
+typedef ChaosUniquePtr<ChaosStringVector> ChaosStringVectorUPtr;
+typedef ChaosSharedPtr<ChaosStringVector> ChaosStringVectorSPtr;
+typedef ChaosUniquePtr<const ChaosStringVector> ChaosStringVectorConstUPtr;
+typedef ChaosSharedPtr<const ChaosStringVector> ChaosStringVectorConstSPtr;
+
 CHAOS_DEFINE_SET_FOR_TYPE(std::string, ChaosStringSet)
+typedef ChaosUniquePtr<ChaosStringSet> ChaosStringSetUPtr;
+typedef ChaosSharedPtr<ChaosStringSet> ChaosStringSetSPtr;
+typedef ChaosUniquePtr<const ChaosStringSet> ChaosStringSetConstUPtr;
+typedef ChaosSharedPtr<const ChaosStringSet> ChaosStringSetConstSPtr;
 
 #define CHAOS_SCAN_VECTOR_ITERATOR(iter, vec, to_execute)\
 for(iter it = vec.begin();\
