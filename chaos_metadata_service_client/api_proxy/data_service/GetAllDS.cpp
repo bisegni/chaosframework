@@ -31,5 +31,5 @@ API_PROXY_CD_DEFINITION(GetAllDS,
 
 
 ApiProxyResult GetAllDS::execute() {
-    return callApi(NULL);
+    return callApi();
 }
