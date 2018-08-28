@@ -499,7 +499,7 @@ int CUController::submitSlowControlCommand(string commandAlias,
         //fill the command id
         command_id = result_data->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
     } else {
-        if(result_data)
+        if(result_data.get())
             LERR_<<"missing key:"<<BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64<<" :"<<result_data->getJSONString();
     }
     return err;
