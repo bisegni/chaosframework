@@ -73,7 +73,7 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
     boost::shared_lock<boost::shared_mutex> lock(handlerVEctorMutext);
     
     EVTDISPAPP_ << "registerEventActionForEventType";
-    if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
+    if(!eventAction) {throw CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");}
     
     eventScheduler->installEventAction(eventAction);
 }

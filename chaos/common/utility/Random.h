@@ -44,7 +44,6 @@ namespace chaos {
                 ~Random();
                 
                 CInt64 rand() const;
-                operator CInt64() const;
             };
         }
     }

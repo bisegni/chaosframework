@@ -85,7 +85,8 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
             } else {
                 try {
                     InizializableService::initImplementation(*performance_session_handler, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
-                } catch(chaos::CException ex) {
+                } catch(chaos::CException& ex) {
+                    DECODE_CHAOS_EXCEPTION(ex);
                     InizializableService::deinitImplementation(*performance_session_handler,  "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
                     err = -104;
                 }
@@ -111,19 +112,19 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
                                                        performance_session->server_endpoint->getUrl());
         
         //sent the request and waith the ansewer for startp local session
-        CDWUniquePtr init_session_result = sendRequest(node_network_address->ip_port,
-                                                       PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
-                                                       PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
-                                                       MOVE(init_performance_session_param),
-                                                       ms_timeout);
-        
+        sendRequest(node_network_address->ip_port,
+                    PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
+                    PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
+                    MOVE(init_performance_session_param),
+                    ms_timeout);
         
         InizializableService::deinitImplementation(performance_session,  "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
         if(performance_session->client_connection) client_instance->releaseConnection(performance_session->client_connection);
         //i need to release the enpoint
         if(performance_session->server_endpoint) getBroker()->releaseDirectIOServerEndpoint(performance_session->server_endpoint);
         
-    } catch(chaos::CException ex) {
+    } catch(chaos::CException& ex) {
+        DECODE_CHAOS_EXCEPTION(ex);
         return -100;
     }
     delete(local_performance_session);

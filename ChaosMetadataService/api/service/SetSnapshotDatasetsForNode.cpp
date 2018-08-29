@@ -100,7 +100,7 @@ chaos::common::data::CDataWrapper *SetSnapshotDatasetsForNode::execute(chaos::co
                                                     false))) {
             LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error incrementing job counter on snapshot %1%",%snapshot_name));
         }
-        throw ex;
+        throw;
     }
     
     return NULL;

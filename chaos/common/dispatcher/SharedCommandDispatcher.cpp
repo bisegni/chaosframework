@@ -190,7 +190,6 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
 void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *actionDescription,
                                                    ElementManagingPolicy &policy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    //CDataWrapper            *responsePack = NULL;
     CDataWrapper            *subCommand = NULL;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
@@ -325,7 +324,7 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             if(!submitMessage(answer_ip,
                               MOVE(response_pack),
                               false)){
-
+                LERR_ << CHAOS_FORMAT("Error submitting answer to %1%", %answer_ip);
             }
         }
     } catch (CException& ex) {

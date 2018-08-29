@@ -324,29 +324,28 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     deleteSocket(socket_info);
                     socket_info = NULL;
                 } else {
-                     CDataWrapper*tmp=NULL;
-                     uint64_t rid_ack=0;
+                    CDWUniquePtr tmp;
+                    uint64_t rid_ack=0;
                     //decode result of the posting message operation
-                     if(zmq_msg_size(&reply)>0){
-                          tmp=new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply)));
-                          if(tmp->hasKey("seq_id")){
-                              rid_ack=tmp->getInt64Value("seq_id");
-                              if(rid_ack!=loc_seq_id){
-                                  ZMQC_LERR<<"MISMATCH request id:"<<loc_seq_id<<" to:@"<<messageInfo->destinationAddr<<" ack id:"<<rid_ack <<" from @"<<messageInfo->sender_node_id;
-                              }
-                          }
-
-                     }
+                    if(zmq_msg_size(&reply)>0){
+                        tmp.reset(new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                        if(tmp->hasKey("seq_id")){
+                            rid_ack=tmp->getInt64Value("seq_id");
+                            if(rid_ack!=loc_seq_id){
+                                ZMQC_LERR<<"MISMATCH request id:"<<loc_seq_id<<" to:@"<<messageInfo->destinationAddr<<" ack id:"<<rid_ack <<" from @"<<messageInfo->sender_node_id;
+                            }
+                        }
+                    }
                     if(messageInfo->is_request) {
-                        if(tmp){
+                        if(tmp.get()){
                             if(RpcClient::syncrhonous_call) {
-                                forwadSubmissionResult(messageInfo,tmp);
+                                forwadSubmissionResult(messageInfo,tmp.release());
                             } else {
                                 ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for request:"<<loc_seq_id;
                                 //there is a reply so we need to check if all ok or in case answer to request
                                 forwadSubmissionResultError(messageInfo->sender_node_id,
                                                             messageInfo->sender_request_id,
-                                                            tmp);
+                                                            tmp.release());
                             }
                         } else {
                             ZMQC_LDBG << "Bad ACK received for request:"<<loc_seq_id<<" @"<<messageInfo->sender_node_id;

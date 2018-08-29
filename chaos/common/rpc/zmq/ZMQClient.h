@@ -55,6 +55,7 @@ namespace chaos {
         uint32_t zmq_timeout;
         boost::shared_mutex map_socket_mutex;
         SocketMap map_socket;
+        ChaosAtomic<uint64_t> seq_id;
     protected:
         void *zmq_context;
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
@@ -70,7 +71,6 @@ namespace chaos {
         
         //timer handler
         void timeout();
-        ChaosAtomic<uint64_t> seq_id;
 
     public:
         

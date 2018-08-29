@@ -59,7 +59,6 @@ PerformanceManagment::~PerformanceManagment() {
 void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
 	//check the network broker setup
 	if(!network_broker) throw chaos::CException(-1, "NetworkBroker not set", __PRETTY_FUNCTION__);
-	
 	//register the action
 	network_broker->registerAction(this);
 }
@@ -67,17 +66,14 @@ void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
 //Start the implementation
 void PerformanceManagment::start() throw(chaos::CException) {
 	PMLAPP_ << "Start the purger thread";
-	//work_on_purge = true;
-	//thread_purge.reset(new boost::thread(& PerformanceManagment::purge_worker, this));
+
     AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
 }
 
 //Stop the implementation
 void PerformanceManagment::stop() throw(chaos::CException) {
 	PMLAPP_ << "Stop the purger thread";
-	//work_on_purge = false;
-	//purge_wait_semaphore.unlock();
-	//thread_purge->join();
+
     AsyncCentralManager::getInstance()->removeTimer(this);
 	PMLAPP_ << "Purger thread stoppped";
 	
@@ -89,8 +85,6 @@ DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
 	boost::unique_lock<boost::mutex> ul(mutext_client_connection);
 	if(!global_performance_connection) {
 		global_performance_connection = network_broker->getSharedDirectIOClientInstance();
-		//if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
-		//InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 	return global_performance_connection;
 }
@@ -99,10 +93,6 @@ DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
 void PerformanceManagment::deinit() throw(chaos::CException) {
 	//register the action
 	network_broker->deregisterAction(this);
-	
-	//if(global_performance_connection) {
-	//	InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
-	//}
 }
 
 void PerformanceManagment::timeout() {
@@ -131,7 +121,6 @@ void  PerformanceManagment::handleEvent(DirectIOClientConnection *client_connect
 	}
 	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), map_sessions.accessItem(client_connection->getURL())));
 	PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " added in purge map";
-	
 }
 
 void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *performance_node) {
@@ -141,7 +130,7 @@ void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *p
 		PMLAPP_ << "Dispose the performance node for "<<server_description;
 		InizializableService::initImplementation(performance_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 	}
-	catch(CException ex) {}
+	catch(CException& ex) {}
 	catch(...) {}
 	
 	//deregister the server
@@ -199,11 +188,11 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 		result = new chaos_data::CDataWrapper();
 		result->addStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, server_endpoint->getUrl());
 		
-	} catch(CException ex) {
+	} catch(CException& ex) {
 		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
 		if(server_endpoint) network_broker->releaseDirectIOServerEndpoint(server_endpoint);
-		throw ex;
+		throw;
 	} catch(...) {
 		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
