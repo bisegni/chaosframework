@@ -73,12 +73,14 @@ bool StateLevel::operator< (const StateLevel &right) {
     return value < right.value;
 }
 
-StateLevel& StateLevel::operator=(StateLevel const &rhs) {
-    value = rhs.value;
-    tag = rhs.tag;
-    description = rhs.description;
-    severity = rhs.severity;
-    occurence = rhs.occurence;
+StateLevel& StateLevel::operator=(const StateLevel &rhs) {
+    if(this != &rhs) {
+        value = rhs.value;
+        tag = rhs.tag;
+        description = rhs.description;
+        severity = rhs.severity;
+        occurence = rhs.occurence;
+    }
     return *this;
 }
 
@@ -123,11 +125,13 @@ StateFlag::StateFlag(const StateFlag& src):
 flag_description(src.flag_description),
 current_level(src.current_level){}
 
-StateFlag& StateFlag::operator=(StateFlag const &rhs) {
-    flag_description.name = rhs.flag_description.name;
-    flag_description.description = rhs.flag_description.description;
-    current_level = rhs.current_level;
-    set_levels = rhs.set_levels;
+StateFlag& StateFlag::operator=(const StateFlag  &rhs) {
+    if(this != &rhs) {
+        flag_description.name = rhs.flag_description.name;
+        flag_description.description = rhs.flag_description.description;
+        current_level = rhs.current_level;
+        set_levels = rhs.set_levels;
+    }
     return *this;
 };
 

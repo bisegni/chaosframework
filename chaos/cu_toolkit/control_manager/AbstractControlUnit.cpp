@@ -584,7 +584,7 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
                 check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
             } catch(CException& ex){
                 check_list_sub_service.getSharedCheckList("_start")->removeElement(START_RPC_PHASE_RESTORE_ON_FIRST_START);
-                throw ex;
+                throw;
             }
             break;
         }
@@ -726,7 +726,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
         }
         
     } catch (MetadataLoggingCException& ex) {
-        throw ex;
+        throw;
     } catch (CException& ex) {
         throw MetadataLoggingCException(getCUID(),
                                         ex.errorCode,
@@ -756,7 +756,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     } catch(CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -791,7 +791,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
         }
         
     }  catch (MetadataLoggingCException& ex) {
-        throw ex;
+        throw;
     } catch (CException& ex) {
         throw MetadataLoggingCException(getCUID(),
                                         ex.errorCode,
@@ -818,7 +818,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     } catch(CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -855,7 +855,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     } catch (CException& ex) {
         throw MetadataLoggingCException(getCUID(),
                                         ex.errorCode,
@@ -881,7 +881,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     } catch (CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -915,7 +915,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
             LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
         }
     }  catch (MetadataLoggingCException& ex) {
-        throw ex;
+        throw;
     }  catch (CException& ex) {
         throw MetadataLoggingCException(getCUID(),
                                         ex.errorCode,
@@ -942,7 +942,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     } catch (CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -976,7 +976,7 @@ CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
                                    ex,
                                    "AbstractControlUnit",
                                    __PRETTY_FUNCTION__);
-        throw ex;
+        throw;
     }  catch (CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -1035,7 +1035,7 @@ void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
             //input attribute already already updated
         }
     } catch (MetadataLoggingCException& ex) {
-        throw ex;
+        throw;
     }  catch (CException& ex) {
         MetadataLoggingCException loggable_exception(getCUID(),
                                                      ex.errorCode,
@@ -1108,7 +1108,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
                 
             }
         } catch (MetadataLoggingCException& ex) {
-            throw ex;
+            throw;
         }  catch (CException& ex) {
             MetadataLoggingCException loggable_exception(getCUID(),
                                                          ex.errorCode,
@@ -1122,7 +1122,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         try {
             restore_cache->deinit();
         }  catch (MetadataLoggingCException& ex) {
-            throw ex;
+            throw;
         } catch (CException& ex) {
             MetadataLoggingCException loggable_exception(getCUID(),
                                                          ex.errorCode,
@@ -1160,7 +1160,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
         
     } catch (CException& ex) {
         //at this time notify the wel gone setting of comand
-        throw ex;
+        throw;
     }
     
     return result;
@@ -1747,11 +1747,9 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         //inform the subclass for the change
         unitInputAttributeChangedHandler();
     }catch(CException& ex) {
-        
         //inform the subclass for the change
         unitInputAttributeChangedHandler();
-        
-        throw ex;
+        throw;
     }
     return NULL;
 }

@@ -181,7 +181,7 @@ CDataWrapper *NodeRegister::unitServerRegistration(CDataWrapper *api_data,
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
                                                        api_data);
         USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
-        throw ex;
+        throw;
     } catch (...) {
         api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
@@ -322,7 +322,7 @@ CDataWrapper *NodeRegister::controlUnitRegistration(CDataWrapper *api_data,
         USRA_ERR << "Sent ack for registration denied to the unit server " << cu_uid;
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::RegistrationAckBatchCommand),
                                                        ack_command.release());
-        throw ex;
+        throw;
     } catch (...) {
         USRA_ERR << "Sent ack for registration denied to the unit server " << cu_uid;
         //somenthing goes worng so deny the registration

@@ -66,10 +66,12 @@ dataset_key(copy_src.dataset_key),
 type(copy_src.type){}
 
 Dataset& Dataset::operator=(Dataset const &rhs) {
-    name = rhs.name;
-    dataset_key = rhs.dataset_key;
-    type = rhs.type;
-    attribute_set = rhs.attribute_set;
+    if(this != &rhs) {
+        name = rhs.name;
+        dataset_key = rhs.dataset_key;
+        type = rhs.type;
+        attribute_set = rhs.attribute_set;
+    }
     return *this;
 }
 
@@ -134,8 +136,10 @@ value(copy_src.value),
 type(copy_src.type){}
 
 DatasetBurst& DatasetBurst::operator=(DatasetBurst const &rhs) {
-    tag = rhs.tag;
-    value = rhs.value;
-    type = rhs.type;
+    if(this != &rhs) {
+        tag = rhs.tag;
+        value = rhs.value;
+        type = rhs.type;
+    }
     return *this;
 }

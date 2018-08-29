@@ -85,7 +85,8 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
             } else {
                 try {
                     InizializableService::initImplementation(*performance_session_handler, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
-                } catch(chaos::CException ex) {
+                } catch(chaos::CException& ex) {
+                    DECODE_CHAOS_EXCEPTION(ex);
                     InizializableService::deinitImplementation(*performance_session_handler,  "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
                     err = -104;
                 }
@@ -122,7 +123,8 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
         //i need to release the enpoint
         if(performance_session->server_endpoint) getBroker()->releaseDirectIOServerEndpoint(performance_session->server_endpoint);
         
-    } catch(chaos::CException ex) {
+    } catch(chaos::CException& ex) {
+        DECODE_CHAOS_EXCEPTION(ex);
         return -100;
     }
     delete(local_performance_session);

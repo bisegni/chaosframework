@@ -273,17 +273,19 @@ const std::string& StateFlagCatalog::getName() const {
     return catalog_name;
 }
 
-StateFlagCatalog& StateFlagCatalog::operator=(StateFlagCatalog const &rhs) {
-    catalog_name = rhs.catalog_name;
-    catalog_container() = rhs.catalog_container();
-    //gester this new container has listener
-    StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
-    for(StateFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
-        end = ordered_index.end();
-        it != end;
-        it++){
-        
-        (*it)->status_flag->addListener(this);
+StateFlagCatalog& StateFlagCatalog::operator=(const StateFlagCatalog &rhs) {
+    if(this != &rhs) {
+        catalog_name = rhs.catalog_name;
+        catalog_container() = rhs.catalog_container();
+        //gester this new container has listener
+        StateFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container());
+        for(StateFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+            end = ordered_index.end();
+            it != end;
+            it++){
+            
+            (*it)->status_flag->addListener(this);
+        }
     }
     return *this;
 }

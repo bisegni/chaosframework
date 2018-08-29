@@ -123,20 +123,21 @@ SlbCachedInfoPtr LFDataCache::getCurrentCachedPtr() {
     boost::uint32_t oldMem, oldValue;
     
     //get the old reference count from current RPtr
-    do {
-        //get info ptr
-        result  = rwPtr[readIndex.load(boost::memory_order_consume)];
-        //get ref pointer
-        mem = &result->references;
-        //get the old value
-        oldMem = *mem;
-        //if 0 is not usable
-        if(oldMem == 0) continue;
-        //increment the value with cas operation
-        oldValue = boost::interprocess::ipcdetail::atomic_cas32(mem, *mem + 1, oldMem);
-        
-        //check if old value is the same of the one memorized early
-    } while (oldValue != oldMem);
+    //TODO reiimplemetne method with more modern code
+//    do {
+//        //get info ptr
+//        result  = rwPtr[readIndex.load(boost::memory_order_consume)];
+//        //get ref pointer
+//        mem = &result->references;
+//        //get the old value
+//        oldMem = *mem;
+//        //if 0 is not usable
+//        if(oldMem == 0) continue;
+//        //increment the value with cas operation
+//        oldValue = boost::interprocess::ipcdetail::atomic_cas32(mem, *mem + 1, oldMem);
+//
+//        //check if old value is the same of the one memorized early
+//    } while (oldValue != oldMem);
     
     //we have suceed to udpate the reference count without noone has modified it
     return result;

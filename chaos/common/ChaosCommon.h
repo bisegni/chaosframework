@@ -369,7 +369,7 @@ namespace chaos {
                     chaos::common::utility::InizializableService::initImplementation(chaos::common::plugin::PluginManager::getInstance(), NULL, "PluginManager", __PRETTY_FUNCTION__);
                 }
             } catch(CException& ex) {
-                throw ex;
+                throw;
             } catch(...) {
                 throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
             }

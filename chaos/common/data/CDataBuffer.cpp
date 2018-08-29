@@ -66,6 +66,8 @@ CDBufferUniquePtr CDataBuffer::newOwnBufferFromBuffer(Buffer& buffer) {
 }
 
 CDataBuffer& CDataBuffer::operator=(CDataBuffer const &rhs) {
-    internal_buffer = rhs.internal_buffer;
+    if (this != &rhs) {
+        internal_buffer = rhs.internal_buffer;
+    }
     return *this;
 };

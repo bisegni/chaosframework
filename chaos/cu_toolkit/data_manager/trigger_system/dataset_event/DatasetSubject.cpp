@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetSubject.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetSubject.h>
 
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 

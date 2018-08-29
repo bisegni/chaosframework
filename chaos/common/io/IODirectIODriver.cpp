@@ -27,7 +27,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common//global.h>
+#include <chaos/common/global.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
