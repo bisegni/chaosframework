@@ -44,11 +44,13 @@ property_value(property_default_value){}
 PropertyDescription::~PropertyDescription() {}
 
 PropertyDescription& PropertyDescription::operator=(PropertyDescription const &rhs) {
-    name=rhs.name;
-    description=rhs.description;
-    type=rhs.type;
-    flag=rhs.flag;
-    property_value=rhs.property_value;
+    if(this != &rhs) {
+        name=rhs.name;
+        description=rhs.description;
+        type=rhs.type;
+        flag=rhs.flag;
+        property_value=rhs.property_value;
+    }
     return *this;
 }
 

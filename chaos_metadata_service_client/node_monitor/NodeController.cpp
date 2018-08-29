@@ -136,11 +136,10 @@ void NodeController::updateData() {
         //update internal state
         _setNodeInternalState(last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
         
-        if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
-           last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+        if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0) {
             if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE) &&
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN)) {
                 //we need to show error
                 ErrorInformation new_err_inf;
                 new_err_inf.error_code = last_ds_healt->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE);

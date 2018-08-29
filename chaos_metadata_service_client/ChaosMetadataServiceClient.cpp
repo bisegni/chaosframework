@@ -112,10 +112,9 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         init();
-
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 
@@ -130,7 +129,7 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
         CMSC_LAPP << "-------------------------------------------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 
@@ -144,7 +143,7 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
         CHAOS_NOT_THROW( ChaosCommon<ChaosMetadataServiceClient>::stop();)
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 

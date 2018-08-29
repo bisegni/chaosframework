@@ -38,9 +38,11 @@ last_sampling_time(0),
 creation_time(TimingUtil::getTimeStamp()/1000){}
 
 ProcStat& ProcStat::operator=(ProcStat const &rhs) {
-    usr_time = rhs.usr_time;
-    sys_time = rhs.sys_time;
-    swap_rsrc = rhs.swap_rsrc;
+    if(this != &rhs) {
+        usr_time = rhs.usr_time;
+        sys_time = rhs.sys_time;
+        swap_rsrc = rhs.swap_rsrc;
+    }
     return *this;
 }
 

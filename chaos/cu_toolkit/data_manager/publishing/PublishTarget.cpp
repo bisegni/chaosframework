@@ -45,9 +45,11 @@ PublishElementAttribute::PublishElementAttribute(const PublishElementAttribute& 
 publishing_mode(src.publishing_mode),
 publish_rate(src.publish_rate){}
 
-PublishElementAttribute& PublishElementAttribute::operator=(const PublishElementAttribute& src) {
-    publishing_mode = src.publishing_mode;
-    publish_rate = src.publish_rate;
+PublishElementAttribute& PublishElementAttribute::operator=(const PublishElementAttribute& rhs) {
+    if(this != &rhs) {
+        publishing_mode = rhs.publishing_mode;
+        publish_rate = rhs.publish_rate;
+    }
     return *this;
 }
 

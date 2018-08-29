@@ -97,7 +97,6 @@ int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
                                               uint32_t millisec_to_wait) {
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    //ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(device_dataset->getBSONRawData()));
     device_dataset->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     if(requestCheck){
@@ -125,7 +124,6 @@ int MDSMessageChannel::sendNodeRegistration(CDWUniquePtr node_description,
                                             uint32_t millisec_to_wait) {
     std::string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    //ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(node_description->getBSONRawData(size_bson)));
     node_description->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     node_description->addStringValue(NodeDefinitionKey::NODE_HOST_NAME, InetUtility::getHostname());
     //set our timestamp
@@ -152,11 +150,7 @@ int MDSMessageChannel::sendNodeRegistration(CDWUniquePtr node_description,
 int MDSMessageChannel::sentNodeHealthStatus(CDWUniquePtr node_health_data,
                                             bool request_check,
                                             uint32_t millisec_to_wait) {
-    int size_bson = 0;
     std::string currentBrokerIpPort;
-    
-    //get rpc receive port
-    //ChaosUniquePtr<chaos::common::data::CDataWrapper> data(new CDataWrapper(node_health_data.getBSONRawData(size_bson)));
     
     if(request_check){
         ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
@@ -179,7 +173,6 @@ int MDSMessageChannel::sentNodeHealthStatus(CDWUniquePtr node_health_data,
 int MDSMessageChannel::sendNodeLoadCompletion(CDWUniquePtr node_information,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {
-    int size_bson = 0;
     std::string currentBrokerIpPort;
     
     //get rpc receive port

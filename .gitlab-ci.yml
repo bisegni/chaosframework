@@ -15,7 +15,7 @@ before_script:
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
 
-build_ubuntu_14_04_gcc49:
+build_u_14_04_gcc49:
   tags:
     - chaos
     - docker
@@ -25,7 +25,7 @@ build_ubuntu_14_04_gcc49:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
@@ -49,9 +49,9 @@ build_ubuntu_14_04_gcc49:
     - web
   retry: 2
 
-build_ubuntu_14_04_gcc49_test:
+test_u_14_04_gcc49:
   dependencies:
-    - build_ubuntu_14_04_gcc49
+    - build_u_14_04_gcc49
   tags:
     - chaos
     - docker
@@ -92,7 +92,7 @@ build_ubuntu_14_04_gcc49_test:
     - web
   retry: 2
 
-build_ubuntu_16_04_gcc5:
+build_u_16_04_gcc5:
   tags:
     - chaos
     - docker
@@ -102,13 +102,10 @@ build_ubuntu_16_04_gcc5:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
+    - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
     - make clean
     - make  -j $NPROC
     - make install
-#    - cd ccs
-#    - /Qt/5.9.3/gcc_64/bin/qmake
-#    - make -j $NPROC
   cache:
     key: UBUNTU_1604_LLVM7_$CI_BUILD_REF_NAME
     paths:
@@ -124,9 +121,9 @@ build_ubuntu_16_04_gcc5:
     - web
   retry: 2
 
-build_ubuntu_16_04_gcc5_test:
+test_u_16_04_gcc5_test:
   dependencies:
-    - build_ubuntu_16_04_gcc5
+    - build_u_16_04_gcc5
   tags:
     - chaos
     - docker
@@ -148,7 +145,7 @@ build_ubuntu_16_04_gcc5_test:
     - web
   retry: 2
 
-build_ubuntu_18_04_gcc73:
+build_u_18_04_gcc73:
   tags:
     - chaos
     - docker
@@ -158,13 +155,10 @@ build_ubuntu_18_04_gcc73:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
+    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
     - make clean
     - make  -j $NPROC
     - make install
-#    - cd ccs
-#    - /Qt/5.9.3/gcc_64/bin/qmake
-#    - make -j $NPROC
   cache:
     key: UBUNTU_1604_LLVM7_$CI_BUILD_REF_NAME
     paths:
@@ -180,9 +174,9 @@ build_ubuntu_18_04_gcc73:
     - web
   retry: 2
 
-build_ubuntu_18_04_gcc73_test:
+test_u_18_04_gcc73:
   dependencies:
-    - build_ubuntu_18_04_gcc73
+    - build_u_18_04_gcc73
   tags:
     - chaos
     - docker
@@ -204,8 +198,7 @@ build_ubuntu_18_04_gcc73_test:
     - web
   retry: 2
 
-
-build_framework_centos7:
+build_c7:
   tags:
     - chaos
     - docker
@@ -219,10 +212,6 @@ build_framework_centos7:
     - make clean
     - make  -j $NPROC
     - make install
-#    - cd ccs
-#    - /Qt/5.9.3/gcc_64/bin/qmake
-#    - make -j $NPROC
-#    - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-centos7
   cache:
     key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
@@ -238,9 +227,9 @@ build_framework_centos7:
     - web
   retry: 2
 
-build_framework_centos7_test:
+test_c7:
   dependencies:
-    - build_framework_centos7
+    - build_c7
   tags:
     - chaos
     - docker
@@ -262,7 +251,9 @@ build_framework_centos7_test:
     - web
   retry: 2
 
-framework_centos7_deploy:
+deploy_c7:
+  dependencies:
+    - test_c7
   allow_failure: true
   tags:
     - chaos
@@ -273,8 +264,6 @@ framework_centos7_deploy:
     - lnf
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
-  dependencies:
-    - build_framework_centos7_test
   script:
     - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
@@ -288,7 +277,7 @@ framework_centos7_deploy:
     - web
   retry: 2
 
-build_ubuntu_14_04_gcc48_c98:
+build_u_14_04_gcc48_c98:
   tags:
     - chaos
     - docker
@@ -298,11 +287,10 @@ build_ubuntu_14_04_gcc48_c98:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - make  -j $NPROC
     - make install
-    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-c98
   cache:
     key: x86_64_c98_$CI_BUILD_REF_NAME
     paths:
@@ -316,9 +304,9 @@ build_ubuntu_14_04_gcc48_c98:
     - web
   retry: 2
 
-build_ubuntu_14_04_gcc48_c98_test:
+test_u_14_04_gcc48_c98:
   dependencies:
-    - build_ubuntu_14_04_gcc48_c98
+    - build_u_14_04_gcc48_c98
   tags:
     - chaos
     - docker
@@ -336,7 +324,7 @@ build_ubuntu_14_04_gcc48_c98_test:
     - web
   retry: 2
 
-build_framework_arm:
+build_arm:
   tags:
     - chaos
     - docker
@@ -363,7 +351,7 @@ build_framework_arm:
     - web
   retry: 2
 
-llvm_build_framework_x86_64:
+build_x86_64_llvm:
   tags:
     - chaos
     - docker
@@ -373,11 +361,10 @@ llvm_build_framework_x86_64:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
     - tools/chaos_clean.sh
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
+    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
     - make clean
     - make  -j $NPROC
     - make install
-    # - mv /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux-llvm
   cache:
     key: llvm_x86_64_$CI_BUILD_REF_NAME
     paths:
@@ -393,7 +380,7 @@ llvm_build_framework_x86_64:
     - web
   retry: 2
 
-llvm_build_framework_x86_64_test:
+test_x86_64_llvm:
   tags:
     - chaos
     - docker
@@ -402,7 +389,7 @@ llvm_build_framework_x86_64_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   dependencies:
-    - llvm_build_framework_x86_64
+    - build_x86_64_llvm
   script:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
@@ -441,7 +428,7 @@ exp_llvm_scan_coverity:
 pages:
   stage: publish
   dependencies:
-    - build_ubuntu_14_04_gcc49_test
+    - test_u_14_04_gcc49
   script:
     - mv coverage_html public
     - ls -la
