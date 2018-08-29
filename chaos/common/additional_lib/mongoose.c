@@ -67,7 +67,7 @@ struct ctl_msg {
 };
 
 #if MG_ENABLE_MQTT
-struct mg_mqtt_message;
+//struct mg_mqtt_message;
 
 #define MG_MQTT_ERROR_INCOMPLETE_MSG -1
 #define MG_MQTT_ERROR_MALFORMED_MSG -2
@@ -1624,23 +1624,6 @@ void mbuf_remove(struct mbuf *mb, size_t n) {
 #ifdef MG_MODULE_LINES
 #line 1 "common/mg_str.c"
 #endif
-/*
- * Copyright (c) 2014-2018 Cesanta Software Limited
- * All rights reserved
- *
- * Licensed under the Apache License, Version 2.0 (the ""License"");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an ""AS IS"" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 /* Amalgamated: #include "common/mg_mem.h" */
 /* Amalgamated: #include "common/mg_str.h" */
 /* Amalgamated: #include "common/platform.h" */
@@ -1772,22 +1755,6 @@ struct mg_str mg_strstrip(struct mg_str s) {
 #ifdef MG_MODULE_LINES
 #line 1 "common/str_util.c"
 #endif
-/*
- * Copyright (c) 2014-2018 Cesanta Software Limited
- * All rights reserved
- *
- * Licensed under the Apache License, Version 2.0 (the ""License"");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an ""AS IS"" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 #ifndef EXCLUDE_COMMON
 
