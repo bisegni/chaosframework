@@ -208,7 +208,7 @@ build_c7:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework .
+    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
     - make clean
     - make  -j $NPROC
     - make install
