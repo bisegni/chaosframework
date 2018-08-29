@@ -107,10 +107,10 @@ bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(rpc_forwarder_ptr)
     if(!message.get() && server_port.size()) return false;
-    common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
+    NFIUniquePtr nfi(new NetworkForwardInfo(false));
     nfi->destinationAddr = server_port;
     nfi->setMessage(MOVE(message));
-    return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
+    return rpc_forwarder_ptr->submitMessage(MOVE(nfi), onThisThread);
 }
 
 chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {

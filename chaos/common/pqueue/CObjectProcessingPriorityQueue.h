@@ -124,10 +124,7 @@ namespace chaos {
                 //thread group
                 boost::thread_group t_group;
                 
-            protected:
-                
-                CObjectProcessingQueueListener<T> *eventListener;
-                
+            protected:                
                 /*
                  Thread method that work on buffer item
                  */
@@ -144,11 +141,6 @@ namespace chaos {
                         }
                         //Process the element
                         try {
-                            if(eventListener &&
-                               !(*eventListener).elementWillBeProcessed(tag, dataRow->element)){
-                                DELETE_OBJ_POINTER(dataRow);
-                                continue;
-                            }
                             elementPolicy.elementHasBeenDetached=false;
                             processBufferElement(dataRow->element, elementPolicy);
                             dataRow->disposeOnDestroy = !elementPolicy.elementHasBeenDetached;
@@ -157,9 +149,6 @@ namespace chaos {
                         } catch (...) {
                             COPPQUEUE_LAPP_ << "Unknown exception";
                         }
-                        
-                        //if weg got a listener notify it
-                        if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow->element))continue;
                         
                         DELETE_OBJ_POINTER(dataRow);
                     }
@@ -175,13 +164,6 @@ namespace chaos {
                 
                 CObjectProcessingPriorityQueue():
                 in_deinit(false),
-                eventListener(NULL),
-                uid(common::utility::UUIDUtil::generateUUIDLite()),
-                tag(0){}
-                
-                CObjectProcessingPriorityQueue(CObjectProcessingQueueListener<T> *_eventListener):
-                in_deinit(false),
-                eventListener(_eventListener),
                 uid(common::utility::UUIDUtil::generateUUIDLite()),
                 tag(0){}
                 
@@ -311,13 +293,6 @@ namespace chaos {
                     unsigned long queueSize() {
                         boost::unique_lock<boost::mutex> lock(qMutex);
                         return bufferQueue.size();
-                    }
-                    
-                    /*
-                     Assign the elaboration Listener
-                     */
-                    void setEndElaborationListener(CObjectProcessingQueueListener<T> *objPtr) {
-                        eventListener = objPtr;
                     }
                     
                     /*

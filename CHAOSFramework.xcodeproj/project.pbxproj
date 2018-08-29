@@ -507,7 +507,6 @@
 		326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */; };
 		326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */; };
 		326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */; };
-		326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */; };
 		326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41214B38BC00018A8D0 /* ChaosRpc.h */; };
 		326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41814B38BC00018A8D0 /* RpcServer.h */; };
 		326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */; };
@@ -1865,7 +1864,6 @@
 		326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectProcessingPriorityQueue.h; sourceTree = "<group>"; };
 		326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CObjectProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CObjectProcessingQueueListener.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB41214B38BC00018A8D0 /* ChaosRpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosRpc.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB41814B38BC00018A8D0 /* RpcServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RpcServer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CNodeNetworkAddress.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -4121,7 +4119,6 @@
 				326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */,
 				326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */,
 				326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */,
-				326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */,
 			);
 			path = pqueue;
 			sourceTree = "<group>";
@@ -5649,7 +5646,6 @@
 				32612ACA1CE210BC00F3B8F3 /* script_types.h in Headers */,
 				3243606D201F5A9800B03037 /* ChaosLoggingBackend.h in Headers */,
 				32A88BDE1CF8228A001DBAF5 /* lprefix.h in Headers */,
-				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,

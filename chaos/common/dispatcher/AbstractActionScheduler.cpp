@@ -28,10 +28,6 @@ dispatcher(NULL){}
 
 AbstractActionScheduler::~AbstractActionScheduler() {}
 
-
-/*
- 
- */
 void AbstractActionScheduler::setDispatcher(AbstractCommandDispatcher *newDispatcher) {
     dispatcher = newDispatcher;
 }

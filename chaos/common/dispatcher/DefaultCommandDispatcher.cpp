@@ -206,26 +206,23 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
     
 }
 
-CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * message_data) {
+CDWUniquePtr DefaultCommandDispatcher::executeCommandSync(CDWUniquePtr message_data) {
     //allocate new Result Pack
-    CDataWrapper *result = new CDataWrapper();
+    CreateNewDataWrapper(result,);
     try{
         
         if(!message_data) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "Action call with no action domain", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         string action_domain = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
         if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -3, "Action Call with no action name", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
         string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
@@ -233,14 +230,16 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(action_domain)) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+message_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
+            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result,
+                                            -4,
+                                            "Action Domain \""+action_domain+"\" not registered (data pack \""+message_data->getJSONString()+"\")",
+                                            __PRETTY_FUNCTION__)
             return result;
         }
         
         //submit the action(Thread Safe)
         das_map[action_domain]->synchronousCall(action_name,
-                                                message_data,
+                                                MOVE(message_data),
                                                 result);
         
         //tag message has submitted
@@ -259,12 +258,11 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
  the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
  will ever return an allocated object. The deallocaiton is demanded to caller
  */
-CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPack) throw(CException)  {
+CDWUniquePtr DefaultCommandDispatcher::dispatchCommand(CDWUniquePtr commandPack) throw(CException)  {
     //allocate new Result Pack
-    CDataWrapper *resultPack = new CDataWrapper();
+    CreateNewDataWrapper(resultPack,);
     bool sent = false;
     try{
-        
         if(!commandPack) return resultPack;
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE, "Action Call with no action domain", __PRETTY_FUNCTION__);

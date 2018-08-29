@@ -23,6 +23,5 @@
 
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
-#include <chaos/common/pqueue/CObjectProcessingQueueListener.h>
 
 #endif

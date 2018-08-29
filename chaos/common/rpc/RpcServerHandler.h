@@ -51,7 +51,7 @@ namespace chaos {
 		 @param action_pack the CDatawrapper instance pointer received by rpc server taht contain infromatio to execute an action
 		 @return the response of the called action
 		 */
-		virtual chaos::common::data::CDWUniquePtr* executeCommandSync(chaos::common::data::CDWUniquePtr action_pack) = 0;
+		virtual chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr action_pack) = 0;
     };
 }
 #endif
