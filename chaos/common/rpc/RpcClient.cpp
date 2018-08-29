@@ -41,8 +41,8 @@ server_handler(NULL){}
 /*!
  Forward to dispatcher the error during the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
-                                       CDataWrapper *submission_result) {
+void RpcClient::forwadSubmissionResult(NFIUniquePtr message_info,
+                                       CDWUniquePtr submission_result) {
     CHAOS_ASSERT(server_handler && submission_result)
     //! chec if it is a request
     if(message_info->sender_node_id.size() == 0) {
@@ -72,7 +72,7 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
  */
 void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
                                             uint32_t message_request_id,
-                                            CDataWrapper *submission_result) {
+                                            CDWUniquePtr *submission_result) {
     CHAOS_ASSERT(server_handler && submission_result)
     //! chec if it is a request
     if(channel_node_id.size() == 0) {
@@ -109,7 +109,7 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
 /*!
  Forward to dispatcher the error durngi the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
+void RpcClient::forwadSubmissionResultError(NFIUniquePtr message_info,
                                             int32_t error_code,
                                             const std::string& error_message,
                                             const std::string& error_domain) {

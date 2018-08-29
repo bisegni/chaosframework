@@ -72,19 +72,19 @@ namespace chaos {
         
         bool syncrhonous_call;
         
-        void forwadSubmissionResult(NetworkForwardInfo *message_info,
-                                    chaos::common::data::CDataWrapper *submission_result);
+        void forwadSubmissionResult(NFIUniquePtr message_info,
+                                    chaos::common::data::CDWUniquePtr submission_result);
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
          */
         void forwadSubmissionResultError(const std::string& channel_node_id,
                                          uint32_t message_request,
-                                         chaos::common::data::CDataWrapper *submission_result);
+                                         chaos::common::data::CDWUniquePtr submission_result);
         
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
          */
-        void forwadSubmissionResultError(NetworkForwardInfo *message_info,
+        void forwadSubmissionResultError(NFIUniquePtr message_info,
                                          int32_t error_code,
                                          const std::string& error_message,
                                          const std::string& error_domain);

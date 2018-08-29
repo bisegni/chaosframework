@@ -85,12 +85,13 @@ void RpcClientMetricCollector::setServerHandler(RpcServerHandler *_server_handle
     wrapped_client->setServerHandler(_server_handler);
 }
 
-bool RpcClientMetricCollector::submitMessage(chaos::common::network::NetworkForwardInfo *forward_info, bool on_this_thread) {
+bool RpcClientMetricCollector::submitMessage(chaos::common::network::NFIUniquePtr forward_info, bool on_this_thread) {
     CHAOS_ASSERT(wrapped_client)
     int size = 0;
     bool result = true;
     
-    result = wrapped_client->submitMessage(forward_info, on_this_thread);
+    result = wrapped_client->submitMessage(MOVE(forward_info),
+                                           on_this_thread);
     
     //inrement packec count
     pack_count++;

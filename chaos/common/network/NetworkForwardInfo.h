@@ -72,6 +72,9 @@ namespace chaos {
                     return message.get() != NULL;
                 }
 			} NetworkForwardInfo;
+            
+            typedef ChaosUniquePtr<NetworkForwardInfo> NFIUniquePtr;
+            typedef ChaosSharedptr<NetworkForwardInfo> NFISharedPtr;
 		}
 	}
 }
