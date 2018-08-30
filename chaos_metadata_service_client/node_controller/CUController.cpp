@@ -927,7 +927,7 @@ int CUController::fetchAllDataset() {
             return -1;
 
     }
-    ChaosReadLock lock(trackMutext);
+   // ChaosReadLock lock(trackMutext);
     chaos::common::data::VectorCDWShrdPtr results;
     if((err = ioLiveDataDriver->retriveMultipleData(channel_keys,
                                                     results)) == 0) {
@@ -948,7 +948,7 @@ int CUController::fetchAllDataset() {
 
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-    ChaosReadLock lock(trackMutext);
+  //  ChaosReadLock lock(trackMutext);
     size_t value_len = 0;
     char *value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
     if(value){
