@@ -34,6 +34,8 @@ boost::str(boost::format("%1%-%2%(%3%)") % e % m % d)
 using namespace chaos::common::data;
 using namespace chaos::common::message;
 //!private destructor
+#define CHECK_NULL_MESSAGE(message_pack) (message_pack.get()?MOVE(message_pack->clone()):CDWUniquePtr())
+
 MultiAddressMessageRequestFuture::MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
                                                                    const std::string& _action_domain,
                                                                    const std::string& _action_name,
@@ -48,7 +50,7 @@ message_pack(MOVE(_message_pack)){
     //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack->clone()),
+                                                                       CHECK_NULL_MESSAGE(message_pack) ,
                                                                        last_used_address);
 }
 
@@ -67,7 +69,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack->clone()),
+                                                                       CHECK_NULL_MESSAGE(message_pack),
                                                                        last_used_address);
     if(current_future.get()) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
@@ -76,10 +78,14 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //reuse all server
         //parent_mn_message_channel->checkForAliveService();
         //retrasmission of the datapack
-        current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
+        /**
+         * TODO re-enable endpoint
+        */
+        /*current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
                                                                            MOVE(message_pack->clone()),
                                                                            last_used_address);
+                                                                           */
     }
 }
 

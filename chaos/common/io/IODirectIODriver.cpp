@@ -129,12 +129,15 @@ void IODirectIODriver::deinit() throw(CException) {
         //remove me as handler
         device_server_channel->setHandler(NULL);
         init_parameter.endpoint_instance->releaseChannelInstance(device_server_channel);
+        device_server_channel=NULL;
     }
     
     if(init_parameter.endpoint_instance) {
         NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
+        init_parameter.endpoint_instance=NULL;
     }
     IODataDriver::deinit();
+    IODirectIODriver_DLDBG_<<"Deinitialized";
 }
 
 int IODirectIODriver::storeData(const std::string& key,
