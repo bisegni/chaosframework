@@ -618,7 +618,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDataWrapper* BatchCommandExecutor::getCommandState(CDataWrapper *params, bool& detachParam) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::getCommandState(CDWUniquePtr params) throw (CException) {
     BCELAPP_ << "Get command state from the executor with id: " << executorID;
     //boost::mutex::scoped_lock lock(mutextQueueManagment);
     ReadLock lock(command_state_rwmutex);
@@ -626,8 +626,7 @@ CDataWrapper* BatchCommandExecutor::getCommandState(CDataWrapper *params, bool& 
     ChaosSharedPtr<CommandState> cmd_state = getCommandState(command_id);
     if(!cmd_state.get()) throw CException(1, "The command requested is not present", "BatchCommandExecutor::getCommandSandboxStatistics");
     
-    CDataWrapper *result = new CDataWrapper();
-    
+    CreateNewDataWrapper(result,);
     //add statistic to result
     result->addInt32Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32, cmd_state->last_event);
     if(cmd_state->last_event == BatchCommandEventType::EVT_FAULT) {
@@ -642,7 +641,7 @@ CDataWrapper* BatchCommandExecutor::getCommandState(CDataWrapper *params, bool& 
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params) throw (CException) {
     if(!params || sandbox_map.size()==0)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
@@ -680,7 +679,7 @@ void BatchCommandExecutor::setCommandFeatures(features::Features& features) thro
 }
 
 //! Kill current command rpc action
-CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::killCurrentCommand(CDWUniquePtr params) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->killCurrentCommand();
@@ -688,7 +687,7 @@ CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, boo
 }
 
 //! Kill current command rpc action
-CDataWrapper* BatchCommandExecutor::clearCommandQueue(CDataWrapper *params, bool& detachParam) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::clearCommandQueue(CDWUniquePtr params) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->clearCommandQueue();
@@ -696,7 +695,7 @@ CDataWrapper* BatchCommandExecutor::clearCommandQueue(CDataWrapper *params, bool
 }
 
 //! Flush the command state history
-CDataWrapper* BatchCommandExecutor::flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::flushCommandStates(CDWUniquePtr params) throw (CException) {
     BCELAPP_ << "Flushing all endend command state history for executr id:" << executorID;
     // get upgradable access
     boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);

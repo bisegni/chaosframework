@@ -145,7 +145,7 @@ CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_d
         } else {
             //call and return
             try {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(rpc_action_message.get(), message_has_been_detached));
+                CDWUniquePtr action_result = action_desc_ptr->call(MOVE(rpc_action_message));
                 if(action_result.get() &&
                    rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                    rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -179,9 +179,7 @@ void SharedCommandDispatcher::processBufferElement(CDWUniquePtr action_descripti
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  remote_action_result;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_result;
-    
-    //keep track for the retain of the message of the aciton description
-    ElementManagingPolicy               action_elementPolicy = {false};
+
     bool    needAnswer = false;
     //bool    detachParam = false;
     int     answer_id;
@@ -252,11 +250,7 @@ void SharedCommandDispatcher::processBufferElement(CDWUniquePtr action_descripti
                 remote_action_result.reset(new CDataWrapper());
             }
             //synCronusly call the action in the current thread
-            action_elementPolicy.elementHasBeenDetached = false;
-            action_result.reset(action_description_ptr->call(action_message.get(), action_elementPolicy.elementHasBeenDetached));
-            if(action_elementPolicy.elementHasBeenDetached) {
-                action_message.release();
-            }
+            action_result = action_description_ptr->call(MOVE(action_message));
             //check if we need to submit a sub command
             if(sub_command) {
                 //we can submit sub command
@@ -316,12 +310,6 @@ void SharedCommandDispatcher::processBufferElement(CDWUniquePtr action_descripti
         //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
-    
-    //check if we need to detach the action message
-    if(action_elementPolicy.elementHasBeenDetached){
-        action_message.release();
-    }
-    
     //set hte action as no fired
     action_description_ptr->setFired(false);
 }

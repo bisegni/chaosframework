@@ -84,7 +84,7 @@ namespace chaos {
 					//! deinit the data broker
 					void deinit() throw(chaos::CException);
 					//! action for start the handshake
-					CDataWrapper *startHandshake(CDataWrapper *handshakeData, bool& detach);
+                    chaos::common::data::CDWUniquePtr startHandshake(chaos::common::data::CDWUniquePtr handshake_data);
 				};
 			}
 		}

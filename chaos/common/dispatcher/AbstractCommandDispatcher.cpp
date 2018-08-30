@@ -43,8 +43,7 @@ EchoRpcAction::EchoRpcAction() {
                                                               "Echo rpc action");
 }
 //!echo function return the data sent as parameter
-CDataWrapper *EchoRpcAction::echoAction(CDataWrapper *action_data, bool& detach) {
-    detach = true;
+CDWUniquePtr EchoRpcAction::echoAction(CDWUniquePtr action_data) {
     return action_data;
 }
 //-----------------------------------------------------------------
@@ -63,7 +62,7 @@ dispatcher(_dispatcher) {
                                 "Is the name of the rpc domain to ckeck");
 }
 //!echo function return the data sent as parameter
-CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool& detach) {
+CDWUniquePtr CheckDomainRpcAction::checkDomain(CDWUniquePtr action_data) {
     CHAOS_ASSERT(dispatcher);
     CHECK_CDW_THROW_AND_LOG(action_data, ACDLERR_, -1, "Input parameter as mandatory");
     CHECK_KEY_THROW_AND_LOG(action_data, "domain_name", ACDLERR_, -2, "domain_name key, representing the domain to ckeck, is mandatory!");
@@ -77,7 +76,7 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
     //create the result data pack
     result->addBoolValue("alive", alive);
     result->addInt32Value("queued_actions", queued_action_in_domain);
-    return result.release();
+    return result;
 }
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(const string& alias):

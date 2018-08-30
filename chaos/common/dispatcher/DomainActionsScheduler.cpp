@@ -70,7 +70,6 @@ uint32_t DomainActionsScheduler::getQueuedActionSize() {
 void DomainActionsScheduler::synchronousCall(const std::string& action,
                                              CDWUniquePtr action_message,
                                              CDWUniquePtr& result) {
-    bool message_has_been_detached = false;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     if(!domainActionsContainer->hasActionName(action)) {
         LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
@@ -97,11 +96,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
         
         //call and return
         try {
-            message_has_been_detached = false;
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
-            if(message_has_been_detached) {
-                message_data.release();
-            }
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result = action_desc_ptr->call(MOVE(message_data));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -117,12 +112,8 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
             result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -3);
         }
     }
-    if(message_has_been_detached) {
-        message_data.release();
-    }
     //set hte action as no fired
     action_desc_ptr->setFired(false);
-    
     //return the result
     return;
 }
@@ -202,12 +193,8 @@ void DomainActionsScheduler::processBufferElement(CDWUniquePtr rpc_call_action) 
                 remote_action_result.reset(new CDataWrapper());
             }
             //synCronusly call the action in the current thread
-            bool detach = false;
-            action_result.reset(actionDescriptionPtr->call(action_message.get(), detach));
-            if(detach) {
-                //TODO update rpc ation to use unique_ptr
-                action_message.release();
-            }
+            action_result = actionDescriptionPtr->call(MOVE(action_message));
+
             //check if we need to submit a sub command
             if( sub_command ) {
                 //we can submit sub command

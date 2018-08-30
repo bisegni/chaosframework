@@ -30,9 +30,6 @@ shared_execution(shared_execution){}
 
 AbstractActionDescriptor::~AbstractActionDescriptor() {}
 
-/*
- set the string value for the determinated type
- */
 void AbstractActionDescriptor::setTypeValue(ActionStringType sType, const string & sValue) {
     switch (sType) {
         case ActionDomain:
@@ -81,10 +78,6 @@ bool AbstractActionDescriptor::setEnabled(bool _enabled){
     return enabled =_enabled;
 }
 
-/*
- get the string value for the determinated type, a reference
- has been return so keep in mind that string live within object life
- */
 const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
     if (sType == ActionDomain) {
         return actionDomain;
@@ -94,16 +87,10 @@ const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
 }
 
 #pragma mark Param Method
-/*
- Return the array list of the param defined by this action
- */
 vector< ChaosSharedPtr<ActionParamDescription> >& AbstractActionDescriptor::getParamDescriptions() {
     return paramDescriptionVec;
 }
 
-/*
- Add a new param
- */
 void AbstractActionDescriptor::addParam(const std::string& param_name,
                                         DataType::DataType type,
                                         const std::string& description){

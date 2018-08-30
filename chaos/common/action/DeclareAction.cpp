@@ -26,8 +26,9 @@ using namespace chaos;
 using namespace boost;
 namespace chaos_data = chaos::common::data;
 
+DeclareAction::DeclareAction() {}
+
 DeclareAction::~DeclareAction() {
-        //dispose all descriptors
     actionDescriptionVector.clear();
 }
 

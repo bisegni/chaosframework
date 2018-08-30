@@ -77,8 +77,7 @@ namespace chaos {
                  Called when a response to a request is received, it will manage the search of
                  the apprioriate promis and answer to it
                  */
-                virtual chaos::common::data::CDataWrapper *response(chaos::common::data::CDataWrapper *reposnse_data,
-                                                                    bool &detach);
+                virtual chaos::common::data::CDWUniquePtr response(chaos::common::data::CDWUniquePtr reposnse_data);
             public:
                 MessageRequestDomain();
                 ~MessageRequestDomain();
