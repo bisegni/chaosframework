@@ -122,6 +122,6 @@ void AsioImplEventClient::processBufferElement(EventDescriptorSPtr event) throw(
 }
 
 bool AsioImplEventClient::submitEvent(EventDescriptorUPtr event)  throw(CException) {
-    return CObjectProcessingPriorityQueue<EventDescriptor>::push(EventDescriptorSPtr(event.release()),
-                                                                 event->getEventPriority());
+    uint8_t priority = event->getEventPriority();
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(EventDescriptorSPtr(event.release()), priority);
 }
