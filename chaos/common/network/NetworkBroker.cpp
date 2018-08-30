@@ -474,14 +474,13 @@ bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
     CHAOS_ASSERT(event_client && !GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     bool result = true;
     try{
-        event_client->submitEvent(event);
+        event_client->submitEvent(MOVE(EventDescriptorUPtr(event)));
     } catch(CException& ex) {
         result = false;
         DECODE_CHAOS_EXCEPTION(ex);
     }
     return result;
 }
-
 
 #pragma mark Action Registration
 /*
@@ -508,11 +507,11 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
 bool NetworkBroker::submitMessage(const string& host,
                                   CDWUniquePtr message) {
     CHAOS_ASSERT(rpc_client)
-    NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
+    CreateNewUniquePtr(NetworkForwardInfo, nfi, true);
     nfi->destinationAddr = host;
     nfi->setMessage(MOVE(message));
     //add answer id to datawrapper
-    return rpc_client->submitMessage(nfi, false);
+    return rpc_client->submitMessage(MOVE(nfi), false);
 }
 
 //!send interparocess message
@@ -520,13 +519,13 @@ bool NetworkBroker::submitMessage(const string& host,
  forward the message directly to the dispatcher for broadcasting it
  to the registered rpc domain
  */
-chaos::common::data::CDataWrapper *NetworkBroker::submitInterProcessMessage(chaos::common::data::CDataWrapper *message,
+chaos::common::data::CDWUniquePtr NetworkBroker::submitInterProcessMessage(chaos::common::data::CDWUniquePtr message,
                                                                             bool onThisThread) {
     CHAOS_ASSERT(rpc_dispatcher)
     if(onThisThread) {
-        return rpc_dispatcher->executeCommandSync(message);
+        return rpc_dispatcher->executeCommandSync(MOVE(message));
     }else{
-        return rpc_dispatcher->dispatchCommand(message);
+        return rpc_dispatcher->dispatchCommand(MOVE(message));
     }
 }
 
@@ -539,12 +538,12 @@ bool NetworkBroker::submiteRequest(const string& host,
                                    uint32_t sender_request_id) {
     CHAOS_ASSERT(rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
-    NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
+    CreateNewUniquePtr(NetworkForwardInfo, nfi, true);
     nfi->destinationAddr = host;
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
     nfi->setMessage(MOVE(request));
-    return rpc_client->submitMessage(nfi, false);
+    return rpc_client->submitMessage(MOVE(nfi), false);
 }
 
 /*

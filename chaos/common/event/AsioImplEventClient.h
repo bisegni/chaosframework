@@ -43,7 +43,7 @@ namespace chaos {
             class AsioEventForwarder;
             
             DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient),
-            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor>{
+            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor> {
             protected:
                 /*
                  init the event adapter
@@ -64,13 +64,12 @@ namespace chaos {
                 void deinit() throw(CException);
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptor *priorityElement,
-                                          ElementManagingPolicy& policy) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement) throw(CException);
                 
             public:
                 AsioImplEventClient(string alias);
                 ~AsioImplEventClient();
-                bool submitEvent(EventDescriptor *event)  throw(CException);
+                bool submitEvent(EventDescriptorUPtr event)  throw(CException);
             private:
                 boost::asio::ip::udp::socket *socket_alert;
                 boost::asio::ip::udp::socket *socket_instrument;

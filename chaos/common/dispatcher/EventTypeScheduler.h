@@ -54,7 +54,7 @@ namespace chaos {
             //!pointer to the domain containing action
         map<string, EventAction*> eventActionList;
     protected:
-        void processBufferElement(common::event::EventDescriptor*, ElementManagingPolicy&) throw(CException);
+        void processBufferElement(common::event::EventDescriptorSPtr event) throw(CException);
         
         bool push(common::event::EventDescriptor *event) throw(CException);
     public:

@@ -48,13 +48,12 @@ void AsyncPoolRunner::deinit() throw(chaos::CException) {
     PriorityQueueRunnable::deinit(true);
 }
 
-void AsyncPoolRunner::submit(AsyncRunnable *runnable) {
-    PriorityQueueRunnable::push(runnable);
+void AsyncPoolRunner::submit(ChaosUniquePtr<AsyncRunnable> runnable) {
+    PriorityQueueRunnable::push(ChaosSharedPtr<AsyncRunnable>(runnable.release()));
 }
 
 #pragma Protected Methods
-void AsyncPoolRunner::processBufferElement(AsyncRunnable *next_job,
-                                           ElementManagingPolicy& element_policy) throw(CException) {
+void AsyncPoolRunner::processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job) throw(CException) {
     try {
        next_job->run();
     } catch (CException& ex) {

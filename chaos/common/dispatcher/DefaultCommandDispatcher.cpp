@@ -258,46 +258,41 @@ CDWUniquePtr DefaultCommandDispatcher::executeCommandSync(CDWUniquePtr message_d
  the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
  will ever return an allocated object. The deallocaiton is demanded to caller
  */
-CDWUniquePtr DefaultCommandDispatcher::dispatchCommand(CDWUniquePtr commandPack) throw(CException)  {
+CDWUniquePtr DefaultCommandDispatcher::dispatchCommand(CDWUniquePtr command_pack) {
     //allocate new Result Pack
-    CreateNewDataWrapper(resultPack,);
+    CreateNewDataWrapper(result_pack,);
     bool sent = false;
     try{
-        if(!commandPack) return resultPack;
-        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
+        if(!command_pack) return result_pack;
+        if(!command_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE, "Action Call with no action domain", __PRETTY_FUNCTION__);
         
-        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
+        if(!command_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
             throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action Call with no action name", __PRETTY_FUNCTION__);
-        string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+        string actionDomain = command_pack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(das_map.count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
+        if(das_map.count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+command_pack->getJSONString()+"\")", __PRETTY_FUNCTION__);
         
-        //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
+        //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START\n"<<command_pack->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
-        if(!(sent = das_map[actionDomain]->push(commandPack))) {
+        if(!(sent = das_map[actionDomain]->push(MOVE(command_pack)))) {
             throw CException(ErrorRpcCoce::EC_RPC_NO_MORE_SPACE_ON_DOMAIN_QUEUE, "No more space in queue", __PRETTY_FUNCTION__);
         }
         
         //tag message has submitted
-        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
+        result_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
     }catch(CException& ex){
-        if(!sent && commandPack) delete(commandPack);
         LDEF_CMD_DISPTC_ERR_<<ex;
-        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(resultPack, ex)
+        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result_pack, ex)
     } catch(...){
-        if(!sent && commandPack) delete(commandPack);
         //tag message has not submitted
-        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING);
+        result_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING);
         //set error to general exception error
-        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
+        result_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
-    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
-    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
-    //DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
-    return resultPack;
+    return result_pack;
 }
 
 uint32_t DefaultCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {

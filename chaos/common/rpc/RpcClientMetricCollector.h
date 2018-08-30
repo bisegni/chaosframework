@@ -48,7 +48,8 @@ namespace chaos {
                 /*!
                  reimplementation of forwarder abstract method to collect the metric on sent message
                  */
-                bool submitMessage(chaos::common::network::NetworkForwardInfo *forward_info, bool on_this_thread=false);
+                bool submitMessage(chaos::common::network::NFIUniquePtr forward_info,
+                                   bool on_this_thread=false);
                 
                 /*
                  init the rpc adapter

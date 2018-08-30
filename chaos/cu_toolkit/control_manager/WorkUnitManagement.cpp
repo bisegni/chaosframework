@@ -227,7 +227,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> rpc_message(new CDataWrapper);
+                CreateNewDataWrapper(rpc_message,);
                 all_cmd_key.clear();
                 (*it)->getAllKey(all_cmd_key);
                 
@@ -243,7 +243,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
                 
                 //submit startup command
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
+                CDWUniquePtr submittion_result = NetworkBroker::getInstance()->submitInterProcessMessage(MOVE(rpc_message));
                 
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
                     //error submitting startup command

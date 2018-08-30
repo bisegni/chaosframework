@@ -41,7 +41,7 @@ namespace chaos {
                  @return a true value if the submitions to output queue has been done
                  */
                 //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-                virtual bool submitEvent(EventDescriptor *event)  throw(CException) = 0;
+                virtual bool submitEvent(EventDescriptorUPtr event)  throw(CException) = 0;
             };
         }
     }

@@ -52,10 +52,10 @@ typedef ChaosSharedPtr<FutureInfo> FutureInfoShrdPtr;
 
 class CDWComsumerPromise:
 public chaos::CObjectProcessingQueue<PromiseInfo> {
-    void processBufferElement(PromiseInfo_t*, chaos::ElementManagingPolicy&) throw(chaos::CException);
+    void processBufferElement(ChaosUniquePtr<PromiseInfo_t> promises_info) throw(chaos::CException);
 };
 
 class CDWComsumerFuture:
 public chaos::CObjectProcessingQueue<FutureInfo> {
-    void processBufferElement(FutureInfo_t*, chaos::ElementManagingPolicy&) throw(chaos::CException);
+    void processBufferElement(ChaosUniquePtr<FutureInfo_t> future_info) throw(chaos::CException);
 };

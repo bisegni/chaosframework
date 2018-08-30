@@ -55,8 +55,7 @@ namespace chaos {
             protected:
                 unsigned int thread_number;
                 //!inherited by CObjectProcessingPriorityQueue
-                virtual void processBufferElement(AsyncRunnable *next_job,
-                                                  ElementManagingPolicy& element_policy) throw(chaos::CException);
+                virtual void processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job) throw(chaos::CException);
             public:
                 AsyncPoolRunner(unsigned int _thread_number);
                 ~AsyncPoolRunner();
@@ -69,7 +68,7 @@ namespace chaos {
                  the ownership on runnable is kept by the runner that
                  will provi to delete the object
                  */
-                void submit(AsyncRunnable *runnable);
+                void submit(ChaosUniquePtr<AsyncRunnable> runnable);
             };
         }
     }

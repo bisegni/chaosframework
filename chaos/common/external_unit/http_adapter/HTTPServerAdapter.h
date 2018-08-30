@@ -84,7 +84,7 @@ namespace chaos{
                                                    const EUCMessageOpcode opcode);
                     void executeOpcodeOnConnection(OpcodeShrdPtr op, mg_connection *nc);
                 protected:
-                    void processBufferElement(ServerWorkRequest *request, ElementManagingPolicy& policy) throw(CException);
+                    void processBufferElement(ChaosUniquePtr<ServerWorkRequest> request) throw(CException);
                     int sendDataToConnection(const std::string& connection_identifier,
                                              chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);

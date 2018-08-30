@@ -290,7 +290,7 @@ namespace chaos {
                  forward the message directly to the dispatcher for broadcasting it 
                  to the registered rpc domain
                  */
-                chaos::common::data::CDataWrapper *submitInterProcessMessage(chaos::common::data::CDataWrapper *message,
+                chaos::common::data::CDWUniquePtr submitInterProcessMessage(chaos::common::data::CDWUniquePtr message,
                                                                              bool onThisThread=false);
                 
 				//!message submition

@@ -33,24 +33,24 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-void CDWComsumerPromise::processBufferElement(PromiseInfo_t *pi, chaos::ElementManagingPolicy& policy) throw(chaos::CException) {
+void CDWComsumerPromise::processBufferElement(ChaosUniquePtr<PromiseInfo_t> promises_info) throw(chaos::CException) {
     promises_counter++;
     CDWShrdPtr result(new CDataWrapper());
-    result->addInt32Value("pid", pi->promise_id);
-    pi->future_helper->setDataForPromiseID(pi->promise_id, result);
+    result->addInt32Value("pid", promises_info->promise_id);
+    promises_info->future_helper->setDataForPromiseID(promises_info->promise_id, result);
 }
 
-void CDWComsumerFuture::processBufferElement(FutureInfo_t *fi, chaos::ElementManagingPolicy& policy) throw(chaos::CException) {
+void CDWComsumerFuture::processBufferElement(ChaosUniquePtr<FutureInfo_t> future_info) throw(chaos::CException) {
     ChaosFutureStatus fret = ChaosFutureStatus::deferred;
     CDWShrdPtr result;
     do{
-        ASSERT_NO_THROW(fret = fi->future.wait_for(ChaosCronoMilliseconds(1000)));
+        ASSERT_NO_THROW(fret = future_info->future.wait_for(ChaosCronoMilliseconds(1000)));
         if(fret == ChaosFutureStatus::ready) {
             try{
-                ASSERT_NO_THROW(result = fi->future.get());
+                ASSERT_NO_THROW(result = future_info->future.get());
                 ASSERT_TRUE(result.get());
                 ASSERT_TRUE(result->hasKey("pid"));
-                ASSERT_TRUE(result->getInt32Value("pid") == fi->promise_id);
+                ASSERT_TRUE(result->getInt32Value("pid") == future_info->promise_id);
                 future_counter++;
             }catch(...){future_excpt_counter++;}
         } else if(fret == ChaosFutureStatus::timeout) {
@@ -80,10 +80,10 @@ TEST(FutureHelperTests, Base) {
         helper_test->addNewPromise(new_id, new_shared_future);
         ChaosUniquePtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
         ChaosUniquePtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
-        while(fq.push(fi.get()) == false);
+        while(fq.push(MOVE(fi)) == false);
         fi.release();
         //usleep(100);
-        while(pq.push(pi.get()) == false);
+        while(pq.push(MOVE(pi)) == false);
         pi.release();
     }
     ASSERT_NO_THROW(pq.deinit());

@@ -50,13 +50,8 @@ socket_custom(NULL) {
     threadNumber = 0;
 }
 
-AsioImplEventClient::~AsioImplEventClient() {
-    
-}
+AsioImplEventClient::~AsioImplEventClient() {}
 
-/*
- init the event adapter
- */
 void AsioImplEventClient::init(void* initParameter) throw(CException) {
     threadNumber = 1;
     //alertForwrder
@@ -85,15 +80,7 @@ void AsioImplEventClient::init(void* initParameter) throw(CException) {
     CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
 }
 
-/*
- start the event adapter
- */
 void AsioImplEventClient::start() throw(CException) {
-    
-    
-    //register forall event
-    //create the services
-    
     for (int idx = 0; idx < threadNumber; idx++) {
         //create the handler
         // ChaosSharedPtr<thread> thread();
@@ -101,14 +88,8 @@ void AsioImplEventClient::start() throw(CException) {
     }
 }
 
-//-----------------------
-void AsioImplEventClient::stop() throw(CException) {
-    
-}
+void AsioImplEventClient::stop() throw(CException) {}
 
-/*
- deinit the event adapter
- */
 void AsioImplEventClient::deinit() throw(CException) {
     DELETE_EVENT_SOCKET(socket_alert);
     DELETE_EVENT_SOCKET(socket_instrument);
@@ -120,12 +101,10 @@ void AsioImplEventClient::deinit() throw(CException) {
     
     io_service.stop();
     
-    // Wait for all threads in the pool to exit.
     service_thread_group.join_all();
 }
 
-void AsioImplEventClient::processBufferElement(EventDescriptor *event,
-                                               ElementManagingPolicy& policy) throw(CException) {
+void AsioImplEventClient::processBufferElement(EventDescriptorSPtr event) throw(CException) {
         switch (event->getEventType()) {
             case event::EventTypeAlert:
                 SEND_EVENT_DATA(socket_alert, event);
@@ -140,11 +119,9 @@ void AsioImplEventClient::processBufferElement(EventDescriptor *event,
                 SEND_EVENT_DATA(socket_custom, event);
                 break;
         }
-    
 }
 
-//! abstract queue action method implementation
-bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException) {
-    return CObjectProcessingPriorityQueue<EventDescriptor>::push(event,
+bool AsioImplEventClient::submitEvent(EventDescriptorUPtr event)  throw(CException) {
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(EventDescriptorSPtr(event.release()),
                                                                  event->getEventPriority());
 }

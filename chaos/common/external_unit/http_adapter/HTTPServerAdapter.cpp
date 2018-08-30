@@ -277,8 +277,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
     }
 }
 
-void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
-                                             ElementManagingPolicy& policy) throw(CException) {
+void HTTPServerAdapter::processBufferElement(ChaosUniquePtr<ServerWorkRequest> request) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeWSFrame: {
             int err = 0;
@@ -289,9 +288,7 @@ void HTTPServerAdapter::processBufferElement(ServerWorkRequest *request,
             }
             if((err = sendDataToEndpoint(*conn_it->second,
                                          MOVE(request->buffer)))) {
-                //add error message to the queue
-                //                const std::string error = CHAOS_FORMAT("{error:%1%,message:\"%2%\"}", %err%map_connection()[reinterpret_cast<uintptr_t>(request->nc)]->getEndpointIdentifier());
-                //                mg_send_websocket_frame(request->nc, WEBSOCKET_OP_TEXT, error.c_str(), error.size());
+                ERR << CHAOS_FORMAT("Error sending data to %1%", %request->connection_uuid);
             }
             break;
         }
@@ -320,10 +317,10 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_WEBSOCKET_FRAME: {
             websocket_message *message = static_cast<websocket_message*>(ev_data);
-            ServerWorkRequest *req = new ServerWorkRequest(connection_metadata->conn_uuid,
+            ChaosUniquePtr<ServerWorkRequest> req(new ServerWorkRequest(connection_metadata->conn_uuid,
                                                            (const char *)message->data,
-                                                           (uint32_t)message->size);
-            connection_metadata->class_instance->push(req);
+                                                           (uint32_t)message->size));
+            connection_metadata->class_instance->push(MOVE(req));
             break;
         }
             

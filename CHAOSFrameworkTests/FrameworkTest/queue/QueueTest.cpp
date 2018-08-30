@@ -32,8 +32,7 @@ void QueueTest::SetUp() {
     job_to_do = 0;
     job_done = 0;
 }
-void QueueTest::processBufferElement(TestJobPriorityStruct *job,
-                                     chaos::ElementManagingPolicy& p) throw(chaos::CException) {
+void QueueTest::processBufferElement(ChaosSharedPtr<TestJobPriorityStruct> job) throw(chaos::CException) {
     assert(job);
     job_done++;
     if((--job->check_concurence) != 0) {
@@ -43,7 +42,7 @@ void QueueTest::processBufferElement(TestJobPriorityStruct *job,
 
 void QueueTest::producer() {
     for(int idx = 0;idx < number_of_production; idx++) {
-        TestJobPriorityStruct *job = new TestJobPriorityStruct();
+        ChaosSharedPtr<TestJobPriorityStruct> job = ChaosMakeSharedPtr<TestJobPriorityStruct>();
         job->check_concurence = 1;
         job_to_do++;
         while(push(job, 0) == false){

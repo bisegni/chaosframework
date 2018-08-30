@@ -98,7 +98,7 @@ void RpcServerMetricCollector::setCommandDispatcher(RpcServerHandler *_wrapperd_
 }
 
 // method called when the rpc server receive a new data
-CDWUniquePtr RpcServerMetricCollector::dispatchCommand(CDWUniquePtr action_pack)  throw(CException) {
+CDWUniquePtr RpcServerMetricCollector::dispatchCommand(CDWUniquePtr action_pack) {
     CHAOS_ASSERT(wrapperd_server_handler)
     int size = 0;
     CDWUniquePtr result;

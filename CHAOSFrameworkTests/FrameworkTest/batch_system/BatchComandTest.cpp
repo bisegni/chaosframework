@@ -36,7 +36,6 @@ void BatchCommandTest::whaitOrAssertOnFault(TestCommandExecutor &executor, const
            executor.getStacked() != 0 ||
            (executor.completed_count+executor.fault_count+executor.killed_count) != n_element);
 }
-
 TEST_F(BatchCommandTest, BatchCommandNormalSubmition) {
     uint64_t command_id = 0;
     std::srand((unsigned int)std::time(0));
@@ -59,7 +58,6 @@ TEST_F(BatchCommandTest, BatchCommandNormalSubmition) {
     ASSERT_NO_THROW(StartableService::stopImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::deinitImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
 }
-
 TEST_F(BatchCommandTest, BatchCommandStackSubmition) {
     uint64_t command_id = 0;
     std::srand((unsigned int)std::time(0));

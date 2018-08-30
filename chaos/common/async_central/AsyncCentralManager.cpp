@@ -104,6 +104,6 @@ int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
     return err;
 }
 
-void AsyncCentralManager::submitAsyncJob(AsyncRunnable *runnable) {
-    async_pool_runner->submit(runnable);
+void AsyncCentralManager::submitAsyncJob(ChaosUniquePtr<AsyncRunnable> runnable) {
+    async_pool_runner->submit(MOVE(runnable));
 }

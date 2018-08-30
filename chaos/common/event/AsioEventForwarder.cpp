@@ -34,9 +34,7 @@ AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast
     sent = true;
 }
 
-AsioEventForwarder::~AsioEventForwarder() {
-    
-}
+AsioEventForwarder::~AsioEventForwarder() {}
 
 /*
  init the event adapter
@@ -56,10 +54,10 @@ void AsioEventForwarder::deinit() throw(CException) {
     CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
 }
 
-bool AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
-    return CObjectProcessingPriorityQueue<EventDescriptor>::push(event, event->getEventPriority());
+bool AsioEventForwarder::submitEventAsync(EventDescriptorUPtr event) {
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(MOVE(event), event->getEventPriority());
 }
 
-void AsioEventForwarder::processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException) {
+void AsioEventForwarder::processBufferElement(EventDescriptorUPtr priorityElement) throw(CException) {
     _socket.send(boost::asio::buffer(priorityElement->getEventData(), priorityElement->getEventDataLength()));
 }

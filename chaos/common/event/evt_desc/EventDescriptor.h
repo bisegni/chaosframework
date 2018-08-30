@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include <cstddef>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/exception/exception.h>
 namespace chaos {
     namespace common{
@@ -255,8 +256,10 @@ namespace chaos {
                 void getEventValue(void *valuePtr, uint16_t *size) const;
                 
                 const char * const getEventValue() const;
-                
             };
+            
+            typedef ChaosUniquePtr<EventDescriptor> EventDescriptorUPtr;
+            typedef ChaosSharedPtr<EventDescriptor> EventDescriptorSPtr;
         }
     }
 }

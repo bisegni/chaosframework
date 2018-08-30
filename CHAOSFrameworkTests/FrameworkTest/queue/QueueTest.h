@@ -39,8 +39,7 @@ protected:
     boost::atomic<int> error_in_job;
     boost::atomic<int> priority_counter;
     boost::thread_group tg;
-    void processBufferElement(TestJobPriorityStruct *job,
-                              chaos::ElementManagingPolicy& p) throw(chaos::CException);
+    void processBufferElement(ChaosSharedPtr<TestJobPriorityStruct> job) throw(chaos::CException);
 public:
     QueueTest();
     virtual ~QueueTest();

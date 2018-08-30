@@ -58,7 +58,7 @@ namespace chaos {
     protected:
         bool in_deinit;
         mutable boost::mutex qMutex;
-        std::queue< QueueElementUPtr > bufferQueue;
+        std::queue< QueueElementUPtr > buffer_queue;
         boost::condition_variable liveThreadConditionLock;
         boost::condition_variable emptyQueueConditionLock;
         
@@ -70,7 +70,11 @@ namespace chaos {
             while(!in_deinit) {
                 //Process the element
                 try {
-                    processBufferElement(waitAndPop());
+                    QueueElementUPtr element = MOVE(waitAndPop());
+                    if(!element.get()) {
+                        continue;
+                    }
+                    processBufferElement(MOVE(element));
                 } catch (CException& ex) {
                     DECODE_CHAOS_EXCEPTION(ex)
                 } catch (...) {
@@ -117,7 +121,7 @@ namespace chaos {
                 
                 if(waithForEmptyQueue){
                     COPQUEUE_LDBG_ << " wait until queue is empty";
-                    while(!bufferQueue.empty()){
+                    while(!buffer_queue.empty()){
                         emptyQueueConditionLock.timed_wait(lock,
                                                            boost::posix_time::milliseconds(500));
                         
@@ -143,8 +147,8 @@ namespace chaos {
             virtual bool push(QueueElementUPtr data) throw(CException) {
                 boost::unique_lock<boost::mutex> lock(qMutex);
                 if(in_deinit ||
-                   bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
-                bufferQueue.push(data);
+                   buffer_queue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
+                buffer_queue.push(MOVE(data));
                 liveThreadConditionLock.notify_one();
                 return true;
             }
@@ -157,20 +161,20 @@ namespace chaos {
                 //output result poitner
                 QueueElementUPtr element;
                 //DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
-                while(bufferQueue.empty() && !in_deinit) {
+                while(buffer_queue.empty() && !in_deinit) {
                     liveThreadConditionLock.wait(lock);
                 }
                 //DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
                 //get the oldest data ad copy the ahsred_ptr
-                if(bufferQueue.empty()) {
+                if(buffer_queue.empty()) {
                     DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
-                    return NULL;
+                    return QueueElementUPtr();
                 }
                 //get the last pointer from the queue
-                element = MOVE(bufferQueue.front());
+                element = MOVE(buffer_queue.front());
                 
                 //remove the oldest data
-                bufferQueue.pop();
+                buffer_queue.pop();
                 return element;
             }
             
@@ -179,7 +183,7 @@ namespace chaos {
              */
             bool isEmpty() const {
                 boost::unique_lock<boost::mutex> lock(qMutex);
-                return bufferQueue.empty();
+                return buffer_queue.empty();
             }
             
             /*
@@ -187,11 +191,11 @@ namespace chaos {
              */
             void waitForEmpty() {
                 boost::unique_lock<boost::mutex> lock(qMutex);
-                while(!bufferQueue.empty()){
+                while(!buffer_queue.empty()){
                     emptyQueueConditionLock.timed_wait(lock,
                                                        boost::posix_time::milliseconds(500));
                 }
-                return bufferQueue.empty();
+                return buffer_queue.empty();
             }
             
             
@@ -201,9 +205,9 @@ namespace chaos {
             void clear() {
                 CHAOS_BOOST_LOCK_ERR(boost::unique_lock<boost::mutex> lock(qMutex);, COPQUEUE_LERR_ << "Error on lock";)
                 //remove all element
-                while (!bufferQueue.empty()) {
+                while (!buffer_queue.empty()) {
                     //QueueElementUPtr tmp = MOVE(bufferQueue.front());
-                    bufferQueue.pop();
+                    buffer_queue.pop();
                 }
             }
             
@@ -212,7 +216,7 @@ namespace chaos {
              */
             unsigned long queueSize() {
                 boost::unique_lock<boost::mutex> lock(qMutex);
-                return bufferQueue.size();
+                return buffer_queue.size();
             }
             
             /*

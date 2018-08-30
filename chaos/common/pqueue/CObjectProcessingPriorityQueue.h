@@ -48,34 +48,24 @@ namespace chaos {
             class PriorityQueuedElement {
                 template<typename U>
                 friend class CObjectProcessingPriorityQueue;
-                
-                
-                bool disposeOnDestroy;
             public:
+                typedef typename ChaosSharedPtr<T> PriorityQueuedElementType;
                 uint64_t sequence_id;
                 int priority;
-                T *element;
-                PriorityQueuedElement(T *_element,
-                                      int _priority = 50,
-                                      bool _disposeOnDestroy = true):
-                disposeOnDestroy(_disposeOnDestroy),
+                PriorityQueuedElementType element;
+                PriorityQueuedElement(PriorityQueuedElementType _element,
+                                      int _priority = 50):
                 sequence_id(chaos::common::utility::TimingUtil::getTimeStampInMicroseconds()),
                 priority(_priority),
-                element(_element) {}
+                element(MOVE(_element)) {}
                 PriorityQueuedElement(T *_element,
                                       uint64_t _sequence_id,
                                       int _priority = 50,
                                       bool _disposeOnDestroy = true):
-                disposeOnDestroy(_disposeOnDestroy),
                 sequence_id(_sequence_id),
                 priority(_priority),
                 element(_element) {}
-                ~PriorityQueuedElement(){
-                    if (disposeOnDestroy && element) {
-                        delete(element);
-                        element = NULL;
-                    }
-                }
+                ~PriorityQueuedElement(){}
                 
                 /*
                  Operator for heap
@@ -89,12 +79,12 @@ namespace chaos {
                 }
             };
             
-#define PRIORITY_ELEMENT(e) chaos::common::pqueue::PriorityQueuedElement< e >
+#define PRIORITY_ELEMENT(e) ChaosSharedPtr< chaos::common::pqueue::PriorityQueuedElement< e > >
             
             // pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
             template<typename T>
             struct PriorityElementCompare {
-                bool operator() (const PRIORITY_ELEMENT(T)* lhs, const PRIORITY_ELEMENT(T)* rhs) const {
+                bool operator() (const PRIORITY_ELEMENT(T)& lhs, const PRIORITY_ELEMENT(T)& rhs) const {
                     if(lhs->priority < rhs->priority) {
                         return true;
                     } else if(lhs->priority == rhs->priority) {
@@ -110,8 +100,8 @@ namespace chaos {
              */
             template<typename T>
             class CObjectProcessingPriorityQueue {
-                typedef std::priority_queue< PRIORITY_ELEMENT(T)*,
-                std::vector< PRIORITY_ELEMENT(T)* >,
+                typedef std::priority_queue< PRIORITY_ELEMENT(T),
+                std::vector< PRIORITY_ELEMENT(T) >,
                 PriorityElementCompare<T> > ChaosPriorityQueue;
                 
                 std::string uid;
@@ -131,41 +121,33 @@ namespace chaos {
                 void executeOnThread() {
                     while(!in_deinit) {
                         //get the oldest element
-                        PRIORITY_ELEMENT(T)* dataRow = NULL;
-                        ElementManagingPolicy elementPolicy;
+                        PRIORITY_ELEMENT(T) dataRow;
                         //retrive the oldest element
                         dataRow = waitAndPop();
-                        if(!dataRow) {
+                        if(!dataRow.get()) {
                             DEBUG_CODE(COPPQUEUE_LDBG_<<" waitAndPop() return NULL object so we return";)
                             continue;
                         }
                         //Process the element
                         try {
-                            elementPolicy.elementHasBeenDetached=false;
-                            processBufferElement(dataRow->element, elementPolicy);
-                            dataRow->disposeOnDestroy = !elementPolicy.elementHasBeenDetached;
+                            processBufferElement(MOVE(dataRow->element));
                         } catch (CException& ex) {
                             DECODE_CHAOS_EXCEPTION(ex)
                         } catch (...) {
                             COPPQUEUE_LAPP_ << "Unknown exception";
                         }
-                        
-                        DELETE_OBJ_POINTER(dataRow);
                     }
                     DEBUG_CODE(COPPQUEUE_LDBG_<< " executeOnThread ended";)
                 }
                 /*
                  Process the oldest element in buffer
                  */
-                virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
+                virtual void processBufferElement(typename PriorityQueuedElement<T>::PriorityQueuedElementType) throw(CException) = 0;
                 
             public:
-                int tag;
-                
                 CObjectProcessingPriorityQueue():
                 in_deinit(false),
-                uid(common::utility::UUIDUtil::generateUUIDLite()),
-                tag(0){}
+                uid(common::utility::UUIDUtil::generateUUIDLite()){}
                 
                 /*
                  Initialization method for output buffer
@@ -210,14 +192,13 @@ namespace chaos {
                         COPPQUEUE_LAPP_ << "deinitialized";
                     }
                     
-                    bool push(T* elementToPush,
-                              int32_t _priority = 0,
-                              bool _disposeOnDestroy = true){
+                    bool push(typename PriorityQueuedElement<T>::PriorityQueuedElementType elementToPush,
+                              int32_t _priority = 0){
                         boost::unique_lock<boost::mutex>  lock(qMutex);
                         if(in_deinit ||
                            bufferQueue.size() > CObjectProcessingPriorityQueue_MAX_ELEMENT_IN_QUEUE) return false;
-                        PriorityQueuedElement<T> *_element = new PriorityQueuedElement<T>(elementToPush, _priority, _disposeOnDestroy);
-                        bufferQueue.push(_element);
+
+                        bufferQueue.push(MOVE(ChaosUniquePtr< PriorityQueuedElement<T> >(new PriorityQueuedElement<T>(elementToPush, _priority))));
                         liveThreadConditionLock.notify_one();
                         return true;
                     }
@@ -225,10 +206,10 @@ namespace chaos {
                     /*
                      get the last insert data
                      */
-                    PRIORITY_ELEMENT(T)* waitAndPop() {
+                    PRIORITY_ELEMENT(T) waitAndPop() {
                         boost::unique_lock<boost::mutex> lock(qMutex);
                         //output result poitner
-                        PriorityQueuedElement<T> *prioritizedElement = NULL;
+                        PRIORITY_ELEMENT(T) prioritizedElement;
                         
                         while(bufferQueue.empty() &&
                               !in_deinit) {
@@ -237,7 +218,7 @@ namespace chaos {
                         //get the oldest data ad copy the ahsred_ptr
                         if(bufferQueue.empty()) {
                             DEBUG_CODE(COPPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
-                            return NULL;
+                            return PRIORITY_ELEMENT(T)();
                         }
                         //get the last pointer from the queue
                         prioritizedElement = bufferQueue.top();
@@ -264,7 +245,6 @@ namespace chaos {
                             emptyQueueConditionLock.timed_wait(lock,
                                                                boost::posix_time::milliseconds(500));
                         }
-                        //return bufferQueue.empty();
                     }
                     
                     
@@ -273,17 +253,10 @@ namespace chaos {
                      */
                     void clear() {
                         boost::unique_lock<boost::mutex>  lock(qMutex);
-                        
                         //remove all element
                         while (!bufferQueue.empty()) {
-                            //delete the next element
-                            PRIORITY_ELEMENT(T) *toDelete =  bufferQueue.top();
-                            if(!toDelete) return;
                             //remove upper element
                             bufferQueue.pop();
-                            
-                            //delete element
-                            DELETE_OBJ_POINTER(toDelete);
                         }
                     }
                     
