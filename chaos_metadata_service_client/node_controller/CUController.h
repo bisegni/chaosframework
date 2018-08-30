@@ -83,7 +83,7 @@ namespace chaos {
                 
                 std::string devId;
                 //mutext for multi threading track operation
-                boost::mutex trackMutext;
+                ChaosSharedMutex trackMutext;
                 
                 //!store the type of the attribute for fast retrieve
                 std::map<std::string, common::data::RangeValueInfo> attributeValueMap;

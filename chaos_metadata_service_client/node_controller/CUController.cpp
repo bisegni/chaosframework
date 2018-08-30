@@ -113,7 +113,6 @@ deviceChannel(NULL),devId(_deviceID) {
 }
 
 CUController::~CUController() {
-    boost::mutex::scoped_lock lock(trackMutext);
 
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<devId;
     stopTracking();
@@ -131,6 +130,8 @@ CUController::~CUController() {
         ioLiveDataDriver->deinit();
         ioLiveDataDriver.reset();
     }
+    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] removed Device Controller:"<<devId;
+
 }
 
 
@@ -796,7 +797,7 @@ void CUController::allocateNewLiveBufferForAttributeAndType(string& attributeNam
 }
 
 UIDataBuffer *CUController::getBufferForAttribute(string& attributeName) {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     UIDataBuffer * result = NULL;
     //allocate attribute traccking
     
@@ -820,7 +821,7 @@ UIDataBuffer *CUController::getBufferForAttribute(string& attributeName) {
 }
 
 PointerBuffer *CUController::getPtrBufferForAttribute(string& attributeName) {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     PointerBuffer * result = NULL;
     //allocate attribute traccking
     if(attributeValueMap.count(attributeName) == 0  ) return result;
@@ -873,7 +874,7 @@ void CUController::deinitializeAttributeIndexMap() {
 }
 
 void CUController::addAttributeToTrack(string& attr) {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosWriteLock lock(trackMutext);
     
     //add attribute name to list of tracking attribute
     trackingAttribute.push_back(attr);
@@ -891,14 +892,14 @@ CDataWrapper * CUController::getLiveCDataWrapperPtr() {
 
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper> CUController::getCurrentDatasetForDomain(DatasetDomain domain) {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     if(domain<current_dataset.size()){
         return current_dataset[domain];
     }
     return current_dataset[0];
 }
 int CUController::getCurrentDatasetForDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     if(ret){
         //ret->reset();
         //ret->setSerializedData((const char*)current_dataset[domain]->getBSONData());
@@ -910,7 +911,7 @@ int CUController::getCurrentDatasetForDomain(DatasetDomain domain,chaos::common:
 }
 int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::common::data::CDataWrapper* ret){
     CUController::fetchCurrentDatatasetFromDomain(domain);
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     if(ret){
         // ret->reset();
         current_dataset[domain]->copyAllTo(*ret);
@@ -926,7 +927,7 @@ int CUController::fetchAllDataset() {
             return -1;
 
     }
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     chaos::common::data::VectorCDWShrdPtr results;
     if((err = ioLiveDataDriver->retriveMultipleData(channel_keys,
                                                     results)) == 0) {
@@ -947,7 +948,7 @@ int CUController::fetchAllDataset() {
 
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     size_t value_len = 0;
     char *value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
     if(value){
@@ -990,7 +991,7 @@ int CUController::getTimeStamp(uint64_t& live,bool hr){
     return -1;
 }
 void CUController::setupTracking() {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosWriteLock lock(trackMutext);
     
     //init live buffer
     initializeAttributeIndexMap();
@@ -1001,12 +1002,12 @@ void CUController::setupTracking() {
 }
 
 void CUController::stopTracking() {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosWriteLock lock(trackMutext);
     deinitializeAttributeIndexMap();
 }
 
 void CUController::fetchCurrentDeviceValue() {
-    boost::mutex::scoped_lock lock(trackMutext);
+    ChaosReadLock lock(trackMutext);
     
     //! fetch the output odmain
     fetchCurrentDatatasetFromDomain(KeyDataStorageDomainOutput);
