@@ -707,7 +707,7 @@ void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CExce
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
+CDWUniquePtr AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                          bool& detachParam) throw(CException) {
     if(getServiceState() == CUStateKey::INIT) {
         return NULL;
@@ -775,7 +775,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
 /*
  Starto the  Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
+CDWUniquePtr AbstractControlUnit::_start(CDataWrapper *startParam,
                                           bool& detachParam) throw(CException) {
     if(getServiceState() == CUStateKey::START) {
         return NULL;
@@ -834,7 +834,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 /*
  Stop the Custom Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
+CDWUniquePtr AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                          bool& detachParam) throw(CException) {
     if(getServiceState() == CUStateKey::STOP) {
         return NULL;
@@ -899,7 +899,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 /*go
  deinit all datastorage
  */
-CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
+CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam,
                                            bool& detachParam) throw(CException) {
     if(getServiceState() == CUStateKey::DEINIT) {
         return NULL;
@@ -960,8 +960,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 /*
  deinit all datastorage
  */
-CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
-                                            bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_recover(CDWUniquePtr gdeinitParam) {
     if(getServiceState() != CUStateKey::RECOVERABLE_ERROR) throw MetadataLoggingCException(getCUID(), -1, DatasetDB::getDeviceID()+" need to be recoverable errore in the way to be recoverable!", __PRETTY_FUNCTION__);
     
     //first we start the deinitializaiton of the implementation unit
@@ -994,15 +993,8 @@ CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
 void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
                                                              CDataWrapper& dataset,
                                                              AbstractSharedDomainCache& restore_cache) {
-    // the list of the key
     std::vector<std::string> dataset_key;
-    
-    // get all key name
     dataset.getAllKey(dataset_key);
-    
-    uint32_t value_size = 0;
-    const char * raw_value_ptr = NULL;
-    AttributeValue *cached_attribute_value = NULL;
     for(std::vector<std::string>::iterator it = dataset_key.begin();
         it != dataset_key.end();
         it++) {
@@ -1049,8 +1041,7 @@ void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
 /*!
  Restore the control unit to a precise tag
  */
-CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreParam,
-                                                          bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restoreParam) {
     int err = 0;
     //check
     if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
@@ -1144,25 +1135,20 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 /*
  Receive the event for set the dataset input element
  */
-CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_attribute_values,
-                                                        bool& detachParam) throw (CException) {
-    CDataWrapper *result = NULL;
+CDWUniquePtr AbstractControlUnit::_setDatasetAttribute(CDWUniquePtr dataset_attribute_values) {
+    CDWUniquePtr result;
     try {
         if(!dataset_attribute_values) {
             throw MetadataLoggingCException(getCUID(), -1, "No Input parameter", __PRETTY_FUNCTION__);
         }
-        
         if(SWEService::getServiceState() == CUStateKey::DEINIT) {
             throw MetadataLoggingCException(getCUID(), -3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
         }
         //send dataset attribute change pack to control unit implementation
         result = setDatasetAttribute(dataset_attribute_values, detachParam);
-        
     } catch (CException& ex) {
-        //at this time notify the wel gone setting of comand
         throw;
     }
-    
     return result;
 }
 #pragma mark State Machine method
@@ -1450,17 +1436,15 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 /*
  Get the current control unit state
  */
-CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
-                                             bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_getState(CDWUniquePtr getStatedParam){
     
-    CDataWrapper *stateResult = new CDataWrapper();
-    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(SWEService::getServiceState()));
-    return stateResult;
+    CreateNewDataWrapper(result,);
+    result->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(SWEService::getServiceState()));
+    return result;
 }
 
 
-chaos::common::data::CDataWrapper* AbstractControlUnit::_submitStorageBurst(CDataWrapper* data,
-                                                                            bool& detachParam) throw (CException) {
+CDWUniquePtr AbstractControlUnit::_submitStorageBurst(CDWUniquePtr data) {
     common::data::structured::DatasetBurstSDWrapper db_sdw;
     db_sdw.deserialize(data);
     DatasetBurstShrdPtr burst = ChaosMakeSharedPtr<DatasetBurst>(db_sdw());
@@ -1479,8 +1463,7 @@ chaos::common::data::CDataWrapper* AbstractControlUnit::_submitStorageBurst(CDat
     return NULL;
 }
 
-chaos::common::data::CDataWrapper* AbstractControlUnit::_datasetTagManagement(chaos::common::data::CDataWrapper* data,
-                                                                              bool& detachParam) throw (CException) {
+CDWUniquePtr AbstractControlUnit::_datasetTagManagement(CDWUniquePtr data){
     CHECK_CDW_THROW_AND_LOG(data, ACULERR_, -1, "No parameter found");
     if(data->hasKey(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST)) {
         CHECK_KEY_THROW_AND_LOG(data,
@@ -1520,9 +1503,8 @@ chaos::common::data::CDataWrapper* AbstractControlUnit::_datasetTagManagement(ch
 /*
  Get the current control unit state
  */
-CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
-                                            bool& detachParam) throw(CException) {
-    CDataWrapper *stateResult = new CDataWrapper();
+CDWUniquePtr AbstractControlUnit::_getInfo(CDWUniquePtr getStatedParam) {
+    CreateNewDataWrapper(stateResult,);
     //set the string representing the type of the control unit
     stateResult->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
     stateResult->addStringValue(NodeDefinitionKey::NODE_SUB_TYPE, control_unit_type);
@@ -1646,7 +1628,7 @@ if(v < min || v > max) throw MetadataLoggingCException(getCUID(), -1,  boost::st
 if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 
-CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
+CDWUniquePtr AbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attribute_values) throw (CException) {
     CHAOS_ASSERT(dataset_attribute_values)
     ChaosSharedPtr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
     w_lock->lock();
@@ -1659,7 +1641,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         unitInputAttributePreChangeHandler();
         
         //first call attribute handler
-        dataset_attribute_manager.executeHandlers(dataset_attribute_values);
+        dataset_attribute_manager.executeHandlers(dataset_attribute_values.get());
         
         //get all input attribute name for input and bidirectional directions
         getDatasetAttributesName(DataType::Input , in_attribute_name);
@@ -1757,7 +1739,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 /*
  Update the configuration for all descendant tree in the Control Unit class structure
  */
-CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detachParam) throw (CException) {
+CDWUniquePtr AbstractControlUnit::updateConfiguration(CDWUniquePtr update_pack) {
     //check to see if the device can ben initialized
     if(SWEService::getServiceState() != chaos::CUStateKey::INIT &&
        SWEService::getServiceState() != chaos::CUStateKey::START) {
@@ -1767,11 +1749,11 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* update_pac
     
     PropertyGroupVectorSDWrapper pg_sdw;
     pg_sdw.serialization_key="property";
-    pg_sdw.deserialize(update_pack);
+    pg_sdw.deserialize(update_pack.get());
     
     //update the property
     PropertyCollector::applyValue(pg_sdw());
-    key_data_storage->updateConfiguration(update_pack);
+    key_data_storage->updateConfiguration(update_pack.get());
     //mark all cache as changed
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     

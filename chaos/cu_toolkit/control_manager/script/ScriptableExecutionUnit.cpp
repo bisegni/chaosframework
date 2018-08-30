@@ -391,10 +391,9 @@ bool ScriptableExecutionUnit::updatedInputDataset(const std::string &attribute_n
     return managed;
 }
 
-CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pack,
-                                                           bool &detachParam) throw(CException) {
+CDWUniquePtr ScriptableExecutionUnit::updateScriptSource(CDWUniquePtr data_pack) {
     ScriptInParam input_param;
-    chaos::service_common::data::script::ScriptSDWrapper sdw(data_pack);
+    chaos::service_common::data::script::ScriptSDWrapper sdw(data_pack.get());
     LockableScriptManagerWriteLock rl = script_manager.getWriteLockObject();
 
     if(sdw().script_description.language.compare(script_language) != 0) {
@@ -434,9 +433,9 @@ CDataWrapper * ScriptableExecutionUnit::updateScriptSource(CDataWrapper *data_pa
             break;
     }
     SEU_LAPP << "Script source code update";
-    return NULL;
+    return CDWUniquePtr();
 }
 
 void ScriptableExecutionUnit::pluginDirectoryHasBeenUpdated() {
-
+    //TODO need to be implemented
 }

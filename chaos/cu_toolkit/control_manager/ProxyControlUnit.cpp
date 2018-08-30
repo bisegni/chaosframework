@@ -136,9 +136,8 @@ void ProxyControlUnit::deinit() throw(CException) {
 /*!
  Event for update some CU configuration
  */
-CDataWrapper* ProxyControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
-    CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    return result;
+CDWUniquePtr ProxyControlUnit::updateConfiguration(CDWUniquePtr update_pack) {
+    return AbstractControlUnit::updateConfiguration(MOVE(update_pack));
 }
 
 void ProxyControlUnit::unitDefineActionAndDataset() throw(CException) {

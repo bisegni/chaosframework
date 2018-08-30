@@ -288,13 +288,12 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             break;
         }
         case UnitStateUnpublishing: {
-            CDataWrapper fakeDWForDeinit;
-            bool detachFake;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
+            CDWUniquePtr fakeDWForDeinit;
+            fakeDWForDeinit->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";
                 if(work_unit_instance->getServiceState() == 2) {
-                    work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+                    work_unit_instance->_stop(MOVE(fakeDWForDeinit->clone()));
                 }
             } catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -307,7 +306,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 WUMAPP_  << "Deiniting Work Unit";
                 if(work_unit_instance->getServiceState() == 1 ||
                    work_unit_instance->getServiceState() == 3) {
-                    work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+                    work_unit_instance->_deinit(MOVE(fakeDWForDeinit->clone()));
                 }
             } catch (CException& ex) {
                 if(ex.errorCode != 1){
