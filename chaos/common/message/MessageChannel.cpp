@@ -158,8 +158,6 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const
     result = message_request_domain->getNewRequestMessageFuture(*data_pack,
                                                                 new_request_id,
                                                                 safe_promises_handler_caller);
-    
-    //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
                            MOVE(data_pack),

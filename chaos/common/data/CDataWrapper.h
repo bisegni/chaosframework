@@ -19,7 +19,6 @@
  */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
-#pragma GCC diagnostic ignored "-Wignored-attributes"
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/exception/CException.h>

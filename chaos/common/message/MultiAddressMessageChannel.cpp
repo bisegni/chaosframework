@@ -171,8 +171,7 @@ ChaosUniquePtr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWit
                                                                                         std::string& used_remote_address) {
     ChaosUniquePtr<MessageRequestFuture> result;
     MMCFeederService *service =  static_cast<MMCFeederService*>(service_feeder.getService());
-    bool has_been_found_a_server = (service!=NULL);
-    if(has_been_found_a_server ) {
+    if(service) {
         result = MessageChannel::sendRequestWithFuture((used_remote_address = service->ip_port),
                                                        action_domain,
                                                        action_name,

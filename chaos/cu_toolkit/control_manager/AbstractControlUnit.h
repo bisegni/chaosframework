@@ -21,7 +21,7 @@
 
 #ifndef ControlUnit_H
 #define ControlUnit_H
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <map>
 #include <set>

@@ -9,7 +9,7 @@
 #ifndef CHAOSFramework_ZMQClient_h
 #define CHAOSFramework_ZMQClient_h
 
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>

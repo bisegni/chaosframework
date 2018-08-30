@@ -21,7 +21,7 @@
 
 #ifndef CHAOSFramework_DefaultEventDispatcher_h
 #define CHAOSFramework_DefaultEventDispatcher_h
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>

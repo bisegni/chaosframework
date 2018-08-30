@@ -20,8 +20,6 @@
 #ifndef DataPack_H
 #define DataPack_H
 
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
 #include <chaos_micro_unit_toolkit/external_lib/bson/bson.h>
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
 

@@ -21,7 +21,7 @@
 
 #ifndef __CHAOSFramework__AsioEventForwarder__
 #define __CHAOSFramework__AsioEventForwarder__
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <iostream>
 #include <string>

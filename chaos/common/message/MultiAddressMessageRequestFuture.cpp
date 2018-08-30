@@ -48,7 +48,7 @@ message_pack(MOVE(_message_pack)){
     //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack),
+                                                                       MOVE(message_pack->clone()),
                                                                        last_used_address);
 }
 
@@ -67,7 +67,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //retrasmission of the datapack
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
-                                                                       MOVE(message_pack),
+                                                                       MOVE(message_pack->clone()),
                                                                        last_used_address);
     if(current_future.get()) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
@@ -78,7 +78,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //retrasmission of the datapack
         current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
-                                                                           MOVE(message_pack),
+                                                                           MOVE(message_pack->clone()),
                                                                            last_used_address);
     }
 }
@@ -93,7 +93,6 @@ bool MultiAddressMessageRequestFuture::wait() {
           working) {
         MAMRF_DBG << "Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms";
         //! waith for future
-
 
         if(current_future->wait(timeout_in_milliseconds)) {
         	MAMRF_DBG << "Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms";

@@ -21,7 +21,7 @@
 
 #ifndef ChaosMetadataService_H
 #define ChaosMetadataService_H
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include "mds_constants.h"
 #include "mds_types.h"
