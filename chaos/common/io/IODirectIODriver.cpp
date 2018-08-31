@@ -70,6 +70,7 @@ shutting_down(false){
 }
 
 IODirectIODriver::~IODirectIODriver() {
+    // SO that if used as shared pointer will be called once the object is destroyed
 }
 
 void IODirectIODriver::setDirectIOParam(IODirectIODriverInitParam& _init_parameter) {
@@ -106,6 +107,10 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 }
 
 void IODirectIODriver::deinit() throw(CException) {
+    if(shutting_down){
+            IODirectIODriver_LINFO_ << "Already deinitialized";
+        return;
+    }
     shutting_down = true;
     IODirectIODriver_LINFO_ << "Remove active query";
     //lock all  internal resource that can be effetted by

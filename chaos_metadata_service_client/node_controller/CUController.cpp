@@ -127,8 +127,13 @@ CUController::~CUController() {
     }
     
     if(ioLiveDataDriver.get()){
-        ioLiveDataDriver->deinit();
+        LDBG_<<"["<<__PRETTY_FUNCTION__<<"] io LiveDataDriver use:"<<ioLiveDataDriver.use_count();
+        // deinit is called also by the destructur of IODirectDriver  
+      /*  if(ioLiveDataDriver.use_count()==1){
+            ioLiveDataDriver->deinit();
+        }
         ioLiveDataDriver.reset();
+        */
     }
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] removed Device Controller:"<<devId;
 
