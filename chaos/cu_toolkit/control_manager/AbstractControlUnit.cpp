@@ -2042,7 +2042,7 @@ void AbstractControlUnit::manageBurstQueue() {
     } else {
         if(!current_burst->active(timestamp_acq_cached_value->getValuePtr<int64_t>())) {
             //remove the tag for the burst
-            ACULDBG_<<"======= End Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
+            ACULDBG_<<"======= End Burst tag:'"<<current_burst->dataset_burst->tag<<"' =======";
             key_data_storage->removeTag(current_burst->dataset_burst->tag);
             key_data_storage->setTimingConfigurationBehaviour(true);
             key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeUndefined);
@@ -2053,7 +2053,7 @@ void AbstractControlUnit::manageBurstQueue() {
             current_burst.reset();
             pushSystemDataset();
         } else {
-            ACULDBG_<<"======= Active Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
+            ACULDBG_<<"======= Active Burst tag:'"<<current_burst->dataset_burst->tag<<"' =======";
         }
     }
 }
