@@ -4568,16 +4568,16 @@
 		    "cu_type": "RTCameraBase",
 		    "cu_param": "{\"FRAMEBUFFER_ENCODING\":\"CV_8UC3\"}",
 		    "auto_load": true,
-		    "auto_start": false,
+		    "auto_start": true,
 		    "auto_init": true,
-		    "storage_type": 1,
+		    "storage_type": 2,
 		    "storage_ageing": 1,
   		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ShapeSim",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":100.0,\"colb\":255}}"
+			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":50.0,\"colb\":255}}"
 			}
 		    ],
 		    "AttrDesc": [
@@ -4590,12 +4590,12 @@
 		    		{	  "ds_attr_name": "WIDTH",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "320"
+					    "ds_default_value": "640"
 					},
 		    		{	  "ds_attr_name": "HEIGHT",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "240"
+					    "ds_default_value": "480"
 					},{	  "ds_attr_name": "OFFSETX",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
@@ -4603,7 +4603,7 @@
 					},	{	  "ds_attr_name": "OFFSETY",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "480"
+					    "ds_default_value": "0"
 					}
 		    ]
 		},
@@ -4613,16 +4613,16 @@
 		    "cu_type": "RTCameraBase",
 		    "cu_param": "{\"FRAMEBUFFER_ENCODING\":\"CV_8UC3\"}",
 		    "auto_load": true,
-		    "auto_start": false,
+		    "auto_start": true,
 		    "auto_init": true,
-		    "storage_type": 1,
+		    "storage_type": 2,
 		    "storage_ageing": 1,
-  		    "default_schedule_delay": 10000000,	
+  		    "default_schedule_delay": 1000000,	
 		    "DriverDescription": [
 			{
 			    "DriverDescriptionName": "ShapeSim",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":100.0,\"colr\":255}}"
+			    "DriverDescriptionInitParam": "{\"SHAPE\":{\"type\":\"ellipse\",\"err_centerx\":10.0,\"err_centery\":10.0,\"err_rotangle\":2.0,\"tickness\":-1,\"linetype\":8,\"err_tickness\":10.0,\"colr\":255}}"
 			}
 		    ],
 		    "AttrDesc": [
@@ -4635,12 +4635,12 @@
 		    		{	  "ds_attr_name": "WIDTH",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "320"
+					    "ds_default_value": "640"
 					},
 		    		{	  "ds_attr_name": "HEIGHT",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "240"
+					    "ds_default_value": "480"
 					},{	  "ds_attr_name": "OFFSETX",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
@@ -4648,7 +4648,7 @@
 					},	{	  "ds_attr_name": "OFFSETY",
 					    "ds_max_range": "1024",
 					    "ds_min_range": "0",
-					    "ds_default_value": "480"
+					    "ds_default_value": "0"
 					}
 		    ]
 		}
