@@ -2009,21 +2009,28 @@ int AbstractControlUnit::pushCUAlarmDataset() {
 
 void AbstractControlUnit::manageBurstQueue() {
     if(!current_burst.get()) {
+        DatasetBurstShrdPtr next_burst;
         LQueueBurstReadLock wl = burst_queue.getReadLockObject();
-        if(!burst_queue().empty()){
-            switch(burst_queue().front()->type) {
+        if(!burst_queue().empty()) {
+            next_burst = burst_queue().front();
+            burst_queue().pop();
+        }
+        wl->unlock();
+        
+        if(next_burst.get()){
+            switch(next_burst->type) {
                 case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeNPush:
-                    current_burst.reset(new PushStorageBurst(MOVE(burst_queue().front())));
+                    current_burst.reset(new PushStorageBurst(next_burst));
                     break;
                 case chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeMSec:
-                    current_burst.reset(new MSecStorageBurst(MOVE(burst_queue().front())));
+                    current_burst.reset(new MSecStorageBurst(next_burst));
                     break;
                 default:
                     break;
             }
-            burst_queue().pop();
+            
             //set the tag for burst
-            ACULDBG_<<"===Start Burst tag:'"<<current_burst->dataset_burst->tag<<"' ====";
+            ACULDBG_<<"=======Start Burst tag:'"<<current_burst->dataset_burst->tag<<"' ====";
             key_data_storage->addTag(current_burst->dataset_burst->tag);
             key_data_storage->setTimingConfigurationBehaviour(false);
             key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeHistory);
@@ -2033,11 +2040,9 @@ void AbstractControlUnit::manageBurstQueue() {
             pushSystemDataset();
         }
     } else {
-        
         if(!current_burst->active(timestamp_acq_cached_value->getValuePtr<int64_t>())) {
             //remove the tag for the burst
-            ACULDBG_<<"=== End Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
-
+            ACULDBG_<<"=======End Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
             key_data_storage->removeTag(current_burst->dataset_burst->tag);
             key_data_storage->setTimingConfigurationBehaviour(true);
             key_data_storage->setOverrideStorageType(DataServiceNodeDefinitionType::DSStorageTypeUndefined);
@@ -2047,6 +2052,8 @@ void AbstractControlUnit::manageBurstQueue() {
             //we need to remove it
             current_burst.reset();
             pushSystemDataset();
+        } else {
+            ACULDBG_<<"=======Active Burst tag:'"<<current_burst->dataset_burst->tag<<"'  =======";
         }
     }
 }
