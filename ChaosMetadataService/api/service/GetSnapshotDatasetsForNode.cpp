@@ -31,12 +31,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetSnapshotDatasetsForNode::GetSnapshotDatasetsForNode():
-AbstractApi("getSnapshotDatasetForNode"){}
+CHAOS_MDS_DEFINE_API_CD(GetSnapshotDatasetsForNode, getSnapshotDatasetForNode)
 
-GetSnapshotDatasetsForNode::~GetSnapshotDatasetsForNode() {}
-
-chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetSnapshotDatasetsForNode::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The node unique id key is mandatory");
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), ERR, -3, "The node unique id needs to be a string");
@@ -44,7 +41,7 @@ chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::co
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("snapshot_name"), ERR, -5, "The snapshot name needs to be a string");
     int err = 0;
     VectorStrCDWShrdPtr saved_dataset;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     
@@ -66,5 +63,5 @@ chaos::common::data::CDataWrapper *GetSnapshotDatasetsForNode::execute(chaos::co
     }
 
     result->finalizeArrayForKey("dataset_list");
-    return result.release();
+    return result;
 }

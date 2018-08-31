@@ -487,10 +487,8 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION){
-            bool detach_fake = false;
-            
             //call update param function
-            updateConfiguration(init_configuration.get(), detach_fake);
+            updateConfiguration(MOVE(init_configuration->clone()));
             
             //check if we need to do a restore on first start
             PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
@@ -704,11 +702,7 @@ void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CExce
 
 //----------------------------------------- protected initi/deinit method ------------------------------------------------
 #pragma mark RPC State Machine method
-/*
- Initialize the Custom Contro Unit and return the configuration
- */
-CDWUniquePtr AbstractControlUnit::_init(CDataWrapper *init_configuration,
-                                         bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_init(CDWUniquePtr init_configuration) {
     if(getServiceState() == CUStateKey::INIT) {
         return NULL;
     }
@@ -737,8 +731,7 @@ CDWUniquePtr AbstractControlUnit::_init(CDataWrapper *init_configuration,
     try {
         
         //update configuraiton and own it
-        detachParam = true;
-        this->init_configuration.reset(init_configuration);
+        this->init_configuration = MOVE(init_configuration);
         
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -772,11 +765,7 @@ CDWUniquePtr AbstractControlUnit::_init(CDataWrapper *init_configuration,
     return NULL;
 }
 
-/*
- Starto the  Control Unit scheduling for device
- */
-CDWUniquePtr AbstractControlUnit::_start(CDataWrapper *startParam,
-                                          bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_start(CDWUniquePtr startParam){
     if(getServiceState() == CUStateKey::START) {
         return NULL;
     }
@@ -831,11 +820,7 @@ CDWUniquePtr AbstractControlUnit::_start(CDataWrapper *startParam,
     return NULL;
 }
 
-/*
- Stop the Custom Control Unit scheduling for device
- */
-CDWUniquePtr AbstractControlUnit::_stop(CDataWrapper *stopParam,
-                                         bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_stop(CDWUniquePtr stopParam){
     if(getServiceState() == CUStateKey::STOP) {
         return NULL;
     }
@@ -864,7 +849,6 @@ CDWUniquePtr AbstractControlUnit::_stop(CDataWrapper *stopParam,
     }
     
     try {
-        
         //set healt to start
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -899,8 +883,7 @@ CDWUniquePtr AbstractControlUnit::_stop(CDataWrapper *stopParam,
 /*go
  deinit all datastorage
  */
-CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam,
-                                           bool& detachParam) throw(CException) {
+CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam) {
     if(getServiceState() == CUStateKey::DEINIT) {
         return NULL;
     }
@@ -957,9 +940,6 @@ CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam,
     return NULL;
 }
 
-/*
- deinit all datastorage
- */
 CDWUniquePtr AbstractControlUnit::_recover(CDWUniquePtr gdeinitParam) {
     if(getServiceState() != CUStateKey::RECOVERABLE_ERROR) throw MetadataLoggingCException(getCUID(), -1, DatasetDB::getDeviceID()+" need to be recoverable errore in the way to be recoverable!", __PRETTY_FUNCTION__);
     
@@ -1145,7 +1125,7 @@ CDWUniquePtr AbstractControlUnit::_setDatasetAttribute(CDWUniquePtr dataset_attr
             throw MetadataLoggingCException(getCUID(), -3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
         }
         //send dataset attribute change pack to control unit implementation
-        result = setDatasetAttribute(dataset_attribute_values, detachParam);
+        result = setDatasetAttribute(MOVE(dataset_attribute_values));
     } catch (CException& ex) {
         throw;
     }
@@ -1446,7 +1426,7 @@ CDWUniquePtr AbstractControlUnit::_getState(CDWUniquePtr getStatedParam){
 
 CDWUniquePtr AbstractControlUnit::_submitStorageBurst(CDWUniquePtr data) {
     common::data::structured::DatasetBurstSDWrapper db_sdw;
-    db_sdw.deserialize(data);
+    db_sdw.deserialize(data.get());
     DatasetBurstShrdPtr burst = ChaosMakeSharedPtr<DatasetBurst>(db_sdw());
     
     if(burst->type == chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined) {
@@ -1628,8 +1608,8 @@ if(v < min || v > max) throw MetadataLoggingCException(getCUID(), -1,  boost::st
 if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 
-CDWUniquePtr AbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attribute_values) throw (CException) {
-    CHAOS_ASSERT(dataset_attribute_values)
+CDWUniquePtr AbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attribute_values) {
+    CHAOS_ASSERT(dataset_attribute_values.get())
     ChaosSharedPtr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
     w_lock->lock();
     

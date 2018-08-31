@@ -346,7 +346,7 @@ namespace chaos{
                 /*!
                  Deinit the Control Unit
                  */
-                virtual chaos::common::data::CDWUniquePtr _deinit(chaos::common::data::CDWUniquePtr data) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _deinit(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Starto the  Control Unit scheduling for device

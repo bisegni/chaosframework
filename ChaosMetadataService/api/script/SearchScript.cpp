@@ -31,15 +31,11 @@ using namespace chaos::common::event::channel;
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
-SearchScript::SearchScript():
-AbstractApi("searchScript"){}
 
-SearchScript::~SearchScript() {}
+CHAOS_MDS_DEFINE_API_CD(SearchScript, searchScript)
 
-chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
     int err = 0;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
-    
     ScriptBaseDescriptionListWrapper found_page_element;
     found_page_element.instance_serialization_key = chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST;
     //check for mandatory attributes
@@ -60,5 +56,5 @@ chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data,
     }
     
     //we don't have had error so we will have fill the list wrapper of the result page
-    return found_page_element.serialize().release();
+    return found_page_element.serialize();
 }

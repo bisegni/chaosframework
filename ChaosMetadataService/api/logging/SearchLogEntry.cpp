@@ -38,11 +38,10 @@ AbstractApi("searchLogEntry"){}
 
 SearchLogEntry::~SearchLogEntry() {}
 
-chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr SearchLogEntry::execute(CDWUniquePtr api_data) {
     int err = 0;
     
-    CDataWrapper *result = NULL;
-    
+    CreateNewDataWrapper(result,);
     GET_DATA_ACCESS(LoggingDataAccess, l_da, -4);
     
     //entry list

@@ -34,17 +34,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_GI_DBG  DBG_LOG(GetInstance)
 #define CU_GI_ERR  ERR_LOG(GetInstance)
 
-GetInstance::GetInstance():
-AbstractApi("getInstance"){
-    
-}
+CHAOS_MDS_DEFINE_API_CD(GetInstance, getInstance);
 
-GetInstance::~GetInstance() {
-    
-}
-
-CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
-                                   bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetInstance::execute(CDWUniquePtr api_data) {
     
     if(!api_data) {LOG_AND_TROW(CU_GI_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_GI_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
@@ -85,5 +77,5 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
             result->addVariantValue(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, pg.getProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME).getPropertyValue());
         }
     }
-    return result;
+    return CDWUniquePtr(result);
 }

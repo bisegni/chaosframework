@@ -37,15 +37,7 @@ namespace chaos {
                  Otherwhise the datapack will be saved in node structure without further
                  considerations.
                  */
-                class NodeHealthStatus:
-                public AbstractApi {
-                public:
-                    NodeHealthStatus();
-                    ~NodeHealthStatus();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-                
+                CHAOS_MDS_DECLARE_API(NodeHealthStatus)
             }
         }
     }

@@ -30,18 +30,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CUCUI_DBG  DBG_LOG(SetInstanceDescription)
 #define CUCUI_ERR  ERR_LOG(SetInstanceDescription)
 
-SetInstanceDescription::SetInstanceDescription():
-AbstractApi("setInstanceDescription"){
+CHAOS_MDS_DEFINE_API_CD(SetInstanceDescription, setInstanceDescription)
 
-}
-
-SetInstanceDescription::~SetInstanceDescription() {
-
-}
-
-chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common::data::CDataWrapper *api_data,
-                                                                   bool& detach_data) throw(chaos::CException) {
-
+CDWUniquePtr SetInstanceDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
@@ -115,5 +106,5 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
     if((err = n_da->updatePropertyDefaultValue(cu_uid, pgv_sdw()))){
         LOG_AND_TROW(CUCUI_ERR, err, CHAOS_FORMAT("Error updating property defaults for node:%1%",%cu_uid));
     }
-    return NULL;
+    return CDWUniquePtr();
 }

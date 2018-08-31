@@ -37,13 +37,11 @@ using namespace chaos::metadata_service::api::deploy;
 using namespace chaos::metadata_service::persistence::data_access;
 
 StartUploadSession::StartUploadSession():
-AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_INIT_DEPLOY_SESSION){
-}
+AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_INIT_DEPLOY_SESSION){}
 
-StartUploadSession::~StartUploadSession() {
-}
+StartUploadSession::~StartUploadSession() {}
 
-CDataWrapper *StartUploadSession::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr StartUploadSession::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
-    return NULL;
+    return CDWUniquePtr();
 }

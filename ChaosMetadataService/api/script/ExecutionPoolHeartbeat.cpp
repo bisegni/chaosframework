@@ -46,7 +46,7 @@ AbstractApi("executionPoolHeartbeat"){}
 
 ExecutionPoolHeartbeat::~ExecutionPoolHeartbeat() {}
 
-chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDWUniquePtr) {
     int err = 0;
     
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");

@@ -34,17 +34,13 @@ using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
 GetLogForSourceUID::GetLogForSourceUID():
-AbstractApi("getLogForNodeUID"){
-}
+AbstractApi("getLogForNodeUID"){}
 
-GetLogForSourceUID::~GetLogForSourceUID() {
-}
+GetLogForSourceUID::~GetLogForSourceUID() {}
 
-chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetLogForSourceUID::execute(CDWUniquePtr api_data) {
     int err = 0;
-    
-    CDataWrapper *result = NULL;
-    
+    CreateNewDataWrapper(result,);
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, L_GLFNI_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, L_GLFNI_ERR, -2, "The log timestamp key is mandatory");

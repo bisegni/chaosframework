@@ -40,9 +40,7 @@ void AbstractApi::init(void *init_data) throw (chaos::CException) {
     if(!subservice) throw chaos::CException(-1, "No Persistence Driver has been set", __PRETTY_FUNCTION__);
 }
 
-void AbstractApi::deinit()  throw (chaos::CException) {
-    
-}
+void AbstractApi::deinit()  throw (chaos::CException) {}
 
 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)

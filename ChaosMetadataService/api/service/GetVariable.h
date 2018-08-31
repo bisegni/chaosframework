@@ -34,14 +34,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class GetVariable:
-                public AbstractApi {
-                public:
-                    GetVariable();
-                    ~GetVariable();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API(GetVariable);
             }
         }
     }

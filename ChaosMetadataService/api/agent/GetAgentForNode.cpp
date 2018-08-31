@@ -42,7 +42,7 @@ AbstractApi("getAgentForNode"){
 GetAgentForNode::~GetAgentForNode() {
 }
 
-CDataWrapper *GetAgentForNode::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *GetAgentForNode::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));

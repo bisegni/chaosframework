@@ -32,22 +32,13 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define GBE_DBG  DBG_LOG(GetBestEndpoints)
 #define GBE_ERR  ERR_LOG(GetBestEndpoints)
 
-GetBestEndpoints::GetBestEndpoints():
-AbstractApi("getBestEndpoints"){
-    
-}
+CHAOS_MDS_DEFINE_API_CD(GetBestEndpoints, getBestEndpoints);
 
-GetBestEndpoints::~GetBestEndpoints() {
-    
-}
-
-chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data::CDataWrapper *api_data,
-                                                             bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
     int err = 0;
     int32_t numner_or_result = 3;
     const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
+    CreateNewDataWrapper(result, );
     std::vector<ChaosSharedPtr<CDataWrapper> > data_services;
     
     if(api_data && api_data->hasKey("count")) {
@@ -76,5 +67,5 @@ chaos::common::data::CDataWrapper *GetBestEndpoints::execute(chaos::common::data
         }
         result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    return result.release();
+    return result;
 }

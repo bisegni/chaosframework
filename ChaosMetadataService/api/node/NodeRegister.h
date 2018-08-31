@@ -36,25 +36,11 @@ namespace chaos {
                  Otherwhise the datapack will be saved in node structure without further
                  considerations.
                  */
-                class NodeRegister:
-                public AbstractApi {
-                    //!perform te agent registration
-                    chaos::common::data::CDataWrapper *agentRegistration(chaos::common::data::CDataWrapper *api_data,
-                                                                         bool& detach_data) throw(chaos::CException);
-                    //! perform registration for specific unit server
-                    chaos::common::data::CDataWrapper *unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
-                                                                              bool& detach_data) throw(chaos::CException);
-                    
-                    //! perform specific registration for control unit
-                    chaos::common::data::CDataWrapper *controlUnitRegistration(chaos::common::data::CDataWrapper *api_data,
-                                                                               bool& detach_data) throw(chaos::CException);
-                public:
-                    NodeRegister();
-                    ~NodeRegister();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-                
+                CHAOS_MDS_DEFINE_API_EXT(NodeRegister,
+                                         chaos::common::data::CDWUniquePtr unitServerRegistration(chaos::common::data::CDWUniquePtr api_data);
+                                         chaos::common::data::CDWUniquePtr agentRegistration(chaos::common::data::CDWUniquePtr api_data);
+                                         chaos::common::data::CDWUniquePtr controlUnitRegistration(chaos::common::data::CDWUniquePtr api_data);
+                                         );
             }
         }
     }

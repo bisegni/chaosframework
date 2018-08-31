@@ -43,7 +43,7 @@ AbstractApi("manageNodeLogging"){
 ManageNodeLogging::~ManageNodeLogging() {
 }
 
-CDataWrapper *ManageNodeLogging::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ManageNodeLogging::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_MANDATORY_KEY(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2);

@@ -31,12 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
-ProcessHello::ProcessHello():
-AbstractApi("processHello"){}
+CHAOS_MDS_DEFINE_API_CD(ProcessHello, processHello)
 
-ProcessHello::~ProcessHello() {}
-
-chaos::common::data::CDataWrapper *ProcessHello::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ProcessHello::execute(CDWUniquePtr api_data) {
     int err = 0;
     const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
@@ -77,5 +74,5 @@ chaos::common::data::CDataWrapper *ProcessHello::execute(chaos::common::data::CD
         }
     }
     result->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
-    return result.release();
+    return result;
 }

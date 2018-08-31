@@ -42,7 +42,7 @@ AbstractApi("manageScriptInstance"){
 ManageScriptInstance::~ManageScriptInstance() {
 }
 
-chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDWUniquePtr) {
     int err = 0;
     
     //check for mandatory attributes

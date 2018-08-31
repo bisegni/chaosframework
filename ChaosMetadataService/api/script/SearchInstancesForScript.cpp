@@ -42,7 +42,7 @@ AbstractApi("searchInstancesForScript"){
 SearchInstancesForScript::~SearchInstancesForScript() {
 }
 
-CDataWrapper *SearchInstancesForScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *SearchInstancesForScript::execute(CDWUniquePtr) {
     int err = 0;
     
     //check for mandatory attributes

@@ -33,16 +33,11 @@ using namespace chaos::common::event::channel;
 using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetLogDomainForSourceUID::GetLogDomainForSourceUID():
-AbstractApi("getLogDomainForSourceUID"){
-}
+CHAOS_MDS_DEFINE_API_CD(GetLogDomainForSourceUID, getLogDomainForSourceUID)
 
-GetLogDomainForSourceUID::~GetLogDomainForSourceUID() {
-}
-
-chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDWUniquePtr GetLogDomainForSourceUID::execute(CDWUniquePtr api_data) {
     int err = 0;
-    CDataWrapper *result = NULL;
+    CreateNewDataWrapper(result,);
     LogDomainList domain_list;
     
     GET_DATA_ACCESS(LoggingDataAccess, l_da, -4);

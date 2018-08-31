@@ -31,12 +31,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CreateNewSnapshot::CreateNewSnapshot():
-AbstractApi("createNewSnapshot"){}
+CHAOS_MDS_DEFINE_API_CD(CreateNewSnapshot, createNewSnapshot)
 
-CreateNewSnapshot::~CreateNewSnapshot() {}
-
-chaos::common::data::CDataWrapper *CreateNewSnapshot::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr CreateNewSnapshot::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, S_CNS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_CNS_ERR, -2, "The snapshot_name key is mandatory")
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("snapshot_name"), S_CNS_ERR, -3, "snapshot_name needs to be a string")
@@ -54,7 +51,6 @@ chaos::common::data::CDataWrapper *CreateNewSnapshot::execute(chaos::common::dat
     }
     api_data->addStringValue("work_id", work_id);
     command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::general::CreateSnapshotBatch),
-                                                   api_data);
-    detach_data = true;
-    return NULL;
+                                                   api_data.release());
+    return CDWUniquePtr();
 }

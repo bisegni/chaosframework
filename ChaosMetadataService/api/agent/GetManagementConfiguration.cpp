@@ -41,7 +41,7 @@ AbstractApi("getManagementConfiguration"){}
 
 GetManagementConfiguration::~GetManagementConfiguration(){}
 
-CDataWrapper *GetManagementConfiguration::execute(CDataWrapper *api_data, bool& detach_data) {
+CDataWrapper *GetManagementConfiguration::execute(CDWUniquePtr) {
     GET_DATA_ACCESS(AgentDataAccess, a_da, -1);
     AgentManagementSettingSDWrapper set_w;
     a_da->getLogEntryExpiration(set_w().expiration_enabled, set_w().log_expiration_in_seconds);

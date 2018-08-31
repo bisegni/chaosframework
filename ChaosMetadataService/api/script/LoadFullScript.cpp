@@ -39,7 +39,7 @@ AbstractApi("loadFullScript"){
 LoadFullScript::~LoadFullScript() {
 }
 
-chaos::common::data::CDataWrapper *LoadFullScript::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *LoadFullScript::execute(CDWUniquePtr) {
     int err = 0;
     
     //check for mandatory attributes

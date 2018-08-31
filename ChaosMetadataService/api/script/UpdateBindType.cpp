@@ -100,7 +100,7 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
     return err;
 }
 
-chaos::common::data::CDataWrapper *UpdateBindType::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *UpdateBindType::execute(CDWUniquePtr) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "script_base_description", ERR, -2, "The script_base_description key is mandatory");

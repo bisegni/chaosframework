@@ -37,16 +37,14 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 SubmitEntry::SubmitEntry():
 AbstractApi(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY){
-    //allocate event channel for broadcast the logging event
     alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
 }
 
 SubmitEntry::~SubmitEntry() {
-    //deallocae the event channel
     if(alert_event_channel) {NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);}
 }
 
-chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr SubmitEntry::execute(CDWUniquePtr api_data) {
     int err = 0;
     
     //check for mandatory attributes

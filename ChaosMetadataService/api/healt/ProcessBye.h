@@ -28,14 +28,7 @@ namespace chaos {
         namespace api {
             namespace healt {
 
-                class ProcessBye:
-                public AbstractApi {
-                public:
-                    ProcessBye();
-                    ~ProcessBye();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-                };
-
+                CHAOS_MDS_DEFINE_API(ProcessBye)
             }
         }
     }

@@ -29,18 +29,12 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetAllSnapshot::GetAllSnapshot():
-AbstractApi("getAllSnapshot"){}
+CHAOS_MDS_DEFINE_API_CD(GetAllSnapshot,getAllSnapshot)
 
-GetAllSnapshot::~GetAllSnapshot() {}
-
-chaos::common::data::CDataWrapper *GetAllSnapshot::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
-
-    
+CDWUniquePtr GetAllSnapshot::execute(CDWUniquePtr api_data) {
     int err = 0;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     SnapshotList snapshots;
-
+    CreateNewDataWrapper(result, );
     std::string snapshot_query_result;
     
     if(api_data &&
@@ -62,5 +56,5 @@ chaos::common::data::CDataWrapper *GetAllSnapshot::execute(chaos::common::data::
     }
     
     result->finalizeArrayForKey("snapshot_list_result");
-    return result.release();
+    return result;
 }

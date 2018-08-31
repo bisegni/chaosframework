@@ -38,7 +38,7 @@ GetDescription::~GetDescription() {
 
 }
 
-chaos::common::data::CDataWrapper *GetDescription::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *GetDescription::execute(chaos::common::data::CDWUniquePtr) {
     int err = 0;
     bool presence = false;
     chaos::common::data::CDataWrapper *result = NULL;

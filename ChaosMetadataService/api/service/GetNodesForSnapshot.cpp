@@ -33,19 +33,16 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, NodeList);
 
-GetNodesForSnapshot::GetNodesForSnapshot():
-AbstractApi("getNodesForSnapshot"){}
+CHAOS_MDS_DEFINE_API_CD(GetNodesForSnapshot, getNodesForSnapshot)
 
-GetNodesForSnapshot::~GetNodesForSnapshot() {}
-
-chaos::common::data::CDataWrapper *GetNodesForSnapshot::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetNodesForSnapshot::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, S_GNFN_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_GNFN_ERR, -2, "The snapshot_name key is mandatory");
     if(!api_data->isStringValue("snapshot_name")) {LOG_AND_TROW(S_GNFN_ERR, -3, "snapshot_name needs to be a string");}
     
     int err = 0;
     NodeList node_in_snapshot;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     const std::string snapshot_name = api_data->getStringValue("snapshot_name");
     
     GET_DATA_ACCESS(SnapshotDataAccess, s_da, -1);
@@ -62,5 +59,5 @@ chaos::common::data::CDataWrapper *GetNodesForSnapshot::execute(chaos::common::d
     }
     
     result->finalizeArrayForKey("node_in_snapshot");
-    return result.release();
+    return result;
 }

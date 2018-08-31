@@ -28,16 +28,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-                class GetCurrentDataset:
-                public AbstractApi {
-                    ChaosSharedPtr<chaos::common::data::CDataWrapper> mergeDatasetAttributeWithSetup(ChaosSharedPtr<chaos::common::data::CDataWrapper> element_in_dataset,
-                                                                                   ChaosSharedPtr<chaos::common::data::CDataWrapper> element_in_setup);
-                public:
-                    GetCurrentDataset();
-                    ~GetCurrentDataset();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API(GetCurrentDataset);
             }
         }
     }

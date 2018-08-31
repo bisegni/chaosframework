@@ -37,12 +37,10 @@ namespace chaos {
                  */
                 class UploadChunk:
                 public AbstractApi {
-                    
                 public:
                     UploadChunk();
                     ~UploadChunk();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

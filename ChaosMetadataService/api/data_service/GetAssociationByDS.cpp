@@ -29,14 +29,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_GET_ASSOC_DBG  DBG_LOG(GetAssociationByDS)
 #define DS_GET_ASSOC_ERR  ERR_LOG(GetAssociationByDS)
 
-GetAssociationByDS::GetAssociationByDS():
-AbstractApi("getAssociation"){
-    
-}
-
-GetAssociationByDS::~GetAssociationByDS() {
-    
-}
+CHAOS_MDS_DEFINE_API_CD(GetAssociationByDS, getAssociation)
 
 chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException) {
@@ -64,5 +57,5 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
         result->appendCDataWrapperToArray(*it->get());
     }
     result->finalizeArrayForKey("node_search_result_page");
-    return result.release();
+    return result;
 }

@@ -40,8 +40,7 @@ namespace chaos {
                 public:
                     SaveNodeAssociation();
                     ~SaveNodeAssociation();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

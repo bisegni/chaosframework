@@ -27,14 +27,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-                class InitDeinit:
-                public AbstractApi {
-                public:
-                    InitDeinit();
-                    ~InitDeinit();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API(InitDeinit);
             }
         }
     }

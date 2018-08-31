@@ -31,12 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
-DeleteSnapshot::DeleteSnapshot():
-AbstractApi("deleteSnapshot"){}
+CHAOS_MDS_DEFINE_API_CD(DeleteSnapshot, deleteSnapshot)
 
-DeleteSnapshot::~DeleteSnapshot() {}
-
-chaos::common::data::CDataWrapper *DeleteSnapshot::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr DeleteSnapshot::execute(CDWUniquePtr api_data) {
     
     CHECK_CDW_THROW_AND_LOG(api_data, S_DS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "snapshot_name", S_DS_ERR, -2, "The snapshot_name key is mandatory")

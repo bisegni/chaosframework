@@ -68,7 +68,7 @@ namespace chaos {
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr setDatasetAttribute(chaos::common::data::CDWUniquePtr dataset_attribute_values);
                 
                 //!inherited method by @AbstractControlUnit
                 void propertyUpdatedHandler(const std::string& group_name,

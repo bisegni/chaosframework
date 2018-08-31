@@ -37,13 +37,11 @@ using namespace chaos::metadata_service::api::deploy;
 using namespace chaos::metadata_service::persistence::data_access;
 
 UploadChunk::UploadChunk():
-AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK){
-}
+AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK){}
 
-UploadChunk::~UploadChunk() {
-}
+UploadChunk::~UploadChunk() {}
 
-CDataWrapper *UploadChunk::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr UploadChunk::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
-    return NULL;
+    return CDWUniquePtr();
 }

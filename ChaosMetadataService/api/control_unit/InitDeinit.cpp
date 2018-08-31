@@ -32,17 +32,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_INDEIN_DBG  DBG_LOG(InitDeinit)
 #define CU_INDEIN_ERR  ERR_LOG(InitDeinit)
 
-InitDeinit::InitDeinit():
-AbstractApi("initDeinit"){
-    
-}
+CHAOS_MDS_DEFINE_API_CD(InitDeinit, initDeinit);
 
-InitDeinit::~InitDeinit() {
-    
-}
-
-CDataWrapper *InitDeinit::execute(CDataWrapper *api_data,
-                                  bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr InitDeinit::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_INDEIN_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, CU_INDEIN_ERR, -2, "The ndk_unique_id key is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, "init", CU_INDEIN_ERR, -3, "The init key is mandatory")
@@ -80,5 +72,5 @@ CDataWrapper *InitDeinit::execute(CDataWrapper *api_data,
     //launch initilization in background
     command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand)),
                                                    data_pack.release());
-    return NULL;
+    return CDWUniquePtr();
 }

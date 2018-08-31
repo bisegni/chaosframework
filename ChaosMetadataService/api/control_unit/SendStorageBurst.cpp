@@ -34,13 +34,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_RNU_DBG  DBG_LOG(RecoverError)
 #define CU_RNU_ERR  ERR_LOG(RecoverError)
 
-SendStorageBurst::SendStorageBurst():
-AbstractApi("sendStorageBurst"){}
+CHAOS_MDS_DEFINE_API(SendStorageBurst, sendStorageBurst);
 
-SendStorageBurst::~SendStorageBurst() {}
-
-CDataWrapper *SendStorageBurst::execute(CDataWrapper *api_data,
-                                        bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr SendStorageBurst::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_RNU_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_RNU_ERR, -2, "The ndk_uid key is mandatory")
     CHECK_ASSERTION_THROW_AND_LOG((!api_data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID) ||
@@ -48,7 +44,7 @@ CDataWrapper *SendStorageBurst::execute(CDataWrapper *api_data,
     
     //check burst information
     DatasetBurstSDWrapper db_sdw;
-    db_sdw.deserialize(api_data);
+    db_sdw.deserialize(api_data.get());
     CHECK_ASSERTION_THROW_AND_LOG(db_sdw().tag.size() != 0, CU_RNU_ERR, -4, "The tag of burst is mandatory");
     CHECK_ASSERTION_THROW_AND_LOG(db_sdw().type != chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined, CU_RNU_ERR, -5, "The type of burst is mandatory");
     CHECK_ASSERTION_THROW_AND_LOG(db_sdw().value.isValid(), CU_RNU_ERR, -6, "The value ofburst is mandatory");
@@ -100,6 +96,5 @@ CDataWrapper *SendStorageBurst::execute(CDataWrapper *api_data,
         command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::node::SendRpcCommand)),
                                                        batch_data.release());
     }
-    
-    return NULL;
+    return CDWUniquePtr();
 }

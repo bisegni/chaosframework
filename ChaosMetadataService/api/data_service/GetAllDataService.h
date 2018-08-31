@@ -29,15 +29,7 @@ namespace chaos {
         namespace api {
             namespace data_service {
 
-                class GetAllDataService:
-                public AbstractApi {
-
-                public:
-                    GetAllDataService();
-                    ~GetAllDataService();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API(GetAllDataService)
             }
         }
     }

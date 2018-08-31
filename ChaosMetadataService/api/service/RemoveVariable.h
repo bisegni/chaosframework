@@ -33,14 +33,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class RemoveVariable:
-                public AbstractApi {
-                public:
-                    RemoveVariable();
-                    ~RemoveVariable();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API(RemoveVariable);
             }
         }
     }

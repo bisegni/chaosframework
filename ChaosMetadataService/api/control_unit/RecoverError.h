@@ -28,15 +28,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-                class RecoverError:
-                public AbstractApi {
-                    
-                public:
-                    RecoverError();
-                    ~RecoverError();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API(RecoverError);
             }
         }
     }

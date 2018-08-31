@@ -52,6 +52,33 @@ MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
 dst->addInt32Value(k, src->getInt32Value(k));\
 }
+
+#define CHAOS_MDS_DEFINE_API(name) \
+class name:\
+public AbstractApi {\
+public:\
+name();\
+~name();\
+chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);\
+};
+  
+#define CHAOS_MDS_DEFINE_API_EXT(name, decl) \
+class name:\
+public AbstractApi {\
+decl \
+public: \
+name(); \
+~name(); \
+chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data); \
+};
+            
+#define CHAOS_MDS_DEFINE_API_CD(name, alias)\
+name::name():AbstractApi(#alias){}\
+name::~name() {}
+            
+#define CHAOS_MDS_DEFINE_API_CD_STR(name, alias)\
+name::name():AbstractApi(alias){}\
+name::~name() {}
             
             class AbstractApiGroup;
             

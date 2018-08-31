@@ -43,8 +43,7 @@ AbstractApi("getProcessLogEntries"){
 GetProcessLogEntries::~GetProcessLogEntries() {
 }
 
-CDataWrapper *GetProcessLogEntries::execute(CDataWrapper *api_data,
-                                            bool& detach_data) {
+CDWUniquePtr GetProcessLogEntries::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_MANDATORY_KEY(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2);

@@ -40,7 +40,7 @@ AbstractApi("removeScript"){
 RemoveScript::~RemoveScript() {
 }
 
-chaos::common::data::CDataWrapper *RemoveScript::execute(CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *RemoveScript::execute(CDWUniquePtr) {
     int err = 0;
     
     //check for mandatory attributes

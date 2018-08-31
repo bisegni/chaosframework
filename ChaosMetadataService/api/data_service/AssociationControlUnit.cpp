@@ -30,17 +30,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_ASSCIATE_CU_DS_DBG  DBG_LOG(AssociationControlUnit)
 #define DS_ASSCIATE_CU_DS_ERR  ERR_LOG(AssociationControlUnit)
 
-AssociationControlUnit::AssociationControlUnit():
-AbstractApi("associateControlUnit"){
+CHAOS_MDS_DEFINE_API_CD(AssociationControlUnit, associateControlUnit)
 
-}
-
-AssociationControlUnit::~AssociationControlUnit() {
-
-}
-
-CDataWrapper *AssociationControlUnit::execute(CDataWrapper *api_data,
-                                              bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr AssociationControlUnit::execute(CDWUniquePtr api_data){
 
     CHECK_CDW_THROW_AND_LOG(api_data, DS_ASSCIATE_CU_DS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, DS_ASSCIATE_CU_DS_ERR, -2, "The ndk_unique_id key is mandatory")
@@ -95,6 +87,5 @@ CDataWrapper *AssociationControlUnit::execute(CDataWrapper *api_data,
             LOG_AND_TROW(DS_ASSCIATE_CU_DS_ERR, -1, boost::str(boost::format("The data service '%1%' has not been found")%ds_uid))
         }
     }
-
-    return NULL;
+    return CDWUniquePtr();
 }

@@ -33,14 +33,9 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
-SaveScript::SaveScript():
-AbstractApi("saveScript"){
-}
+CHAOS_MDS_DEFINE_API_CD(SaveScript, SaveScript)
 
-SaveScript::~SaveScript() {
-}
-
-chaos::common::data::CDataWrapper *SaveScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
     int err = 0;
     
     //check for mandatory attributes
@@ -49,7 +44,7 @@ chaos::common::data::CDataWrapper *SaveScript::execute(CDataWrapper *api_data, b
     bool import = CDW_GET_BOOL_WITH_DEFAULT(api_data, "import", false);
     
     //get scrip description
-    ScriptSDWrapper script_dw(api_data);
+    ScriptSDWrapper script_dw(api_data.get());
     ScriptBaseDescriptionSDWrapper script_bs_result_dw;
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
@@ -73,5 +68,5 @@ chaos::common::data::CDataWrapper *SaveScript::execute(CDataWrapper *api_data, b
     
     //return the script base description
     script_bs_result_dw.dataWrapped() = script_dw.dataWrapped().script_description;
-    return script_bs_result_dw.serialize().release();
+    return script_bs_result_dw.serialize();
 }

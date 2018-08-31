@@ -33,18 +33,10 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetDomains::GetDomains():
-AbstractApi("getDomains"){
-    
-}
+CHAOS_MDS_DEFINE_API_CD(GetDomains, getDomains)
 
-GetDomains::~GetDomains() {
-    
-}
-
-chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetDomains::execute(CDWUniquePtr api_data) {
     int err = 0;
-
     GET_DATA_ACCESS(TreeGroupDataAccess, tg_da, -1);
     DomainList domain_list;
     if((err = tg_da->getAllGroupDomain(domain_list))){
@@ -52,7 +44,7 @@ chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDat
     }
     
     //compose output
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     if(domain_list.size()) {
         for(DomainListIterator it = domain_list.begin();
             it != domain_list.end();
@@ -61,5 +53,5 @@ chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDat
         }
     }
     result->finalizeArrayForKey("domain_list");
-    return result.release();
+    return result;
 }
