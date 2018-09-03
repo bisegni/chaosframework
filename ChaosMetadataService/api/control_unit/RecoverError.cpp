@@ -35,7 +35,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_RNU_DBG  DBG_LOG(RecoverError)
 #define CU_RNU_ERR  ERR_LOG(RecoverError)
 
-CHAOS_MDS_DEFINE_API(RecoverError, recoverError);
+CHAOS_MDS_DEFINE_API_CLASS_CD(RecoverError, "recoverError");
 
 CDWUniquePtr RecoverError::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_RNU_ERR, -1, "No parameter found")

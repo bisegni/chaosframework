@@ -29,7 +29,7 @@ namespace chaos {
         namespace api {
             namespace control_unit {
                 
-                CHAOS_MDS_DEFINE_API(GetInstance);
+                CHAOS_MDS_DEFINE_API_CLASS(GetInstance);
             }
         }
     }

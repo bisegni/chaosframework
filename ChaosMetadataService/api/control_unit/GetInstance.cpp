@@ -34,7 +34,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_GI_DBG  DBG_LOG(GetInstance)
 #define CU_GI_ERR  ERR_LOG(GetInstance)
 
-CHAOS_MDS_DEFINE_API_CD(GetInstance, getInstance);
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetInstance, "getInstance");
 
 CDWUniquePtr GetInstance::execute(CDWUniquePtr api_data) {
     

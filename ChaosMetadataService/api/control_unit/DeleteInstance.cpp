@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_DI_DBG  DBG_LOG(GetInstance)
 #define CU_DI_ERR  ERR_LOG(GetInstance)
 
-CHAOS_MDS_DEFINE_API_CD(DeleteInstance, deleteInstance);
+CHAOS_MDS_DEFINE_API_CLASS_CD(DeleteInstance, "deleteInstance");
 
 CDWUniquePtr DeleteInstance::execute(CDWUniquePtr api_data) {
     int err = 0;

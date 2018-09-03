@@ -34,7 +34,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_GCD_DBG  DBG_LOG(GetFullDescription)
 #define CU_GCD_ERR  ERR_LOG(GetFullDescription)
 
-CHAOS_MDS_DEFINE_API_CD(GetFullDescription, getFullDescription);
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetFullDescription, "getFullDescription");
 
 
 ChaosSharedPtr<CDataWrapper> mergeDatasetAttributeWithSetup(ChaosSharedPtr<CDataWrapper> element_in_dataset,

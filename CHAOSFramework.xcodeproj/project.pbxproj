@@ -2133,6 +2133,34 @@
 		32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetadataLogChannel.h; sourceTree = "<group>"; };
 		32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorLoggingChannel.cpp; sourceTree = "<group>"; };
 		32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorLoggingChannel.h; sourceTree = "<group>"; };
+		32B6B6C8213D808100D7ECF8 /* SendStorageBurst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendStorageBurst.cpp; sourceTree = "<group>"; };
+		32B6B6C9213D808100D7ECF8 /* DeleteInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteInstance.h; sourceTree = "<group>"; };
+		32B6B6CA213D808100D7ECF8 /* GetFullDescription.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullDescription.cpp; sourceTree = "<group>"; };
+		32B6B6CB213D808100D7ECF8 /* CopyInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CopyInstance.cpp; sourceTree = "<group>"; };
+		32B6B6CC213D808100D7ECF8 /* SetInstanceDescription.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetInstanceDescription.cpp; sourceTree = "<group>"; };
+		32B6B6CD213D808100D7ECF8 /* GetCurrentDataset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetCurrentDataset.cpp; sourceTree = "<group>"; };
+		32B6B6CE213D808100D7ECF8 /* RecoverError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecoverError.h; sourceTree = "<group>"; };
+		32B6B6CF213D808100D7ECF8 /* SetInputDatasetAttributeValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetInputDatasetAttributeValues.h; sourceTree = "<group>"; };
+		32B6B6D0213D808100D7ECF8 /* Delete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
+		32B6B6D1213D808100D7ECF8 /* SetInstanceDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetInstanceDescription.h; sourceTree = "<group>"; };
+		32B6B6D2213D808100D7ECF8 /* SetInputDatasetAttributeValues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SetInputDatasetAttributeValues.cpp; sourceTree = "<group>"; };
+		32B6B6D3213D808100D7ECF8 /* Delete.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
+		32B6B6D4213D808100D7ECF8 /* SendStorageBurst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendStorageBurst.h; sourceTree = "<group>"; };
+		32B6B6D5213D808100D7ECF8 /* SearchInstancesByUS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesByUS.cpp; sourceTree = "<group>"; };
+		32B6B6D6213D808100D7ECF8 /* GetInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GetInstance.cpp; sourceTree = "<group>"; };
+		32B6B6D7213D808100D7ECF8 /* StartStop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StartStop.cpp; sourceTree = "<group>"; };
+		32B6B6D8213D808100D7ECF8 /* RecoverError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecoverError.cpp; sourceTree = "<group>"; };
+		32B6B6D9213D808100D7ECF8 /* InitDeinit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InitDeinit.cpp; sourceTree = "<group>"; };
+		32B6B6DA213D808100D7ECF8 /* InitDeinit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitDeinit.h; sourceTree = "<group>"; };
+		32B6B6DB213D808100D7ECF8 /* GetFullDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetFullDescription.h; sourceTree = "<group>"; };
+		32B6B6DC213D808100D7ECF8 /* ControlUnitGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitGroup.cpp; sourceTree = "<group>"; };
+		32B6B6DD213D808100D7ECF8 /* StartStop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartStop.h; sourceTree = "<group>"; };
+		32B6B6DE213D808100D7ECF8 /* SearchInstancesByUS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchInstancesByUS.h; sourceTree = "<group>"; };
+		32B6B6DF213D808100D7ECF8 /* CopyInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyInstance.h; sourceTree = "<group>"; };
+		32B6B6E0213D808100D7ECF8 /* DeleteInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteInstance.cpp; sourceTree = "<group>"; };
+		32B6B6E1213D808100D7ECF8 /* GetInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetInstance.h; sourceTree = "<group>"; };
+		32B6B6E2213D808100D7ECF8 /* ControlUnitGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ControlUnitGroup.h; sourceTree = "<group>"; };
+		32B6B6E3213D808100D7ECF8 /* GetCurrentDataset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetCurrentDataset.h; sourceTree = "<group>"; };
 		32B6BD321E1E88F800A9F86C /* SharedCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SharedCommandDispatcher.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32B6BD331E1E88F800A9F86C /* SharedCommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedCommandDispatcher.h; sourceTree = "<group>"; };
 		32B6BD3A1E23CD8900A9F86C /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
@@ -4444,6 +4472,41 @@
 			path = batch;
 			sourceTree = "<group>";
 		};
+		32B6B6C7213D808100D7ECF8 /* control_unit */ = {
+			isa = PBXGroup;
+			children = (
+				32B6B6DC213D808100D7ECF8 /* ControlUnitGroup.cpp */,
+				32B6B6E2213D808100D7ECF8 /* ControlUnitGroup.h */,
+				32B6B6C8213D808100D7ECF8 /* SendStorageBurst.cpp */,
+				32B6B6D4213D808100D7ECF8 /* SendStorageBurst.h */,
+				32B6B6D3213D808100D7ECF8 /* Delete.cpp */,
+				32B6B6D0213D808100D7ECF8 /* Delete.h */,
+				32B6B6E0213D808100D7ECF8 /* DeleteInstance.cpp */,
+				32B6B6C9213D808100D7ECF8 /* DeleteInstance.h */,
+				32B6B6CA213D808100D7ECF8 /* GetFullDescription.cpp */,
+				32B6B6DB213D808100D7ECF8 /* GetFullDescription.h */,
+				32B6B6CB213D808100D7ECF8 /* CopyInstance.cpp */,
+				32B6B6DF213D808100D7ECF8 /* CopyInstance.h */,
+				32B6B6CC213D808100D7ECF8 /* SetInstanceDescription.cpp */,
+				32B6B6D1213D808100D7ECF8 /* SetInstanceDescription.h */,
+				32B6B6CD213D808100D7ECF8 /* GetCurrentDataset.cpp */,
+				32B6B6E3213D808100D7ECF8 /* GetCurrentDataset.h */,
+				32B6B6D8213D808100D7ECF8 /* RecoverError.cpp */,
+				32B6B6CE213D808100D7ECF8 /* RecoverError.h */,
+				32B6B6D2213D808100D7ECF8 /* SetInputDatasetAttributeValues.cpp */,
+				32B6B6CF213D808100D7ECF8 /* SetInputDatasetAttributeValues.h */,
+				32B6B6D5213D808100D7ECF8 /* SearchInstancesByUS.cpp */,
+				32B6B6DE213D808100D7ECF8 /* SearchInstancesByUS.h */,
+				32B6B6D6213D808100D7ECF8 /* GetInstance.cpp */,
+				32B6B6E1213D808100D7ECF8 /* GetInstance.h */,
+				32B6B6D7213D808100D7ECF8 /* StartStop.cpp */,
+				32B6B6DD213D808100D7ECF8 /* StartStop.h */,
+				32B6B6D9213D808100D7ECF8 /* InitDeinit.cpp */,
+				32B6B6DA213D808100D7ECF8 /* InitDeinit.h */,
+			);
+			path = control_unit;
+			sourceTree = "<group>";
+		};
 		32B9F3EE1AC3E6F600380FE9 /* data_access */ = {
 			isa = PBXGroup;
 			children = (
@@ -4610,6 +4673,7 @@
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
 				32BE0AC91E4B44870007764C /* agent */,
+				32B6B6C7213D808100D7ECF8 /* control_unit */,
 			);
 			path = api;
 			sourceTree = "<group>";

@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_GCD_DBG  DBG_LOG(GetCurrentDataset)
 #define CU_GCD_ERR  ERR_LOG(GetCurrentDataset)
 
-CHAOS_MDS_DEFINE_API_CD(GetCurrentDataset, getCurrentDataset);
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetCurrentDataset, "getCurrentDataset");
 
 CDWUniquePtr GetCurrentDataset::execute(CDWUniquePtr api_data) {
     if(!api_data) {LOG_AND_TROW(CU_GCD_ERR, -1, "Search parameter are needed");}

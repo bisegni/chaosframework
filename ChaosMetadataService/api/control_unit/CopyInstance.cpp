@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_CI_DBG  DBG_LOG(CopyInstance)
 #define CU_CI_ERR  ERR_LOG(CopyInstance)
 
-CHAOS_MDS_DEFINE_API_CD(CopyInstance, copyInstance)
+CHAOS_MDS_DEFINE_API_CLASS_CD(CopyInstance, "copyInstance")
 
 CDWUniquePtr CopyInstance::execute(CDWUniquePtr *api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_CI_ERR, -1, "No parameter found")

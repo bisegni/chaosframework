@@ -29,7 +29,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_SI_DBG  DBG_LOG(SearchInstancesByUS)
 #define CU_SI_ERR  ERR_LOG(SearchInstancesByUS)
 
-CHAOS_MDS_DEFINE_API_CD(SearchInstancesByUS, searchInstancesByUS)
+CHAOS_MDS_DEFINE_API_CLASS_CD(SearchInstancesByUS, "searchInstancesByUS")
 
 CDWUniquePtr SearchInstancesByUS::execute(CDWUniquePtr api_data) {
     int err = 0;

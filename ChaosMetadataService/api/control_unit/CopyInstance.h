@@ -33,7 +33,7 @@ namespace chaos {
                 /*!
                  the contorl unit instance is copied into a new instance with a new control unit id
                  */
-                CHAOS_MDS_DEFINE_API(CopyInstance)
+                CHAOS_MDS_DEFINE_API_CLASS(CopyInstance)
  
             }
         }

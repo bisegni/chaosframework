@@ -28,7 +28,7 @@ namespace chaos {
         namespace api {
             namespace control_unit {
 
-                CHAOS_MDS_DEFINE_API(SearchInstancesByUS)
+                CHAOS_MDS_DEFINE_API_CLASS(SearchInstancesByUS)
             }
         }
     }

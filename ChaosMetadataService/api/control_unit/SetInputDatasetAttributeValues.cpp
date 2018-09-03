@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_SIDAV_DBG  DBG_LOG(SetInputDatasetAttributeValues)
 #define CU_SIDAV_ERR  ERR_LOG(SetInputDatasetAttributeValues)
 
-CHAOS_MDS_DEFINE_API_CD(SetInputDatasetAttributeValues, setInputDatasetAttributeValues);
+CHAOS_MDS_DEFINE_API_CLASS_CD(SetInputDatasetAttributeValues, "setInputDatasetAttributeValues");
 
 CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr *api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_SIDAV_ERR, -1, "No parameter found")

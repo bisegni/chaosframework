@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_STASTO_DBG  DBG_LOG(StartStop)
 #define CU_STASTO_ERR  ERR_LOG(StartStop)
 
-CHAOS_MDS_DEFINE_API(StartStop, startStop);
+CHAOS_MDS_DEFINE_API_CLASS_CD(StartStop, startStop);
 
 CDWUniquePtr StartStop::execute(CDWUniquePtr api_data) {
     if(!api_data) {LOG_AND_TROW(CU_STASTO_ERR, -1, "Search parameter are needed");}

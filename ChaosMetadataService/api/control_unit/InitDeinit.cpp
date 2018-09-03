@@ -32,7 +32,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_INDEIN_DBG  DBG_LOG(InitDeinit)
 #define CU_INDEIN_ERR  ERR_LOG(InitDeinit)
 
-CHAOS_MDS_DEFINE_API_CD(InitDeinit, initDeinit);
+CHAOS_MDS_DEFINE_API_CLASS_CD(InitDeinit, "initDeinit");
 
 CDWUniquePtr InitDeinit::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_INDEIN_ERR, -1, "No parameter found")
