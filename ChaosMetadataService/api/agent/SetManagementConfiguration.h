@@ -35,14 +35,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class SetManagementConfiguration:
-                public AbstractApi {
-                    
-                public:
-                    SetManagementConfiguration();
-                    ~SetManagementConfiguration();
-                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(SetManagementConfiguration)
             }
         }
     }

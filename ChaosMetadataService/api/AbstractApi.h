@@ -29,13 +29,13 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/global.h>
 namespace chaos {
-	namespace metadata_service {
-		namespace api {
-
+    namespace metadata_service {
+        namespace api {
+            
 #define GET_DATA_ACCESS(x,v, err)\
 x *v = getPersistenceDriver()->getDataAccess<x>();\
 if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);
-
+            
 #define MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
 dst->addStringValue(k, src->getStringValue(k));\
@@ -52,40 +52,29 @@ MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
 dst->addInt32Value(k, src->getInt32Value(k));\
 }
-
-#define CHAOS_MDS_DEFINE_API(name) \
+            
+#define CHAOS_MDS_DEFINE_API_CLASS(name)\
 class name:\
 public AbstractApi {\
+protected:\
 public:\
-name();\
-~name();\
-chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);\
-};
-  
-#define CHAOS_MDS_DEFINE_API_EXT(name, decl) \
-class name:\
-public AbstractApi {\
-decl \
-public: \
-name(); \
-~name(); \
-chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data); \
+    name();\
+    ~name();\
+    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);\
 };
             
-#define CHAOS_MDS_DEFINE_API_CD(name, alias)\
-name::name():AbstractApi(#alias){}\
-name::~name() {}
+#define CHAOS_MDS_DEFINE_API_CLASS_CD(n, a)\
+n::n():\
+AbstractApi(a){}\
+n::~n(){}
             
-#define CHAOS_MDS_DEFINE_API_CD_STR(name, alias)\
-name::name():AbstractApi(alias){}\
-name::~name() {}
             
             class AbstractApiGroup;
             
-			//! Api abstraction
-			/*!
-			 This class define the rule for the api development
-			 */
+            //! Api abstraction
+            /*!
+             This class define the rule for the api development
+             */
             class AbstractApi:
             public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService {
@@ -98,24 +87,23 @@ name::~name() {}
                 service_common::persistence::data_access::AbstractPersistenceDriver *getPersistenceDriver();
                 batch::MDSBatchExecutor *getBatchExecutor();
                 chaos::common::network::NetworkBroker *getNetworkBroker();
-			public:
-				//! defaukt constructor with the alias of the api
+            public:
+                //! defaukt constructor with the alias of the api
                 AbstractApi(const std::string& name);
-				
-				//d! efault destructor
-				virtual ~AbstractApi();
-				
+                
+                //d! efault destructor
+                virtual ~AbstractApi();
+                
                 void init(void *init_data) throw (chaos::CException);
                 
                 void deinit()  throw (chaos::CException);
                 
-				//! execute the api
-				virtual chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                                   bool& detach_data) = 0;
-			};
-			
-		}
-	}
+                //! execute the api
+                virtual chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data) = 0;
+            };
+
+        }
+    }
 }
 
 #endif

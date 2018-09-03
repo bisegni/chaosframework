@@ -36,12 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-NodeOperation::NodeOperation():
-AbstractApi("nodeOperation"){
-}
-
-NodeOperation::~NodeOperation() {
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeOperation, "nodeOperation");
 
 CDWUniquePtr NodeOperation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -68,5 +63,5 @@ CDWUniquePtr NodeOperation::execute(CDWUniquePtr api_data) {
                                                    batch_data.release(),
                                                    0,
                                                    1000);
-    return NULL;
+    return CDWUniquePtr();
 }

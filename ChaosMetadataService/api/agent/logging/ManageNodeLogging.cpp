@@ -36,12 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-ManageNodeLogging::ManageNodeLogging():
-AbstractApi("manageNodeLogging"){
-}
-
-ManageNodeLogging::~ManageNodeLogging() {
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(ManageNodeLogging, "manageNodeLogging")
 
 CDWUniquePtr ManageNodeLogging::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -62,5 +57,5 @@ CDWUniquePtr ManageNodeLogging::execute(CDWUniquePtr api_data) {
                                                batch_data.release(),
                                                0,
                                                1000);
-    return NULL;
+    return CDWUniquePtr();
 }

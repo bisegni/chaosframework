@@ -34,12 +34,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-LoadNodeAssociation::LoadNodeAssociation():
-AbstractApi("loadNodeAssociation"){
-}
-
-LoadNodeAssociation::~LoadNodeAssociation() {
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadNodeAssociation, "loadNodeAssociation")
 
 CDWUniquePtr LoadNodeAssociation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes

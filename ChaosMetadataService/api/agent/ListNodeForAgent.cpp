@@ -36,10 +36,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 using namespace chaos::service_common::data::agent;
 
-ListNodeForAgent::ListNodeForAgent():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE){}
-
-ListNodeForAgent::~ListNodeForAgent() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(ListNodeForAgent, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE);
 
 CDWUniquePtr ListNodeForAgent::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -57,5 +54,5 @@ CDWUniquePtr ListNodeForAgent::execute(CDWUniquePtr api_data) {
     if((err = a_da->getNodeListStatusForAgent(agent_uid, association_status_vec_sd_wrap()))) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading association status for agent %1%",%agent_uid));
     }
-    return association_status_vec_sd_wrap.serialize().release();
+    return association_status_vec_sd_wrap.serialize();
 }

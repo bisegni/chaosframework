@@ -36,12 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetProcessLogEntries::GetProcessLogEntries():
-AbstractApi("getProcessLogEntries"){
-}
-
-GetProcessLogEntries::~GetProcessLogEntries() {
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetProcessLogEntries, "getProcessLogEntries");
 
 CDWUniquePtr GetProcessLogEntries::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -75,5 +70,5 @@ CDWUniquePtr GetProcessLogEntries::execute(CDWUniquePtr api_data) {
                                 lev_w()))){
         LOG_AND_TROW(ERR, -11, CHAOS_FORMAT("Error retrieving log entries for node %1%", %node_uid));
     }
-    return lev_w.serialize().release();
+    return lev_w.serialize();
 }

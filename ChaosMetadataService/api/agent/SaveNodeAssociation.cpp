@@ -34,10 +34,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-SaveNodeAssociation::SaveNodeAssociation():
-AbstractApi("saveNodeAssociation"){}
-
-SaveNodeAssociation::~SaveNodeAssociation() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(SaveNodeAssociation, "saveNodeAssociation")
 
 CDWUniquePtr SaveNodeAssociation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -72,7 +69,7 @@ CDWUniquePtr SaveNodeAssociation::execute(CDWUniquePtr api_data) {
     } else {
         VectorAgentAssociationSDWrapper associationList_sd_wrap;
         associationList_sd_wrap.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
-        associationList_sd_wrap.deserialize(api_data);
+        associationList_sd_wrap.deserialize(api_data.get());
         for(std::vector<AgentAssociation>::iterator it = associationList_sd_wrap().begin(),
             end = associationList_sd_wrap().end();
             it != end;

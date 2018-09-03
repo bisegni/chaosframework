@@ -36,16 +36,13 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-SetManagementConfiguration::SetManagementConfiguration():
-AbstractApi("setManagementConfiguration"){}
-
-SetManagementConfiguration::~SetManagementConfiguration(){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(SetManagementConfiguration, "setManagementConfiguration")
 
 CDWUniquePtr SetManagementConfiguration::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     GET_DATA_ACCESS(AgentDataAccess, a_da, -2);
-    AgentManagementSettingSDWrapper set_w(api_data);
+    AgentManagementSettingSDWrapper set_w(api_data.get());
     a_da->setLogEntryExpiration(true, set_w().log_expiration_in_seconds);
-    return NULL;
+    return CDWUniquePtr();
 }

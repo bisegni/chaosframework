@@ -32,10 +32,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-LoadAgentDescription::LoadAgentDescription():
-AbstractApi("loadAgentDescription"){}
-
-LoadAgentDescription::~LoadAgentDescription(){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadAgentDescription, "loadAgentDescription");
 
 CDWUniquePtr LoadAgentDescription::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -58,5 +55,5 @@ CDWUniquePtr LoadAgentDescription::execute(CDWUniquePtr api_data) {
                                          agent_instance_sd_wrapper()))) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading full description for agent %1%",%agent_uid));
     }
-    return agent_instance_sd_wrapper.serialize().release();
+    return agent_instance_sd_wrapper.serialize();
 }

@@ -36,14 +36,11 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetManagementConfiguration::GetManagementConfiguration():
-AbstractApi("getManagementConfiguration"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetManagementConfiguration, "getManagementConfiguration")
 
-GetManagementConfiguration::~GetManagementConfiguration(){}
-
-CDataWrapper *GetManagementConfiguration::execute(CDWUniquePtr) {
+CDWUniquePtr GetManagementConfiguration::execute(CDWUniquePtr api_data) {
     GET_DATA_ACCESS(AgentDataAccess, a_da, -1);
     AgentManagementSettingSDWrapper set_w;
     a_da->getLogEntryExpiration(set_w().expiration_enabled, set_w().log_expiration_in_seconds);
-    return set_w.serialize().release();
+    return set_w.serialize();
 }

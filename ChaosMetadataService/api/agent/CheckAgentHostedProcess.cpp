@@ -36,10 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CheckAgentHostedProcess::CheckAgentHostedProcess():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE){}
-
-CheckAgentHostedProcess::~CheckAgentHostedProcess() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CheckAgentHostedProcess, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE)
 
 CDWUniquePtr CheckAgentHostedProcess::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes

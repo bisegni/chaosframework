@@ -35,14 +35,7 @@ namespace chaos {
                     /*!
                      
                      */
-                    class GetProcessLogEntries:
-                    public AbstractApi {
-                        
-                    public:
-                        GetProcessLogEntries();
-                        ~GetProcessLogEntries();
-                        chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                    };
+                    CHAOS_MDS_DEFINE_API_CLASS(GetProcessLogEntries);
                 }
             }
         }

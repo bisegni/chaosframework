@@ -36,10 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-RemoveNodeAssociation::RemoveNodeAssociation():
-AbstractApi("removeNodeAssociation"){}
-
-RemoveNodeAssociation::~RemoveNodeAssociation() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(RemoveNodeAssociation, "removeNodeAssociation")
 
 CDWUniquePtr RemoveNodeAssociation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
@@ -53,9 +50,8 @@ CDWUniquePtr RemoveNodeAssociation::execute(CDWUniquePtr api_data) {
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
 //    int err = 0;
-    detach_data = true;
     uint64_t cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentRemoveNodeSafety),
-                                                        api_data,
+                                                        api_data.release(),
                                                         0,
                                                         1000);
     //    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);

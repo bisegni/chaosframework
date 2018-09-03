@@ -35,14 +35,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class CheckAgentHostedProcess:
-                public AbstractApi {
-                    
-                public:
-                    CheckAgentHostedProcess();
-                    ~CheckAgentHostedProcess();
-                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(CheckAgentHostedProcess)
             }
         }
     }

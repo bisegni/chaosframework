@@ -35,13 +35,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class LoadAgentDescription:
-                public AbstractApi {
-                public:
-                    LoadAgentDescription();
-                    ~LoadAgentDescription();
-                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(LoadAgentDescription);
             }
         }
     }
