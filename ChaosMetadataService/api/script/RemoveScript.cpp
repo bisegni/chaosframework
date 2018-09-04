@@ -33,20 +33,14 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
-RemoveScript::RemoveScript():
-AbstractApi("removeScript"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(RemoveScript, "removeScript");
 
-RemoveScript::~RemoveScript() {
-}
-
-chaos::common::data::CDataWrapper *RemoveScript::execute(CDWUniquePtr) {
+CDWUniquePtr RemoveScript::execute(CDWUniquePtr api_data) {
     int err = 0;
-    
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
-    ScriptBaseDescriptionSDWrapper script_bs_dw(api_data);
+    ScriptBaseDescriptionSDWrapper script_bs_dw(api_data.get());
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
     
@@ -55,5 +49,5 @@ chaos::common::data::CDataWrapper *RemoveScript::execute(CDWUniquePtr) {
                                  script_bs_dw().name))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_bs_dw.dataWrapped().name%script_bs_dw().unique_id));
     }
-    return NULL;
+    return CDWUniquePtr();
 }

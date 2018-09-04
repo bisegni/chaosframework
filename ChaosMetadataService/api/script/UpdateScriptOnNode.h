@@ -29,7 +29,7 @@ namespace chaos {
         namespace api {
             namespace script {
                 //! Update the script on a determinate node or series of node
-                CHAOS_MDS_DEFINE_API(UpdateScriptOnNode);
+                CHAOS_MDS_DEFINE_API_CLASS(UpdateScriptOnNode);
             }
         }
     }

@@ -34,15 +34,7 @@ namespace chaos {
                 /*!
                  Perform the creation of new script with all data passed in input
                  */
-                class RemoveScript:
-                public AbstractApi {
-                    
-                public:
-                    RemoveScript();
-                    ~RemoveScript();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(RemoveScript);
             }
         }
     }

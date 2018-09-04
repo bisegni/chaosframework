@@ -41,7 +41,7 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(UpdateScriptOnNode,updateScriptOnNode)
+CHAOS_MDS_DEFINE_API_CLASS_CD(UpdateScriptOnNode, "updateScriptOnNode")
 
 CDWUniquePtr UpdateScriptOnNode::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");

@@ -34,7 +34,7 @@ namespace chaos {
                 /*!
                  Search and return the scrip found according to search string
                  */
-                CHAOS_MDS_DEFINE_API(SearchScript)
+                CHAOS_MDS_DEFINE_API_CLASS(SearchScript)
             }
         }
     }

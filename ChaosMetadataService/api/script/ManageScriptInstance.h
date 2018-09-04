@@ -29,15 +29,7 @@ namespace chaos {
         namespace api {
             namespace script {
                 //! Add a new instance to the script
-                class ManageScriptInstance:
-                public AbstractApi {
-                    
-                public:
-                    ManageScriptInstance();
-                    ~ManageScriptInstance();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(ManageScriptInstance)
             }
         }
     }

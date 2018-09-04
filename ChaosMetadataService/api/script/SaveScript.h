@@ -34,7 +34,7 @@ namespace chaos {
                 /*!
                  Perform the creation of new script with all data passed in input
                  */
-                CHAOS_MDS_DEFINE_API(SaveScript)
+                CHAOS_MDS_DEFINE_API_CLASS(SaveScript)
             }
         }
     }

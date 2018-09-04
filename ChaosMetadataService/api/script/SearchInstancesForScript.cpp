@@ -35,14 +35,9 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
-SearchInstancesForScript::SearchInstancesForScript():
-AbstractApi("searchInstancesForScript"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(SearchInstancesForScript, "searchInstancesForScript")
 
-SearchInstancesForScript::~SearchInstancesForScript() {
-}
-
-CDataWrapper *SearchInstancesForScript::execute(CDWUniquePtr) {
+CDWUniquePtr SearchInstancesForScript::execute(CDWUniquePtr api_data) {
     int err = 0;
     
     //check for mandatory attributes
@@ -70,5 +65,5 @@ CDataWrapper *SearchInstancesForScript::execute(CDWUniquePtr) {
                                          page_lenght))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error searching instance for script %1%",%script_name));
     }
-    return ni_list_wrapper.serialize().release();
+    return ni_list_wrapper.serialize();
 }
