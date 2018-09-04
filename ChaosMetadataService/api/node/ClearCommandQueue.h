@@ -28,7 +28,13 @@ namespace chaos {
         namespace api {
             namespace node {
                 //! Call feature api for the sandbox
-                CHAOS_MDS_DEFINE_API_CLASS(ClearCommandQueue);
+                class ClearCommandQueue:
+                public ForwardNodeRpcMessage {
+                public:
+                    ClearCommandQueue();
+                    ~ClearCommandQueue();
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
+                };
             }
         }
     }

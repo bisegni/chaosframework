@@ -30,7 +30,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DBG  DBG_LOG(CommandInstanceSubmit)
 #define ERR  ERR_LOG(CommandInstanceSubmit)
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(ClearCommandQueue, "clearCommandQueue");
+ClearCommandQueue::ClearCommandQueue():
+ForwardNodeRpcMessage("clearCommandQueue"){}
+ClearCommandQueue::~ClearCommandQueue(){}
 
 CDWUniquePtr ClearCommandQueue::execute(CDWUniquePtr api_data) {
     CDWUniquePtr node_description;

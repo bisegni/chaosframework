@@ -30,7 +30,10 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DBG  DBG_LOG(CommandInstanceSubmit)
 #define ERR  ERR_LOG(CommandInstanceSubmit)
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(KillCurrentCommand, "killCurrentCommand");
+
+KillCurrentCommand::KillCurrentCommand():
+ForwardNodeRpcMessage("killCurrentCommand"){}
+KillCurrentCommand::~KillCurrentCommand(){}
 
 CDWUniquePtr KillCurrentCommand::execute(CDWUniquePtr api_data) {
     CDWUniquePtr node_description;
@@ -41,6 +44,5 @@ CDWUniquePtr KillCurrentCommand::execute(CDWUniquePtr api_data) {
     //complete data with domain and action name
     api_data->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME,
                              BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND);
-    return ForwardNodeRpcMessage::execute(api_data,
-                                          detach_data);
+    return ForwardNodeRpcMessage::execute(MOVE(api_data));
 }

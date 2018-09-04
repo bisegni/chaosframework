@@ -23,12 +23,19 @@
 #define __CHAOSFramework__KillCurrentCommand__
 
 #include "ForwardNodeRpcMessage.h"
+
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
                 //! Call feature api for the sandbox
-                CHAOS_MDS_DEFINE_API_CLASS(KillCurrentCommand);
+                class KillCurrentCommand:
+                public ForwardNodeRpcMessage {
+                public:
+                    KillCurrentCommand();
+                    ~KillCurrentCommand();
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
+                };
             }
         }
     }
