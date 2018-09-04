@@ -32,18 +32,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_LOUNLO_DBG  DBG_LOG(LoadUnloadControlUnit)
 #define CU_LOUNLO_ERR  ERR_LOG(LoadUnloadControlUnit)
 
-LoadUnloadControlUnit::LoadUnloadControlUnit():
-AbstractApi("loadUnloadControlUnit"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadUnloadControlUnit, "loadUnloadControlUnit")
 
-LoadUnloadControlUnit::~LoadUnloadControlUnit() {
-    
-}
-
-CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr LoadUnloadControlUnit::execute(CDWUniquePtr api_data) {
     if(!api_data) {LOG_AND_TROW(CU_LOUNLO_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_LOUNLO_ERR, -1, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
     if(!api_data->hasKey("load")) {LOG_AND_TROW(CU_LOUNLO_ERR, -2, "The 'load' key is mandatory!");}

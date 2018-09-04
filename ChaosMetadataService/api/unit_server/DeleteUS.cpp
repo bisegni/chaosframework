@@ -31,18 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define US_NEW_DBG  DBG_LOG(DeleteUS)
 #define US_NEW_ERR  ERR_LOG(DeleteUS)
 
-DeleteUS::DeleteUS():
-AbstractApi("deleteUS"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(DeleteUS, "deleteUS")
 
-}
-
-DeleteUS::~DeleteUS() {
-
-}
-
-CDataWrapper *DeleteUS::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
-
+CDWUniquePtr DeleteUS::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, US_NEW_ERR, -1, "No parameter has been set!")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, US_NEW_ERR, -2, "No mdk_uid is mandatory!")
     
@@ -60,5 +51,5 @@ CDataWrapper *DeleteUS::execute(CDataWrapper *api_data,
             LOG_AND_TROW(US_NEW_ERR, -6, boost::str(boost::format("Error removing unit server of id:%1%") % new_us_uid));
         }   
     }
-    return NULL;
+    return CDWUniquePtr();
 }

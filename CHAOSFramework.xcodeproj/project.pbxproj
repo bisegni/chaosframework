@@ -330,6 +330,13 @@
 		325F0230213ED99C00270077 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0223213ED99C00270077 /* ServiceApiGroup.cpp */; };
 		325F0231213ED99C00270077 /* DeleteSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0224213ED99C00270077 /* DeleteSnapshot.cpp */; };
 		325F0232213ED99C00270077 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0225213ED99C00270077 /* GetNodesForSnapshot.cpp */; };
+		325F0242213EE20400270077 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0236213EE20300270077 /* NewUS.cpp */; };
+		325F0243213EE20400270077 /* GetDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0237213EE20300270077 /* GetDescription.cpp */; };
+		325F0244213EE20400270077 /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0238213EE20300270077 /* LoadUnloadControlUnit.cpp */; };
+		325F0245213EE20400270077 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F023C213EE20300270077 /* ManageCUType.cpp */; };
+		325F0246213EE20400270077 /* GetSetFullUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F023E213EE20300270077 /* GetSetFullUnitServer.cpp */; };
+		325F0247213EE20400270077 /* UnitServerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0240213EE20300270077 /* UnitServerApiGroup.cpp */; };
+		325F0248213EE20400270077 /* DeleteUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0241213EE20300270077 /* DeleteUS.cpp */; };
 		325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */; };
 		325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */; };
 		325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */; };
@@ -1593,6 +1600,20 @@
 		325F0223213ED99C00270077 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		325F0224213ED99C00270077 /* DeleteSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteSnapshot.cpp; sourceTree = "<group>"; };
 		325F0225213ED99C00270077 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
+		325F0234213EE20300270077 /* GetDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetDescription.h; sourceTree = "<group>"; };
+		325F0235213EE20300270077 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
+		325F0236213EE20300270077 /* NewUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewUS.cpp; sourceTree = "<group>"; };
+		325F0237213EE20300270077 /* GetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDescription.cpp; sourceTree = "<group>"; };
+		325F0238213EE20300270077 /* LoadUnloadControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadUnloadControlUnit.cpp; sourceTree = "<group>"; };
+		325F0239213EE20300270077 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
+		325F023A213EE20300270077 /* UnitServerApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerApiGroup.h; sourceTree = "<group>"; };
+		325F023B213EE20300270077 /* DeleteUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteUS.h; sourceTree = "<group>"; };
+		325F023C213EE20300270077 /* ManageCUType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageCUType.cpp; sourceTree = "<group>"; };
+		325F023D213EE20300270077 /* LoadUnloadControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadUnloadControlUnit.h; sourceTree = "<group>"; };
+		325F023E213EE20300270077 /* GetSetFullUnitServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSetFullUnitServer.cpp; sourceTree = "<group>"; };
+		325F023F213EE20300270077 /* GetSetFullUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSetFullUnitServer.h; sourceTree = "<group>"; };
+		325F0240213EE20300270077 /* UnitServerApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerApiGroup.cpp; sourceTree = "<group>"; };
+		325F0241213EE20300270077 /* DeleteUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteUS.cpp; sourceTree = "<group>"; };
 		325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverUnitProxy.cpp; sourceTree = "<group>"; };
 		325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverUnitProxy.h; sourceTree = "<group>"; };
 		325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
@@ -3408,6 +3429,27 @@
 			path = service;
 			sourceTree = "<group>";
 		};
+		325F0233213EE20300270077 /* unit_server */ = {
+			isa = PBXGroup;
+			children = (
+				325F0240213EE20300270077 /* UnitServerApiGroup.cpp */,
+				325F023A213EE20300270077 /* UnitServerApiGroup.h */,
+				325F0236213EE20300270077 /* NewUS.cpp */,
+				325F0239213EE20300270077 /* NewUS.h */,
+				325F0237213EE20300270077 /* GetDescription.cpp */,
+				325F0234213EE20300270077 /* GetDescription.h */,
+				325F0238213EE20300270077 /* LoadUnloadControlUnit.cpp */,
+				325F023D213EE20300270077 /* LoadUnloadControlUnit.h */,
+				325F023C213EE20300270077 /* ManageCUType.cpp */,
+				325F0235213EE20300270077 /* ManageCUType.h */,
+				325F023E213EE20300270077 /* GetSetFullUnitServer.cpp */,
+				325F023F213EE20300270077 /* GetSetFullUnitServer.h */,
+				325F0241213EE20300270077 /* DeleteUS.cpp */,
+				325F023B213EE20300270077 /* DeleteUS.h */,
+			);
+			path = unit_server;
+			sourceTree = "<group>";
+		};
 		325F51771F3C3D89000B842F /* raw_driver */ = {
 			isa = PBXGroup;
 			children = (
@@ -5010,6 +5052,7 @@
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
+				325F0233213EE20300270077 /* unit_server */,
 				325F020B213ED99C00270077 /* service */,
 				32B6B782213EA6DD00D7ECF8 /* script */,
 				32B6B739213E8C7600D7ECF8 /* node */,
@@ -6238,6 +6281,7 @@
 				32B6B734213E736D00D7ECF8 /* GetLogDomainForSourceUID.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32B6B70E213E710100D7ECF8 /* StartUploadSession.cpp in Sources */,
+				325F0242213EE20400270077 /* NewUS.cpp in Sources */,
 				325F022E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */,
 				32B6B79B213EA6DD00D7ECF8 /* LoadFullScript.cpp in Sources */,
@@ -6258,6 +6302,8 @@
 				32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */,
 				326ACF861E01525D00AD011E /* MongoDBObjectStorageDriver.cpp in Sources */,
 				32B6B779213E8C7600D7ECF8 /* CommandGet.cpp in Sources */,
+				325F0245213EE20400270077 /* ManageCUType.cpp in Sources */,
+				325F0243213EE20400270077 /* GetDescription.cpp in Sources */,
 				32B6B77B213E8C7600D7ECF8 /* GetNodeNetworkAddress.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32FF2A931E6874FF00117985 /* MongoDBDeployDataAccess.cpp in Sources */,
@@ -6327,6 +6373,7 @@
 				326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */,
 				32B6B737213E736D00D7ECF8 /* SubmitEntry.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
+				325F0247213EE20400270077 /* UnitServerApiGroup.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
 				32B6B728213E72A900D7ECF8 /* ProcessBye.cpp in Sources */,
 				32B6B79E213EA6DD00D7ECF8 /* SearchInstancesForScript.cpp in Sources */,
@@ -6336,6 +6383,7 @@
 				32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */,
 				325F0227213ED99C00270077 /* GetSnapshotForNode.cpp in Sources */,
 				32B6B71C213E71EC00D7ECF8 /* GetNodeChilds.cpp in Sources */,
+				325F0248213EE20400270077 /* DeleteUS.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */,
 				32B6B799213EA6DD00D7ECF8 /* SaveScript.cpp in Sources */,
@@ -6350,6 +6398,7 @@
 				32F9F8261D90330E0023948D /* MDSCronusManager.cpp in Sources */,
 				32B6B776213E8C7600D7ECF8 /* ClearCommandQueue.cpp in Sources */,
 				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
+				325F0244213EE20400270077 /* LoadUnloadControlUnit.cpp in Sources */,
 				325F022B213ED99C00270077 /* SetVariable.cpp in Sources */,
 				32B6B770213E8C7600D7ECF8 /* NodeGroup.cpp in Sources */,
 				32B6B71B213E71EC00D7ECF8 /* GetDomains.cpp in Sources */,
@@ -6365,6 +6414,7 @@
 				32B6B6F3213E6EE700D7ECF8 /* GetBestEndpoints.cpp in Sources */,
 				32BE0AD61E4B758D0007764C /* SaveNodeAssociation.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
+				325F0246213EE20400270077 /* GetSetFullUnitServer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

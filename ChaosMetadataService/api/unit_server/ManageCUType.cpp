@@ -30,18 +30,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define US_ACT_DBG  DBG_LOG(ManageCUType)
 #define US_ACT_ERR  ERR_LOG(ManageCUType)
 
-ManageCUType::ManageCUType():
-AbstractApi("manageCUType"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(ManageCUType, "manageCUType")
 
-ManageCUType::~ManageCUType() {
-    
-}
-
-CDataWrapper *ManageCUType::execute(CDataWrapper *api_data,
-                             bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr ManageCUType::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, US_ACT_ERR, -1, "No parameter has been set!")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, US_ACT_ERR, -2, "No ndk_uid is mandatory!")
     CHECK_KEY_THROW_AND_LOG(api_data, UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS, US_ACT_ERR, -3, "No usndk_hosted_cu_class is mandatory!")
@@ -78,6 +69,5 @@ CDataWrapper *ManageCUType::execute(CDataWrapper *api_data,
             LOG_AND_TROW_FORMATTED(US_ACT_ERR, -10, "Invalid oepration:%1% for ManageCUType api[%2%:%3%]", %operation%us_uid%new_cu_type);
             break;
     }
-
-    return NULL;
+    return CDWUniquePtr();
 }

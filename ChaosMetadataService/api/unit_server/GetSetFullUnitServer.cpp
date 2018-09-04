@@ -35,18 +35,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define US_ACT_DBG  DBG_LOG(GetSetFullUnitServer)
 #define US_ACT_ERR  ERR_LOG(GetSetFullUnitServer)
 
-GetSetFullUnitServer::GetSetFullUnitServer():
-AbstractApi("GetSetFullUnitServer"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetSetFullUnitServer, "GetSetFullUnitServer")
 
-GetSetFullUnitServer::~GetSetFullUnitServer() {
-    
-}
-
-CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
-                                            bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr GetSetFullUnitServer::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, US_ACT_ERR, -1, "No parameter has been set!")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, US_ACT_ERR, -2, "No ndk_uid is mandatory!")
     
@@ -196,8 +187,6 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
             if(page_result.size() > 0) {
                 //add found element to result
                 CDataWrapper* res;
-                
-                
                 for (std::vector<ChaosSharedPtr<CDataWrapper> >::iterator it = page_result.begin();
                      it != page_result.end();
                      it++) {
@@ -211,18 +200,13 @@ CDataWrapper *GetSetFullUnitServer::execute(CDataWrapper *api_data,
                             
                         }
                         tot_res.appendCDataWrapperToArray(*res);
-                        
                     }
                 }
                 tot_res.finalizeArrayForKey("cu_desc");
             }
             result->addCSDataValue("us_desc",tot_res);
-            
-            return result;
-            
-            
+            return CDWUniquePtr(result);
         }
     }
-    
-    return NULL;
+    return CDWUniquePtr();
 }
