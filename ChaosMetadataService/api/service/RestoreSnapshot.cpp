@@ -31,7 +31,8 @@ using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
-CHAOS_MDS_DEFINE_API_CD(RestoreSnapshot,restoreSnapshot)
+
+CHAOS_MDS_DEFINE_API_CLASS_CD(RestoreSnapshot, "restoreSnapshot")
 
 CDWUniquePtr RestoreSnapshot::execute(CDWUniquePtr api_data) {
     

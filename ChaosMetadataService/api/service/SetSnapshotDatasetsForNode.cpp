@@ -31,7 +31,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(SetSnapshotDatasetsForNode, setSnapshotDatasetsForNode)
+CHAOS_MDS_DEFINE_API_CLASS_CD(SetSnapshotDatasetsForNode, "setSnapshotDatasetsForNode")
 
 CDWUniquePtr SetSnapshotDatasetsForNode::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");

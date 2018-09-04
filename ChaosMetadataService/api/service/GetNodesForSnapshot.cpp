@@ -33,7 +33,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, NodeList);
 
-CHAOS_MDS_DEFINE_API_CD(GetNodesForSnapshot, getNodesForSnapshot)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetNodesForSnapshot, "getNodesForSnapshot")
 
 CDWUniquePtr GetNodesForSnapshot::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, S_GNFN_ERR, -1, "No parameter found");

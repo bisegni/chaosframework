@@ -33,7 +33,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CHAOS_MDS_DEFINE_API(RestoreSnapshot)
+                CHAOS_MDS_DEFINE_API_CLASS(RestoreSnapshot)
             }
         }
     }

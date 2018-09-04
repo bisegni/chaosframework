@@ -317,6 +317,19 @@
 		325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 325D2FCC1AFA19E500B2A706 /* HealtManager.h */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
+		325F0226213ED99C00270077 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F020C213ED99C00270077 /* ResetAll.cpp */; };
+		325F0227213ED99C00270077 /* GetSnapshotForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F020D213ED99C00270077 /* GetSnapshotForNode.cpp */; };
+		325F0228213ED99C00270077 /* CreateNewSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0214213ED99C00270077 /* CreateNewSnapshot.cpp */; };
+		325F0229213ED99C00270077 /* GetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0215213ED99C00270077 /* GetVariable.cpp */; };
+		325F022A213ED99C00270077 /* RemoveVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0219213ED99C00270077 /* RemoveVariable.cpp */; };
+		325F022B213ED99C00270077 /* SetVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F021A213ED99C00270077 /* SetVariable.cpp */; };
+		325F022C213ED99C00270077 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F021B213ED99C00270077 /* GetAllSnapshot.cpp */; };
+		325F022D213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F021C213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp */; };
+		325F022E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F021E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp */; };
+		325F022F213ED99C00270077 /* RestoreSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0220213ED99C00270077 /* RestoreSnapshot.cpp */; };
+		325F0230213ED99C00270077 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0223213ED99C00270077 /* ServiceApiGroup.cpp */; };
+		325F0231213ED99C00270077 /* DeleteSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0224213ED99C00270077 /* DeleteSnapshot.cpp */; };
+		325F0232213ED99C00270077 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F0225213ED99C00270077 /* GetNodesForSnapshot.cpp */; };
 		325F517A1F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */; };
 		325F517B1F3C3DD2000B842F /* ExternalDriverUnitProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */; };
 		325F517E1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */; };
@@ -1554,6 +1567,32 @@
 		325D2FCC1AFA19E500B2A706 /* HealtManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtManager.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
+		325F020C213ED99C00270077 /* ResetAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAll.cpp; sourceTree = "<group>"; };
+		325F020D213ED99C00270077 /* GetSnapshotForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotForNode.cpp; sourceTree = "<group>"; };
+		325F020E213ED99C00270077 /* RemoveVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveVariable.h; sourceTree = "<group>"; };
+		325F020F213ED99C00270077 /* DeleteSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteSnapshot.h; sourceTree = "<group>"; };
+		325F0210213ED99C00270077 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
+		325F0211213ED99C00270077 /* ResetAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAll.h; sourceTree = "<group>"; };
+		325F0212213ED99C00270077 /* SetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
+		325F0213213ED99C00270077 /* CreateNewSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateNewSnapshot.h; sourceTree = "<group>"; };
+		325F0214213ED99C00270077 /* CreateNewSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateNewSnapshot.cpp; sourceTree = "<group>"; };
+		325F0215213ED99C00270077 /* GetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetVariable.cpp; sourceTree = "<group>"; };
+		325F0216213ED99C00270077 /* GetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetVariable.h; sourceTree = "<group>"; };
+		325F0217213ED99C00270077 /* GetSnapshotForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotForNode.h; sourceTree = "<group>"; };
+		325F0218213ED99C00270077 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
+		325F0219213ED99C00270077 /* RemoveVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveVariable.cpp; sourceTree = "<group>"; };
+		325F021A213ED99C00270077 /* SetVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetVariable.cpp; sourceTree = "<group>"; };
+		325F021B213ED99C00270077 /* GetAllSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAllSnapshot.cpp; sourceTree = "<group>"; };
+		325F021C213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSnapshotDatasetsForNode.cpp; sourceTree = "<group>"; };
+		325F021D213ED99C00270077 /* SetVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetVariable.h; sourceTree = "<group>"; };
+		325F021E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetSnapshotDatasetsForNode.cpp; sourceTree = "<group>"; };
+		325F021F213ED99C00270077 /* RestoreSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreSnapshot.h; sourceTree = "<group>"; };
+		325F0220213ED99C00270077 /* RestoreSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSnapshot.cpp; sourceTree = "<group>"; };
+		325F0221213ED99C00270077 /* GetSnapshotDatasetsForNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetSnapshotDatasetsForNode.h; sourceTree = "<group>"; };
+		325F0222213ED99C00270077 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
+		325F0223213ED99C00270077 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
+		325F0224213ED99C00270077 /* DeleteSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteSnapshot.cpp; sourceTree = "<group>"; };
+		325F0225213ED99C00270077 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
 		325F51781F3C3DD2000B842F /* ExternalDriverUnitProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverUnitProxy.cpp; sourceTree = "<group>"; };
 		325F51791F3C3DD2000B842F /* ExternalDriverUnitProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalDriverUnitProxy.h; sourceTree = "<group>"; };
 		325F517C1F3C3E11000B842F /* ExternalDriverHandlerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalDriverHandlerWrapper.cpp; sourceTree = "<group>"; };
@@ -3336,6 +3375,39 @@
 			path = channel;
 			sourceTree = "<group>";
 		};
+		325F020B213ED99C00270077 /* service */ = {
+			isa = PBXGroup;
+			children = (
+				325F0223213ED99C00270077 /* ServiceApiGroup.cpp */,
+				325F0222213ED99C00270077 /* ServiceApiGroup.h */,
+				325F020C213ED99C00270077 /* ResetAll.cpp */,
+				325F0211213ED99C00270077 /* ResetAll.h */,
+				325F020D213ED99C00270077 /* GetSnapshotForNode.cpp */,
+				325F0210213ED99C00270077 /* GetNodesForSnapshot.h */,
+				325F0214213ED99C00270077 /* CreateNewSnapshot.cpp */,
+				325F0213213ED99C00270077 /* CreateNewSnapshot.h */,
+				325F0215213ED99C00270077 /* GetVariable.cpp */,
+				325F0216213ED99C00270077 /* GetVariable.h */,
+				325F0219213ED99C00270077 /* RemoveVariable.cpp */,
+				325F020E213ED99C00270077 /* RemoveVariable.h */,
+				325F021A213ED99C00270077 /* SetVariable.cpp */,
+				325F021D213ED99C00270077 /* SetVariable.h */,
+				325F021B213ED99C00270077 /* GetAllSnapshot.cpp */,
+				325F0218213ED99C00270077 /* GetAllSnapshot.h */,
+				325F021C213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp */,
+				325F0212213ED99C00270077 /* SetSnapshotDatasetsForNode.h */,
+				325F021E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp */,
+				325F0221213ED99C00270077 /* GetSnapshotDatasetsForNode.h */,
+				325F0220213ED99C00270077 /* RestoreSnapshot.cpp */,
+				325F021F213ED99C00270077 /* RestoreSnapshot.h */,
+				325F0224213ED99C00270077 /* DeleteSnapshot.cpp */,
+				325F020F213ED99C00270077 /* DeleteSnapshot.h */,
+				325F0225213ED99C00270077 /* GetNodesForSnapshot.cpp */,
+				325F0217213ED99C00270077 /* GetSnapshotForNode.h */,
+			);
+			path = service;
+			sourceTree = "<group>";
+		};
 		325F51771F3C3D89000B842F /* raw_driver */ = {
 			isa = PBXGroup;
 			children = (
@@ -4938,6 +5010,7 @@
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
+				325F020B213ED99C00270077 /* service */,
 				32B6B782213EA6DD00D7ECF8 /* script */,
 				32B6B739213E8C7600D7ECF8 /* node */,
 				32B6B729213E736D00D7ECF8 /* logging */,
@@ -6140,11 +6213,13 @@
 				32FF2A5B1E6579A400117985 /* NodeOperation.cpp in Sources */,
 				32B6B70C213E710100D7ECF8 /* UploadChunk.cpp in Sources */,
 				32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */,
+				325F022C213ED99C00270077 /* GetAllSnapshot.cpp in Sources */,
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
 				32B6B772213E8C7600D7ECF8 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32B6B76D213E8C7600D7ECF8 /* CommandCommonUtility.cpp in Sources */,
 				32B6B6F2213E6EE700D7ECF8 /* GetAssociationByDS.cpp in Sources */,
+				325F0226213ED99C00270077 /* ResetAll.cpp in Sources */,
 				32E6F4421E48B4B10068320E /* MongoDBAgentDataAccess.cpp in Sources */,
 				32BE0AD91E4B75A00007764C /* LoadNodeAssociation.cpp in Sources */,
 				32E6F4461E48D28F0068320E /* AgentAckCommand.cpp in Sources */,
@@ -6163,6 +6238,7 @@
 				32B6B734213E736D00D7ECF8 /* GetLogDomainForSourceUID.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32B6B70E213E710100D7ECF8 /* StartUploadSession.cpp in Sources */,
+				325F022E213ED99C00270077 /* GetSnapshotDatasetsForNode.cpp in Sources */,
 				32990B331E547ED900A4AF8F /* AgentCheckAgentProcess.cpp in Sources */,
 				32B6B79B213EA6DD00D7ECF8 /* LoadFullScript.cpp in Sources */,
 				325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */,
@@ -6193,6 +6269,7 @@
 				32B6B77C213E8C7600D7ECF8 /* NodeCreateUnitServer.cpp in Sources */,
 				32990B301E547D8900A4AF8F /* CheckAgentHostedProcess.cpp in Sources */,
 				32B6B76A213E8C7600D7ECF8 /* NodeHealthStatus.cpp in Sources */,
+				325F0230213ED99C00270077 /* ServiceApiGroup.cpp in Sources */,
 				32B6B727213E72A900D7ECF8 /* HealtApiGroup.cpp in Sources */,
 				32B6B777213E8C7600D7ECF8 /* GetPropertyDefaultValues.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
@@ -6222,6 +6299,8 @@
 				32BE0AD01E4B45DB0007764C /* ListNodeForAgent.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
+				325F022F213ED99C00270077 /* RestoreSnapshot.cpp in Sources */,
+				325F0228213ED99C00270077 /* CreateNewSnapshot.cpp in Sources */,
 				32990B131E4CB74C00A4AF8F /* RemoveNodeAssociation.cpp in Sources */,
 				32B6B71A213E71EC00D7ECF8 /* DeleteNode.cpp in Sources */,
 				32B6B70B213E710100D7ECF8 /* EndUploadSession.cpp in Sources */,
@@ -6237,6 +6316,7 @@
 				32B6B774213E8C7600D7ECF8 /* KillCurrentCommand.cpp in Sources */,
 				326ACF821E01525D00AD011E /* CouchbaseCacheDriver.cpp in Sources */,
 				32FF2AC21E6F10A300117985 /* AgentLoggingApiGroup.cpp in Sources */,
+				325F0232213ED99C00270077 /* GetNodesForSnapshot.cpp in Sources */,
 				32F9F82E1D903B1D0023948D /* MDSHistoryAgeingManagement.cpp in Sources */,
 				32AC6F141EC4A53400FCCD85 /* GetManagementConfiguration.cpp in Sources */,
 				32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */,
@@ -6251,13 +6331,17 @@
 				32B6B728213E72A900D7ECF8 /* ProcessBye.cpp in Sources */,
 				32B6B79E213EA6DD00D7ECF8 /* SearchInstancesForScript.cpp in Sources */,
 				32B6B778213E8C7600D7ECF8 /* NodeLoadCompletion.cpp in Sources */,
+				325F022A213ED99C00270077 /* RemoveVariable.cpp in Sources */,
+				325F0229213ED99C00270077 /* GetVariable.cpp in Sources */,
 				32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */,
+				325F0227213ED99C00270077 /* GetSnapshotForNode.cpp in Sources */,
 				32B6B71C213E71EC00D7ECF8 /* GetNodeChilds.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */,
 				32B6B799213EA6DD00D7ECF8 /* SaveScript.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
+				325F022D213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */,
 				32B6B771213E8C7600D7ECF8 /* UpdateProperty.cpp in Sources */,
 				326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */,
@@ -6266,8 +6350,10 @@
 				32F9F8261D90330E0023948D /* MDSCronusManager.cpp in Sources */,
 				32B6B776213E8C7600D7ECF8 /* ClearCommandQueue.cpp in Sources */,
 				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
+				325F022B213ED99C00270077 /* SetVariable.cpp in Sources */,
 				32B6B770213E8C7600D7ECF8 /* NodeGroup.cpp in Sources */,
 				32B6B71B213E71EC00D7ECF8 /* GetDomains.cpp in Sources */,
+				325F0231213ED99C00270077 /* DeleteSnapshot.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
 				32FF2AC51E6F10F400117985 /* ManageNodeLogging.cpp in Sources */,
 				32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */,

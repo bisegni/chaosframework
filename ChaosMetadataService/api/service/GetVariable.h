@@ -34,7 +34,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CHAOS_MDS_DEFINE_API(GetVariable);
+                CHAOS_MDS_DEFINE_API_CLASS(GetVariable);
             }
         }
     }

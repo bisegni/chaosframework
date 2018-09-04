@@ -31,7 +31,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(GetVariable, getVariable)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetVariable, "getVariable")
 
 CDWUniquePtr GetVariable::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
@@ -43,7 +43,7 @@ CDWUniquePtr GetVariable::execute(CDWUniquePtr api_data) {
     int err = 0;
     const std::string variable_name = api_data->getStringValue("variable_name");
     
-    CDWUniquePtr *result = NULL;
+    CDataWrapper *result = NULL;
     if((err = u_da->getVariable(variable_name, &result))){
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error retrieving the variable %1% with error %2%", %variable_name%err));
     }

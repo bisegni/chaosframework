@@ -29,7 +29,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(GetAllSnapshot,getAllSnapshot)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetAllSnapshot, "getAllSnapshot")
 
 CDWUniquePtr GetAllSnapshot::execute(CDWUniquePtr api_data) {
     int err = 0;
