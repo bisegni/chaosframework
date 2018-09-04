@@ -131,15 +131,15 @@ if [ -n "$updateconfig" ];then
 		error_mesg "you must specify a CHAOS_PREFIX or '-i' to update MDS"
 		exit 1	
 	fi	
-	info_mesg "updating configuration of $MDS_SERVER with " "$cudir/MDSConfig.txt"
-	if [ ! -f  $cudir/MDSConfig.txt ];then
-		error_mesg "cannot find configuration " "$cu_dir/MDSConfig.txt"
+	info_mesg "updating configuration of $MDS_SERVER with " "$cudir/MDSConfig.json"
+	if [ ! -f  $cudir/MDSConfig.json ];then
+		error_mesg "cannot find configuration " "$cu_dir/MDSConfig.json"
 		exit 1
 	fi	
-	if $CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $cudir/MDSConfig.txt --metadata-server $MDS_SERVER:5000 >& /dev/null;then
-		ok_mesg "configuration set $cudir/MDSConfig.txt"
+	if $CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $cudir/MDSConfig.json --metadata-server $MDS_SERVER:5000 >& /dev/null;then
+		ok_mesg "configuration set $cudir/MDSConfig.json"
 	else
-		nok_mesg "configuration set $cudir/MDSConfig.txt"
+		nok_mesg "configuration set $cudir/MDSConfig.json"
 		exit 1
 	fi	
 fi
