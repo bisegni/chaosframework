@@ -29,14 +29,7 @@ namespace chaos {
         namespace api {
             namespace node {
                 //update property live on node
-                class GetPropertyDefaultValues:
-                public AbstractApi {
-                public:
-                    GetPropertyDefaultValues();
-                    ~GetPropertyDefaultValues();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetPropertyDefaultValues);
             }
         }
     }

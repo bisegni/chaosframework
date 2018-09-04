@@ -27,16 +27,8 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                
                 //! Call feature api for the sandbox
-                class KillCurrentCommand:
-                public ForwardNodeRpcMessage  {
-                public:
-                    KillCurrentCommand();
-                    ~KillCurrentCommand();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(KillCurrentCommand);
             }
         }
     }

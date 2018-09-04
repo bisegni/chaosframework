@@ -29,7 +29,7 @@ namespace chaos {
         namespace api {
             namespace data_service {
 
-                CHAOS_MDS_DEFINE_API(GetAllDataService)
+                CHAOS_MDS_DEFINE_API_CLASS(GetAllDataService)
             }
         }
     }

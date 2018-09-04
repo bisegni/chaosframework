@@ -66,7 +66,7 @@ CDWUniquePtr SubmitEntry::execute(CDWUniquePtr api_data) {
     new_log_entry.domain = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
     new_log_entry.subject = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT);
     //compelte log antry with log channel custom key
-    completeLogEntry(api_data,
+    completeLogEntry(*api_data,
                      new_log_entry);
     
     //insert the log entry
@@ -83,12 +83,12 @@ CDWUniquePtr SubmitEntry::execute(CDWUniquePtr api_data) {
     return NULL;
 }
 
-void SubmitEntry::completeLogEntry(CDataWrapper *api_data,
+void SubmitEntry::completeLogEntry(CDataWrapper& api_data,
                                    LogEntry& new_log_entry) {
     
     //compose entry
     std::vector<std::string> all_keys_in_pack;
-    api_data->getAllKey(all_keys_in_pack);
+    api_data.getAllKey(all_keys_in_pack);
     for(std::vector<std::string>::iterator it = all_keys_in_pack.begin();
         it != all_keys_in_pack.end();
         it++) {
@@ -97,16 +97,16 @@ void SubmitEntry::completeLogEntry(CDataWrapper *api_data,
            it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0 ||
            it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT) == 0) continue;
         
-        if(api_data->isBoolValue(*it)) {
-            new_log_entry.map_bool_value.insert(make_pair(*it,api_data->getBoolValue(*it)));
-        } else if(api_data->isInt32Value(*it)) {
-            new_log_entry.map_int32_value.insert(make_pair(*it,api_data->getInt32Value(*it)));
-        } else if(api_data->isInt64Value(*it)) {
-            new_log_entry.map_int64_value.insert(make_pair(*it,api_data->getInt64Value(*it)));
-        } else if(api_data->isDoubleValue(*it)) {
-            new_log_entry.map_double_value.insert(make_pair(*it,api_data->getDoubleValue(*it)));
-        } else if(api_data->isStringValue(*it)) {
-            new_log_entry.map_string_value.insert(make_pair(*it,api_data->getStringValue(*it)));
+        if(api_data.isBoolValue(*it)) {
+            new_log_entry.map_bool_value.insert(make_pair(*it,api_data.getBoolValue(*it)));
+        } else if(api_data.isInt32Value(*it)) {
+            new_log_entry.map_int32_value.insert(make_pair(*it,api_data.getInt32Value(*it)));
+        } else if(api_data.isInt64Value(*it)) {
+            new_log_entry.map_int64_value.insert(make_pair(*it,api_data.getInt64Value(*it)));
+        } else if(api_data.isDoubleValue(*it)) {
+            new_log_entry.map_double_value.insert(make_pair(*it,api_data.getDoubleValue(*it)));
+        } else if(api_data.isStringValue(*it)) {
+            new_log_entry.map_string_value.insert(make_pair(*it,api_data.getStringValue(*it)));
         }
     }
 }

@@ -28,9 +28,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(NodeSearch, nodeSearch);
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeSearch, "nodeSearch");
 
-CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) throw(chaos::CException) {
+CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, NS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "unique_id_filter", NS_ERR, -2, CHAOS_FORMAT("The %1% key is mandatory",%"unique_id_filter"));
     CHECK_KEY_THROW_AND_LOG(api_data, "node_type_filter", NS_ERR, -3, CHAOS_FORMAT("The %1% key is mandatory",%"node_type_filter"));

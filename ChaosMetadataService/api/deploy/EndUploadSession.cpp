@@ -36,10 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::deploy;
 using namespace chaos::metadata_service::persistence::data_access;
 
-EndUploadSession::EndUploadSession():
-AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_END_DEPLOY_SESSION){}
-
-EndUploadSession::~EndUploadSession() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(EndUploadSession, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_END_DEPLOY_SESSION);
 
 CDWUniquePtr EndUploadSession::execute(CDWUniquePtr api_data) {
     return CDWUniquePtr();

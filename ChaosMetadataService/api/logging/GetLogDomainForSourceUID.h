@@ -33,7 +33,7 @@ namespace chaos {
                 /*!
                  The logging are paged so in query can be gave the last sequence id
                  */
-                CHAOS_MDS_DEFINE_API(GetLogDomainForSourceUID)
+                CHAOS_MDS_DEFINE_API_CLASS(GetLogDomainForSourceUID)
             }
         }
     }

@@ -32,7 +32,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CHAOS_MDS_DEFINE_API(GetDomains)
+                CHAOS_MDS_DEFINE_API_CLASS(GetDomains)
             }
         }
     }

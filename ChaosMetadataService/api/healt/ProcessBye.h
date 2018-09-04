@@ -28,7 +28,7 @@ namespace chaos {
         namespace api {
             namespace healt {
 
-                CHAOS_MDS_DEFINE_API(ProcessBye)
+                CHAOS_MDS_DEFINE_API_CLASS(ProcessBye)
             }
         }
     }

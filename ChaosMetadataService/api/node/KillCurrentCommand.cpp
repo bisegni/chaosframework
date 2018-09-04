@@ -30,13 +30,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DBG  DBG_LOG(CommandInstanceSubmit)
 #define ERR  ERR_LOG(CommandInstanceSubmit)
 
-KillCurrentCommand::KillCurrentCommand():
-ForwardNodeRpcMessage("killCurrentCommand"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(KillCurrentCommand, "killCurrentCommand");
 
-KillCurrentCommand::~KillCurrentCommand() {}
-
-CDataWrapper *KillCurrentCommand::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr KillCurrentCommand::execute(CDWUniquePtr api_data) {
     CDWUniquePtr node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The attribute %1% is mandatory",%NodeDefinitionKey::NODE_UNIQUE_ID));

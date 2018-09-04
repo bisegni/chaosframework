@@ -29,7 +29,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_GET_ALL_DBG  DBG_LOG(GetAllDataService)
 #define DS_GET_ALL_ERR  ERR_LOG(GetAllDataService)
 
-CHAOS_MDS_DEFINE_API_CD(GetAllDataService, getAllDS)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetAllDataService, "getAllDS")
 
 CDWUniquePtr GetAllDataService::execute(CDWUniquePtr api_data) {
     int err = 0;

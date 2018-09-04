@@ -34,13 +34,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_GCTD_DBG  DBG_LOG(GetCommandAndTemplateDescription)
 #define N_GCTD_ERR  ERR_LOG(GetCommandAndTemplateDescription)
 
-GetCommandAndTemplateDescription::GetCommandAndTemplateDescription():
-AbstractApi("getCommandAndTemplateDescription"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetCommandAndTemplateDescription, "getCommandAndTemplateDescription");
 
-GetCommandAndTemplateDescription::~GetCommandAndTemplateDescription() {}
-
-CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
-                                                        bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetCommandAndTemplateDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     CDataWrapper *tmp_d_ptr = NULL;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cmd_desc;
@@ -84,5 +80,5 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addCSDataValue("command_description", *cmd_desc);
     result->addCSDataValue("template_description", *tmplt_cmd_desc);
-    return result.release();
+    return result;
 }

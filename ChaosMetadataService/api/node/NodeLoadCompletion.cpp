@@ -33,11 +33,10 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_LC_DBG  DBG_LOG(NodeLoadCompletion)
 #define CU_LC_ERR  ERR_LOG(NodeLoadCompletion)
 
-CHAOS_MDS_DEFINE_API_CD_STR(NodeLoadCompletion, chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION)
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeLoadCompletion, chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION)
 
 CDWUniquePtr NodeLoadCompletion::execute(CDWUniquePtr api_data) {
     CDWUniquePtr result;
-    
     CHECK_CDW_THROW_AND_LOG(api_data, CU_LC_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_LC_ERR, -2, "The ndk_uid key is mandatory");
     if(!api_data->isStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)){LOG_AND_TROW(CU_LC_ERR, -3, "The ndk_uid key need to be string");}

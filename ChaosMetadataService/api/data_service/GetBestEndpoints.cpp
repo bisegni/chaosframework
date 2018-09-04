@@ -32,7 +32,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define GBE_DBG  DBG_LOG(GetBestEndpoints)
 #define GBE_ERR  ERR_LOG(GetBestEndpoints)
 
-CHAOS_MDS_DEFINE_API_CD(GetBestEndpoints, getBestEndpoints);
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetBestEndpoints, "getBestEndpoints");
 
 CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
     int err = 0;
@@ -66,6 +66,8 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
             
         }
         result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+    } else {
+        LOG_AND_TROW(GBE_ERR, -1, "No best endpoint found");
     }
     return result;
 }

@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_ASSCIATE_CU_DS_DBG  DBG_LOG(AssociationControlUnit)
 #define DS_ASSCIATE_CU_DS_ERR  ERR_LOG(AssociationControlUnit)
 
-CHAOS_MDS_DEFINE_API_CD(AssociationControlUnit, associateControlUnit)
+CHAOS_MDS_DEFINE_API_CLASS_CD(AssociationControlUnit, "associateControlUnit")
 
 CDWUniquePtr AssociationControlUnit::execute(CDWUniquePtr api_data){
 

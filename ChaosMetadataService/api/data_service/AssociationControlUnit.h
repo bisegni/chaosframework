@@ -28,7 +28,7 @@ namespace chaos {
         namespace api {
             namespace data_service {
 
-                CHAOS_MDS_DEFINE_API(AssociationControlUnit)
+                CHAOS_MDS_DEFINE_API_CLASS(AssociationControlUnit)
             }
         }
     }

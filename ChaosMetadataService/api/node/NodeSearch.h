@@ -27,7 +27,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                CHAOS_MDS_DEFINE_API(NodeSearch);
+                CHAOS_MDS_DEFINE_API_CLASS(NodeSearch);
             }
         }
     }

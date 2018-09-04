@@ -33,7 +33,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(GetDomains, getDomains)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetDomains, "getDomains")
 
 CDWUniquePtr GetDomains::execute(CDWUniquePtr api_data) {
     int err = 0;

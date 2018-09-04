@@ -28,19 +28,11 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-NodeCreateUnitServer::NodeCreateUnitServer():
-AbstractApi("newNode"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeCreateUnitServer, "newNode");
 
-NodeCreateUnitServer::~NodeCreateUnitServer() {
-    
-}
-
-chaos::common::data::CDataWrapper *NodeCreateUnitServer::execute(chaos::common::data::CDataWrapper *api_data,
-                                                                 bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr NodeCreateUnitServer::execute(CDWUniquePtr api_data) {
     bool presence = false;
-    chaos::common::data::CDataWrapper *result = NULL;
+    CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         LOG_AND_TROW(USRA_ERR, -1, "Node unique id not found")
     }
@@ -59,5 +51,5 @@ chaos::common::data::CDataWrapper *NodeCreateUnitServer::execute(chaos::common::
     if(us_da->checkPresence(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), presence)) {
         
     }
-    return result;
+    return CDWUniquePtr(result);
 }

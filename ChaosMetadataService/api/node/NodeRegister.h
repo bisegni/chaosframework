@@ -36,11 +36,16 @@ namespace chaos {
                  Otherwhise the datapack will be saved in node structure without further
                  considerations.
                  */
-                CHAOS_MDS_DEFINE_API_EXT(NodeRegister,
-                                         chaos::common::data::CDWUniquePtr unitServerRegistration(chaos::common::data::CDWUniquePtr api_data);
-                                         chaos::common::data::CDWUniquePtr agentRegistration(chaos::common::data::CDWUniquePtr api_data);
-                                         chaos::common::data::CDWUniquePtr controlUnitRegistration(chaos::common::data::CDWUniquePtr api_data);
-                                         );
+                class NodeRegister:
+                public AbstractApi {
+                    chaos::common::data::CDWUniquePtr unitServerRegistration(chaos::common::data::CDWUniquePtr api_data);
+                    chaos::common::data::CDWUniquePtr agentRegistration(chaos::common::data::CDWUniquePtr api_data);
+                    chaos::common::data::CDWUniquePtr controlUnitRegistration(chaos::common::data::CDWUniquePtr api_data);
+                public:
+                    NodeRegister();
+                    ~NodeRegister();
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
+                };
             }
         }
     }

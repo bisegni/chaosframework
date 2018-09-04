@@ -29,10 +29,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_GET_ASSOC_DBG  DBG_LOG(GetAssociationByDS)
 #define DS_GET_ASSOC_ERR  ERR_LOG(GetAssociationByDS)
 
-CHAOS_MDS_DEFINE_API_CD(GetAssociationByDS, getAssociation)
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetAssociationByDS, "getAssociation")
 
-chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetAssociationByDS::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data,
                             DS_GET_ASSOC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data,
@@ -50,7 +49,7 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
         LOG_AND_TROW(DS_GET_ASSOC_ERR, err, boost::str(boost::format("Error fetching the association for data service %1%") % ds_unique_id))
     }
     
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     for(std::vector<ChaosSharedPtr<CDataWrapper> >::iterator it = node_associated.begin();
         it != node_associated.end();
         it++) {

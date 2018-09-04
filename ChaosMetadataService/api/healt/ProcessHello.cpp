@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
-CHAOS_MDS_DEFINE_API_CD(ProcessHello, processHello)
+CHAOS_MDS_DEFINE_API_CLASS_CD(ProcessHello, "processHello")
 
 CDWUniquePtr ProcessHello::execute(CDWUniquePtr api_data) {
     int err = 0;

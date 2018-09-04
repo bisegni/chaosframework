@@ -35,14 +35,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class StartUploadSession:
-                public AbstractApi {
-                    
-                public:
-                    StartUploadSession();
-                    ~StartUploadSession();
-                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(StartUploadSession);
             }
         }
     }

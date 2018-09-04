@@ -33,17 +33,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_CTG_DBG  DBG_LOG(CommandTemplateDelete)
 #define N_CTG_ERR  ERR_LOG(CommandTemplateDelete)
 
-CommandTemplateDelete::CommandTemplateDelete():
-AbstractApi("commandTemplateDelete"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CommandTemplateDelete, "commandTemplateDelete");
 
-CommandTemplateDelete::~CommandTemplateDelete() {
-    
-}
-
-CDataWrapper *CommandTemplateDelete::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandTemplateDelete::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
     CDataWrapper *result = NULL;
@@ -69,5 +61,5 @@ CDataWrapper *CommandTemplateDelete::execute(CDataWrapper *api_data,
             LOG_AND_TROW_FORMATTED(N_CTG_ERR, err, "Error removing the command template %1%(%2%)", %template_name%command_unique_id)
         }
     }
-    return result;
+    return CDWUniquePtr(result);
 }

@@ -29,17 +29,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-NodeGetDescription::NodeGetDescription():
-AbstractApi("getNodeDescription"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeGetDescription, "getNodeDescription")
 
-NodeGetDescription::~NodeGetDescription() {
-    
-}
-
-chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::data::CDataWrapper *api_data,
-                                                                 bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr NodeGetDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
     chaos::common::data::CDataWrapper *result = NULL;
@@ -59,5 +51,5 @@ chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::da
     } else {
         LOG_AND_TROW(USRA_ERR, -3, "Node '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' not found")
     }
-    return result;
+    return CDWUniquePtr(result);
 }

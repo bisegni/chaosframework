@@ -35,7 +35,7 @@ namespace chaos {
                  common toolkit, in a synchronous way, call this api to register itself and to get tree 
                  server where publish healt information.
                  */
-                CHAOS_MDS_DEFINE_API(ProcessHello)
+                CHAOS_MDS_DEFINE_API_CLASS(ProcessHello)
             }
         }
     }

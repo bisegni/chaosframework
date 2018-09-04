@@ -32,13 +32,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_UP_DBG  DBG_LOG(UpdateProperty)
 #define N_UP_ERR  ERR_LOG(UpdateProperty)
 
-UpdateProperty::UpdateProperty():
-AbstractApi("updateProperty"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(UpdateProperty, "updateProperty");
 
-UpdateProperty::~UpdateProperty(){}
-
-CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
-                                      bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr UpdateProperty::execute(CDWUniquePtr api_data) {
     uint64_t command_id;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, N_UP_ERR, -1, "No parameter found")
@@ -58,5 +54,5 @@ CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
     
     command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::UpdatePropertyCommand),
                                                    update_property_batch_pack.release());
-    return NULL;
+    return CDWUniquePtr();
 }

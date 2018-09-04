@@ -47,8 +47,7 @@ CommandTemplateSubmit::~CommandTemplateSubmit() {
     
 }
 
-CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -3, "The list of submission task is mandatory")
     
@@ -82,7 +81,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
                                                        instance_pack.release());
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,

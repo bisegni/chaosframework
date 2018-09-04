@@ -36,10 +36,7 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::deploy;
 using namespace chaos::metadata_service::persistence::data_access;
 
-UploadChunk::UploadChunk():
-AbstractApi(AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK){}
-
-UploadChunk::~UploadChunk() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(UploadChunk, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_UPLOAD_DEPLOY_CHUNK);
 
 CDWUniquePtr UploadChunk::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes

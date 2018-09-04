@@ -37,7 +37,7 @@ using namespace chaos::common::property;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD_STR(NodeRegister, chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE);
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeRegister, chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE);
 
 CDWUniquePtr NodeRegister::execute(CDWUniquePtr api_data){
     CHECK_CDW_THROW_AND_LOG(api_data, USRA_ERR, -1, "No parameter found")

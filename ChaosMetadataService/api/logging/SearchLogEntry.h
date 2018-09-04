@@ -37,13 +37,7 @@ namespace chaos {
                 //! Perform and advanced search on log entrries
                 /*!
                  */
-                class SearchLogEntry:
-                public AbstractApi {
-                public:
-                    SearchLogEntry();
-                    ~SearchLogEntry();
-                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(SearchLogEntry)
             }
         }
     }

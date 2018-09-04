@@ -33,10 +33,7 @@ using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetLogForSourceUID::GetLogForSourceUID():
-AbstractApi("getLogForNodeUID"){}
-
-GetLogForSourceUID::~GetLogForSourceUID() {}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetLogForSourceUID, "getLogForNodeUID")
 
 CDWUniquePtr GetLogForSourceUID::execute(CDWUniquePtr api_data) {
     int err = 0;
@@ -82,14 +79,12 @@ CDWUniquePtr GetLogForSourceUID::execute(CDWUniquePtr api_data) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);
     }
     if(entry_list.size()) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_result(new CDataWrapper());
         for(LogEntryListIterator it = entry_list.begin();
             it != entry_list.end();
             it++){
-            tmp_result->appendCDataWrapperToArray(*LogUtility::convertEntry(*(*it).get()));
+            result->appendCDataWrapperToArray(*LogUtility::convertEntry(*(*it).get()));
         }
-        tmp_result->finalizeArrayForKey("result_list");
-        result = tmp_result.release();
+        result->finalizeArrayForKey("result_list");
     }
     return result;
 }

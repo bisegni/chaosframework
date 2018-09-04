@@ -28,7 +28,15 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-                CHAOS_MDS_DEFINE_API_CLASS(SetInputDatasetAttributeValues);
+                //CHAOS_MDS_DEFINE_API_CLASS();
+                class SetInputDatasetAttributeValues:
+                public ::chaos::metadata_service::api::AbstractApi {
+                protected:
+                public:
+                    SetInputDatasetAttributeValues();
+                    ~SetInputDatasetAttributeValues();
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
+                };
             }
         }
     }

@@ -31,7 +31,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CHAOS_MDS_DEFINE_API(NodeLoadCompletion);
+                CHAOS_MDS_DEFINE_API_CLASS(NodeLoadCompletion);
             }
         }
     }

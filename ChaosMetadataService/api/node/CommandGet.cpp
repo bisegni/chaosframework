@@ -31,17 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_CG_DBG  DBG_LOG(CommandGet)
 #define N_CG_ERR  ERR_LOG(CommandGet)
 
-CommandGet::CommandGet():
-AbstractApi("commandGet"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CommandGet, "commandGet");
 
-CommandGet::~CommandGet() {
-    
-}
-
-CDataWrapper *CommandGet::execute(CDataWrapper *api_data,
-                                  bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandGet::execute(CDWUniquePtr api_data) {
     int err = 0;
     CDataWrapper *result = NULL;
     CHECK_CDW_THROW_AND_LOG(api_data, N_CG_ERR, -1, "No parameter found")
@@ -56,5 +48,5 @@ CDataWrapper *CommandGet::execute(CDataWrapper *api_data,
     if((err = n_da->getCommand(command_unique_id, &result))) {
         LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %1%", %command_unique_id);
     }
-    return result;
+    return CDWUniquePtr(result);
 }

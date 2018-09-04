@@ -37,7 +37,7 @@ namespace chaos {
                  Otherwhise the datapack will be saved in node structure without further
                  considerations.
                  */
-                CHAOS_MDS_DECLARE_API(NodeHealthStatus)
+                CHAOS_MDS_DEFINE_API_CLASS(NodeHealthStatus)
             }
         }
     }

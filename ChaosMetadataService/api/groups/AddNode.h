@@ -32,7 +32,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CHAOS_MDS_DEFINE_API(AddNode)
+                CHAOS_MDS_DEFINE_API_CLASS(AddNode)
             }
         }
     }

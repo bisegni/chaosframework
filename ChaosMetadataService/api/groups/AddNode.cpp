@@ -31,7 +31,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CD(AddNode, addNode)
+CHAOS_MDS_DEFINE_API_CLASS_CD(AddNode, "addNode")
 
 CDWUniquePtr AddNode::execute(CDWUniquePtr api_data) {
     int err = 0;

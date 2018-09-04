@@ -33,17 +33,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_TCS_DBG  DBG_LOG(CommandTemplateSearch)
 #define N_TCS_ERR  ERR_LOG(CommandTemplateSearch)
 
-CommandTemplateSearch::CommandTemplateSearch():
-AbstractApi("commandTemplateSearch"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CommandTemplateSearch, "commandTemplateSearch")
 
-CommandTemplateSearch::~CommandTemplateSearch() {
-    
-}
-
-CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandTemplateSearch::execute(CDWUniquePtr api_data) {
     int err = 0;
     CDataWrapper *result = NULL;
     uint32_t last_sequence_id = 0;
@@ -66,7 +58,7 @@ CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
     
     CMultiTypeDataArrayWrapperSPtr uid_list(api_data->getVectorValue("cmd_uid_fetch_list"));
     //we don't accept request for query on all command
-    if(uid_list->size()==0) return result;
+    if(uid_list->size()==0) return CDWUniquePtr(result);
     
     //fill the vector
     for(int idx = 0;
@@ -82,5 +74,5 @@ CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
                                           page_length))) {
         LOG_AND_TROW(N_TCS_ERR, -4, "Loading search page")
     }
-    return result;
+    return CDWUniquePtr(result);
 }
