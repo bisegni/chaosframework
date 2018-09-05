@@ -21,8 +21,6 @@
 
 #include "GetFullDescription.h"
 #include "../../ChaosMetadataService.h"
-
-#include <boost/format.hpp>
 #include <boost/foreach.hpp>
 
 using namespace chaos;
@@ -74,7 +72,7 @@ CDWUniquePtr GetFullDescription::execute(CDWUniquePtr api_data) {
             LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the node  unit uid:%1% with error %2%") % cu_uid % err));
         }
         ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset(result);
-        return dataset.release();
+        return dataset;
         
     }
     
@@ -182,5 +180,5 @@ CDWUniquePtr GetFullDescription::execute(CDWUniquePtr api_data) {
         }
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    return init_datapack.release();
+    return init_datapack;
 }

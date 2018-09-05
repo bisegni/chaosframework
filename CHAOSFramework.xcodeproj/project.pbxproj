@@ -727,6 +727,7 @@
 		32A626C6213FBC0600D63009 /* SetInputDatasetAttributeValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A626A9213FB40800D63009 /* SetInputDatasetAttributeValues.cpp */; };
 		32A626C7213FBC6800D63009 /* RecoverError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A626AF213FB40800D63009 /* RecoverError.cpp */; };
 		32A626C8213FBCC800D63009 /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A626AA213FB40800D63009 /* Delete.cpp */; };
+		32A626CA213FD70F00D63009 /* GetFullDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A626A1213FB40800D63009 /* GetFullDescription.cpp */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
 		32A862161D58C79900A7D707 /* AbstractConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8620C1D58C79900A7D707 /* AbstractConsumer.cpp */; };
@@ -5128,7 +5129,6 @@
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
-				32A6269E213FB40800D63009 /* control_unit */,
 				325F0233213EE20300270077 /* unit_server */,
 				325F020B213ED99C00270077 /* service */,
 				32B6B782213EA6DD00D7ECF8 /* script */,
@@ -5138,6 +5138,7 @@
 				32B6B70F213E71EC00D7ECF8 /* groups */,
 				32B6B702213E710000D7ECF8 /* deploy */,
 				32B6B6E4213E6EE600D7ECF8 /* data_service */,
+				32A6269E213FB40800D63009 /* control_unit */,
 				32BE0AC91E4B44870007764C /* agent */,
 			);
 			path = api;
@@ -6440,6 +6441,7 @@
 				32FF2A901E6874B600117985 /* DeployDataAccess.cpp in Sources */,
 				32A626C0213FB91800D63009 /* DeleteInstance.cpp in Sources */,
 				32B6B735213E736D00D7ECF8 /* GetLogForSourceUID.cpp in Sources */,
+				32A626CA213FD70F00D63009 /* GetFullDescription.cpp in Sources */,
 				32B6B6F1213E6EE700D7ECF8 /* GetAllDataService.cpp in Sources */,
 				32990B251E521C8400A4AF8F /* LoadAgentDescription.cpp in Sources */,
 				32A626C3213FBA0E00D63009 /* GetCurrentDataset.cpp in Sources */,
