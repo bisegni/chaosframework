@@ -43,7 +43,7 @@ server_handler(NULL){}
  */
 void RpcClient::forwadSubmissionResult(NFISharedPtr message_info,
                                        CDWUniquePtr submission_result) {
-    CHAOS_ASSERT(server_handler && submission_result)
+    CHAOS_ASSERT(server_handler && submission_result.get())
     //! chec if it is a request
     if(message_info->sender_node_id.size() == 0) {
         return;

@@ -68,7 +68,7 @@ const std::string& MessageRequestDomain::getDomainID() {
 }
 
 CDWUniquePtr MessageRequestDomain::response(CDWUniquePtr response_data) {
-    if(response_data == NULL) return CDWUniquePtr();
+    if(response_data.get() == NULL) return CDWUniquePtr();
     CDWShrdPtr response_data_sp(response_data.release());
     if(!response_data_sp->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
     uint32_t request_id = response_data_sp->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);

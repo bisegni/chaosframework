@@ -208,7 +208,7 @@ CDWUniquePtr PerformanceManagment::startPerformanceSession(data::CDWUniquePtr pa
 }
 
 CDWUniquePtr PerformanceManagment::stopPerformanceSession(CDWUniquePtr param) {
-	if(!param) return CDWUniquePtr();
+	if(!param.get()) return CDWUniquePtr();
 	if(!param->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION))
 		throw chaos::CException(-1, "Requester server description not found", __PRETTY_FUNCTION__);
 	//we can initiate performance session allcoation
