@@ -65,8 +65,7 @@ void DeployWorker::init(void *data) throw(chaos::CException) {}
 
 void DeployWorker::deinit() throw(chaos::CException) {}
 
-CDataWrapper *DeployWorker::initDeploySession(CDataWrapper *data,
-                                              bool& detach) {
+CDWUniquePtr DeployWorker::initDeploySession(CDWUniquePtr data) {
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             "Init session without data si not possible");
@@ -80,8 +79,7 @@ CDataWrapper *DeployWorker::initDeploySession(CDataWrapper *data,
     return NULL;
 }
 
-CDataWrapper *DeployWorker::uploadDeployChunk(CDataWrapper *data,
-                                              bool& detach) {
+CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             "Init session without data si not possible");
@@ -99,8 +97,7 @@ CDataWrapper *DeployWorker::uploadDeployChunk(CDataWrapper *data,
     return NULL;
 }
 
-CDataWrapper *DeployWorker::endDeploySession(CDataWrapper *data,
-                                             bool& detach) {
+CDWUniquePtr DeployWorker::endDeploySession(CDWUniquePtr data) {
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             "Init session without data si not possible");

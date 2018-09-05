@@ -74,7 +74,7 @@ namespace chaos {
             /*!
              receive the ack package for agent registration on the MDS
              */
-            chaos::common::data::CDataWrapper* registrationACK(chaos::common::data::CDataWrapper  *message_data, bool& detach);
+            chaos::common::data::CDWUniquePtr registrationACK(chaos::common::data::CDWUniquePtr  message_data);
         public:
             AgentRegister();
             ~AgentRegister();

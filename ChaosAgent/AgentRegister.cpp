@@ -113,8 +113,7 @@ void AgentRegister::deinit() throw (chaos::CException) {
     }
 }
 
-CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
-                                             bool& detach) {
+CDWUniquePtr AgentRegister::registrationACK(CDWUniquePtr  ack_pack) {
     const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     CHECK_CDW_THROW_AND_LOG(ack_pack, ERROR, -1, CHAOS_FORMAT("ACK message with no contento for agent %1%", %agent_uid));
     CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid));

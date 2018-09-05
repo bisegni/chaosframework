@@ -94,10 +94,7 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
                                          "Need to be a vector of node association");
 }
 
-ProcessWorker::~ProcessWorker() {
-    
-}
-
+ProcessWorker::~ProcessWorker() {}
 
 void ProcessWorker::init(void *data) throw(chaos::CException) {
     AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::AgentTimersTimeoutinMSec);
@@ -133,8 +130,7 @@ void ProcessWorker::removeToRespawn(const std::string& node_uid) {
     INFO << CHAOS_FORMAT("Node %1% removed from auto respawn check", %node_uid);
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data::CDataWrapper *data,
-                                                             bool& detach) {
+CDWUniquePtr ProcessWorker::launchNode(CDWUniquePtr data) {
     CHECK_CDW_THROW_AND_LOG(data,
                             ERROR, -1,
                             CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
@@ -149,20 +145,19 @@ chaos::common::data::CDataWrapper *ProcessWorker::launchNode(chaos::common::data
                                       CHAOS_FORMAT("[%1%] %2% key need to be a string", %getName()%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG));
     }
     AgentAssociationSDWrapper assoc_sd_wrapper;
-    assoc_sd_wrapper.deserialize(data);
+    assoc_sd_wrapper.deserialize(data.get());
     if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == false) {
         ProcUtil::launchProcess(assoc_sd_wrapper());
     }
     if(assoc_sd_wrapper().keep_alive) {
        addToRespawn(assoc_sd_wrapper());
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::CDataWrapper *data,
-                                                           bool& detach) {
+CDWUniquePtr ProcessWorker::stopNode(CDWUniquePtr data) {
     AgentAssociationSDWrapper assoc_sd_wrapper;
-    assoc_sd_wrapper.deserialize(data);
+    assoc_sd_wrapper.deserialize(data.get());
     if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == true) {
         bool kill = false;
         if(data!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
@@ -173,17 +168,16 @@ chaos::common::data::CDataWrapper *ProcessWorker::stopNode(chaos::common::data::
         INFO << CHAOS_FORMAT("Associated node %1% isn't in execution", %assoc_sd_wrapper().associated_node_uid);
     }
     removeToRespawn(assoc_sd_wrapper().associated_node_uid);
-    return NULL;
+    return CDWUniquePtr();
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::data::CDataWrapper *data,
-                                                              bool& detach) {
+CDWUniquePtr ProcessWorker::restartNode(CDWUniquePtr data) {
     bool try_to_stop = true;
     int retry = 0;
     bool process_alive = false;
     
     AgentAssociationSDWrapper assoc_sd_wrapper;
-    assoc_sd_wrapper.deserialize(data);
+    assoc_sd_wrapper.deserialize(data.get());
     
     //first remove node to respawn
     removeToRespawn(assoc_sd_wrapper().associated_node_uid);
@@ -212,15 +206,14 @@ chaos::common::data::CDataWrapper *ProcessWorker::restartNode(chaos::common::dat
     return NULL;
 }
 
-chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data::CDataWrapper *data,
-                                                             bool& detach) {
+CDWUniquePtr ProcessWorker::checkNodes(CDWUniquePtr data) {
     VectorAgentAssociationStatusSDWrapper result_status_vec_sd_wrapper;
     result_status_vec_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
     
     VectorAgentAssociationSDWrapper associated_node_sd_wrapper;
     associated_node_sd_wrapper.serialization_key = AgentNodeDefinitionKey::NODE_ASSOCIATED;
     
-    associated_node_sd_wrapper.deserialize(data);
+    associated_node_sd_wrapper.deserialize(data.get());
     if(associated_node_sd_wrapper().size()) {
         for(VectorAgentAssociationIterator it = associated_node_sd_wrapper().begin(),
             end = associated_node_sd_wrapper().end();
@@ -232,5 +225,5 @@ chaos::common::data::CDataWrapper *ProcessWorker::checkNodes(chaos::common::data
             result_status_vec_sd_wrapper().push_back(status);
         }
     }
-    return result_status_vec_sd_wrapper.serialize().release();
+    return result_status_vec_sd_wrapper.serialize();
 }
