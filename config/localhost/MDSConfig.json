@@ -5968,7 +5968,8 @@
 			    "ds_default_value": "20"
 			}
 		    ]
-		},	{		
+		},	
+		{		
 		    "unit_server_alias": "FLAME",
 		    "cu_id": "FLAME/SCRAPER/SLT002",
 		    "cu_type": "::driver::actuator::SCActuatorControlUnit",

@@ -553,7 +553,10 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 
                 //get the attribute
                 ChaosUniquePtr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
-                
+                if(attributeEntity.get()==NULL){
+                    // NOTE: enabling setAutoReconnection in deviceMessageChannel I get this null
+                    continue;
+                }
                 //attribute description
                 if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)){
                     addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION).c_str());
