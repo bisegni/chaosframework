@@ -171,7 +171,7 @@ namespace chaos {
                     return QueueElementShrdPtr();
                 }
                 //get the last pointer from the queue
-                element = MOVE(buffer_queue.front());
+                element = buffer_queue.front();
                 
                 //remove the oldest data
                 buffer_queue.pop();
