@@ -317,9 +317,9 @@ void HTTPServerAdapter::eventHandler(mg_connection *nc, int ev, void *ev_data) {
         }
         case MG_EV_WEBSOCKET_FRAME: {
             websocket_message *message = static_cast<websocket_message*>(ev_data);
-            ChaosUniquePtr<ServerWorkRequest> req(new ServerWorkRequest(connection_metadata->conn_uuid,
-                                                           (const char *)message->data,
-                                                           (uint32_t)message->size));
+            ChaosSharedPtr<ServerWorkRequest> req(new ServerWorkRequest(connection_metadata->conn_uuid,
+                                                                        (const char *)message->data,
+                                                                        (uint32_t)message->size));
             connection_metadata->class_instance->push(MOVE(req));
             break;
         }
@@ -373,7 +373,7 @@ int HTTPServerAdapter::deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) 
     if(me_it == map_endpoint().end()) return 0;
     //at this point no new conneciton can be associated to the endpoint
     me_it->second = NULL;
-
+    
     //scan all conenciton and push opcode for close it
     for(MapConnectionIterator it = map_connection().begin(),
         end = map_connection().end();

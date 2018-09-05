@@ -54,10 +54,10 @@ void AsioEventForwarder::deinit() throw(CException) {
     CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
 }
 
-bool AsioEventForwarder::submitEventAsync(EventDescriptorUPtr event) {
+bool AsioEventForwarder::submitEventAsync(EventDescriptorSPtr event) {
     return CObjectProcessingPriorityQueue<EventDescriptor>::push(MOVE(event), event->getEventPriority());
 }
 
-void AsioEventForwarder::processBufferElement(EventDescriptorUPtr priorityElement) throw(CException) {
+void AsioEventForwarder::processBufferElement(EventDescriptorSPtr priorityElement) throw(CException) {
     _socket.send(boost::asio::buffer(priorityElement->getEventData(), priorityElement->getEventDataLength()));
 }

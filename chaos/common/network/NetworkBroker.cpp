@@ -474,7 +474,7 @@ bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
     CHAOS_ASSERT(event_client && !GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     bool result = true;
     try{
-        event_client->submitEvent(MOVE(EventDescriptorUPtr(event)));
+        event_client->submitEvent(MOVE(EventDescriptorSPtr(event)));
     } catch(CException& ex) {
         result = false;
         DECODE_CHAOS_EXCEPTION(ex);

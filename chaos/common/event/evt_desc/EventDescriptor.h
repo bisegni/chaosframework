@@ -258,7 +258,7 @@ namespace chaos {
                 const char * const getEventValue() const;
             };
             
-            typedef ChaosUniquePtr<EventDescriptor> EventDescriptorUPtr;
+            //typedef ChaosUniquePtr<EventDescriptor> EventDescriptorSPtr;
             typedef ChaosSharedPtr<EventDescriptor> EventDescriptorSPtr;
         }
     }
