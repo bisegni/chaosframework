@@ -54,7 +54,7 @@ namespace chaos {
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
     public:
-        virtual void processBufferElement(chaos::common::data::CDWUniquePtr element) throw(CException);
+        virtual void processBufferElement(chaos::common::data::CDWShrdPtr element) throw(CException);
 		
 		//!call the action in an async way
         virtual void synchronousCall(const std::string& action,

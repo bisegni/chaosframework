@@ -72,7 +72,7 @@ namespace chaos {
         
         bool syncrhonous_call;
         
-        void forwadSubmissionResult(NFIUniquePtr message_info,
+        void forwadSubmissionResult(NFISharedPtr message_info,
                                     chaos::common::data::CDWUniquePtr submission_result);
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
@@ -84,7 +84,7 @@ namespace chaos {
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
          */
-        void forwadSubmissionResultError(NFIUniquePtr message_info,
+        void forwadSubmissionResultError(NFISharedPtr message_info,
                                          int32_t error_code,
                                          const std::string& error_message,
                                          const std::string& error_domain);

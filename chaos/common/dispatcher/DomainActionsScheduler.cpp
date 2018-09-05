@@ -52,7 +52,7 @@ void DomainActionsScheduler::deinit() throw(CException) {
 bool DomainActionsScheduler::push(CDWUniquePtr rpc_action_call) throw(CException) {
     if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
     if(!domainActionsContainer->hasActionName(rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
-    return CObjectProcessingQueue<CDataWrapper>::push(MOVE(rpc_action_call));
+    return CObjectProcessingQueue<CDataWrapper>::push(MOVE(CDWShrdPtr(rpc_action_call.release())));
 }
 
 const string& DomainActionsScheduler::getManagedDomainName() {
@@ -121,7 +121,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDWUniquePtr rpc_call_action) throw(CException) {
+void DomainActionsScheduler::processBufferElement(CDWShrdPtr rpc_call_action) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDWUniquePtr  response_pack;
     CDWUniquePtr  sub_command;

@@ -73,7 +73,7 @@ namespace chaos {
                 }
 			} NetworkForwardInfo;
             
-            typedef ChaosUniquePtr<NetworkForwardInfo> NFIUniquePtr;
+            //typedef ChaosUniquePtr<NetworkForwardInfo> NFIUniquePtr;
             typedef ChaosSharedPtr<NetworkForwardInfo> NFISharedPtr;
 		}
 	}

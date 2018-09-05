@@ -124,7 +124,7 @@ void ZMQClient::deinit() throw(CException) {
 /*
  
  */
-bool ZMQClient::submitMessage(NFIUniquePtr forwardInfo,
+bool ZMQClient::submitMessage(NFISharedPtr forwardInfo,
                               bool onThisThread) throw(CException) {
     CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
@@ -239,7 +239,7 @@ void ZMQClient::timeout() {
 /*
  process the element action to be executed
  */
-void ZMQClient::processBufferElement(NFIUniquePtr messageInfo) throw(CException) {
+void ZMQClient::processBufferElement(NFISharedPtr messageInfo) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     int			err = 0;
     uint64_t    loc_seq_id = 0;

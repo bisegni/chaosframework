@@ -98,11 +98,10 @@ void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass
 CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_data) {
     MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
     //allocate new Result Pack
-    bool message_has_been_detached = false;
     CreateNewDataWrapper(result,);
     try{
         
-        if(!rpc_call_data) {
+        if(!rpc_call_data.get()) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
             return result;
         }
@@ -173,7 +172,7 @@ CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_d
     return result;
 }
 
-void SharedCommandDispatcher::processBufferElement(CDWUniquePtr action_description) throw(CException) {
+void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDWUniquePtr  sub_command;
     ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message;
@@ -324,7 +323,7 @@ CDWUniquePtr SharedCommandDispatcher::dispatchCommand(CDWUniquePtr rpc_call_data
     //allocate new Result Pack
     CreateNewDataWrapper(result_pack,);
     try{
-        if(!rpc_call_data) return result_pack;
+        if(!rpc_call_data.get()) return result_pack;
         if(!rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE, "Action Call with no action domain", __PRETTY_FUNCTION__);
         

@@ -277,7 +277,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
     }
 }
 
-void HTTPServerAdapter::processBufferElement(ChaosUniquePtr<ServerWorkRequest> request) throw(CException) {
+void HTTPServerAdapter::processBufferElement(ChaosSharedPtr<ServerWorkRequest> request) throw(CException) {
     switch(request->r_type) {
         case WorkRequestTypeWSFrame: {
             int err = 0;

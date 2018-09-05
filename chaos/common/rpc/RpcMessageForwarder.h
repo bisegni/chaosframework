@@ -41,7 +41,7 @@ namespace chaos {
 		 \param forward_info the information for the message forward to network node
 		 \param on_this_thread if true the message is forwarded in the same thread of the caller
 		 */
-        virtual bool submitMessage(chaos::common::network::NFIUniquePtr forward_info,
+        virtual bool submitMessage(chaos::common::network::NFISharedPtr forward_info,
                                    bool on_this_thread=false)=0;
 	};
 }

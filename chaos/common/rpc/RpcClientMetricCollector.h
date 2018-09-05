@@ -48,7 +48,7 @@ namespace chaos {
                 /*!
                  reimplementation of forwarder abstract method to collect the metric on sent message
                  */
-                bool submitMessage(chaos::common::network::NFIUniquePtr forward_info,
+                bool submitMessage(chaos::common::network::NFISharedPtr forward_info,
                                    bool on_this_thread=false);
                 
                 /*

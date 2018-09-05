@@ -49,7 +49,7 @@ namespace chaos {
     template<typename T>
     class CObjectProcessingQueue {
     public:
-        typedef ChaosUniquePtr<T> QueueElementUPtr;
+        typedef ChaosSharedPtr<T> QueueElementShrdPtr;
     private:
         const std::string uuid;
         //thread group
@@ -58,7 +58,7 @@ namespace chaos {
     protected:
         bool in_deinit;
         mutable boost::mutex qMutex;
-        std::queue< QueueElementUPtr > buffer_queue;
+        std::queue< QueueElementShrdPtr > buffer_queue;
         boost::condition_variable liveThreadConditionLock;
         boost::condition_variable emptyQueueConditionLock;
         
@@ -70,7 +70,7 @@ namespace chaos {
             while(!in_deinit) {
                 //Process the element
                 try {
-                    QueueElementUPtr element = MOVE(waitAndPop());
+                    QueueElementShrdPtr element = MOVE(waitAndPop());
                     if(!element.get()) {
                         continue;
                     }
@@ -87,7 +87,7 @@ namespace chaos {
         /*
          Process the oldest element in buffer
          */
-        virtual void processBufferElement(QueueElementUPtr element)  throw(CException) = 0;
+        virtual void processBufferElement(QueueElementShrdPtr element)  throw(CException) = 0;
         
     public:
         CObjectProcessingQueue():
@@ -144,7 +144,7 @@ namespace chaos {
             /*
              push the row value into the buffer
              */
-            virtual bool push(QueueElementUPtr data) throw(CException) {
+            virtual bool push(QueueElementShrdPtr data) throw(CException) {
                 boost::unique_lock<boost::mutex> lock(qMutex);
                 if(in_deinit ||
                    buffer_queue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
@@ -156,10 +156,10 @@ namespace chaos {
             /*
              get the last insert data
              */
-            QueueElementUPtr waitAndPop() {
+            QueueElementShrdPtr waitAndPop() {
                 boost::unique_lock<boost::mutex> lock(qMutex);
                 //output result poitner
-                QueueElementUPtr element;
+                QueueElementShrdPtr element;
                 //DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
                 while(buffer_queue.empty() && !in_deinit) {
                     liveThreadConditionLock.wait(lock);
@@ -168,7 +168,7 @@ namespace chaos {
                 //get the oldest data ad copy the ahsred_ptr
                 if(buffer_queue.empty()) {
                     DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
-                    return QueueElementUPtr();
+                    return QueueElementShrdPtr();
                 }
                 //get the last pointer from the queue
                 element = MOVE(buffer_queue.front());
@@ -206,7 +206,7 @@ namespace chaos {
                 CHAOS_BOOST_LOCK_ERR(boost::unique_lock<boost::mutex> lock(qMutex);, COPQUEUE_LERR_ << "Error on lock";)
                 //remove all element
                 while (!buffer_queue.empty()) {
-                    //QueueElementUPtr tmp = MOVE(bufferQueue.front());
+                    //QueueElementShrdPtr tmp = MOVE(bufferQueue.front());
                     buffer_queue.pop();
                 }
             }

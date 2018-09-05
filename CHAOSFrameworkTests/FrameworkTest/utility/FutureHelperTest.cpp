@@ -33,14 +33,14 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-void CDWComsumerPromise::processBufferElement(ChaosUniquePtr<PromiseInfo_t> promises_info) throw(chaos::CException) {
+void CDWComsumerPromise::processBufferElement(ChaosSharedPtr<PromiseInfo_t> promises_info) throw(chaos::CException) {
     promises_counter++;
     CDWShrdPtr result(new CDataWrapper());
     result->addInt32Value("pid", promises_info->promise_id);
     promises_info->future_helper->setDataForPromiseID(promises_info->promise_id, result);
 }
 
-void CDWComsumerFuture::processBufferElement(ChaosUniquePtr<FutureInfo_t> future_info) throw(chaos::CException) {
+void CDWComsumerFuture::processBufferElement(ChaosSharedPtr<FutureInfo_t> future_info) throw(chaos::CException) {
     ChaosFutureStatus fret = ChaosFutureStatus::deferred;
     CDWShrdPtr result;
     do{
@@ -78,13 +78,11 @@ TEST(FutureHelperTests, Base) {
     for (int i = 0; i < NUMBER_OF_TEST; ++i){
         //generate new future
         helper_test->addNewPromise(new_id, new_shared_future);
-        ChaosUniquePtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
-        ChaosUniquePtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
+        ChaosSharedPtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
+        ChaosSharedPtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
         while(fq.push(MOVE(fi)) == false);
-        fi.release();
         //usleep(100);
         while(pq.push(MOVE(pi)) == false);
-        pi.release();
     }
     ASSERT_NO_THROW(pq.deinit());
     ASSERT_NO_THROW(fq.deinit());

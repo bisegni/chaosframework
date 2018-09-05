@@ -46,7 +46,7 @@ namespace chaos{
                           AbstractCommandDispatcher){
         MapDomainActionsLocked map_domain_actions;
     protected:
-        void processBufferElement(chaos::common::data::CDWUniquePtr element) throw(CException);
+        void processBufferElement(chaos::common::data::CDWShrdPtr element) throw(CException);
     public:
         SharedCommandDispatcher(const string& alias);
         virtual ~SharedCommandDispatcher();

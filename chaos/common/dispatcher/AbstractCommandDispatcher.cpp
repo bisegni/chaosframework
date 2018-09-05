@@ -106,7 +106,7 @@ bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(rpc_forwarder_ptr)
     if(!message.get() && server_port.size()) return false;
-    NFIUniquePtr nfi(new NetworkForwardInfo(false));
+    NFISharedPtr nfi(new NetworkForwardInfo(false));
     nfi->destinationAddr = server_port;
     nfi->setMessage(MOVE(message));
     return rpc_forwarder_ptr->submitMessage(MOVE(nfi), onThisThread);
