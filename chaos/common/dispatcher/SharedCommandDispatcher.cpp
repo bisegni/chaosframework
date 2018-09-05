@@ -339,7 +339,7 @@ CDWUniquePtr SharedCommandDispatcher::dispatchCommand(CDWUniquePtr rpc_call_data
         //DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<rpc_call_data->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
-        processBufferElement(MOVE(rpc_call_data));
+        processBufferElement(MOVE(CDWShrdPtr(rpc_call_data.release())));
 
         //tag message has submitted
         result_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
