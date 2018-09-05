@@ -174,6 +174,6 @@ int MetadataLoggingManager::pushLogEntry(chaos::common::data::CDataWrapper *log_
                                          int32_t priority) {
     CHAOS_ASSERT(getServiceState() == 1);
     if(log_entry == NULL) return -10000;
-    return CObjectProcessingPriorityQueue<CDataWrapper>::push(log_entry->clone(),
+    return CObjectProcessingPriorityQueue<CDataWrapper>::push(CDWShrdPtr(log_entry),
                                                               priority);
 }
