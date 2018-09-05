@@ -67,14 +67,11 @@ const std::string& MessageRequestDomain::getDomainID() {
     return domain_id;
 }
 
-/*!
- called when a result of a message is received
- */
 CDWUniquePtr MessageRequestDomain::response(CDWUniquePtr response_data) {
     if(response_data == NULL) return CDWUniquePtr();
     CDWShrdPtr response_data_sp(response_data.release());
-    if(!response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
-    uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+    if(!response_data_sp->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
+    uint32_t request_id = response_data_sp->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     future_helper.setDataForPromiseID(request_id, response_data_sp);
     return CDWUniquePtr();
 }
