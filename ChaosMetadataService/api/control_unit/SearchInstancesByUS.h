@@ -27,7 +27,6 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-
                 CHAOS_MDS_DEFINE_API_CLASS(SearchInstancesByUS)
             }
         }

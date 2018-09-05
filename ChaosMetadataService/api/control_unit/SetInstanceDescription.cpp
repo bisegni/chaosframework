@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CUCUI_DBG  DBG_LOG(SetInstanceDescription)
 #define CUCUI_ERR  ERR_LOG(SetInstanceDescription)
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(SetInstanceDescription, setInstanceDescription)
+CHAOS_MDS_DEFINE_API_CLASS_CD(SetInstanceDescription, "setInstanceDescription")
 
 CDWUniquePtr SetInstanceDescription::execute(CDWUniquePtr api_data) {
     int err = 0;

@@ -26,7 +26,7 @@
 #include "InitDeinit.h"
 #include "StartStop.h"
 #include "GetCurrentDataset.h"
-#include "GetFullDescription.h"
+//#include "GetFullDescription.h"
 #include "SetInputDatasetAttributeValues.h"
 #include "CopyInstance.h"
 #include "RecoverError.h"
@@ -45,7 +45,7 @@ AbstractApiGroup("control_unit"){
     addApi<InitDeinit>();
     addApi<StartStop>();
     addApi<GetCurrentDataset>();
-    addApi<GetFullDescription>();
+//    addApi<GetFullDescription>();
     addApi<SetInputDatasetAttributeValues>();
     addApi<CopyInstance>();
     addApi<RecoverError>();
@@ -53,6 +53,4 @@ AbstractApiGroup("control_unit"){
     addApi<SendStorageBurst>();
 }
 
-ControlUnitGroup::~ControlUnitGroup() {
-
-}
+ControlUnitGroup::~ControlUnitGroup() {}
