@@ -197,8 +197,8 @@ namespace chaos {
                         boost::unique_lock<boost::mutex>  lock(qMutex);
                         if(in_deinit ||
                            bufferQueue.size() > CObjectProcessingPriorityQueue_MAX_ELEMENT_IN_QUEUE) return false;
-
-                        bufferQueue.push(MOVE(ChaosUniquePtr< PriorityQueuedElement<T> >(new PriorityQueuedElement<T>(elementToPush, _priority))));
+                        //PRIORITY_ELEMENT(T) element(elementToPush);
+                        bufferQueue.push(ChaosSharedPtr< PriorityQueuedElement<T> >(new PriorityQueuedElement<T>(elementToPush, _priority)));
                         liveThreadConditionLock.notify_one();
                         return true;
                     }
