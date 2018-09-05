@@ -211,7 +211,7 @@ CDWUniquePtr DefaultCommandDispatcher::executeCommandSync(CDWUniquePtr message_d
     CreateNewDataWrapper(result,);
     try{
         
-        if(!message_data) {
+        if(!message_data.get()) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
             return result;
         }
@@ -263,7 +263,7 @@ CDWUniquePtr DefaultCommandDispatcher::dispatchCommand(CDWUniquePtr command_pack
     CreateNewDataWrapper(result_pack,);
     bool sent = false;
     try{
-        if(!command_pack) return result_pack;
+        if(!command_pack.get()) return result_pack;
         if(!command_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE, "Action Call with no action domain", __PRETTY_FUNCTION__);
         

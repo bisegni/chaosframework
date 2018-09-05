@@ -252,7 +252,7 @@ void SharedCommandDispatcher::processBufferElement(CDWUniquePtr action_descripti
             //synCronusly call the action in the current thread
             action_result = action_description_ptr->call(MOVE(action_message));
             //check if we need to submit a sub command
-            if(sub_command) {
+            if(sub_command.get()) {
                 //we can submit sub command
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatchCommand(MOVE(sub_command)));
             }

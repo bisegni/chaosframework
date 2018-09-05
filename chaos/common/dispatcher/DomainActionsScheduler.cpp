@@ -196,7 +196,7 @@ void DomainActionsScheduler::processBufferElement(CDWUniquePtr rpc_call_action) 
             action_result = actionDescriptionPtr->call(MOVE(action_message));
 
             //check if we need to submit a sub command
-            if( sub_command ) {
+            if( sub_command.get() ) {
                 //we can submit sub command
                 CDWUniquePtr dispatchSubCommandResult = dispatcher->dispatchCommand(MOVE(sub_command));
             }
