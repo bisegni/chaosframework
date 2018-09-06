@@ -76,7 +76,7 @@ CDWUniquePtr DeployWorker::initDeploySession(CDWUniquePtr data) {
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, String, ERROR, -4);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, Int32, ERROR, -5);
 
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
@@ -94,7 +94,7 @@ CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_OFFSET, Int32, ERROR, -8);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_DATA, Binary, ERROR, -9);
 
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr DeployWorker::endDeploySession(CDWUniquePtr data) {
@@ -107,5 +107,5 @@ CDWUniquePtr DeployWorker::endDeploySession(CDWUniquePtr data) {
     
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, String, ERROR, -4);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_HASH, String, ERROR, -5);
-    return NULL;
+    return CDWUniquePtr();
 }
