@@ -642,7 +642,7 @@ CDWUniquePtr BatchCommandExecutor::getCommandState(CDWUniquePtr params) throw (C
  Return the number and the infromation of the queued command via RPC
  */
 CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params) throw (CException) {
-    if(!params || sandbox_map.size()==0)
+    if(!params.get() || sandbox_map.size()==0)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
     ReadLock   lock(sandbox_map_mutex);
@@ -663,8 +663,7 @@ CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params) throw
         //has scheduler step wait
         tmp_ptr->setCurrentCommandScheduerStepDelay(params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64));
     }
-
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! Command features modification rpc action
@@ -683,7 +682,7 @@ CDWUniquePtr BatchCommandExecutor::killCurrentCommand(CDWUniquePtr params) throw
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->killCurrentCommand();
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! Kill current command rpc action
@@ -691,7 +690,7 @@ CDWUniquePtr BatchCommandExecutor::clearCommandQueue(CDWUniquePtr params) throw 
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->clearCommandQueue();
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! Flush the command state history
@@ -715,5 +714,5 @@ CDWUniquePtr BatchCommandExecutor::flushCommandStates(CDWUniquePtr params) throw
         //delete it
         command_state_queue.pop_back();
     }
-    return NULL;
+    return CDWUniquePtr();
 }
