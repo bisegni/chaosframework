@@ -140,7 +140,7 @@ CDWUniquePtr AgentRegister::registrationACK(CDWUniquePtr  ack_pack) {
                 break;
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 

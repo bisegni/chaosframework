@@ -133,5 +133,5 @@ void CommandManager::deregisterAction(DeclareAction* declareActionClass) {
 CDWUniquePtr CommandManager::shutdown(CDWUniquePtr action_param) throw (CException) {
     CHAOS_ASSERT(server_handler)
     if(server_handler) server_handler->stop();
-    return NULL;
+    return CDWUniquePtr();
 }
