@@ -66,23 +66,23 @@ void DeployWorker::init(void *data) throw(chaos::CException) {}
 void DeployWorker::deinit() throw(chaos::CException) {}
 
 CDWUniquePtr DeployWorker::initDeploySession(CDWUniquePtr data) {
-    CHECK_CDW_THROW_AND_LOG(data!=NULL,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, ERROR, -3);
     
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, String, ERROR, -4);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, Int32, ERROR, -5);
-
+    
     return CDWUniquePtr();
 }
 
 CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
-    CHECK_CDW_THROW_AND_LOG(data!=NULL,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, ERROR, -3);
@@ -93,14 +93,14 @@ CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, Int32, ERROR, -7);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_OFFSET, Int32, ERROR, -8);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_DATA, Binary, ERROR, -9);
-
+    
     return CDWUniquePtr();
 }
 
 CDWUniquePtr DeployWorker::endDeploySession(CDWUniquePtr data) {
-    CHECK_CDW_THROW_AND_LOG(data!=NULL,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_HASH, ERROR, -3);

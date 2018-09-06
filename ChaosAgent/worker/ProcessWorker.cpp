@@ -131,10 +131,11 @@ void ProcessWorker::removeToRespawn(const std::string& node_uid) {
 }
 
 CDWUniquePtr ProcessWorker::launchNode(CDWUniquePtr data) {
-    CHECK_CDW_THROW_AND_LOG(data!=NULL,
-                            ERROR, -1,
-                            CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
-    CHECK_KEY_THROW_AND_LOG(data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME,
+    CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL,
+                                  ERROR, -1,
+                                  CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
+    CHECK_KEY_THROW_AND_LOG(data,
+                            AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME,
                             ERROR, -2, CHAOS_FORMAT("[%1%] No unit server name found", %getName()));
     CHECK_ASSERTION_THROW_AND_LOG((data->isStringValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME)),
                                   ERROR, -3,
@@ -150,7 +151,7 @@ CDWUniquePtr ProcessWorker::launchNode(CDWUniquePtr data) {
         ProcUtil::launchProcess(assoc_sd_wrapper());
     }
     if(assoc_sd_wrapper().keep_alive) {
-       addToRespawn(assoc_sd_wrapper());
+        addToRespawn(assoc_sd_wrapper());
     }
     return CDWUniquePtr();
 }
@@ -160,7 +161,7 @@ CDWUniquePtr ProcessWorker::stopNode(CDWUniquePtr data) {
     assoc_sd_wrapper.deserialize(data.get());
     if(ProcUtil::checkProcessAlive(assoc_sd_wrapper()) == true) {
         bool kill = false;
-        if(data!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
+        if(data.get()!=NULL && data->hasKey(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL)) {
             kill = data->getBoolValue(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_RESTART_NODE_PAR_KILL);
         }
         ProcUtil::quitProcess(assoc_sd_wrapper(), kill);
