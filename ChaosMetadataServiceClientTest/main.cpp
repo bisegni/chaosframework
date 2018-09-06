@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
@@ -39,7 +40,8 @@ using namespace chaos::metadata_service_client::monitor_system;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::common::utility;
 using namespace chaos::common::data;
-
+using namespace chaos::common::network;
+using namespace chaos::common::message;
 #define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
 #define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
 #define MSCT_ERR    INFO_LOG(MetadataServiceClientTest)
@@ -86,6 +88,22 @@ int main(int argc, const char *argv[]){
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
     ChaosMetadataServiceClient::getInstance()->start();
     ChaosMetadataServiceClient::getInstance()->enableMonitor();
+    
+
+//    DeviceMessageChannel *dmc = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress("rt_sin_a"), true);
+//    while (true) {
+//        ChaosUniquePtr<MessageRequestFuture> req = dmc->sendCustomRequestWithFuture("actionTestOne", CDWUniquePtr());
+//        if(req->wait(5000)) {
+//            if(req->getError() == 0 &&
+//               req->getResult()) {
+//                std::cout << req->getResult()->getJSONString() << std::endl;
+//            }
+//        }
+//        
+//        sleep(1);
+//    }
+//    NetworkBroker::getInstance()->disposeMessageChannel(dmc);
+    
     try{
         switch (operation){
             case 0:{
