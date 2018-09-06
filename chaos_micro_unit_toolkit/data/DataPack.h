@@ -29,7 +29,7 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
 // See libmongoc.hh for details on this diagnostic suppression
-//#pragma GCC diagnostic push
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
@@ -281,10 +281,12 @@ namespace chaos {
 #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getDoubleValue(k):d)
 #define CDW_CHECK_AND_SET(chk, cdw, t, k, v) if(chk){cdw->t(k,v);}
 #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) ((c)->hasKey(k)?(c)->t(k):d)
-            
-
-
         }
     }
 }
+#endif
+
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+#pragma GCC diagnostic pop
 #endif

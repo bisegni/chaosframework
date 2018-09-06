@@ -34,7 +34,7 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
 // See libmongoc.hh for details on this diagnostic suppression
-//#pragma GCC diagnostic push
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
@@ -388,4 +388,9 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
         }
     }
 }
+#endif
+
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+#pragma GCC diagnostic pop
 #endif
