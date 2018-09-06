@@ -203,7 +203,7 @@ CDWUniquePtr ProcessWorker::restartNode(CDWUniquePtr data) {
             addToRespawn(assoc_sd_wrapper());
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr ProcessWorker::checkNodes(CDWUniquePtr data) {

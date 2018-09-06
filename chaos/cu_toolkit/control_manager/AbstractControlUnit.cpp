@@ -1024,7 +1024,7 @@ void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
 CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restoreParam) {
     int err = 0;
     //check
-    if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return CDWUniquePtr();
+    if(!restoreParam.get() || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return CDWUniquePtr();
     
     if(getServiceState() != CUStateKey::START ) {
         throw MetadataLoggingCException(getCUID(), -1, "Control Unit restore can appen only in start state", __PRETTY_FUNCTION__);
@@ -1118,7 +1118,7 @@ CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restorePar
 CDWUniquePtr AbstractControlUnit::_setDatasetAttribute(CDWUniquePtr dataset_attribute_values) {
     CDWUniquePtr result;
     try {
-        if(!dataset_attribute_values) {
+        if(!dataset_attribute_values.get()) {
             throw MetadataLoggingCException(getCUID(), -1, "No Input parameter", __PRETTY_FUNCTION__);
         }
         if(SWEService::getServiceState() == CUStateKey::DEINIT) {
