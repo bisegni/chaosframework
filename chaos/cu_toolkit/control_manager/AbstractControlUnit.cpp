@@ -1444,7 +1444,7 @@ CDWUniquePtr AbstractControlUnit::_submitStorageBurst(CDWUniquePtr data) {
 }
 
 CDWUniquePtr AbstractControlUnit::_datasetTagManagement(CDWUniquePtr data){
-    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, ACULERR_, -1, "No parameter found");
+    CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL, ACULERR_, -1, "No parameter found");
     if(data->hasKey(ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST)) {
         CHECK_KEY_THROW_AND_LOG(data,
                                 ControlUnitNodeDomainAndActionRPC::ACTION_DATASET_TAG_MANAGEMENT_ADD_LIST,
