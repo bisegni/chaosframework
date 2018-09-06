@@ -105,7 +105,7 @@ default_sticky_command(){}
 BatchCommandSandbox::~BatchCommandSandbox() {}
 
 void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
-    current_executing_command = NULL;
+    current_executing_command.reset();
     
     acquire_handler_functor.cmd_instance = NULL;
     acquire_handler_functor.sandbox_identifier = identification;
@@ -470,7 +470,7 @@ void BatchCommandSandbox::checkNextCommand() {
                     if (!command_stack.empty()) {
                         //keep track of running property that needs to be deleted
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete = current_executing_command;
-                        current_executing_command = NULL;
+                        current_executing_command.reset();
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -511,7 +511,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         }
                     } else {
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete = current_executing_command;
-                        current_executing_command = NULL;
+                        current_executing_command.reset();
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -758,7 +758,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                                               &current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay, sizeof (uint64_t));
         }
     } else {
-        current_executing_command = NULL;
+        current_executing_command.reset();
         acquire_handler_functor.cmd_instance = NULL;
         correlation_handler_functor.cmd_instance = NULL;
         end_handler_functor.cmd_instance = NULL;
