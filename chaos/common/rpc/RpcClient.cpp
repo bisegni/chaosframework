@@ -59,7 +59,7 @@ void RpcClient::forwadSubmissionResult(NFISharedPtr message_info,
     answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, message_info->sender_node_id);
     answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
     // add reuslt to answer
-    if(submission_result) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
+    if(submission_result.get()) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
     //forward answer to channel
     CDWUniquePtr to_delete = server_handler->dispatchCommand(MOVE(answer_to_send));
 }

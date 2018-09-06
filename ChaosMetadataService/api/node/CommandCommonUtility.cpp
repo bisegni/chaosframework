@@ -32,8 +32,8 @@ using namespace chaos::metadata_service::api::node;
 #define N_CCU_DBG  DBG_LOG(CommandCommonUtility)
 #define N_CCU_ERR  ERR_LOG(CommandCommonUtility)
 
-void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *command_description,
-                                                                CDataWrapper *command_template,
+void CommandCommonUtility::validateCommandTemplateToDescription(CDWShrdPtr command_description,
+                                                                CDWShrdPtr command_template,
                                                                 std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException) {
     //check ifthe command has parameter
     CHECK_CDW_THROW_AND_LOG(command_description, N_CCU_ERR, -1, "Command description is mandatory")
@@ -133,9 +133,9 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
 
 //! create an instance by submission, command and temaplte description
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
-                                                                                                                               CDataWrapper *command_submission,
-                                                                                                                               CDataWrapper *command_description,
-                                                                                                                               CDataWrapper *command_template_description) throw(chaos::CException) {
+                                                                                                                                CDWShrdPtr command_submission,
+                                                                                                                                CDWShrdPtr command_description,
+                                                                                                                                CDWShrdPtr command_template_description) throw(chaos::CException) {
     bool is_correct_type = false;
     ChaosStringVector all_template_key;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
