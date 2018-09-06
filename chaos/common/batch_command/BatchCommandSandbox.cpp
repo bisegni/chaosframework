@@ -539,7 +539,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         }
                         if(command_to_delete->element->cmdImpl->sticky==false){
                             removeHandler(command_to_delete);
-                            installHandler(NULL);
+                            installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)());
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
                             command_to_delete.reset();
                         }
