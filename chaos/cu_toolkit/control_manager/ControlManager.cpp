@@ -551,12 +551,12 @@ CDWUniquePtr ControlManager::loadControlUnit(CDWUniquePtr message_data) {
     
     //submit contorl unit releaseing the ChaosUniquePtr
     submitControlUnit(instance);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! message for unload operation
 CDWUniquePtr ControlManager::unloadControlUnit(CDWUniquePtr message_data) {
-    IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
+    IN_ACTION_PARAM_CHECK(!message_data.get(), -1, "No param found")
     //IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
     IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No id for the work unit instance found")
     
@@ -586,7 +586,7 @@ CDWUniquePtr ControlManager::unloadControlUnit(CDWUniquePtr message_data) {
     
     //unlock the thread
     thread_waith_semaphore.unlock();
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr ControlManager::unitServerStatus(CDWUniquePtr message_data) {
@@ -610,12 +610,12 @@ CDWUniquePtr ControlManager::unitServerStatus(CDWUniquePtr message_data) {
     unit_server_status->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CU_STATES);
     mds_channel->sendUnitServerCUStates(MOVE(unit_server_status));
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! ack received for the registration of the uwork unit
 CDWUniquePtr ControlManager::workUnitRegistrationACK(CDWUniquePtr message_data) {
-    IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
+    IN_ACTION_PARAM_CHECK(!message_data.get(), -1, "No param found")
     IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No device id found")
     
     //lock the registering control unit map
@@ -626,14 +626,14 @@ CDWUniquePtr ControlManager::workUnitRegistrationACK(CDWUniquePtr message_data) 
     
     //we can process the ack into the right manager
     map_cuid_reg_unreg_instance[device_id]->manageACKPack(*message_data);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 /*
  Configure the sandbox and all subtree of the CU
  */
 CDWUniquePtr ControlManager::updateConfiguration(CDWUniquePtr message_data) {
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //---------------unit server state machine managment handler
@@ -772,7 +772,7 @@ CDWUniquePtr ControlManager::unitServerRegistrationACK(CDWUniquePtr message_data
     } else {
         throw CException(-3, "No result received", __PRETTY_FUNCTION__);
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! allota a new control unit proxy

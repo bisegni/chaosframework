@@ -704,7 +704,7 @@ void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CExce
 #pragma mark RPC State Machine method
 CDWUniquePtr AbstractControlUnit::_init(CDWUniquePtr init_configuration) {
     if(getServiceState() == CUStateKey::INIT) {
-        return NULL;
+        return CDWUniquePtr();
     }
     
     try {
@@ -762,12 +762,12 @@ CDWUniquePtr AbstractControlUnit::_init(CDWUniquePtr init_configuration) {
                                    __PRETTY_FUNCTION__);
         throw loggable_exception;
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr AbstractControlUnit::_start(CDWUniquePtr startParam){
     if(getServiceState() == CUStateKey::START) {
-        return NULL;
+        return CDWUniquePtr();
     }
     try {
         
@@ -817,12 +817,12 @@ CDWUniquePtr AbstractControlUnit::_start(CDWUniquePtr startParam){
         SWEService::goInFatalError(this, loggable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__);
         throw loggable_exception;
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr AbstractControlUnit::_stop(CDWUniquePtr stopParam){
     if(getServiceState() == CUStateKey::STOP) {
-        return NULL;
+        return CDWUniquePtr();
     }
     try {
         /*
@@ -876,7 +876,7 @@ CDWUniquePtr AbstractControlUnit::_stop(CDWUniquePtr stopParam){
         throw loggable_exception;
     }
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 
@@ -885,7 +885,7 @@ CDWUniquePtr AbstractControlUnit::_stop(CDWUniquePtr stopParam){
  */
 CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam) {
     if(getServiceState() == CUStateKey::DEINIT) {
-        return NULL;
+        return CDWUniquePtr();
     }
     try {
         /*
@@ -937,7 +937,7 @@ CDWUniquePtr AbstractControlUnit::_deinit(CDWUniquePtr deinitParam) {
         throw loggable_exception;
     }
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr AbstractControlUnit::_recover(CDWUniquePtr gdeinitParam) {
@@ -966,7 +966,7 @@ CDWUniquePtr AbstractControlUnit::_recover(CDWUniquePtr gdeinitParam) {
         throw loggable_exception;
     }
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! fill cache with found dataset at the restore point
@@ -1024,7 +1024,7 @@ void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
 CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restoreParam) {
     int err = 0;
     //check
-    if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
+    if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return CDWUniquePtr();
     
     if(getServiceState() != CUStateKey::START ) {
         throw MetadataLoggingCException(getCUID(), -1, "Control Unit restore can appen only in start state", __PRETTY_FUNCTION__);
@@ -1109,7 +1109,7 @@ CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restorePar
     }
     metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                     CHAOS_FORMAT("End restoring snapshot tag for: %1%", %restore_snapshot_tag));
-    return NULL;
+    return CDWUniquePtr();
 }
 
 /*
@@ -1431,16 +1431,16 @@ CDWUniquePtr AbstractControlUnit::_submitStorageBurst(CDWUniquePtr data) {
     
     if(burst->type == chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined) {
         ACULERR_ << CHAOS_FORMAT("The type is mandatory for burst %1%", %data->getJSONString());
-        return NULL;
+        return CDWUniquePtr();
     }
     if(!burst->value.isValid()) {
         ACULERR_ << CHAOS_FORMAT("The value is mandatory for burst %1%", %data->getJSONString());
-        return NULL;
+        return CDWUniquePtr();
     }
     ACULDBG_<<"Enabling burst:"<<data->getCompliantJSONString();
     LQueueBurstWriteLock wl = burst_queue.getWriteLockObject();
     burst_queue().push(burst);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 CDWUniquePtr AbstractControlUnit::_datasetTagManagement(CDWUniquePtr data){
@@ -1477,7 +1477,7 @@ CDWUniquePtr AbstractControlUnit::_datasetTagManagement(CDWUniquePtr data){
         key_data_storage->removeTag(ss);
     }
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 /*
@@ -1713,7 +1713,7 @@ CDWUniquePtr AbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attri
         unitInputAttributeChangedHandler();
         throw;
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 /*
@@ -1738,7 +1738,7 @@ CDWUniquePtr AbstractControlUnit::updateConfiguration(CDWUniquePtr update_pack) 
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     
     pushSystemDataset();
-    return NULL;
+    return CDWUniquePtr();
 }
 
 bool AbstractControlUnit::propertyChangeHandler(const std::string& group_name,
