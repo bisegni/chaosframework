@@ -81,7 +81,7 @@ void DeviceMessageChannel::deinit() throw(CException) {
 void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *new_device_network_address) {
     NodeMessageChannel::setNewAddress(new_device_network_address);
     device_network_address = new_device_network_address;
-    DMCINFO << boost::str(boost::format("New netowrk address for device %1% has been set[%2%/%3%]")%device_network_address->device_id%device_network_address->node_id%device_network_address->ip_port);
+    DMCINFO << boost::str(boost::format("New network address for device %1% has been set[%2%/%3%]")%device_network_address->device_id%device_network_address->node_id%device_network_address->ip_port);
 }
 
 void DeviceMessageChannel::timeout() {
