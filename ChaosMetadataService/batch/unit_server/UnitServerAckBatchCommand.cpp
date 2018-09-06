@@ -55,7 +55,7 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     if(data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         us_can_start = data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT) == ErrorCode::EC_MDS_NODE_REGISTRATION_OK;
     }
-    CHECK_CDW_THROW_AND_LOG(data, USAC_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!=NULL), USAC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, USAC_ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, USAC_ERR, -3, "The rpc address of unit server is mandatory")
     //CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, USAC_ERR, -4, "The rpc domain of unit server is mandatory")

@@ -42,7 +42,7 @@ void UpdatePropertyCommand::setHandler(CDataWrapper *data) {
     int err = 0;
     CDataWrapper *tmp_ptr = NULL;
     
-    CHECK_CDW_THROW_AND_LOG(data, CU_UP_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, CU_UP_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, NodeDefinitionKey::NODE_UNIQUE_ID, CU_UP_ERR, -2, "The attribute node unique id is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, "property", CU_UP_ERR, -3, "The attribute node unique id is mandatory")
 

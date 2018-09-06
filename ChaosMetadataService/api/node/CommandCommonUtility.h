@@ -45,7 +45,7 @@ namespace chaos {
                      be setuped withi the template
                      */
                     static void validateCommandTemplateToDescription(chaos::common::data::CDWShrdPtr command_description,
-                                                                     chaos::common::data::CDWShrdPtr *command_template_description,
+                                                                     chaos::common::data::CDWShrdPtr command_template_description,
                                                                      std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException);
                     
                     //! create an instance by submission, command and temaplte description

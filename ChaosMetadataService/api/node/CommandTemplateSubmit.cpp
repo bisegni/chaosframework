@@ -39,13 +39,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 
 CommandTemplateSubmit::CommandTemplateSubmit():
-AbstractApi("commandTemplateSubmit"){
-    
-}
+AbstractApi("commandTemplateSubmit"){}
 
-CommandTemplateSubmit::~CommandTemplateSubmit() {
-    
-}
+CommandTemplateSubmit::~CommandTemplateSubmit() {}
 
 CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found")
@@ -76,8 +72,8 @@ CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
         it != command_instance_list.end();
         it++) {
         ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_pack(new CDataWrapper());
-        N_CTS_INFO << "Send datapack "<< it->getJSONString();
-        instance_pack->addCSDataValue("submission_task", *it);
+        N_CTS_INFO << "Send datapack "<< (*it)->getJSONString();
+        instance_pack->addCSDataValue("submission_task", *(*it));
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
                                                        instance_pack.release());
     }
@@ -96,23 +92,23 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
     const std::string command_unique_id = submission_task->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     
     //fetch command
-    ChaosSharedPtr<CDataWrapper> command_description = getCommandDescription(n_da,
-                                                                                command_unique_id);
+    CDWShrdPtr command_description = getCommandDescription(n_da,
+                                                           command_unique_id);
     //fetch template
-    ChaosSharedPtr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
-                                                                                          template_name,
-                                                                                          command_unique_id);
+    CDWShrdPtr template_description = getCommandTemaplateDescription(n_da,
+                                                                     template_name,
+                                                                     command_unique_id);
     
     //store command instance
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
-                                                                                                                         submission_task.get(),
-                                                                                                                         command_description.get(),
-                                                                                                                         template_description.get());
-    command_instance_list.push_back(instance.release());
+    CDWShrdPtr instance = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(node_uid,
+                                                                                                        submission_task,
+                                                                                                        command_description,
+                                                                                                        template_description);
+    command_instance_list.push_back(instance);
 }
 
 ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,
-                                                                             const std::string& command_unique_id) {
+                                                                          const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
@@ -136,8 +132,8 @@ ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDa
 }
 
 ChaosSharedPtr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescription(NodeDataAccess *n_da,
-                                                                                      const std::string& template_name,
-                                                                                      const std::string& command_unique_id) {
+                                                                                   const std::string& template_name,
+                                                                                   const std::string& command_unique_id) {
     int err = 0;
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;

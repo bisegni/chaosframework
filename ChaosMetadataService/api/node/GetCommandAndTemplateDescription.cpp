@@ -39,8 +39,8 @@ CHAOS_MDS_DEFINE_API_CLASS_CD(GetCommandAndTemplateDescription, "getCommandAndTe
 CDWUniquePtr GetCommandAndTemplateDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     CDataWrapper *tmp_d_ptr = NULL;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> cmd_desc;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> tmplt_cmd_desc;
+    CDWShrdPtr cmd_desc;
+    CDWShrdPtr tmplt_cmd_desc;
     CHECK_CDW_THROW_AND_LOG(api_data, N_GCTD_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "template_name", N_GCTD_ERR, -2, "The name of the template is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_GCTD_ERR, -3, "The unique id of the command is mandatory")
@@ -74,7 +74,7 @@ CDWUniquePtr GetCommandAndTemplateDescription::execute(CDWUniquePtr api_data) {
     }
     
     //validate template with command
-    CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc.get(), tmplt_cmd_desc.get(), NULL);
+    CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc, tmplt_cmd_desc, NULL);
     
     //we have either
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());

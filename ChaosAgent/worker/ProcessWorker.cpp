@@ -131,7 +131,7 @@ void ProcessWorker::removeToRespawn(const std::string& node_uid) {
 }
 
 CDWUniquePtr ProcessWorker::launchNode(CDWUniquePtr data) {
-    CHECK_CDW_THROW_AND_LOG(data,
+    CHECK_CDW_THROW_AND_LOG(data!=NULL,
                             ERROR, -1,
                             CHAOS_FORMAT("[%1%] ACK message with no content", %getName()));
     CHECK_KEY_THROW_AND_LOG(data, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_NAME,
