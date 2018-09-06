@@ -311,7 +311,7 @@ for c in $lista_driver; do
 done
 echo -e "\t\tchaos::cu::ChaosCUToolkit::getInstance()->start();" >> $project_dir/main.cpp
 
-echo -e "\t} catch (CException& e) {\n\t\tstd::cerr<<\"Exception:\"<<std::endl;\n\t\tstd::cerr<< \"domain	:\"<<e.errorDomain << std::endl;\n\t\tstd::cerr<< \"cause	:\"<<e.errorMessage << std::endl;return -1;\n\t} catch (program_options::error &e){\n\t\tstd::cerr << "\"Unable to parse command line: \"" << e.what() << std::endl;return -2;\n\t} catch (...){\n\t\tstd::cerr << \"unexpected exception caught.. \" << std::endl;return -3;\n\t}return 0;\n}\n" >> $project_dir/main.cpp
+echo -e "\t} catch (chaos::CException& e) {\n\t\tstd::cerr<<\"Exception:\"<<std::endl;\n\t\tstd::cerr<< \"domain	:\"<<e.errorDomain << std::endl;\n\t\tstd::cerr<< \"cause	:\"<<e.errorMessage << std::endl;return -1;\n\t} catch (program_options::error &e){\n\t\tstd::cerr << "\"Unable to parse command line: \"" << e.what() << std::endl;return -2;\n\t} catch (...){\n\t\tstd::cerr << \"unexpected exception caught.. \" << std::endl;return -3;\n\t}return 0;\n}\n" >> $project_dir/main.cpp
 
 echo "cmake_minimum_required(VERSION 2.8)" > $project_dir/CMakeLists.txt
 echo "find_package(chaos MODULE REQUIRED)" >> $project_dir/CMakeLists.txt

@@ -95,11 +95,7 @@ namespace chaos {
                 std::map<std::string,  common::utility::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
                 std::map<std::string,  common::utility::PointerBuffer*> pointerAttributeLiveBuffer;
                 
-                //! update inromation for talking with device
-                /*!
-                 Perform oall the orpeation to find the rigth chaos address of the device
-                 */
-                void updateChannel() throw(CException);
+               
                 
                 /*!
                  Initialize the map for the devices
@@ -136,6 +132,11 @@ namespace chaos {
                  */
                 ~CUController();
             public:
+             //! update inromation for talking with device
+                /*!
+                 Find the right chaos address of the device
+                 */
+                void updateChannel() throw(CException);
                 /**
                  * return the number of output channels
                  * @return return the nyumber of predefined output channels
