@@ -26,6 +26,13 @@
 #include <set>
 #include <string>
 #include <vector>
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+// See libmongoc.hh for details on this diagnostic suppression
+//#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace data {

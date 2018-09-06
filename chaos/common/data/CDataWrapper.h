@@ -32,6 +32,12 @@
 #include <boost/shared_ptr.hpp>
 #include <utility>
 
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+// See libmongoc.hh for details on this diagnostic suppression
+//#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 namespace chaos {
     namespace common {
         namespace data {
