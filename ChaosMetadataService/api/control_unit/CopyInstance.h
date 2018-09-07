@@ -33,16 +33,8 @@ namespace chaos {
                 /*!
                  the contorl unit instance is copied into a new instance with a new control unit id
                  */
-                class CopyInstance:
-                public AbstractApi {
-                    
-                public:
-                    CopyInstance();
-                    ~CopyInstance();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(CopyInstance)
+ 
             }
         }
     }

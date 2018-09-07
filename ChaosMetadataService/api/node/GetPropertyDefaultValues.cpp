@@ -29,13 +29,9 @@ using namespace chaos::common::property;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetPropertyDefaultValues::GetPropertyDefaultValues():
-AbstractApi("getPropertyDefaultValues"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetPropertyDefaultValues, "getPropertyDefaultValues");
 
-GetPropertyDefaultValues::~GetPropertyDefaultValues(){}
-
-CDataWrapper *GetPropertyDefaultValues::execute(CDataWrapper *api_data,
-                                                bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetPropertyDefaultValues::execute(CDWUniquePtr api_data) {
     int err = 0;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found")
@@ -55,5 +51,5 @@ CDataWrapper *GetPropertyDefaultValues::execute(CDataWrapper *api_data,
                                 pgv_sdv()))) {
         LOG_AND_TROW_FORMATTED(ERR, -4, "Error getting command for uid %1%", %node_unique_id);
     }
-    return pgv_sdv.serialize().release();
+    return pgv_sdv.serialize();
 }

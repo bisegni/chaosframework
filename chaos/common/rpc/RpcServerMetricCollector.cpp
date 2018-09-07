@@ -23,7 +23,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
-using namespace chaos::common;
+using namespace chaos::common::data;
 using namespace chaos::common::rpc;
 using namespace chaos::common::metric;
 
@@ -98,13 +98,13 @@ void RpcServerMetricCollector::setCommandDispatcher(RpcServerHandler *_wrapperd_
 }
 
 // method called when the rpc server receive a new data
-chaos_data::CDataWrapper* RpcServerMetricCollector::dispatchCommand(chaos_data::CDataWrapper * action_pack)  throw(CException) {
+CDWUniquePtr RpcServerMetricCollector::dispatchCommand(CDWUniquePtr action_pack) {
     CHAOS_ASSERT(wrapperd_server_handler)
     int size = 0;
-    chaos_data::CDataWrapper *result = NULL;
+    CDWUniquePtr result;
     //inrement packec count
     pack_count++;
-    result = wrapperd_server_handler->dispatchCommand(action_pack);
+    result = wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
     //increment packet size
     action_pack->getBSONRawData(size);
     bandwith+=size;
@@ -112,13 +112,13 @@ chaos_data::CDataWrapper* RpcServerMetricCollector::dispatchCommand(chaos_data::
 }
 
 // execute an action in synchronous mode
-chaos_data::CDataWrapper* RpcServerMetricCollector::executeCommandSync(chaos_data::CDataWrapper * action_pack) {
+CDWUniquePtr RpcServerMetricCollector::executeCommandSync(CDWUniquePtr action_pack) {
     CHAOS_ASSERT(wrapperd_server_handler)
     int size = 0;
-    chaos_data::CDataWrapper *result = NULL;
+    CDWUniquePtr result;
     //inrement packec count
     pack_count++;
-    result = wrapperd_server_handler->dispatchCommand(action_pack);
+    result = wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
     //increment packet size
     action_pack->getBSONRawData(size);
     bandwith+=size;

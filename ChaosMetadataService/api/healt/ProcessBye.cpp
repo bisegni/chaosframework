@@ -18,15 +18,8 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
-ProcessBye::ProcessBye():
-AbstractApi("processBye"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(ProcessBye, "processBye")
 
-}
-
-ProcessBye::~ProcessBye() {
-
-}
-
-chaos::common::data::CDataWrapper *ProcessBye::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ProcessBye::execute(CDWUniquePtr api_data) {
     return NULL;
 }

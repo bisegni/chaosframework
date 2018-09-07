@@ -38,15 +38,7 @@ namespace chaos {
                 /*!
                  The logging are paged so in query can be gave the last sequence id
                  */
-                class GetLogForSourceUID:
-                public AbstractApi {
-                    inline ChaosUniquePtr<chaos::common::data::CDataWrapper> converEntry(persistence::data_access::LogEntry& log_entry);
-                public:
-                    GetLogForSourceUID();
-                    ~GetLogForSourceUID();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetLogForSourceUID)
             }
         }
     }

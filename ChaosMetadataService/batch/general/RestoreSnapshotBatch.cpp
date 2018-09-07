@@ -43,7 +43,7 @@ void RestoreSnapshotBatch::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     int err = 0;
     
-    CHECK_CDW_THROW_AND_LOG(data, G_RS_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, G_RS_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, "snapshot_name", G_RS_ERR, -2, "The name of the snapshot is mandatory")
     
     snapshot_name = data->getStringValue("snapshot_name");

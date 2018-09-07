@@ -218,7 +218,6 @@ void ControlManager::stop() throw(CException) {
  Deinitialize the CU Instantiator
  */
 void ControlManager::deinit() throw(CException) {
-    bool detachFake = false;
     std::string cu_identification_temp;
     std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     vector<string> allCUDeviceIDToStop;
@@ -249,7 +248,7 @@ void ControlManager::deinit() throw(CException) {
         fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu->work_unit_instance->getDeviceID());
         try{
             LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
-            cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+            cu->work_unit_instance->_stop(MOVE(fakeDWForDeinit.clone()));
         }catch (CException& ex) {
             if(ex.errorCode != 1){
                 //these exception need to be logged
@@ -259,7 +258,7 @@ void ControlManager::deinit() throw(CException) {
         
         try{
             LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
-            cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+            cu->work_unit_instance->_deinit(MOVE(fakeDWForDeinit.clone()));
         }catch (CException& ex) {
             if(ex.errorCode != 1){
                 //these exception need to be logged
@@ -472,7 +471,7 @@ void ControlManager::manageControlUnit() {
 #define CDW_STR_KEY(x) CDW_HAS_KEY(x)?message_data->getStringValue(x):""
 
 //! message for load operation
-CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
+CDWUniquePtr ControlManager::loadControlUnit(CDWUniquePtr message_data) {
     //check param
     CHECK_CDW_THROW_AND_LOG(message_data, LCMERR_, -1, "No param found");
     CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, LCMERR_, -2, "No instancer alias");
@@ -552,12 +551,12 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     
     //submit contorl unit releaseing the ChaosUniquePtr
     submitControlUnit(instance);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! message for unload operation
-CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
-    IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
+CDWUniquePtr ControlManager::unloadControlUnit(CDWUniquePtr message_data) {
+    IN_ACTION_PARAM_CHECK(!message_data.get(), -1, "No param found")
     //IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
     IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No id for the work unit instance found")
     
@@ -587,10 +586,10 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
     
     //unlock the thread
     thread_waith_semaphore.unlock();
-    return NULL;
+    return CDWUniquePtr();
 }
 
-CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException) {
+CDWUniquePtr ControlManager::unitServerStatus(CDWUniquePtr message_data) {
     CDWUniquePtr unit_server_status(new CDataWrapper());
     unit_server_status->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias.size()?unit_server_alias:"No Server Defined");
     unit_server_status->addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
@@ -611,12 +610,12 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
     unit_server_status->finalizeArrayForKey(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CU_STATES);
     mds_channel->sendUnitServerCUStates(MOVE(unit_server_status));
     
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! ack received for the registration of the uwork unit
-CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException) {
-    IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
+CDWUniquePtr ControlManager::workUnitRegistrationACK(CDWUniquePtr message_data) {
+    IN_ACTION_PARAM_CHECK(!message_data.get(), -1, "No param found")
     IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No device id found")
     
     //lock the registering control unit map
@@ -627,14 +626,14 @@ CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data
     
     //we can process the ack into the right manager
     map_cuid_reg_unreg_instance[device_id]->manageACKPack(*message_data);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 /*
  Configure the sandbox and all subtree of the CU
  */
-CDataWrapper* ControlManager::updateConfiguration(CDataWrapper *message_data, bool& detach) {
-    return NULL;
+CDWUniquePtr ControlManager::updateConfiguration(CDWUniquePtr message_data) {
+    return CDWUniquePtr();
 }
 
 //---------------unit server state machine managment handler
@@ -703,11 +702,10 @@ void ControlManager::sendUnitServerRegistration() {
 }
 
 // Server registration ack message
-CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException) {
+CDWUniquePtr ControlManager::unitServerRegistrationACK(CDWUniquePtr message_data) {
     //lock the sm access
     boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
     LCMAPP_ << "Unit server registration ack message received";
-    detach = false;
     if(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
         throw CException(-1, "No alias forwarder", __PRETTY_FUNCTION__);
     
@@ -774,7 +772,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
     } else {
         throw CException(-3, "No result received", __PRETTY_FUNCTION__);
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 //! allota a new control unit proxy

@@ -36,14 +36,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CheckAgentHostedProcess::CheckAgentHostedProcess():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CheckAgentHostedProcess, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_CHECK_NODE)
 
-CheckAgentHostedProcess::~CheckAgentHostedProcess() {
-}
-
-CDataWrapper *CheckAgentHostedProcess::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr CheckAgentHostedProcess::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));

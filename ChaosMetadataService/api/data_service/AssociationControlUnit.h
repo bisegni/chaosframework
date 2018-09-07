@@ -28,16 +28,7 @@ namespace chaos {
         namespace api {
             namespace data_service {
 
-                class AssociationControlUnit:
-                public AbstractApi {
-
-                public:
-                    AssociationControlUnit();
-                    ~AssociationControlUnit();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-
+                CHAOS_MDS_DEFINE_API_CLASS(AssociationControlUnit)
             }
         }
     }

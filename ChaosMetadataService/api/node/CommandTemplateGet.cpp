@@ -33,17 +33,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_CTG_DBG  DBG_LOG(CommandTemplateGet)
 #define N_CTG_ERR  ERR_LOG(CommandTemplateGet)
 
-CommandTemplateGet::CommandTemplateGet():
-AbstractApi("commandTemplateGet"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CommandTemplateGet, "commandTemplateGet");
 
-CommandTemplateGet::~CommandTemplateGet() {
-    
-}
-
-CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandTemplateGet::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
     CDataWrapper *result = NULL;
@@ -70,5 +62,5 @@ CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
             LOG_AND_TROW_FORMATTED(N_CTG_ERR, err, "Error getting the command template %1%(%2%)", %template_name%command_unique_id)
         }
     }
-    return result;
+    return CDWUniquePtr(result);
 }

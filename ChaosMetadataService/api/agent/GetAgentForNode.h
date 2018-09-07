@@ -34,15 +34,7 @@ namespace chaos {
                 //! Return an agent associated to node
                 /*!
                  */
-                class GetAgentForNode:
-                public AbstractApi {
-                    
-                public:
-                    GetAgentForNode();
-                    ~GetAgentForNode();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetAgentForNode);
             }
         }
     }

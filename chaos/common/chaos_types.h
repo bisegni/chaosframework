@@ -124,6 +124,9 @@ using ChaosFunction = std::function< R >;
 #define ChaosBindPlaceholder(x) x
 #endif
 
+//allocator for smarpoitner
+#define CreateNewUniquePtr(t, n, p) ChaosUniquePtr<t> n(new t(p))
+
 //define accelerator
 #define MOVE(x) ChaosMoveOperator(x)
 

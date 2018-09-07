@@ -31,16 +31,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-AddNode::AddNode():
-AbstractApi("addNode"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(AddNode, "addNode")
 
-AddNode::~AddNode() {
-    
-}
-
-chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr AddNode::execute(CDWUniquePtr api_data) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, G_AN_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "node_name", G_AN_ERR, -2, "The node_name key is mandatory");
@@ -74,5 +67,5 @@ chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWr
                                    %node_name%err%ChaosGetErrorMessage(err));
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }

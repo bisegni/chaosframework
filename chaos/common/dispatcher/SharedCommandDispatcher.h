@@ -46,8 +46,7 @@ namespace chaos{
                           AbstractCommandDispatcher){
         MapDomainActionsLocked map_domain_actions;
     protected:
-        void processBufferElement(chaos_data::CDataWrapper*,
-                                  ElementManagingPolicy&) throw(CException);
+        void processBufferElement(chaos::common::data::CDWShrdPtr element) throw(CException);
     public:
         SharedCommandDispatcher(const string& alias);
         virtual ~SharedCommandDispatcher();
@@ -73,10 +72,10 @@ namespace chaos{
         virtual void deregisterAction(DeclareAction*)  throw(CException) ;
         
         // inherited method
-        chaos::common::data::CDataWrapper* dispatchCommand(chaos::common::data::CDataWrapper*) throw(CException);
+        chaos::common::data::CDWUniquePtr dispatchCommand(chaos::common::data::CDWUniquePtr rpc_call_data);
         
         // inherited method
-        chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
+        chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr rpc_call_data);
         
         //inherited method
         uint32_t domainRPCActionQueued(const std::string& domain_name);

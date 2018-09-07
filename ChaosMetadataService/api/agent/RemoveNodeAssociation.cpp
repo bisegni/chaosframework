@@ -36,14 +36,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-RemoveNodeAssociation::RemoveNodeAssociation():
-AbstractApi("removeNodeAssociation"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(RemoveNodeAssociation, "removeNodeAssociation")
 
-RemoveNodeAssociation::~RemoveNodeAssociation() {
-}
-
-CDataWrapper *RemoveNodeAssociation::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr RemoveNodeAssociation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -55,9 +50,8 @@ CDataWrapper *RemoveNodeAssociation::execute(CDataWrapper *api_data, bool& detac
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
 //    int err = 0;
-    detach_data = true;
     uint64_t cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentRemoveNodeSafety),
-                                                        api_data,
+                                                        api_data.release(),
                                                         0,
                                                         1000);
     //    const std::string agent_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);

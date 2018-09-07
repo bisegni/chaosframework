@@ -27,15 +27,7 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			namespace unit_server {
-				
-				class GetDescription:
-				public AbstractApi {
-				public:
-					GetDescription();
-					~GetDescription();
-					chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-				};
-				
+				CHAOS_MDS_DEFINE_API_CLASS(GetDescription)
 			}
 		}
 	}

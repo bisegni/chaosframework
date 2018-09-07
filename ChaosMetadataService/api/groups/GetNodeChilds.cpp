@@ -34,21 +34,13 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetNodeChilds::GetNodeChilds():
-AbstractApi("getNodeChilds"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetNodeChilds, "getNodeChilds")
 
-GetNodeChilds::~GetNodeChilds() {
-    
-}
-
-chaos::common::data::CDataWrapper *GetNodeChilds::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetNodeChilds::execute(CDWUniquePtr api_data) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, G_AN_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "group_domain", G_AN_ERR, -2, "The group_domain key is mandatory");
     CHAOS_LASSERT_EXCEPTION(api_data->isStringValue("group_domain"), G_AN_ERR, -3, "The group_domain needs to be a string");
-    
     
     GET_DATA_ACCESS(TreeGroupDataAccess, tg_da, -6);
     NodeList node_list;
@@ -64,7 +56,7 @@ chaos::common::data::CDataWrapper *GetNodeChilds::execute(chaos::common::data::C
         }
     }
     //compose output
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     if(node_list.size()) {
         for(NodeListIterator it = node_list.begin();
             it != node_list.end();
@@ -73,5 +65,5 @@ chaos::common::data::CDataWrapper *GetNodeChilds::execute(chaos::common::data::C
         }
     }
     result->finalizeArrayForKey("node_child_list");
-    return result.release();
+    return result;
 }

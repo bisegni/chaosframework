@@ -32,6 +32,12 @@
 #include <boost/shared_ptr.hpp>
 #include <utility>
 
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+// See libmongoc.hh for details on this diagnostic suppression
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 namespace chaos {
     namespace common {
         namespace data {
@@ -374,10 +380,17 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
             typedef ChaosUniquePtr<chaos::common::data::CDataWrapper> CDWUniquePtr;
             typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> CDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWShrdPtr, VectorCDWShrdPtr);
-
+#define CreateNewDataWrapper(n,p) CreateNewUniquePtr(CDataWrapper, n, p)
+            
+            
             typedef std::pair<std::string, CDWShrdPtr> PairStrCDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(PairStrCDWShrdPtr, VectorStrCDWShrdPtr);
         }
     }
 }
+#endif
+
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+#pragma GCC diagnostic pop
 #endif

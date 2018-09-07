@@ -108,7 +108,6 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
 }
 
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
-
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         init();

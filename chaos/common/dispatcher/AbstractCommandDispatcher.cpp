@@ -43,8 +43,7 @@ EchoRpcAction::EchoRpcAction() {
                                                               "Echo rpc action");
 }
 //!echo function return the data sent as parameter
-CDataWrapper *EchoRpcAction::echoAction(CDataWrapper *action_data, bool& detach) {
-    detach = true;
+CDWUniquePtr EchoRpcAction::echoAction(CDWUniquePtr action_data) {
     return action_data;
 }
 //-----------------------------------------------------------------
@@ -63,7 +62,7 @@ dispatcher(_dispatcher) {
                                 "Is the name of the rpc domain to ckeck");
 }
 //!echo function return the data sent as parameter
-CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool& detach) {
+CDWUniquePtr CheckDomainRpcAction::checkDomain(CDWUniquePtr action_data) {
     CHAOS_ASSERT(dispatcher);
     CHECK_CDW_THROW_AND_LOG(action_data, ACDLERR_, -1, "Input parameter as mandatory");
     CHECK_KEY_THROW_AND_LOG(action_data, "domain_name", ACDLERR_, -2, "domain_name key, representing the domain to ckeck, is mandatory!");
@@ -71,13 +70,13 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
     
     const std::string domain_name = action_data->getStringValue("domain_name");
     
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    CreateNewDataWrapper(result,);
     bool alive = dispatcher->hasDomain(domain_name);
     uint32_t queued_action_in_domain = 0;
     //create the result data pack
     result->addBoolValue("alive", alive);
     result->addInt32Value("queued_actions", queued_action_in_domain);
-    return result.release();
+    return result;
 }
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(const string& alias):
@@ -107,10 +106,10 @@ bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(rpc_forwarder_ptr)
     if(!message.get() && server_port.size()) return false;
-    common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
+    NFISharedPtr nfi(new NetworkForwardInfo(false));
     nfi->destinationAddr = server_port;
     nfi->setMessage(MOVE(message));
-    return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
+    return rpc_forwarder_ptr->submitMessage(MOVE(nfi), onThisThread);
 }
 
 chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {

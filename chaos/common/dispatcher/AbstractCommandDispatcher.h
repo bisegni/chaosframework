@@ -57,8 +57,7 @@ namespace chaos{
     public:
         EchoRpcAction();
     protected:
-        chaos::common::data::CDataWrapper *echoAction(chaos::common::data::CDataWrapper *action_data,
-                                                      bool& detach);
+        chaos::common::data::CDWUniquePtr echoAction(chaos::common::data::CDWUniquePtr action_data);
     };
     
     //! class for the check if an RPC domain is alive
@@ -68,8 +67,7 @@ namespace chaos{
     public:
         CheckDomainRpcAction(AbstractCommandDispatcher *_dispatcher);
     protected:
-        chaos::common::data::CDataWrapper *checkDomain(chaos::common::data::CDataWrapper *action_data,
-                                                      bool& detach);
+        chaos::common::data::CDWUniquePtr checkDomain(chaos::common::data::CDWUniquePtr action_data);
     };
     
     //! Base class for the Chaos Action Dispatcher

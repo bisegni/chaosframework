@@ -107,7 +107,7 @@ namespace chaos {
          \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
          \return the result of the action
          */
-        virtual chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
+        virtual chaos::common::data::CDWUniquePtr call(chaos::common::data::CDWUniquePtr actionParam) = 0;
         
         /*!
          set the string value for the determinated type
@@ -156,7 +156,7 @@ namespace chaos {
     class ActionDescriptor:
     public AbstractActionDescriptor {
     public:
-        typedef chaos::common::data::CDataWrapper* (T::*ActionPointerDef)(chaos::common::data::CDataWrapper*, bool&);
+        typedef chaos::common::data::CDWUniquePtr (T::*ActionPointerDef)(chaos::common::data::CDWUniquePtr);
         
         /*!
          construct the action class with objectClass pointer,object method pointer action domain name and action name
@@ -182,13 +182,12 @@ namespace chaos {
         /*!
          execute the action call
          */
-        chaos::common::data::CDataWrapper* call(chaos::common::data::CDataWrapper *actionParam,
-                                                bool& detachParam)  throw (CException) {
+        chaos::common::data::CDWUniquePtr call(chaos::common::data::CDWUniquePtr action_data)  throw (CException) {
             //call the action with param
             CHAOS_ASSERT(objectReference)
             boost::unique_lock<boost::mutex> wl(mutex_execution_lock, boost::defer_lock);
             if(isShared() == false){wl.lock();};
-            return ((*objectReference).*actionPointer)(actionParam, detachParam);
+            return ((*objectReference).*actionPointer)(MOVE(action_data));
         }
         
     private:

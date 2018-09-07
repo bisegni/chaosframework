@@ -29,24 +29,16 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_SI_DBG  DBG_LOG(SearchInstancesByUS)
 #define CU_SI_ERR  ERR_LOG(SearchInstancesByUS)
 
-SearchInstancesByUS::SearchInstancesByUS():
-AbstractApi("searchInstancesByUS"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(SearchInstancesByUS, "searchInstancesByUS")
 
-}
-
-SearchInstancesByUS::~SearchInstancesByUS() {
-
-}
-
-CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
-                                       bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr SearchInstancesByUS::execute(CDWUniquePtr api_data) {
     int err = 0;
     uint32_t last_sequence_id = 0;
     uint32_t page_length = 30;
     std::vector<ChaosSharedPtr<CDataWrapper> > page_result;
     std::vector<std::string> cu_type_filter;
 
-    chaos::common::data::CDataWrapper *result = NULL;
+    CDWUniquePtr result;
     if(!api_data) {LOG_AND_TROW(CU_SI_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_SI_ERR, -2, "The ndk_parent key (representing the unit server uid) is mandatory");}
 
@@ -79,7 +71,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
     } else {
         if(page_result.size() > 0) {
             //add found element to result
-            result = new CDataWrapper();
+            result.reset(new CDataWrapper());
             for (std::vector<ChaosSharedPtr<CDataWrapper> >::iterator it = page_result.begin();
                  it != page_result.end();
                  it++) {

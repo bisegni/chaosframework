@@ -46,7 +46,7 @@ AgentAckCommand::~AgentAckCommand() {}
 // inherited method
 void AgentAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!= NULL), ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, ERR, -3, "The rpc address of unit server is mandatory")
     

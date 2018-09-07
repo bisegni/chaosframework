@@ -29,14 +29,7 @@ namespace chaos {
         namespace api {
             namespace node {
                 //!compatibility API used to simulate the old mdslite client
-                class GetNodeNetworkAddress:
-                public AbstractApi {
-                public:
-                    GetNodeNetworkAddress();
-                    ~GetNodeNetworkAddress();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetNodeNetworkAddress);
             }
         }
     }

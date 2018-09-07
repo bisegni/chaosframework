@@ -33,14 +33,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class RestoreSnapshot:
-                public AbstractApi {
-                public:
-                    RestoreSnapshot();
-                    ~RestoreSnapshot();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(RestoreSnapshot)
             }
         }
     }

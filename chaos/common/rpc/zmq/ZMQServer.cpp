@@ -229,15 +229,16 @@ void ZMQServer::worker() {
                         seq_id=message_data->getInt64Value("seq_id");
                     } 
                     ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
+                    const std::string msg_desc = message_data->getCompliantJSONString();
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
-                        result_data_pack.reset(command_handler->executeCommandSync(message_data.release()));
+                        result_data_pack = command_handler->executeCommandSync(MOVE(message_data));
                     } else {
-                        result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
+                        result_data_pack = command_handler->dispatchCommand(MOVE(message_data));
                     }
                     //create zmq message
                     if(result_data_pack.get()==NULL){
-                        ZMQS_LERR << "ERROR:"<<message_data->getCompliantJSONString();
+                        ZMQS_LERR << "ERROR:"<<msg_desc;
 
                     }
                     result_data_pack->addInt64Value("seq_id",seq_id);

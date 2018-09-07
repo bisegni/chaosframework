@@ -33,16 +33,11 @@ using namespace chaos::common::event::channel;
 using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetLogDomainForSourceUID::GetLogDomainForSourceUID():
-AbstractApi("getLogDomainForSourceUID"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetLogDomainForSourceUID, "getLogDomainForSourceUID")
 
-GetLogDomainForSourceUID::~GetLogDomainForSourceUID() {
-}
-
-chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr GetLogDomainForSourceUID::execute(CDWUniquePtr api_data) {
     int err = 0;
-    CDataWrapper *result = NULL;
+    CreateNewDataWrapper(result,);
     LogDomainList domain_list;
     
     GET_DATA_ACCESS(LoggingDataAccess, l_da, -4);
@@ -71,14 +66,12 @@ chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrappe
         LOG_AND_TROW(L_GLTFS_ERR, err, "Error searching log types");
     }
     if(domain_list.size()) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_result(new CDataWrapper());
         for(LogDomainListIterator it = domain_list.begin();
             it != domain_list.end();
             it++){
-            tmp_result->appendStringToArray(*it);
+            result->appendStringToArray(*it);
         }
-        tmp_result->finalizeArrayForKey("result_list");
-        result = tmp_result.release();
+        result->finalizeArrayForKey("result_list");
     }
     return result;
 }

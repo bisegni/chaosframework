@@ -31,17 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_D_DBG  DBG_LOG(Delete)
 #define CU_D_ERR  ERR_LOG(Delete)
 
-Delete::Delete():
-AbstractApi("delete"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(Delete, "delete");
 
-Delete::~Delete() {
-    
-}
-
-CDataWrapper *Delete::execute(CDataWrapper *api_data,
-                              bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr Delete::execute(CDWUniquePtr api_data) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, CU_D_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_D_ERR, -2, "The ndk_uid key is mandatory")
@@ -54,5 +46,5 @@ CDataWrapper *Delete::execute(CDataWrapper *api_data,
                               chaos::NodeType::NODE_TYPE_CONTROL_UNIT))){
         LOG_AND_TROW_FORMATTED(CU_D_ERR, err, "Error deleting the control unit %1%", %node_uid);
     }
-    return NULL;
+    return CDWUniquePtr();
 }

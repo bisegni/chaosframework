@@ -65,9 +65,7 @@ void NewUS::performQuery(const std::string& new_us_uid,
     }
 }
 
-CDataWrapper *NewUS::execute(CDataWrapper *api_data,
-                             bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr NewUS::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, US_NEW_ERR, -1, "No parameter has been set!")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, US_NEW_ERR, -2, "No mdk_uid is mandatory!")
     

@@ -58,7 +58,7 @@ namespace chaos {
         ChaosAtomic<uint64_t> seq_id;
     protected:
         void *zmq_context;
-        virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(NFISharedPtr element) throw(CException);
         inline ZMQSocketPool::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
         inline void releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
         inline void deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
@@ -98,7 +98,7 @@ namespace chaos {
          Submit the message to be send to a certain ip, the datawrapper must contains
          the key CS_CMDM_REMOTE_HOST_IP
          */
-        bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
+        bool submitMessage(NFISharedPtr forwardInfo, bool onThisThread=false) throw(CException);
         
         //inherited method
         virtual uint64_t getMessageQueueSize();

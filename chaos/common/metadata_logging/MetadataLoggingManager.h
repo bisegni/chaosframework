@@ -72,8 +72,7 @@ namespace chaos {
                 //!internal function to permit the forwarding of th elog entry to the mds
                 int sendLogEntry(chaos::common::data::CDWUniquePtr log_entry);
                 
-                void processBufferElement(chaos::common::data::CDataWrapper *log_entry,
-                                          ElementManagingPolicy& element_policy) throw(CException);
+                void processBufferElement(chaos::common::data::CDWShrdPtr log_entry) throw(CException);
             protected:
                 //!submit the log entry in the logging queue
                 int pushLogEntry(chaos::common::data::CDataWrapper *log_entry,

@@ -32,13 +32,12 @@ actionWithNoResultCounter(0){
                                                            "actionWithNoResult");
 }
 
-CDataWrapper *RpcHandler::actionWithResult(CDataWrapper *action_data, bool& detach) {
-    detach = true;
+CDWUniquePtr RpcHandler::actionWithResult(CDWUniquePtr action_data) {
     actionWithResultCounter++;
     return action_data;
 }
 
-CDataWrapper *RpcHandler::actionWithNoResult(CDataWrapper *action_data, bool& detach) {
+CDWUniquePtr RpcHandler::actionWithNoResult(CDWUniquePtr action_data) {
     actionWithNoResultCounter++;
     return NULL;
 }

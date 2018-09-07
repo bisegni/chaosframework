@@ -81,8 +81,7 @@ namespace chaos {
                 /*!
                  Event for update some CU configuration
                  */
-                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper* update_pack,
-                                                                               bool& detach_param) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr update_pack);
                 
                 
             public:

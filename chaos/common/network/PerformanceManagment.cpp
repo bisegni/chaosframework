@@ -29,6 +29,7 @@
 #define PMLDBG_ LDBG_ << PM_LOG_HEAD << __FUNCTION__
 #define PMLERR_ LERR_ << PM_LOG_HEAD
 
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
@@ -153,11 +154,11 @@ void  PerformanceManagment::freeObject(const PMKeyObjectContainer::TKOCElement& 
 	disposePerformanceNode(element_to_dispose.element);
 }
 
-chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
+CDWUniquePtr PerformanceManagment::startPerformanceSession(data::CDWUniquePtr param) {
     CHECK_CDW_THROW_AND_LOG(param, PMLERR_, -1, "No parameter has been set")
     CHECK_KEY_THROW_AND_LOG_FORMATTED(param, PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, PMLERR_, -2, "No %1% key has been set",%PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)
     
-	chaos_data::CDataWrapper *result = NULL;
+	CDWUniquePtr result;
 	
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
@@ -185,7 +186,7 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 		InizializableService::initImplementation(performace_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		
 		//set the result value to the local endpoint url
-		result = new chaos_data::CDataWrapper();
+		result.reset(new CDataWrapper());
 		result->addStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, server_endpoint->getUrl());
 		
 	} catch(CException& ex) {
@@ -206,8 +207,8 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	return result;
 }
 
-chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
-	if(!param) return NULL;
+CDWUniquePtr PerformanceManagment::stopPerformanceSession(CDWUniquePtr param) {
+	if(!param.get()) return CDWUniquePtr();
 	if(!param->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION))
 		throw chaos::CException(-1, "Requester server description not found", __PRETTY_FUNCTION__);
 	//we can initiate performance session allcoation
@@ -221,5 +222,5 @@ chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_dat
 	
 	// dispose the sesison node
 	disposePerformanceNode(performace_node);
-	return NULL;
+	return CDWUniquePtr();
 }

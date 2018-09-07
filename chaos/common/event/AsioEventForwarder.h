@@ -64,10 +64,10 @@ namespace chaos {
                 virtual ~AsioEventForwarder();
                 
                 //! submit the event
-                bool submitEventAsync(EventDescriptor *event);
+                bool submitEventAsync(EventDescriptorSPtr event);
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement) throw(CException);
             private:
                 bool sent;
                 //! mutext used for unlock and wait esclusive access

@@ -23,8 +23,8 @@ public:
     ChaosAtomic<uint32_t> actionWithNoResultCounter;
     RpcHandler();
 protected:
-    chaos::common::data::CDataWrapper *actionWithResult(chaos::common::data::CDataWrapper *action_data, bool& detach);
-    chaos::common::data::CDataWrapper *actionWithNoResult(chaos::common::data::CDataWrapper *action_data, bool& detach);
+    chaos::common::data::CDWUniquePtr actionWithResult(chaos::common::data::CDWUniquePtr action_data);
+    chaos::common::data::CDWUniquePtr actionWithNoResult(chaos::common::data::CDWUniquePtr action_data);
 };
 
 class RPCTest:

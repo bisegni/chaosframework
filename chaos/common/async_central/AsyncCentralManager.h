@@ -73,7 +73,7 @@ namespace chaos {
 				int removeTimer(TimerHandler *timer_handler);
                 
                 //!submit a runnable
-                void submitAsyncJob(AsyncRunnable *runnable);
+                void submitAsyncJob(ChaosUniquePtr<AsyncRunnable> runnable);
 			};
 		}
 	}

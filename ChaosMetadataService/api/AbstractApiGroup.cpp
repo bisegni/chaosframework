@@ -49,5 +49,4 @@ void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void AbstractApiGroup::deinit()  throw (chaos::CException) {
-}
+void AbstractApiGroup::deinit()  throw (chaos::CException) {}

@@ -33,7 +33,7 @@ namespace chaos {
         namespace api {
             namespace node {
                 
-                CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(chaos::common::data::CDataWrapper, CommandInstanceList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDWShrdPtr, CommandInstanceList)
                 
                 class CommandTemplateSubmit:
                 public AbstractApi {
@@ -50,8 +50,7 @@ namespace chaos {
                 public:
                     CommandTemplateSubmit();
                     ~CommandTemplateSubmit();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

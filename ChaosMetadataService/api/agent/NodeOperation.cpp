@@ -36,14 +36,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-NodeOperation::NodeOperation():
-AbstractApi("nodeOperation"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeOperation, "nodeOperation");
 
-NodeOperation::~NodeOperation() {
-}
-
-CDataWrapper *NodeOperation::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr NodeOperation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -68,5 +63,5 @@ CDataWrapper *NodeOperation::execute(CDataWrapper *api_data, bool& detach_data) 
                                                    batch_data.release(),
                                                    0,
                                                    1000);
-    return NULL;
+    return CDWUniquePtr();
 }

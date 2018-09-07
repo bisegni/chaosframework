@@ -341,29 +341,29 @@ namespace chaos{
                 /*!
                  Initialize the Custom Contro Unit and return the configuration
                  */
-                virtual chaos::common::data::CDataWrapper* _init(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _init(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Deinit the Control Unit
                  */
-                virtual chaos::common::data::CDataWrapper* _deinit(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _deinit(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Starto the  Control Unit scheduling for device
                  */
-                virtual chaos::common::data::CDataWrapper* _start(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _start(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Stop the Custom Control Unit scheduling for device
                  */
-                virtual chaos::common::data::CDataWrapper* _stop(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _stop(chaos::common::data::CDWUniquePtr data);
                 
                 //!Recover from a recoverable error state
-                virtual chaos::common::data::CDataWrapper* _recover(chaos::common::data::CDataWrapper *deinitParam, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _recover(chaos::common::data::CDWUniquePtr data);
                 /*!
                  Restore the control unit to a precise tag
                  */
-                virtual chaos::common::data::CDataWrapper* _unitRestoreToSnapshot(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _unitRestoreToSnapshot(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Define the control unit DataSet and Action into
@@ -463,32 +463,27 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper* data,
-                                                                        bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr _setDatasetAttribute(chaos::common::data::CDWUniquePtr data);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper* data,
-                                                             bool& detachParam) throw(CException);
+                chaos::common::data::CDWUniquePtr _getState(chaos::common::data::CDWUniquePtr data);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper* data,
-                                                            bool& detachParam) throw(CException);
+                chaos::common::data::CDWUniquePtr _getInfo(chaos::common::data::CDWUniquePtr datadetachParam);
                 
                 //!start a new storicization burst execution
-                chaos::common::data::CDataWrapper* _submitStorageBurst(chaos::common::data::CDataWrapper* data,
-                                                                       bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr _submitStorageBurst(chaos::common::data::CDWUniquePtr data);
                 
                 //!start a new storicization burst execution
-                chaos::common::data::CDataWrapper* _datasetTagManagement(chaos::common::data::CDataWrapper* data,
-                                                                         bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr _datasetTagManagement(chaos::common::data::CDWUniquePtr data);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts);
@@ -607,7 +602,7 @@ namespace chaos{
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                virtual chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper*, bool& detachParam) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr setDatasetAttribute(chaos::common::data::CDWUniquePtr data);
                 
                 // Infrastructure configuration update
                 /*!
@@ -615,7 +610,7 @@ namespace chaos{
                  checked to control waht is needed to update. Subclass that override this method need first inherited
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
-                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr data);
                 
                 //!callback for put a veto on property value change request
                 virtual bool propertyChangeHandler(const std::string& group_name,

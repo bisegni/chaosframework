@@ -29,20 +29,11 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DS_GET_ALL_DBG  DBG_LOG(GetAllDataService)
 #define DS_GET_ALL_ERR  ERR_LOG(GetAllDataService)
 
-GetAllDataService::GetAllDataService():
-AbstractApi("getAllDS"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetAllDataService, "getAllDS")
 
-}
-
-GetAllDataService::~GetAllDataService() {
-
-}
-
-chaos::common::data::CDataWrapper *GetAllDataService::execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException) {
-
+CDWUniquePtr GetAllDataService::execute(CDWUniquePtr api_data) {
     int err = 0;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result;
+    CDWUniquePtr result;
     std::vector<ChaosSharedPtr<CDataWrapper> > data_services;
 
     GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)
@@ -58,5 +49,5 @@ chaos::common::data::CDataWrapper *GetAllDataService::execute(chaos::common::dat
         }
         result->finalizeArrayForKey("node_search_result_page");
     }
-    return result.release();
+    return result;
 }

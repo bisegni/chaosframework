@@ -256,15 +256,12 @@ ChaosUniquePtr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_
     return slow_command_executor->getStateForCommandID(command_id);
 }
 
-/*
- Receive the event for set the dataset input element
- */
-CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
+CDWUniquePtr SCAbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attribute_values) {
     uint64_t command_id =0;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result_for_command;
     
     //cal first the superclass method because the dataset_attribute_values is not detached
-    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
+    CDWUniquePtr result = AbstractControlUnit::setDatasetAttribute(MOVE(dataset_attribute_values->clone()));
     
     //check if we have a command
     if(dataset_attribute_values->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
@@ -274,12 +271,11 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
         //so we need to detach it
         // submit the detacched command to slow controll subsystem
         slow_command_executor->submitCommand(command_alias,
-                                             dataset_attribute_values,
+                                             dataset_attribute_values.release(),
                                              command_id);
-        detachParam = true;
         //construct the result if we don't already have it
-        if(!result) {
-            result = new CDataWrapper();
+        if(!result.get()) {
+            result.reset(new CDataWrapper());
         }
         //add command id into the result
         result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);

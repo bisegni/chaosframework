@@ -31,18 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_SIDAV_DBG  DBG_LOG(SetInputDatasetAttributeValues)
 #define CU_SIDAV_ERR  ERR_LOG(SetInputDatasetAttributeValues)
 
+CHAOS_MDS_DEFINE_API_CLASS_CD(SetInputDatasetAttributeValues, "setInputDatasetAttributeValues");
 
-SetInputDatasetAttributeValues::SetInputDatasetAttributeValues():
-AbstractApi("setInputDatasetAttributeValues"){
-    
-}
-
-SetInputDatasetAttributeValues::~SetInputDatasetAttributeValues() {
-    
-}
-
-CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
-                                                      bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_SIDAV_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "attribute_set_values", CU_SIDAV_ERR, -2, "The attribute_set_values key is mandatory")
     
@@ -172,5 +163,5 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::ApplyChangeSet)),
                                                        batch_message_per_cu.release());
     }
-    return NULL;
+    return CDWUniquePtr();
 }

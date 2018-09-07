@@ -30,13 +30,12 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define DBG  DBG_LOG(CommandInstanceSubmit)
 #define ERR  ERR_LOG(CommandInstanceSubmit)
 
+
 KillCurrentCommand::KillCurrentCommand():
 ForwardNodeRpcMessage("killCurrentCommand"){}
+KillCurrentCommand::~KillCurrentCommand(){}
 
-KillCurrentCommand::~KillCurrentCommand() {}
-
-CDataWrapper *KillCurrentCommand::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr KillCurrentCommand::execute(CDWUniquePtr api_data) {
     CDWUniquePtr node_description;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The attribute %1% is mandatory",%NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -45,6 +44,5 @@ CDataWrapper *KillCurrentCommand::execute(CDataWrapper *api_data,
     //complete data with domain and action name
     api_data->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME,
                              BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND);
-    return ForwardNodeRpcMessage::execute(api_data,
-                                          detach_data);
+    return ForwardNodeRpcMessage::execute(MOVE(api_data));
 }

@@ -95,9 +95,9 @@ namespace chaos {
 				//! Stop the implementation
 				void deinit() throw(chaos::CException);
 				
-				chaos_data::CDataWrapper* startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException);
+                chaos::common::data::CDWUniquePtr startPerformanceSession(chaos::common::data::CDWUniquePtr param);
 				
-				chaos_data::CDataWrapper* stopPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException);
+				chaos::common::data::CDWUniquePtr stopPerformanceSession(chaos::common::data::CDWUniquePtr param);
 				
                 void freeObject(const PMKeyObjectContainer::TKOCElement& element_to_dispose);
 				

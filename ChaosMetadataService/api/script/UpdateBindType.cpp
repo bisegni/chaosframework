@@ -100,7 +100,7 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
     return err;
 }
 
-chaos::common::data::CDataWrapper *UpdateBindType::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr UpdateBindType::execute(CDWUniquePtr api_data) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "script_base_description", ERR, -2, "The script_base_description key is mandatory");
@@ -117,7 +117,7 @@ chaos::common::data::CDataWrapper *UpdateBindType::execute(CDataWrapper *api_dat
         CHECK_ASSERTION_THROW_AND_LOG(api_data->isVectorValue("vector_script_instance"), ERR, -5, "vector_script_instance key need to be a vector of object");
         StdVectorSDWrapper<ScriptInstance, ScriptInstanceSDWrapper> ni_list_wrapper;
         ni_list_wrapper.serialization_key = "vector_script_instance";
-        ni_list_wrapper.deserialize(api_data);
+        ni_list_wrapper.deserialize(api_data.get());
         for(StdVectorSDWrapper<ScriptInstance, ScriptInstanceSDWrapper>::iterator it = ni_list_wrapper().begin(),
             end = ni_list_wrapper().end();
             it != end;
@@ -136,5 +136,5 @@ chaos::common::data::CDataWrapper *UpdateBindType::execute(CDataWrapper *api_dat
             LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error updating bind for %1% instance of script %2%[%3%]", %isdw().instance_name%script_description_sdw().name%script_description_sdw().unique_id));
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }

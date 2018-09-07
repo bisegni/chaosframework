@@ -24,8 +24,7 @@
 QueuePriorityTest::QueuePriorityTest(){}
 QueuePriorityTest::~QueuePriorityTest(){}
 
-void QueuePriorityTest::processBufferElement(TestPriorityElement *element,
-                                             chaos::ElementManagingPolicy& p) throw(chaos::CException) {
+void QueuePriorityTest::processBufferElement(ChaosSharedPtr<TestPriorityElement> element) throw(chaos::CException) {
     if(last_priority != element->priority) {
         ASSERT_EQ(last_priority>=element->priority, true);
         last_priority = element->priority;
@@ -50,7 +49,8 @@ TEST_F(QueuePriorityTest, QueueTestPriority) {
     for(int idx = 0; idx < number_of_production; idx++) {
         //generating random priority
         priority = std::rand()%max_priority+1;
-        push(new TestPriorityElement(chaos::common::utility::UUIDUtil::generateUUID(), idx, priority), priority, true);
+        ChaosSharedPtr<TestPriorityElement> element = ChaosMakeSharedPtr<TestPriorityElement>(chaos::common::utility::UUIDUtil::generateUUID(), idx, priority);
+        push(element, priority);
     }
     init(1);
     deinit(true);

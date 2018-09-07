@@ -31,18 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_GCD_DBG  DBG_LOG(GetCurrentDataset)
 #define CU_GCD_ERR  ERR_LOG(GetCurrentDataset)
 
-GetCurrentDataset::GetCurrentDataset():
-AbstractApi("getCurrentDataset"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetCurrentDataset, "getCurrentDataset");
 
-GetCurrentDataset::~GetCurrentDataset() {
-    
-}
-
-CDataWrapper *GetCurrentDataset::execute(CDataWrapper *api_data,
-                                         bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr GetCurrentDataset::execute(CDWUniquePtr api_data) {
     if(!api_data) {LOG_AND_TROW(CU_GCD_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_GCD_ERR, -2, "The ndk_unique_id key is mandatory");}
     
@@ -68,5 +59,5 @@ CDataWrapper *GetCurrentDataset::execute(CDataWrapper *api_data,
     if((err = cu_da->getDataset(cu_uid, &result))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     }
-    return result;
+    return CDWUniquePtr(result);
 }

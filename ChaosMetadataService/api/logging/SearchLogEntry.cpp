@@ -33,16 +33,12 @@ using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
-SearchLogEntry::SearchLogEntry():
-AbstractApi("searchLogEntry"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(SearchLogEntry, "searchLogEntry");
 
-SearchLogEntry::~SearchLogEntry() {}
-
-chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr SearchLogEntry::execute(CDWUniquePtr api_data) {
     int err = 0;
     
-    CDataWrapper *result = NULL;
-    
+    CreateNewDataWrapper(result,);
     GET_DATA_ACCESS(LoggingDataAccess, l_da, -4);
     
     //entry list
@@ -82,14 +78,12 @@ chaos::common::data::CDataWrapper *SearchLogEntry::execute(CDataWrapper *api_dat
         LOG_AND_TROW(L_SLE_ERR, err, "Error searching for source");
     }
     if(entry_list.size()) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> tmp_result(new CDataWrapper());
         for(LogEntryListIterator it = entry_list.begin();
             it != entry_list.end();
             it++){
-            tmp_result->appendCDataWrapperToArray(*LogUtility::convertEntry(*(*it).get()));
+            result->appendCDataWrapperToArray(*LogUtility::convertEntry(*(*it).get()));
         }
-        tmp_result->finalizeArrayForKey("result_list");
-        result = tmp_result.release();
+        result->finalizeArrayForKey("result_list");
     }
     return result;
 }

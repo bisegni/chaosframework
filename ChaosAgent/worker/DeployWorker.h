@@ -35,14 +35,11 @@ namespace chaos {
             public AbstractWorker {
                 
             protected:
-                chaos::common::data::CDataWrapper *initDeploySession(chaos::common::data::CDataWrapper *data,
-                                                                       bool& detach);
+                chaos::common::data::CDWUniquePtr initDeploySession(chaos::common::data::CDWUniquePtr data);
                 
-                chaos::common::data::CDataWrapper *uploadDeployChunk(chaos::common::data::CDataWrapper *data,
-                                                                       bool& detach);
+                chaos::common::data::CDWUniquePtr uploadDeployChunk(chaos::common::data::CDWUniquePtr data);
                 
-                chaos::common::data::CDataWrapper *endDeploySession(chaos::common::data::CDataWrapper *data,
-                                                                         bool& detach);
+                chaos::common::data::CDWUniquePtr endDeploySession(chaos::common::data::CDWUniquePtr data);
             public:
                 DeployWorker();
                 ~DeployWorker();

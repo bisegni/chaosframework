@@ -85,8 +85,7 @@ namespace chaos {
                     /*!
                      defin ean rpc action that permit to update, at runtime, the soruce of the script
                      */
-                    chaos::common::data::CDataWrapper* updateScriptSource(chaos::common::data::CDataWrapper *data_pack,
-                                                                          bool& detachParam) throw(CException);
+                    chaos::common::data::CDWUniquePtr updateScriptSource(chaos::common::data::CDWUniquePtr data_pack);
                     
                     void pluginDirectoryHasBeenUpdated();
                 public:

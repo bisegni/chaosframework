@@ -42,8 +42,6 @@
 
 using namespace boost;
 
-namespace chaos_data = chaos::common::data;
-
 namespace chaos{
     namespace event {
         namespace channel {
@@ -134,7 +132,7 @@ namespace chaos{
 				/*
 				 Shutdown the chaos control library
 				 */
-				chaos_data::CDataWrapper* shutdown(chaos_data::CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDWUniquePtr shutdown(chaos::common::data::CDWUniquePtr action_param) throw (CException);
 			private:
 				CommandManager();
 				~CommandManager();

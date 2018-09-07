@@ -105,7 +105,7 @@ default_sticky_command(){}
 BatchCommandSandbox::~BatchCommandSandbox() {}
 
 void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
-    current_executing_command = NULL;
+    current_executing_command.reset();
     
     acquire_handler_functor.cmd_instance = NULL;
     acquire_handler_functor.sandbox_identifier = identification;
@@ -185,7 +185,7 @@ void BatchCommandSandbox::stop() throw (chaos::CException) {
 }
 
 void BatchCommandSandbox::deinit() throw (chaos::CException) {
-    PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = NULL;
+    PRIORITY_ELEMENT(CommandInfoAndImplementation) nextAvailableCommand;
     
     SCSLAPP_ << "Delete scheduler thread";
     thread_scheduler.reset();
@@ -203,7 +203,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
                                               current_executing_command->element->cmdInfo,
                                               cmd_stat);
         }
-        DELETE_OBJ_POINTER(current_executing_command)
+        current_executing_command.reset();
         
     }
     
@@ -222,7 +222,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
                                               nextAvailableCommand->element->cmdInfo,
                                               cmd_stat);
         }
-        DELETE_OBJ_POINTER(nextAvailableCommand);
+        nextAvailableCommand.reset();
     }
     SCSLAPP_ << "Paused command into the stack removed";
     
@@ -236,7 +236,7 @@ void BatchCommandSandbox::deinit() throw (chaos::CException) {
                                                                                      BatchCommandEventType::EVT_KILLED,
                                                                                      nextAvailableCommand->element->cmdInfo,
                                                                                      cmd_stat);
-        DELETE_OBJ_POINTER(nextAvailableCommand)
+        nextAvailableCommand.reset();
     }
     
     //reset all the handler
@@ -275,15 +275,15 @@ void BatchCommandSandbox::consumeWaitCmdOps() {
         switch(stack_wait_cmd_op().top()) {
             case WCFOClearQueue: {
                 while(!command_submitted_queue.empty()) {
-                    PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = command_submitted_queue.top();
+                    PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete = command_submitted_queue.top();
                     command_submitted_queue.pop();
                     cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
-                    if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                         command_to_delete->element->cmdImpl->unique_id,
-                                                                         BatchCommandEventType::EVT_DEQUEUE,
-                                                                         command_to_delete->element->cmdInfo,
-                                                                         cmd_stat);
-                    DELETE_OBJ_POINTER(command_to_delete);
+                    if (event_handler) {event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                          command_to_delete->element->cmdImpl->unique_id,
+                                                                          BatchCommandEventType::EVT_DEQUEUE,
+                                                                          command_to_delete->element->cmdInfo,
+                                                                          cmd_stat);}
+                    command_to_delete.reset();
                 }
                 break;
             }
@@ -324,8 +324,8 @@ void BatchCommandSandbox::checkNextCommand() {
             SCSLDBG_ << "[checkNextCommand] checkNextCommand can work, queue size:"<<command_submitted_queue.size();
             
             if (current_executing_command) {
-                PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = NULL;
-                PRIORITY_ELEMENT(CommandInfoAndImplementation) *next_available_command = NULL;
+                PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete;
+                PRIORITY_ELEMENT(CommandInfoAndImplementation) next_available_command;
                 //compute the runnig state or fault
                 boost::mutex::scoped_lock lockForCurrentCommandMutex(mutext_access_current_command);
                 // cehck waht we need to do with current and submitted command
@@ -369,7 +369,6 @@ void BatchCommandSandbox::checkNextCommand() {
                         lock_next_command_queue.unlock();
                         if(current_executing_command->element->cmdImpl->sticky != true) {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] stacking current command:\" " << current_executing_command->element->cmdImpl->getAlias());
-                            
                             command_stack.push(current_executing_command);
                         }
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_stack " << command_stack.size();)
@@ -450,11 +449,11 @@ void BatchCommandSandbox::checkNextCommand() {
                 //delete
                 if (command_to_delete && !command_to_delete->element->cmdImpl->sticky) {
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
-                    DELETE_OBJ_POINTER(command_to_delete);
+                    command_to_delete.reset();
                 }
             } else {
                 lock_next_command_queue.lock();
-                PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = command_submitted_queue.top();
+                PRIORITY_ELEMENT(CommandInfoAndImplementation) nextAvailableCommand = command_submitted_queue.top();
                 installHandler(nextAvailableCommand);
                 command_submitted_queue.pop();
                 //increment command stat
@@ -470,8 +469,8 @@ void BatchCommandSandbox::checkNextCommand() {
                     boost::mutex::scoped_lock lockForCurrentCommandMutex(mutext_access_current_command);
                     if (!command_stack.empty()) {
                         //keep track of running property that needs to be deleted
-                        PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
-                        current_executing_command = NULL;
+                        PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete = current_executing_command;
+                        current_executing_command.reset();
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -498,7 +497,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             }
                         }
                         //manage paused command
-                        PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = command_stack.top();
+                        PRIORITY_ELEMENT(CommandInfoAndImplementation) nextAvailableCommand = command_stack.top();
                         
                         removeHandler(command_to_delete);
                         installHandler(nextAvailableCommand);
@@ -508,11 +507,11 @@ void BatchCommandSandbox::checkNextCommand() {
                         if(command_to_delete->element->cmdImpl->sticky == false){
                             
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command "<< command_to_delete->element->cmdInfo->getJSONString()<<" with pointer " << std::hex << command_to_delete << std::dec;)
-                            DELETE_OBJ_POINTER(command_to_delete);
+                            command_to_delete.reset();
                         }
                     } else {
-                        PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
-                        current_executing_command = NULL;
+                        PRIORITY_ELEMENT(CommandInfoAndImplementation) command_to_delete = current_executing_command;
+                        current_executing_command.reset();
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_END:{
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -539,13 +538,10 @@ void BatchCommandSandbox::checkNextCommand() {
                             }
                         }
                         if(command_to_delete->element->cmdImpl->sticky==false){
-                            
                             removeHandler(command_to_delete);
-                            
-                            installHandler(NULL);
-                            
+                            installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)());
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
-                            DELETE_OBJ_POINTER(command_to_delete);
+                            command_to_delete.reset();
                         }
                     }
                 }
@@ -556,7 +552,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 default_sticky_command->element->cmdImpl->sticky) {
                 //we have no command so we need to apply the default command
                 default_sticky_command->element->cmdImpl->already_setupped = false;
-                installHandler(default_sticky_command.get());
+                installHandler(default_sticky_command);
                 thread_scheduler_pause_condition.unlock();
                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)
             }
@@ -704,9 +700,10 @@ void BatchCommandSandbox::runCommand() {
     SCSLDBG_ << "Scheduler thread has finished";
 }
 
-bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
+bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) cmd_to_install) {
     //set current command
-    if (cmd_to_install && cmd_to_install->element->cmdImpl) {
+    if (cmd_to_install.get() &&
+        cmd_to_install->element->cmdImpl) {
         
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
@@ -761,7 +758,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                                               &current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay, sizeof (uint64_t));
         }
     } else {
-        current_executing_command = NULL;
+        current_executing_command.reset();
         acquire_handler_functor.cmd_instance = NULL;
         correlation_handler_functor.cmd_instance = NULL;
         end_handler_functor.cmd_instance = NULL;
@@ -770,8 +767,8 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
     return true;
 }
 
-void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
-    if (!cmd_to_install ) return;
+void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) cmd_to_install) {
+    if (!cmd_to_install.get()) return;
     DEBUG_CODE(SCSLDBG_ << "[removeHandler] remove  command:\""<< cmd_to_install->element->cmdImpl->getAlias()<<"\"" );
     
     BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
@@ -817,11 +814,10 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
         
         //get the assigned id
         addCommandID(command_impl);
-        
-        command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
-                                                                                             command_impl->unique_id,
-                                                                                             priority,
-                                                                                             true));
+        command_submitted_queue.push(ChaosSharedPtr< PriorityQueuedElement<CommandInfoAndImplementation> >(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
+                                                                                                                                                                   command_impl->unique_id,
+                                                                                                                                                                   priority,
+                                                                                                                                                                   true)));
         SCSLDBG_ << "New command enqueued:\"" << command_impl->command_alias.c_str() << "\" \"" << ((command_to_info) ? command_to_info->getJSONString() : "") << "\"";
         SCSLDBG_ << "Queue size:" << command_submitted_queue.size();
         
