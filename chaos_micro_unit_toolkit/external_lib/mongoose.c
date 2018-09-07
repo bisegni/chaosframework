@@ -2118,7 +2118,7 @@ void mg_mgr_init(struct mg_mgr *m, void *user_data) {
 
 void mg_mgr_init_opt(struct mg_mgr *m, void *user_data,
                      struct mg_mgr_init_opts opts) {
-  memset(m, 0, sizeof(*m));
+  memset(m, 0, sizeof(struct mg_mgr));
 #if MG_ENABLE_BROADCAST
   m->ctl[0] = m->ctl[1] = INVALID_SOCKET;
 #endif

@@ -128,7 +128,7 @@ CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_d
         
         //submit the action(Thread Safe)
         AbstActionDescShrPtr action_desc_ptr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> rpc_action_message(rpc_call_data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        CDWUniquePtr rpc_action_message(rpc_call_data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         
         //lock the action for write, so we can schedule it
         ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -175,9 +175,9 @@ CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_d
 void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDWUniquePtr  sub_command;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  remote_action_result;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_result;
+    CDWUniquePtr  action_message;
+    CDWUniquePtr  remote_action_result;
+    CDWUniquePtr  action_result;
 
     bool    needAnswer = false;
     //bool    detachParam = false;
@@ -253,7 +253,7 @@ void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description
             //check if we need to submit a sub command
             if(sub_command.get()) {
                 //we can submit sub command
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatchCommand(MOVE(sub_command)));
+                CDWUniquePtr dispatchSubCommandResult(dispatchCommand(MOVE(sub_command)));
             }
             
             if(needAnswer){

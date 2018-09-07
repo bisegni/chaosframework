@@ -83,9 +83,11 @@ namespace chaos{
                     CounterType promise_id;
                     
                     PromisesInfo():
-                    promise(new HandlerMessagePromise(PromisesHandlerWeakPtr())){}
+                    promise(new HandlerMessagePromise(PromisesHandlerWeakPtr())),
+                    promise_id(0){}
                     
                     PromisesInfo(PromisesHandlerWeakPtr weak_handler):
+                    timeout_ts(0),
                     promise(new HandlerMessagePromise(weak_handler)){}
                     
                     PromisesInfo(const PromisesInfo& src):
