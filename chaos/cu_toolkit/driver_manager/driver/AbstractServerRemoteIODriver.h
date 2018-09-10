@@ -34,9 +34,9 @@ namespace chaos {
                 class AbstractServerRemoteIODriver:
                 public ServerARIODriver {
                 protected:
-                    void driverInit(const char *initParameter) throw (chaos::CException);
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException);
-                    void driverDeinit() throw (chaos::CException);
+                    void driverInit(const char *initParameter) ;
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) ;
+                    void driverDeinit() ;
                 public:
                     AbstractServerRemoteIODriver():
                     AbstractRemoteIODriver<ExternalUnitServerEndpoint>() {

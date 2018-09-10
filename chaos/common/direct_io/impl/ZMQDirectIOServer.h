@@ -65,16 +65,16 @@ namespace chaos {
                 public:
                     
                     //! Initialize instance
-                    void init(void *init_data) throw(chaos::CException);
+                    void init(void *init_data) ;
                     
                     //! Start the implementation
-                    void start() throw(chaos::CException);
+                    void start() ;
                     
                     //! Stop the implementation
-                    void stop() throw(chaos::CException);
+                    void stop() ;
                     
                     //! Deinit the implementation
-                    void deinit() throw(chaos::CException);
+                    void deinit() ;
                 };
             }
         }

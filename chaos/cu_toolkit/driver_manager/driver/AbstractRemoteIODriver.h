@@ -100,10 +100,10 @@ namespace chaos {
                     //message sent to remote endpoint when new connection has been received
                     chaos::common::data::CDWUniquePtr   driver_init_pack;
                     //!initialization and deinitialization driver methods
-                    void driverInit(const char *initParameter) throw (chaos::CException) {
+                    void driverInit(const char *initParameter)  {
                         //AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
                     }
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
                         CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
                         //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                         //get the authorization key
@@ -121,7 +121,7 @@ namespace chaos {
                         }
                         future_hepler.init(NULL);
                     }
-                    void driverDeinit() throw (chaos::CException) {
+                    void driverDeinit()  {
                         //send deinit, in case no one hase deinitlized before
                         _sendDeinitRequest();
                         //close future helper

@@ -57,7 +57,7 @@ PerformanceManagment::~PerformanceManagment() {
 }
 
 //init the implementation
-void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
+void PerformanceManagment::init(void *init_parameter)  {
 	//check the network broker setup
 	if(!network_broker) throw chaos::CException(-1, "NetworkBroker not set", __PRETTY_FUNCTION__);
 	//register the action
@@ -65,14 +65,14 @@ void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
 }
 
 //Start the implementation
-void PerformanceManagment::start() throw(chaos::CException) {
+void PerformanceManagment::start()  {
 	PMLAPP_ << "Start the purger thread";
 
     AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
 }
 
 //Stop the implementation
-void PerformanceManagment::stop() throw(chaos::CException) {
+void PerformanceManagment::stop()  {
 	PMLAPP_ << "Stop the purger thread";
 
     AsyncCentralManager::getInstance()->removeTimer(this);
@@ -91,7 +91,7 @@ DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
 }
 
 //Deinit the implementation
-void PerformanceManagment::deinit() throw(chaos::CException) {
+void PerformanceManagment::deinit()  {
 	//register the action
 	network_broker->deregisterAction(this);
 }

@@ -125,12 +125,12 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void init() throw(CException);
+                virtual void init();
                 
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
             public:
                 //! return last sendxxx error code
                 virtual int32_t getLastErrorCode();

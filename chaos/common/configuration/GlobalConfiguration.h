@@ -98,13 +98,13 @@ x = hasOption(y);
         /*!
          Generalized parser option function
          */
-        void parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException);
+        void parseParameter(const po::basic_parsed_options<char>& optionsParser) ;
         
         //! recognize the
         /*!
          Generalized parser option function
          */
-        int32_t filterLogLevel(string& levelStr) throw (CException);
+        int32_t filterLogLevel(string& levelStr) ;
         
         //! contains the key value pair for the rpc implementation
         MapStrKeyStrValue map_kv_param_rpc_impl;
@@ -122,43 +122,43 @@ x = hasOption(y);
 //                             const std::string& kv_string,
 //                             const std::string& regex);
     public:
-        void loadStartupParameter(int, const char* argv[]) throw (CException);
-        void loadStreamParameter(std::istream &config_file) throw (CException);
-        void scanOption() throw (CException);
-        void checkDefaultOption() throw (CException);
+        void loadStartupParameter(int, const char* argv[]) ;
+        void loadStreamParameter(std::istream &config_file) ;
+        void scanOption() ;
+        void checkDefaultOption() ;
         //! startup parameter pre setup
         /*
          Set up all stardard input attribute map
          */
-        void preParseStartupParameters() throw (CException);
+        void preParseStartupParameters() ;
         //! C and C++ attribute parser
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void parseStartupParameters(int, const char* argv[]) throw (CException);
+        void parseStartupParameters(int, const char* argv[]) ;
         //!stringbuffer parser
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void parseStringStream(std::istream &) throw (CException);
+        void parseStringStream(std::istream &) ;
         
         /*
          Add a custom option
          */
         void addOption(const char* name,
                        const po::value_semantic* s,
-                       const char* description) throw (CException);
+                       const char* description) ;
         /*
          Add a custom option
          */
         void addOption(const char* name,
-                       const char* description) throw (CException);
+                       const char* description) ;
         /*
          Add a custom option
          */
         template<typename T>
         void addOption(const char* name,
-                       const char* description)  throw (CException) {
+                       const char* description)   {
             try{//po::value<T>(&timeout)->default_value(2000)
                 const po::value_semantic* s = po::value<T>();
                 desc.add_options()(name, s, description);
@@ -174,7 +174,7 @@ x = hasOption(y);
         void addOption(const char* name,
                        const char* description,
                        T default_value,
-                       bool multivalue = false)  throw (CException) {
+                       bool multivalue = false)   {
             try{//po::value<T>(&timeout)->default_value(2000)
                 const po::value_semantic* s = multivalue?po::value<T>()->default_value(default_value)->multitoken():po::value<T>()->default_value(default_value);
                 desc.add_options()(name, s, description);
@@ -190,7 +190,7 @@ x = hasOption(y);
                        const char* description,
                        T default_value,
                        T *default_variable,
-                       bool multivalue = false)  throw (CException) {
+                       bool multivalue = false)   {
             try{
                 const po::value_semantic* s = multivalue?po::value<T>(default_variable)->default_value(default_value)->multitoken():po::value<T>(default_variable)->default_value(default_value);
                 desc.add_options()(name, s, description);
@@ -204,7 +204,7 @@ x = hasOption(y);
          */
         void addOptionZeroTokens(const char* name,
                                  const char* description,
-                                 bool *default_variable) throw (CException);
+                                 bool *default_variable) ;
         
         /*
          Add a custom option
@@ -213,7 +213,7 @@ x = hasOption(y);
         void addOption(const char* name,
                        const char* description,
                        T *default_variable,
-                       bool multivalue = false)  throw (CException) {
+                       bool multivalue = false)   {
             try{
                 const po::value_semantic* s = multivalue?po::value<T>(default_variable)->multitoken():po::value<T>(default_variable);
                 desc.add_options()(name, s, description);
@@ -227,7 +227,7 @@ x = hasOption(y);
          */
         template<typename T>
         void addOptionZeroToken(const char* name,
-                                const char* description)  throw (CException) {
+                                const char* description)   {
             try{
                 const po::value_semantic* s = po::value<T>()->zero_tokens();
                 desc.add_options()(name, s, description);
@@ -248,7 +248,7 @@ x = hasOption(y);
         }
         
         template<typename T>
-        T getOption(const char* optName) throw (CException){
+        T getOption(const char* optName) {
             if(vm.count(optName)==0) {
                 string opt=string("option:") + "\""+optName + "\"" + string(" not given");
                 throw CException(2,opt.c_str(),"GlobalConfiguration::getOption");
@@ -269,7 +269,7 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addMetadataServerAddress(const string& mdsAddress) throw (CException);
+        void addMetadataServerAddress(const string& mdsAddress) ;
         
         //!close the metadata server list array
         void finalizeMetadataServerAddress();
@@ -277,11 +277,11 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addLocalServerAddress(const std::string& mdsAddress) throw (CException);
+        void addLocalServerAddress(const std::string& mdsAddress) ;
         /**
          *Add the metadataserver address
          */
-        void addLocalServerBasePort(int32_t localDefaultPort) throw (CException);
+        void addLocalServerBasePort(int32_t localDefaultPort) ;
         
         //!return the hostname of the host that run chaos node
         std::string getHostname();

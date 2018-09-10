@@ -195,13 +195,13 @@ namespace chaos{
                 
                 virtual ~FutureHelper() {}
                 
-                void init(void *init_data) throw(chaos::CException) {
+                void init(void *init_data)  {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                                purge_delay,
                                                                                                purge_delay);
                 }
                 
-                void deinit() throw(chaos::CException) {
+                void deinit()  {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
                     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
                     set_p().clear();

@@ -34,7 +34,7 @@ using namespace chaos::metadata_service::api::node;
 
 void CommandCommonUtility::validateCommandTemplateToDescription(CDWShrdPtr command_description,
                                                                 CDWShrdPtr command_template,
-                                                                std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException) {
+                                                                std::vector<AttributeRequested> *attribute_requested_by_template)  {
     //check ifthe command has parameter
     CHECK_CDW_THROW_AND_LOG(command_description, N_CCU_ERR, -1, "Command description is mandatory")
     CHECK_CDW_THROW_AND_LOG(command_template, N_CCU_ERR, -1, "Command template is mandatory")
@@ -135,7 +135,7 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDWShrdPtr comma
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
                                                                                                                                 CDWShrdPtr command_submission,
                                                                                                                                 CDWShrdPtr command_description,
-                                                                                                                                CDWShrdPtr command_template_description) throw(chaos::CException) {
+                                                                                                                                CDWShrdPtr command_template_description)  {
     bool is_correct_type = false;
     ChaosStringVector all_template_key;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());

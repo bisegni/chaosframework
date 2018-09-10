@@ -67,7 +67,7 @@ object_storage_driver(NULL){}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
-void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
+void QueryDataConsumer::init(void *init_data)  {
     //get new chaos direct io endpoint
     server_endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
     if(!server_endpoint) throw chaos::CException(-2, "Invalid server endpoint", __FUNCTION__);
@@ -118,13 +118,13 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void QueryDataConsumer::start() throw (chaos::CException) {
+void QueryDataConsumer::start()  {
 }
 
-void QueryDataConsumer::stop() throw (chaos::CException) {
+void QueryDataConsumer::stop()  {
 }
 
-void QueryDataConsumer::deinit() throw (chaos::CException) {
+void QueryDataConsumer::deinit()  {
     if(server_endpoint) {
         server_endpoint->releaseChannelInstance(device_channel);
         NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(server_endpoint);

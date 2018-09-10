@@ -128,26 +128,26 @@ namespace chaos {
                                                   bool mandatory);
                     
                     //! inherited method
-                    void unitDefineActionAndDataset() throw(CException);
+                    void unitDefineActionAndDataset();
                     
                     
                     //! inherithed method
-                    void executeAlgorithmLaunch() throw (CException);
+                    void executeAlgorithmLaunch() ;
                     
                     //! inherithed method
-                    void executeAlgorithmStart() throw (CException);
+                    void executeAlgorithmStart() ;
                     
                     //! inherithed method
-                    void executeAlgorithmStep(uint64_t step_delay_time) throw (CException);
+                    void executeAlgorithmStep(uint64_t step_delay_time) ;
                     
                     //! inherithed method
-                    void executeAlgorithmStop() throw (CException);
+                    void executeAlgorithmStop() ;
                     
                     //! inherithed method
-                    void executeAlgorithmEnd() throw (CException);
+                    void executeAlgorithmEnd() ;
                     
                     //! inherithed method
-                    void unitUndefineActionAndDataset() throw(CException);
+                    void unitUndefineActionAndDataset();
                     
                     //!called when changed on input attribute are detected
                     /*!

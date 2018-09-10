@@ -160,23 +160,23 @@ void AbstractExecutionUnit::setOutputAttributeValue(const std::string& attribute
     cached_value->setValue(attribute_value);
 }
 
-void AbstractExecutionUnit::_defineActionAndDataset(chaos_data::CDataWrapper& setup_configuration) throw(CException) {
+void AbstractExecutionUnit::_defineActionAndDataset(chaos_data::CDataWrapper& setup_configuration) {
     //call superclass method
     RTAbstractControlUnit::_defineActionAndDataset(setup_configuration);
     //add description
     if(eu_description.size()){setup_configuration.addStringValue(ExecutionUnitNodeDefinitionKey::EXECUTION_UNIT_DESCRIPTION, eu_description);}
 }
 
-void AbstractExecutionUnit::unitInit() throw(CException) {
+void AbstractExecutionUnit::unitInit() {
     
     executeAlgorithmLaunch();
 }
 
-void AbstractExecutionUnit::unitStart() throw(CException) {
+void AbstractExecutionUnit::unitStart() {
     executeAlgorithmStart();
 }
 
-void AbstractExecutionUnit::unitRun() throw(CException) {
+void AbstractExecutionUnit::unitRun() {
     //get temp pointe to step timestamp
     uint64_t *step_ts = timestamp_acq_cached_value->getValuePtr<uint64_t>();
     //execute algorithm step
@@ -185,11 +185,11 @@ void AbstractExecutionUnit::unitRun() throw(CException) {
     last_execution_ts = *step_ts;
 }
 
-void AbstractExecutionUnit::unitStop() throw(CException) {
+void AbstractExecutionUnit::unitStop() {
     executeAlgorithmStop();
 }
 
-void AbstractExecutionUnit::unitDeinit() throw(CException) {
+void AbstractExecutionUnit::unitDeinit() {
     executeAlgorithmEnd();
 }
 

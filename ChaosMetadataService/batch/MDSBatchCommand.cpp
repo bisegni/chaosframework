@@ -90,14 +90,14 @@ bool MDSBatchCommand::timeoutHandler() {
 //! create a request to a remote rpc action
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
                                                            const std::string& remote_domain,
-                                                           const std::string& remote_action) throw (chaos::CException) {
+                                                           const std::string& remote_action)  {
     return ChaosUniquePtr<RequestInfo> (new RequestInfo(remote_address,
                                                         remote_domain,
                                                         remote_action));
 }
 
 void MDSBatchCommand::sendRequest(RequestInfo& request_info,
-                                  CDWUniquePtr message) throw (chaos::CException) {
+                                  CDWUniquePtr message)  {
     CHAOS_ASSERT(message_channel)
     
     request_info.request_future = message_channel->sendRequestWithFuture(request_info.remote_address,
@@ -108,7 +108,7 @@ void MDSBatchCommand::sendRequest(RequestInfo& request_info,
 }
 
 void MDSBatchCommand::sendMessage(RequestInfo& request_info,
-                                  CDWUniquePtr message) throw (chaos::CException) {
+                                  CDWUniquePtr message)  {
     CHAOS_ASSERT(message_channel)
     message_channel->sendMessage(request_info.remote_address,
                                  request_info.remote_domain,
@@ -119,7 +119,7 @@ void MDSBatchCommand::sendMessage(RequestInfo& request_info,
 
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node_uid,
                                                          const std::string& rpc_action,
-                                                         CDWUniquePtr message) throw (chaos::CException) {
+                                                         CDWUniquePtr message)  {
     CDataWrapper *tmp_ptr = NULL;
     int err = 0;
     bool alive = false;
@@ -156,7 +156,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
 
 ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node_uid,
                                                          const std::string& rpc_action,
-                                                         CDWUniquePtr message) throw (chaos::CException) {
+                                                         CDWUniquePtr message)  {
     CDataWrapper *tmp_ptr = NULL;
     int err = 0;
     bool alive = false;
@@ -188,7 +188,7 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendMessage(const std::string& node
     return new_request;
 }
 
-void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos::CException) {
+void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info)  {
     switch(request_info.phase) {
         case MESSAGE_PHASE_UNSENT:
             throw chaos::CException(-1, "Request is unsent", __PRETTY_FUNCTION__);

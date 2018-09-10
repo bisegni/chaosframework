@@ -45,7 +45,7 @@ DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
 }
 
 // Start the implementation
-void DirectIODispatcherMetricCollector::start() throw(chaos::CException) {
+void DirectIODispatcherMetricCollector::start()  {
     //flow back to base class
     DirectIODispatcher::start();
     //start metric logging
@@ -53,7 +53,7 @@ void DirectIODispatcherMetricCollector::start() throw(chaos::CException) {
 }
 
 // Stop the implementation
-void DirectIODispatcherMetricCollector::stop() throw(chaos::CException) {
+void DirectIODispatcherMetricCollector::stop()  {
     //stop metric logging
     stopLogging();
     //flow back to base class

@@ -50,27 +50,27 @@ namespace chaos {
                 /*
                  init the event adapter
                  */
-                virtual void init(void*) throw(CException) = 0;
+                virtual void init(void*) = 0;
                 
                 /*
                  start the event adapter
                  */
-                virtual void start() throw(CException) = 0;
+                virtual void start() = 0;
                 
-                virtual void stop() throw(CException) = 0;
+                virtual void stop() = 0;
                 
                 /*
                  start the event adapter
                  */
-                virtual void listeForEventType(event::EventType type,  bool listen) throw(CException) = 0;
+                virtual void listeForEventType(event::EventType type,  bool listen) = 0;
                 
                 
                 /*
                  deinit the event adapter
                  */
-                virtual void deinit() throw(CException) = 0;
+                virtual void deinit() = 0;
                 
-                void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) throw (CException);
+                void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) ;
                 
             public:
                 

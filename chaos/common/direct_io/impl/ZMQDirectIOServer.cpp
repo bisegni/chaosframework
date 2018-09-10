@@ -58,7 +58,7 @@ direct_io_thread_number(2){};
 ZMQDirectIOServer::~ZMQDirectIOServer(){};
 
 //! Initialize instance
-void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
+void ZMQDirectIOServer::init(void *init_data)  {
     
     chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
     if(!init_cw) throw chaos::CException(0, "No configration has been provided", __PRETTY_FUNCTION__);
@@ -80,7 +80,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
 }
 
 //! Start the implementation
-void ZMQDirectIOServer::start() throw(chaos::CException) {
+void ZMQDirectIOServer::start()  {
     int err = 0;
     MapZMQConfiguration         default_context_configuration;
     default_context_configuration["ZMQ_IO_THREADS"] = "1";
@@ -148,7 +148,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
 }
 
 //! Stop the implementation
-void ZMQDirectIOServer::stop() throw(chaos::CException) {
+void ZMQDirectIOServer::stop()  {
     run_server = false;
     DirectIOServer::stop();
     ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
@@ -163,7 +163,7 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
 }
 
 //! Deinit the implementation
-void ZMQDirectIOServer::deinit() throw(chaos::CException) {
+void ZMQDirectIOServer::deinit()  {
     //serverThreadGroup.stopGroup(true);
     
     DirectIOServer::deinit();

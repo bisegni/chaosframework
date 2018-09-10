@@ -47,13 +47,13 @@ set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)
 QuantumSlotScheduler::~QuantumSlotScheduler() {}
 
 
-void QuantumSlotScheduler::init(void *init_data) throw (chaos::CException) {
+void QuantumSlotScheduler::init(void *init_data)  {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
     CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
 }
 
-void QuantumSlotScheduler::start() throw (chaos::CException) {
+void QuantumSlotScheduler::start()  {
     work_on_scan = true;
     work_on_fetch = true;
     
@@ -68,7 +68,7 @@ void QuantumSlotScheduler::start() throw (chaos::CException) {
     }
 }
 
-void QuantumSlotScheduler::stop() throw (chaos::CException) {
+void QuantumSlotScheduler::stop()  {
     work_on_scan = false;
     work_on_fetch = false;
     
@@ -85,7 +85,7 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     QSS_INFO<< "Fetcher thread stopped";
 }
 
-void QuantumSlotScheduler::deinit() throw (chaos::CException) {
+void QuantumSlotScheduler::deinit()  {
     
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;

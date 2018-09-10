@@ -54,9 +54,9 @@ namespace chaos {
             //!pointer to the domain containing action
         map<string, EventAction*> eventActionList;
     protected:
-        void processBufferElement(common::event::EventDescriptorSPtr event) throw(CException);
+        void processBufferElement(common::event::EventDescriptorSPtr event);
         
-        bool push(common::event::EventDescriptor *event) throw(CException);
+        bool push(common::event::EventDescriptor *event);
     public:
         /*!
          Default constructor
@@ -76,12 +76,12 @@ namespace chaos {
         /*!
          Initialization method
          */
-        void init(int threadNumber = 1) throw(CException);
+        void init(int threadNumber = 1);
         
         /*!
          Deinitialization method
          */
-        void deinit() throw(CException);
+        void deinit();
         
         void installEventAction(EventAction*);
         

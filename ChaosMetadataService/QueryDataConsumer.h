@@ -111,10 +111,10 @@ namespace chaos{
         public:
             QueryDataConsumer();
             ~QueryDataConsumer();
-            void init(void *init_data) throw (chaos::CException);
-            void start() throw (chaos::CException);
-            void stop() throw (chaos::CException);
-            void deinit() throw (chaos::CException);
+            void init(void *init_data) ;
+            void start() ;
+            void stop() ;
+            void deinit() ;
             
         };
     }

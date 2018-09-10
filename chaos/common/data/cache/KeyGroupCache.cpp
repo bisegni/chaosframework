@@ -57,7 +57,7 @@ KeyGroupCache::~KeyGroupCache() {
 
     //---------------------------------------------------------------
 
-void KeyGroupCache::init(void* initParam) throw(chaos::CException) {
+void KeyGroupCache::init(void* initParam)  {
     LFDataCache *tmpLFDataCache = NULL;
     
         //configure the cache using the maximum and minimum channel size
@@ -91,19 +91,19 @@ void KeyGroupCache::init(void* initParam) throw(chaos::CException) {
     //---------------------------------------------------------------
 
     //---------------------------------------------------------------
-void KeyGroupCache::start() throw(chaos::CException) {
+void KeyGroupCache::start()  {
 }
 
     //---------------------------------------------------------------
 
     //---------------------------------------------------------------
-void KeyGroupCache::stop() throw(chaos::CException) {
+void KeyGroupCache::stop()  {
 }
 
     //---------------------------------------------------------------
 
     //---------------------------------------------------------------
-void KeyGroupCache::deinit() throw(chaos::CException) {
+void KeyGroupCache::deinit()  {
     memoryPool.deinit();
 }
 

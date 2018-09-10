@@ -36,7 +36,7 @@ SharedCommandDispatcher::~SharedCommandDispatcher(){}
 /*
  Initialization method for output buffer
  */
-void SharedCommandDispatcher::init(void *initConfiguration) throw(CException) {
+void SharedCommandDispatcher::init(void *initConfiguration) {
     AbstractCommandDispatcher::init(initConfiguration);
 //    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
 }
@@ -45,7 +45,7 @@ void SharedCommandDispatcher::init(void *initConfiguration) throw(CException) {
 /*
  Deinitialization method for output buffer
  */
-void SharedCommandDispatcher::deinit() throw(CException) {
+void SharedCommandDispatcher::deinit() {
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
     
     map_domain_actions().clear();
@@ -56,7 +56,7 @@ void SharedCommandDispatcher::deinit() throw(CException) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
+void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass)   {
     if(!declareActionClass) return;
     //we need to allocate the scheduler for every registered domain that doesn't exist
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
@@ -75,7 +75,7 @@ void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass) 
 /*
  Deregister actions for a determianted domain
  */
-void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
+void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  {
     if(!declareActionClass) return;
     //we need to allocate the scheduler for every registered domain that doesn't exist
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
@@ -172,7 +172,7 @@ CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_d
     return result;
 }
 
-void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description) throw(CException) {
+void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDWUniquePtr  sub_command;
     CDWUniquePtr  action_message;

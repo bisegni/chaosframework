@@ -42,8 +42,8 @@ namespace chaos{
             public:
                 AbstractClientAdapter();
                 ~AbstractClientAdapter();
-                void init(void *init_data) throw (chaos::CException);
-                void deinit() throw (chaos::CException);
+                void init(void *init_data) ;
+                void deinit() ;
                 virtual int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
                                                 const std::string& endpoint_url,
                                                 const std::string& serialization) = 0;

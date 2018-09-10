@@ -76,8 +76,8 @@ namespace chaos{
                 public:
                     ExecutionPoolManager();
                     ~ExecutionPoolManager();
-                    void init(void *init_data) throw(chaos::CException);
-                    void deinit() throw(chaos::CException);
+                    void init(void *init_data) ;
+                    void deinit() ;
                     
                     void registerUID(const std::string& new_uid);
                     void deregisterUID(const std::string& remove_uid);

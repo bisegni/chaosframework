@@ -47,25 +47,25 @@ namespace chaos {
                  Thsi is the methdo that is called when the specified event is recognized
                  by dispatcher
                  */
-                virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) throw(CException) = 0;
+                virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) = 0;
                 //!Instrument handler execution method
                 /*!
                  Thsi is the methdo that is called when the specified event is recognized
                  by dispatcher
                  */
-                virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) throw(CException) = 0;
+                virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) = 0;
                 //!Command handler execution method
                 /*!
                  Thsi is the methdo that is called when the specified event is recognized
                  by dispatcher
                  */
-                virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) throw(CException) = 0;
+                virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) = 0;
                 //!Custom handler execution method
                 /*!
                  Thsi is the methdo that is called when the specified event is recognized
                  by dispatcher
                  */
-                virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) throw(CException) = 0;
+                virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) = 0;
             };
         }
     }

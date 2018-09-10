@@ -87,13 +87,13 @@ namespace chaos{
                 
                 ~BatchCommandParallelSandbox();
                 
-                void init(void *init_data) throw(CException);
+                void init(void *init_data);
                 
-                void start() throw(CException);
+                void start();
                 
-                void stop() throw(CException);
+                void stop();
                 
-                void deinit() throw(CException);
+                void deinit();
                 
                 void killCurrentCommand();
                 
@@ -103,7 +103,7 @@ namespace chaos{
                 
                 void lockCurrentCommandFeature(bool lock);
                 
-                void setCurrentCommandFeatures(features::Features& features) throw (CException);
+                void setCurrentCommandFeatures(features::Features& features) ;
                 
                 void setDefaultStickyCommand(BatchCommand *sticky_command);
                 

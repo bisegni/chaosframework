@@ -47,13 +47,13 @@ message_broadcasted(0){
 
 HTTPClientAdapter::~HTTPClientAdapter() {}
 
-void HTTPClientAdapter::init(void *init_data) throw (chaos::CException) {
+void HTTPClientAdapter::init(void *init_data)  {
     mg_mgr_init(&mgr, NULL);
     run = true;
     thread_poller.reset(new boost::thread(boost::bind(&HTTPClientAdapter::poller, this)));
 }
 
-void HTTPClientAdapter::deinit() throw (chaos::CException) {
+void HTTPClientAdapter::deinit()  {
     run = false;
     DBG<<" HTTPClientAdapter DEINIT";
     thread_poller->join();

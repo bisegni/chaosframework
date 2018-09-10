@@ -76,7 +76,7 @@ plugin_directory(_plugin_directory) {}
 
 PluginManager::~PluginManager() {}
 
-void PluginManager::init(void *init_data) throw(CException) {
+void PluginManager::init(void *init_data) {
     //check for plugin directory
     //ensurePluginDirectory();
     
@@ -87,7 +87,7 @@ void PluginManager::init(void *init_data) throw(CException) {
     timeout();
 }
 
-void PluginManager::deinit() throw(CException) {
+void PluginManager::deinit() {
     //as::AsyncCentralManager::getInstance()->removeTimer(this);
 }
 

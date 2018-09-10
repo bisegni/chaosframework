@@ -76,10 +76,10 @@ namespace chaos {
 				/*!
 				 Need a point to a structure DBDriverSetting for the setting
 				 */
-				void init(void *init_data) throw (chaos::CException);
+				void init(void *init_data) ;
 				
 				//!deinit
-				void deinit() throw (chaos::CException);
+				void deinit() ;
             };
         }
     }

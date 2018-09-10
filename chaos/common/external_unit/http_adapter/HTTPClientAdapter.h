@@ -93,8 +93,8 @@ namespace chaos {
                 public:
                     HTTPClientAdapter();
                     ~HTTPClientAdapter();
-                    void init(void *init_data) throw (chaos::CException);
-                    void deinit() throw (chaos::CException);
+                    void init(void *init_data) ;
+                    void deinit() ;
                     int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
                                                     const std::string& endpoint_url,
                                                     const std::string& serialization);

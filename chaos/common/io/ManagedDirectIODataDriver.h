@@ -45,10 +45,10 @@ namespace chaos{
             public:
                 ManagedDirectIODataDriver();
                 ~ManagedDirectIODataDriver();
-                void init(void *init_parameter) throw(CException);
-                void deinit() throw(CException);
+                void init(void *init_parameter);
+                void deinit();
                 void storeLogEntries(const std::string& key,
-                                     ChaosStringVector log_entries) throw(CException);
+                                     ChaosStringVector log_entries);
             };
         }
     }

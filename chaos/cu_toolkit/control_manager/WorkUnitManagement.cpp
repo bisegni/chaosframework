@@ -106,7 +106,7 @@ string WorkUnitManagement::getCurrentStateString() {
 /*---------------------------------------------------------------------------------
  turn on the control unit
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::turnOn() throw (CException) {
+void WorkUnitManagement::turnOn()  {
     WUMDBG_ << "Turn ON";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
@@ -121,7 +121,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
 /*---------------------------------------------------------------------------------
  turn off the control unit
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::turnOFF() throw (CException) {
+void WorkUnitManagement::turnOFF()  {
     WUMDBG_ << "Turn OFF";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
@@ -137,7 +137,7 @@ void WorkUnitManagement::turnOFF() throw (CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::scheduleSM() throw (CException) {
+void WorkUnitManagement::scheduleSM()  {
     WUMDBG_ << "Start state machine step";
     switch ((UnitState) wu_instance_sm.current_state()[0]) {
         case UnitStateUnpublished:{

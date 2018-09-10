@@ -87,7 +87,7 @@ namespace chaos {
         /*
          Process the oldest element in buffer
          */
-        virtual void processBufferElement(QueueElementShrdPtr element)  throw(CException) = 0;
+        virtual void processBufferElement(QueueElementShrdPtr element)  = 0;
         
     public:
         CObjectProcessingQueue():
@@ -100,7 +100,7 @@ namespace chaos {
         /*
          Initialization method for output buffer
          */
-        virtual void init(int threadNumber) throw(CException) {
+        virtual void init(int threadNumber) {
             in_deinit = false;
             COPQUEUE_LDBG_ << "init";
             //add the n thread on the threadgroup
@@ -115,7 +115,7 @@ namespace chaos {
             /*
              Deinitialization method for output buffer
              */
-            virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
+            virtual void deinit(bool waithForEmptyQueue=true) {
                 boost::unique_lock<boost::mutex> lock(qMutex);
                 COPQUEUE_LDBG_ << "Deinitialization";
                 
@@ -144,7 +144,7 @@ namespace chaos {
             /*
              push the row value into the buffer
              */
-            virtual bool push(QueueElementShrdPtr data) throw(CException) {
+            virtual bool push(QueueElementShrdPtr data) {
                 boost::unique_lock<boost::mutex> lock(qMutex);
                 if(in_deinit ||
                    buffer_queue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;

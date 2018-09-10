@@ -159,7 +159,7 @@ void CUController::deviceAvailabilityChanged(const std::string& device_id,
     }
 }
 
-void CUController::updateChannel() throw(CException) {
+void CUController::updateChannel() {
     int err = ErrorCode::EC_NO_ERROR;
     CDWUniquePtr tmp_data_handler;
     CHAOS_ASSERT(deviceChannel)

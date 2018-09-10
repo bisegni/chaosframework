@@ -24,27 +24,27 @@ using namespace chaos::common::data;
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::init(void *init_parameter) throw(CException){
+void IODataDriver::init(void *init_parameter){
     
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::deinit() throw(CException) {
+void IODataDriver::deinit() {
     
 }
 
 int IODataDriver::removeData(const std::string& key,
                              uint64_t start_ts,
-                             uint64_t end_ts) throw(CException) {
+                             uint64_t end_ts) {
     return 0;
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, CDataWrapper*const)  throw(CException){
+ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, CDataWrapper*const) {
  //   boost::mutex::scoped_lock l(iomutex);
 
     //check for key length
@@ -54,7 +54,7 @@ ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, C
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  throw(CException) {
+ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  {
   //  boost::mutex::scoped_lock l(iomutex);
     
     ArrayPointer<CDataWrapper> *result = new ArrayPointer<CDataWrapper>();

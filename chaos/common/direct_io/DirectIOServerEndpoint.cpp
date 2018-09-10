@@ -88,14 +88,14 @@ void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualS
 
 
 // New channel allocation by name
-channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name) throw (CException) {
+channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name)  {
     channel::DirectIOVirtualServerChannel *channel = ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name);
     registerChannelInstance(channel);
     return channel;
 }
 
 // New channel allocation by name
-void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException) {
+void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance)  {
     deregisterChannelInstance(channel_instance);
     if(channel_instance) delete(channel_instance);
 }

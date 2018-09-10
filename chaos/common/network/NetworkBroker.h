@@ -162,25 +162,25 @@ namespace chaos {
 				 * Initzialize the Message Broker. In this step are taken the configured implementation
 				 * for the rpc client and server and for the dispatcher. All these are here initialized
 				 */
-				virtual void init(void *initData = NULL) throw(CException);
+				virtual void init(void *initData = NULL);
 				
 				//!NetworkBroker deinitialization
 				/*!
 				 * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
 				 */
-				virtual void deinit() throw(CException);
+				virtual void deinit();
 				
 				//!start all internal engine for client, server and message dispatcher
 				/*!
 				 * all part are started
 				 */
-				virtual void start() throw(CException);
+				virtual void start();
 				
 				//!start all internal engine for client, server and message dispatcher
 				/*!
 				 * all part are started
 				 */
-				virtual void stop() throw(CException);
+				virtual void stop();
 				
 				//!Get the published port
 				/*!

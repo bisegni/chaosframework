@@ -32,10 +32,10 @@ NamedService(_worker_name){}
 
 AbstractWorker::~AbstractWorker() {}
 
-void AbstractWorker::init(void *data) throw(chaos::CException) {
+void AbstractWorker::init(void *data)  {
     
 }
 
-void AbstractWorker::deinit() throw(chaos::CException) {
+void AbstractWorker::deinit()  {
     
 }

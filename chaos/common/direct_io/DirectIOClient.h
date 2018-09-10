@@ -110,11 +110,11 @@ namespace chaos {
                 
                 
                 //! Initialize instance
-                void init(void *init_data) throw(chaos::CException);
+                void init(void *init_data) ;
                 
                 
                 //! Deinit the implementation
-                void deinit() throw(chaos::CException);
+                void deinit() ;
 			};
 			
 		}

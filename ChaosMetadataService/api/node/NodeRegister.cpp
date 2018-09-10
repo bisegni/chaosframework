@@ -169,8 +169,8 @@ CDWUniquePtr NodeRegister::unitServerRegistration(CDWUniquePtr api_data) {
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
         getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
                                           api_data->clone().release());
-        LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
         USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
+        LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
     }
     
     //all is gone weel

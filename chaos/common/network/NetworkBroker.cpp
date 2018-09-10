@@ -74,7 +74,7 @@ NetworkBroker::~NetworkBroker() {
  * Initzialize the Message Broker. In this step are taken the configured implementation
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
-void NetworkBroker::init(void *initData) throw(CException) {
+void NetworkBroker::init(void *initData) {
     MB_LAPP << "Init phase";
     //get global configuration reference
     CDataWrapper *globalConfiguration = GlobalConfiguration::getInstance()->getConfiguration();
@@ -228,7 +228,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 /*!
  * All rpc adapter and command siaptcer are deinitilized
  */
-void NetworkBroker::deinit() throw(CException) {
+void NetworkBroker::deinit() {
     //delete the shared mds channel instance
     
     MB_LAPP  << "Deinitialize performance session manager";
@@ -309,7 +309,7 @@ void NetworkBroker::deinit() throw(CException) {
 /*!
  * all part are started
  */
-void NetworkBroker::start() throw(CException){
+void NetworkBroker::start(){
     StartableService::startImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);
     if(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE)) {
         StartableService::startImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);
@@ -325,7 +325,7 @@ void NetworkBroker::start() throw(CException){
 /*!
  * all part are started
  */
-void NetworkBroker::stop() throw(CException) {
+void NetworkBroker::stop() {
     CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)

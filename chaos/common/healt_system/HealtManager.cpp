@@ -117,10 +117,10 @@ void HealtManager::updateProcInfo() {
 }
 
 
-void HealtManager::init(void *init_data) throw (chaos::CException) {
+void HealtManager::init(void *init_data)  {
 }
 
-int HealtManager::sayHello() throw (chaos::CException) {
+int HealtManager::sayHello()  {
     //    int retry = 0;
     //    bool saying_hello = true;
     //    HM_INFO << "Start hello, searching metadata services";
@@ -175,7 +175,7 @@ int HealtManager::sayHello() throw (chaos::CException) {
     return -1;
 }
 
-void HealtManager::start() throw (chaos::CException) {
+void HealtManager::start()  {
     AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
     //say hello to mds
     //    int32_t retry =HELLO_PHASE_RETRY;
@@ -195,12 +195,12 @@ void HealtManager::start() throw (chaos::CException) {
     //    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
 }
 
-void HealtManager::stop() throw (chaos::CException) {
+void HealtManager::stop()  {
     //add timer to publish all node healt very 5 second
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
-void HealtManager::deinit() throw (chaos::CException) {
+void HealtManager::deinit()  {
     //    if(mds_message_channel) {
     //        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
     //        mds_message_channel = NULL;

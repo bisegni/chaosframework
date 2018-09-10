@@ -45,7 +45,7 @@ DefaultCommandDispatcher::~DefaultCommandDispatcher(){}
 /*
  Initialization method for output buffer
  */
-void DefaultCommandDispatcher::init(void *initConfiguration) throw(CException) {
+void DefaultCommandDispatcher::init(void *initConfiguration) {
     LDEF_CMD_DISPTC_APP_ << "Initializing Default Command Dispatcher";
     AbstractCommandDispatcher::init(initConfiguration);
     
@@ -57,7 +57,7 @@ void DefaultCommandDispatcher::init(void *initConfiguration) throw(CException) {
 /*
  Deinitialization method for output buffer
  */
-void DefaultCommandDispatcher::deinit() throw(CException) {
+void DefaultCommandDispatcher::deinit() {
     LDEF_CMD_DISPTC_APP_ << "Deinitializing Default Command Dispatcher";
     //we need to stop all das
     chaos::common::thread::ReadLock r_lock(das_map_mutex);
@@ -112,7 +112,7 @@ void DefaultCommandDispatcher::removeDomainActionsFromName(const string& domainN
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
+void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)   {
     if(!declareActionClass) return;
     
     //we need to allocate the scheduler for every registered domain that doesn't exist
@@ -157,7 +157,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
 /*
  Deregister actions for a determianted domain
  */
-void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
+void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  {
     if(!declareActionClass) return;
     
     chaos::common::thread::WriteLock w_lock(das_map_mutex);

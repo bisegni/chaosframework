@@ -61,9 +61,9 @@ AbstractWorker(AgentNodeDomainAndActionRPC::DeployWorker::RPC_DOMAIN) {
 
 DeployWorker::~DeployWorker() {}
 
-void DeployWorker::init(void *data) throw(chaos::CException) {}
+void DeployWorker::init(void *data)  {}
 
-void DeployWorker::deinit() throw(chaos::CException) {}
+void DeployWorker::deinit()  {}
 
 CDWUniquePtr DeployWorker::initDeploySession(CDWUniquePtr data) {
     CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL,

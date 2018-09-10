@@ -83,16 +83,16 @@ namespace chaos{
                 ~MDSBatchExecutor();
                 
                 // Initialize instance
-                void init(void *init_data) throw(chaos::CException);
+                void init(void *init_data) ;
                 
                 // start instance
-                void start() throw(chaos::CException);
+                void start() ;
                 
                 // stop instance
-                void stop() throw(chaos::CException);
+                void stop() ;
                 
                 // Deinitialize instance
-                void deinit() throw(chaos::CException);
+                void deinit() ;
                 
                 //! return the number of the sandbox
                 uint32_t getNextSandboxToUse();

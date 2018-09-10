@@ -87,19 +87,19 @@ namespace chaos{
 				/*
 				 * Initzialize the command manager
 				 */
-				void init(void *initParam) throw(CException);
+				void init(void *initParam);
 				/*
 				 * Deinitzialize the command manager
 				 */
-				void deinit() throw(CException);
+				void deinit();
 				
 				/*
 				 * Start all sub process
 				 */
-				void start() throw(CException);
+				void start();
 				
 				//-----------------------
-				void stop() throw(CException);
+				void stop();
 				
 				/*
 				 Configure the sandbox and all subtree of the CU
@@ -132,7 +132,7 @@ namespace chaos{
 				/*
 				 Shutdown the chaos control library
 				 */
-                chaos::common::data::CDWUniquePtr shutdown(chaos::common::data::CDWUniquePtr action_param) throw (CException);
+                chaos::common::data::CDWUniquePtr shutdown(chaos::common::data::CDWUniquePtr action_param) ;
 			private:
 				CommandManager();
 				~CommandManager();

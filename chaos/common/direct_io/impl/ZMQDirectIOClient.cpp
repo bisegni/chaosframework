@@ -58,7 +58,7 @@ zmq_context(NULL){};
 ZMQDirectIOClient::~ZMQDirectIOClient(){};
 
 //! Initialize instance
-void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
+void ZMQDirectIOClient::init(void *init_data)  {
     int err = 0;
     MapZMQConfiguration default_configuration;
     default_configuration["ZMQ_IO_THREADS"] = "1";
@@ -84,7 +84,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 }
 
 //! Deinit the implementation
-void ZMQDirectIOClient::deinit() throw(chaos::CException) {
+void ZMQDirectIOClient::deinit()  {
     int err = 0;
     //remove all active connection (never need to be exists at this step)
     map_connections.clearElement();

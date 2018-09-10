@@ -63,7 +63,7 @@ ZMQClient::~ZMQClient(){}
 /*
  Initialization method for output buffer
  */
-void ZMQClient::init(void *init_data) throw(CException) {
+void ZMQClient::init(void *init_data) {
     CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQC_LAPP << "initialization";
     int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
@@ -89,7 +89,7 @@ void ZMQClient::init(void *init_data) throw(CException) {
 /*
  start the rpc adapter
  */
-void ZMQClient::start() throw(CException) {
+void ZMQClient::start() {
     int err = 0;
     //start timere after and repeat every one minut
     if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, ZMQ_SOCKET_MAINTENANCE_TIMEOUT, ZMQ_SOCKET_MAINTENANCE_TIMEOUT))) {LOG_AND_TROW(ZMQC_LERR, err, "Error adding timer")}
@@ -98,7 +98,7 @@ void ZMQClient::start() throw(CException) {
 /*
  start the rpc adapter
  */
-void ZMQClient::stop() throw(CException) {
+void ZMQClient::stop() {
     int err = 0;
     if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this))) {LOG_AND_TROW(ZMQC_LERR, err, "Error removing timer")}
 }
@@ -106,7 +106,7 @@ void ZMQClient::stop() throw(CException) {
 /*
  Deinitialization method for output buffer
  */
-void ZMQClient::deinit() throw(CException) {
+void ZMQClient::deinit() {
     ZMQC_LAPP << "deinitialization";
     map_socket.clear();
     
@@ -125,7 +125,7 @@ void ZMQClient::deinit() throw(CException) {
  
  */
 bool ZMQClient::submitMessage(NFISharedPtr forwardInfo,
-                              bool onThisThread) throw(CException) {
+                              bool onThisThread) {
     CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
     try{
@@ -239,7 +239,7 @@ void ZMQClient::timeout() {
 /*
  process the element action to be executed
  */
-void ZMQClient::processBufferElement(NFISharedPtr messageInfo) throw(CException) {
+void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     int			err = 0;
     uint64_t    loc_seq_id = 0;

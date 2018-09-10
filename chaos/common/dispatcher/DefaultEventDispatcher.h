@@ -44,46 +44,46 @@ namespace chaos {
         /*!
          * Initzialize the Event Broker
          */
-        void init(void *initData) throw(CException);
+        void init(void *initData);
         
             //!Event dispatcher initialization
         /*!
          * Initzialize the Event Broker
          */
-        void start() throw(CException);
+        void start();
         
         //-----------------------
-        void stop() throw(CException){};
+        void stop(){};
         
             //!Event dispatcher deinitialization
         /*!
          * All resource aredeinitialized
          */
-        void deinit() throw(CException);
+        void deinit();
         
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException);
+        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) ;
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException);
+        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) ;
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException);
+        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) ;
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException);
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) ;
         
     public:
             //! Basic Constructor
@@ -96,13 +96,13 @@ namespace chaos {
         /*
          Perform the registration of an handler
          */
-        void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL)  throw(CException);
+        void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL) ;
         
             //! Event handler deregistration
         /*
          Perform the deregistration of an handler
          */
-        void deregisterEventAction(EventAction *eventAction)  throw(CException);
+        void deregisterEventAction(EventAction *eventAction) ;
 
 
     };

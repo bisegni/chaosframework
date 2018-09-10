@@ -111,12 +111,12 @@ namespace chaos {
              \param temporary if true instruct the driver to create a temporary database
              that will be deleted when the object will be destroyed
              */
-            virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) = 0;
+            virtual int16_t initDB(const char* name, bool temporary = true)  = 0;
             
             /*!
              Initialize the db implementation
              */
-            virtual int16_t deinitDB()  throw (CException) = 0;
+            virtual int16_t deinitDB()   = 0;
             
             /*!
              add a new Key returning the associated ID.

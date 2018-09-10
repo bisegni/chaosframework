@@ -37,8 +37,8 @@ namespace chaos {
                 AbstractCommandOutputStream();
                 virtual ~AbstractCommandOutputStream();
                 
-                void init(void *init_data) throw (chaos::CException);
-                void deinit() throw (chaos::CException);
+                void init(void *init_data) ;
+                void deinit() ;
                 
                 virtual AbstractCommandOutputStream& operator<<(const std::string& string) = 0;
                 virtual AbstractCommandOutputStream& operator<<(const char * string) = 0;

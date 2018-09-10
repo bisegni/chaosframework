@@ -46,12 +46,12 @@ safe_promises_handler_caller(PromisesHandlerSharedPtr(new PromisesHandler(boost:
 
 MessageChannel::~MessageChannel() {}
 
-void MessageChannel::init() throw(CException) {
+void MessageChannel::init() {
     //not implemented
 }
 
 
-void MessageChannel::deinit() throw(CException) {
+void MessageChannel::deinit() {
     //invalidate safety handler
     safe_promises_handler_caller.reset();
 }

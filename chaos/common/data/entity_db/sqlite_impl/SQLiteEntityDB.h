@@ -76,12 +76,12 @@ namespace chaos {
             /*
              Initialize the db implementation
              */
-            int16_t initDB(const char* name, bool temporary = true)  throw (CException) ;
+            int16_t initDB(const char* name, bool temporary = true)   ;
             
             /*
              Initialize the db implementation
              */
-            int16_t deinitDB()  throw (CException) ;
+            int16_t deinitDB()   ;
             
             /*
              add a new Key returning the associated ID.

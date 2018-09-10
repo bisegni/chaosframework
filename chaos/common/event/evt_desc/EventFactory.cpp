@@ -35,7 +35,7 @@ using namespace chaos::common::event::command;
 using namespace chaos::common::event::custom;
 using namespace chaos::common::utility;
 
-EventDescriptor *EventFactory::getEventInstance(const unsigned char * serializedEvent,  uint16_t length)  throw (CException) {
+EventDescriptor *EventFactory::getEventInstance(const unsigned char * serializedEvent,  uint16_t length)   {
     EventDescriptor *result = NULL;
     if(serializedEvent == NULL) throw CException(0, "Invalid pointer to serialized event", "EventFactory::getEventInstance");
     if(length > EVT_DATA_MAX_BYTE_LENGTH)  throw CException(1, "Event memory size exceed the max allowed", "EventFactory::getEventInstance");

@@ -57,16 +57,16 @@ namespace chaos {
 				DirectIODispatcher();
 				~DirectIODispatcher();
 				// Initialize instance
-				void init(void *init_data) throw(chaos::CException);
+				void init(void *init_data) ;
 				
 				// Start the implementation
-				void start() throw(chaos::CException);
+				void start() ;
 				
 				// Stop the implementation
-				void stop() throw(chaos::CException);
+				void stop() ;
 				
 				// Deinit the implementation
-				virtual void deinit() throw(chaos::CException);
+				virtual void deinit() ;
 				
 				//! Allocate a new endpoint
 				virtual DirectIOServerEndpoint *getNewEndpoint();

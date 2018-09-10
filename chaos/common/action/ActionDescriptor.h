@@ -182,7 +182,7 @@ namespace chaos {
         /*!
          execute the action call
          */
-        chaos::common::data::CDWUniquePtr call(chaos::common::data::CDWUniquePtr action_data)  throw (CException) {
+        chaos::common::data::CDWUniquePtr call(chaos::common::data::CDWUniquePtr action_data)   {
             //call the action with param
             CHAOS_ASSERT(objectReference)
             boost::unique_lock<boost::mutex> wl(mutex_execution_lock, boost::defer_lock);

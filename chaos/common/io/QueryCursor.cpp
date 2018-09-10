@@ -50,7 +50,7 @@ const bool QueryCursor::ResultPage::hasNext() const {
 uint32_t QueryCursor::ResultPage::size() const {
     return found_element_page.size();
 }
-ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
+ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() {
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
     return found_element_page[current_fetched++];
 }
@@ -173,7 +173,7 @@ const bool QueryCursor::hasNext() {
     }
 }
 
-ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw (chaos::CException) {
+ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next()  {
     return result_page.next();
 }
 

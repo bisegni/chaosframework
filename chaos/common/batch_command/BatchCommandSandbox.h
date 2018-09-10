@@ -198,16 +198,16 @@ namespace chaos{
                 void* sharedSettingPtr;
                 
                 //! Initialize instance
-                void init(void*) throw(chaos::CException);
+                void init(void*) ;
                 
                 // Start the implementation
-                virtual void start() throw(chaos::CException);
+                virtual void start() ;
                 
                 // Start the implementation
-                virtual void stop() throw(chaos::CException);
+                virtual void stop() ;
                 
                 // Deinit the implementation
-                void deinit() throw(chaos::CException);
+                void deinit() ;
                 
                 //! enqueue a new command
                 bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
@@ -225,7 +225,7 @@ namespace chaos{
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCurrentCommandFeatures(features::Features& features) throw (CException);
+                void setCurrentCommandFeatures(features::Features& features) ;
                 
                 void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay);
                 

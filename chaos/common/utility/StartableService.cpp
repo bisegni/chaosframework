@@ -37,12 +37,12 @@ StartableService::~StartableService() {
 }
 
 //! Start the implementation
-void StartableService::start() throw(chaos::CException) {
+void StartableService::start()  {
     
 }
 
 //! Start the implementation
-void StartableService::stop() throw(chaos::CException) {
+void StartableService::stop()  {
     
 }
 

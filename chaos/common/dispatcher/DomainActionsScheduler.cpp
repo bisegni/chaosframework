@@ -35,13 +35,13 @@ DomainActionsScheduler::~DomainActionsScheduler() {
     
 }
 
-void DomainActionsScheduler::init(int threadNumber) throw(CException) {
+void DomainActionsScheduler::init(int threadNumber) {
     LAPP_ << "Initializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
     CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
     armed = true;
 }
 
-void DomainActionsScheduler::deinit() throw(CException) {
+void DomainActionsScheduler::deinit() {
     LAPP_ << "Deinitializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
     //mutex::scoped_lock lockAction(actionAccessMutext);
     CObjectProcessingQueue<CDataWrapper>::clear();
@@ -49,7 +49,7 @@ void DomainActionsScheduler::deinit() throw(CException) {
     armed = false;
 }
 
-bool DomainActionsScheduler::push(CDWUniquePtr rpc_action_call) throw(CException) {
+bool DomainActionsScheduler::push(CDWUniquePtr rpc_action_call) {
     if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
     if(!domainActionsContainer->hasActionName(rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
     return CObjectProcessingQueue<CDataWrapper>::push(MOVE(CDWShrdPtr(rpc_action_call.release())));
@@ -121,7 +121,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDWShrdPtr rpc_call_action) throw(CException) {
+void DomainActionsScheduler::processBufferElement(CDWShrdPtr rpc_call_action) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDWUniquePtr  response_pack;
     CDWUniquePtr  sub_command;

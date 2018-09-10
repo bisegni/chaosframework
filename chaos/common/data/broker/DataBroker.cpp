@@ -24,7 +24,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::data::broker;
 
     //! Initialize instance
-void DataBroker::init(void*) throw(chaos::CException) {
+void DataBroker::init(void*)  {
     
         //define the action for start the hadnshake
     AbstActionDescShrPtr actionDescription = DeclareAction::addActionDescritionInstance(this,
@@ -38,15 +38,15 @@ void DataBroker::init(void*) throw(chaos::CException) {
     actionDescription->addParam(REQUESTED_MODE, DataType::TYPE_INT32, "The request mode to use");
 }
 
-void DataBroker::start() throw(chaos::CException) {
+void DataBroker::start()  {
     //not implemetned
 }
 
-void DataBroker::stop() throw(chaos::CException) {
+void DataBroker::stop()  {
     //not implemetned
 }
 
-void DataBroker::deinit() throw(chaos::CException) {
+void DataBroker::deinit()  {
     //not implemetned
 }
 

@@ -48,12 +48,12 @@ namespace chaos {
         /*
          Add an action descriptor to this domain
          */
-        bool addActionDescriptor(AbstActionDescShrPtr) throw(CException);
+        bool addActionDescriptor(AbstActionDescShrPtr);
         
         /*
          remove an action identified by it's descriptor
          */
-        void removeActionDescriptor(AbstActionDescShrPtr) throw(CException);
+        void removeActionDescriptor(AbstActionDescShrPtr);
 
         /*
          return the domain name

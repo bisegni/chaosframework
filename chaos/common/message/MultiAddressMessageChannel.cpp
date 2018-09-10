@@ -79,11 +79,11 @@ MultiAddressMessageChannel::~MultiAddressMessageChannel() {
     service_feeder.clear();
 }
 
-void MultiAddressMessageChannel::init() throw(CException) {
+void MultiAddressMessageChannel::init() {
     MessageChannel::init();
 }
 
-void MultiAddressMessageChannel::deinit() throw(CException) {
+void MultiAddressMessageChannel::deinit() {
     AsyncCentralManager::getInstance()->removeTimer(this);
     MessageChannel::deinit();
 }

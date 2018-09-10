@@ -171,7 +171,7 @@ key_data_storage() {
     _initChecklist();
 }
 
-void AbstractControlUnit::_initDrivers() throw(CException) {
+void AbstractControlUnit::_initDrivers() {
     ACULAPP_ << "Initializating Driver Accessors";
     //at this point and before the unit implementation init i need to get
     //the infromation about the needed drivers
@@ -282,7 +282,7 @@ const std::string& AbstractControlUnit::getCUType() {
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  {
     
     vector<std::string> tempStringVector;
     
@@ -403,12 +403,12 @@ void AbstractControlUnit::unitDefineCustomAttribute() {
 }
 
 
-void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
+void AbstractControlUnit::_undefineActionAndDataset() {
     ACULDBG_ << "Remove Action Description";
     unitUndefineActionAndDataset();
 }
 
-void AbstractControlUnit::unitUndefineActionAndDataset() throw(CException) {
+void AbstractControlUnit::unitUndefineActionAndDataset() {
     
 }
 
@@ -419,7 +419,7 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
 
 //----------------------------------------- checklist method ------------------------------------------------
 #pragma mark checklist method
-void AbstractControlUnit::doInitRpCheckList() throw(CException) {
+void AbstractControlUnit::doInitRpCheckList() {
     std::vector<std::string> attribute_names;
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
@@ -540,7 +540,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
 }
-void AbstractControlUnit::doInitSMCheckList() throw(CException) {
+void AbstractControlUnit::doInitSMCheckList() {
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "init"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_INIT_DB){
@@ -566,7 +566,7 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "init")
 }
 
-void AbstractControlUnit::doStartRpCheckList() throw(CException) {
+void AbstractControlUnit::doStartRpCheckList() {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             start();
@@ -590,7 +590,7 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
 }
 
-void AbstractControlUnit::doStartSMCheckList() throw(CException) {
+void AbstractControlUnit::doStartSMCheckList() {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
             //register timer for push statistic
@@ -602,7 +602,7 @@ void AbstractControlUnit::doStartSMCheckList() throw(CException) {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "start")
 }
 
-void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CException) {
+void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) {
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_init"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
@@ -655,7 +655,7 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_init")
 }
 
-void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CException) {
+void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "init"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
             break;
@@ -675,7 +675,7 @@ void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CExcep
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "init")
 }
 
-void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CException) {
+void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             CHEK_IF_NEED_TO_THROW(throw_exception, stop();)
@@ -689,7 +689,7 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CExce
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_start")
 }
 
-void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CException) {
+void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "start"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
             //remove timer for push statistic
@@ -984,7 +984,7 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
     }
 }
 
-void AbstractControlUnit::checkForRestoreOnInit()  throw(CException) {
+void AbstractControlUnit::checkForRestoreOnInit()  {
     //now we can launch the restore the current input attrite, remeber that
     //input attribute are composed by mds so the type of restore data(static conf or live) is manage at mds leve
     //control unit in case off pply true need only to launch the restore on current input dataset set.
@@ -1133,7 +1133,7 @@ CDWUniquePtr AbstractControlUnit::_setDatasetAttribute(CDWUniquePtr dataset_attr
 }
 #pragma mark State Machine method
 // Startable Service method
-void AbstractControlUnit::init(void *init_data) throw(CException) {
+void AbstractControlUnit::init(void *init_data) {
     //allocate metadata loggin channel for alarm
     alarm_logging_channel = (AlarmLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("AlarmLoggingChannel");
     if(alarm_logging_channel == NULL) {LOG_AND_TROW(ACULERR_, -1, "Alarm logging channel not found");}
@@ -1146,17 +1146,17 @@ void AbstractControlUnit::init(void *init_data) throw(CException) {
 }
 
 // Startable Service method
-void AbstractControlUnit::start() throw(CException) {
+void AbstractControlUnit::start() {
     doStartSMCheckList();
 }
 
 // Startable Service method
-void AbstractControlUnit::stop() throw(CException) {
+void AbstractControlUnit::stop() {
     redoStartSMCheckList();
 }
 
 // Startable Service method
-void AbstractControlUnit::deinit() throw(CException) {
+void AbstractControlUnit::deinit() {
     redoInitSMCheckList();
     if(alarm_logging_channel) {
         MetadataLoggingManager::getInstance()->releaseChannel(alarm_logging_channel);
@@ -1583,19 +1583,19 @@ void AbstractControlUnit::_setBypassState(bool bypass_stage,
 }
 
 //!handler calledfor restor a control unit to a determinate point
-bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
+bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) {
     return true;
 }
 
 //! this andler is called befor the input attribute will be updated
-void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {}
+void AbstractControlUnit::unitInputAttributePreChangeHandler() {}
 
 //! attribute change handler
 /*!
  the handle is fired after the input attribute cache as been update triggere
  by the rpc request for attribute change.
  */
-void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {}
+void AbstractControlUnit::unitInputAttributeChangedHandler() {}
 
 
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\

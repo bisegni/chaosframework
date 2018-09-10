@@ -51,7 +51,7 @@ DirectIODispatcher::~DirectIODispatcher(){
 }
 
 // Initialize instance
-void DirectIODispatcher::init(void *init_data) throw(chaos::CException) {
+void DirectIODispatcher::init(void *init_data)  {
     //allocate memory for the endpoint array
     if(endpoint_slot_array==NULL){
         DIOD_LDBG_<< "Allocating all memory for endpoint slot array";
@@ -74,13 +74,13 @@ void DirectIODispatcher::init(void *init_data) throw(chaos::CException) {
 }
 
 // Start the implementation
-void DirectIODispatcher::start() throw(chaos::CException) {}
+void DirectIODispatcher::start()  {}
 
 // Stop the implementation
-void DirectIODispatcher::stop() throw(chaos::CException) {}
+void DirectIODispatcher::stop()  {}
 
 // Deinit the implementation
-void DirectIODispatcher::deinit() throw(chaos::CException) {
+void DirectIODispatcher::deinit()  {
     if(endpoint_slot_array) {
         DIOD_LDBG_ << "Deallocating all endpoint slot";
         //allocate all endpoint slot

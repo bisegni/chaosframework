@@ -37,12 +37,12 @@ parent_group(NULL){}
 //default destructor
 AbstractApi::~AbstractApi(){deinit();}
 
-void AbstractApi::init(void *init_data) throw (chaos::CException) {
+void AbstractApi::init(void *init_data)  {
     subservice = static_cast<ApiSubserviceAccessor*>(init_data);
     if(!subservice) throw chaos::CException(-1, "No Persistence Driver has been set", __PRETTY_FUNCTION__);
 }
 
-void AbstractApi::deinit()  throw (chaos::CException) {}
+void AbstractApi::deinit()   {}
 
 AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)

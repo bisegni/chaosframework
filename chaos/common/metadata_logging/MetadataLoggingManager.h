@@ -72,14 +72,14 @@ namespace chaos {
                 //!internal function to permit the forwarding of th elog entry to the mds
                 int sendLogEntry(chaos::common::data::CDWUniquePtr log_entry);
                 
-                void processBufferElement(chaos::common::data::CDWShrdPtr log_entry) throw(CException);
+                void processBufferElement(chaos::common::data::CDWShrdPtr log_entry);
             protected:
                 //!submit the log entry in the logging queue
                 int pushLogEntry(chaos::common::data::CDataWrapper *log_entry,
                                  int32_t priority = 0);
             public:
-                void init(void *init_data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *init_data) ;
+                void deinit() ;
                 
                 void registerChannel(const std::string& channel_alias,
                                      chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer);

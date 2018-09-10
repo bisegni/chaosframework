@@ -49,7 +49,7 @@ root_connection(0){}
 
 HTTPServerAdapter::~HTTPServerAdapter() {}
 
-void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
+void HTTPServerAdapter::init(void *init_data)  {
     //scsan configuration
     setting.publishing_port = "8080";
     setting.thread_number = GlobalConfiguration::getInstance()->getOption<unsigned int>(InitOption::OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER);
@@ -79,7 +79,7 @@ void HTTPServerAdapter::init(void *init_data) throw (chaos::CException) {
     thread_poller.reset(new boost::thread(boost::bind(&HTTPServerAdapter::poller, this)));
 }
 
-void HTTPServerAdapter::deinit() throw (chaos::CException) {
+void HTTPServerAdapter::deinit()  {
     run = false;
     thread_poller->join();
     CObjectProcessingQueue<ServerWorkRequest>::deinit();
@@ -277,7 +277,7 @@ void  HTTPServerAdapter::manageWSHandshake(mg_connection *nc,
     }
 }
 
-void HTTPServerAdapter::processBufferElement(ChaosSharedPtr<ServerWorkRequest> request) throw(CException) {
+void HTTPServerAdapter::processBufferElement(ChaosSharedPtr<ServerWorkRequest> request) {
     switch(request->r_type) {
         case WorkRequestTypeWSFrame: {
             int err = 0;

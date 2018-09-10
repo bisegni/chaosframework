@@ -141,12 +141,12 @@ namespace chaos {
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void init() throw(CException);
+                virtual void init();
                 
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
             public:
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);

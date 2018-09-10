@@ -46,7 +46,7 @@ protected:
 		/*!
 		Define the Control Unit Dataset and Actions
 		*/
-		void unitDefineActionAndDataset()throw(chaos::CException);
+		void unitDefineActionAndDataset();
 		/*!(Optional)
 		Define the Control Unit custom attribute
 		*/
@@ -54,39 +54,39 @@ protected:
     /*!(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-		void unitInit() throw(chaos::CException);
+		void unitInit() ;
     /*!(Optional)
      Execute the work, this is called with a determinated delay
      */
-    void unitStart() throw(chaos::CException);
+    void unitStart() ;
     /*!
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void unitRun() throw(chaos::CException);
+    void unitRun() ;
 
     /*!(Optional)
      The Control Unit will be stopped
      */
-    void unitStop() throw(chaos::CException);
+    void unitStop() ;
 
     /*!(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void unitDeinit() throw(chaos::CException);
+    void unitDeinit() ;
 
 		//! Pre input attribute change
 		/*!(Optional)
 		This handler is called befor the update of the
 		cached input attribute with the requested valure
 		*/
-		void unitInputAttributePreChangeHandler() throw(chaos::CException);
+		void unitInputAttributePreChangeHandler() ;
 
 		//! Handler called on the update of one or more input attribute
 		/*!(Optional)
 		After an input attribute has been chacnged this handler
 		is called
 		*/
-		void unitInputAttributeChangedHandler() throw(chaos::CException);
+		void unitInputAttributeChangedHandler() ;
 };
 
 #endif

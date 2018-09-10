@@ -34,7 +34,7 @@ void DirectIOPerformanceSession::setConnectionHandler(DirectIOClientConnectionEv
 }
 
 // Initialize instance
-void DirectIOPerformanceSession::init(void *init_data) throw(chaos::CException) {
+void DirectIOPerformanceSession::init(void *init_data)  {
 	//check the client and server
 	if(!client_connection) throw CException(-1 ,"The client instance as not been set", __PRETTY_FUNCTION__);
 	if(!server_endpoint) throw CException(-2 ,"Error initializing the endpoint", __PRETTY_FUNCTION__);
@@ -52,7 +52,7 @@ void DirectIOPerformanceSession::init(void *init_data) throw(chaos::CException) 
 }
 
 // Deinit the implementation
-void DirectIOPerformanceSession::deinit() throw(chaos::CException) {
+void DirectIOPerformanceSession::deinit()  {
 	//release the channel
 	
 	if(server_endpoint && server_channel) {

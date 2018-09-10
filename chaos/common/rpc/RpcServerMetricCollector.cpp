@@ -55,7 +55,7 @@ RpcServerMetricCollector::~RpcServerMetricCollector() {
 /*
  init the rpc adapter
  */
-void RpcServerMetricCollector::init(void *init_data) throw(CException) {
+void RpcServerMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapper_server)
     utility::StartableService::initImplementation(wrapper_server, init_data, wrapper_server->getName(), __PRETTY_FUNCTION__);
 }
@@ -63,7 +63,7 @@ void RpcServerMetricCollector::init(void *init_data) throw(CException) {
 /*
  start the rpc adapter
  */
-void RpcServerMetricCollector::start() throw(CException) {
+void RpcServerMetricCollector::start() {
     CHAOS_ASSERT(wrapper_server)
     startLogging();
     utility::StartableService::startImplementation(wrapper_server, wrapper_server->getName(), __PRETTY_FUNCTION__);
@@ -72,7 +72,7 @@ void RpcServerMetricCollector::start() throw(CException) {
 /*
  start the rpc adapter
  */
-void RpcServerMetricCollector::stop() throw(CException) {
+void RpcServerMetricCollector::stop() {
     CHAOS_ASSERT(wrapper_server)
     stopLogging();
     utility::StartableService::stopImplementation(wrapper_server, wrapper_server->getName(), __PRETTY_FUNCTION__);
@@ -81,7 +81,7 @@ void RpcServerMetricCollector::stop() throw(CException) {
 /*
  deinit the rpc adapter
  */
-void RpcServerMetricCollector::deinit() throw(CException) {
+void RpcServerMetricCollector::deinit() {
     CHAOS_ASSERT(wrapper_server)
     utility::StartableService::deinitImplementation(wrapper_server, wrapper_server->getName(), __PRETTY_FUNCTION__);
 }

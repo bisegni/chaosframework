@@ -129,7 +129,7 @@ void ScriptableExecutionUnit::unregisterApi() {
 log << "("<<num<<") " << msg;\
 throw MetadataLoggingCException(getDeviceID(), num, msg, __PRETTY_FUNCTION__);
 
-void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
+void ScriptableExecutionUnit::unitDefineActionAndDataset() {
     int err = 0;
     bool exists = false;
 
@@ -288,7 +288,7 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     //    }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmLaunch() {
     if(!alghorithm_handler_implemented[0])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -301,7 +301,7 @@ void ScriptableExecutionUnit::executeAlgorithmLaunch() throw(CException) {
     }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmStart() throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmStart() {
     if(!alghorithm_handler_implemented[1])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -314,7 +314,7 @@ void ScriptableExecutionUnit::executeAlgorithmStart() throw(CException) {
     }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) {
     if(!alghorithm_handler_implemented[2])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -331,7 +331,7 @@ void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) thr
     }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmStop() throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmStop() {
     if(!alghorithm_handler_implemented[3])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -344,7 +344,7 @@ void ScriptableExecutionUnit::executeAlgorithmStop() throw(CException) {
     }
 }
 
-void ScriptableExecutionUnit::executeAlgorithmEnd() throw(CException) {
+void ScriptableExecutionUnit::executeAlgorithmEnd() {
     if(!alghorithm_handler_implemented[4])
         return;
     LockableScriptManagerReadLock rl = script_manager.getReadLockObject();
@@ -357,7 +357,7 @@ void ScriptableExecutionUnit::executeAlgorithmEnd() throw(CException) {
     }
 }
 
-void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
+void ScriptableExecutionUnit::unitUndefineActionAndDataset() {
     SEU_LAPP << "Unregister api";
     unregisterApi();
 

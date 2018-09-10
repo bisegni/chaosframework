@@ -152,7 +152,7 @@ namespace chaos {
                  This message will activate the registration process of the control unit
                  and all the step are done to achive the registration.
                  */
-                void turnOn()throw (CException);
+                void turnOn();
                 
                     //! turn off the control unit
                 /*!
@@ -160,10 +160,10 @@ namespace chaos {
                  if it is running, before that the process for the unpublish can 
                  start it will be stopped and deinitialized.
                  */
-                void turnOFF()throw (CException);
+                void turnOFF();
                 
                     //! manage the internal state machine
-                void scheduleSM() throw (CException);
+                void scheduleSM() ;
                 
                     //! manage the ack pack
                 bool manageACKPack(chaos::common::data::CDataWrapper& ack_pack);

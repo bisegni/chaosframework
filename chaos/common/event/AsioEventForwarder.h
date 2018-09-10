@@ -47,12 +47,12 @@ namespace chaos {
                 /*!
                  init the asio event forwarder
                  */
-                void init() throw(CException);
+                void init();
                 
                 /*!
                  deinit the asio event forwarder
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 
             public:
@@ -67,7 +67,7 @@ namespace chaos {
                 bool submitEventAsync(EventDescriptorSPtr event);
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptorSPtr priorityElement) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement);
             private:
                 bool sent;
                 //! mutext used for unlock and wait esclusive access

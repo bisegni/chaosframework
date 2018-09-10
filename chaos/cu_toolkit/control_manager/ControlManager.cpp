@@ -76,7 +76,7 @@ ControlManager::~ControlManager() {
 /*
  Initialize the CU Instantiator
  */
-void ControlManager::init(void *initParameter) throw(CException) {
+void ControlManager::init(void *initParameter) {
     //control manager action initialization
     AbstActionDescShrPtr actionDescription;
     
@@ -180,7 +180,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
 /*
  Initialize the CU Instantiator
  */
-void ControlManager::start() throw(CException) {
+void ControlManager::start() {
     LCMAPP_  << "Start cu scan timer";
     int err = 0;
     if(use_unit_server){
@@ -209,7 +209,7 @@ void ControlManager::stopControlUnitSMThread(bool whait) {
 /*
  Initialize the CU Instantiator
  */
-void ControlManager::stop() throw(CException) {
+void ControlManager::stop() {
     LCMAPP_  << "Stop cu scan timer";
     stopControlUnitSMThread();
 }
@@ -217,7 +217,7 @@ void ControlManager::stop() throw(CException) {
 /*
  Deinitialize the CU Instantiator
  */
-void ControlManager::deinit() throw(CException) {
+void ControlManager::deinit() {
     std::string cu_identification_temp;
     std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     vector<string> allCUDeviceIDToStop;
@@ -294,7 +294,7 @@ void ControlManager::deinit() throw(CException) {
 /*
  Submit a new Control unit for operation
  */
-void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException) {
+void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) {
     CHAOS_ASSERT(control_unit_instance)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);

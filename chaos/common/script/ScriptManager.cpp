@@ -77,7 +77,7 @@ int ScriptManager::callScriptApi(const std::string& api_class,
                                              output_parameter);
 }
 
-void ScriptManager::init(void *init_data) throw(chaos::CException) {
+void ScriptManager::init(void *init_data)  {
     SCRTMAN_INFO << "Use " << script_language << " as script language";
     SCRTMAN_INFO << "Try to load " << vm_name << " virtual machine";
     script_vm = ObjectFactoryRegister<AbstractScriptVM>::getInstance()->getNewInstanceByName(vm_name);
@@ -86,7 +86,7 @@ void ScriptManager::init(void *init_data) throw(chaos::CException) {
     InizializableService::initImplementation(script_vm, NULL, vm_name, __PRETTY_FUNCTION__);
 }
 
-void ScriptManager::deinit() throw(chaos::CException) {
+void ScriptManager::deinit()  {
     if(script_vm) {
         InizializableService::deinitImplementation(script_vm, vm_name, __PRETTY_FUNCTION__);
         delete(script_vm);

@@ -68,7 +68,7 @@ SQLiteEntityDB::~SQLiteEntityDB() {
 /*!
  Initialize the db implementation
  */
-int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CException) {
+int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)   {
     int16_t result = 0;
     int errorSequence = 0;
     std::string uriPath;
@@ -163,7 +163,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
 /*!
  Initialize the db implementation
  */
-int16_t SQLiteEntityDB::deinitDB()  throw (CException) {
+int16_t SQLiteEntityDB::deinitDB()   {
     int16_t result = 0;
     for (int i = 0; i < NUM_STMT; i++) {
         if(stmt[i]) sqlite3_finalize(stmt[i]);

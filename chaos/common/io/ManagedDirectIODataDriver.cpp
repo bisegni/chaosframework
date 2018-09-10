@@ -39,7 +39,7 @@ mds_channel(NULL){}
 
 ManagedDirectIODataDriver::~ManagedDirectIODataDriver() {}
 
-void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
+void ManagedDirectIODataDriver::init(void *init_parameter) {
     IODirectIODriver::init(init_parameter);
     mds_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
     if(mds_channel == NULL) {throw CException(-1, "Error creating mds channel", __PRETTY_FUNCTION__);}
@@ -60,7 +60,7 @@ void ManagedDirectIODataDriver::init(void *init_parameter) throw(CException) {
 }
 
 
-void ManagedDirectIODataDriver::deinit() throw(CException) {
+void ManagedDirectIODataDriver::deinit() {
     if(mds_channel) {
         NetworkBroker::getInstance()->disposeMessageChannel(mds_channel);
     }
@@ -68,7 +68,7 @@ void ManagedDirectIODataDriver::deinit() throw(CException) {
 }
 
 void ManagedDirectIODataDriver::storeLogEntries(const std::string& key,
-                                                ChaosStringVector log_entries) throw(CException) {
+                                                ChaosStringVector log_entries) {
     int err = 0;
     boost::shared_lock<boost::shared_mutex> wl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());

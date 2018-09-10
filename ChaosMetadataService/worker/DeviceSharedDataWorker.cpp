@@ -46,7 +46,7 @@ DeviceSharedDataWorker::DeviceSharedDataWorker(){}
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 
-void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
+void DeviceSharedDataWorker::init(void *init_data)  {
     DataWorker::init(init_data);
     
     const std::string object_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl;
@@ -62,7 +62,7 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
+void DeviceSharedDataWorker::deinit()  {
     DataWorker::deinit();
     global_object_storage_driver->deinit();
 }

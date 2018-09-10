@@ -65,7 +65,7 @@ SlowCommandExecutor::~SlowCommandExecutor(){
 }
 
 // Initialize instance
-void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
+void SlowCommandExecutor::init(void *initData)  {
     error_logging_channel = (ErrorLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("ErrorLoggingChannel");
     if(error_logging_channel == NULL) {throw CException(-1, "No metadata logging error channel found", __PRETTY_FUNCTION__);}
     
@@ -76,21 +76,21 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 }
 
 // Start the implementation
-void SlowCommandExecutor::start() throw(chaos::CException) {
+void SlowCommandExecutor::start()  {
     //start superclass
     BatchCommandExecutor::start();
 }
 
 
 // Start the implementation
-void SlowCommandExecutor::stop() throw(chaos::CException) {
+void SlowCommandExecutor::stop()  {
 	SCELDBG_ << "stopping";
     //initialize superclass
     BatchCommandExecutor::stop();
 }
 
 // Deinit instance
-void SlowCommandExecutor::deinit() throw(chaos::CException) {
+void SlowCommandExecutor::deinit()  {
     //initialize superclass
     BatchCommandExecutor::deinit();
     

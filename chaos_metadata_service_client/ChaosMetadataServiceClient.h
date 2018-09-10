@@ -78,18 +78,18 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, const char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]) ;
 
             //! For common methods already initialized
-            void init()  throw(CException);
+            void init() ;
             //! StartableService inherited method
-            void init(void *init_data)  throw(CException);
+            void init(void *init_data) ;
             //! StartableService inherited method
-            void start()throw(CException);
+            void start();
             //! StartableService inherited method
-            void stop()throw(CException);
+            void stop();
             //! StartableService inherited method
-            void deinit()throw(CException);
+            void deinit();
             
             template<typename D>
             ChaosUniquePtr<D> getApiProxy(int32_t timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec) {
@@ -100,11 +100,11 @@ namespace chaos {
             
             void addServerAddress(const std::string& server_address_and_port);
             
-            void enableMonitor() throw(CException);
+            void enableMonitor();
             
-            void disableMonitor() throw(CException);
+            void disableMonitor();
             
-            void reconfigureMonitor() throw(CException);
+            void reconfigureMonitor();
             
             bool monitoringIsStarted();
             
@@ -223,7 +223,7 @@ namespace chaos {
             
             void deleteCUController(chaos::metadata_service_client::node_controller::CUController *cu_ctrl_ptr);
 
-            chaos::common::io::IODataDriverShrdPtr getDataProxyChannelNewInstance() throw(CException);
+            chaos::common::io::IODataDriverShrdPtr getDataProxyChannelNewInstance();
 
         };
     }

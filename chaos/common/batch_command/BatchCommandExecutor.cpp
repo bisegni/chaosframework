@@ -157,7 +157,7 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 }
 
 // Initialize instance
-void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
+void BatchCommandExecutor::init(void *initData)  {
     
     //reset the command sequence on initialization(id 0 is used for stiky command by sandboxes)
     //command_sequence_id = 0;
@@ -190,7 +190,7 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
 }
 
 // Start the implementation
-void BatchCommandExecutor::start() throw(chaos::CException) {
+void BatchCommandExecutor::start()  {
     try {
         // set thread run flag for work
         StartableService::start();
@@ -218,7 +218,7 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 }
 
 // Start the implementation
-void BatchCommandExecutor::stop() throw(chaos::CException) {
+void BatchCommandExecutor::stop()  {
     
     //!remove capper timer
     AsyncCentralManager::getInstance()->removeTimer(this);
@@ -243,7 +243,7 @@ void BatchCommandExecutor::stop() throw(chaos::CException) {
 }
 
 // Deinit the implementation
-void BatchCommandExecutor::deinit() throw(chaos::CException) {
+void BatchCommandExecutor::deinit()  {
     {
         ReadLock       lock(sandbox_map_mutex);
         
@@ -539,7 +539,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
 // Submite a batch command
 void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
                                          CDataWrapper *commandDescription,
-                                         uint64_t& command_id)  throw (CException) {
+                                         uint64_t& command_id)   {
     if(!commandDescription)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
@@ -581,7 +581,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
                                          uint32_t priority,
                                          uint32_t submission_rule,
                                          uint32_t submission_retry_delay,
-                                         uint64_t scheduler_step_delay)  throw (CException) {
+                                         uint64_t scheduler_step_delay)   {
     if(sandbox_map.count(execution_channel) == 0)
         throw CException(-3, "Execution channel not found", "BatchCommandExecutor::submitCommand");
     
@@ -618,7 +618,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDWUniquePtr BatchCommandExecutor::getCommandState(CDWUniquePtr params) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::getCommandState(CDWUniquePtr params)  {
     BCELAPP_ << "Get command state from the executor with id: " << executorID;
     //boost::mutex::scoped_lock lock(mutextQueueManagment);
     ReadLock lock(command_state_rwmutex);
@@ -641,7 +641,7 @@ CDWUniquePtr BatchCommandExecutor::getCommandState(CDWUniquePtr params) throw (C
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params)  {
     if(!params.get() || sandbox_map.size()==0)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
@@ -670,7 +670,7 @@ CDWUniquePtr BatchCommandExecutor::setCommandFeatures(CDWUniquePtr params) throw
 /*!
  Updat ethe modiable features of the running command
  */
-void BatchCommandExecutor::setCommandFeatures(features::Features& features) throw (CException) {
+void BatchCommandExecutor::setCommandFeatures(features::Features& features)  {
     ReadLock       lock(sandbox_map_mutex);
     
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
@@ -678,7 +678,7 @@ void BatchCommandExecutor::setCommandFeatures(features::Features& features) thro
 }
 
 //! Kill current command rpc action
-CDWUniquePtr BatchCommandExecutor::killCurrentCommand(CDWUniquePtr params) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::killCurrentCommand(CDWUniquePtr params)  {
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->killCurrentCommand();
@@ -686,7 +686,7 @@ CDWUniquePtr BatchCommandExecutor::killCurrentCommand(CDWUniquePtr params) throw
 }
 
 //! Kill current command rpc action
-CDWUniquePtr BatchCommandExecutor::clearCommandQueue(CDWUniquePtr params) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::clearCommandQueue(CDWUniquePtr params)  {
     ReadLock       lock(sandbox_map_mutex);
     ChaosSharedPtr<AbstractSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->clearCommandQueue();
@@ -694,7 +694,7 @@ CDWUniquePtr BatchCommandExecutor::clearCommandQueue(CDWUniquePtr params) throw 
 }
 
 //! Flush the command state history
-CDWUniquePtr BatchCommandExecutor::flushCommandStates(CDWUniquePtr params) throw (CException) {
+CDWUniquePtr BatchCommandExecutor::flushCommandStates(CDWUniquePtr params)  {
     BCELAPP_ << "Flushing all endend command state history for executr id:" << executorID;
     // get upgradable access
     boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);

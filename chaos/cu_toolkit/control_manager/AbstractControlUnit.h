@@ -240,7 +240,7 @@ namespace chaos{
                 chaos::common::data::CDWShrdPtr writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
                                                                            int32_t dataset_type);
                 //check at initilization time ifr need to to a restore or only an apply
-                void checkForRestoreOnInit() throw(CException);
+                void checkForRestoreOnInit();
             private:
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -326,17 +326,17 @@ namespace chaos{
                 
                 //! init configuration
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_configuration;
-                void _initDrivers() throw(CException);
+                void _initDrivers();
                 void _initChecklist();
                 void _initPropertyGroup();
-                void doInitRpCheckList() throw(CException);
-                void doInitSMCheckList() throw(CException);
-                void doStartRpCheckList() throw(CException);
-                void doStartSMCheckList() throw(CException);
-                void redoInitRpCheckList(bool throw_exception = true) throw(CException);
-                void redoInitSMCheckList(bool throw_exception = true) throw(CException);
-                void redoStartRpCheckList(bool throw_exception = true) throw(CException);
-                void redoStartSMCheckList(bool throw_exception = true) throw(CException);
+                void doInitRpCheckList();
+                void doInitSMCheckList();
+                void doStartRpCheckList();
+                void doStartSMCheckList();
+                void redoInitRpCheckList(bool throw_exception = true);
+                void redoInitSMCheckList(bool throw_exception = true);
+                void redoStartRpCheckList(bool throw_exception = true);
+                void redoStartSMCheckList(bool throw_exception = true);
                 
                 /*!
                  Initialize the Custom Contro Unit and return the configuration
@@ -369,19 +369,19 @@ namespace chaos{
                  Define the control unit DataSet and Action into
                  a CDataWrapper
                  */
-                void _undefineActionAndDataset() throw(CException);
+                void _undefineActionAndDataset();
                 
                 // Startable Service method
-                void init(void *initData) throw(CException);
+                void init(void *initData);
                 
                 // Startable Service method
-                void start() throw(CException);
+                void start();
                 
                 // Startable Service method
-                void stop() throw(CException);
+                void stop();
                 
                 // Startable Service method
-                void deinit() throw(CException);
+                void deinit();
                 
                 //! State machine is gone into recoverable error
                 void recoverableErrorFromState(int last_state, chaos::CException& ex);
@@ -449,7 +449,7 @@ namespace chaos{
                 /*!
                  This method configure the CDataWrapper whit all th einromation for describe the implemented device
                  */
-                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
+                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! Get all managed declare action instance
                 /*!
@@ -525,7 +525,7 @@ namespace chaos{
                  Subclass, in this method can call the api to create the dataset, after this method
                  this class will collet all the information and send all to the MDS server.
                  */
-                virtual void unitDefineActionAndDataset() throw(CException) = 0;
+                virtual void unitDefineActionAndDataset() = 0;
                 
                 //! Abstract method for the definition of the driver
                 /*!
@@ -547,35 +547,35 @@ namespace chaos{
                  This is where the subclass need to be inizialize their environment, usually the hardware initialization. An exception
                  will stop the Control Unit live.
                  */
-                virtual void unitInit() throw(CException) = 0;
+                virtual void unitInit() = 0;
                 
                 //! Abstract method for the start of the control unit
                 /*!
                  This is where the subclass need to be start all the staff needed by normal control process. An exception
                  will stop the Control Unit live and perform the deinitialization of the control unit.
                  */
-                virtual void unitStart() throw(CException) = 0;
+                virtual void unitStart() = 0;
                 
                 //! Abstract method for the stop of the control unit
                 /*!
                  This is where the subclass need to be stop all the staff needed for pause the control process. An exception
                  will stop the Control Unit live and perform the deinitialization of the control unit.
                  */
-                virtual void unitStop() throw(CException) = 0;
+                virtual void unitStop() = 0;
                 
                 //! Abstract method for the deinit of the control unit
                 /*!
                  This is where the subclass need to be deinit all the staff that has been allocatate into the init method.
                  Usually the hardware deallocation etc..
                  */
-                virtual void unitDeinit() throw(CException) = 0;
+                virtual void unitDeinit() = 0;
                 
                 //! Abstract Method that need to be used by the sublcass to undefine ihis data
                 /*!
                  Subclass, in this method canclear all infromation defined into the deined event. This because
                  after this call can be called only a new define phase
                  */
-                virtual void unitUndefineActionAndDataset() throw(CException);
+                virtual void unitUndefineActionAndDataset();
                 
                 //!handler called for restore a control unit to a determinate point
                 /*!
@@ -585,17 +585,17 @@ namespace chaos{
                  that contain the four domain filled with the attribute/value faound
                  on saved tag
                  */
-                virtual bool unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException);
+                virtual bool unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache);
                 
                 //! this andler is called befor the input attribute will be updated
-                virtual void unitInputAttributePreChangeHandler() throw(CException);
+                virtual void unitInputAttributePreChangeHandler();
                 
                 //! attribute change handler
                 /*!
                  the handle is fired after the input attribute cache as been update triggere
                  by the rpc request for attribute change.
                  */
-                virtual void unitInputAttributeChangedHandler() throw(CException);
+                virtual void unitInputAttributeChangedHandler();
                 
                 //Abstract method used to sublcass to set theri needs
                 /*!

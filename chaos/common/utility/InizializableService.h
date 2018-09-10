@@ -84,10 +84,10 @@ namespace chaos {
 				unsigned int serviceState;
 				
 				//! Initialize instance
-				virtual void init(void*) throw(chaos::CException);
+				virtual void init(void*) ;
 				
 				//! Deinit the implementation
-				virtual void deinit() throw(chaos::CException);
+				virtual void deinit() ;
 				
 			public:
 				InizializableService();

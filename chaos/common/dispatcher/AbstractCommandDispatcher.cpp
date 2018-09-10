@@ -87,23 +87,23 @@ rpc_forwarder_ptr(NULL){
 
 AbstractCommandDispatcher::~AbstractCommandDispatcher() {}
 
-void AbstractCommandDispatcher::init(void *init_data)  throw(CException) {}
+void AbstractCommandDispatcher::init(void *init_data)  {}
 
-void AbstractCommandDispatcher::start() throw(CException) {
+void AbstractCommandDispatcher::start() {
     registerAction(&echo_action_class);
     registerAction(&check_domain_action);
 }
 
-void AbstractCommandDispatcher::stop() throw(CException) {
+void AbstractCommandDispatcher::stop() {
     deregisterAction(&check_domain_action);
     deregisterAction(&echo_action_class);
 }
 
-void AbstractCommandDispatcher::deinit()  throw(CException) {}
+void AbstractCommandDispatcher::deinit()  {}
 
 bool AbstractCommandDispatcher::submitMessage(const string& server_port,
                                               CDWUniquePtr message,
-                                              bool onThisThread)  throw(CException) {
+                                              bool onThisThread)  {
     CHAOS_ASSERT(rpc_forwarder_ptr)
     if(!message.get() && server_port.size()) return false;
     NFISharedPtr nfi(new NetworkForwardInfo(false));
@@ -112,7 +112,7 @@ bool AbstractCommandDispatcher::submitMessage(const string& server_port,
     return rpc_forwarder_ptr->submitMessage(MOVE(nfi), onThisThread);
 }
 
-chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {
+chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  {
     return NULL;
 }
 

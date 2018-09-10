@@ -41,7 +41,7 @@ namespace chaos {
          @param newPack the new CDatawrapper instance pointer received by rpc server
          @return the response if the action has been submitted
          */
-            //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
+            //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) = 0;
         virtual chaos::common::data::CDWUniquePtr dispatchCommand(chaos::common::data::CDWUniquePtr action_pack) = 0;
 		
 		//! execute an action in synchronous mode

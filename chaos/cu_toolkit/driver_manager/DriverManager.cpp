@@ -49,22 +49,22 @@ DriverManager::~DriverManager() {
 }
 
 // Initialize instance
-void DriverManager::init(void *initParameter) throw(chaos::CException) {
+void DriverManager::init(void *initParameter)  {
 
 }
 
 // Start the implementation
-void DriverManager::start() throw(chaos::CException) {
+void DriverManager::start()  {
 
 }
 
 // Stop the implementation
-void DriverManager::stop() throw(chaos::CException) {
+void DriverManager::stop()  {
 
 }
 
 // Deinit the implementation
-void DriverManager::deinit() throw(chaos::CException) {
+void DriverManager::deinit()  {
   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
   //deinitialize all allcoated driver
@@ -91,7 +91,7 @@ void DriverManager::deinit() throw(chaos::CException) {
 
 // Register a new driver
 void DriverManager::registerDriver(ChaosSharedPtr<ObjectInstancer<AbstractDriver> > instancer,
-                                   ChaosSharedPtr<PluginInspector> description) throw(chaos::CException) {
+                                   ChaosSharedPtr<PluginInspector> description)  {
   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
   if (!instancer) {
@@ -120,7 +120,7 @@ void DriverManager::registerDriver(ChaosSharedPtr<ObjectInstancer<AbstractDriver
 }
 
 // Get a new driver accessor for a driver instance
-DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &request_info) throw(chaos::CException) {
+DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &request_info)  {
   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
   std::string composedDriverName;

@@ -142,7 +142,7 @@ namespace chaos {
                 /*
                  Process the oldest element in buffer
                  */
-                virtual void processBufferElement(typename PriorityQueuedElement<T>::PriorityQueuedElementType) throw(CException) = 0;
+                virtual void processBufferElement(typename PriorityQueuedElement<T>::PriorityQueuedElementType) = 0;
                 
             public:
                 CObjectProcessingPriorityQueue():
@@ -152,7 +152,7 @@ namespace chaos {
                 /*
                  Initialization method for output buffer
                  */
-                virtual void init(int threadNumber) throw(CException) {
+                virtual void init(int threadNumber) {
                     boost::unique_lock<boost::mutex>  lock(qMutex);
                     in_deinit = false;
                     COPPQUEUE_LAPP_ << "init";
@@ -167,7 +167,7 @@ namespace chaos {
                     /*
                      Deinitialization method for output buffer
                      */
-                    virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
+                    virtual void deinit(bool waithForEmptyQueue=true) {
                         boost::unique_lock<boost::mutex>  lock(qMutex);
                         COPPQUEUE_LAPP_ << "Deinitialization";
                         

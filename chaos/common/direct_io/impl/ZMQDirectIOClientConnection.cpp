@@ -48,12 +48,12 @@ message_counter(0) {
 
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
-void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
+void ZMQDirectIOClientConnection::init(void *init_data)  {
     int err = 0;
     if((err = ensureSocket()) != 0) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
-void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
+void ZMQDirectIOClientConnection::deinit()  {
     //disable monitor
     releaseSocketPair();
     INFO << "Disabled monitor socket for " << getServerDescription();

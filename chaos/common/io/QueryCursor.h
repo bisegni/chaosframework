@@ -55,7 +55,7 @@ namespace chaos {
                     ~ResultPage();
                     const bool hasNext() const;
                     uint32_t size() const;
-                    ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  throw (chaos::CException);
+                    ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  ;
                 };
                 
                 const std::string query_id;
@@ -114,7 +114,7 @@ namespace chaos {
                 
                 const bool hasNext();
                 const int32_t getError();
-                ChaosSharedPtr<chaos::common::data::CDataWrapper> next() throw (CException);
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> next() ;
                 uint32_t size()const;
                 const uint32_t getPageLen() const;
                 

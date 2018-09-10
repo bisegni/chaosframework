@@ -30,14 +30,14 @@ EventTypeScheduler::EventTypeScheduler():armed(false){}
 
 EventTypeScheduler::~EventTypeScheduler() {}
 
-void EventTypeScheduler::init(int threadNumber) throw(CException) {
+void EventTypeScheduler::init(int threadNumber) {
     DESLAPP_ << "Initializing";
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     CObjectProcessingPriorityQueue<EventDescriptor>::init(threadNumber);
     armed = true;
 }
 
-void EventTypeScheduler::deinit() throw(CException) {
+void EventTypeScheduler::deinit() {
     DESLAPP_ << "Deinitializing ";
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     armed = false;
@@ -47,7 +47,7 @@ void EventTypeScheduler::deinit() throw(CException) {
 
 }
 
-bool EventTypeScheduler::push(EventDescriptor *event) throw(CException) {
+bool EventTypeScheduler::push(EventDescriptor *event) {
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     if(!armed) throw CException(0, "Event can't be processed, scheduler is not armed", "EventTypeScheduler::push");
     uint8_t priority = event->getEventPriority();
@@ -74,7 +74,7 @@ void EventTypeScheduler::removeEventAction(EventAction *eventAction) {
     eventActionList.erase(eventAction->getUUID());
 }
 
-void EventTypeScheduler::processBufferElement(EventDescriptorSPtr event) throw(CException) {
+void EventTypeScheduler::processBufferElement(EventDescriptorSPtr event) {
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     for ( map<string, EventAction*>::iterator iter =  eventActionList.begin();
          iter != eventActionList.end();

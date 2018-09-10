@@ -70,7 +70,7 @@ void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
     map_worker.insert(MapWorkerPair(new_worker->getName(), new_worker));
 }
 
-void AgentRegister::init(void *init_data) throw (chaos::CException) {
+void AgentRegister::init(void *init_data)  {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
     
@@ -79,7 +79,7 @@ void AgentRegister::init(void *init_data) throw (chaos::CException) {
     CHECK_ASSERTION_THROW_AND_LOG((mds_message_channel != NULL), ERROR, -1, "Error creating new mds channel");
 }
 
-void AgentRegister::start() throw (chaos::CException) {
+void AgentRegister::start()  {
     //register rpc action
     NetworkBroker::getInstance()->registerAction(this);
     //start the registering state machine
@@ -89,7 +89,7 @@ void AgentRegister::start() throw (chaos::CException) {
                                                  SM_EXECTION_STEP_MS);
 }
 
-void AgentRegister::stop() throw (chaos::CException) {
+void AgentRegister::stop()  {
     //register rpc action
     NetworkBroker::getInstance()->deregisterAction(this);
     
@@ -106,7 +106,7 @@ void AgentRegister::stop() throw (chaos::CException) {
     
 }
 
-void AgentRegister::deinit() throw (chaos::CException) {
+void AgentRegister::deinit()  {
     if(mds_message_channel) {
         NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
         mds_message_channel = NULL;

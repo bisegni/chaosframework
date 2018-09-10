@@ -96,11 +96,11 @@ AbstractWorker(AgentNodeDomainAndActionRPC::ProcessWorker::RPC_DOMAIN) {
 
 ProcessWorker::~ProcessWorker() {}
 
-void ProcessWorker::init(void *data) throw(chaos::CException) {
+void ProcessWorker::init(void *data)  {
     AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::AgentTimersTimeoutinMSec);
 }
 
-void ProcessWorker::deinit() throw(chaos::CException) {
+void ProcessWorker::deinit()  {
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 

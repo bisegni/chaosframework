@@ -51,7 +51,7 @@ online_retry(0){}
 /*!
  Initialization phase of the channel
  */
-void DeviceMessageChannel::init() throw(CException) {
+void DeviceMessageChannel::init() {
     DMCINFO<< "Try to allocate local mds channel";
     if(self_managed) {
         if((local_mds_channel = getBroker()->getMetadataserverMessageChannel(getMessageRequestDomain())) == NULL) {
@@ -65,7 +65,7 @@ void DeviceMessageChannel::init() throw(CException) {
 /*!
  Initialization phase of the channel
  */
-void DeviceMessageChannel::deinit() throw(CException) {
+void DeviceMessageChannel::deinit() {
     if(self_managed) {
         async_central::AsyncCentralManager::getInstance()->removeTimer(this);
         

@@ -58,13 +58,13 @@ namespace chaos {
          */
         virtual void registerEventAction(chaos::EventAction *eventAction,
                                          chaos::common::event::EventType eventType,
-										 const char * const identificationString = NULL)  throw(CException) = 0;
+										 const char * const identificationString = NULL)  = 0;
         
             //! Event handler deregistration
         /*
             Perform the deregistration of an handler
          */
-        virtual void deregisterEventAction(chaos::EventAction *eventAction)  throw(CException) = 0;
+        virtual void deregisterEventAction(chaos::EventAction *eventAction)  = 0;
     };
     
 }

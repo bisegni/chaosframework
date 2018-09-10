@@ -93,7 +93,7 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
 }
 
 //! called whr the infrastructure need to know how is composed the control unit
-void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  {
     //add the batch command description to the configuration
     SCACU_LAPP_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
     installCommand(BATCH_COMMAND_GET_DESCRIPTION(SCWaitCommand), false);
@@ -122,7 +122,7 @@ AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void SCAbstractControlUnit::init(void *initData) throw(CException) {
+void SCAbstractControlUnit::init(void *initData) {
     //this need to be made first of AbstractControlUnit::init(initData); because
     //SlowCommandExecutor has his own instance of cache and this control unit need to
     //use that
@@ -146,7 +146,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 /*
  Deinit the Control Unit
  */
-void SCAbstractControlUnit::deinit() throw(CException) {
+void SCAbstractControlUnit::deinit() {
     //call parent impl
     
     if(slow_command_executor) {
@@ -164,7 +164,7 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 /*
  Starto the  Control Unit scheduling for node
  */
-void SCAbstractControlUnit::start() throw(CException) {
+void SCAbstractControlUnit::start() {
     //call parent impl
     AbstractControlUnit::start();
     
@@ -175,7 +175,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 /*
  Stop the Custom Control Unit scheduling for node
  */
-void SCAbstractControlUnit::stop() throw(CException) {
+void SCAbstractControlUnit::stop() {
     //call parent impl
     AbstractControlUnit::stop();
     
@@ -240,7 +240,7 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                                uint32_t priority,
                                                uint32_t submission_rule,
                                                uint32_t submission_retry_delay,
-                                               uint64_t scheduler_step_delay)  throw (CException) {
+                                               uint64_t scheduler_step_delay)   {
     CHAOS_ASSERT(slow_command_executor)
     slow_command_executor->submitCommand(batch_command_alias,
                                          command_data,

@@ -57,22 +57,22 @@ namespace chaos{
                 uint64_t last_execution_ts;
                 
                 //!inherited method
-                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
+                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! inherited method
-                void unitRun() throw(CException);
+                void unitRun();
                 
                 //! inherited method
-                void unitInit() throw(CException);
+                void unitInit();
                 
                 //! inherited method
-                void unitStart() throw(CException);
+                void unitStart();
                 
                 //! inherited method
-                void unitStop() throw(CException);
+                void unitStop();
                 
                 //! inherited method
-                void unitDeinit() throw(CException);
+                void unitDeinit();
             protected:
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
@@ -179,10 +179,10 @@ namespace chaos{
                                      chaos::common::data::CDataVariant& value);
                 
                 //!Event for notify that alghortim is going to be executed
-                virtual void executeAlgorithmLaunch() throw (CException) = 0;
+                virtual void executeAlgorithmLaunch()  = 0;
                 
                 //!Event for notify that alghortim is going to start
-                virtual void executeAlgorithmStart() throw (CException) = 0;
+                virtual void executeAlgorithmStart()  = 0;
                 
                 //!perform a step of the algorithm
                 /*!
@@ -191,13 +191,13 @@ namespace chaos{
                  \ingroup Execution_Unit_User_Api
                  /param step_delay_time is the delay form the last step of the algorithm
                  */
-                virtual void executeAlgorithmStep(uint64_t step_delay_time) throw (CException) = 0;
+                virtual void executeAlgorithmStep(uint64_t step_delay_time)  = 0;
                 
                 //!Event for notify that alghorithm is going to stop it's execution
-                virtual void executeAlgorithmStop() throw (CException) = 0;
+                virtual void executeAlgorithmStop()  = 0;
                 
                 //!Event for notify that alghorithm is going to end the execution
-                virtual void executeAlgorithmEnd() throw (CException) = 0;
+                virtual void executeAlgorithmEnd()  = 0;
             public:
                 
                 /*! default constructor

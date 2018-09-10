@@ -54,7 +54,7 @@ command_queue(new DriverQueueType()){}
 AbstractDriver::~AbstractDriver() {}
 
 // Initialize instance
-void AbstractDriver::init(void *init_param) throw(chaos::CException) {
+void AbstractDriver::init(void *init_param)  {
     driver_need_to_deinitialize = false;
     
     //!try to decode parameter string has json document
@@ -110,7 +110,7 @@ void AbstractDriver::init(void *init_param) throw(chaos::CException) {
 }
 
 // Deinit the implementation
-void AbstractDriver::deinit() throw(chaos::CException) {
+void AbstractDriver::deinit()  {
     ADLAPP_ << "Call custom driver deinitialization";
     // driverDeinit();
     DrvMsg deinit_msg;
@@ -287,7 +287,7 @@ void AbstractDriver::scanForMessage() {
     ADLAPP_ << "Scanner thread terminated for driver["<<driver_uuid<<"]";
 }
 
-void AbstractDriver::driverInit(const chaos::common::data::CDataWrapper& data) throw(chaos::CException){
+void AbstractDriver::driverInit(const chaos::common::data::CDataWrapper& data) {
     ADLERR_<<"driver "<<identification_string<<" has json parameters you should implement driverInit(const chaos::common::data::CDataWrapper& data) initialization";
     driverInit(data.getCompliantJSONString().c_str());
 }

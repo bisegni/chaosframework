@@ -168,19 +168,19 @@ namespace chaos {
                                                                     uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
-                int sayHello() throw (chaos::CException);
+                int sayHello() ;
             public:
                 //! inherited method
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data) ;
                 
                 //! inherited method
-                void start() throw (chaos::CException);
+                void start() ;
                 
                 //! inherited method
-                void stop() throw (chaos::CException);
+                void stop() ;
                 
                 //! inherited method
-                void deinit() throw (chaos::CException);
+                void deinit() ;
                 
                 //! return the const info for the calculater proc info state
                 const ProcInfo& getLastProcInfo();

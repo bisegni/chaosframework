@@ -107,9 +107,9 @@ namespace chaos{
                                chaos_io::IODataDriver *_io_data_driver);
                 virtual ~KeyDataStorage();
                 
-                void init(void *init_parameter) throw (chaos::CException);
+                void init(void *init_parameter) ;
                 
-                void deinit() throw (chaos::CException);
+                void deinit() ;
                 /*
                  Return a new instace for the CSDatawrapped
                  */

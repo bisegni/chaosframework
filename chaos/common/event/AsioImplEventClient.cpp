@@ -52,7 +52,7 @@ socket_custom(NULL) {
 
 AsioImplEventClient::~AsioImplEventClient() {}
 
-void AsioImplEventClient::init(void* initParameter) throw(CException) {
+void AsioImplEventClient::init(void* initParameter) {
     threadNumber = 1;
     //alertForwrder
     CREATE_EVENT_SOCKET(socket_alert,
@@ -80,7 +80,7 @@ void AsioImplEventClient::init(void* initParameter) throw(CException) {
     CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
 }
 
-void AsioImplEventClient::start() throw(CException) {
+void AsioImplEventClient::start() {
     for (int idx = 0; idx < threadNumber; idx++) {
         //create the handler
         // ChaosSharedPtr<thread> thread();
@@ -88,9 +88,9 @@ void AsioImplEventClient::start() throw(CException) {
     }
 }
 
-void AsioImplEventClient::stop() throw(CException) {}
+void AsioImplEventClient::stop() {}
 
-void AsioImplEventClient::deinit() throw(CException) {
+void AsioImplEventClient::deinit() {
     DELETE_EVENT_SOCKET(socket_alert);
     DELETE_EVENT_SOCKET(socket_instrument);
     DELETE_EVENT_SOCKET(socket_command);
@@ -104,7 +104,7 @@ void AsioImplEventClient::deinit() throw(CException) {
     service_thread_group.join_all();
 }
 
-void AsioImplEventClient::processBufferElement(EventDescriptorSPtr event) throw(CException) {
+void AsioImplEventClient::processBufferElement(EventDescriptorSPtr event) {
         switch (event->getEventType()) {
             case event::EventTypeAlert:
                 SEND_EVENT_DATA(socket_alert, event);
@@ -121,7 +121,7 @@ void AsioImplEventClient::processBufferElement(EventDescriptorSPtr event) throw(
         }
 }
 
-bool AsioImplEventClient::submitEvent(EventDescriptorSPtr event)  throw(CException) {
+bool AsioImplEventClient::submitEvent(EventDescriptorSPtr event)  {
     uint8_t priority = event->getEventPriority();
     return CObjectProcessingPriorityQueue<EventDescriptor>::push(MOVE(event), priority);
 }

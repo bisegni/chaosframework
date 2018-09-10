@@ -50,13 +50,13 @@ AttributeValueSharedCache::~AttributeValueSharedCache() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValueSharedCache::init(void *initData) throw(chaos::CException) {
+void AttributeValueSharedCache::init(void *initData)  {
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValueSharedCache::deinit() throw(chaos::CException) {
+void AttributeValueSharedCache::deinit()  {
     //reset the input channel setting
     input_set.reset();
     

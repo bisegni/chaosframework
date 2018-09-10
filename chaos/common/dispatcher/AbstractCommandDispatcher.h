@@ -99,20 +99,20 @@ namespace chaos{
         
         ~AbstractCommandDispatcher();
         
-        virtual void init(void *init_data)  throw(CException);
+        virtual void init(void *init_data) ;
         
         //-----------------------
-        virtual void start() throw(CException);
+        virtual void start();
         
         //-----------------------
-        virtual void stop() throw(CException);
+        virtual void stop();
         
-        virtual void deinit()  throw(CException);
+        virtual void deinit() ;
         
         /*
          update the dispatcher configuration
          */
-        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException);
+        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*) ;
         
         //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to
@@ -130,7 +130,7 @@ namespace chaos{
          */
         bool submitMessage(const string& server_port,
                            chaos::common::data::CDWUniquePtr message,
-                           bool onThisThread = false) throw(CException);
+                           bool onThisThread = false);
         
         //! Action registration
         /*
@@ -138,7 +138,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) = 0;
+        virtual void registerAction(DeclareAction *declareActionClass)  = 0;
         
         //! Action deregistration
         /*
@@ -146,7 +146,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) = 0;
+        virtual void deregisterAction(DeclareAction *declareActionClass)  = 0;
         
         virtual bool hasDomain(const std::string& domain_name) = 0;
         

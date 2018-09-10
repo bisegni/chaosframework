@@ -38,12 +38,12 @@ AbstractPersistenceDriver::~AbstractPersistenceDriver() {
 
 
 // Initialize the driver
-void AbstractPersistenceDriver::init(void *init_data) throw (chaos::CException) {
+void AbstractPersistenceDriver::init(void *init_data)  {
     
 }
 
 // deinitialize the driver
-void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
+void AbstractPersistenceDriver::deinit()  {
     for(MapDAIterator i = map_data_access.begin();
         i != map_data_access.end();
         i++) {

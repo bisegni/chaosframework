@@ -68,16 +68,16 @@ namespace chaos{
 				/*
 				 * Initzialize the datamanager
 				 */
-				void init(void *initParamter) throw(CException);
+				void init(void *initParamter);
 				/*
 				 * Deinitzialize the datamanager
 				 */
-				void deinit() throw(CException);
+				void deinit();
 				
 				/*
 				 * Start all sub process
 				 */
-				void start() throw(CException);
+				void start();
 				
 				/*
 				 Configure the sandbox and all subtree of the CU
@@ -86,27 +86,27 @@ namespace chaos{
 				/*
 				 *
 				 */
-				KeyDataStorage *getKeyDataStorageNewInstanceForKey(const std::string& device_id) throw(CException);
+				KeyDataStorage *getKeyDataStorageNewInstanceForKey(const std::string& device_id);
 				//-------per test------
 				/*
 				 * Return an instance for the configured data live driver
 				 */
-				chaos_io::IODataDriver *getDataLiveDriverNewInstance() throw(CException);
+				chaos_io::IODataDriver *getDataLiveDriverNewInstance();
 				
 				/*
 				 Initialize a device id KeyDataStorageBuffer
 				 */
-				void initDeviceIDKeyDataStorage(const std::string &device_id, chaos_data::CDataWrapper*) throw(CException);
+				void initDeviceIDKeyDataStorage(const std::string &device_id, chaos_data::CDataWrapper*);
 				
 				/*
 				 Initialize a device id KeyDataStorageBuffer
 				 */
-				void deinitDeviceIDKeyDataStorage(const std::string &device_id) throw(CException);
+				void deinitDeviceIDKeyDataStorage(const std::string &device_id);
 				
 				/*
 				 Submit a CDataWrapper on device id KeyDataStorage
 				 */
-				void pushDeviceDataByIdKey(const std::string& device_id, chaos_data::CDWShrdPtr dataset) throw(CException);
+				void pushDeviceDataByIdKey(const std::string& device_id, chaos_data::CDWShrdPtr dataset);
 				
 				/*
 				 return a new instance of CDataWrapper filled with a mandatory data

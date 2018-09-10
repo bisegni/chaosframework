@@ -94,9 +94,9 @@ n::~n(){}
                 //d! efault destructor
                 virtual ~AbstractApi();
                 
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data) ;
                 
-                void deinit()  throw (chaos::CException);
+                void deinit()  ;
                 
                 //! execute the api
                 virtual chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data) = 0;

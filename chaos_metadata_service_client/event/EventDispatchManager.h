@@ -77,10 +77,10 @@ namespace chaos {
                 ~EventDispatchManager();
                 
                 //!inherited by InizializableService
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data) ;
                 
                 //!inherited by InizializableService
-                void deinit() throw (chaos::CException);
+                void deinit() ;
                 
                 void handleEvent(const chaos::common::event::EventDescriptor * const event);
             public:

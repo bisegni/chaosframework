@@ -36,7 +36,7 @@ network_broker(_network_broker){}
 
 MonitorManager::~MonitorManager() {}
 
-void MonitorManager::init(void *init_data) throw (chaos::CException) {
+void MonitorManager::init(void *init_data)  {
     CHAOS_LASSERT_EXCEPTION(network_broker, MM_ERR, -1, "No network broker instance found")
     if(slot_scheduler==NULL){
     	slot_scheduler = new QuantumSlotScheduler(network_broker);
@@ -46,7 +46,7 @@ void MonitorManager::init(void *init_data) throw (chaos::CException) {
     StartableService::initImplementation(slot_scheduler, init_data, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
 }
 
-void MonitorManager::start() throw (chaos::CException) {
+void MonitorManager::start()  {
     StartableService::startImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
     
     //add timer for purge operation
@@ -55,7 +55,7 @@ void MonitorManager::start() throw (chaos::CException) {
                                                  5000);
 }
 
-void MonitorManager::stop() throw (chaos::CException) {
+void MonitorManager::stop()  {
     //remove time for purge oepration
     AsyncCentralManager::getInstance()->removeTimer(this);
     
@@ -66,7 +66,7 @@ void MonitorManager::stop() throw (chaos::CException) {
     StartableService::stopImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
 }
 
-void MonitorManager::deinit() throw (chaos::CException) {
+void MonitorManager::deinit()  {
     StartableService::deinitImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
     if(slot_scheduler){
     	delete slot_scheduler;

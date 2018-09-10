@@ -174,21 +174,21 @@ void ChaosCUToolkit::closeUIToolkit() {
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosCUToolkit::init(int argc, const char* argv[]) throw (CException) {
+void ChaosCUToolkit::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosCUToolkit>::init(argc, argv);
 }
 //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
-void ChaosCUToolkit::init(istringstream &initStringStream) throw (CException) {
+void ChaosCUToolkit::init(istringstream &initStringStream)  {
     ChaosCommon<ChaosCUToolkit>::init(initStringStream);
 }
 
 /*
  *
  */
-void ChaosCUToolkit::init(void *init_data)  throw(CException) {
+void ChaosCUToolkit::init(void *init_data)  {
     try {
         ChaosCommon<ChaosCUToolkit>::init(init_data);
         LAPP_ << "Initializing !CHAOS Control Unit System";
@@ -254,7 +254,7 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
 /*
  *
  */
-void ChaosCUToolkit::start() throw(CException){
+void ChaosCUToolkit::start(){
     try {
         ChaosCommon<ChaosCUToolkit>::start();
         LAPP_ << "Starting !CHAOS Control Unit System";
@@ -282,7 +282,7 @@ void ChaosCUToolkit::start() throw(CException){
 /*
  Stop the toolkit execution
  */
-void ChaosCUToolkit::stop() throw(CException) {
+void ChaosCUToolkit::stop() {
     LAPP_ << "Stopping !CHAOS Control Unit System";
     CHAOS_NOT_THROW(StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
     CHAOS_NOT_THROW(StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
@@ -295,7 +295,7 @@ void ChaosCUToolkit::stop() throw(CException) {
 /*
  Deiniti all the manager
  */
-void ChaosCUToolkit::deinit() throw(CException) {
+void ChaosCUToolkit::deinit() {
     LAPP_ << "Deinitilizzating !CHAOS Control Unit System";
     if(GlobalConfiguration::getInstance()->hasOption(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE) &&
        GlobalConfiguration::getInstance()->getOption<bool>(chaos::common::external_unit::InitOption::OPT_UNIT_GATEWAY_ENABLE)) {

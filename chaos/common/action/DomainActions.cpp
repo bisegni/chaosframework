@@ -37,7 +37,7 @@ DomainActions::~DomainActions() {
 /*
  Add an action descriptor to this domain
  */
-bool DomainActions::addActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr)  throw(CException){
+bool DomainActions::addActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr) {
     //check if the poitner is valid
     if(!actionDescriptorPtr) return false;
     
@@ -53,7 +53,7 @@ bool DomainActions::addActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr
 /*
  remove an action identified by it's descriptor
  */
-void DomainActions::removeActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr)  throw(CException){
+void DomainActions::removeActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr) {
     //check if the poitner is valid
     if(!actionDescriptorPtr) return;
     

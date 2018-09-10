@@ -136,7 +136,7 @@ namespace chaos {
                 /*!
                  Find the right chaos address of the device
                  */
-                void updateChannel() throw(CException);
+                void updateChannel();
                 /**
                  * return the number of output channels
                  * @return return the nyumber of predefined output channels

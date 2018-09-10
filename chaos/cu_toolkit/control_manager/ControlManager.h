@@ -244,29 +244,29 @@ namespace chaos {
                 /*
                  Submit a new Control unit instance
                  */
-                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException);
+                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance);
 			public:
 				
 				/*
 				 Initialize the Control Manager
 				 */
-				void init(void *initParameter) throw(CException);
+				void init(void *initParameter);
 				
 				/*
 				 Start the Control Manager
 				 */
-				void start() throw(CException);
+				void start();
 				
 				
 				/*!
 				 Stop the control manager
 				 */
-				void stop() throw(CException);
+				void stop();
 				
 				/*
 				 Deinitialize the Control Manager
 				 */
-				void deinit() throw(CException);
+				void deinit();
 				
                 //! allota a new control unit proxy
                 void setProxyCreationHandler(ProxyLoadHandler load_handler);

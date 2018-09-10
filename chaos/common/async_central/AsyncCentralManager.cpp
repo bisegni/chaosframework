@@ -42,7 +42,7 @@ asio_default_work(asio_service) {}
 AsyncCentralManager::~AsyncCentralManager() {}
 
 // Initialize instance
-void AsyncCentralManager::init(void *init_data) throw(chaos::CException) {
+void AsyncCentralManager::init(void *init_data)  {
     ACM_LAPP_ << "Allocating event loop";
     asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_service));
     
@@ -55,7 +55,7 @@ void AsyncCentralManager::init(void *init_data) throw(chaos::CException) {
 }
 
 // Deinit the implementation
-void AsyncCentralManager::deinit() throw(chaos::CException) {
+void AsyncCentralManager::deinit()  {
     ACM_LAPP_ << "Stop job async runner";
     utility::InizializableService::deinitImplementation(*async_pool_runner,
                                                         "AsyncPoolRunner",

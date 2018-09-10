@@ -38,11 +38,11 @@ EventChannel::~EventChannel() {
     
 }
 
-void EventChannel::init() throw (CException) {
+void EventChannel::init()  {
     
 }
 
-void EventChannel::deinit() throw (CException) {
+void EventChannel::deinit()  {
 }
 
 void EventChannel::_activateChannelEventReception(EventAction *event_action,

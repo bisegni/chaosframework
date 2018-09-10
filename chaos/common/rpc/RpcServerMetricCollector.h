@@ -52,22 +52,22 @@ namespace chaos {
                 /*
                  init the rpc adapter
                  */
-                virtual void init(void*) throw(CException);
+                virtual void init(void*);
                 
                 /*
                  start the rpc adapter
                  */
-                virtual void start() throw(CException);
+                virtual void start();
                 
                 /*
                  start the rpc adapter
                  */
-                virtual void stop() throw(CException);
+                virtual void stop();
                 
                 /*
                  deinit the rpc adapter
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
                 
                 /*!
                  Return the published port

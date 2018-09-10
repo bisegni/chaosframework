@@ -58,8 +58,8 @@ namespace chaos {
             public:
                 ProcessWorker();
                 ~ProcessWorker();
-                void init(void *data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *data) ;
+                void deinit() ;
                 
                 void addToRespawn(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 

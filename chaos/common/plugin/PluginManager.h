@@ -112,8 +112,8 @@ namespace chaos{
             public:
                 PluginManager(const std::string& _plugin_directory);
                 ~PluginManager();
-                void init(void *init_data) throw(CException);
-                void deinit() throw(CException);
+                void init(void *init_data);
+                void deinit();
                 bool getRegisterdPluginForSubclass(const std::string& plugin_subclass,
                                                    ChaosStringVector& registered_plugin);
                 template<typename C>

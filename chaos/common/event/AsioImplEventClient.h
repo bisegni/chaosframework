@@ -48,28 +48,28 @@ namespace chaos {
                 /*
                  init the event adapter
                  */
-                void init(void*) throw(CException);
+                void init(void*);
                 
                 /*
                  start the event adapter
                  */
-                void start() throw(CException);
+                void start();
                 
                 //-----------------------
-                void stop() throw(CException);
+                void stop();
                 
                 /*
                  deinit the event adapter
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptorSPtr priorityElement) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement);
                 
             public:
                 AsioImplEventClient(string alias);
                 ~AsioImplEventClient();
-                bool submitEvent(EventDescriptorSPtr event)  throw(CException);
+                bool submitEvent(EventDescriptorSPtr event) ;
             private:
                 boost::asio::ip::udp::socket *socket_alert;
                 boost::asio::ip::udp::socket *socket_instrument;

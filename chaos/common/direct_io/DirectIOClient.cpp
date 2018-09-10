@@ -59,13 +59,13 @@ void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *cl
 }
 
 //! Initialize instance
-void DirectIOClient::init(void *init_data) throw(chaos::CException) {
+void DirectIOClient::init(void *init_data)  {
     
 }
 
 
 //! Deinit the implementation
-void DirectIOClient::deinit() throw(chaos::CException) {
+void DirectIOClient::deinit()  {
     map_shared_collectors.clear();
 }
 

@@ -77,16 +77,16 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, const char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]) ;
             //!stringbuffer parser
             /*
              specialized option for string stream buffer with boost semantics
              */
-            void init(istringstream &initStringStream) throw (CException);
-            void init(void *init_data)  throw(CException);
-            void start()throw(CException);
-            void stop()throw(CException);
-            void deinit()throw(CException);
+            void init(istringstream &initStringStream) ;
+            void init(void *init_data) ;
+            void start();
+            void stop();
+            void deinit();
         };
     }
 }

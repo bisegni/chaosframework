@@ -27,9 +27,9 @@ driver_protocol(_driver_protocol){CHAOS_ASSERT(driver_protocol)}
 
 OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
 
-void OpcodeExternalCommandMapper::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {}
+void OpcodeExternalCommandMapper::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {}
 
-void OpcodeExternalCommandMapper::driverDeinit() throw(chaos::CException) {}
+void OpcodeExternalCommandMapper::driverDeinit()  {}
 
 int OpcodeExternalCommandMapper::sendRawRequest(chaos::common::data::CDWUniquePtr message_data,
                                                 chaos::common::data::CDWShrdPtr& message_response,

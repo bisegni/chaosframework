@@ -91,12 +91,12 @@ namespace chaos {
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void init() throw(CException);
+                virtual void init();
                 
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
                 
                 //! request result introspection
                 /*!

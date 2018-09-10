@@ -28,11 +28,11 @@ using namespace chaos::common::data;
 using namespace chaos::common::async_central;
 using namespace chaos::cu::driver_manager::driver;
 
-void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
+void AbstractClientRemoteIODriver::driverInit(const char *initParameter)  {
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
 
-void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
     int err = 0;
     std::string content_type = "application/json";
     CHECK_MANDATORY_KEY(const_cast<const CDataWrapper *>(&init_parameter) , "url", ERR, -2);
@@ -71,7 +71,7 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
 }
 
-void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
+void AbstractClientRemoteIODriver::driverDeinit()  {
     //deinit driver  will send the deinitlization message to remote layer
     DBG<<"deinitializing  remote driver";
 

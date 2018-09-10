@@ -31,7 +31,7 @@ abstract_persistance_driver(NULL){}
 
 MDSCronusManager::~MDSCronusManager() {}
 
-void MDSCronusManager::init(void *init_data) throw(chaos::CException) {
+void MDSCronusManager::init(void *init_data)  {
     CronusManager::init(init_data);
     std::string job_string;
     addJob(new MDSHistoryAgeingManagement(NULL),
@@ -40,7 +40,7 @@ void MDSCronusManager::init(void *init_data) throw(chaos::CException) {
            ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time*1000);
 }
 
-void MDSCronusManager::deinit() throw(chaos::CException) {
+void MDSCronusManager::deinit()  {
     CronusManager::deinit();
 }
 

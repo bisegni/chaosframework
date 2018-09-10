@@ -51,21 +51,21 @@ WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosMetadataService::init(int argc, const char* argv[]) throw (CException) {
+void ChaosMetadataService::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosMetadataService>::init(argc, argv);
 }
 //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
-void ChaosMetadataService::init(istringstream &initStringStream) throw (CException) {
+void ChaosMetadataService::init(istringstream &initStringStream)  {
     ChaosCommon<ChaosMetadataService>::init(initStringStream);
 }
 
 /*
  *
  */
-void ChaosMetadataService::init(void *init_data)  throw(CException) {
+void ChaosMetadataService::init(void *init_data)  {
     try {
         ChaosCommon<ChaosMetadataService>::init(init_data);
         
@@ -166,7 +166,7 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 /*
  *
  */
-void ChaosMetadataService::start()  throw(CException) {
+void ChaosMetadataService::start()  {
     //lock o monitor for waith the end
     try {
         ChaosCommon<ChaosMetadataService>::start();
@@ -229,7 +229,7 @@ void ChaosMetadataService::timeout() {
 /*
  Stop the toolkit execution
  */
-void ChaosMetadataService::stop() throw(CException) {
+void ChaosMetadataService::stop() {
     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     
     //stop data consumer
@@ -246,7 +246,7 @@ void ChaosMetadataService::stop() throw(CException) {
 /*
  Deiniti all the manager
  */
-void ChaosMetadataService::deinit() throw(CException) {
+void ChaosMetadataService::deinit() {
     InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);

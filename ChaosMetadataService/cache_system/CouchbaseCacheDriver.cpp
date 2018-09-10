@@ -140,7 +140,7 @@ CouchbaseCacheDriver::~CouchbaseCacheDriver() {
 }
 
 //! init
-void CouchbaseCacheDriver::init(void *init_data) throw (chaos::CException) {
+void CouchbaseCacheDriver::init(void *init_data)  {
     //call superclass init
     CacheDriver::init(init_data);
     
@@ -158,7 +158,7 @@ void CouchbaseCacheDriver::init(void *init_data) throw (chaos::CException) {
 }
 
 //!deinit
-void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
+void CouchbaseCacheDriver::deinit()  {
     //call superclass deinit
     CacheDriver::deinit();
 }

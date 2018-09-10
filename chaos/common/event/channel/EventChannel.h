@@ -59,9 +59,9 @@ namespace chaos {
                     
                     virtual ~EventChannel();
                     
-                    void init() throw (CException);
+                    void init() ;
                     
-                    void deinit() throw (CException);
+                    void deinit() ;
                     
                     int sendRawEvent(EventDescriptor *newEvent);
                     

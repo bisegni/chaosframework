@@ -27,9 +27,9 @@ AbstractClientAdapter::AbstractClientAdapter() {}
 
 AbstractClientAdapter::~AbstractClientAdapter() {}
 
-void AbstractClientAdapter::init(void *init_data) throw (chaos::CException) {}
+void AbstractClientAdapter::init(void *init_data)  {}
 
-void AbstractClientAdapter::deinit() throw (chaos::CException) {}
+void AbstractClientAdapter::deinit()  {}
 
 int AbstractClientAdapter::sendDataToEndpoint(ExternalUnitConnection& connection,
                                         chaos::common::data::CDBufferUniquePtr received_data) {

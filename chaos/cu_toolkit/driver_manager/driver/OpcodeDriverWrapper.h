@@ -52,13 +52,13 @@ namespace chaos {
                     opcode_ext_cmd_mapper(new OpExCMDAdaptor(this)){}
                     ~OpcodeDriverWrapper() {}
                     
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
                         ExtDriverImpl::driverInit(init_parameter);
                         /* cannot be called before the instance is created*/
                         opcode_ext_cmd_mapper->driverInit(init_parameter);
                     }
                     
-                    void driverDeinit() throw(chaos::CException) {
+                    void driverDeinit()  {
                         opcode_ext_cmd_mapper->driverDeinit();
                         ExtDriverImpl::driverDeinit();
                     }

@@ -269,7 +269,7 @@ namespace chaos {
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void init(int argc, const char* argv[]) throw (CException) {
+        void init(int argc, const char* argv[])  {
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
@@ -280,7 +280,7 @@ namespace chaos {
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void init(std::istream &initStream) throw (CException) {
+        void init(std::istream &initStream)  {
             GlobalConfiguration::getInstance()->parseStringStream(initStream);
             init(NULL);
         }
@@ -290,7 +290,7 @@ namespace chaos {
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        void init(void *init_data) throw (CException) {
+        void init(void *init_data)  {
             int err = 0;
             struct utsname u_name;
             if(initialized)
@@ -373,7 +373,7 @@ namespace chaos {
             }
         }
                 
-        void deinit() throw (CException) {
+        void deinit()  {
             if(deinitialized) return;
             deinitialized=true;
             initialized = false;
@@ -394,8 +394,8 @@ namespace chaos {
             chaos::common::log::LogManager::getInstance()->deinit();
         }
                 
-        void start() throw (CException) {}
-        void stop() throw (CException) {}
+        void start()  {}
+        void stop()  {}
                 
         GlobalConfiguration *getGlobalConfigurationInstance() {
             return GlobalConfiguration::getInstance();

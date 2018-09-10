@@ -78,7 +78,7 @@ void IODirectIODriver::setDirectIOParam(IODirectIODriverInitParam& _init_paramet
     //init_parameter = _init_parameter;
 }
 
-void IODirectIODriver::init(void *_init_parameter) throw(CException) {
+void IODirectIODriver::init(void *_init_parameter) {
     shutting_down = false;
     IODataDriver::init(_init_parameter);
     
@@ -106,7 +106,7 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
     
 }
 
-void IODirectIODriver::deinit() throw(CException) {
+void IODirectIODriver::deinit() {
     if(shutting_down){
             IODirectIODriver_LINFO_ << "Already deinitialized";
         return;
@@ -148,7 +148,7 @@ void IODirectIODriver::deinit() throw(CException) {
 int IODirectIODriver::storeData(const std::string& key,
                                     CDWShrdPtr data_to_store,
                                  DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                 const ChaosStringSet& tag_set)  throw(CException) {
+                                 const ChaosStringSet& tag_set)  {
     int err = 0;
     CHAOS_ASSERT(data_to_store)
     ChaosReadLock rl(mutext_feeder);
@@ -173,7 +173,7 @@ int IODirectIODriver::storeData(const std::string& key,
 int IODirectIODriver::storeHealthData(const std::string& key,
                                        CDWShrdPtr data_to_store,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                       const ChaosStringSet& tag_set) throw(CException) {
+                                       const ChaosStringSet& tag_set) {
     int err = 0;
     CHAOS_ASSERT(data_to_store)
     try{
@@ -199,7 +199,7 @@ int IODirectIODriver::storeHealthData(const std::string& key,
     return err;
 }
 
-char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
+char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  {
     char* result = NULL;
 
     boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
@@ -218,7 +218,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 }
 
 int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
-                                          chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) {
+                                          chaos::common::data::VectorCDWShrdPtr& result)  {
     ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;
@@ -233,7 +233,7 @@ int IODirectIODriver::retriveMultipleData(const ChaosStringVector& key,
 
 int IODirectIODriver::removeData(const std::string& key,
                                  uint64_t start_ts,
-                                 uint64_t end_ts) throw(CException) {
+                                 uint64_t end_ts) {
     ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return -1;

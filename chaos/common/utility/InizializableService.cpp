@@ -44,11 +44,11 @@ InizializableService::~InizializableService() {
 }
 
 //! Initialize instance
-void InizializableService::init(void*) throw(chaos::CException) {
+void InizializableService::init(void*)  {
 }
 
 //! Deinit the implementation
-void InizializableService::deinit() throw(chaos::CException) {
+void InizializableService::deinit()  {
     
 }
     //! Return the state

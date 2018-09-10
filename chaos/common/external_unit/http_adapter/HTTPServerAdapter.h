@@ -84,7 +84,7 @@ namespace chaos{
                                                    const EUCMessageOpcode opcode);
                     void executeOpcodeOnConnection(OpcodeShrdPtr op, mg_connection *nc);
                 protected:
-                    void processBufferElement(ChaosSharedPtr<ServerWorkRequest> request) throw(CException);
+                    void processBufferElement(ChaosSharedPtr<ServerWorkRequest> request);
                     int sendDataToConnection(const std::string& connection_identifier,
                                              chaos::common::data::CDBufferUniquePtr data,
                                              const EUCMessageOpcode opcode);
@@ -92,8 +92,8 @@ namespace chaos{
                 public:
                     HTTPServerAdapter();
                     ~HTTPServerAdapter();
-                    void init(void *init_data) throw (chaos::CException);
-                    void deinit() throw (chaos::CException);
+                    void init(void *init_data) ;
+                    void deinit() ;
                     int registerEndpoint(ExternalUnitServerEndpoint& endpoint);
                     int deregisterEndpoint(ExternalUnitServerEndpoint& endpoint);
                 };

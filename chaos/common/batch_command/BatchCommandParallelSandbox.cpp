@@ -53,22 +53,22 @@ thread_run(false){}
 
 BatchCommandParallelSandbox::~BatchCommandParallelSandbox() {}
 
-void BatchCommandParallelSandbox::init(void *init_data) throw(CException) {
+void BatchCommandParallelSandbox::init(void *init_data) {
     
 }
 
-void BatchCommandParallelSandbox::start() throw(CException) {
+void BatchCommandParallelSandbox::start() {
     thread_run = true;
     thread_group.add_thread(new boost::thread(boost::bind(&BatchCommandParallelSandbox::runCommand, this)));
 }
 
-void BatchCommandParallelSandbox::stop() throw(CException) {
+void BatchCommandParallelSandbox::stop() {
     thread_run = false;
     sem_waith_for_job.unlock();
     thread_group.join_all();
 }
 
-void BatchCommandParallelSandbox::deinit() throw(CException) {
+void BatchCommandParallelSandbox::deinit() {
     
 }
 
@@ -234,7 +234,7 @@ void BatchCommandParallelSandbox::killCurrentCommand() {}
 void BatchCommandParallelSandbox::clearCommandQueue() {}
 void BatchCommandParallelSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {}
 void BatchCommandParallelSandbox::lockCurrentCommandFeature(bool lock) {}
-void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {}
+void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features)  {}
 void BatchCommandParallelSandbox::setDefaultStickyCommand(BatchCommand *sticky_command) {}
 
 bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,

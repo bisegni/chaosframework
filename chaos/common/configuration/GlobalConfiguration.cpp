@@ -52,7 +52,7 @@ GlobalConfiguration::~GlobalConfiguration(){}
 /*
  
  */
-void GlobalConfiguration::preParseStartupParameters() throw (CException) {
+void GlobalConfiguration::preParseStartupParameters()  {
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
@@ -114,14 +114,14 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException) {
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void GlobalConfiguration::parseStartupParameters(int argc, const char* argv[]) throw (CException) {
+void GlobalConfiguration::parseStartupParameters(int argc, const char* argv[])  {
     parseParameter(po::parse_command_line(argc, argv, desc));
 }
 //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
-void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions) throw (CException) {
+void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions)  {
     parseParameter(po::parse_config_file(sStreamOptions, desc));
 }
 
@@ -129,7 +129,7 @@ void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions) throw 
 /*
  Conver the string into enumeration for the log level
  */
-int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException) {
+int32_t GlobalConfiguration::filterLogLevel(string& levelStr)  {
     chaos::common::log::level::LogSeverityLevel level = chaos::common::log::level::LSLInfo;
     
     if (levelStr == "info")
@@ -148,7 +148,7 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
     return static_cast< int32_t >(level);
 }
 
-void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[]) throw (CException) {
+void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
     try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -160,7 +160,7 @@ void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[]) thr
     }
 }
 
-void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw (CException) {
+void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
     try{
         //
         po::store(po::parse_config_file(config_file, desc), vm);
@@ -173,7 +173,7 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
     }
 }
 
-void GlobalConfiguration::scanOption()  throw (CException) {
+void GlobalConfiguration::scanOption()   {
     try {
         if (hasOption(InitOption::OPT_HELP)) {
             std::cout << desc;
@@ -199,7 +199,7 @@ void GlobalConfiguration::scanOption()  throw (CException) {
 /*
  parse the tandard startup parameters
  */
-void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException){
+void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) {
     //int rpcServerPort;
     //int rpcServerThreadNumber;
     //string metadataServerAddress;
@@ -221,7 +221,7 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     //check the default option
     checkDefaultOption();
 }
-void GlobalConfiguration::checkDefaultOption() throw (CException) {
+void GlobalConfiguration::checkDefaultOption()  {
     configuration.reset(new CDataWrapper());
     //now we can fill the gloabl configuration
     //start with getting log configuration
@@ -376,7 +376,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
  Add a custom option
  */
 void GlobalConfiguration::addOption(const char* name,
-                                    const char* description) throw (CException){
+                                    const char* description) {
     try{
         desc.add_options()(name, description);
     }catch (po::error &e) {
@@ -389,7 +389,7 @@ void GlobalConfiguration::addOption(const char* name,
  */
 void GlobalConfiguration::addOption(const char* name,
                                     const po::value_semantic* s,
-                                    const char* description) throw (CException){
+                                    const char* description) {
     try {
         desc.add_options()(name, s, description);
     }catch (po::error &e) {
@@ -402,7 +402,7 @@ void GlobalConfiguration::addOption(const char* name,
  */
 void GlobalConfiguration::addOptionZeroTokens(const char* name,
                                               const char* description,
-                                              bool *default_variable)  throw (CException) {
+                                              bool *default_variable)   {
     try{
         addOption(name, po::value< bool >(default_variable)->zero_tokens(), description);
     }catch (po::error &e) {
@@ -456,7 +456,7 @@ void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
 /**
  *Add the metadataserver address
  */
-void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) throw (CException) {
+void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress)  {
     bool isHostnameAndPort = InetUtility::checkWellFormedHostNamePort(mdsAddress);
     bool isIpAndPort  = InetUtility::checkWellFormedHostIpPort(mdsAddress);
     if(!isHostnameAndPort && !isIpAndPort){
@@ -475,7 +475,7 @@ void GlobalConfiguration::finalizeMetadataServerAddress() {
 /**
  *Add the metadataserver address
  */
-void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
+void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress)  {
     bool isIp = InetUtility::checkWellFormedHostPort(mdsAddress);
     if(!isIp){
         std::stringstream ss;
@@ -489,7 +489,7 @@ void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) t
 /**
  *Add the metadataserver address
  */
-void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw (CException) {
+void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort)  {
     configuration->addInt32Value("base_port", localDefaultPort);
 }
 

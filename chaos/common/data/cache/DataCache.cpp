@@ -44,7 +44,7 @@ DataCache::~DataCache() {
 }
 
 //! Initialize instance
-void DataCache::init(void* initParam) throw(chaos::CException) {
+void DataCache::init(void* initParam)  {
     CacheSettings *cp = initParam ? static_cast<CacheSettings*>(initParam):NULL;
     if(!cp) throw CException(1, "Error retriving init parameter", "DataCache::init");
     memcpy(&settings, cp, sizeof(CacheSettings));
@@ -57,7 +57,7 @@ void DataCache::init(void* initParam) throw(chaos::CException) {
 
 
 //! Start the implementation
-void DataCache::start() throw(chaos::CException) {
+void DataCache::start()  {
     
    // if( start_assoc_maintenance_thread() ) {
      //   throw CException(-1, "start_assoc_maintenance_thread", "FastCache::start");
@@ -65,12 +65,12 @@ void DataCache::start() throw(chaos::CException) {
 }
 
 //! Start the implementation
-void DataCache::stop() throw(chaos::CException) {
+void DataCache::stop()  {
     //stop_assoc_maintenance_thread();
 }
 
 //! Deinit the implementation
-void DataCache::deinit() throw(chaos::CException) {
+void DataCache::deinit()  {
     memory::ManagedMemory::deinit();
 }
 

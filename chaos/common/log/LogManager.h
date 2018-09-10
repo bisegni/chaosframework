@@ -75,8 +75,8 @@ namespace chaos {
                 boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::syslog_backend > > syslog_sink;
                 LogManager(){}
             public:
-                void init() throw(CException);
-                void deinit() throw(CException);
+                void init();
+                void deinit();
                 void addMDSLoggingBackend(const std::string& source);
             };
             

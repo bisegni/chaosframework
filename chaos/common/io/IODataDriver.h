@@ -59,11 +59,11 @@ namespace chaos{
                  * Init method, the has map has all received value for configuration
                  * every implemented driver need to get all needed configuration param
                  */
-                void init(void *init_parameter) throw(CException);
+                void init(void *init_parameter);
                 /*!
                  * DeInit method
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 /*!
                  * This method cache all object passed to driver
@@ -73,30 +73,30 @@ namespace chaos{
                 virtual int storeData(const std::string& key,
                                        chaos_data::CDWShrdPtr dataToStore,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                       const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;
+                                       const ChaosStringSet& tag_set = ChaosStringSet()) = 0;
                 
                 virtual int storeHealthData(const std::string& key,
                                              chaos_data::CDWShrdPtr dataToStore,
                                              DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                             const ChaosStringSet& tag_set = ChaosStringSet()) throw(CException) = 0;
+                                             const ChaosStringSet& tag_set = ChaosStringSet()) = 0;
                 
                 //!remove data between the time intervall (extreme included) operation is not undoable
                 virtual int removeData(const std::string& key,
                                        uint64_t start_ts,
-                                       uint64_t end_ts) throw(CException);
+                                       uint64_t end_ts);
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
                  * return a pointer to the class ArrayPointer of CDataWrapper type
                  */
                 virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key,
-                                                                                     chaos_data::CDataWrapper*const)  throw(CException);
+                                                                                     chaos_data::CDataWrapper*const) ;
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
                  * return a pointer to the class ArrayPointer of CDataWrapper type
                  */
-                virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key)  throw(CException);
+                virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key) ;
                 
                 
                 /*!
@@ -104,11 +104,11 @@ namespace chaos{
                  * return a pointer to the class ArrayPointer of CDataWrapper type
                  */
                 virtual char * retriveRawData(const std::string& key,
-                                              size_t* dataDim=NULL)  throw(CException) = 0;
+                                              size_t* dataDim=NULL)  = 0;
                 
                 
                 virtual int retriveMultipleData(const ChaosStringVector& key,
-                                                chaos::common::data::VectorCDWShrdPtr& result)  throw(CException) = 0;
+                                                chaos::common::data::VectorCDWShrdPtr& result)  = 0;
                 
                 //! restore from a tag a dataset associated to a key
                 /*!

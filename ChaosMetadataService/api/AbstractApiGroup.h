@@ -100,9 +100,9 @@ namespace chaos {
 				}
                 
                 
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data) ;
                 
-                void deinit()  throw (chaos::CException);
+                void deinit()  ;
 			};
 			
 		}

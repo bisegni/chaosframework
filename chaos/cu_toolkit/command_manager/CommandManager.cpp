@@ -58,7 +58,7 @@ CommandManager::~CommandManager(){
 /*
  * Initzialize the datamanager
  */
-void CommandManager::init(void *initParam) throw(CException) {
+void CommandManager::init(void *initParam) {
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
@@ -72,7 +72,7 @@ void CommandManager::init(void *initParam) throw(CException) {
 /*
  * Deinitzialize the command manager
  */
-void CommandManager::deinit() throw(CException) {
+void CommandManager::deinit() {
 
         //deregistering the action
     broker->deregisterAction(this);
@@ -81,10 +81,10 @@ void CommandManager::deinit() throw(CException) {
 /*
  * Start all sub process
  */
-void CommandManager::start() throw(CException) {}
+void CommandManager::start() {}
 
 //-----------------------
-void CommandManager::stop() throw(CException) {}
+void CommandManager::stop() {}
 
 /*
  Configure the sandbox and all subtree of the CU
@@ -130,7 +130,7 @@ void CommandManager::deregisterAction(DeclareAction* declareActionClass) {
 /*
  Init the sandbox
  */
-CDWUniquePtr CommandManager::shutdown(CDWUniquePtr action_param) throw (CException) {
+CDWUniquePtr CommandManager::shutdown(CDWUniquePtr action_param)  {
     CHAOS_ASSERT(server_handler)
     if(server_handler) server_handler->stop();
     return CDWUniquePtr();

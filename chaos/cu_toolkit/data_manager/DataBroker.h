@@ -71,9 +71,9 @@ namespace chaos {
                 DataBroker(const std::string& _owner_node_uid);
                 ~DataBroker();
                 
-                void init(void* init_data) throw(CException);
+                void init(void* init_data);
                 
-                void deinit() throw(CException);
+                void deinit();
                 
                 //!return the dataset editor
                 manipulation::DataBrokerEditor& getEditor();

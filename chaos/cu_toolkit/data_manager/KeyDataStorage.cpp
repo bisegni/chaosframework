@@ -59,13 +59,13 @@ KeyDataStorage::~KeyDataStorage() {
     restore_point_map.clear();
 }
 
-void KeyDataStorage::init(void *init_parameter) throw (chaos::CException) {
+void KeyDataStorage::init(void *init_parameter)  {
     if(!io_data_driver.get()) throw chaos::CException(-1, "IO data driver not set", __PRETTY_FUNCTION__);
     
     io_data_driver->init(init_parameter);
 }
 
-void KeyDataStorage::deinit() throw (chaos::CException) {
+void KeyDataStorage::deinit()  {
     if(io_data_driver.get()) {io_data_driver->deinit();}
     restore_point_map.clear();
 }

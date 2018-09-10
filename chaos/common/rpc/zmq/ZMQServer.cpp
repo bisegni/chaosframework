@@ -57,7 +57,7 @@ ZMQServer::~ZMQServer() {
 }
 
 //init the server getting the configuration value
-void ZMQServer::init(void *init_data) throw(CException) {
+void ZMQServer::init(void *init_data) {
     //get portnumber and thread number
     CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQS_LAPP << "initialization";
@@ -104,16 +104,16 @@ void ZMQServer::init(void *init_data) throw(CException) {
 }
 
 //start the rpc adapter
-void ZMQServer::start() throw(CException) {
+void ZMQServer::start() {
 }
 
 //start the rpc adapter
-void ZMQServer::stop() throw(CException) {
+void ZMQServer::stop() {
     
 }
 
 //deinit the rpc adapter
-void ZMQServer::deinit() throw(CException) {
+void ZMQServer::deinit() {
     run_server = false;
     ZMQS_LAPP << "Stopping thread";
     //wiath all thread

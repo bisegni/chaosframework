@@ -104,7 +104,7 @@ default_sticky_command(){}
 
 BatchCommandSandbox::~BatchCommandSandbox() {}
 
-void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
+void BatchCommandSandbox::init(void *initData)  {
     current_executing_command.reset();
     
     acquire_handler_functor.cmd_instance = NULL;
@@ -118,7 +118,7 @@ void BatchCommandSandbox::init(void *initData) throw (chaos::CException) {
     schedule_work_flag = false;
 }
 
-void BatchCommandSandbox::start() throw (chaos::CException) {
+void BatchCommandSandbox::start()  {
     
     //se the flag to the end o the scheduler
     SCSLDBG_ << "Set scheduler work flag to true";
@@ -161,7 +161,7 @@ void BatchCommandSandbox::start() throw (chaos::CException) {
 #endif
 }
 
-void BatchCommandSandbox::stop() throw (chaos::CException) {
+void BatchCommandSandbox::stop()  {
     //we ned to get the lock on the scheduler
     
     //se the flag to the end o fthe scheduler
@@ -184,7 +184,7 @@ void BatchCommandSandbox::stop() throw (chaos::CException) {
     SCSLAPP_ << "schedulerThread terminated";
 }
 
-void BatchCommandSandbox::deinit() throw (chaos::CException) {
+void BatchCommandSandbox::deinit()  {
     PRIORITY_ELEMENT(CommandInfoAndImplementation) nextAvailableCommand;
     
     SCSLAPP_ << "Delete scheduler thread";
@@ -836,7 +836,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
 
 //! Command features modification rpc action
 
-void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {
+void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features)  {
     uint64_t thread_step_delay = 0;
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);

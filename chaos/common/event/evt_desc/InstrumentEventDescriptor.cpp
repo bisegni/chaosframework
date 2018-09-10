@@ -77,7 +77,7 @@ void InstrumentEventDescriptor::setInstrument(const std::string& indetifier,
                                               uint16_t priority,
                                               EventDataType value_type,
                                               const void *value_ptr,
-                                              uint16_t value_size)  throw (CException) {
+                                              uint16_t value_size)   {
     if(alert_code <= EventAlertLastCodeNumber) throw CException(0, "Invalid custom sub code for the event", "InstrumentEventDescriptor::setInstrument");
         //2 byte
     setSubCode(alert_code);

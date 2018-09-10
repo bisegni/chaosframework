@@ -39,7 +39,7 @@ AsioEventForwarder::~AsioEventForwarder() {}
 /*
  init the event adapter
  */
-void AsioEventForwarder::init() throw(CException) {
+void AsioEventForwarder::init() {
     _socket.connect(_endpoint);
     CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
 }
@@ -47,7 +47,7 @@ void AsioEventForwarder::init() throw(CException) {
 /*
  deinit the event adapter
  */
-void AsioEventForwarder::deinit() throw(CException) {
+void AsioEventForwarder::deinit() {
     boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
     _socket.close();
     CObjectProcessingPriorityQueue<EventDescriptor>::clear();
@@ -58,6 +58,6 @@ bool AsioEventForwarder::submitEventAsync(EventDescriptorSPtr event) {
     return CObjectProcessingPriorityQueue<EventDescriptor>::push(MOVE(event), event->getEventPriority());
 }
 
-void AsioEventForwarder::processBufferElement(EventDescriptorSPtr priorityElement) throw(CException) {
+void AsioEventForwarder::processBufferElement(EventDescriptorSPtr priorityElement) {
     _socket.send(boost::asio::buffer(priorityElement->getEventData(), priorityElement->getEventDataLength()));
 }

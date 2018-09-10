@@ -55,13 +55,13 @@ namespace chaos {
             protected:
                 unsigned int thread_number;
                 //!inherited by CObjectProcessingPriorityQueue
-                virtual void processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job) throw(chaos::CException);
+                virtual void processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job) ;
             public:
                 AsyncPoolRunner(unsigned int _thread_number);
                 ~AsyncPoolRunner();
                 
-                void init(void *init_data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *init_data) ;
+                void deinit() ;
                 
                 //! submit a new runnable
                 /*!

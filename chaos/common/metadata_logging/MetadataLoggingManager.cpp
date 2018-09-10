@@ -53,7 +53,7 @@ message_channel(NULL) {
 
 MetadataLoggingManager::~MetadataLoggingManager() {}
 
-void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
+void MetadataLoggingManager::init(void *init_data)  {
     if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size() > 0) {
         message_channel = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
         if(message_channel) {
@@ -66,7 +66,7 @@ void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
     CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
 
-void MetadataLoggingManager::deinit() throw(chaos::CException) {
+void MetadataLoggingManager::deinit()  {
     MLM_INFO << "Wait for queue will empty";
     CObjectProcessingPriorityQueue<CDataWrapper>::deinit(true);
     MLM_INFO << "Queue is empty";
@@ -119,7 +119,7 @@ void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_
     delete(channel_instance);
 }
 
-void MetadataLoggingManager::processBufferElement(CDWShrdPtr log_entry) throw(CException) {
+void MetadataLoggingManager::processBufferElement(CDWShrdPtr log_entry) {
     CHAOS_ASSERT(getServiceState() == 1);
     int err = 0;
     DEBUG_CODE(MLM_DBG << "forwarding log entry " << log_entry->getJSONString());

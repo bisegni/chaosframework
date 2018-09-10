@@ -62,11 +62,11 @@ ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
-void ChaosMetadataServiceClient::init(int argc, const char* argv[]) throw (CException) {
+void ChaosMetadataServiceClient::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
 
-void ChaosMetadataServiceClient::init()  throw(CException) {
+void ChaosMetadataServiceClient::init()  {
 
 	if(mds_client_initialized){
 		CMSC_LDBG<<"Already initialized";
@@ -107,7 +107,7 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
       }
 }
 
-void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
+void ChaosMetadataServiceClient::init(void *init_data)  {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         init();
@@ -117,7 +117,7 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     }
 }
 
-void ChaosMetadataServiceClient::start()  throw(CException) {
+void ChaosMetadataServiceClient::start()  {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::start();
         
@@ -132,7 +132,7 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
     }
 }
 
-void ChaosMetadataServiceClient::stop()   throw(CException) {
+void ChaosMetadataServiceClient::stop()   {
     try {
         //stop monitor manager
         if(monitoringIsStarted()) {
@@ -146,7 +146,7 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
     }
 }
 
-void ChaosMetadataServiceClient::deinit()   throw(CException) {
+void ChaosMetadataServiceClient::deinit()   {
 
 	if(mds_client_deinitialized){
 		LDBG_<<"Already deinitialized";
@@ -180,19 +180,19 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
     api_proxy_manager->addServerAddress(server_address_and_port);
 }
 
-void ChaosMetadataServiceClient::enableMonitor() throw(CException) {
+void ChaosMetadataServiceClient::enableMonitor() {
     //configure data driver
     reconfigureMonitor();
     //start the monitor manager
     monitor_manager.start(__PRETTY_FUNCTION__);
 }
 
-void ChaosMetadataServiceClient::disableMonitor() throw(CException) {
+void ChaosMetadataServiceClient::disableMonitor() {
     CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
 }
 
 
-chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyChannelNewInstance() throw(CException){
+chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyChannelNewInstance(){
 	int poolsize=DPCK_LAST_DATASET_INDEX+1;
 	chaos::common::io::IODataDriverShrdPtr shret;
 	if(GlobalConfiguration::getInstance()->hasOption(POOL_SIZE_OPTION)){
@@ -233,7 +233,7 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 
 }
 
-void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
+void ChaosMetadataServiceClient::reconfigureMonitor() {
     std::vector<std::string> endpoints_list;
     
     CMSC_LDBG << "Ask to metadata server for cds enpoint for monitoring";

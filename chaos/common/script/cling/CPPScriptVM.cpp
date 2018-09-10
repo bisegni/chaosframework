@@ -89,11 +89,11 @@ void CPPScriptVM::initNewInterpreter() {
     }
 }
 
-void CPPScriptVM::init(void *init_data) throw(chaos::CException) {
+void CPPScriptVM::init(void *init_data)  {
     
 }
 
-void CPPScriptVM::deinit() throw(chaos::CException) {
+void CPPScriptVM::deinit()  {
     interpreter.reset();
 }
 

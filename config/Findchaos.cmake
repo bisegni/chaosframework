@@ -11,6 +11,7 @@ set(chaos_LIBRARIES chaos_cutoolkit chaos_common)
 set(chaos_client_LIBRARIES chaos_metadata_service_client)
 SET(CMAKE_INSTALL_RPATH "${PREFIX}/lib")
 link_directories(${PREFIX}/lib)
+include_directories(${chaos_INCLUDE_DIRS})
 SET(FrameworkLib ${chaos_LIBRARIES} ${boost_libs} pthread dl)
 include(${PREFIX}/CMakeMacroUtils.txt)
 IF(CHAOS_STATIC)
@@ -45,4 +46,3 @@ IF ( CHAOS_SANITIZER)
 
   ENDIF()
 ENDIF()
-
