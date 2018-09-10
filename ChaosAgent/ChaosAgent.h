@@ -47,9 +47,9 @@ namespace chaos {
             static void signalHanlder(int signal_number);
         public:
             ChaosAgentSettings settings;
-            void init(int argc, const char* argv[]) ;
-            void init(istringstream &initStringStream) ;
-            void init(void *init_data) ;
+            void init(int argc, const char* argv[]);
+            void init(istringstream &initStringStream);
+            void init(void *init_data);
             void start();
             void stop();
             void deinit();

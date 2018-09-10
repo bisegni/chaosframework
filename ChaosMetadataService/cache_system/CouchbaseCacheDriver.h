@@ -128,10 +128,10 @@ namespace chaos {
                 int updateConfig();
                 
                 //! init
-                void init(void *init_data) ;
+                void init(void *init_data);
                 
                 //!deinit
-                void deinit() ;
+                void deinit();
             };
         }
     }

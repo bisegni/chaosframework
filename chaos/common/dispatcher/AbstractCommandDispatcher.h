@@ -99,7 +99,7 @@ namespace chaos{
         
         ~AbstractCommandDispatcher();
         
-        virtual void init(void *init_data) ;
+        virtual void init(void *init_data);
         
         //-----------------------
         virtual void start();
@@ -107,12 +107,12 @@ namespace chaos{
         //-----------------------
         virtual void stop();
         
-        virtual void deinit() ;
+        virtual void deinit();
         
         /*
          update the dispatcher configuration
          */
-        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*) ;
+        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*);
         
         //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to

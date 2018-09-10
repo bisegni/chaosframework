@@ -42,7 +42,7 @@ file_size(bf::file_size(plugin_file_path)),
 last_write_time(bf::last_write_time(plugin_file_path)){
     if(loader->loaded()) {
         ChaosUniquePtr<PluginDiscover> discover(loader->getDiscover());
-        for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
+        for (int idx = 0; idx < discover->getNamesSize(); idx++) {
             const std::string registered_name = discover->getNameForIndex(idx);
             ChaosUniquePtr<PluginInspector> discover(loader->getInspectorForName(registered_name));
             map_type_plugin[discover->getSubclass()].insert(registered_name);

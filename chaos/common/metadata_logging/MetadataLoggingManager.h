@@ -78,8 +78,8 @@ namespace chaos {
                 int pushLogEntry(chaos::common::data::CDataWrapper *log_entry,
                                  int32_t priority = 0);
             public:
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
                 
                 void registerChannel(const std::string& channel_alias,
                                      chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer);

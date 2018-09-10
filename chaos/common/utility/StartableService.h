@@ -66,10 +66,10 @@ namespace chaos {
 			protected:
 				
 				//! Start the implementation
-				virtual void start() ;
+				virtual void start();
 				
 				//! Stop the implementation
-				virtual void stop() ;
+				virtual void stop();
 				
 			public:
 				StartableService();

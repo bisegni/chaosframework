@@ -58,8 +58,8 @@ namespace chaos {
                 NodeMonitor(chaos::metadata_service_client::monitor_system::MonitorManager *_monitor_manager,
                             chaos::metadata_service_client::api_proxy::ApiProxyManager *_api_proxy_manager);
                 ~NodeMonitor();
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
                 
                 void startNodeMonitor(const std::string& node_uid,
                                       ControllerType controller_type);

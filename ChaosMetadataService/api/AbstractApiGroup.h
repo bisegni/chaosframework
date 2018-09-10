@@ -100,7 +100,7 @@ namespace chaos {
 				}
                 
                 
-                void init(void *init_data) ;
+                void init(void *init_data);
                 
                 void deinit()  ;
 			};

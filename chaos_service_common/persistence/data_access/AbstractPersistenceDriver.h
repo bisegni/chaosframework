@@ -83,10 +83,10 @@ namespace chaos {
                     virtual ~AbstractPersistenceDriver();
                     
                     //! Initialize the driver
-                    void init(void *init_data) ;
+                    void init(void *init_data);
                     
                     //!deinitialize the driver
-                    void deinit() ;
+                    void deinit();
                     
                     //! return the implementation of the unit server data access
                     template<typename D>

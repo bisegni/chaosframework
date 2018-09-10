@@ -69,7 +69,7 @@ namespace chaos {
             public:
                 AsioImplEventClient(string alias);
                 ~AsioImplEventClient();
-                bool submitEvent(EventDescriptorSPtr event) ;
+                bool submitEvent(EventDescriptorSPtr event);
             private:
                 boost::asio::ip::udp::socket *socket_alert;
                 boost::asio::ip::udp::socket *socket_instrument;

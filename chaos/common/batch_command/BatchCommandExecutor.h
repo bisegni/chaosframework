@@ -163,7 +163,7 @@ namespace chaos {
                  Return infromation about the execution statistic for the current running command, collected into the
                  chaos::cu::control_manager::slow_command::SandboxStat structure.
                  */
-                chaos::common::data::CDWUniquePtr getCommandState(chaos::common::data::CDWUniquePtr params) ;
+                chaos::common::data::CDWUniquePtr getCommandState(chaos::common::data::CDWUniquePtr params);
                 
                 
                 //! Command features modification rpc action
@@ -171,13 +171,13 @@ namespace chaos {
                  \ingroup API_Slow_Control
                  Updat ethe modiable features of the running command
                  */
-                chaos::common::data::CDWUniquePtr setCommandFeatures(chaos::common::data::CDWUniquePtr params) ;
+                chaos::common::data::CDWUniquePtr setCommandFeatures(chaos::common::data::CDWUniquePtr params);
                 
                 //! Command features modification rpc action
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features& features) ;
+                void setCommandFeatures(features::Features& features);
                 
                 //! Kill current command rpc action
                 /*!
@@ -186,7 +186,7 @@ namespace chaos {
                  from the scheduler. It waith the lock on the scehduler  and the provi to delete
                  the current command "as is".
                  */
-                chaos::common::data::CDWUniquePtr killCurrentCommand(chaos::common::data::CDWUniquePtr params) ;
+                chaos::common::data::CDWUniquePtr killCurrentCommand(chaos::common::data::CDWUniquePtr params);
                 
                 //! remove all pendig command form queue
                 /*!
@@ -194,7 +194,7 @@ namespace chaos {
                  This METHOD perform the clean operation of the queue al the pending command will be deleted and not
                  will be executed.
                  */
-                chaos::common::data::CDWUniquePtr clearCommandQueue(chaos::common::data::CDWUniquePtr params) ;
+                chaos::common::data::CDWUniquePtr clearCommandQueue(chaos::common::data::CDWUniquePtr params);
                 
                 //! Flush the command state history
                 /*!
@@ -202,7 +202,7 @@ namespace chaos {
                  This METHOD perform the "flushing" of the command state queue (and hash). The flushing operation ensure that all,
                  non ended command state, will be remove from the history.
                  */
-                chaos::common::data::CDWUniquePtr flushCommandStates(chaos::common::data::CDWUniquePtr params) ;
+                chaos::common::data::CDWUniquePtr flushCommandStates(chaos::common::data::CDWUniquePtr params);
                 
                 //!Inherited by TimerHandler for capper operation
                 void timeout();
@@ -216,16 +216,16 @@ namespace chaos {
                 virtual ~BatchCommandExecutor();
                 
                 // Initialize instance
-                virtual void init(void*) ;
+                virtual void init(void*);
                 
                 // Start the implementation
-                virtual void start() ;
+                virtual void start();
                 
                 // Start the implementation
-                virtual void stop() ;
+                virtual void stop();
                 
                 // Deinit the implementation
-                virtual void deinit() ;
+                virtual void deinit();
                 
                 //! Perform a command registration
                 /*!

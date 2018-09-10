@@ -46,13 +46,13 @@ namespace chaos {
                      */
                     static void validateCommandTemplateToDescription(chaos::common::data::CDWShrdPtr command_description,
                                                                      chaos::common::data::CDWShrdPtr command_template_description,
-                                                                     std::vector<AttributeRequested> *attribute_requested_by_template) ;
+                                                                     std::vector<AttributeRequested> *attribute_requested_by_template);
                     
                     //! create an instance by submission, command and temaplte description
                     static ChaosUniquePtr<chaos::common::data::CDataWrapper> createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
                                                                                                                                     chaos::common::data::CDWShrdPtr command_submission,
                                                                                                                                     chaos::common::data::CDWShrdPtr command_description,
-                                                                                                                                    chaos::common::data::CDWShrdPtr command_template_description) ;
+                                                                                                                                    chaos::common::data::CDWShrdPtr command_template_description);
                 };
             }
         }

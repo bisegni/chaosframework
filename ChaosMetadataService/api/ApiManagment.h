@@ -80,8 +80,8 @@ namespace chaos {
 					}
 				}
 				
-				void init(void* init_data) ;
-				void deinit() ;
+				void init(void* init_data);
+				void deinit();
 			};
 			
 		}

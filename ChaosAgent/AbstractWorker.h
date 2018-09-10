@@ -40,8 +40,8 @@ namespace chaos {
             AbstractWorker(const std::string& _worker_name);
             virtual ~AbstractWorker();
             
-            void init(void *data) ;
-            void deinit() ;
+            void init(void *data);
+            void deinit();
         };
     }
 }

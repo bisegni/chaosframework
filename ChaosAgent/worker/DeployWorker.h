@@ -43,8 +43,8 @@ namespace chaos {
             public:
                 DeployWorker();
                 ~DeployWorker();
-                void init(void *data) ;
-                void deinit() ;
+                void init(void *data);
+                void deinit();
             };
         }
     }

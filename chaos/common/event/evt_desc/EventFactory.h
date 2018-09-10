@@ -30,7 +30,7 @@ namespace chaos {
         namespace event{
             class EventFactory {
             public:
-                static EventDescriptor *getEventInstance(const unsigned char * serializedEvent, uint16_t length) ;
+                static EventDescriptor *getEventInstance(const unsigned char * serializedEvent, uint16_t length);
             };
         }
     }

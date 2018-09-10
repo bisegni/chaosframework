@@ -37,8 +37,8 @@ namespace chaos {
             public:
                 PersistenceManager();
                 ~PersistenceManager();
-                void init(void* init_data) ;
-                void deinit() ;
+                void init(void* init_data);
+                void deinit();
                 
                 template<typename T>
                 T* getDataAccess() {

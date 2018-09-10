@@ -62,10 +62,10 @@ namespace chaos {
                 CronusManager(uint64_t _scheduler_repeat_time = CHECK_TIME);
                 ~CronusManager();
                 //!intherited by @chaos::common::utility::InizializableService
-                void init(void *init_data) ;
+                void init(void *init_data);
                 
                 //!intherited by @chaos::common::utility::InizializableService
-                void deinit() ;
+                void deinit();
                 
                 //! add a new job to the cron manager
                 /*!

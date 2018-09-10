@@ -90,13 +90,13 @@ namespace chaos{
                  * return a pointer to the class ArrayPointer of CDataWrapper type
                  */
                 virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key,
-                                                                                     chaos_data::CDataWrapper*const) ;
+                                                                                     chaos_data::CDataWrapper*const);
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
                  * return a pointer to the class ArrayPointer of CDataWrapper type
                  */
-                virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key) ;
+                virtual utility::ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key);
                 
                 
                 /*!

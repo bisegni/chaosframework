@@ -60,8 +60,8 @@ namespace chaos {
                  */
 
                 class BasicIODriver : ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
-                    void driverInit(const char *initParameter) ;
-                    void driverDeinit() ;
+                    void driverInit(const char *initParameter);
+                    void driverDeinit();
                 protected:
                     ddDataSet_t *dataset;
                     int datasetSize;

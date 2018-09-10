@@ -59,9 +59,9 @@ namespace chaos {
                     
                     virtual ~EventChannel();
                     
-                    void init() ;
+                    void init();
                     
-                    void deinit() ;
+                    void deinit();
                     
                     int sendRawEvent(EventDescriptor *newEvent);
                     

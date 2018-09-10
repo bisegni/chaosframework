@@ -78,12 +78,12 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, const char* argv[]) ;
+            void init(int argc, const char* argv[]);
 
             //! For common methods already initialized
-            void init() ;
+            void init();
             //! StartableService inherited method
-            void init(void *init_data) ;
+            void init(void *init_data);
             //! StartableService inherited method
             void start();
             //! StartableService inherited method

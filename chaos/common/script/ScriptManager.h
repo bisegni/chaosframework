@@ -53,8 +53,8 @@ namespace chaos {
                 AbstractScriptVM *script_vm;
                 MapRegisteredApiClass map_api_class;
             protected:
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
 
                     //!entry point of the scripting for call an exposed api
                 int callScriptApi(const std::string& api_class,

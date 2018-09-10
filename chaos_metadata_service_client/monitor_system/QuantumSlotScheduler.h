@@ -243,10 +243,10 @@ mutex_ ## queue_name.unlock();
                                                               uint64_t millisecond_for_work);
             public:
                 
-                void init(void *init_data) ;
-                void start() ;
-                void stop() ;
-                void deinit() ;
+                void init(void *init_data);
+                void start();
+                void stop();
+                void deinit();
                 
                 //! Set a new lits of server to use for fetch values
                 void setDataDriverEndpoints(const std::vector<std::string>& _data_driver_endpoint);

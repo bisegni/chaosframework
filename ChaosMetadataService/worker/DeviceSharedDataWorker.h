@@ -67,8 +67,8 @@ namespace chaos{
             public:
                 DeviceSharedDataWorker();
                 ~DeviceSharedDataWorker();
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
             };
         }
     }

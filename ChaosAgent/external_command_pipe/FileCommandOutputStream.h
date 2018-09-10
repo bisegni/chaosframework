@@ -37,8 +37,8 @@ namespace chaos {
             public:
                 FileCommandOutputStream(const std::string& file_path);
                 ~FileCommandOutputStream();
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
                 virtual AbstractCommandOutputStream& operator<<(const std::string& string);
                 virtual AbstractCommandOutputStream& operator<<(const char * string);
             };

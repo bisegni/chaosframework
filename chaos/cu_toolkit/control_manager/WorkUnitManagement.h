@@ -163,7 +163,7 @@ namespace chaos {
                 void turnOFF();
                 
                     //! manage the internal state machine
-                void scheduleSM() ;
+                void scheduleSM();
                 
                     //! manage the ack pack
                 bool manageACKPack(chaos::common::data::CDataWrapper& ack_pack);

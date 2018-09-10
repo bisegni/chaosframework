@@ -156,20 +156,22 @@ namespace chaos{
                  * Return the alias of the command
                  * @return the alis name of the command
                  */
-                std::string getAlias(){return command_alias;}
+                std::string getAlias();
+                
                 //! return the identification of the device
-                std::string& getDeviceID();
+                std::string getDeviceID();
                 
                 //! return the set handler time in milliseocnds
-                uint64_t getSetTime();
+                const uint64_t getSetTime() const;
                 
                 //! return the start step time of the sandbox in milliseocnds
-                uint64_t getStartStepTime();
+                const uint64_t getStartStepTime() const;
                 
-                uint64_t getStepCounter();
+                //!count the number of cilce made by the command
+                const uint64_t getStepCounter() const;
                 
                 //! return the last step duration of the sandbox in microseconds
-                uint64_t getLastStepDuration();
+                const uint64_t getLastStepDuration() const;
                 
                 //! set the alias of the command
                 void setCommandAlias(const std::string& _command_alias);
