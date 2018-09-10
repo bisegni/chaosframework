@@ -69,6 +69,9 @@ template< class R >
 using ChaosFunction = std::function< R >;
 #define ChaosBind std::bind
 #define ChaosBindPlaceholder(x) std::placeholders::x
+#define ChaosUniquePtr std::unique_ptr
+#define ChaosMoveOperator(x) std::move(x)
+
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
@@ -89,9 +92,10 @@ using ChaosFunction = std::function< R >;
 #define ChaosFunction boost::function
 #define ChaosBind boost::bind
 #define ChaosBindPlaceholder(x) x
+#define ChaosUniquePtr std::auto_ptr
+#define ChaosMoveOperator(x) x
+
 #endif
-#define ChaosUniquePtr std::unique_ptr
-#define ChaosMoveOperator(x) std::move(x)
 
 #else
 #include <stdint.h>
