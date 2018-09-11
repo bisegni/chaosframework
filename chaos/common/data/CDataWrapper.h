@@ -263,6 +263,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
                 //return the bson data
                 SerializationBufferUPtr getBSONData() const;
+                BufferUPtr getBSONDataBuffer() const;
                 const char* getBSONRawData(int& size) const;
                 const char* getBSONRawData() const;
                 const int getBSONRawSize() const;

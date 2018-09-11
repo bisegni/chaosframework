@@ -303,6 +303,7 @@ int MongoDBNodeDataAccess::setNodeHealthStatus(const std::string& node_unique_id
     try {
         mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id);
         mongo::BSONObj u = BSON("$set" << BSON("health_stat" << BSON(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(health_stat.timestamp) <<
+                                                                     NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP << mongo::Date_t(health_stat.mds_received_timestamp) <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME << (long long)health_stat.uptime <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << health_stat.user_time <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << health_stat.sys_time <<
@@ -1045,7 +1046,7 @@ int MongoDBNodeDataAccess::isNodeAlive(const std::string& node_uid, bool& alive)
     try {
         mongo::BSONObj result;
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_uid <<
-                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) <<
+                                    CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP) <<
                                     BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay((6*1000)))));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("isNodeAlive",

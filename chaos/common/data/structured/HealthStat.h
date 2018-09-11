@@ -32,7 +32,10 @@ namespace chaos {
                 //! define node overall status information
                 struct HealthStat {
                     std::string node_uid;
+                    //!is the heath timesatmp of the node host
                     uint64_t timestamp;
+                    //!is the timestamp of med at time that health dapapack has been received
+                    int64_t mds_received_timestamp;
                     std::string health_status;
                     uint64_t uptime;
                     double user_time;
@@ -60,6 +63,7 @@ namespace chaos {
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     Subclass::dataWrapped().node_uid = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, DataPackCommonKey::DPCK_DEVICE_ID, getStringValue, "");
                     Subclass::dataWrapped().timestamp = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, getUInt64Value, 0);
+                    Subclass::dataWrapped().mds_received_timestamp = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, getUInt64Value, 0);
                     Subclass::dataWrapped().uptime = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, getUInt64Value, 0);
                     Subclass::dataWrapped().user_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, getDoubleValue, 0.0);
                     Subclass::dataWrapped().sys_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME,getDoubleValue, 0.0);
@@ -71,6 +75,7 @@ namespace chaos {
                     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, Subclass::dataWrapped().node_uid);
                     result->addStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS, Subclass::dataWrapped().health_status);
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, Subclass::dataWrapped().timestamp);
+                    result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, Subclass::dataWrapped().mds_received_timestamp);
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, Subclass::dataWrapped().uptime);
                     result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, Subclass::dataWrapped().user_time);
                     result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, Subclass::dataWrapped().sys_time);

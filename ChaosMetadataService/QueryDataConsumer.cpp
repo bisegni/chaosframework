@@ -200,14 +200,17 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
     
     HealthStatSDWrapper attribute_reference_wrapper;
     attribute_reference_wrapper.deserialize(&health_data_pack);
+    attribute_reference_wrapper().mds_received_timestamp = TimingUtil::getTimeStamp();
     if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
                                         attribute_reference_wrapper()))) {
         ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
     }
+    //create channel data with injected mds timestamp
+    BufferSPtr channel_data_injected(attribute_reference_wrapper.serialize()->getBSONDataBuffer().release());
     return consumePutEvent(key,
                            hst_tag,
                            MOVE(meta_tag_set),
-                           channel_data);
+                           channel_data_injected);
 }
 
 int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
