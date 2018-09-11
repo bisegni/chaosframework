@@ -371,5 +371,4 @@ else()
   MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
   boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
 endif()
-execute_process(COMMAND "${CMAKE_COMMAND}" "-LA" OUTPUT_FILE "${CMAKE_INSTALL_PREFIX}/CMakeConfiguration.txt")
 
