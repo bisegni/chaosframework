@@ -288,7 +288,7 @@ void WorkUnitManagement::scheduleSM()  {
             break;
         }
         case UnitStateUnpublishing: {
-            CDWUniquePtr fakeDWForDeinit;
+            CDWUniquePtr fakeDWForDeinit(new CDataWrapper);
             fakeDWForDeinit->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";

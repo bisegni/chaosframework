@@ -4,9 +4,37 @@ ELSE()
   set(PREFIX ${CMAKE_CURRENT_LIST_DIR})
 ENDIF()
 
+execute_process(COMMAND "grep CHAOS_ENABLE_C11:BOOL=OFF ${PREFIX}/CMakeConfiguration.txt"   
+   RESULT_VARIABLE retcode)
+
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
+   message(FATAL_ERROR "Host GCC version must be at least 4.8!")
+ endif()   
+
+ IF(NOT CHAOS_TARGET)
+  ADD_DEFINITIONS(-DCHAOS -fPIC)
+ELSE()
+  ADD_DEFINITIONS(-DCHAOS -fPIC -DFORCE_BOOST_SHPOINTER)
+ENDIF()
+
+if(NOT "${retcode}" STREQUAL "0")
+
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+  ## greater the default is c11
+  ADD_DEFINITIONS(-std=c++11)
+  MESG("Enabling C11 compilation")
+else()
+  MESG("Using default ${CMAKE_CXX_COMPILER_VERSION}")
+endif() 
+
+ELSE()
+  MESG("Force Static C98 compatibility compilation")
+  ADD_DEFINITIONS(-DFORCE_BOOST_SHPOINTER)
+  ADD_DEFINITIONS(-std=c++98)
+ENDIF()
 set(chaos_INCLUDE_DIRS ${PREFIX}/include)
 FILE(GLOB boost_libs ${PREFIX}/lib/libboost*.a)
-ADD_DEFINITIONS(-DCHAOS -fPIC)
+
 set(chaos_LIBRARIES chaos_cutoolkit chaos_common)
 set(chaos_client_LIBRARIES chaos_metadata_service_client)
 SET(CMAKE_INSTALL_RPATH "${PREFIX}/lib")

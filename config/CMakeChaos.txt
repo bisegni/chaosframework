@@ -191,6 +191,7 @@ SET(CHAOS_DISABLE_EVENTFD ON)
 
     ELSE()
 IF(${CHAOS_TARGET} MATCHES "i686-linux26")
+  SET(CHAOS_ENABLE_C11 "Enable C11" OFF)
   MESG("Cross compiling for i686 platforms on linux 2.6")
   CheckCompiler("CXX" i686-nptl-linux-gnu-g++)
   CheckCompiler("C" i686-nptl-linux-gnu-gcc)
@@ -370,3 +371,5 @@ else()
   MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
   boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
 endif()
+execute_process(COMMAND "${CMAKE_COMMAND}" "-LA" OUTPUT_FILE "${CMAKE_INSTALL_PREFIX}/CMakeConfiguration.txt")
+
