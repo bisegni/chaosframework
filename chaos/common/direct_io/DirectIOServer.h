@@ -58,16 +58,16 @@ namespace chaos {
                 virtual ~DirectIOServer();
                 
                 // Initialize instance
-                void init(void *init_data) ;
+                void init(void *init_data);
                 
                 // Start the implementation
-                void start() ;
+                void start();
                 
                 // Stop the implementation
-                void stop() ;
+                void stop();
                 
                 // Deinit the implementation
-                void deinit() ;
+                void deinit();
                 
                 //! Send some data to the server
                 void setHandler(DirectIODispatcher *_handler_impl);

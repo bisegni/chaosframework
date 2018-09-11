@@ -128,16 +128,16 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 public:
 
                     // Initialize instance
-                    void init(void*) ;
+                    void init(void*);
 
 					// Start the implementation
-					void start() ;
+					void start();
 
 					// Start the implementation
-					void stop() ;
+					void stop();
 
 					// Deinit instance
-					void deinit() ;
+					void deinit();
 
 					//! Install a command associated with a type
                     void installCommand(const std::string& alias,

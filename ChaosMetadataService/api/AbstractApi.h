@@ -94,7 +94,7 @@ n::~n(){}
                 //d! efault destructor
                 virtual ~AbstractApi();
                 
-                void init(void *init_data) ;
+                void init(void *init_data);
                 
                 void deinit()  ;
                 

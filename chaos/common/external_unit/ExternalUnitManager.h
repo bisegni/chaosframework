@@ -71,8 +71,8 @@ new chaos::common::utility::TypedObjectInstancer<SerializerClass, serialization:
                 ~ExternalUnitManager();
                 
             public:
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
                 //!endpoint management api
                 //! register an endpoint on all server adapter
                 int registerEndpoint(ExternalUnitServerEndpoint& endpoint);

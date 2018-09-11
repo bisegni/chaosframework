@@ -72,9 +72,9 @@ namespace chaos {
                     return ChaosUniquePtr<P>((P*)i->getInstance(mn_message_channel, timeout_in_milliseconds));
                 };
                 //!inherited by InizializableService
-                void init(void *init_data) ;
+                void init(void *init_data);
                 //!inherited by InizializableService
-                void deinit() ;
+                void deinit();
                 //! add a new api server endpoint
                 void addServerAddress(const std::string& server_address);
                 //! remove all api endpoint server

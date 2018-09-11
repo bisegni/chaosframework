@@ -76,13 +76,13 @@ namespace chaos {
 					
 				public:
 					//! Initialize the data broker
-					void init(void*) ;
+					void init(void*);
 					//! start the data broker
-					void start() ;
+					void start();
 					//! stop the data broker
-					void stop() ;
+					void stop();
 					//! deinit the data broker
-					void deinit() ;
+					void deinit();
 					//! action for start the handshake
                     chaos::common::data::CDWUniquePtr startHandshake(chaos::common::data::CDWUniquePtr handshake_data);
 				};

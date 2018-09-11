@@ -65,16 +65,16 @@ namespace chaos {
                 public:
                     
                     //! Initialize instance
-                    void init(void *init_data) ;
+                    void init(void *init_data);
                     
                     //! Start the implementation
-                    void start() ;
+                    void start();
                     
                     //! Stop the implementation
-                    void stop() ;
+                    void stop();
                     
                     //! Deinit the implementation
-                    void deinit() ;
+                    void deinit();
                 };
             }
         }

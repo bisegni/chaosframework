@@ -98,13 +98,13 @@ x = hasOption(y);
         /*!
          Generalized parser option function
          */
-        void parseParameter(const po::basic_parsed_options<char>& optionsParser) ;
+        void parseParameter(const po::basic_parsed_options<char>& optionsParser);
         
         //! recognize the
         /*!
          Generalized parser option function
          */
-        int32_t filterLogLevel(string& levelStr) ;
+        int32_t filterLogLevel(string& levelStr);
         
         //! contains the key value pair for the rpc implementation
         MapStrKeyStrValue map_kv_param_rpc_impl;
@@ -122,37 +122,37 @@ x = hasOption(y);
 //                             const std::string& kv_string,
 //                             const std::string& regex);
     public:
-        void loadStartupParameter(int, const char* argv[]) ;
-        void loadStreamParameter(std::istream &config_file) ;
-        void scanOption() ;
-        void checkDefaultOption() ;
+        void loadStartupParameter(int, const char* argv[]);
+        void loadStreamParameter(std::istream &config_file);
+        void scanOption();
+        void checkDefaultOption();
         //! startup parameter pre setup
         /*
          Set up all stardard input attribute map
          */
-        void preParseStartupParameters() ;
+        void preParseStartupParameters();
         //! C and C++ attribute parser
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void parseStartupParameters(int, const char* argv[]) ;
+        void parseStartupParameters(int, const char* argv[]);
         //!stringbuffer parser
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void parseStringStream(std::istream &) ;
+        void parseStringStream(std::istream &);
         
         /*
          Add a custom option
          */
         void addOption(const char* name,
                        const po::value_semantic* s,
-                       const char* description) ;
+                       const char* description);
         /*
          Add a custom option
          */
         void addOption(const char* name,
-                       const char* description) ;
+                       const char* description);
         /*
          Add a custom option
          */
@@ -204,7 +204,7 @@ x = hasOption(y);
          */
         void addOptionZeroTokens(const char* name,
                                  const char* description,
-                                 bool *default_variable) ;
+                                 bool *default_variable);
         
         /*
          Add a custom option
@@ -269,7 +269,7 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addMetadataServerAddress(const string& mdsAddress) ;
+        void addMetadataServerAddress(const string& mdsAddress);
         
         //!close the metadata server list array
         void finalizeMetadataServerAddress();
@@ -277,11 +277,11 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addLocalServerAddress(const std::string& mdsAddress) ;
+        void addLocalServerAddress(const std::string& mdsAddress);
         /**
          *Add the metadataserver address
          */
-        void addLocalServerBasePort(int32_t localDefaultPort) ;
+        void addLocalServerBasePort(int32_t localDefaultPort);
         
         //!return the hostname of the host that run chaos node
         std::string getHostname();

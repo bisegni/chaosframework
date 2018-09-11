@@ -65,10 +65,10 @@ namespace chaos{
                     void *customData;
                     
                     //! Initialize instance
-                    void init(void *initData) ;
+                    void init(void *initData);
                     
                     //! Deinit the implementation
-                    void deinit() ;
+                    void deinit();
                     
                     //! Return the value object for the domain and the string key
                     AttributeValue *getAttributeValue(SharedCacheDomain domain,

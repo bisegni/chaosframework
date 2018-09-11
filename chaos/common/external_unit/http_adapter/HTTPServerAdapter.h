@@ -92,8 +92,8 @@ namespace chaos{
                 public:
                     HTTPServerAdapter();
                     ~HTTPServerAdapter();
-                    void init(void *init_data) ;
-                    void deinit() ;
+                    void init(void *init_data);
+                    void deinit();
                     int registerEndpoint(ExternalUnitServerEndpoint& endpoint);
                     int deregisterEndpoint(ExternalUnitServerEndpoint& endpoint);
                 };

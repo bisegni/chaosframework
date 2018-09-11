@@ -116,28 +116,28 @@ namespace chaos{
                 //! create a request to a remote rpc action
                 ChaosUniquePtr<RequestInfo> createRequest(const std::string& remote_address,
                                                           const std::string& remote_domain,
-                                                          const std::string& remote_action) ;
+                                                          const std::string& remote_action);
                 
                 //! send a request to a remote rpc action
                 /*!
                  \param message the message to send(the ownership of the memory belong to the caller)
                  */
                 void sendRequest(RequestInfo& request_info,
-                                 chaos::common::data::CDWUniquePtr message) ;
+                                 chaos::common::data::CDWUniquePtr message);
                 
                 //! send a message toa remote rpc action
                 void sendMessage(RequestInfo& request_info,
-                                 chaos::common::data::CDWUniquePtr message) ;
+                                 chaos::common::data::CDWUniquePtr message);
                 
                 ChaosUniquePtr<RequestInfo> sendRequest(const std::string& node_uid,
                                                         const std::string& rpc_action,
-                                                        chaos::common::data::CDWUniquePtr message) ;
+                                                        chaos::common::data::CDWUniquePtr message);
                 
                 ChaosUniquePtr<RequestInfo> sendMessage(const std::string& node_uid,
                                                         const std::string& rpc_action,
-                                                        chaos::common::data::CDWUniquePtr message) ;
+                                                        chaos::common::data::CDWUniquePtr message);
                 
-                void manageRequestPhase(RequestInfo& request_info) ;
+                void manageRequestPhase(RequestInfo& request_info);
                 
                 template<typename T>
                 T* getDataAccess() {

@@ -83,10 +83,10 @@ namespace chaos {
                 ~MonitorManager();
                 
                 
-                void init(void *init_data) ;
-                void start() ;
-                void stop() ;
-                void deinit() ;
+                void init(void *init_data);
+                void start();
+                void stop();
+                void deinit();
                 
             public:
                 

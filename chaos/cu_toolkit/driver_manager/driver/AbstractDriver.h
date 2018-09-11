@@ -114,10 +114,10 @@ namespace chaos{
                     OpcodeExecutor *o_exe;
                     
                     // Initialize instance
-                    void init(void *init_param) ;
+                    void init(void *init_param);
                     
                     // Deinit the implementation
-                    void deinit() ;
+                    void deinit();
 					
 					
                     //! Wait the new command and broadcast it
@@ -139,7 +139,7 @@ namespace chaos{
 					/*
 					 * In case of json initialization driverInit with CDataWrapper is called
 					 * */
-					virtual void driverInit(const chaos::common::data::CDataWrapper&) ;
+					virtual void driverInit(const chaos::common::data::CDataWrapper&);
 
 					virtual void driverDeinit()   = 0;
                     const bool isDriverParamInJson() const;

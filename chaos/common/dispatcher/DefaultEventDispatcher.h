@@ -65,25 +65,25 @@ namespace chaos {
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) ;
+        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription);
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) ;
+        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription);
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) ;
+        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription);
             //!Handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) ;
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription);
         
     public:
             //! Basic Constructor
@@ -96,13 +96,13 @@ namespace chaos {
         /*
          Perform the registration of an handler
          */
-        void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL) ;
+        void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL);
         
             //! Event handler deregistration
         /*
          Perform the deregistration of an handler
          */
-        void deregisterEventAction(EventAction *eventAction) ;
+        void deregisterEventAction(EventAction *eventAction);
 
 
     };

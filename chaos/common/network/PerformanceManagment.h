@@ -84,16 +84,16 @@ namespace chaos {
 				chaos_direct_io::DirectIOClient *getLocalDirectIOClientInstance();
 			protected:
 				//! Start the implementation
-				void init(void *init_parameter) ;
+				void init(void *init_parameter);
 								
 				//! Start the implementation
-				void start() ;
+				void start();
 				
 				//! Stop the implementation
-				void stop() ;
+				void stop();
 				
 				//! Stop the implementation
-				void deinit() ;
+				void deinit();
 				
                 chaos::common::data::CDWUniquePtr startPerformanceSession(chaos::common::data::CDWUniquePtr param);
 				

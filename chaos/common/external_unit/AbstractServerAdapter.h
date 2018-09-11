@@ -42,8 +42,8 @@ namespace chaos{
             public:
                 AbstractServerAdapter();
                 ~AbstractServerAdapter();
-                void init(void *init_data) ;
-                void deinit() ;
+                void init(void *init_data);
+                void deinit();
                 
                 virtual int registerEndpoint(ExternalUnitServerEndpoint& endpoint) = 0;
                 virtual int deregisterEndpoint(ExternalUnitServerEndpoint& endpoint) = 0;

@@ -70,7 +70,7 @@ namespace chaos {
                  */
                 virtual void deinit() = 0;
                 
-                void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) ;
+                void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length);
                 
             public:
                 

@@ -132,7 +132,7 @@ namespace chaos{
 				/*
 				 Shutdown the chaos control library
 				 */
-                chaos::common::data::CDWUniquePtr shutdown(chaos::common::data::CDWUniquePtr action_param) ;
+                chaos::common::data::CDWUniquePtr shutdown(chaos::common::data::CDWUniquePtr action_param);
 			private:
 				CommandManager();
 				~CommandManager();

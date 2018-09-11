@@ -114,7 +114,7 @@ namespace chaos {
                 
                 const bool hasNext();
                 const int32_t getError();
-                ChaosSharedPtr<chaos::common::data::CDataWrapper> next() ;
+                ChaosSharedPtr<chaos::common::data::CDataWrapper> next();
                 uint32_t size()const;
                 const uint32_t getPageLen() const;
                 

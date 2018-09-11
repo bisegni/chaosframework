@@ -136,18 +136,18 @@ namespace chaos{
                 int storeData(const std::string& key,
                                chaos_data::CDWShrdPtr data_to_store,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
-                               const ChaosStringSet& tag_set = ChaosStringSet()) ;
+                               const ChaosStringSet& tag_set = ChaosStringSet());
                 
                 int removeData(const std::string& key,
                                uint64_t start_ts,
                                uint64_t end_ts);
                 int retriveMultipleData(const ChaosStringVector& key,
-                                        chaos::common::data::VectorCDWShrdPtr& result) ;
+                                        chaos::common::data::VectorCDWShrdPtr& result);
                 /*
                  * retriveRawData
                  */
                 char * retriveRawData(const std::string& key,
-                                      size_t *dim=NULL) ;
+                                      size_t *dim=NULL);
                 
                 //! restore from a tag a dataset associated to a key
                 int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,

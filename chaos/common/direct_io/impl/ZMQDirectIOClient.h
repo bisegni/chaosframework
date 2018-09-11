@@ -77,11 +77,11 @@ namespace chaos {
                 public:
                     
                     //! Initialize instance
-                    void init(void *init_data) ;
+                    void init(void *init_data);
 
                     
                     //! Deinit the implementation
-                    void deinit() ;
+                    void deinit();
                 };
             }
         }

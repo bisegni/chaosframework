@@ -36,9 +36,9 @@ namespace chaos {
                 class AbstractClientRemoteIODriver:
                 public ClientARIODriver {
                 protected:
-                    void driverInit(const char *initParameter) ;
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) ;
-                    void driverDeinit() ;
+                    void driverInit(const char *initParameter);
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter);
+                    void driverDeinit();
                     void handleNewConnection(const std::string& connection_identifier);
                 public:
                     AbstractClientRemoteIODriver():

@@ -83,10 +83,10 @@ namespace chaos {
 			public:
 				DataWorker();
 				virtual ~DataWorker();
-				void init(void *init_data) ;
-				void start() ;
-				void stop() ;
-				void deinit() ;
+				void init(void *init_data);
+				void start();
+				void stop();
+				void deinit();
                 void setMaxElement(uint64_t new_max_element);
                 virtual int submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait = common::constants::MDSHistoryQueuePushTimeoutinMSec);
 			};

@@ -69,8 +69,8 @@ namespace chaos{
             void deallocateResource(const std::string& pool_identification,
                                     chaos::service_common::persistence::data_access::AbstractPersistenceDriver* pooled_driver);
             
-            void init(void *init_data) ;
-            void deinit() ;
+            void init(void *init_data);
+            void deinit();
         };
         
         typedef chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver> CachePool;
@@ -103,8 +103,8 @@ namespace chaos{
             void deallocateResource(const std::string& pool_identification,
                                     chaos::data_service::cache_system::CacheDriver* pooled_driver);
             
-            void init(void *init_data) ;
-            void deinit() ;
+            void init(void *init_data);
+            void deinit();
         };
         
         
@@ -124,8 +124,8 @@ namespace chaos{
         protected:
             //timer handler
             void timeout();
-            void init(void *init_data) ;
-            void deinit() ;
+            void init(void *init_data);
+            void deinit();
             
         public:
             CachePoolSlot *getCacheDriverInstance();

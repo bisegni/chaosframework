@@ -66,13 +66,13 @@ namespace chaos{
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, const char* argv[]) ;
+            void init(int argc, const char* argv[]);
             //!stringbuffer parser
             /*
              specialized option for string stream buffer with boost semantics
              */
-            void init(istringstream &initStringStream) ;
-            void init(void *init_data) ;
+            void init(istringstream &initStringStream);
+            void init(void *init_data);
             void start();
             void stop();
             void deinit();

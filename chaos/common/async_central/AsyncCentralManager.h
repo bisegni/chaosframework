@@ -60,10 +60,10 @@ namespace chaos {
 				AsyncCentralManager();
 				~AsyncCentralManager();
 				// Initialize instance
-				void init(void *inti_data) ;
+				void init(void *inti_data);
 				
 				// Deinit the implementation
-				void deinit() ;
+				void deinit();
 			public:
                 //!ad a timer specifying the timeout and repeat time in milliseconds
 				int addTimer(TimerHandler *timer_handler,

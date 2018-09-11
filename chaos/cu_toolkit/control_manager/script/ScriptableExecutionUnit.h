@@ -132,19 +132,19 @@ namespace chaos {
                     
                     
                     //! inherithed method
-                    void executeAlgorithmLaunch() ;
+                    void executeAlgorithmLaunch();
                     
                     //! inherithed method
-                    void executeAlgorithmStart() ;
+                    void executeAlgorithmStart();
                     
                     //! inherithed method
-                    void executeAlgorithmStep(uint64_t step_delay_time) ;
+                    void executeAlgorithmStep(uint64_t step_delay_time);
                     
                     //! inherithed method
-                    void executeAlgorithmStop() ;
+                    void executeAlgorithmStop();
                     
                     //! inherithed method
-                    void executeAlgorithmEnd() ;
+                    void executeAlgorithmEnd();
                     
                     //! inherithed method
                     void unitUndefineActionAndDataset();

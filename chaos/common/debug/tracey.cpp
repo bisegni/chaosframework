@@ -1848,7 +1848,7 @@ std::string hexdump( const void *data, size_t num_bytes, const void *self )
 	unsigned width_chars_block  = (width * 3 + 1) + sizeof("asc");
 	unsigned width_hex_block    = (width * 3 + 1) + sizeof("hex");
 	unsigned width_padding = max( 0, int( maxwidth - ( width_offset_block + width_chars_block + width_hex_block ) ) );
-	unsigned blocks = width_padding / ( width_chars_block + width_hex_block ) ;
+	unsigned blocks = width_padding / ( width_chars_block + width_hex_block );
 
 	unsigned dumpsize = ( num_bytes < width * 16 ? num_bytes : width * 16 ); //16 lines max
 

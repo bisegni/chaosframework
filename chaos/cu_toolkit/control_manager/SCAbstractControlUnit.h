@@ -80,7 +80,7 @@ namespace chaos {
                 void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
                 
                 //! called whr the infrastructure need to know how is composed the control unit
-                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) ;
+                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! system dataset configuraiton overload
                 void initSystemAttributeOnSharedAttributeCache();

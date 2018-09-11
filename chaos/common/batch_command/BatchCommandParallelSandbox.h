@@ -103,7 +103,7 @@ namespace chaos{
                 
                 void lockCurrentCommandFeature(bool lock);
                 
-                void setCurrentCommandFeatures(features::Features& features) ;
+                void setCurrentCommandFeatures(features::Features& features);
                 
                 void setDefaultStickyCommand(BatchCommand *sticky_command);
                 

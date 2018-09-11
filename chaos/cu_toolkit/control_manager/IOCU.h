@@ -54,39 +54,39 @@ protected:
     /*!(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-		void unitInit() ;
+		void unitInit();
     /*!(Optional)
      Execute the work, this is called with a determinated delay
      */
-    void unitStart() ;
+    void unitStart();
     /*!
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void unitRun() ;
+    void unitRun();
 
     /*!(Optional)
      The Control Unit will be stopped
      */
-    void unitStop() ;
+    void unitStop();
 
     /*!(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void unitDeinit() ;
+    void unitDeinit();
 
 		//! Pre input attribute change
 		/*!(Optional)
 		This handler is called befor the update of the
 		cached input attribute with the requested valure
 		*/
-		void unitInputAttributePreChangeHandler() ;
+		void unitInputAttributePreChangeHandler();
 
 		//! Handler called on the update of one or more input attribute
 		/*!(Optional)
 		After an input attribute has been chacnged this handler
 		is called
 		*/
-		void unitInputAttributeChangedHandler() ;
+		void unitInputAttributeChangedHandler();
 };
 
 #endif
