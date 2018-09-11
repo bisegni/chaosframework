@@ -99,7 +99,7 @@ using ChaosFunction = std::function< R >;
 #define ChaosUniquePtr boost::movelib::unique_ptr
 #define ChaosMoveOperator(x) boost::move(x)
 #else
-#define ChaosUniquePtr boost::shared_ptr
+#define ChaosUniquePtr std::auto_ptr
 #define ChaosMoveOperator(x) x
 
 #endif
@@ -123,7 +123,7 @@ using ChaosFunction = std::function< R >;
 #define ChaosUniquePtr boost::movelib::unique_ptr
 #define ChaosMoveOperator(x)  boost::move(x)
 #else
-#define ChaosUniquePtr boost::shared_ptr
+#define ChaosUniquePtr std::auto_ptr
 #define ChaosMoveOperator(x) (x)
 
 #endif
