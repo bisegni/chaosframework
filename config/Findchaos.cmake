@@ -7,9 +7,11 @@ ENDIF()
 execute_process(COMMAND "grep CHAOS_ENABLE_C11:BOOL=OFF ${PREFIX}/CMakeConfiguration.txt"   
    RESULT_VARIABLE retcode)
 
-if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
-   message(FATAL_ERROR "Host GCC version must be at least 4.8!")
- endif()   
+ IF(CMAKE_CXX_COMPILER_VERSION_VERSION)
+   if(CMAKE_CXX_COMPILER_VERSION_VERSION LESS 4.8)
+     message(FATAL_ERROR "Host GCC ${CMAKE_CXX_COMPILER_VERSION} version must be at least 4.8!")
+   endif()   
+ENDIF()
 
  IF(NOT CHAOS_TARGET)
   ADD_DEFINITIONS(-DCHAOS -fPIC)
@@ -19,7 +21,7 @@ ENDIF()
 
 if(NOT "${retcode}" STREQUAL "0")
 
-if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+if(CMAKE_CXX_COMPILER_VERSION_VERSION LESS 5.0)
   ## greater the default is c11
   ADD_DEFINITIONS(-std=c++11)
   message( STATUS "Enabling C11 compilation")

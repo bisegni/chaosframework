@@ -78,7 +78,6 @@ using ChaosFunction = std::function< R >;
 #include <boost/thread/future.hpp>
 #include <boost/chrono.hpp>
 #include <boost/function.hpp>
-#include <boost/move/unique_ptr.hpp>
 
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
@@ -94,9 +93,16 @@ using ChaosFunction = std::function< R >;
 #define ChaosFunction boost::function
 #define ChaosBind boost::bind
 #define ChaosBindPlaceholder(x) x
+#if 0
+#include <boost/move/unique_ptr.hpp>
+
 #define ChaosUniquePtr boost::movelib::unique_ptr
 #define ChaosMoveOperator(x) boost::move(x)
+#else
+#define ChaosUniquePtr boost::shared_ptr
+#define ChaosMoveOperator(x) x
 
+#endif
 #endif
 
 #else
@@ -112,13 +118,19 @@ using ChaosFunction = std::function< R >;
 #include <boost/thread/future.hpp>
 #include <boost/chrono.hpp>
 #include <boost/function.hpp>
+#if 0
 #include <boost/move/unique_ptr.hpp>
+#define ChaosUniquePtr boost::movelib::unique_ptr
+#define ChaosMoveOperator(x)  boost::move(x)
+#else
+#define ChaosUniquePtr boost::shared_ptr
+#define ChaosMoveOperator(x) (x)
+
+#endif
 
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosMakeSharedPtr boost::make_shared
 #define ChaosWeakPtr boost::weak_ptr
-#define ChaosUniquePtr boost::movelib::unique_ptr
-#define ChaosMoveOperator(x)  boost::move(x)
 #define ChaosAtomic boost::atomic
 #define ChaosPromise boost::promise
 #define ChaosFuture  boost::future
