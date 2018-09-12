@@ -368,6 +368,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
 
         if(!found){
             DBG << "No data has been found";
+            
         }
 
 
