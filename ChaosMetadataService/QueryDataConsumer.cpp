@@ -114,7 +114,7 @@ void QueryDataConsumer::init(void *init_data)  {
             StartableService::startImplementation(tmp, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
         }
         
-
+        
     }
 }
 
@@ -155,10 +155,10 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
                                        BufferSPtr channel_data) {
     CHAOS_ASSERT(channel_data)
     int err = 0;
-
+    
     DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);
     //! if tag is == 1 the datapack is in liveonly
-
+    
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive) {
         //protected access to cached driver
         CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
@@ -195,18 +195,20 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
     int err = 0;
     
     CDataWrapper health_data_pack((char *)channel_data->data());
-
+    health_data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp());
+    
     NodeDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<NodeDataAccess>();
     
     HealthStatSDWrapper attribute_reference_wrapper;
     attribute_reference_wrapper.deserialize(&health_data_pack);
-    attribute_reference_wrapper().mds_received_timestamp = TimingUtil::getTimeStamp();
     if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
                                         attribute_reference_wrapper()))) {
         ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
     }
     //create channel data with injected mds timestamp
-    BufferSPtr channel_data_injected(attribute_reference_wrapper.serialize()->getBSONDataBuffer().release());
+    
+    
+    BufferSPtr channel_data_injected(health_data_pack.getBSONDataBuffer().release());
     return consumePutEvent(key,
                            hst_tag,
                            MOVE(meta_tag_set),
@@ -241,14 +243,15 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                                        chaos::common::data::BufferSPtr& result_value) {
     int err = 0;
+    std::string key(key_data->data(),
+                    key_data->size());
     //debug check
     //protected access to cached driver
     CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         if(cache_slot) {
             //get data
-            err = cache_slot->resource_pooled->getData(std::string(key_data->data(),
-                                                                   key_data->size()),
+            err = cache_slot->resource_pooled->getData(key,
                                                        result_value);
             if(result_value &&
                result_value->size()) {

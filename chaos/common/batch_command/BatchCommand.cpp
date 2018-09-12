@@ -87,12 +87,12 @@ void BatchCommand::setHandler(CDataWrapper *data) {}
 /*
  implement the data acquisition handler
  */
-void BatchCommand::acquireHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::acquireHandler() {}
 
 /*
  implement the data correlation handler
  */
-void BatchCommand::ccHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::ccHandler() {}
 
 //timeout handler
 bool BatchCommand::timeoutHandler() {return false;}

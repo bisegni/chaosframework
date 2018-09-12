@@ -167,7 +167,7 @@ namespace chaos{
                 //! return the start step time of the sandbox in milliseocnds
                 const uint64_t getStartStepTime() const;
                 
-                //!count the number of cilce made by the command
+                //!count the number of cicle made by the command
                 const uint64_t getStepCounter() const;
                 
                 //! return the last step duration of the sandbox in microseconds
