@@ -8,29 +8,25 @@
             "name": "TestFramework",
             "type": "cppdbg",
             "request": "launch",
-            "osx": {
-                "program": "${workspaceFolder}/build/build-x86_64-Darwin/TestFramework", 
-            },
+            "program": "${workspaceFolder}/build/build-x86_64-Linux/TestFramework",
             "args": ["--gtest_filter=VariantTest.*"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "gdb"
         },
         {
             "name": "MDS",
             "type": "cppdbg",
             "request": "launch",
-            "osx": {
-                "program": "${workspaceFolder}/build/build-x86_64-Darwin/ChaosMetadataService",    
-            },
-            "args": ["--log-on-console", "--log-level=debug", "--conf-file=/Users/bisegni/source/configuration/chaos_mds_bisdevel.cfg"],
+            "program": "${workspaceFolder}/build/build-x86_64-Linux/ChaosMetadataService",    
+            "args": ["--log-on-console", "--log-level=debug", "--conf-file=/home/makogo82/notchaos/chaos_mds_matdevel.cfg"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb"
+            "MIMode": "gdb"
         }
     ]
 }
