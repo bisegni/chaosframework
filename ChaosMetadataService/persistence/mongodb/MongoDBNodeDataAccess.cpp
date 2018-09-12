@@ -47,15 +47,15 @@ utility_data_access(NULL){}
 MongoDBNodeDataAccess::~MongoDBNodeDataAccess() {}
 
 mongo::BSONObj MongoDBNodeDataAccess::getAliveOption(unsigned int timeout_sec) {
-    return BSON(CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-(timeout_sec*1000))));
+    return BSON(CHAOS_FORMAT("health_stat.%1%",%NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay((timeout_sec * 1000), false))));
 }
 
 int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                               chaos::common::data::CDWUniquePtr &node_description) {
     int err = 0;
     chaos::common::data::CDataWrapper *node_description_tmp = NULL;
-    if(err = getNodeDescription(node_unique_id,
-                                &node_description_tmp)) {
+    if((err = getNodeDescription(node_unique_id,
+                                &node_description_tmp))) {
         MDBNDA_ERR << "Error fetching node description";
     } else {
         node_description.reset(node_description_tmp);
@@ -305,7 +305,7 @@ int MongoDBNodeDataAccess::setNodeHealthStatus(const std::string& node_unique_id
         mongo::BSONObj u = BSON("$set" << BSON("health_stat" << BSON(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(health_stat.timestamp) <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP << mongo::Date_t(health_stat.mds_received_timestamp) <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME << (long long)health_stat.uptime <<
-                                                                     NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << health_stat.user_time <<
+                                                                     NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << health_stat.usr_time <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << health_stat.sys_time <<
                                                                      NodeHealtDefinitionKey::NODE_HEALT_STATUS << health_stat.health_status)));
         DEBUG_CODE(MDBNDA_DBG<<log_message("setNodeHealthStatus",

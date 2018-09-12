@@ -59,10 +59,10 @@ namespace chaos {
                                      uint32_t endpoint);
                     
                     //inherited method
-                    int updateNodeStatistic(const std::string& ds_unique_id,
-                                            const std::string& ds_direct_io_addr,
-                                            const uint32_t endpoint,
-                                            const chaos::common::utility::ProcStat& process_resuorce_usage,const std::string& zone);
+//                    int updateNodeStatistic(const std::string& ds_unique_id,
+//                                            const std::string& ds_direct_io_addr,
+//                                            const uint32_t endpoint,
+//                                            const chaos::common::utility::ProcStat& process_resuorce_usage,const std::string& zone);
                     
                     //inherited method
                     int deleteDataService(const std::string& ds_unique_id);

@@ -23,6 +23,7 @@
 #define __CHAOSFramework__9F37844_1F3C_4AE7_9CFA_D78611B3CC3B_HealthStat_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/ProcStat.h>
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
 
 namespace chaos {
@@ -30,32 +31,29 @@ namespace chaos {
         namespace data {
             namespace structured {
                 //! define node overall status information
-                struct HealthStat {
+                struct HealthStat:
+                public chaos::common::utility::ProcStat {
                     std::string node_uid;
                     //!is the heath timesatmp of the node host
                     uint64_t timestamp;
                     //!is the timestamp of med at time that health dapapack has been received
                     int64_t mds_received_timestamp;
                     std::string health_status;
-                    uint64_t uptime;
-                    double user_time;
-                    double sys_time;
+//                    uint64_t uptime;
+//                    double user_time;
+//                    double sys_time;
                     
                     HealthStat():
+                    ProcStat(),
                     node_uid(),
                     timestamp(0),
-                    health_status(),
-                    uptime(0),
-                    user_time(0.0),
-                    sys_time(0.0){}
+                    health_status(){}
                     
                     HealthStat(const HealthStat& health_stat_src):
+                    ProcStat(health_stat_src),
                     node_uid(health_stat_src.node_uid),
                     timestamp(health_stat_src.timestamp),
-                    health_status(health_stat_src.health_status),
-                    uptime(health_stat_src.uptime),
-                    user_time(health_stat_src.user_time),
-                    sys_time(health_stat_src.sys_time){}
+                    health_status(health_stat_src.health_status){}
                 };
                 
                 //! define serialization wrapper for dataset type
@@ -65,7 +63,7 @@ namespace chaos {
                     Subclass::dataWrapped().timestamp = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, getUInt64Value, 0);
                     Subclass::dataWrapped().mds_received_timestamp = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, getUInt64Value, 0);
                     Subclass::dataWrapped().uptime = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, getUInt64Value, 0);
-                    Subclass::dataWrapped().user_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, getDoubleValue, 0.0);
+                    Subclass::dataWrapped().usr_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, getDoubleValue, 0.0);
                     Subclass::dataWrapped().sys_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME,getDoubleValue, 0.0);
                     Subclass::dataWrapped().health_status = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_STATUS, getStringValue, "");
                 }
@@ -77,7 +75,7 @@ namespace chaos {
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, Subclass::dataWrapped().timestamp);
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, Subclass::dataWrapped().mds_received_timestamp);
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, Subclass::dataWrapped().uptime);
-                    result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, Subclass::dataWrapped().user_time);
+                    result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, Subclass::dataWrapped().usr_time);
                     result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, Subclass::dataWrapped().sys_time);
                     return result;
                 }
