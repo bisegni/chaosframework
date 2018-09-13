@@ -146,7 +146,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
     try{
         if(set_handler_call) {
             //run set handler
-            command_stat.command_info.cmdImpl->commandPre();
+            command_stat.command_info.cmdImpl->startHandler();
             command_stat.command_info.cmdImpl->setHandler(command_stat.command_info.cmdInfo);
             command_stat.command_info.cmdImpl->already_setupped = true;
             

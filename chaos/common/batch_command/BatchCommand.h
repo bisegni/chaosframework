@@ -49,14 +49,14 @@ namespace chaos{
 #define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_END);
 #define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FAULT);
 #define BC_FATAL_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT);
-
+            
             //help madro to get the state
 #define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_EXSC)
 #define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_NORMAL)
 #define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_END)
 #define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FAULT)
 #define BC_CHECK_FATAL_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT)
-
+            
             
             //! Collect the command timing stats
             typedef struct CommandTimingStats {
@@ -83,9 +83,11 @@ namespace chaos{
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 friend struct EndFunctor;
-
                 friend struct CommandInfoAndImplementation;
+                
+                //!define if command is a sticky type
                 bool sticky;
+                
                 //!unique command id
                 uint64_t unique_id;
                 
@@ -132,12 +134,6 @@ namespace chaos{
                 //! shared setting across all slow command
                 chaos::common::data::cache::AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
-                //! called befor the command start the execution
-                void commandPre();
-                
-                //! called after the command step excecution
-                void commandPost();
-                
             protected:
                 
                 //! default constructor
@@ -146,12 +142,31 @@ namespace chaos{
                 //! default destructor
                 virtual ~BatchCommand();
                 
-                virtual
-		  chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
+                //! return the cache to implementation
+                virtual chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
+                
+                
+                //! Notify the termination of the command execution
+                /*!
+                 This handle is called in command termination has the main purpose to end the command. All
+                 resources managed by command need to be deallocated here
+                 */
+                virtual void startHandler();
+                
+                //! Notify the termination of the command execution
+                /*!
+                 This handle is called in command termination has the main purpose to end the command. All
+                 resources managed by command need to be deallocated here
+                 */
+                virtual void endHandler();
+                
+                //! called after the command step excecution
+                virtual void commandPost();
                 
             public:
                 //! return the unique id for the command instance
                 uint64_t getUID();
+                
                 /**
                  * Return the alias of the command
                  * @return the alis name of the command
@@ -282,14 +297,6 @@ namespace chaos{
                  */
                 virtual void setHandler(chaos::common::data::CDataWrapper *data);
                 
-
-                //! End the command execution
-                      /*!
-                         This handle is called in command termination has the main purpose to end the command. All the operation need to close the command.
-
-                    */
-               virtual void endHandler();
-
                 //! Aquire the necessary data for the command
                 /*!
                  The acquire handler has the purpose to get all necessary data need the by CC handler.

@@ -33,23 +33,19 @@ using namespace chaos::cu::control_manager::slow_command;
 #define SCLERR_ LERR_ << SCLOG_HEAD_SL
 
 // default constructor
-SlowCommand::SlowCommand() {
-    
-    
-}
+SlowCommand::SlowCommand() {}
 
 // default destructor
-SlowCommand::~SlowCommand() {
-    
-}
+SlowCommand::~SlowCommand() {}
 
 const string & SlowCommand::getDeviceID() {
     return abstract_control_unit->getDeviceID();
 }
 
-/*
- return the device database with the dafualt device information
- */
+const bool SlowCommand::isAutoBusy() {
+    return auto_busy;
+}
+
 chaos::common::data::DatasetDB * const SlowCommand::getDeviceDatabase() {
     return abstract_control_unit;
 }
@@ -110,4 +106,18 @@ void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_lev
     abstract_control_unit->metadataLogging(getAlias(),
                                            log_level,
                                            message);
+}
+
+void SlowCommand::startHandler() {
+    BatchCommand::startHandler();
+    if(isAutoBusy()) {
+        setBusyFlag(true);
+    }
+}
+
+void SlowCommand::endHandler() {
+    if(isAutoBusy()) {
+        setBusyFlag(false);
+    }
+    BatchCommand::endHandler();
 }
