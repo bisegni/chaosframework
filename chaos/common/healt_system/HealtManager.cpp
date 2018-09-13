@@ -481,7 +481,6 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
     //send datapack
     CDWShrdPtr data_pack = prepareNodeDataPack(*heath_set,
                                                publish_ts);
-    HM_INFO << data_pack->getJSONString();
     if(data_pack.get()) {
         //store data on cache
         SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,

@@ -309,8 +309,11 @@ void SCAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name
 void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
                                            bool is_default,
                                            bool sticky,
+                                           bool auto_busy,
                                            unsigned int sandbox) {
     CHAOS_ASSERT(slow_command_executor)
+    //set custom attribute
+    command_description->getCustomAttributeRef().insert(BCInstantiationAttributeMapPair("auto_busy", CDataVariant(auto_busy)));
     slow_command_executor->installCommand(command_description);
     if(is_default){
         setDefaultCommand(command_description->getAlias(),
@@ -346,6 +349,7 @@ bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
             case BatchCommandEventType::EVT_FAULT:
                 SCACU_LDBG_ << cmd_id << " -> FAULT";
                 break;
+            default: break;
         }
         //whait some times
         usleep(500000);

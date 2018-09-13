@@ -20,10 +20,10 @@
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 
-#include <chaos/common/bson/bson.h>
-#include <chaos/common/exception/CException.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/bson/bson.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataBuffer.h>
 #include <json/json.h>
 

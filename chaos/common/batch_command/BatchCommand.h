@@ -22,16 +22,15 @@
 #ifndef __CHAOSFramework__BatchCommand__
 #define __CHAOSFramework__BatchCommand__
 
-#include <bitset>
-#include <vector>
-#include <string>
-#include <stdint.h>
-
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
+
+#include <bitset>
+#include <vector>
+#include <string>
+#include <stdint.h>
 
 namespace chaos{
     
@@ -75,6 +74,7 @@ namespace chaos{
              - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
              */
             class BatchCommand {
+                friend class BatchCommandDescription;
                 friend class BatchCommandSandbox;
                 friend class RunningCommandStat;
                 friend class BatchCommandParallelSandbox;
@@ -135,7 +135,8 @@ namespace chaos{
                 chaos::common::data::cache::AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
             protected:
-                
+                //!custom attribute fileld by implementations for custom purphoses
+                BCInstantiationAttributeMap instance_custom_attribute;
                 //! default constructor
                 BatchCommand();
                 
@@ -190,6 +191,9 @@ namespace chaos{
                 
                 //! set the alias of the command
                 void setCommandAlias(const std::string& _command_alias);
+                
+                //!set the map of custom attribute for current instance
+                void setInstanceCustomAttribute(BCInstantiationAttributeMap& new_instance_custom_attribute);
                 
                 //! set the features with the uint32 value
                 /*!
