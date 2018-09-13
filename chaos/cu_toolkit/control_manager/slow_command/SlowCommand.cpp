@@ -48,8 +48,7 @@ void SlowCommand::setAutoBusy(bool new_auto_busy) {
 }
 
 const bool SlowCommand::isAutoBusy() {
-    CDataVariant& var = instance_custom_attribute["auto_busy"];
-    return var.asBool();
+    return instance_custom_attribute["auto_busy"].asBool();
 }
 
 chaos::common::data::DatasetDB * const SlowCommand::getDeviceDatabase() {
