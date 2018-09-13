@@ -313,13 +313,16 @@ void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescriptio
                                            unsigned int sandbox) {
     CHAOS_ASSERT(slow_command_executor)
     //set custom attribute
-    command_description->getCustomAttributeRef().insert(BCInstantiationAttributeMapPair("auto_busy", CDataVariant(auto_busy)));
+    bool loc_auto_busy = auto_busy;
     slow_command_executor->installCommand(command_description);
     if(is_default){
+        //default command usually doesn't need to show busy
+        loc_auto_busy = false;
         setDefaultCommand(command_description->getAlias(),
                           sticky,
                           sandbox);
     }
+    command_description->getCustomAttributeRef().insert(BCInstantiationAttributeMapPair("auto_busy", CDataVariant(loc_auto_busy)));
 }
 bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
     ChaosUniquePtr<CommandState> cmd_state;
