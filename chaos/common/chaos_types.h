@@ -22,6 +22,8 @@
 #ifndef CHAOSFramework_chaos_types_h
 #define CHAOSFramework_chaos_types_h
 
+#include <chaos/common/batch_command/BatchCommandTypes.h>
+
 #include <boost/ptr_container/ptr_container.hpp>
 
 #include <boost/thread.hpp>
