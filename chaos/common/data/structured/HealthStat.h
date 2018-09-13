@@ -65,6 +65,7 @@ namespace chaos {
                     Subclass::dataWrapped().uptime = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, getUInt64Value, 0);
                     Subclass::dataWrapped().usr_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, getDoubleValue, 0.0);
                     Subclass::dataWrapped().sys_time = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME,getDoubleValue, 0.0);
+                    Subclass::dataWrapped().swap_rsrc = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP,getDoubleValue, 0.0);
                     Subclass::dataWrapped().health_status = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, NodeHealtDefinitionKey::NODE_HEALT_STATUS, getStringValue, "");
                 }
                 
@@ -77,6 +78,7 @@ namespace chaos {
                     result->addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, Subclass::dataWrapped().uptime);
                     result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, Subclass::dataWrapped().usr_time);
                     result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, Subclass::dataWrapped().sys_time);
+                    result->addDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP, Subclass::dataWrapped().swap_rsrc);
                     return result;
                 }
                 CHAOS_CLOSE_SDWRAPPER()

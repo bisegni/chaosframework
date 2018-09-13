@@ -53,6 +53,7 @@ ProcStat& ProcStat::operator=(ProcStat const &rhs) {
         usr_time = rhs.usr_time;
         sys_time = rhs.sys_time;
         swap_rsrc = rhs.swap_rsrc;
+        uptime = rhs.uptime;
     }
     return *this;
 }
@@ -93,6 +94,5 @@ void ProcStatCalculator::update(ProcStat& stat) {
     stat.last_sys_time = local_sys_time;
     stat.last_sampling_time = sampling_time;
     stat.swap_rsrc = process_resurce_usage.ru_nswap;
-    
     stat.uptime = (stat.last_sampling_time-stat.creation_time);
 }
