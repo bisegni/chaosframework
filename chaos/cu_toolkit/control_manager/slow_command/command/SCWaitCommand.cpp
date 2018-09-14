@@ -48,7 +48,6 @@ BATCH_COMMAND_CLOSE_DESCRIPTION()
 uint8_t SCWaitCommand::implementedHandler() {
     //we need to implements all handler because we need to pause all
     return  HandlerType::HT_Set |
-    HandlerType::HT_Acquisition |
     HandlerType::HT_Correlation;
     
 }
@@ -76,6 +75,12 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     BC_EXCLUSIVE_RUNNING_PROPERTY;
     DEBUG_CODE(SCWC_INFO << "timeout set to " << delay << " milliseconds";)
 }
+
+
+void SCWaitCommand::ccHandler() {
+    SCWC_INFO << CHAOS_FORMAT("Wait command runs for %1% msec",%(getStartStepTime()-getSetTime()));
+}
+
 
 bool SCWaitCommand::timeoutHandler() {
     uint64_t timeDiff = getStartStepTime() - getSetTime();

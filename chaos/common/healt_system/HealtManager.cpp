@@ -77,11 +77,7 @@ void SendHealthStatAsyncJob::run() {
 HealtManager::HealtManager():
 mds_message_channel(NULL),
 last_fire_counter_set(0),
-current_fire_slot(0),
-last_usr_time(0),
-last_sys_time(0),
-last_total_time(0),
-last_sampling_time(0){}
+current_fire_slot(0){}
 
 HealtManager::~HealtManager() {
     //clear node map
@@ -90,30 +86,31 @@ HealtManager::~HealtManager() {
 
 void HealtManager::updateProcInfo() {
     //used to compute the resource occupaiton between sampling time
-    struct rusage local_process_resurce_usage;
-    double local_usr_time = 0;
-    double local_sys_time = 0;
-    //samplig time in seconds
-    uint64_t sampling_time = TimingUtil::getTimeStamp()/1000;
-    getrusage(RUSAGE_SELF, &local_process_resurce_usage);
-    local_usr_time = (double)local_process_resurce_usage.ru_utime.tv_sec + ((double)local_process_resurce_usage.ru_utime.tv_usec / 1000000.0);
-    local_sys_time = (double)local_process_resurce_usage.ru_stime.tv_sec + ((double)local_process_resurce_usage.ru_stime.tv_usec / 1000000.0);
-    if(last_usr_time &&
-       last_sys_time &&
-       last_sampling_time) {
-        uint64_t temp_ts = (sampling_time-last_sampling_time);
-        if(temp_ts > 0) {
-            current_proc_info.usr_time = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
-            current_proc_info.sys_time = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
-        }else {
-            current_proc_info.usr_time = current_proc_info.sys_time = 0;
-        }
-        
-    }
-    last_usr_time = local_usr_time;
-    last_sys_time = local_sys_time;
-    last_sampling_time = sampling_time;
-    current_proc_info.swap_rsrc = local_process_resurce_usage.ru_nswap;
+//    struct rusage local_process_resurce_usage;
+//    double local_usr_time = 0;
+//    double local_sys_time = 0;
+//    //samplig time in seconds
+//    uint64_t sampling_time = TimingUtil::getTimeStamp()/1000;
+//    getrusage(RUSAGE_SELF, &local_process_resurce_usage);
+//    local_usr_time = (double)local_process_resurce_usage.ru_utime.tv_sec + ((double)local_process_resurce_usage.ru_utime.tv_usec / 1000000.0);
+//    local_sys_time = (double)local_process_resurce_usage.ru_stime.tv_sec + ((double)local_process_resurce_usage.ru_stime.tv_usec / 1000000.0);
+//    if(last_usr_time &&
+//       last_sys_time &&
+//       last_sampling_time) {
+//        uint64_t temp_ts = (sampling_time-last_sampling_time);
+//        if(temp_ts > 0) {
+//            current_proc_info.usr_time = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
+//            current_proc_info.sys_time = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
+//        }else {
+//            current_proc_info.usr_time = current_proc_info.sys_time = 0;
+//        }
+//
+//    }
+//    last_usr_time = local_usr_time;
+//    last_sys_time = local_sys_time;
+//    last_sampling_time = sampling_time;
+//    current_proc_info.swap_rsrc = local_process_resurce_usage.ru_nswap;
+    ProcStatCalculator::update(current_proc_info);
 }
 
 
@@ -207,7 +204,7 @@ void HealtManager::deinit()  {
     //    }
 }
 
-const ProcInfo& HealtManager::getLastProcInfo() {
+const ProcStat& HealtManager::getLastProcInfo() {
     return current_proc_info;
 }
 

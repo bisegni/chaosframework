@@ -26,11 +26,7 @@ DEFINE_DA_NAME(DataServiceDataAccess)
 
     //! default constructor
 DataServiceDataAccess::DataServiceDataAccess():
-AbstractDataAccess("DataServiceDataAccess") {
-
-}
+AbstractDataAccess("DataServiceDataAccess") {}
 
     //!default destructor
-DataServiceDataAccess::~DataServiceDataAccess() {
-
-}
+DataServiceDataAccess::~DataServiceDataAccess() {}

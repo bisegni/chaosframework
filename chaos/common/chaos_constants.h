@@ -1275,6 +1275,8 @@ namespace chaos {
         static const char * const HEALT_KEY_POSTFIX                     = "_healt";
         //! define time stamp of the push (usefull for heart beating) [uint64_t]
         static const char * const NODE_HEALT_TIMESTAMP                  = DataPackCommonKey::DPCK_TIMESTAMP;
+        //! define time stamp of mds at time that health datapack has been received [uint64_t]
+        static const char * const NODE_HEALT_MDS_TIMESTAMP              = "dpck_mds_ats";
         //! identify the time spent as user by the process and all his thread[double]
         static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
         //! identify the time spent for system call by the process and all his thread[double]

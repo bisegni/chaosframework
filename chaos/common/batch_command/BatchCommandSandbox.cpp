@@ -727,7 +727,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         //check set handler
         if (!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
             try {
-                tmp_impl->commandPre();
+                tmp_impl->startHandler();
                 tmp_impl->setHandler(tmp_info);
                 tmp_impl->already_setupped = true;
             } catch (chaos::CFatalException& ex) {

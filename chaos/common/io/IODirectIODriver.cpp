@@ -108,7 +108,7 @@ void IODirectIODriver::init(void *_init_parameter) {
 
 void IODirectIODriver::deinit() {
     if(shutting_down){
-            IODirectIODriver_LINFO_ << "Already deinitialized";
+        IODirectIODriver_LINFO_ << "Already deinitialized";
         return;
     }
     shutting_down = true;
@@ -146,9 +146,9 @@ void IODirectIODriver::deinit() {
 }
 
 int IODirectIODriver::storeData(const std::string& key,
-                                    CDWShrdPtr data_to_store,
-                                 DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                 const ChaosStringSet& tag_set)  {
+                                CDWShrdPtr data_to_store,
+                                DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                const ChaosStringSet& tag_set)  {
     int err = 0;
     CHAOS_ASSERT(data_to_store)
     ChaosReadLock rl(mutext_feeder);
@@ -162,7 +162,7 @@ int IODirectIODriver::storeData(const std::string& key,
                                                                                           storage_type,
                                                                                           tag_set))) {
             IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%, data packet size:%3%",%next_client->connection->getServerDescription()%err%serialization->getBufferLen());
-        
+            
         }
     } else {
         DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
@@ -171,9 +171,9 @@ int IODirectIODriver::storeData(const std::string& key,
 }
 
 int IODirectIODriver::storeHealthData(const std::string& key,
-                                       CDWShrdPtr data_to_store,
-                                       DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                       const ChaosStringSet& tag_set) {
+                                      CDWShrdPtr data_to_store,
+                                      DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                      const ChaosStringSet& tag_set) {
     int err = 0;
     CHAOS_ASSERT(data_to_store)
     try{
@@ -201,9 +201,9 @@ int IODirectIODriver::storeHealthData(const std::string& key,
 
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  {
     char* result = NULL;
-
+    
     boost::shared_lock<boost::shared_mutex> rl(mutext_feeder);
-
+    
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
     if(!next_client) return NULL;
     
@@ -315,7 +315,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
             ret=newConfigration;
         }
     } else {
-         IODirectIODriver_LERR_<<"DS list not present:"<<newConfigration->getJSONString();
+        IODirectIODriver_LERR_<<"DS list not present:"<<newConfigration->getJSONString();
     }
     return ret;
 }
@@ -409,11 +409,11 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t start_ts,
                                             const uint64_t end_ts,
                                             const uint32_t page_len) {
-  return performQuery(key,
-                      start_ts,
-                      end_ts,
-                      ChaosStringSet(),
-                      page_len);
+    return performQuery(key,
+                        start_ts,
+                        end_ts,
+                        ChaosStringSet(),
+                        page_len);
 }
 
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
@@ -444,13 +444,13 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t sequid,
                                             const uint64_t runid,
                                             uint32_t page_len) {
-  return performQuery(key,
-                      start_ts,
-                      end_ts,
-                      sequid,
-                      runid,
-                      ChaosStringSet(),
-                      page_len);
+    return performQuery(key,
+                        start_ts,
+                        end_ts,
+                        sequid,
+                        runid,
+                        ChaosStringSet(),
+                        page_len);
 }
 
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
