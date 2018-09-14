@@ -200,7 +200,7 @@ void BatchCommandSandbox::deinit()  {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                               current_executing_command->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              current_executing_command->element->cmdInfo,
+                                              current_executing_command->element.get(),
                                               cmd_stat);
         }
         current_executing_command.reset();
@@ -219,7 +219,7 @@ void BatchCommandSandbox::deinit()  {
             event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                               nextAvailableCommand->element->cmdImpl->unique_id,
                                               BatchCommandEventType::EVT_KILLED,
-                                              nextAvailableCommand->element->cmdInfo,
+                                              nextAvailableCommand->element.get(),
                                               cmd_stat);
         }
         nextAvailableCommand.reset();
@@ -234,7 +234,7 @@ void BatchCommandSandbox::deinit()  {
         if (event_handler && nextAvailableCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->command_alias,
                                                                                      nextAvailableCommand->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_KILLED,
-                                                                                     nextAvailableCommand->element->cmdInfo,
+                                                                                     nextAvailableCommand->element.get(),
                                                                                      cmd_stat);
         nextAvailableCommand.reset();
     }
@@ -281,7 +281,7 @@ void BatchCommandSandbox::consumeWaitCmdOps() {
                     if (event_handler) {event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                           BatchCommandEventType::EVT_DEQUEUE,
-                                                                          command_to_delete->element->cmdInfo,
+                                                                          command_to_delete->element.get(),
                                                                           cmd_stat);}
                     command_to_delete.reset();
                 }
@@ -376,7 +376,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         if (event_handler) event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
                                                                              current_executing_command->element->cmdImpl->unique_id,
                                                                              BatchCommandEventType::EVT_PAUSED,
-                                                                             current_executing_command->element->cmdInfo,
+                                                                             current_executing_command->element.get(),
                                                                              cmd_stat);
                         //install next command
                         installHandler(next_available_command);
@@ -399,7 +399,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_KILLED,
-                                                                                                          command_to_delete->element->cmdInfo,
+                                                                                                          command_to_delete->element.get(),
                                                                                                           cmd_stat);
                                 break;
                             }
@@ -410,7 +410,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_COMPLETED,
-                                                                                                          command_to_delete->element->cmdInfo,
+                                                                                                          command_to_delete->element.get(),
                                                                                                           cmd_stat);
                                 break;
                             }
@@ -420,10 +420,12 @@ void BatchCommandSandbox::checkNextCommand() {
                                 
                                 ChaosUniquePtr<chaos::common::data::CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                                         command_to_delete->element->cmdImpl->fault_description);
+                                
+                                command_to_delete->element->command_and_fault = MOVE(command_and_fault);
                                 if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                           command_to_delete->element->cmdImpl->unique_id,
                                                                                                           BatchCommandEventType::EVT_FAULT,
-                                                                                                          command_and_fault.get(),
+                                                                                                          command_to_delete->element.get(),
                                                                                                           cmd_stat);
                                 break;
                             }
@@ -476,7 +478,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     command_to_delete->element->cmdInfo,
+                                                                                     command_to_delete->element.get(),
                                                                                      cmd_stat);
                                 break;
                             }
@@ -486,10 +488,11 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                                                         command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()) {
+                                    command_to_delete->element->command_and_fault = MOVE(command_and_fault);
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
                                                                       (command_to_delete->element->cmdImpl->runningProperty==RunningPropertyType::RP_FAULT)?BatchCommandEventType::EVT_FAULT:BatchCommandEventType::EVT_FATAL_FAULT,
-                                                                      command_and_fault.get(),
+                                                                      command_to_delete->element.get(),
                                                                       cmd_stat);
                                 }
                                 
@@ -517,7 +520,7 @@ void BatchCommandSandbox::checkNextCommand() {
                                 if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                      command_to_delete->element->cmdImpl->unique_id,
                                                                                      BatchCommandEventType::EVT_COMPLETED,
-                                                                                     command_to_delete->element->cmdInfo,
+                                                                                     command_to_delete->element.get(),
                                                                                      cmd_stat);
                                 break;
                             }
@@ -527,10 +530,11 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                                                                         command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
                                     command_and_fault.get()){
+                                    command_to_delete->element->command_and_fault = MOVE(command_and_fault);
                                     event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                       command_to_delete->element->cmdImpl->unique_id,
                                                                       (command_to_delete->element->cmdImpl->runningProperty==RunningPropertyType::RP_FAULT)?BatchCommandEventType::EVT_FAULT:BatchCommandEventType::EVT_FATAL_FAULT,
-                                                                      command_and_fault.get(),
+                                                                      command_to_delete->element.get(),
                                                                       cmd_stat);
                                 }
                                 
@@ -720,7 +724,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
             event_handler->handleCommandEvent(tmp_impl->command_alias,
                                               tmp_impl->unique_id,
                                               BatchCommandEventType::EVT_RUNNING,
-                                              cmd_to_install->element->cmdInfo,
+                                              cmd_to_install->element.get(),
                                               cmd_stat);
         }
         
@@ -814,22 +818,23 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
         
         //get the assigned id
         addCommandID(command_impl);
-        command_submitted_queue.push(ChaosSharedPtr< PriorityQueuedElement<CommandInfoAndImplementation> >(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
-                                                                                                                                                                   command_impl->unique_id,
-                                                                                                                                                                   priority,
-                                                                                                                                                                   true)));
+        ChaosSharedPtr< PriorityQueuedElement<CommandInfoAndImplementation> > new_element_to_push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
+                                                                                                                                      command_impl->unique_id,
+                                                                                                                                      priority,
+                                                                                                                                                         true));
+        //fire the waiting command
+        if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
+                                                             command_impl->unique_id,
+                                                             BatchCommandEventType::EVT_QUEUED,
+                                                             new_element_to_push->element.get(),
+                                                             cmd_stat);
+        command_submitted_queue.push(new_element_to_push);
         SCSLDBG_ << "New command enqueued:\"" << command_impl->command_alias.c_str() << "\" \"" << ((command_to_info) ? command_to_info->getJSONString() : "") << "\"";
         SCSLDBG_ << "Queue size:" << command_submitted_queue.size();
         
     }
     //increment command stat
     cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
-    //fire the waiting command
-    if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
-                                                         command_impl->unique_id,
-                                                         BatchCommandEventType::EVT_QUEUED,
-                                                         command_to_info,
-                                                         cmd_stat);
     whait_for_next_check.unlock();
     return true;
 }

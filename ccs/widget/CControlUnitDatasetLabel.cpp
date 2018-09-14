@@ -65,7 +65,7 @@ void CControlUnitDatasetLabel::updatedDS(const std::string& control_unit_uid,
     QString text_to_show = datasetValueToLabel(datasetAttributeName(),
                                                dataset_key_values,
                                                doublePrintPrecision());
-
+    qDebug() << "CControlUnitDatasetLabel" << datasetAttributeName() << " " << text_to_show;
     QMetaObject::invokeMethod(this,
                               "updateUI",
                               Qt::QueuedConnection,

@@ -74,7 +74,7 @@ n->fault_description.domain = d;
             struct CommandInfoAndImplementation {
                 chaos::common::data::CDataWrapper *cmdInfo;
                 BatchCommand *cmdImpl;
-                
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> command_and_fault;
                 CommandInfoAndImplementation(chaos::common::data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
                 ~CommandInfoAndImplementation();
                 
