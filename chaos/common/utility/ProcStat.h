@@ -39,6 +39,7 @@ namespace chaos {
                 double swap_rsrc;
                 uint64_t uptime;
                 ProcStat();
+                ProcStat(const ProcStat& ps_src);
                 ProcStat& operator=(ProcStat const &rhs);
             private:
                 //last sampling resurce usage

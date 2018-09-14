@@ -33,14 +33,18 @@
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::data_service;
-using namespace chaos::metadata_service;
+
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
+using namespace chaos::common::data::structured;
+
+using namespace chaos::data_service;
+
+using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
+
 using namespace chaos::service_common::persistence::data_access;
-using ChaosSharedPtr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 
@@ -217,13 +221,15 @@ void ChaosMetadataService::start()  {
 }
 
 void ChaosMetadataService::timeout() {
+    int err = 0;
+    HealthStat service_proc_stat;
     ProcStatCalculator::update(service_proc_stat);
-    persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-    ds_da->updateNodeStatistic(NetworkBroker::getInstance()->getRPCUrl(),
-                               NetworkBroker::getInstance()->getDirectIOUrl(),
-                               0,
-                               service_proc_stat,setting.ha_zone_name);
-    
+    persistence::data_access::NodeDataAccess *n_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::NodeDataAccess>();
+    service_proc_stat.mds_received_timestamp = TimingUtil::getTimeStamp();
+    if((err = n_da->setNodeHealthStatus(NetworkBroker::getInstance()->getRPCUrl(),
+                                        service_proc_stat))) {
+        LCND_LERR << CHAOS_FORMAT("error storing health data into database for this mds [%1%]", %NetworkBroker::getInstance()->getRPCUrl());
+    }
 }
 
 /*

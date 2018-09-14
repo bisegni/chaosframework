@@ -44,6 +44,8 @@ namespace chaos {
                         // Set the needed timout
                         void setHandler(chaos::common::data::CDataWrapper *data);
                         
+                        void ccHandler();
+                        
                         bool timeoutHandler();
                     };
                     

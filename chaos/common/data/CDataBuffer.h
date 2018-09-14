@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework__CDataBuffer_h
 #define __CHAOSFramework__CDataBuffer_h
 
-#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/Buffer.hpp>
 #include <stdint.h>
 

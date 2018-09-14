@@ -27,6 +27,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread.hpp>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>

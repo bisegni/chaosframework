@@ -90,6 +90,9 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     friend class SlowCommandExecutor;
                     friend class command::SetAttributeCommand;
                     
+                    //!specify when the infrastructure need to manage busy flag
+                    bool auto_busy;
+                    
                     //! point to the in memory device database
                     chaos::cu::control_manager::AbstractControlUnit  *abstract_control_unit;
                     
@@ -149,10 +152,23 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     
                     void metadataLogging(const chaos::common::metadata_logging::StandardLoggingChannel::LogLevel log_level,
                                          const std::string& message);
+                    //!inherited methods
+                    void startHandler();
+                    void endHandler();
                 public:
                     
                     //! return the identification of the device
                     const string & getDeviceID();
+                    
+                    //! se the auto busy behaviour
+                    /*!
+                     Auto busy, let the control unit to manage the busy flag in automatic mode
+                     for the instance of command the set it to true;
+                     */
+                    void setAutoBusy(bool new_auto_busy);
+                    
+                    //! return the auto busy flag
+                    const bool isAutoBusy();
                 };
             }
         }

@@ -58,7 +58,7 @@ namespace chaos {
             chaos::common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
             
             //keep track of process resource usage
-            ProcStat service_proc_stat;
+            //ProcStat service_proc_stat;
             
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};

@@ -22,10 +22,13 @@
 #ifndef __CHAOSFramework__BatchCommandDescription__
 #define __CHAOSFramework__BatchCommandDescription__
 
-#include <chaos/common/chaos_types.h>
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
+//#include <chaos/common/chaos_types.h>
+//#include <chaos/common/chaos_constants.h>
+//#include <chaos/common/data/CDataWrapper.h>
+//#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/utility/ObjectInstancer.h>
+
+#include <chaos/common/batch_command/BatchCommandTypes.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -77,9 +80,6 @@ namespace chaos {
             class BatchCommandExecutor;
             class BatchCommand;
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, BatchCommandParameterNameList);
-            
             //! provide a set of method that permit to declare a batch command
             /*!
              A batch command need to be declare to permit to other chaos node
@@ -90,9 +90,9 @@ namespace chaos {
                 std::string alias;
                 std::string description;
                 std::string unique_identifier;
-                BatchCommandMapParamter map_parameter;
-                
-                chaos::common::utility::ObjectInstancer<BatchCommand> *instancer;
+                BCParamterMap map_parameter;
+                BCInstantiationAttributeMap instance_custom_attribute;
+                ChaosUniquePtr< chaos::common::utility::ObjectInstancer<BatchCommand> > instancer;
             public:
                 //! default constructor
                 BatchCommandDescription();
@@ -137,6 +137,10 @@ namespace chaos {
                 
                 ChaosSharedPtr<chaos::common::data::CDataWrapper>
                 getFullDescription();
+                
+                BatchCommand* getInstance();
+                
+                BCInstantiationAttributeMap& getCustomAttributeRef();
             };
             
             
