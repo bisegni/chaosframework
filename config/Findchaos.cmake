@@ -64,15 +64,14 @@ ENDIF()
 
 IF ( CHAOS_SANITIZER)
   IF(DEFINED PROJECT_NAME)
-    SET(FrameworkLib asan ${FrameworkLib})
+      SET(FrameworkLib asan ${FrameworkLib})
 
-    IF( ${CHAOS_SANITIZER} STREQUAL ${PROJECT_NAME} )
+    IF( (${CHAOS_SANITIZER} STREQUAL ${PROJECT_NAME}) OR (${CHAOS_SANITIZER} STREQUAL "ALL"))
       message(STATUS "ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
+      ADD_DEFINITIONS(-fsanitize=address)
+    
 
-      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
-      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address")
       set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
-
     ENDIF()
 
   ENDIF()
