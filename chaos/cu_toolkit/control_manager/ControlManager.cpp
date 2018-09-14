@@ -40,7 +40,6 @@
 #define LCMAPP_ LAPP_ << "[Control Manager] - "
 #define LCMDBG_ LDBG_ << "[Control Manager] - "
 #define LCMERR_ LERR_ << "[Control Manager]"<<__LINE__<<" - "
-#define WAITH_TIME_FOR_CU_REGISTRATION 2000000
 #define WU_IDENTIFICATION(x) std::string(x->getCUInstance()) + std::string("-") + std::string(x->getCUID())
 
 

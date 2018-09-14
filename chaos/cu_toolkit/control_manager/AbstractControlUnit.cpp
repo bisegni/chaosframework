@@ -1386,6 +1386,9 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     
+    //add busy state
+    domain_attribute_setting.addAttribute("busy", 0, DataType::TYPE_BOOLEAN);
+    
     //add bypass state
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BYPASS_STATE, 0, DataType::TYPE_BOOLEAN);
     
@@ -1548,12 +1551,6 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 void AbstractControlUnit::_completeDatasetAttribute() {
-    
-    //add busy flag
-    DatasetDB::addAttributeToDataSet("busy",
-                                     "Notify that the control unit is busy",
-                                     DataType::TYPE_BOOLEAN,
-                                     DataType::Output);
     
     //add global alarm checn
     DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmCU),
@@ -2145,16 +2142,16 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
 }
 
 void AbstractControlUnit::setBusyFlag(bool state) {
-    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    if(output_cache.hasName("busy")) {
-        output_cache.getValueSettingByName("busy")->setValue(CDataVariant(state));
+    AttributeCache& system_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    if(system_cache.hasName("busy")) {
+        system_cache.getValueSettingByName("busy")->setValue(CDataVariant(state));
     }
 }
 
 const bool AbstractControlUnit::getBusyFlag() const {
-    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-    if(output_cache.hasName("busy")) {
-        return output_cache.getValueSettingByName("busy")->getAsVariant().asBool();
+    AttributeCache& system_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    if(system_cache.hasName("busy")) {
+        return system_cache.getValueSettingByName("busy")->getAsVariant().asBool();
     }else {
         return false;
     }

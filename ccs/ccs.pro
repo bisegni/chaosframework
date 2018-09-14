@@ -187,7 +187,8 @@ SOURCES += main.cpp\
     node/connection_manager/model/ControlUnitNodeDataModel.cpp \
     language_editor/LuaLanguageSupport.cpp \
     language_editor/CLINGLanguageSupport.cpp \
-    widget/StorageBurst.cpp
+    widget/StorageBurst.cpp \
+    widget/CLedIndicatorCUBusy.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -365,7 +366,8 @@ HEADERS  += \
     language_editor/LanguageEditorSupport.h \
     language_editor/LuaLanguageSupport.h \
     language_editor/CLINGLanguageSupport.h \
-    widget/StorageBurst.h
+    widget/StorageBurst.h \
+    widget/CLedIndicatorCUBusy.h
 
 FORMS    += \
     search/searchnoderesult.ui \

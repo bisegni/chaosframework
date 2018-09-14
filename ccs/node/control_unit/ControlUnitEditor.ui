@@ -512,6 +512,35 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Busy:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CLedIndicatorCUBusy" name="widgetBusyFlag" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Indicate the state of busy flag for current executed command</string>
+           </property>
+           <property name="whatsThis">
+            <string>Is the busi flag indicator of control unit command</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -1368,6 +1397,12 @@
    <class>CPropertyPushButton</class>
    <extends>QPushButton</extends>
    <header>widget/CPropertyPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CLedIndicatorCUBusy</class>
+   <extends>QWidget</extends>
+   <header>widget/CLedIndicatorCUBusy.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

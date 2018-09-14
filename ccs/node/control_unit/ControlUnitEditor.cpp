@@ -205,6 +205,9 @@ void ControlUnitEditor::initUI() {
     ui->listViewWarning->setModel(&warning_list_model);
     //manage command stat
     ui->widgetCommandStatistic->setVisible(false);
+    //busy flag
+    ui->widgetBusyFlag->setNodeUID(control_unit_unique_id);
+    ui->widgetBusyFlag->initChaosContent();
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -271,7 +274,7 @@ bool ControlUnitEditor::isClosing() {
     ui->widgetNodeResource->deinitChaosContent();
     //disable log widget
     ui->widgetChaosNodeLog->deinitChaosContent();
-
+    ui->widgetBusyFlag->deinitChaosContent();
     dataset_input_table_model.setAttributeMonitoring(false);
     dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
