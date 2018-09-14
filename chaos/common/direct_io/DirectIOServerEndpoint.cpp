@@ -72,7 +72,6 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
     if(!channel_instance) return NULL;
     // gest exsclusive access
     DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
-    if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
     ChaosWriteLock rl(shared_mutex);
     channel_slot[channel_instance->getChannelRouterIndex()] = channel_instance;
     return channel_instance;
@@ -81,7 +80,6 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
 //! Dispose the channel
 void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
     if(!channel_instance) return;
-    if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return;
     ChaosWriteLock rl(shared_mutex);
     channel_slot[channel_instance->getChannelRouterIndex()] = NULL;
 }

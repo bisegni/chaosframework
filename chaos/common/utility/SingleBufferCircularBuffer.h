@@ -83,7 +83,8 @@ namespace chaos {
 				 */
 				void addValue(T newValue) {
 					(*writePointer) = newValue;
-					currentPostion = (++currentPostion) % bufferDimension;
+                    ++currentPostion;
+					currentPostion = currentPostion % bufferDimension;
 					writePointer = basePointer + currentPostion;
 				}
 				//!Retur the write buffer position

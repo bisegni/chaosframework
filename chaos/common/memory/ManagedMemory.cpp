@@ -248,7 +248,7 @@ void *ManagedMemory::do_slabs_alloc(const size_t size, unsigned int id) {
     slabclass_t *p;
     void *ret = NULL;
     
-    if (id < POWER_SMALLEST || id > power_largest) {
+    if (id > power_largest) {
         return NULL;
     }
     
@@ -283,8 +283,7 @@ void *ManagedMemory::do_slabs_alloc(const size_t size, unsigned int id) {
 
 void ManagedMemory::do_slabs_free(void *ptr, const size_t size, unsigned int id) {
     slabclass_t *p;
-    assert(id >= POWER_SMALLEST && id <= power_largest);
-    if (id < POWER_SMALLEST || id > power_largest)
+    if (id > power_largest)
         return;
     
     p = &slabclass[id];
