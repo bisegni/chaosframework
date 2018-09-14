@@ -54,14 +54,13 @@ health_key(key + DataPackPrefixID::HEALTH_DATASET_POSTFIX),
 cu_alarm_key(key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX),
 dev_alarm_key(key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX){
     //set sequence id for all domain
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainOutput, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainInput, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCustom, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainSystem, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainHealth, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainDevAlarm, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCUAlarm, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
-
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainOutput, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainInput, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCustom, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainSystem, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainHealth, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainDevAlarm, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCUAlarm, ChaosSharedPtr< ChaosAtomic<int64_t> >(new ChaosAtomic<int64_t>())));
 }
 
 KeyDataStorage::~KeyDataStorage() {
