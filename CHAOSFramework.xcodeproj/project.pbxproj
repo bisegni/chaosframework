@@ -4483,9 +4483,9 @@
 				32FC49B11E0AAFBE0087D82C /* AbstractSandbox.cpp */,
 				32FC49B21E0AAFBE0087D82C /* AbstractSandbox.h */,
 				3296031C1876B45000CDCADA /* BatchCommandSandboxEventHandler.h */,
-				3296031D1876B45000CDCADA /* BatchCommandTypes.h */,
 				329603161876B45000CDCADA /* BatchCommandConstants.h */,
 				329603171876B45000CDCADA /* BatchCommandException.h */,
+				3296031D1876B45000CDCADA /* BatchCommandTypes.h */,
 				32571D9F1C7C91090001D884 /* batch_command.h */,
 			);
 			path = batch_command;

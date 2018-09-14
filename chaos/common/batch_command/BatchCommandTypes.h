@@ -22,8 +22,11 @@
 #ifndef CHAOSFramework_BatchCommandTypes_h
 #define CHAOSFramework_BatchCommandTypes_h
 
-#include <string>
-#include <stdint.h>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataVariant.h>
+
 #include <boost/dynamic_bitset.hpp>
 
 namespace chaos {
@@ -195,6 +198,14 @@ namespace chaos {
                 } RunningProperty;
             }
             
+            
+            //!defne custom attribute that the implementation need to be set at instantion time
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::CDataVariant, BCInstantiationAttributeMap);
+            
+            //!define the command parameter types
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<chaos::common::data::CDataWrapper>, BCParamterMap);
+            
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, BatchCommandParameterNameList);
         }
     }
 }

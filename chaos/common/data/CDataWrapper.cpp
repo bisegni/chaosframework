@@ -610,6 +610,11 @@ SerializationBufferUPtr CDataWrapper::getBSONData() const{
     return SerializationBufferUPtr(new SerializationBuffer(buff, bson->len));
 }
 
+BufferUPtr CDataWrapper::getBSONDataBuffer() const {
+    return BufferUPtr(new Buffer(reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson))),
+                      bson->len));
+}
+
 /*
  Return the pointer of the data and the size. th eownership of data remain
  of the CDataWrapper

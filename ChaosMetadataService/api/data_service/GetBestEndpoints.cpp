@@ -21,10 +21,14 @@
 
 #include "GetBestEndpoints.h"
 #include "../../ChaosMetadataService.h"
+
+#include <chaos/common/utility/TimingUtil.h>
+
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api::data_service;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -32,25 +36,39 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define GBE_DBG  DBG_LOG(GetBestEndpoints)
 #define GBE_ERR  ERR_LOG(GetBestEndpoints)
 
+//!next update timestamp for the cache
+static int64_t nu_cache_ts = 0;
+static std::vector< ChaosSharedPtr<CDataWrapper> > data_services;
+static ChaosSharedMutex smutex;
+
 CHAOS_MDS_DEFINE_API_CLASS_CD(GetBestEndpoints, "getBestEndpoints");
 
 CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
+    //lock for manage the cache of endpoint
+    ChaosWriteLock wl(smutex);
+    
     int err = 0;
     int32_t numner_or_result = 3;
+    int64_t now = TimingUtil::getTimeStamp();
+    
     const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     CreateNewDataWrapper(result, );
-    std::vector<ChaosSharedPtr<CDataWrapper> > data_services;
     
     if(api_data && api_data->hasKey("count")) {
         numner_or_result = api_data->getInt32Value("count");
     }
     
-    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -1)
-    
-    if((err = ds_da->getBestNDataService(ha_zone_name,
-                                         data_services,
-                                         numner_or_result))) {
-        LOG_AND_TROW(GBE_ERR, err, "Error fetching best available data service")
+    if(now >= nu_cache_ts ||
+       data_services.size() == 0) {
+        GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -1)
+        
+        if((err = ds_da->getBestNDataService(ha_zone_name,
+                                             data_services,
+                                             numner_or_result))) {
+            LOG_AND_TROW(GBE_ERR, err, "Error fetching best available data service")
+        }
+        //update cache on first call after ten seconds
+        nu_cache_ts = now + 10000;
     }
     
     //constructs the result

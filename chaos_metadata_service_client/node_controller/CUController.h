@@ -23,6 +23,7 @@
 #define CHAOSFramework_CUCONTROLLER_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/exception/exception.h>

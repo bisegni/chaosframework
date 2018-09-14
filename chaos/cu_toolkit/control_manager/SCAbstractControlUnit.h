@@ -159,6 +159,7 @@ namespace chaos {
                 void installCommand(ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> command_description,
                                     bool is_default = false,
                                     bool sticky = true,
+                                    bool auto_busy = true,
                                     unsigned int sandbox = 0);
                 
                 bool waitOnCommandID(uint64_t& cmd_id);

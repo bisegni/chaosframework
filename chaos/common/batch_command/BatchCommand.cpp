@@ -87,22 +87,23 @@ void BatchCommand::setHandler(CDataWrapper *data) {}
 /*
  implement the data acquisition handler
  */
-void BatchCommand::acquireHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::acquireHandler() {}
 
 /*
  implement the data correlation handler
  */
-void BatchCommand::ccHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::ccHandler() {}
 
 //timeout handler
 bool BatchCommand::timeoutHandler() {return false;}
 
 //! called befor the command start the execution
-void BatchCommand::commandPre() {
+void BatchCommand::startHandler() {
 	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicroseconds();
 }
-void BatchCommand::endHandler() {;
-}
+
+void BatchCommand::endHandler() {}
+
 #define SET_FAULT(c, m, d) \
 BC_FAULT_RUNNING_PROPERTY \
 BCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \
@@ -149,4 +150,8 @@ const uint64_t BatchCommand::getStartStepTime() const {
 //! return the last step time of the sandbox
 const uint64_t BatchCommand::getLastStepDuration() const {
     return (shared_stat->last_cmd_step_duration_usec);
+}
+
+void BatchCommand::setInstanceCustomAttribute(BCInstantiationAttributeMap& new_instance_custom_attribute) {
+    instance_custom_attribute = new_instance_custom_attribute;
 }

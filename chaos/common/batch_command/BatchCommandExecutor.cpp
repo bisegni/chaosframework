@@ -505,7 +505,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
     BatchCommand *instance = NULL;
     if(map_command_description.count(command_alias)) {
         ChaosSharedPtr<BatchCommandDescription> description = map_command_description[command_alias];
-        instance = description->instancer->getInstance();
+        instance = description->getInstance();
         DEBUG_CODE(BCELDBG_ << "Instancing command \"" << command_alias<<"\" sticky/default:"<<instance->sticky;)
         
         //forward the pointer of the driver accessor

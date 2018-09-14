@@ -53,7 +53,9 @@ namespace chaos{
             } KeyDataStorageDomain;
             
             //!define tags set
-             CHAOS_DEFINE_LOCKABLE_OBJECT(ChaosStringSet, LChaosStringSet);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(ChaosStringSet, LChaosStringSet);
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(unsigned int, ChaosSharedPtr< ChaosAtomic<int64_t> >,  DSSeqIDMap);
             
             //!High level driver for manage the push and query of data sets
             class KeyDataStorage {
@@ -67,7 +69,7 @@ namespace chaos{
                 const std::string dev_alarm_key;
                 
                 //!is the sequence if
-                boost::atomic<int64_t> sequence_id;
+                DSSeqIDMap map_seq_id;
                 
                 //!restore poitn map
                 std::map<std::string, std::map<std::string, chaos_data::CDWShrdPtr > > restore_point_map;

@@ -28,6 +28,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 using namespace chaos::cu::control_manager::execution_pool;
@@ -84,7 +85,7 @@ void ExecutionPoolManager::timeout() {
     
     CDWUniquePtr hb_message(new CDataWrapper());
     //collect proc stat
-    const ProcInfo cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
+    const ProcStat cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
     const double total_cpu_usage = cur_proc_stat.sys_time+cur_proc_stat.usr_time;
     
     //ad current unit server alias

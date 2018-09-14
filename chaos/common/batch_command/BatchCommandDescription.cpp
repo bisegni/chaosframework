@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
+#include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -29,19 +29,12 @@ BatchCommandDescription::BatchCommandDescription(const std::string& _command_ali
                                                  const std::string& _unique_identifier):
 alias(_command_alias),
 description(_command_description),
-unique_identifier(_unique_identifier),
-instancer(NULL) {}
+unique_identifier(_unique_identifier){}
 
-BatchCommandDescription::~BatchCommandDescription(){
-    if(instancer) delete(instancer);
-    instancer = NULL;
-}
+BatchCommandDescription::~BatchCommandDescription(){}
 
 void BatchCommandDescription::setInstancer(chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer) {
-    if(instancer){
-        delete (instancer);
-    }
-    instancer = _instancer;
+    instancer.reset(_instancer);
 }
 
 void BatchCommandDescription::addParameter(const std::string& parameter_name,
@@ -66,7 +59,7 @@ BatchCommandDescription::getFullDescription() {
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
     if(map_parameter.size()) {
-        for(BatchCommandMapParamterIterator it = map_parameter.begin();
+        for(BCParamterMapIterator it = map_parameter.begin();
             it != map_parameter.end();
             it++) {
             description_obj->appendCDataWrapperToArray(*it->second);
@@ -77,7 +70,7 @@ BatchCommandDescription::getFullDescription() {
 }
 
 void BatchCommandDescription::getParameters(std::vector<std::string>& parameter_list) {
-    for(BatchCommandMapParamterIterator it = map_parameter.begin();
+    for(BCParamterMapIterator it = map_parameter.begin();
         it != map_parameter.end();
         it++) {
         parameter_list.push_back(it->first);
@@ -132,4 +125,17 @@ void BatchCommandDescription::setDescription(const std::string& _description) {
 //! return the alias of the command
 const std::string& BatchCommandDescription::getDescription() {
     return description;
+}
+
+BatchCommand* BatchCommandDescription::getInstance() {
+    BatchCommand *result = instancer->getInstance();
+    if(result) {
+        //copy the instancer attribute into new instance
+        result->setInstanceCustomAttribute(instance_custom_attribute);
+    }
+    return result;
+}
+
+BCInstantiationAttributeMap& BatchCommandDescription::getCustomAttributeRef() {
+    return instance_custom_attribute;
 }

@@ -20,10 +20,10 @@
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 
-#include <chaos/common/bson/bson.h>
-#include <chaos/common/exception/CException.h>
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/bson/bson.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataBuffer.h>
 #include <json/json.h>
 
@@ -263,6 +263,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
                 //return the bson data
                 SerializationBufferUPtr getBSONData() const;
+                BufferUPtr getBSONDataBuffer() const;
                 const char* getBSONRawData(int& size) const;
                 const char* getBSONRawData() const;
                 const int getBSONRawSize() const;
