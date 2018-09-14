@@ -22,13 +22,7 @@ ENDIF()
 
 if(NOT "${retcode}" STREQUAL "0")
 
-if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
-  ## greater the default is c11
   ADD_DEFINITIONS(-std=c++11)
-  message( STATUS "Enabling C11 compilation because compiler version ${CMAKE_CXX_COMPILER_VERSION}")
-else()
-  message(STATUS "Using default ${CMAKE_CXX_COMPILER_VERSION}")
-endif() 
 
 ELSE()
   message(STATUS "Force Static C98 compatibility compilation")
