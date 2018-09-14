@@ -54,13 +54,14 @@ health_key(key + DataPackPrefixID::HEALTH_DATASET_POSTFIX),
 cu_alarm_key(key + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX),
 dev_alarm_key(key + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX){
     //set sequence id for all domain
-    map_seq_id[KeyDataStorageDomainOutput] = 0;
-    map_seq_id[KeyDataStorageDomainInput] = 0;
-    map_seq_id[KeyDataStorageDomainCustom] = 0;
-    map_seq_id[KeyDataStorageDomainSystem] = 0;
-    map_seq_id[KeyDataStorageDomainHealth] = 0;
-    map_seq_id[KeyDataStorageDomainDevAlarm] = 0;
-    map_seq_id[KeyDataStorageDomainCUAlarm] = 0;
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainOutput, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainInput, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCustom, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainSystem, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainHealth, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainDevAlarm, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+    map_seq_id.insert(DSSeqIDMapPair(KeyDataStorageDomainCUAlarm, ChaosSharedPtr< boost::atomic<int64_t> >(new boost::atomic<int64_t>())));
+
 }
 
 KeyDataStorage::~KeyDataStorage() {
@@ -167,7 +168,7 @@ CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain do
     //add the unique key
     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
     result->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, node_type);
-    result->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++map_seq_id[domain]);
+    result->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++(*map_seq_id[domain]));
     return result;
 }
 

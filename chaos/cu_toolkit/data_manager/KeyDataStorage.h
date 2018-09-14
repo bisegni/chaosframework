@@ -55,7 +55,7 @@ namespace chaos{
             //!define tags set
             CHAOS_DEFINE_LOCKABLE_OBJECT(ChaosStringSet, LChaosStringSet);
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(KeyDataStorageDomain, boost::atomic<int64_t>,  DSSeqIDMap);
+            CHAOS_DEFINE_MAP_FOR_TYPE(unsigned int, ChaosSharedPtr< boost::atomic<int64_t> >,  DSSeqIDMap);
             
             //!High level driver for manage the push and query of data sets
             class KeyDataStorage {
