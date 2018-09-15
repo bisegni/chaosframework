@@ -510,7 +510,10 @@ void AbstractControlUnit::doInitRpCheckList() {
             attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
             // if the CU can't push initial dataset is a real problem, we must detect immediately
             if((err=pushOutputDataset())!=0){
-                throw CException(err,"cannot initialize output dataset",__PRETTY_FUNCTION__);
+                sleep(1);
+                if((err=pushOutputDataset())!=0){
+                    throw CException(err,"cannot initialize output dataset",__PRETTY_FUNCTION__);
+                }
             }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
             
