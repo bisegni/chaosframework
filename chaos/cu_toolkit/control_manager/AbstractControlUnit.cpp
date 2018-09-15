@@ -507,9 +507,31 @@ void AbstractControlUnit::doInitRpCheckList() {
             //set first timestamp for simulate the run step
             int err;
             *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            if((err=pushSystemDataset())!=0){
+                ACULWRN_<<"cannot initialize system dataset, retrying";
+                sleep(1);
+                if((err=pushSystemDataset())!=0){
+                    throw CException(err,"cannot initialize system dataset",__PRETTY_FUNCTION__);
+                }
+            }
+             if((err=pushCUAlarmDataset())!=0){
+                ACULWRN_<<"cannot initialize CUAlarm dataset, retrying";
+                sleep(1);
+                if((err=pushCUAlarmDataset())!=0){
+                    throw CException(err,"cannot initialize CU alarm dataset",__PRETTY_FUNCTION__);
+                }
+            }
+            if((err=pushDevAlarmDataset())!=0){
+                ACULWRN_<<"cannot initialize DEVAlarm dataset, retrying";
+                if((err=pushDevAlarmDataset())!=0){
+                    throw CException(err,"cannot initialize DEV alarm dataset",__PRETTY_FUNCTION__);
+                }
+            }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
             // if the CU can't push initial dataset is a real problem, we must detect immediately
             if((err=pushOutputDataset())!=0){
+                ACULWRN_<<"cannot initialize output dataset, retrying";
                 sleep(1);
                 if((err=pushOutputDataset())!=0){
                     throw CException(err,"cannot initialize output dataset",__PRETTY_FUNCTION__);
@@ -518,25 +540,19 @@ void AbstractControlUnit::doInitRpCheckList() {
             attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
             
             if((err=pushInputDataset())!=0){
-                throw CException(err,"cannot initialize input dataset",__PRETTY_FUNCTION__);
+                ACULWRN_<<"cannot initialize input dataset, retrying";
+                sleep(1);
+                if((err=pushInputDataset())!=0){
+                    throw CException(err,"cannot initialize input dataset",__PRETTY_FUNCTION__);
+                    }
             }
             attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
             
             if((err=pushCustomDataset())!=0){
                 throw CException(err,"cannot initialize custom dataset",__PRETTY_FUNCTION__);
             }
-            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
             
-            if((err=pushSystemDataset())!=0){
-                throw CException(err,"cannot initialize system dataset",__PRETTY_FUNCTION__);
-            }
-            
-            if((err=pushCUAlarmDataset())!=0){
-                throw CException(err,"cannot initialize CU alarm dataset",__PRETTY_FUNCTION__);
-            }
-            if((err=pushDevAlarmDataset())!=0){
-                throw CException(err,"cannot initialize DEV alarm dataset",__PRETTY_FUNCTION__);
-            }
+           
             break;
         }
         
