@@ -38,7 +38,8 @@ using namespace chaos::common::async_central;
 PerformanceManagment::PerformanceManagment(NetworkBroker *_network_broker):
 network_broker(_network_broker),
 map_sessions(this),
-global_performance_connection(NULL){
+global_performance_connection(NULL),
+work_on_purge(false){
 	//create the description for init preformance session rpc action
 	AbstActionDescShrPtr
 	actionDescription = DeclareAction::addActionDescritionInstance<PerformanceManagment>(this,

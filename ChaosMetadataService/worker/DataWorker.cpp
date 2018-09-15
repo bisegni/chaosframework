@@ -39,7 +39,8 @@ using namespace chaos::data_service::worker;
 
 DataWorker::DataWorker():
 work(false),
-max_element(1000){}
+max_element(1000),
+thread_cookie(NULL){}
 
 DataWorker::~DataWorker() {}
 

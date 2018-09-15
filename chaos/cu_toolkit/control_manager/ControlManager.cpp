@@ -59,7 +59,11 @@ using namespace std;
  Constructor
  */
 ControlManager::ControlManager():
-publishing_counter_delay(0){
+publishing_counter_delay(0),
+use_unit_server(false),
+use_execution_pools(false),
+thread_run(false),
+mds_channel(NULL) {
     //! register default control unit
     registerControlUnit<chaos::cu::control_manager::ProxyControlUnit>();
     registerControlUnit<chaos::cu::control_manager::script::ScriptableExecutionUnit>();

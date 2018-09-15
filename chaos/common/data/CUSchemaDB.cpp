@@ -193,7 +193,7 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char
     kiv.type = chaos::edb::KEY_STR_VALUE;
     composeAttributeName(device->getKeyInfo().value.strValue, attributeName, a_name);
     
-    strcpy(kiv.value.strValue, a_name.c_str());
+    strncpy(kiv.value.strValue, a_name.c_str(), 255);
     
     ptr_vector<entity::Entity> childs;
     device->getHasChildByKeyInfo(kiv, alreadyAdded);

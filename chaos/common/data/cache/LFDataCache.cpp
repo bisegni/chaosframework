@@ -25,7 +25,15 @@
 
 using namespace chaos::common::data::cache;
 
-LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):writeIndex(0),readIndex(1),memoryPool(_memoryPool),garbageableSlab(1) {
+LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):
+writeIndex(0),
+readIndex(1),
+memoryPool(_memoryPool),
+garbageableSlab(1),
+slabClassForCachedInfo(0),
+maxLength(0),
+slabRequiredSize(0),
+slabID(0) {
     
     //clear the array
     rwPtr[0] = rwPtr[1] = NULL;

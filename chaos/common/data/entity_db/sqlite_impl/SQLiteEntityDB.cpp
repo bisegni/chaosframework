@@ -53,8 +53,12 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(SQLiteEntityDB, EntityDB)
 /*!
  Default constructor
  */
-SQLiteEntityDB::SQLiteEntityDB(/*string *_alias*/) {
+SQLiteEntityDB::SQLiteEntityDB(/*string *_alias*/):
+dbInstance(NULL) {
     //alias = *_alias;
+    for(int idx = 0; idx < NUM_STMT; idx++) {
+        stmt[idx] = NULL;
+    }
 }
 
 /*!
@@ -963,7 +967,7 @@ void SQLiteEntityDB::fillKeyInfoFromStatement(sqlite3_stmt *stmt, KeyIdAndValue&
             break;
         case 2:
             //copy the string into memoery of the value
-            strcpy(keyValueInfo.value.strValue, (const char *)sqlite3_column_text(stmt, 3));
+            strncpy(keyValueInfo.value.strValue, (const char *)sqlite3_column_text(stmt, 3), 255);
             break;
     }
 }

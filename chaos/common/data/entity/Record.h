@@ -49,7 +49,13 @@ namespace chaos{
             //! information about the key of the current entity db record
             edb::KeyIdAndValue _keyValueInfo;
             
-            Record(edb::EntityDB *_database):database(_database){};
+            Record(edb::EntityDB *_database):
+            database(_database),
+            _id(0){
+                _keyValueInfo.elementID = 0;
+                _keyValueInfo.type = edb::KEY_NUM_VALUE;
+                _keyValueInfo.keyID = 0;
+            };
             
             virtual ~Record(){};
         public:

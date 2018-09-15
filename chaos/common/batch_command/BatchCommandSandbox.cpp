@@ -100,7 +100,12 @@ continue; \
 }
 
 BatchCommandSandbox::BatchCommandSandbox():
-default_sticky_command(){}
+default_sticky_command(),
+sharedSettingPtr(NULL),
+shared_attribute_cache(NULL){
+    stat.last_cmd_step_duration_usec = 0;
+    stat.last_cmd_step_start_usec = 0;
+}
 
 BatchCommandSandbox::~BatchCommandSandbox() {}
 
