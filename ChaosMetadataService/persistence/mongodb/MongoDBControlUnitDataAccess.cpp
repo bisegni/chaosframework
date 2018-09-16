@@ -68,7 +68,7 @@ MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {}
 //        /*BSON(key_last_checing_time << mongo::Date_t(current_ts) <<
 //         key_last_performed_time << mongo::Date_t(current_ts) <<
 //         key_processing_ageing << false);*/
-//        DEBUG_CODE(MDBCUDA_DBG<<log_message("compeleteControlUnitForAgeingManagement",
+//        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
 //                                            "update",
 //                                            DATA_ACCESS_LOG_2_ENTRY("query",
 //                                                                    "update",
@@ -130,7 +130,7 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
         
         mongo::Query query = query_builder.obj();
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "performPagedQuery",
                                             DATA_ACCESS_LOG_1_ENTRY("query",
                                                                     query.toString()));)
@@ -344,7 +344,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
         
         //update dateset
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("setDataset",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "update - dataset",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
@@ -377,7 +377,7 @@ int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_uni
                                     << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
         
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "find",
                                             DATA_ACCESS_LOG_1_ENTRY("query",
                                                                     query.toString()));)
@@ -439,7 +439,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                   ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION << 1);
         
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_2_ENTRY("query",
                                                                     "prj",
@@ -480,7 +480,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                   ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION << 1);
         
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_2_ENTRY("query",
                                                                     "prj",
@@ -620,7 +620,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON("instance_description" << updated_field.obj()));
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
@@ -673,7 +673,7 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<ChaosS
         
         mongo::BSONObj q = bson_find.obj();
         // mongo::BSONObj p =  BSON(NodeDefinitionKey::NODE_UNIQUE_ID<<1);
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.toString()));)
@@ -733,7 +733,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
         }
         mongo::BSONObj q = bson_find.obj();
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.toString()));)
@@ -809,7 +809,7 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
         mongo::BSONObj q = bson_find.obj();
         mongo::BSONObj u = BSON("$unset" << BSON("instance_description" << ""));
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("deleteInstanceDescription",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
@@ -844,7 +844,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
                                     dotted_dataset_path << BSON("$elemMatch"<<BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME << attribute_name)));
         mongo::BSONObj prj = BSON(dotted_dataset_path_proj << 1);
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDatasetAttributeConfiguration",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Projection",
@@ -888,7 +888,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
                                     "instance_description.attribute_value_descriptions" << BSON("$elemMatch"<<BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME << attribute_name)));
         mongo::BSONObj prj = BSON("instance_description.attribute_value_descriptions.$" << 1);
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDatasetAttributeConfiguration",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findOne",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Projection",
@@ -947,7 +947,7 @@ int MongoDBControlUnitDataAccess::getScriptAssociatedToControlUnitInstance(const
         
         mongo::BSONObj p = BSON(NodeDefinitionKey::NODE_GROUP_SET << 1 <<
                                 "script_seq" << 1);
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getScriptAssociatedToControlUnitInstance[script_info]",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "find",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "projection",
@@ -994,7 +994,7 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
         mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE
                                 << "cu_association" << BSON("$in" << BSON_ARRAY(cu_uid)));
         mongo::BSONObj p = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1);
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataServiceAssociated",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "find",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "projection",
@@ -1072,7 +1072,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
                                                       key_last_checking_time << mongo::Date_t(TimingUtil::getTimeStamp())));
         // order getting first cu being the last processed one
         mongo::BSONObj  order_by = BSON(key_last_checking_time << 1);
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("getControlUnitOutOfAgeingTime",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "findAndUpdate",
                                             DATA_ACCESS_LOG_3_ENTRY("query",
                                                                     "update",
@@ -1148,7 +1148,7 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
                                                  BSON(key_processing_ageing << false <<
                                                       key_last_checking_time << mongo::Date_t(current_ts))));
         
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("releaseControlUnitForAgeingManagement",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("query",
                                                                     "update",
@@ -1177,7 +1177,7 @@ int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << control_unit_id <<
                                 DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)) <<
                                 "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr()))));
-        DEBUG_CODE(MDBCUDA_DBG<<log_message("eraseControlUnitDataBeforeTS",
+        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
                                             "delete",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.jsonString()));)
