@@ -776,6 +776,7 @@ void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
     DEBUG_CODE(SCSLDBG_ << "[removeHandler] remove  command:\""<< cmd_to_install->element->cmdImpl->getAlias()<<"\"" );
     
     BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
+    tmp_impl->endHandler();
     uint8_t handlerMask = tmp_impl->implementedHandler();
     if (handlerMask <= 1) {
         //there is only the set handler so we finish here.

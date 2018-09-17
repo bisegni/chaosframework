@@ -37,7 +37,9 @@ using namespace chaos::cu::control_manager::slow_command;
 SlowCommand::SlowCommand() {}
 
 // default destructor
-SlowCommand::~SlowCommand() {}
+SlowCommand::~SlowCommand() {
+    
+}
 
 const string & SlowCommand::getDeviceID() {
     return abstract_control_unit->getDeviceID();
