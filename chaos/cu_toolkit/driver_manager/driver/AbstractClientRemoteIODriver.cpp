@@ -39,7 +39,7 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     CHECK_TYPE_OF_KEY(const_cast<const CDataWrapper *>(&init_parameter), "url", String, ERR, -3);
 
     const std::string url = init_parameter.getStringValue("url");
-    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The uri parameter can't be empty string");
+    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The url parameter can't be empty string");
     //! end point identifier & authorization key
     if(init_parameter.hasKey("endpoint_name")){
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
@@ -59,8 +59,13 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     }
     
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
-    
-    ClientARIODriver::driverInit(init_parameter);
+    CreateNewDataWrapper(init_pack, );
+    if(init_parameter.hasKey("conn_par") &&
+       init_parameter.isCDataWrapperValue("conn_par")) {
+        init_pack = init_parameter.getCSDataValue("conn_par");
+    }
+    INFO << CHAOS_FORMAT("Initilizing remote driver client with data %1%", %init_pack->getJSONString());
+    ClientARIODriver::driverInit(*init_pack);
     DBG <<"Initialize connection...";
     //register this driver as external endpoint
     err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
