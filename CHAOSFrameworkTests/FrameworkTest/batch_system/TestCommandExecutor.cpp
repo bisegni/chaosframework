@@ -55,7 +55,7 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
 void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
                                              BatchCommandEventType::BatchCommandEventType type,
-                                             chaos::common::data::CDataWrapper *command_info,
+                                             chaos::common::batch_command::CommandInfoAndImplementation *command_info,
                                              const BatchCommandStat& commands_stats) {
     queued = commands_stats.queued_commands;
     stacked = commands_stats.stacked_commands;
