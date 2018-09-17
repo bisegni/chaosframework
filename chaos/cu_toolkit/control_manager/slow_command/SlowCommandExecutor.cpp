@@ -159,7 +159,6 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
     switch(type) {
         case BatchCommandEventType::EVT_FATAL_FAULT:
         case BatchCommandEventType::EVT_FAULT: {
-            
             if(command_info &&
                command_info->command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
                command_info->command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
@@ -182,28 +181,31 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
             }
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
             break;
+        }
         case BatchCommandEventType::EVT_COMPLETED:
         case BatchCommandEventType::EVT_KILLED:
         case BatchCommandEventType::EVT_DEQUEUE:
         case BatchCommandEventType::EVT_PAUSED:
-        case BatchCommandEventType::EVT_QUEUED:
+        case BatchCommandEventType::EVT_QUEUED: {
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
             break;
-        case BatchCommandEventType::EVT_RUNNING:
+        }
+        case BatchCommandEventType::EVT_RUNNING:{
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue(command_info->cmdImpl->getAlias(), true, true);
             break;
-        
         }
         default:
             break;
     }
     
     //log command event
-    command_logging_channel->logCommandState(control_unit_instance->getCUID(),
-                                             command_alias,
-                                             command_seq,
-                                             type,
-                                             command_info->cmdInfo);
+    if(command_info) {
+        command_logging_channel->logCommandState(control_unit_instance->getCUID(),
+                                                 command_alias,
+                                                 command_seq,
+                                                 type,
+                                                 command_info->cmdInfo);
+    }
     //update queued and stacked command on system dataset
     sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_QUEUED_CMD)->setValue(CDataVariant(commands_stats.queued_commands));
     sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_STACK_CMD)->setValue(CDataVariant(commands_stats.stacked_commands));
