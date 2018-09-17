@@ -84,7 +84,7 @@ void SlowCommandExecutor::start()  {
 
 // Start the implementation
 void SlowCommandExecutor::stop()  {
-	SCELDBG_ << "stopping";
+    SCELDBG_ << "stopping";
     //initialize superclass
     BatchCommandExecutor::stop();
 }
@@ -126,7 +126,7 @@ void SlowCommandExecutor::installCommand(ChaosSharedPtr<BatchCommandDescription>
 
 //! Check if the waithing command can be installed
 BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias,
-                                                      	uint32_t submission_rule,
+                                                       uint32_t submission_rule,
                                                        uint32_t submission_retry_delay,
                                                        uint64_t scheduler_step_delay) {
     //install command into the batch command executor root class
@@ -148,25 +148,25 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& comman
 void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              uint64_t command_seq,
                                              BatchCommandEventType::BatchCommandEventType type,
-                                             CDataWrapper *command_data,
+                                             CommandInfoAndImplementation *command_info,
                                              const BatchCommandStat& commands_stats) {
-    
+    AttributeCache& sys_cache = getAttributeSharedCache()->getSharedDomain(DOMAIN_SYSTEM);
     //let the base class handle the event
     BatchCommandExecutor::handleCommandEvent(command_seq,
                                              type,
-                                             command_data,
+                                             command_info,
                                              commands_stats);
     switch(type) {
-    case BatchCommandEventType::EVT_FATAL_FAULT:
+        case BatchCommandEventType::EVT_FATAL_FAULT:
         case BatchCommandEventType::EVT_FAULT: {
             
-            if(command_data &&
-               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
-               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
-               command_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)) {
-                const int32_t code = command_data->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
-                const std::string message = command_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
-                const std::string domain = command_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
+            if(command_info &&
+               command_info->command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE) &&
+               command_info->command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE) &&
+               command_info->command_and_fault->hasKey(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)) {
+                const int32_t code = command_info->command_and_fault->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE);
+                const std::string message = command_info->command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE);
+                const std::string domain = command_info->command_and_fault->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN);
                 
                 //log error on metadata server
                 error_logging_channel->logError(control_unit_instance->getCUID(),
@@ -175,14 +175,25 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                                 message,
                                                 domain);
                 if(type==BatchCommandEventType::EVT_FATAL_FAULT){
-                	CFatalException ex(code, message, domain);
-                //async go into recoverable error
-                	boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                    CFatalException ex(code, message, domain);
+                    //async go into recoverable error
+                    boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
                 }
             }
+            sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
             break;
+        case BatchCommandEventType::EVT_COMPLETED:
+        case BatchCommandEventType::EVT_KILLED:
+        case BatchCommandEventType::EVT_DEQUEUE:
+        case BatchCommandEventType::EVT_PAUSED:
+        case BatchCommandEventType::EVT_QUEUED:
+            sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
+            break;
+        case BatchCommandEventType::EVT_RUNNING:
+            sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue(command_info->cmdImpl->getAlias(), true, true);
+            break;
+        
         }
-
         default:
             break;
     }
@@ -192,11 +203,11 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              command_alias,
                                              command_seq,
                                              type,
-                                             command_data);
+                                             command_info->cmdInfo);
     //update queued and stacked command on system dataset
-    AttributeCache& sys_cache = getAttributeSharedCache()->getSharedDomain(DOMAIN_SYSTEM);
     sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_QUEUED_CMD)->setValue(CDataVariant(commands_stats.queued_commands));
     sys_cache.getValueSettingByName(DataPackSystemKey::DP_SYS_STACK_CMD)->setValue(CDataVariant(commands_stats.stacked_commands));
+    //
     control_unit_instance->pushSystemDataset();
 }
 
@@ -212,7 +223,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
         last_ru_id_cache = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
                                                                         DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
         if(!last_ru_id_cache) {
-        	SCELERR_ << "Error getting cache slot for unit id";
+            SCELERR_ << "Error getting cache slot for unit id";
             return;
         }
     }

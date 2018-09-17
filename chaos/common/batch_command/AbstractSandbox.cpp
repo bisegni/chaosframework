@@ -27,7 +27,7 @@ using namespace chaos::common::batch_command;
 
 void AcquireFunctor::operator()() {
     try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) cmd_instance->acquireHandler();
+        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) {cmd_instance->acquireHandler();}
     } catch (chaos::CFatalException&ex) {
         SET_FAULT(ERR_LOG(AcquireFunctor), ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
     } catch (chaos::CException& ex) {
@@ -41,7 +41,7 @@ void AcquireFunctor::operator()() {
 
 void CorrelationFunctor::operator()() {
     try {
-        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) (cmd_instance->ccHandler());
+        if (cmd_instance && (cmd_instance->runningProperty < RunningPropertyType::RP_END)) {cmd_instance->ccHandler();};
     } catch (chaos::CFatalException&ex) {
         SET_FAULT(ERR_LOG(AcquireFunctor), ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
     } catch (chaos::CException& ex) {
@@ -55,7 +55,7 @@ void CorrelationFunctor::operator()() {
 
 void EndFunctor::operator()() {
     try {
-        if (cmd_instance && (cmd_instance->runningProperty >= RunningPropertyType::RP_END)) (cmd_instance->endHandler());
+        if (cmd_instance && (cmd_instance->runningProperty >= RunningPropertyType::RP_END)) {/*cmd_instance->endHandler()*/};
     } catch (chaos::CFatalException&ex) {
         SET_FAULT(ERR_LOG(AcquireFunctor), ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT)
     } catch (chaos::CException& ex) {

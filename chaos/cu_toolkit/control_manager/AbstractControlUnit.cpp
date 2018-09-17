@@ -1931,6 +1931,7 @@ int AbstractControlUnit::pushSystemDataset() {
         system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
         //fill the dataset
         fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
+        ACULAPP_ << system_attribute_dataset->getJSONString();
         //push out the system dataset
         err=key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, MOVE(system_attribute_dataset));
     }

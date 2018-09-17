@@ -150,11 +150,11 @@ namespace chaos {
                                        unsigned int sandbox_instance = 0);
                 void addExecutionChannels(unsigned int execution_channels=1);
                 
-                template<typename T>
-                void installCommand(const std::string& command_alias) {
-                    CHAOS_ASSERT(slow_command_executor)
-                    slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
-                }
+//                template<typename T>
+//                void installCommand(const std::string& command_alias) {
+//                    CHAOS_ASSERT(slow_command_executor)
+//                    slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
+//                }
                 
                 void installCommand(ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> command_description,
                                     bool is_default = false,

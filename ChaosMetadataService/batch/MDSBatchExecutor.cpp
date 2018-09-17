@@ -162,7 +162,7 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
 void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
                                           uint64_t command_seq,
                                           BatchCommandEventType::BatchCommandEventType type,
-                                          common::data::CDataWrapper *command_data,
+                                          CommandInfoAndImplementation *command_info,
                                           const common::batch_command::BatchCommandStat& commands_stat) {
     std::string type_string;
     switch(type){

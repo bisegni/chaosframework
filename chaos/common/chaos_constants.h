@@ -842,9 +842,13 @@ namespace chaos {
          operation of a CU determinate the force of storage data on history backend for a determinated
          amount of time or cu cicle
          */
-        static const char * const BURST_STATE   = "cudk_burst_state";
-        //! repreent the tag associated to the current burst oepration
-        static const char * const BURST_TAG     = "cudk_burst_tag";
+        static const char * const BURST_STATE               = "cudk_burst_state";
+        //! is the tag associated to the current burst oepration
+        static const char * const BURST_TAG                 = "cudk_burst_tag";
+        //! is the tag associated to the current running command alias(in the case of slow contro unit)
+        static const char * const RUNNING_COMMAND_ALIAS     = "running_cmd_alias";
+        
+        
     }
     
     /** @defgroup Contorl unit system key

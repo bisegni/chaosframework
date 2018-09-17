@@ -59,21 +59,21 @@ namespace chaos{
                 boost::mutex    mutex_sandbox_id;
             protected:
                 //overload to permit the customization of newly created command instance
-                ::chaos::common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
-                                                                                  uint32_t submission_rule = ::chaos::common::batch_command::SubmissionRuleType::SUBMIT_NORMAL,
+                chaos::common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
+                                                                                  uint32_t submission_rule = chaos::common::batch_command::SubmissionRuleType::SUBMIT_NORMAL,
                                                                                   uint32_t submission_retry_delay = 1000,
                                                                                   uint64_t scheduler_step_delay = 1000000);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(const std::string& command_alias,
                                         uint64_t command_seq,
-                                        ::chaos::common::batch_command::BatchCommandEventType::BatchCommandEventType type,
-                                        ::chaos::common::data::CDataWrapper *command_data,
+                                        chaos::common::batch_command::BatchCommandEventType::BatchCommandEventType type,
+                                        chaos::common::batch_command::CommandInfoAndImplementation *command_info,
                                         const ::chaos::common::batch_command::BatchCommandStat& commands_stat);
                 
                 //! general sandbox event handler
                 void handleSandboxEvent(const std::string& sandbox_id,
-                                        ::chaos::common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+                                        chaos::common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
                                         void* type_value_ptr,
                                         uint32_t type_value_size);
                 
