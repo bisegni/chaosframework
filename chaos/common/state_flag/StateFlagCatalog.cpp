@@ -91,7 +91,7 @@ void StateFlagCatalog::stateFlagUpdated(const FlagDescription       flag_descrip
 }
 
 void StateFlagCatalog::addMemberToSeverityMap(ChaosSharedPtr<StateFlag> new_status_flag) {
-    DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->getName(););
+    DEBUG_CODE(SLC_DBG << "Add flag to severity bitfield map:\"" << new_status_flag->getName()<<"\"";);
     //iitializethe severity map
     for(int s = StateFlagServerityRegular;
         s != StateFlagServerityUndefuned;

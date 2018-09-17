@@ -28,7 +28,7 @@ export CHAOS_TEST_REPORT=""
 export CHAOS_TEST_DEBUG=""
 export GOOGLE_PROFILE=""
 usage(){
-    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-m <mdsserver> ] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-s:stop on error\n-v:enable callgrind\n-g:activate debug log\n-p <normal|strict|draconian>:activate google heap check\n"
+    echo -e "Usage :$0 [-t <testlist0> .. -t <testlistN>] [-m <mdsserver> ] [-d <directory of testlists> [$testdir]] [-r csv report_file] [-v] [-k]\n-t <testlist>: choose a particular testlist\n-d <dir>: execute all the testlist in a given directory\n-r <report>:create a CSV file with test summary\n-k:stop on error\n-v:enable callgrind\n-g:activate debug log\n-p <normal|strict|draconian>:activate google heap check\n"
 }
 while getopts m:t:d:r:kvgp: opt; do
     case $opt in
