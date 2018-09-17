@@ -35,14 +35,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::persistence::mongodb;
 
 MongoDBUtilityDataAccess::MongoDBUtilityDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
-MongoDBAccessor(_connection){
-    
-}
+MongoDBAccessor(_connection){}
 
-MongoDBUtilityDataAccess::~MongoDBUtilityDataAccess() {
-    
-}
-
+MongoDBUtilityDataAccess::~MongoDBUtilityDataAccess() {}
 
 int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value) {
     int err = 0;
@@ -95,7 +90,7 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
 int MongoDBUtilityDataAccess::resetAllData() {
     int err = 0;
     try {
-        mongo::BSONObj q;
+        mongo::BSONObj q = BSON("ndk_uid" << BSON("$ne" << NodeType::NODE_TYPE_DATA_SERVICE));
         
         MDBUDA_DBG<<"Start resetting mds data";
         
