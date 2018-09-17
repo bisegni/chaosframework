@@ -104,6 +104,8 @@ namespace chaos {
                         //AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
                     }
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
+                        int err = 0;
+                        unsigned int iteration = 0;
                         CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
                         //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                         //get the authorization key
@@ -120,6 +122,16 @@ namespace chaos {
                             driver_init_pack=init_parameter.getCSDataValue(INIT_HARDWARE_PARAM);
                         }
                         future_hepler.init(NULL);
+                        //waith at least 3 seconds for connection
+                        while(conn_phase != RDConnectionPhaseConnected &&
+                              conn_phase != RDConnectionPhaseAutorized &&
+                              iteration < 3) {
+                            sleep(1);
+                            iteration++;
+                        }
+                        //try anyway to send data
+                        if((err = _sendAuthenticationRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -1, "Error sending autorization request");}
+                        if((err = _sendInitRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -2, "Error sending initilization request");}
                     }
                     void driverDeinit()  {
                         //send deinit, in case no one hase deinitlized before
@@ -373,27 +385,6 @@ namespace chaos {
                             }
                                 
                             case RDConnectionPhaseManageAutorization: {
-//                                if(authorization_key.size() != 0) {
-//                                    chaos::common::data::CDWShrdPtr message_response;
-//                                    chaos::common::data::CDWUniquePtr auth_ack_data(new chaos::common::data::CDataWrapper());
-//                                    AbstractRemoteIODriver_DBG<<" Connection OK, authorizing...";
-//
-//                                    auth_ack_data->addStringValue(AUTHORIZATION_KEY, authorization_key);
-//                                    if((err = _sendRawOpcodeRequest(remote_uri,
-//                                                                    "auth",
-//                                                                    MOVE(auth_ack_data),
-//                                                                    message_response)) ==0 ){
-//                                        if(checkAuthenticationState(message_response)) {
-//                                            conn_phase = RDConnectionPhaseAutorized;
-//                                        } else {
-//                                            AbstractRemoteIODriver_ERR<<" Authorization Fails, cannot configure";
-//                                            err = AR_ERROR_NOT_AUTORIZED;
-//                                            break;
-//                                        }
-//                                    }
-//                                } else {
-//                                    conn_phase = RDConnectionPhaseAutorized;
-//                                }
                                 if((err = _sendAuthenticationRequest()) != 0 ||
                                    conn_phase != RDConnectionPhaseAutorized ) {
                                     break;
@@ -401,22 +392,6 @@ namespace chaos {
                             }
                                 
                             case RDConnectionPhaseAutorized: {
-//                                chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
-//                                chaos::common::data::CDWShrdPtr message_response;
-//                                AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
-//                                if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
-//                                                                "init",
-//                                                                MOVE(conf_msg),
-//                                                                message_response)) ==0 ){
-//                                    if(checkConfigurationState(message_response)) {
-//                                        conn_phase = RDConnectionPhaseConfigured;
-//                                    } else {
-//                                        AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
-//                                        err = AR_ERROR_NOT_CONFIGURED;
-//                                        break;
-//                                    }
-//                                }
-                                ;
                                 if((err = _sendInitRequest()) != 0 ||
                                    conn_phase != RDConnectionPhaseConfigured ) {
                                     break;
