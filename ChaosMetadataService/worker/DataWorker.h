@@ -37,7 +37,7 @@
 #define DEFAULT_JOB_THREAD 1
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
 		namespace worker {
 			
 			typedef struct WorkerJob {
@@ -54,7 +54,7 @@ namespace chaos {
 			} DataWorkerSetting;
 			
 			class DataWorker:
-			public common::utility::StartableService  {
+            public chaos::common::utility::StartableService  {
 				//job queue list
                 std::queue<WorkerJobPtr> job_queue;
 				
@@ -88,7 +88,7 @@ namespace chaos {
 				void stop();
 				void deinit();
                 void setMaxElement(uint64_t new_max_element);
-                virtual int submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait = common::constants::MDSHistoryQueuePushTimeoutinMSec);
+                virtual int submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait = chaos::common::constants::MDSHistoryQueuePushTimeoutinMSec);
 			};
 			
 		}

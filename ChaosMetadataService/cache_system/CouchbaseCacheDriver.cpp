@@ -38,7 +38,7 @@
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 
 DEFINE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver);
 

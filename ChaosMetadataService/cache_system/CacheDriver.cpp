@@ -20,7 +20,7 @@
  */
 #include "CacheDriver.h"
 
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 
 CacheDriver::CacheDriver(std::string alias):
 NamedService(alias),

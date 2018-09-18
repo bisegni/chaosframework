@@ -21,7 +21,7 @@
 
 #include "DeviceSharedDataWorkerMetric.h"
 
-using namespace chaos::data_service::worker;
+using namespace chaos::metadata_service::worker;
 
 static const char * const METRIC_KEY_INPUT_PACKET_COUNT = "input_packet_count";
 static const char * const METRIC_KEY_INPUT_BANDWITH = "input_badnwith_kb";

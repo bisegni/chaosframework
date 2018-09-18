@@ -27,7 +27,7 @@
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace data_service {
+            namespace metadata_service {
 
                 CHAOS_MDS_DEFINE_API_CLASS(GetAssociationByDS);
             }

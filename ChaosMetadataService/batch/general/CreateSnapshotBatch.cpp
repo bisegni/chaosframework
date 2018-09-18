@@ -29,7 +29,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::network;
 
 using namespace chaos::metadata_service;
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 using namespace chaos::metadata_service::batch::general;
 
 #define G_RS_INFO INFO_LOG(CreateSnapshotBatch)
@@ -130,7 +130,7 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
     
     G_RS_DBG << "Get live data for " << dataset_to_fetch << " in channel";
     persistence::data_access::SnapshotDataAccess *s_da = getDataAccess<mds_data_access::SnapshotDataAccess>();
-    data_service::CachePoolSlot *cache_slot = data_service::DriverPoolManager::getInstance()->getCacheDriverInstance();
+    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
     try{
         CacheData stored_dataset;
         //get data
@@ -156,10 +156,8 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
             err = -1;
             G_RS_ERR<< "No data has been fetched for " << dataset_to_fetch;
         }
-    } catch(...) {
-        
-    }
-    data_service::DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+    } catch(...) {}
+    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
     return err;
 }
 

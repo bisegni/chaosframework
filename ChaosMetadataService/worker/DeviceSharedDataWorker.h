@@ -37,7 +37,7 @@ namespace chaos_utility		= chaos::common::utility;
 namespace chaos_direct_io	= chaos::common::direct_io;
 
 namespace chaos{
-    namespace data_service {
+    namespace metadata_service {
         namespace worker {
             //forward declaration
             class DeviceSharedDataWorkerMetricCollector;
@@ -54,7 +54,7 @@ namespace chaos{
             
             struct ThreadCookie {
                 ChaosUniquePtr<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> object_storage_driver;
-                chaos::data_service::object_storage::abstraction::ObjectStorageDataAccess *obj_storage_da;
+                chaos::metadata_service::object_storage::abstraction::ObjectStorageDataAccess *obj_storage_da;
             };
             
             //! worker for live device sharing

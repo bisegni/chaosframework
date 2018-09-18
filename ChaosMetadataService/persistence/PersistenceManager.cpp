@@ -26,13 +26,9 @@ using namespace chaos::common::utility;
 using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::persistence;
 
-PersistenceManager::PersistenceManager() {
-    
-}
+PersistenceManager::PersistenceManager() {}
 
-PersistenceManager::~PersistenceManager() {
-    
-}
+PersistenceManager::~PersistenceManager() {}
 
 void PersistenceManager::init(void* init_data)  {
     const std::string impl_name = ChaosMetadataService::getInstance()->setting.persistence_implementation+"PersistenceDriver";

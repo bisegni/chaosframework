@@ -23,7 +23,7 @@
 
 #include <limits>
 
-using namespace chaos::data_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::mongodb;
 
 #define INFO INFO_LOG(ShardKeyManagement)
 #define DBG  DBG_LOG(ShardKeyManagement)

@@ -22,7 +22,7 @@
 #include "CacheDriverMetricCollector.h"
 #include <chaos/common/global.h>
 
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 
 // static initialization
 ChaosSharedPtr<CacheDriverSharedMetricIO> CacheDriverMetricCollector::shared_collector;

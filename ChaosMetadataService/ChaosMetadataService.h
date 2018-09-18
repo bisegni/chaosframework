@@ -55,7 +55,7 @@ namespace chaos {
             //!persistence driver instance
             chaos::common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
             //! CDS data consumer that respond to data api
-            chaos::common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
+            chaos::common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
             
             //keep track of process resource usage
             //ProcStat service_proc_stat;

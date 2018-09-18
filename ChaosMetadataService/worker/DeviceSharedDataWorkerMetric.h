@@ -28,7 +28,7 @@
 #include <boost/atomic.hpp>
 
 namespace chaos{
-    namespace data_service {
+    namespace metadata_service {
         namespace worker {
             
             class DeviceSharedDataWorkerMetric :

@@ -32,8 +32,8 @@ using namespace chaos::service_common::persistence::mongodb;
 
 using namespace chaos::metadata_service;
 
-using namespace chaos::data_service::object_storage::mongodb;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 DEFINE_CLASS_FACTORY(MongoDBObjectStorageDriver,
                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver);

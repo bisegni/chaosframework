@@ -27,7 +27,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
-using namespace chaos::data_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::mongodb;
 
 
 #define INFO INFO_LOG(MongoDBObjectStorageDataAccess)
@@ -45,8 +45,8 @@ using namespace chaos::common::batch_command;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 using namespace chaos::service_common::persistence::mongodb;
-using namespace chaos::data_service::object_storage::mongodb;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
