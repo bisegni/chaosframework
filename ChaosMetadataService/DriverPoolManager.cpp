@@ -29,13 +29,12 @@
 #define DP_LOG_DBG  DBG_LOG(DriverPoolManager)
 #define DP_LOG_ERR ERR_LOG(DriverPoolManager)
 
-using namespace chaos::data_service;
 using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 using namespace chaos::service_common::persistence::data_access;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::abstraction;
 //storage pool
 //-------------------------------------------cache pool---------------------------------------
 
@@ -186,10 +185,24 @@ DriverPoolManager::~DriverPoolManager() {
 }
 
 void DriverPoolManager::init(void *init_data)  {
+    //init cache pool
     InizializableService::initImplementation(cache_pool, NULL, "CacheDriverPool", __PRETTY_FUNCTION__);
+    
+    //init dirver instace
+    const std::string persistence_impl_name = ChaosMetadataService::getInstance()->setting.persistence_implementation+"PersistenceDriver";
+    persistence_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_impl_name),
+                             persistence_impl_name);
+    if(persistence_driver.get() == NULL) throw chaos::CException(-1, "No Persistence driver found", __PRETTY_FUNCTION__);
+    persistence_driver.init(NULL, __PRETTY_FUNCTION__);
+    
+    const std::string storage_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl + "ObjectStorageDriver";
+    storage_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(storage_impl_name),
+                             storage_impl_name);
 }
 
 void DriverPoolManager::deinit()  {
+    storage_driver.deinit(__PRETTY_FUNCTION__);
+    persistence_driver.deinit(__PRETTY_FUNCTION__);
     CHAOS_NOT_THROW(InizializableService::deinitImplementation(cache_pool, "CacheDriverPool", __PRETTY_FUNCTION__);)
 }
 
@@ -206,10 +219,10 @@ void DriverPoolManager::releaseCacheDriverInstance(CachePoolSlot *cache_driver_i
     cache_pool.pool.releaseResource(cache_driver_instance);
 }
 
-ObjectStoragePoolSlot *DriverPoolManager::getObjectStorageInstance() {
-    return obj_storage_pool.pool.getNewResource();
+AbstractPersistenceDriver& DriverPoolManager::getPersistenceDrv() {
+    return *persistence_driver;
 }
 
-void DriverPoolManager::releaseObjectStorageInstance(ObjectStoragePoolSlot *obj_storage_driver_instance) {
-    obj_storage_pool.pool.releaseResource(obj_storage_driver_instance);
+AbstractPersistenceDriver& DriverPoolManager::getObjectStorageDrv() {
+    return *storage_driver;
 }

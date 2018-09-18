@@ -39,7 +39,7 @@
 #include <mongo/bson/bson.h>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             namespace mongodb {
                 

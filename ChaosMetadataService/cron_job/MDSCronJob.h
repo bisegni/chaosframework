@@ -38,12 +38,11 @@ namespace chaos {
             public chaos::common::cronus_manager::CronJob {
                 friend class MDSCronusManager;
                 //dataaccess abstract driver
-                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver& abstract_persistance_driver;
             protected:
                 template<typename T>
                 T* getDataAccess() {
-                    CHAOS_ASSERT(abstract_persistance_driver)
-                    return abstract_persistance_driver->getDataAccess<T>();
+                    return abstract_persistance_driver.getDataAccess<T>();
                 }
             public:
                 MDSCronJob(chaos::common::data::CDataWrapper *param);

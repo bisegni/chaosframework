@@ -34,7 +34,7 @@
 #include <boost/thread.hpp>
 #define COUCHBASE_DEFAULT_TIMEOUT 5000000
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace cache_system {
             
             typedef enum ResultType {

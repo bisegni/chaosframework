@@ -30,7 +30,7 @@
 #include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             namespace abstraction {
                 

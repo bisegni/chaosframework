@@ -30,15 +30,15 @@
 #include "ShardKeyManagement.h"
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             namespace mongodb {
                 class MongoDBObjectStorageDriver;
                 
                 //! Data Access for producer manipulation data
                 class MongoDBObjectStorageDataAccess:
-                public data_service::object_storage::abstraction::ObjectStorageDataAccess,
-                protected service_common::persistence::mongodb::MongoDBAccessor {
+                public chaos::metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
+                protected chaos::service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBObjectStorageDriver;
                    
                     //object storage custom parameter

@@ -46,12 +46,12 @@ namespace chaos{
             std::map<std::string, std::string>	persistence_kv_param_map;
             
             //!cache configuration
-            chaos::data_service::cache_system::CacheDriverSetting cache_driver_setting;
+            chaos::metadata_service::cache_system::CacheDriverSetting cache_driver_setting;
             
             //----------object storage configuration----------------
-            chaos::data_service::object_storage::ObjStorageSetting  object_storage_setting;
+            chaos::metadata_service::object_storage::ObjStorageSetting  object_storage_setting;
             
-            chaos::data_service::worker::DataWorkerSetting          worker_setting;
+            chaos::metadata_service::worker::DataWorkerSetting          worker_setting;
         };
         
         struct ApiSubserviceAccessor {
@@ -60,9 +60,6 @@ namespace chaos{
             
             //! batch executor engine
             chaos::common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
-            
-            //! persistence driver instance
-            chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
         };
         
     }

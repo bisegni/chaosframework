@@ -37,10 +37,10 @@
 
 using namespace chaos::metadata_service;
 
-using namespace chaos::data_service;
-using namespace chaos::data_service::worker;
-using namespace chaos::data_service::cache_system;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service;
+using namespace chaos::metadata_service::worker;
+using namespace chaos::metadata_service::cache_system;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 using namespace chaos::metadata_service::persistence;
 using namespace chaos::metadata_service::persistence::data_access;
@@ -95,8 +95,8 @@ void QueryDataConsumer::init(void *init_data)  {
                                                                     ChaosMetadataService::getInstance()->setting.worker_setting.log_metric_update_interval));
     }
     //device data worker instances
-    chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
-    device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * ChaosMetadataService::getInstance()->setting.worker_setting.instances);
+    chaos::metadata_service::worker::DeviceSharedDataWorker *tmp = NULL;
+    device_data_worker = (chaos::metadata_service::worker::DataWorker**) malloc(sizeof(chaos::metadata_service::worker::DataWorker**) * ChaosMetadataService::getInstance()->setting.worker_setting.instances);
     if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
     for(int idx = 0;
         idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances;
@@ -109,7 +109,7 @@ void QueryDataConsumer::init(void *init_data)  {
             StartableService::initImplementation(tmp, NULL, "DeviceSharedDataWorkerMetricCollector", __PRETTY_FUNCTION__);
             StartableService::startImplementation(tmp, "DeviceSharedDataWorkerMetricCollector", __PRETTY_FUNCTION__);
         } else {
-            device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker();
+            device_data_worker[idx] = tmp = new chaos::metadata_service::worker::DeviceSharedDataWorker();
             StartableService::initImplementation(tmp, NULL, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
             StartableService::startImplementation(tmp, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
         }

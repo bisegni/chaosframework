@@ -21,7 +21,7 @@
 
 #include "ObjectStorageDataAccess.h"
 
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 DEFINE_DA_NAME(ObjectStorageDataAccess)
 

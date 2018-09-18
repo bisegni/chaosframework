@@ -38,7 +38,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::common::data::structured;
 
-using namespace chaos::data_service;
+using namespace chaos::metadata_service;
 
 using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
@@ -115,19 +115,9 @@ void ChaosMetadataService::init(void *init_data)  {
                                                     "MDSBatchExecutor");
         api_subsystem_accessor.batch_executor.init(NULL, __PRETTY_FUNCTION__);
         
-        // persistence driver system
-        const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
-        AbstractPersistenceDriver *instance = ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
-        if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
-        api_subsystem_accessor.persistence_driver.reset(instance, "AbstractPersistenceDriver");
-        api_subsystem_accessor.persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
-        
         //api system
         api_managment_service.reset(new ApiManagment(), "ApiManagment");
         api_managment_service.init(static_cast<void*>(&api_subsystem_accessor), __PRETTY_FUNCTION__);
-        
-        //connect persistence driver to batch system
-        api_subsystem_accessor.batch_executor->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
         
         //check for mandatory configuration
         if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
@@ -154,7 +144,6 @@ void ChaosMetadataService::init(void *init_data)  {
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
         
         //initialize cron manager
-        cron_job::MDSCronusManager::getInstance()->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
         InizializableService::initImplementation(cron_job::MDSCronusManager::getInstance(),
                                                  NULL,
                                                  "MDSConousManager",

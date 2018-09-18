@@ -20,6 +20,7 @@
  */
 
 #include "AbstractApi.h"
+#include "../DriverPoolManager.h"
 
 using namespace chaos::common::network;
 
@@ -42,11 +43,11 @@ void AbstractApi::init(void *init_data)  {
     if(!subservice) throw chaos::CException(-1, "No Persistence Driver has been set", __PRETTY_FUNCTION__);
 }
 
-void AbstractApi::deinit()   {}
+void AbstractApi::deinit() {}
 
 AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)
-    return subservice->persistence_driver.get();
+    return &DriverPoolManager::getInstance()->getPersistenceDrv();
 }
 
 MDSBatchExecutor *AbstractApi::getBatchExecutor() {

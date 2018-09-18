@@ -45,7 +45,7 @@ using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 namespace chaos{
-    namespace data_service {
+    namespace metadata_service {
         
         class ChaosDataService;
         
@@ -64,7 +64,7 @@ namespace chaos{
             
             
             boost::atomic<uint16_t>                 device_data_worker_index;
-            chaos::data_service::worker::DataWorker	**device_data_worker;
+            chaos::metadata_service::worker::DataWorker	**device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(const std::string& key,

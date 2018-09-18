@@ -23,11 +23,11 @@
 #include "../ChaosMetadataService.h"
 #include "management/MDSHistoryAgeingManagement.h"
 
+using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::cron_job;
 
 MDSCronusManager::MDSCronusManager():
-CronusManager(ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time*1000),
-abstract_persistance_driver(NULL){}
+CronusManager(ChaosMetadataService::getInstance()->setting.cron_job_scheduler_repeat_time*1000){}
 
 MDSCronusManager::~MDSCronusManager() {}
 
@@ -49,8 +49,6 @@ bool MDSCronusManager::addJob(MDSCronJob *new_job,
                                uint64_t repeat_delay,
                                uint64_t offset) {
     if(new_job == NULL) return false;
-    
-    new_job->abstract_persistance_driver = abstract_persistance_driver;
     
     return CronusManager::addJob(new_job,
                                   job_index,
