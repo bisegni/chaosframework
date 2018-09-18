@@ -259,16 +259,16 @@ void CDataWrapper::addInt64Value(const std::string& key, uint64_t value) {
 }
 
 //get a csdata value
-ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::getCSDataValue(const std::string& key) const{
+CDWUniquePtr CDataWrapper::getCSDataValue(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_DOCUMENT){
         uint32_t document_len = 0;
         const uint8_t *document = NULL;
         bson_iter_document(&element_found,
                            &document_len,
                            &document);
-        return ChaosUniquePtr<chaos::common::data::CDataWrapper>(new CDataWrapper((const char *)document,document_len));
+        return CDWUniquePtr(new CDataWrapper((const char *)document,document_len));
     } else {
-        return ChaosUniquePtr<chaos::common::data::CDataWrapper>(new CDataWrapper());
+        return CDWUniquePtr(new CDataWrapper());
     }
 }
 std::string CDataWrapper::getJsonValue(const std::string& key) const{
