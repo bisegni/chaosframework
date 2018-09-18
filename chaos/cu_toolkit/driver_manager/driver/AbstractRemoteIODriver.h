@@ -36,8 +36,9 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
-#define AUTHORIZATION_KEY           "authorization_key"
-#define INIT_HARDWARE_PARAM         "ih_par"
+#define AUTHORIZATION_KEY           "message_data"
+#define INIT_HARDWARE_PARAM         "conn_param"
+#define OPCODE_HARDWARE_PARAM       "opc_param"
 #define AUTHORIZATION_STATE         "authorization_state"
 #define CONFIGURATION_STATE         "configuration_state"
 #define MESSAGE                     "msg"
@@ -96,16 +97,15 @@ namespace chaos {
                     //!is the indetifier of the remote conenction used by the sublayer
                     LString             current_connection_identifier;
                 protected:
+                    //! help to manager
                     CDWShrdPtrFutureHelper future_hepler;
-                    //message sent to remote endpoint when new connection has been received
-                    chaos::common::data::CDWUniquePtr   driver_init_pack;
-                    //!initialization and deinitialization driver methods
-                    void driverInit(const char *initParameter)  {
-                        //AbstractRemoteIODriver_DBG <<" Initialization from string..."<<initParameter;
-                    }
-                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
-                        int err = 0;
-                        unsigned int iteration = 0;
+                    //! data sent to remote endpoint for initilization  message
+                    chaos::common::data::CDWUniquePtr   init_pack;
+                    //! opcode param that are added to all opcode sent to the remote layer
+                    chaos::common::data::CDWUniquePtr   opcode_param_pack;
+                    //! initialization and deinitialization driver methods
+                    void driverInit(const char *initParameter)  {/*not mor eused to be removed*/}
+                    void driverInit(const chaos::common::data::CDataWrapper& init_parameter) {
                         CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), AbstractRemoteIODriver_ERR, -1, "Init parameter need to be formated in a json document");
                         //CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey(AUTHORIZATION_KEY), AbstractRemoteIODriver_ERR, -3, "The authorization key is mandatory")
                         //get the authorization key
@@ -119,19 +119,14 @@ namespace chaos {
                         
                         if(init_parameter.hasKey(INIT_HARDWARE_PARAM) &&
                            init_parameter.isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
-                            driver_init_pack=init_parameter.getCSDataValue(INIT_HARDWARE_PARAM);
+                            init_pack=init_parameter.getCSDataValue(INIT_HARDWARE_PARAM);
                         }
+                        if(init_parameter.hasKey(OPCODE_HARDWARE_PARAM) &&
+                           init_parameter.isCDataWrapperValue(OPCODE_HARDWARE_PARAM)) {
+                            opcode_param_pack=init_parameter.getCSDataValue(OPCODE_HARDWARE_PARAM);
+                        }
+                        
                         future_hepler.init(NULL);
-                        //waith at least 3 seconds for connection
-                        while(conn_phase != RDConnectionPhaseConnected &&
-                              conn_phase != RDConnectionPhaseAutorized &&
-                              iteration < 3) {
-                            sleep(1);
-                            iteration++;
-                        }
-                        //try anyway to send data
-                        if((err = _sendAuthenticationRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -1, "Error sending autorization request");}
-                        if((err = _sendInitRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -2, "Error sending initilization request");}
                     }
                     void driverDeinit()  {
                         //send deinit, in case no one hase deinitlized before
@@ -185,7 +180,8 @@ namespace chaos {
                     remote_uri_instance(),
                     authorization_key(),
                     conn_phase(RDConnectionPhaseDisconnected),
-                    driver_init_pack(new chaos::common::data::CDataWrapper()){}
+                    init_pack(new chaos::common::data::CDataWrapper()),
+                    opcode_param_pack(new chaos::common::data::CDataWrapper()) {}
                     
                     ~AbstractRemoteIODriver(){}
                     
@@ -208,9 +204,13 @@ namespace chaos {
                         if((err = _managePhases())) {
                             return err;
                         }
+                        CreateNewDataWrapper(data_pack,);
+                        //append opcode param setting from driver configuration
+                        if(!opcode_param_pack->isEmpty()) {opcode_param_pack->copyAllTo(*data_pack);}
+                        if(message_data.get() && !message_data->isEmpty()) {message_data->copyAllTo(*data_pack);}
                         return _sendRawOpcodeRequest(remote_uri_instance,
                                                      opcode,
-                                                     MOVE(message_data),
+                                                     MOVE(data_pack),
                                                      message_response,
                                                      timeout);
                     }
@@ -227,9 +227,12 @@ namespace chaos {
                         if((err = _managePhases())) {
                             return err;
                         }
+                        CreateNewDataWrapper(data_pack,);
+                        //append opcode param setting from driver configuration
+                        if(opcode_param_pack->isEmpty()) {opcode_param_pack->copyAllTo(*data_pack);}
                         return _sendRawOpcodeMessage(remote_uri_instance,
                                                      opcode,
-                                                     MOVE(message_data));
+                                                     MOVE(data_pack));
                     }
                     
                     //!Send raw request to the remote driver
@@ -444,7 +447,7 @@ namespace chaos {
                             return 0;
                         }
                         if(conn_phase == RDConnectionPhaseAutorized) {
-                            chaos::common::data::CDWUniquePtr conf_msg(driver_init_pack->clone());
+                            chaos::common::data::CDWUniquePtr conf_msg(init_pack->clone());
                             chaos::common::data::CDWShrdPtr message_response;
                             AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
                             if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),

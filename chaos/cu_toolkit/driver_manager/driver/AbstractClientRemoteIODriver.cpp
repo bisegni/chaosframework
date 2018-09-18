@@ -34,6 +34,7 @@ void AbstractClientRemoteIODriver::driverInit(const char *initParameter)  {
 
 void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
     int err = 0;
+    unsigned int iteration = 0;
     std::string content_type = "application/json";
     CHECK_MANDATORY_KEY(const_cast<const CDataWrapper *>(&init_parameter) , "url", ERR, -2);
     CHECK_TYPE_OF_KEY(const_cast<const CDataWrapper *>(&init_parameter), "url", String, ERR, -3);
@@ -59,13 +60,10 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     }
     
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
-    CreateNewDataWrapper(init_pack, );
-    if(init_parameter.hasKey("conn_par") &&
-       init_parameter.isCDataWrapperValue("conn_par")) {
-        init_pack = init_parameter.getCSDataValue("conn_par");
-    }
-    INFO << CHAOS_FORMAT("Initilizing remote driver client with data %1%", %init_pack->getJSONString());
-    ClientARIODriver::driverInit(*init_pack);
+    
+    //initilize subclass
+    ClientARIODriver::driverInit(init_parameter);
+    
     DBG <<"Initialize connection...";
     //register this driver as external endpoint
     err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
@@ -74,6 +72,17 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
                                                                                                 url);
     DBG <<"Connection initialized with error:"<<err;
     CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
+
+    
+    //waith at least 3 seconds for connection
+    while(conn_phase == RDConnectionPhaseConnected &&
+          iteration < 3) {
+        sleep(1);
+        iteration++;
+    }
+    //try anyway to send data
+    if((err = _sendAuthenticationRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -1, "Error sending autorization request");}
+    if((err = _sendInitRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -2, "Error sending initilization request");}
 }
 
 void AbstractClientRemoteIODriver::driverDeinit()  {
