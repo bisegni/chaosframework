@@ -53,15 +53,6 @@ namespace chaos{
             
             chaos::metadata_service::worker::DataWorkerSetting          worker_setting;
         };
-        
-        struct ApiSubserviceAccessor {
-            //! network broker for talk with others chaos node
-            chaos::common::network::NetworkBroker *network_broker_service;
-            
-            //! batch executor engine
-            chaos::common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
-        };
-        
     }
 }
 #endif

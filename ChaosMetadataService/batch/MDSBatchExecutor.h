@@ -25,6 +25,7 @@
 #include "MDSBatchCommand.h"
 //#include "../ChaosMetadataService.h"
 
+#include <chaos/common/utility/Singleton.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
@@ -36,7 +37,6 @@
 namespace chaos{
     namespace metadata_service {
         class ChaosMetadataService;
-        
         namespace batch {
             
             /*!
@@ -44,10 +44,11 @@ namespace chaos{
              the metadataserver batch job
              */
             class MDSBatchExecutor:
+            public chaos::common::utility::Singleton<MDSBatchExecutor>,
             public chaos::common::batch_command::BatchCommandExecutor {
                 friend class chaos::metadata_service::ChaosMetadataService;
-                
-                chaos::common::network::NetworkBroker *network_broker;
+                friend class chaos::common::utility::Singleton<MDSBatchExecutor>;
+
                 chaos::common::message::MessageChannel *message_channel_for_job;
                 chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel_for_job;
                 
@@ -78,8 +79,7 @@ namespace chaos{
                                         uint32_t type_value_size);
                 
             public:
-                MDSBatchExecutor(const std::string& executor_id,
-                                 chaos::common::network::NetworkBroker *_network_broker);
+                MDSBatchExecutor();
                 ~MDSBatchExecutor();
                 
                 // Initialize instance

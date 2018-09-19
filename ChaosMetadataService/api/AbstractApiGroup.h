@@ -45,8 +45,6 @@ namespace chaos {
             public chaos::common::utility::InizializableService,
 			public chaos::DeclareAction {
                 friend class AbstractApi;
-                //! the instace of the persistence driver
-                ApiSubserviceAccessor *subservice;
                 
                 //! list of all installed api in the group
                 ApiList api_instance;
@@ -65,7 +63,7 @@ namespace chaos {
                     if(instance.get()) {
                         //we have an instance so we can initilize it
                         InizializableService::initImplementation(instance.get(),
-                                                                 static_cast<void*>(subservice),
+                                                                 NULL,
                                                                  instance->getName(),
                                                                  __PRETTY_FUNCTION__);
                     }

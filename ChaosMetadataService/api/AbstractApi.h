@@ -79,8 +79,6 @@ n::~n(){}
             public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService {
                 friend class AbstractApiGroup;
-                //! the instace of the persistence driver
-                ApiSubserviceAccessor *subservice;
                 
                 AbstractApiGroup *parent_group;
             protected:
@@ -96,7 +94,7 @@ n::~n(){}
                 
                 void init(void *init_data);
                 
-                void deinit()  ;
+                void deinit();
                 
                 //! execute the api
                 virtual chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data) = 0;
