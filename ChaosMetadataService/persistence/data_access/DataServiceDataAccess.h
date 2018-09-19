@@ -25,8 +25,8 @@
 #include "../persistence.h"
 
 #include <chaos/common/utility/ProcStat.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
-#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace metadata_service {

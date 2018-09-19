@@ -25,7 +25,7 @@
 #include "../persistence.h"
 
 #include <chaos_service_common/data/script/Script.h>
-
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 namespace chaos {
     namespace metadata_service {
         namespace persistence {

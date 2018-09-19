@@ -115,8 +115,8 @@ namespace chaos{
         public chaos::common::async_central::TimerHandler,
         public chaos::common::utility::InizializableService {
             friend class chaos::common::utility::Singleton<DriverPoolManager>;
-            common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
-            common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> storage_driver;
+            chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
+            chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> storage_driver;
             //drivers pool;
             CacheDriverPool         cache_pool;
             //ObjectStorageDriverPool obj_storage_pool;
@@ -134,7 +134,18 @@ namespace chaos{
             void releaseCacheDriverInstance(CachePoolSlot *cache_driver_instance);
             
             chaos::service_common::persistence::data_access::AbstractPersistenceDriver& getPersistenceDrv();
+            template<typename T>
+            T* getPersistenceDataAccess() {
+                if(persistence_driver.get() == NULL) throw CException(-1, "No Persistence Driver Found", __PRETTY_FUNCTION__);
+                return persistence_driver->getDataAccess<T>();
+            }
+            
             chaos::service_common::persistence::data_access::AbstractPersistenceDriver& getObjectStorageDrv();
+            template<typename T>
+            T* getStorageDataAccess() {
+                if(storage_driver.get() == NULL) throw CException(-1, "No Storage Driver Found", __PRETTY_FUNCTION__);
+                return storage_driver->getDataAccess<T>();
+            }
         };
     }
 }

@@ -25,6 +25,7 @@
 #include "../persistence.h"
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
 namespace chaos {
     namespace metadata_service {

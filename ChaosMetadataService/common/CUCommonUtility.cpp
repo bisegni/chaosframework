@@ -144,7 +144,7 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
                 //in this case we need only the value, but if the attribute has been set in static configuration all othe property are preserved
                 //get last dataset
                 CDWShrdPtr tmp_result;
-                AbstractPersistenceDriver& obj_storage_drv = data_service::DriverPoolManager::getInstance()->getObjectStorageDrv();
+                AbstractPersistenceDriver& obj_storage_drv = metadata_service::DriverPoolManager::getInstance()->getObjectStorageDrv();
                 if(obj_storage_drv.getDataAccess<ObjectStorageDataAccess>()->getLastObject(cu_uid+chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX, tmp_result) == 0) {
                     if(tmp_result.get() != NULL) {
                         ChaosStringSet all_keys;

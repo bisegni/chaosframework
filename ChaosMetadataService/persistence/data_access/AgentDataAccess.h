@@ -27,7 +27,7 @@
 #include <chaos/common/chaos_types.h>
 
 #include <chaos_service_common/data/data.h>
-
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 namespace chaos {
     namespace metadata_service {
         namespace persistence {

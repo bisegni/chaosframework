@@ -74,7 +74,8 @@ namespace chaos {
                                            const uint64_t timestamp_to,
                                            const uint32_t page_len,
                                            VectorObject& found_object_page,
-                                           common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) = 0;
+                                           chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) = 0;
+                    
                     //!return the number of object for a determinated key that are store for a time range
                     virtual int countObject(const std::string& key,
                                             const uint64_t timestamp_from,

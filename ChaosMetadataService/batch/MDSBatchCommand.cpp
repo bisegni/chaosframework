@@ -25,6 +25,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::batch_command;
 
+using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -37,8 +38,7 @@ MDSBatchCommand::MDSBatchCommand():
 BatchCommand(),
 message_channel(NULL),
 multiaddress_message_channel(NULL),
-executor_instance(NULL),
-abstract_persistance_driver(NULL){}
+executor_instance(NULL){}
 
 //! default destructor
 MDSBatchCommand::~MDSBatchCommand() {}

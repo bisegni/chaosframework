@@ -153,7 +153,6 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;
-        result->abstract_persistance_driver = abstract_persistance_driver;
     }
     return result;
 }
@@ -173,6 +172,7 @@ void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: type_string = "Command is completed"; break;
         case common::batch_command::BatchCommandEventType::EVT_FAULT: type_string = "Command has fault"; break;
         case common::batch_command::BatchCommandEventType::EVT_KILLED: type_string = "Command killed"; break;
+        default: break;
     }
     BCE_INFO << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type_string;
 }
