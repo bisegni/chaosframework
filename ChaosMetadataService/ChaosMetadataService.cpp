@@ -73,8 +73,6 @@ void ChaosMetadataService::init(void *init_data)  {
     try {
         ChaosCommon<ChaosMetadataService>::init(init_data);
         
-        api_subsystem_accessor.network_broker_service = NetworkBroker::getInstance();
-        
         if (signal((int) SIGINT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
             throw CException(-1, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
         }
@@ -102,18 +100,6 @@ void ChaosMetadataService::init(void *init_data)  {
             fillKVParameter(setting.persistence_kv_param_map,
                             getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
         }
-        //initilize driver pool manager
-        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
-        
-        //! batch system
-        api_subsystem_accessor.batch_executor.reset(new MDSBatchExecutor("MDSBatchExecutor",
-                                                                         api_subsystem_accessor.network_broker_service),
-                                                    "MDSBatchExecutor");
-        api_subsystem_accessor.batch_executor.init(NULL, __PRETTY_FUNCTION__);
-        
-        //api system
-        api_managment_service.reset(new ApiManagment(), "ApiManagment");
-        api_managment_service.init(static_cast<void*>(&api_subsystem_accessor), __PRETTY_FUNCTION__);
         
         //check for mandatory configuration
         if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
@@ -131,6 +117,16 @@ void ChaosMetadataService::init(void *init_data)  {
             fillKVParameter(setting.object_storage_setting.key_value_custom_param,
                             getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
         }
+        
+        //initilize driver pool manager
+        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
+        
+        //! batch system
+        StartableService::initImplementation(MDSBatchExecutor::getInstance(), NULL, "MDSBatchExecutor", __PRETTY_FUNCTION__);
+        
+        //api system
+        api_managment_service.reset(new ApiManagment(), "ApiManagment");
+        api_managment_service.init(NULL, __PRETTY_FUNCTION__);
         
         data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
         if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
@@ -156,14 +152,13 @@ void ChaosMetadataService::start()  {
     //lock o monitor for waith the end
     try {
         ChaosCommon<ChaosMetadataService>::start();
-        std::vector<std::string> bestEndpoints;
+        StartableService::startImplementation(MDSBatchExecutor::getInstance(), "MDSBatchExecutor", __PRETTY_FUNCTION__);
         //start batch system
-        api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
         data_consumer.start( __PRETTY_FUNCTION__);
         LAPP_ <<"\n----------------------------------------------------------------------"<<
         "\n!CHAOS Metadata service started" <<
-        "\nRPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl() <<
-        "\nDirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl() <<
+        "\nRPC Server address: "	<< NetworkBroker::getInstance()->getRPCUrl() <<
+        "\nDirectIO Server address: " << NetworkBroker::getInstance()->getDirectIOUrl() <<
         CHAOS_FORMAT("\nData Service published with url: %1%|0", %NetworkBroker::getInstance()->getDirectIOUrl()) <<
         "\n----------------------------------------------------------------------";
         
@@ -171,15 +166,10 @@ void ChaosMetadataService::start()  {
         persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
 
         ds_da->registerNode(setting.ha_zone_name,
-                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            NetworkBroker::getInstance()->getRPCUrl(),
+                            NetworkBroker::getInstance()->getDirectIOUrl(),
                             0);
 
-       /* ds_da->registerNode(setting.ha_zone_name,
-                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
-                            0);
-    */
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                    0,
@@ -218,8 +208,8 @@ void ChaosMetadataService::timeout() {
     if(presence == false) {
         //reinsert mds
         ds_da->registerNode(setting.ha_zone_name,
-                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
-                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            NetworkBroker::getInstance()->getRPCUrl(),
+                            NetworkBroker::getInstance()->getDirectIOUrl(),
                             0);
     }
     
@@ -240,8 +230,7 @@ void ChaosMetadataService::stop() {
     //stop data consumer
     data_consumer.stop( __PRETTY_FUNCTION__);
     
-    //stop batch system
-    api_subsystem_accessor.batch_executor.stop(__PRETTY_FUNCTION__);
+    StartableService::stopImplementation(MDSBatchExecutor::getInstance(), "MDSBatchExecutor", __PRETTY_FUNCTION__);
     
     ChaosCommon<ChaosMetadataService>::stop();
     //endWaithCondition.notify_one();
@@ -258,12 +247,12 @@ void ChaosMetadataService::deinit() {
     //deinit api system
     CHAOS_NOT_THROW(api_managment_service.deinit(__PRETTY_FUNCTION__);)
     
-    //deinit batch system
-    CHAOS_NOT_THROW(api_subsystem_accessor.batch_executor.deinit(__PRETTY_FUNCTION__);)
-    
     if(data_consumer.get()) {
         data_consumer.deinit(__PRETTY_FUNCTION__);
     }
+    
+    StartableService::deinitImplementation(MDSBatchExecutor::getInstance(), "MDSBatchExecutor", __PRETTY_FUNCTION__);
+    
     //deinitilize driver pool manager
     InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
     
