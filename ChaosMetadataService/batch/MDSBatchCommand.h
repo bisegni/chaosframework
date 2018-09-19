@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__MDSBatchCommand__
 #define __CHAOSFramework__MDSBatchCommand__
 
+#include "../DriverPoolManager.h"
 #include "../persistence/data_access/DataAccess.h"
 
 #include <chaos/common/network/NetworkBroker.h>
@@ -82,9 +83,7 @@ namespace chaos{
                 
                 //executor used for submit command witin command
                 MDSBatchExecutor *executor_instance;
-                
-                //dataaccess abstract driver
-                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
+
             protected:
                 //! default constructor
                 MDSBatchCommand();
@@ -141,8 +140,7 @@ namespace chaos{
                 
                 template<typename T>
                 T* getDataAccess() {
-                    CHAOS_ASSERT(abstract_persistance_driver)
-                    return abstract_persistance_driver->getDataAccess<T>();
+                    return DriverPoolManager::getInstance()->getPersistenceDataAccess<T>();
                 }
                 
                 

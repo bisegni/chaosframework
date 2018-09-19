@@ -197,7 +197,7 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
     CDataWrapper health_data_pack((char *)channel_data->data());
     health_data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp());
     
-    NodeDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<NodeDataAccess>();
+    NodeDataAccess *s_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<NodeDataAccess>();
     
     HealthStatSDWrapper attribute_reference_wrapper;
     attribute_reference_wrapper.deserialize(&health_data_pack);
@@ -337,7 +337,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     int err = 0;
     std::string channel_type;
     //CHAOS_ASSERT(api_result)
-    SnapshotDataAccess *s_da = PersistenceManager::getInstance()->getDataAccess<SnapshotDataAccess>();
+    SnapshotDataAccess *s_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<SnapshotDataAccess>();
     
     //trduce int to postfix channel type
     switch(header.field.channel_type) {
@@ -383,7 +383,7 @@ int QueryDataConsumer::consumeLogEntries(const std::string& node_name,
         end = log_entries.end();
         it != end;
         it++) {
-        AgentDataAccess *a_da = PersistenceManager::getInstance()->getDataAccess<AgentDataAccess>();
+        AgentDataAccess *a_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<AgentDataAccess>();
         if((err = a_da->pushLogEntry(node_name, *it))){
             ERR << CHAOS_FORMAT("Error push entry for node %1%", %node_name);
         }

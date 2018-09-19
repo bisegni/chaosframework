@@ -67,10 +67,12 @@ namespace chaos {
                     //!inherited method
                     int getLastObject(const std::string& key,
                                       chaos::common::data::CDWShrdPtr& object_ptr_ref);
+                    
                     //inhertied method
                     int deleteObject(const std::string& key,
                                      uint64_t start_timestamp,
                                      uint64_t end_timestamp);
+                    
                     //inhertied method
                     int findObject(const std::string& key,
                                    const ChaosStringSet& meta_tags,
@@ -78,7 +80,8 @@ namespace chaos {
                                    const uint64_t timestamp_to,
                                    const uint32_t page_len,
                                    object_storage::abstraction::VectorObject& found_object_page,
-                                   common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+                                   chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+                    
                     //inhertied method
                     int countObject(const std::string& key,
                                     const uint64_t timestamp_from,

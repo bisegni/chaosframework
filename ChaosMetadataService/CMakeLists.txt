@@ -181,8 +181,7 @@ SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorkerMetricCollector.cpp)
 
 #Persistence
-SET(cnd_src  ${cnd_src} persistence/PersistenceManager.cpp
-                        persistence/data_access/UnitServerDataAccess.cpp
+SET(cnd_src  ${cnd_src} persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp

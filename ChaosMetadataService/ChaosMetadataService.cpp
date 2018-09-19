@@ -102,12 +102,8 @@ void ChaosMetadataService::init(void *init_data)  {
             fillKVParameter(setting.persistence_kv_param_map,
                             getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
         }
-        
-        //initilize the persistence managert
-        InizializableService::initImplementation(persistence::PersistenceManager::getInstance(),
-                                                 NULL,
-                                                 "PersistenceManager",
-                                                 __PRETTY_FUNCTION__);
+        //initilize driver pool manager
+        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
         
         //! batch system
         api_subsystem_accessor.batch_executor.reset(new MDSBatchExecutor("MDSBatchExecutor",
@@ -135,9 +131,6 @@ void ChaosMetadataService::init(void *init_data)  {
             fillKVParameter(setting.object_storage_setting.key_value_custom_param,
                             getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
         }
-        
-        //initilize driver pool manager
-        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
         
         data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
         if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
@@ -175,7 +168,7 @@ void ChaosMetadataService::start()  {
         "\n----------------------------------------------------------------------";
         
         //register this process on persistence database
-        persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
+        persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
 
         ds_da->registerNode(setting.ha_zone_name,
                             api_subsystem_accessor.network_broker_service->getRPCUrl(),
@@ -214,8 +207,8 @@ void ChaosMetadataService::timeout() {
     bool presence = false;
     HealthStat service_proc_stat;
     const std::string ds_uid = NetworkBroker::getInstance()->getRPCUrl();
-    persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-    persistence::data_access::NodeDataAccess *n_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::NodeDataAccess>();
+    persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
+    persistence::data_access::NodeDataAccess *n_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::NodeDataAccess>();
     service_proc_stat.mds_received_timestamp = TimingUtil::getTimeStamp();
     if(n_da->checkNodePresence(presence, ds_uid) != 0) {
         LCND_LERR << CHAOS_FORMAT("Error check if this mds [%1%] description is registered", %NetworkBroker::getInstance()->getRPCUrl());
@@ -268,18 +261,11 @@ void ChaosMetadataService::deinit() {
     //deinit batch system
     CHAOS_NOT_THROW(api_subsystem_accessor.batch_executor.deinit(__PRETTY_FUNCTION__);)
     
-    //deinit persistence driver system
-    CHAOS_NOT_THROW(api_subsystem_accessor.persistence_driver.deinit(__PRETTY_FUNCTION__);)
-    
     if(data_consumer.get()) {
         data_consumer.deinit(__PRETTY_FUNCTION__);
     }
     //deinitilize driver pool manager
     InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
-    
-    InizializableService::deinitImplementation(persistence::PersistenceManager::getInstance(),
-                                               "PersistenceManager",
-                                               __PRETTY_FUNCTION__);
     
     ChaosCommon<ChaosMetadataService>::stop();
     LAPP_ << "-----------------------------------------";
