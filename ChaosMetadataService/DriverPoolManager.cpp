@@ -67,17 +67,9 @@ void DriverPoolManager::deinit()  {
     cache_driver.deinit(__PRETTY_FUNCTION__);
 }
 
-void DriverPoolManager::timeout() {
-    //cache_pool.pool.maintenance();
-}
-
 //--------------cach driver pool method--------------
-CachePoolSlot* DriverPoolManager::getCacheDriverInstance() {
-    return NULL;
-}
-
-void DriverPoolManager::releaseCacheDriverInstance(CachePoolSlot *cache_driver_instance) {
-    //cache_pool.pool.releaseResource(cache_driver_instance);
+chaos::metadata_service::cache_system::CacheDriver& DriverPoolManager::getCacheDrv() {
+    return *cache_driver;
 }
 
 AbstractPersistenceDriver& DriverPoolManager::getPersistenceDrv() {

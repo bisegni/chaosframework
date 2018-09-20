@@ -159,14 +159,10 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
     
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive) {
         //protected access to cached driver
-        CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-        if(cache_slot) {
-            err = cache_slot->resource_pooled->putData(key,
-                                                       channel_data);
-            DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-        } else {
-            ERR << "Error allocating cache slot";
-        }
+        CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
+        err = cache_slot.putData(key,
+                                 channel_data);
+        
     }
     
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
@@ -245,22 +241,18 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                     key_data->size());
     //debug check
     //protected access to cached driver
-    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-    try{
-        if(cache_slot) {
-            //get data
-            err = cache_slot->resource_pooled->getData(key,
-                                                       result_value);
-            if(result_value &&
-               result_value->size()) {
-                result_header.value_len = (uint32_t)result_value->size();
-            }
-        } else {
-            err = -1;
-            ERR << "Error allocating cache slot";
-        }
-    } catch(...) {}
-    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+    CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
+    
+    //get data
+    err = cache_slot.getData(key,
+                             result_value);
+    if((err == 0 )&&
+       result_value &&
+       result_value->size()) {
+        result_header.value_len = (uint32_t)result_value->size();
+    }
+    
+    
     return err;
 }
 
@@ -272,13 +264,12 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
     int err = 0;
     //debug check
     //protected access to cached driver
-    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+    CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
     try{
         //get data
         DataBuffer data_buffer;
         MultiCacheData multi_cached_data;
-        if(cache_slot) {
-            err = cache_slot->resource_pooled->getData(keys,
+            err = cache_slot.getData(keys,
                                                        multi_cached_data);
             for(ChaosStringVectorConstIterator it = keys.begin(),
                 end = keys.end();
@@ -302,12 +293,8 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
             result_header.number_of_result = (uint32_t)multi_cached_data.size();
             result_value_len = data_buffer.getCursorLocation();
             result_value = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), result_value_len, result_value_len, true);
-        } else {
-            err = -1;
-            ERR << "Error allocating cache slot";
-        }
+
     } catch(...) {}
-    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
     return err;
 }
 
