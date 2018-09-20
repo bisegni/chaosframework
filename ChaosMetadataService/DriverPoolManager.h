@@ -35,45 +35,6 @@
 
 namespace chaos{
     namespace metadata_service {
-        //!cache
-        //! forward declaration
-        class DriverPoolManager;
-        
-        
-        typedef chaos::common::pool::ResourcePool<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> ObjectStoragePool;
-        typedef ObjectStoragePool::ResourcePoolHelper ObjectStoragePoolHelper;
-        typedef ObjectStoragePool::ResourceSlot ObjectStoragePoolSlot;
-        
-        //! cache driver pool implementation
-        class ObjectStorageDriverPool:
-        public ObjectStoragePoolHelper,
-        public chaos::common::utility::InizializableService {
-            friend class DriverPoolManager;
-            //!created instances
-            unsigned int instance_created;
-            
-            //!keep track of how many instance in pol need to be present at startup
-            unsigned int minimum_instance_in_pool;
-            
-            //complete implementation name of cache driver
-            std::string impl_name;
-            
-            //pool container
-            ObjectStoragePool pool;
-            
-            ObjectStorageDriverPool();
-            ~ObjectStorageDriverPool();
-        protected:
-            //resource pool handler
-            chaos::service_common::persistence::data_access::AbstractPersistenceDriver* allocateResource(const std::string& pool_identification,
-                                                                                                         uint32_t& alive_for_ms);
-            void deallocateResource(const std::string& pool_identification,
-                                    chaos::service_common::persistence::data_access::AbstractPersistenceDriver* pooled_driver);
-            
-            void init(void *init_data);
-            void deinit();
-        };
-        
         typedef chaos::common::pool::ResourcePool<chaos::metadata_service::cache_system::CacheDriver> CachePool;
         typedef CachePool::ResourcePoolHelper CachePoolHelper;
         typedef CachePool::ResourceSlot CachePoolSlot;

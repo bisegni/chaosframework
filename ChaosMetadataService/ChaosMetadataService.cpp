@@ -266,9 +266,6 @@ void ChaosMetadataService::deinit() {
  *
  */
 void ChaosMetadataService::signalHanlder(int signalNumber) {
-    //lock lk(monitor);
-    //unlock the condition for end start method
-    //endWaithCondition.notify_one();
     waitCloseSemaphore.unlock();
 }
 
