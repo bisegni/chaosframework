@@ -58,8 +58,6 @@ namespace chaos {
                 //!inherited method
                 int removeServer(std::string server_desc);
                 //!inherited method
-                int updateConfig();
-                //!inherited method
                 void init(void *init_data);
                 //!inherited method
                 void deinit();

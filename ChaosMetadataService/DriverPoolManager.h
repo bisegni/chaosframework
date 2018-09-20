@@ -39,36 +39,6 @@ namespace chaos{
         typedef CachePool::ResourcePoolHelper CachePoolHelper;
         typedef CachePool::ResourceSlot CachePoolSlot;
         
-        //! cache driver pool implementation
-        class CacheDriverPool:
-        public CachePoolHelper,
-        public chaos::common::utility::InizializableService {
-            friend class DriverPoolManager;
-            //!created instances
-            unsigned int instance_created;
-            
-            //!keep track of how many instance in pol need to be present at startup
-            unsigned int minimum_instance_in_pool;
-            
-            //complete implementation name of cache driver
-            std::string cache_impl_name;
-            
-            //pool container
-            CachePool pool;
-            
-            CacheDriverPool();
-            ~CacheDriverPool();
-        protected:
-            //resource pool handler
-            chaos::metadata_service::cache_system::CacheDriver* allocateResource(const std::string& pool_identification,
-                                                                             uint32_t& alive_for_ms);
-            void deallocateResource(const std::string& pool_identification,
-                                    chaos::metadata_service::cache_system::CacheDriver* pooled_driver);
-            
-            void init(void *init_data);
-            void deinit();
-        };
-        
         
         //!base singleto class for driver pool system
         class DriverPoolManager:
@@ -78,8 +48,9 @@ namespace chaos{
             friend class chaos::common::utility::Singleton<DriverPoolManager>;
             chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
             chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> storage_driver;
+            chaos::common::utility::InizializableServiceContainer<chaos::metadata_service::cache_system::CacheDriver> cache_driver;
             //drivers pool;
-            CacheDriverPool         cache_pool;
+            //CacheDriverPool         cache_pool;
             //ObjectStorageDriverPool obj_storage_pool;
             //private contructor and destructor
             DriverPoolManager();
