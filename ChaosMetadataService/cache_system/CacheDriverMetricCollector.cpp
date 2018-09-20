@@ -87,11 +87,6 @@ int CacheDriverMetricCollector::removeServer(std::string server_desc) {
     return wrapped_cache_driver->removeServer(server_desc);
 }
 
-int CacheDriverMetricCollector::updateConfig() {
-    CHAOS_ASSERT(wrapped_cache_driver)
-    return wrapped_cache_driver->updateConfig();
-}
-
 void CacheDriverMetricCollector::init(void *init_data)  {
     CHAOS_ASSERT(wrapped_cache_driver)
     InizializableService::initImplementation(wrapped_cache_driver,
