@@ -66,6 +66,10 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, api_data.history_time);
     //add the live rate
     instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, api_data.live_time);
+
+    instance_description.addInt32Value(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, api_data.restore_type);
+    instance_description.addBoolValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, api_data.restore_apply);
+
         //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();
@@ -120,6 +124,8 @@ storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
 history_ageing(0),
 history_time(0),
 live_time(0),
+restore_apply(false),
+restore_type(0),
 default_schedule_delay(1000000),
 load_parameter(""){}
 
