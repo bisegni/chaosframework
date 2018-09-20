@@ -68,13 +68,9 @@ namespace chaos {
                 StoreResult();
             };
             
-            //#define COOKIY_TO_
-            
-            //! Abstraction of the chache driver
+            //! Couchbase implementation for cache driver
             /*!
-             This class represent the abstraction of the
-             work to do on cache. Cache system is to be intended as global
-             to all CacheDriver instance.
+             This driver uses couchbase for implementa cache driver.
              */
             DECLARE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)

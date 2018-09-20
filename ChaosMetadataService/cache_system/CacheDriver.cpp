@@ -37,6 +37,4 @@ void CacheDriver::init(void *init_data)  {
 }
 
 //! deinit
-void CacheDriver::deinit()  {
-	
-}
+void CacheDriver::deinit()  {}

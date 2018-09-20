@@ -118,11 +118,9 @@ void QueryDataConsumer::init(void *init_data)  {
     }
 }
 
-void QueryDataConsumer::start()  {
-}
+void QueryDataConsumer::start()  {}
 
-void QueryDataConsumer::stop()  {
-}
+void QueryDataConsumer::stop()  {}
 
 void QueryDataConsumer::deinit()  {
     if(server_endpoint) {
