@@ -130,13 +130,13 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
     
     G_RS_DBG << "Get live data for " << dataset_to_fetch << " in channel";
     persistence::data_access::SnapshotDataAccess *s_da = getDataAccess<mds_data_access::SnapshotDataAccess>();
-    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+    CacheDriver& cache_drv = DriverPoolManager::getInstance()->getCacheDrv();
     try{
         CacheData stored_dataset;
         //get data
-        if((err = cache_slot->resource_pooled->getData(std::string(dataset_to_fetch.c_str(),
-                                                                   dataset_to_fetch.size()),
-                                                       stored_dataset))) {
+        if((err = cache_drv.getData(std::string(dataset_to_fetch.c_str(),
+                                                dataset_to_fetch.size()),
+                                    stored_dataset))) {
             G_RS_ERR << "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
         } else if(stored_dataset &&
                   stored_dataset->size()) {
@@ -157,7 +157,6 @@ int CreateSnapshotBatch::storeDatasetTypeInSnapsnot(const std::string& job_work_
             G_RS_ERR<< "No data has been fetched for " << dataset_to_fetch;
         }
     } catch(...) {}
-    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
     return err;
 }
 
