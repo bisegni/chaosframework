@@ -56,6 +56,12 @@ ELSE()
   SET(BUILD_SHARED_LIBRARIES ON)
 ENDIF()
 
+if(CMAKE_BUILD_TYPE MATCHES PROFILE)
+   MESSAGE( STATUS "ENABLING PROFILE on ${PROJECT_NAME}")
+   ADD_DEFINITIONS(-g -fprofile-arcs -ftest-coverage)
+   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
+
 IF ( CHAOS_SANITIZER)
   IF(DEFINED PROJECT_NAME)
       SET(FrameworkLib asan ${FrameworkLib})
