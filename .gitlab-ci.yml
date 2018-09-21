@@ -280,6 +280,7 @@ deploy_c7:
       - web
     variables:
       - $RELEASE_OP == "deploy"
+      - $CI_COMMIT_MESSAGE =~ /(\[deploy\]|(merge))/  
   retry: 2
 
 regression_c7:
