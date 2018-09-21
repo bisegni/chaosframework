@@ -512,6 +512,52 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Running CMD:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CControlUnitDatasetLabel" name="labelRunningCommandAlias">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>....</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CLedIndicatorCUBusy" name="widgetBusyFlag" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Indicate the state of busy flag for current executed command</string>
+           </property>
+           <property name="whatsThis">
+            <string>Is the busi flag indicator of control unit command</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -1031,13 +1077,13 @@
         <widget class="ChaosStorageTypeWidget" name="widgetStorageType" native="true">
          <property name="minimumSize">
           <size>
-           <width>110</width>
+           <width>130</width>
            <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>130</width>
            <height>20</height>
           </size>
          </property>
@@ -1368,6 +1414,12 @@
    <class>CPropertyPushButton</class>
    <extends>QPushButton</extends>
    <header>widget/CPropertyPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CLedIndicatorCUBusy</class>
+   <extends>QWidget</extends>
+   <header>widget/CLedIndicatorCUBusy.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

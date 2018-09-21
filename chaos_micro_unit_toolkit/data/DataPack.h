@@ -20,14 +20,19 @@
 #ifndef DataPack_H
 #define DataPack_H
 
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
 #include <chaos_micro_unit_toolkit/external_lib/bson/bson.h>
 #include <chaos_micro_unit_toolkit/micro_unit_toolkit_types.h>
 
 #include <set>
 #include <string>
 #include <vector>
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+// See libmongoc.hh for details on this diagnostic suppression
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 namespace chaos {
     namespace micro_unit_toolkit {
         namespace data {
@@ -276,10 +281,12 @@ namespace chaos {
 #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) ((c)->hasKey(k)?(c)->getDoubleValue(k):d)
 #define CDW_CHECK_AND_SET(chk, cdw, t, k, v) if(chk){cdw->t(k,v);}
 #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) ((c)->hasKey(k)?(c)->t(k):d)
-            
-
-
         }
     }
 }
+#endif
+
+
+#if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
+#pragma GCC diagnostic pop
 #endif

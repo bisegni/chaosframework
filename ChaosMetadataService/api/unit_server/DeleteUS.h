@@ -28,16 +28,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace unit_server {
-
-                class DeleteUS:
-                public AbstractApi {
-
-                public:
-                    DeleteUS();
-                    ~DeleteUS();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(DeleteUS)
             }
         }
     }

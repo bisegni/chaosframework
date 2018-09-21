@@ -28,7 +28,7 @@ using namespace chaos::cu::driver_manager::driver;
 #define DBG     DBG_LOG(AbstractServerRemoteIODriver)
 #define ERR     ERR_LOG(AbstractServerRemoteIODriver)
 
-void AbstractServerRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
+void AbstractServerRemoteIODriver::driverInit(const char *initParameter)  {
     INFO << "Init driver:"<<initParameter;
 //    CHECK_ASSERTION_THROW_AND_LOG(isDriverParamInJson(), ERR, -1, "Init parameter need to be formated in a json document");
 //
@@ -53,7 +53,7 @@ void AbstractServerRemoteIODriver::driverInit(const char *initParameter) throw (
 //    chaos::common::external_unit::ExternalUnitManager::getInstance()->registerEndpoint(*this);
     CHAOS_ASSERT(true);
 }
-void AbstractServerRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+void AbstractServerRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
     CHECK_ASSERTION_THROW_AND_LOG((init_parameter.isEmpty() == false), ERR, -1, "Init parameter need to be formated in a json document");
     CHECK_ASSERTION_THROW_AND_LOG(init_parameter.hasKey("endpoint_name"), ERR, -2, "The endpoint name is mandatory");
     
@@ -73,7 +73,7 @@ void AbstractServerRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     chaos::common::external_unit::ExternalUnitManager::getInstance()->registerEndpoint(*this);
 }
 
-void AbstractServerRemoteIODriver::driverDeinit() throw (chaos::CException) {
+void AbstractServerRemoteIODriver::driverDeinit()  {
     INFO << "Deinit driver";
     //registerthis driver as external endpoint
     chaos::common::external_unit::ExternalUnitManager::getInstance()->deregisterEndpoint(*this);

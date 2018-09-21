@@ -40,21 +40,20 @@ thread_number(_thread_number){}
 
 AsyncPoolRunner::~AsyncPoolRunner() {}
 
-void AsyncPoolRunner::init(void *init_data) throw(chaos::CException) {
+void AsyncPoolRunner::init(void *init_data)  {
     PriorityQueueRunnable::init(thread_number);
 }
 
-void AsyncPoolRunner::deinit() throw(chaos::CException) {
+void AsyncPoolRunner::deinit()  {
     PriorityQueueRunnable::deinit(true);
 }
 
-void AsyncPoolRunner::submit(AsyncRunnable *runnable) {
-    PriorityQueueRunnable::push(runnable);
+void AsyncPoolRunner::submit(ChaosUniquePtr<AsyncRunnable> runnable) {
+    PriorityQueueRunnable::push(ChaosSharedPtr<AsyncRunnable>(runnable.release()));
 }
 
 #pragma Protected Methods
-void AsyncPoolRunner::processBufferElement(AsyncRunnable *next_job,
-                                           ElementManagingPolicy& element_policy) throw(CException) {
+void AsyncPoolRunner::processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job) {
     try {
        next_job->run();
     } catch (CException& ex) {

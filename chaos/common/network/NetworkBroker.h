@@ -162,25 +162,25 @@ namespace chaos {
 				 * Initzialize the Message Broker. In this step are taken the configured implementation
 				 * for the rpc client and server and for the dispatcher. All these are here initialized
 				 */
-				virtual void init(void *initData = NULL) throw(CException);
+				virtual void init(void *initData = NULL);
 				
 				//!NetworkBroker deinitialization
 				/*!
 				 * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
 				 */
-				virtual void deinit() throw(CException);
+				virtual void deinit();
 				
 				//!start all internal engine for client, server and message dispatcher
 				/*!
 				 * all part are started
 				 */
-				virtual void start() throw(CException);
+				virtual void start();
 				
 				//!start all internal engine for client, server and message dispatcher
 				/*!
 				 * all part are started
 				 */
-				virtual void stop() throw(CException);
+				virtual void stop();
 				
 				//!Get the published port
 				/*!
@@ -270,7 +270,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submitMessage(const string& serverAndPort,
-								   chaos::common::data::CDataWrapper *message);
+								   chaos::common::data::CDWUniquePtr message);
 				
 				//!message request
 				/*!
@@ -280,7 +280,7 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submiteRequest(const string& serverAndPort,
-                                    chaos::common::data::CDataWrapper *request,
+                                    chaos::common::data::CDWUniquePtr request,
                                     std::string sender_node_id,
                                     uint32_t sender_request_id);
 				
@@ -290,7 +290,7 @@ namespace chaos {
                  forward the message directly to the dispatcher for broadcasting it 
                  to the registered rpc domain
                  */
-                chaos::common::data::CDataWrapper *submitInterProcessMessage(chaos::common::data::CDataWrapper *message,
+                chaos::common::data::CDWUniquePtr submitInterProcessMessage(chaos::common::data::CDWUniquePtr message,
                                                                              bool onThisThread=false);
                 
 				//!message submition

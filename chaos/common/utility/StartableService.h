@@ -66,10 +66,10 @@ namespace chaos {
 			protected:
 				
 				//! Start the implementation
-				virtual void start() throw(chaos::CException);
+				virtual void start();
 				
 				//! Stop the implementation
-				virtual void stop() throw(chaos::CException);
+				virtual void stop();
 				
 			public:
 				StartableService();

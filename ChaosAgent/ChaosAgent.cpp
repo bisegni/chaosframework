@@ -41,15 +41,15 @@ ChaosAgent::ChaosAgent() {}
 
 ChaosAgent::~ChaosAgent() {}
 
-void ChaosAgent::init(int argc, const char* argv[]) throw (CException) {
+void ChaosAgent::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosAgent>::init(argc, argv);
 }
 
-void ChaosAgent::init(istringstream &initStringStream) throw (CException) {
+void ChaosAgent::init(istringstream &initStringStream)  {
     ChaosCommon<ChaosAgent>::init(initStringStream);
 }
 
-void ChaosAgent::init(void *init_data)  throw(CException) {
+void ChaosAgent::init(void *init_data)  {
     ChaosCommon<ChaosAgent>::init(init_data);
     if (signal((int) SIGINT, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-1, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
@@ -81,20 +81,20 @@ void ChaosAgent::init(void *init_data)  throw(CException) {
     external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
 }
 
-void ChaosAgent::start()throw(CException) {
+void ChaosAgent::start() {
     StartableService::startImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__);
     ChaosCommon<ChaosAgent>::start();
     agent_register.start(__PRETTY_FUNCTION__);
     wait_close_semaphore.wait();
 }
 
-void ChaosAgent::stop()throw(CException) {
+void ChaosAgent::stop() {
     CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.stop(__PRETTY_FUNCTION__);
     CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::stop(););
 }
 
-void ChaosAgent::deinit()throw(CException) {
+void ChaosAgent::deinit() {
     CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
     CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     InizializableService::deinitImplementation(SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);

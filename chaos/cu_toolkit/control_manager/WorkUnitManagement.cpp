@@ -106,7 +106,7 @@ string WorkUnitManagement::getCurrentStateString() {
 /*---------------------------------------------------------------------------------
  turn on the control unit
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::turnOn() throw (CException) {
+void WorkUnitManagement::turnOn()  {
     WUMDBG_ << "Turn ON";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
@@ -121,7 +121,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
 /*---------------------------------------------------------------------------------
  turn off the control unit
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::turnOFF() throw (CException) {
+void WorkUnitManagement::turnOFF()  {
     WUMDBG_ << "Turn OFF";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
@@ -137,7 +137,7 @@ void WorkUnitManagement::turnOFF() throw (CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void WorkUnitManagement::scheduleSM() throw (CException) {
+void WorkUnitManagement::scheduleSM()  {
     WUMDBG_ << "Start state machine step";
     switch ((UnitState) wu_instance_sm.current_state()[0]) {
         case UnitStateUnpublished:{
@@ -227,7 +227,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(chaos::cu::control_manager::ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> rpc_message(new CDataWrapper);
+                CreateNewDataWrapper(rpc_message,);
                 all_cmd_key.clear();
                 (*it)->getAllKey(all_cmd_key);
                 
@@ -243,7 +243,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
                 
                 //submit startup command
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
+                CDWUniquePtr submittion_result = NetworkBroker::getInstance()->submitInterProcessMessage(MOVE(rpc_message));
                 
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
                     //error submitting startup command
@@ -288,13 +288,12 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             break;
         }
         case UnitStateUnpublishing: {
-            CDataWrapper fakeDWForDeinit;
-            bool detachFake;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
+            CDWUniquePtr fakeDWForDeinit(new CDataWrapper);
+            fakeDWForDeinit->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";
                 if(work_unit_instance->getServiceState() == 2) {
-                    work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+                    work_unit_instance->_stop(MOVE(fakeDWForDeinit->clone()));
                 }
             } catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -307,7 +306,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 WUMAPP_  << "Deiniting Work Unit";
                 if(work_unit_instance->getServiceState() == 1 ||
                    work_unit_instance->getServiceState() == 3) {
-                    work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+                    work_unit_instance->_deinit(MOVE(fakeDWForDeinit->clone()));
                 }
             } catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -347,18 +346,17 @@ bool WorkUnitManagement::smNeedToSchedule() {
     
 }
 
-int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
+int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& data_to_send) {
     // dataToSend can't be sent because it is porperty of the CU
     //so we need to copy it
-    ChaosUniquePtr<SerializationBuffer> serBuf(dataToSend.getBSONData());
-    CDataWrapper mdsPack(serBuf->getBufferPtr());
+    CDWUniquePtr mds_pack(new CDataWrapper(data_to_send.getBSONRawData()));
     //add action for metadata server
     //add local ip and port
     
     int err = 0;
     
     //register CU from mds
-    if((err = mds_channel->sendNodeRegistration(mdsPack))) {
+    if((err = mds_channel->sendNodeRegistration(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";
@@ -369,11 +367,11 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_uid) {
     
     int err = 0;
-    CDataWrapper mdsPack;
-    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
-    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+    CDWUniquePtr mds_pack(new CDataWrapper());
+    mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
+    mds_pack->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
     //register CU from mds
-    if((err = mds_channel->sendNodeLoadCompletion(mdsPack))) {
+    if((err = mds_channel->sendNodeLoadCompletion(MOVE(mds_pack)))) {
         WUMERR_ << "Error forwarding load completion message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";

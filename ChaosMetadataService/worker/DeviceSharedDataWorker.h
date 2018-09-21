@@ -47,8 +47,8 @@ namespace chaos{
             public WorkerJob {
                 uint8_t key_tag;
                 std::string key;
-                int	put_operation; //0 -storicize only, 1-live only, 2-storicize and live
-                uint32_t data_pack_len;
+                int	put_operation; //0 -storicize only, 1-live only, 2-storicize and liveb
+                ChaosStringSetConstSPtr meta_tag;
                 chaos::common::data::BufferSPtr data_pack;
             };
             
@@ -67,8 +67,8 @@ namespace chaos{
             public:
                 DeviceSharedDataWorker();
                 ~DeviceSharedDataWorker();
-                void init(void *init_data) throw (chaos::CException);
-                void deinit() throw (chaos::CException);
+                void init(void *init_data);
+                void deinit();
             };
         }
     }

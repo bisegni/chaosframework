@@ -100,9 +100,9 @@ namespace chaos {
                  \return the future of the request or null if no server has been found
                  */
                 ChaosUniquePtr<MessageRequestFuture> _sendRequestWithFuture(const std::string& action_domain,
-                                                                           const std::string& action_name,
-                                                                           chaos::common::data::CDataWrapper *request_pack,
-                                                                           std::string& used_remote_address);
+                                                                            const std::string& action_name,
+                                                                            chaos::common::data::CDWUniquePtr request_pack,
+                                                                            std::string& used_remote_address);
             protected:
                 
                 //! default constructor
@@ -141,12 +141,12 @@ namespace chaos {
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void init() throw(CException);
+                virtual void init();
                 
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
             public:
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
@@ -165,7 +165,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& action_domain,
                                  const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * const message_pack,
+                                 chaos::common::data::CDWUniquePtr message_pack = chaos::common::data::CDWUniquePtr(),
                                  bool on_this_thread = false);
                 //!send an rpc request to a remote node
                 /*!
@@ -177,9 +177,9 @@ namespace chaos {
                  \return the future of the request or null if no server has been found
                  */
                 ChaosUniquePtr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
-                                                                                      const std::string& action_name,
-                                                                                      chaos::common::data::CDataWrapper *request_pack,
-                                                                                      int32_t request_timeout = 1000);
+                                                                                       const std::string& action_name,
+                                                                                       chaos::common::data::CDWUniquePtr request_pack = chaos::common::data::CDWUniquePtr(),
+                                                                                       int32_t request_timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
             };
         }
     }

@@ -193,7 +193,7 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char
     kiv.type = chaos::edb::KEY_STR_VALUE;
     composeAttributeName(device->getKeyInfo().value.strValue, attributeName, a_name);
     
-    strcpy(kiv.value.strValue, a_name.c_str());
+    strncpy(kiv.value.strValue, a_name.c_str(), 255);
     
     ptr_vector<entity::Entity> childs;
     device->getHasChildByKeyInfo(kiv, alreadyAdded);
@@ -524,8 +524,6 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDeviceID;
     string attributeName;
     string attributeDescription;
-    CDWUniquePtr elementDescription;
-    CMultiTypeDataArrayWrapperSPtr elementsDescriptions;
     
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
@@ -540,12 +538,12 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             
             //get the entity for device
             entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
-            elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+            CMultiTypeDataArrayWrapperSPtr elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
             
             for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
                 
                 //next element in dataset
-                elementDescription.reset(elementsDescriptions->getCDataWrapperElementAtIndex(idx));
+                CDWUniquePtr elementDescription=elementsDescriptions->getCDataWrapperElementAtIndex(idx);
                 //attribute name
                 
                 if(!elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME))
@@ -555,7 +553,10 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 
                 //get the attribute
                 ChaosUniquePtr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
-                
+                if(attributeEntity.get()==NULL){
+                    // NOTE: enabling setAutoReconnection in deviceMessageChannel I get this null
+                    continue;
+                }
                 //attribute description
                 if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)){
                     addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION).c_str());

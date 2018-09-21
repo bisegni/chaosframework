@@ -33,11 +33,11 @@ FileCommandOutputStream::~FileCommandOutputStream() {
     //close(output_file);
 }
 
-void FileCommandOutputStream::init(void *init_data) throw (chaos::CException) {
+void FileCommandOutputStream::init(void *init_data)  {
     
 }
 
-void FileCommandOutputStream::deinit() throw (chaos::CException) {
+void FileCommandOutputStream::deinit()  {
     
 }
 

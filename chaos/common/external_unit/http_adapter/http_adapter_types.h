@@ -32,10 +32,7 @@ namespace chaos{
             namespace http_adapter {
                 typedef enum {
                     WorkRequestTypeUnspecified,
-                    WorkRequestTypeHttpRequest,
-                    WorkRequestTypeWSHandshakeRequest,
-                    WorkRequestTypeWSFrame,
-                    WorkRequestTypeWSCloseEvent
+                    WorkRequestTypeWSFrame
                 } WorkRequestType;
                 
                 struct HTTPServerAdapterSetting {

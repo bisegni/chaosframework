@@ -13,6 +13,7 @@
 //  Simple memory buffer abstraction. Version 1.0.0.
 //
 
+#include <chaos/common/chaos_types.h>
 #include <cstddef>      // std::size_t
 #include <cstring>      // std::memcpy, std::memcmp, std::memset, std::memchr
 #include <stdexcept>    // std::out_of_range, std::invalid_argument
@@ -260,7 +261,7 @@ namespace chaos {
                     size_type ns (size_ + s);
                     
                     if (capacity_ < ns)
-                        capacity (ns);
+                        capacity (ns + (ns/2));
                     
                     std::memcpy (data_ + size_, d, s);
                     size_ = ns;

@@ -136,11 +136,10 @@ void NodeController::updateData() {
         //update internal state
         _setNodeInternalState(last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
         
-        if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
-           last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+        if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0) {
             if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE) &&
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN)) {
                 //we need to show error
                 ErrorInformation new_err_inf;
                 new_err_inf.error_code = last_ds_healt->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE);
@@ -156,13 +155,12 @@ void NodeController::updateData() {
         
         if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME) &&
            last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
-           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
-           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
+           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)) {
             ProcessResource proc_res;
             proc_res.uptime = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
             proc_res.usr_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
             proc_res.sys_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
-            proc_res.swp_res = last_ds_healt->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
+            //proc_res.swp_res = last_ds_healt->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
             _setProcessResource(proc_res);
         } else {
             _setProcessResource(ProcessResource());

@@ -76,15 +76,15 @@ namespace chaos {
 					
 				public:
 					//! Initialize the data broker
-					void init(void*) throw(chaos::CException);
+					void init(void*);
 					//! start the data broker
-					void start() throw(chaos::CException);
+					void start();
 					//! stop the data broker
-					void stop() throw(chaos::CException);
+					void stop();
 					//! deinit the data broker
-					void deinit() throw(chaos::CException);
+					void deinit();
 					//! action for start the handshake
-					CDataWrapper *startHandshake(CDataWrapper *handshakeData, bool& detach);
+                    chaos::common::data::CDWUniquePtr startHandshake(chaos::common::data::CDWUniquePtr handshake_data);
 				};
 			}
 		}

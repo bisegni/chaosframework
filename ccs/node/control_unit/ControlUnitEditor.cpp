@@ -205,6 +205,9 @@ void ControlUnitEditor::initUI() {
     ui->listViewWarning->setModel(&warning_list_model);
     //manage command stat
     ui->widgetCommandStatistic->setVisible(false);
+    //busy flag
+    ui->widgetBusyFlag->setVisible(false);
+    ui->labelRunningCommandAlias->setVisible(false);
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -271,7 +274,6 @@ bool ControlUnitEditor::isClosing() {
     ui->widgetNodeResource->deinitChaosContent();
     //disable log widget
     ui->widgetChaosNodeLog->deinitChaosContent();
-
     dataset_input_table_model.setAttributeMonitoring(false);
     dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
@@ -280,6 +282,8 @@ bool ControlUnitEditor::isClosing() {
     warning_list_model.untrack();
     if(control_unit_subtype.compare(chaos::NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT) == 0){
         ui->widgetCommandStatistic->deinitChaosContent();
+        ui->widgetBusyFlag->deinitChaosContent();
+        ui->labelRunningCommandAlias->deinitChaosContent();
     }
     return true;
 }
@@ -362,6 +366,17 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
             ui->widgetCommandStatistic->setVisible(true);
             ui->widgetCommandStatistic->setNodeUID(control_unit_unique_id);
             ui->widgetCommandStatistic->initChaosContent();
+
+            ui->widgetBusyFlag->setVisible(true);
+            ui->widgetBusyFlag->setNodeUID(control_unit_unique_id);
+            ui->widgetBusyFlag->initChaosContent();
+
+            //current running command alias
+            ui->labelRunningCommandAlias->setVisible(true);
+            ui->labelRunningCommandAlias->setNodeUID(control_unit_unique_id);
+            ui->labelRunningCommandAlias->setDatasetAttributeName(chaos::ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS);
+            ui->labelRunningCommandAlias->setDatasetType(CControlUnitDatasetLabel::DatasetTypeSystem);
+            ui->labelRunningCommandAlias->initChaosContent();
         }
     }
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {

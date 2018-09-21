@@ -31,25 +31,17 @@ dispatcher(NULL){
     domainActionsContainer = _domainActionsContainer;
 }
 
-/*!
- Default destructor
- */
 DomainActionsScheduler::~DomainActionsScheduler() {
     
 }
-/*
- Initialization method for output buffer
- */
-void DomainActionsScheduler::init(int threadNumber) throw(CException) {
+
+void DomainActionsScheduler::init(int threadNumber) {
     LAPP_ << "Initializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
     CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
     armed = true;
 }
 
-/*
- Deinitialization method for output buffer
- */
-void DomainActionsScheduler::deinit() throw(CException) {
+void DomainActionsScheduler::deinit() {
     LAPP_ << "Deinitializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
     //mutex::scoped_lock lockAction(actionAccessMutext);
     CObjectProcessingQueue<CDataWrapper>::clear();
@@ -57,39 +49,28 @@ void DomainActionsScheduler::deinit() throw(CException) {
     armed = false;
 }
 
-/*
- override the push method for ObjectProcessingQueue<CDataWrapper> superclass
- */
-bool DomainActionsScheduler::push(CDataWrapper *actionParam) throw(CException) {
+bool DomainActionsScheduler::push(CDWUniquePtr rpc_action_call) {
     if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
-    if(!domainActionsContainer->hasActionName(actionParam->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
-    return CObjectProcessingQueue<CDataWrapper>::push(actionParam);
+    if(!domainActionsContainer->hasActionName(rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
+    return CObjectProcessingQueue<CDataWrapper>::push(MOVE(CDWShrdPtr(rpc_action_call.release())));
 }
 
-/*
- 
- */
 const string& DomainActionsScheduler::getManagedDomainName() {
     return domainActionsContainer->getDomainName();
 }
 
-/*
- 
- */
 void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatcher) {
     dispatcher = newDispatcher;
 }
 
 uint32_t DomainActionsScheduler::getQueuedActionSize() {
-    return CObjectProcessingQueue<CDataWrapper>::queueSize();
+    return (uint32_t)CObjectProcessingQueue<CDataWrapper>::queueSize();
 }
 
 void DomainActionsScheduler::synchronousCall(const std::string& action,
-                                             chaos_data::CDataWrapper *message,
-                                             chaos_data::CDataWrapper *result) {
-    bool message_has_been_detached = false;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message(message);
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+                                             CDWUniquePtr action_message,
+                                             CDWUniquePtr& result) {
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
     if(!domainActionsContainer->hasActionName(action)) {
         LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -1);
@@ -115,7 +96,7 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
         
         //call and return
         try {
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+            ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result = action_desc_ptr->call(MOVE(message_data));
             if(action_result.get() &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
                action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
@@ -131,12 +112,8 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
             result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -3);
         }
     }
-    if(message_has_been_detached) {
-        message_data.release();
-    }
     //set hte action as no fired
     action_desc_ptr->setFired(false);
-    
     //return the result
     return;
 }
@@ -144,22 +121,21 @@ void DomainActionsScheduler::synchronousCall(const std::string& action,
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
+void DomainActionsScheduler::processBufferElement(CDWShrdPtr rpc_call_action) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    CDataWrapper            *responsePack = NULL;
-    CDataWrapper            *subCommand = NULL;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionResult;
+    CDWUniquePtr  response_pack;
+    CDWUniquePtr  sub_command;
+    CDWUniquePtr  action_message;
+    CDWUniquePtr  remote_action_result;
+    CDWUniquePtr  action_result;
     //keep track for the retain of the message of the aciton description
-    ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
     //bool    detachParam = false;
     int     answerID;
     string  answerIP;
     string  answerDomain;
     string  answerAction;
-    string  actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
+    string  actionName = rpc_call_action->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
     
     if(!domainActionsContainer->hasActionName(actionName)) {
         LAPP_ << "The action " << actionName << " is not present for domain " << domainActionsContainer->getDomainName();
@@ -179,31 +155,31 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     
     try {
         //get the action message
-        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
+        if( rpc_call_action->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
             //there is a subcommand to submit
-            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+            action_message = rpc_call_action->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
         }
         
         //get sub command if present
         //check if we need to submit a sub command
-        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
+        if( rpc_call_action->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
             //there is a subcommand to submit
-            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
+            sub_command = rpc_call_action->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
         }
         
         //check if request has the rigth key to let chaos lib can manage the answer send operation
-        if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
-           actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
+        if(rpc_call_action->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
+           rpc_call_action->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
             //get infor for answer form the request
-            answerID = actionDescription->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
-            answerIP = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
+            answerID = rpc_call_action->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
+            answerIP = rpc_call_action->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
             
             //we must check this only if we have a destination ip to send the answer
-            if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
-               actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
+            if(rpc_call_action->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
+               rpc_call_action->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
                 //fill the action doma and name for the answer
-                answerDomain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
-                answerAction = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
+                answerDomain = rpc_call_action->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
+                answerAction = rpc_call_action->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
                 
                 //answer can be sent
                 needAnswer = true;
@@ -214,78 +190,73 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             //call function core part
             if(needAnswer){
                 //we need a response, so allocate the memory for it
-                remoteActionResult.reset(new CDataWrapper());
+                remote_action_result.reset(new CDataWrapper());
             }
             //synCronusly call the action in the current thread
-            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), action_elementPolicy.elementHasBeenDetached));
-            
+            action_result = actionDescriptionPtr->call(MOVE(action_message));
+
             //check if we need to submit a sub command
-            if( subCommand ) {
+            if( sub_command.get() ) {
                 //we can submit sub command
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+                CDWUniquePtr dispatchSubCommandResult = dispatcher->dispatchCommand(MOVE(sub_command));
             }
             
             if(needAnswer){
                 //we need an answer so add the submition result
                 //if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
                 //put the submissione result error to 0(all is gone well)
-                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *actionResult.get());
+                if(action_result.get()) remote_action_result->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *action_result.get());
                 
-                remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
+                remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {
             LAPP_ << "Error during action execution:"<<ex.what();
             DECODE_CHAOS_EXCEPTION(ex)
             //set error in response is it's needed
-            if(needAnswer && remoteActionResult.get()) {
-                DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remoteActionResult, ex)
+            if(needAnswer && remote_action_result.get()) {
+                DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remote_action_result, ex)
             }
         } catch(...){
             LAPP_ << "General error during action execution";
             //set error in response is it's needed
-            if(needAnswer) remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
+            if(needAnswer) remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
         }
         
         
-        if( needAnswer && remoteActionResult.get() ) {
+        if( needAnswer && remote_action_result.get() ) {
             //we need to construct the response pack
-            responsePack = new CDataWrapper();
+            CDWUniquePtr response_pack(new CDataWrapper());
             
             //fill answer with data for remote ip and request id
-            remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
+            remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
             //set the answer host ip as remote ip where to send the answere
-            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
+            response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
             
             //check this only if we have a destinantion
             if(answerDomain.size() && answerAction.size()){
                 //set the domain for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
                 
                 //set the name of the action for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
             }
             
             //add the action message
-            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
+            response_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remote_action_result.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
+            if(!dispatcher->submitMessage(answerIP,
+                                          MOVE(response_pack),
+                                          false)){
                 //the response has not been sent
-                DELETE_OBJ_POINTER(responsePack);
+                
             }
         }
     } catch (CException& ex) {
-        DELETE_OBJ_POINTER(responsePack);
         //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
     
-    //check if we need to detach the action message
-    if(action_elementPolicy.elementHasBeenDetached){
-        actionMessage.release();
-    }
-    
     //set hte action as no fired
     actionDescriptionPtr->setFired(false);
-    
 }

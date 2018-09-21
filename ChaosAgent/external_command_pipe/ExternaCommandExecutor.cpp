@@ -48,7 +48,7 @@ dummy_work(io_service){}
 
 ExternaCommandExecutor::~ExternaCommandExecutor(){}
 
-void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
+void ExternaCommandExecutor::init(void *data)  {
     //start asio
     asio_threads.create_thread(bind(&asio::io_service::run, &io_service));
     
@@ -81,7 +81,7 @@ void ExternaCommandExecutor::init(void *data) throw(chaos::CException) {
                                                                this));
 }
 
-void ExternaCommandExecutor::deinit() throw(chaos::CException) {
+void ExternaCommandExecutor::deinit()  {
     CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
     io_service.stop();
     asio_threads.join_all();

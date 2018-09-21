@@ -41,7 +41,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
     int err = 0;
     CDWUniquePtr node_description;
     
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The attribute %1% is mandatory",%NodeDefinitionKey::NODE_UNIQUE_ID));
     CHAOS_LASSERT_EXCEPTION(data->isStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), ERR, -3, CHAOS_FORMAT("The attribute %1% need to be string",%NodeDefinitionKey::NODE_UNIQUE_ID));
     
@@ -55,7 +55,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
     
     if(data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE) &&
        data->isCDataWrapperValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) {
-        rpc_message.reset(data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        rpc_message=data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
     }
     
     if(getDataAccess<mds_data_access::NodeDataAccess>()->isNodeAlive(node_uid, node_alive)) {
@@ -76,7 +76,7 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
                                 node_rpc_domain,
                                 rpc_action);
         sendMessage(*request,
-                    rpc_message.get());
+                    MOVE(rpc_message));
     }
 }
 

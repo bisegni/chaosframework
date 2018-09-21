@@ -21,7 +21,7 @@
 
 #ifndef __CHAOSFramework__AsioImplEventClient__
 #define __CHAOSFramework__AsioImplEventClient__
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/event/EventClient.h>
 #include <chaos/common/event/AsioEventHandler.h>
@@ -43,34 +43,33 @@ namespace chaos {
             class AsioEventForwarder;
             
             DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient),
-            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor>{
+            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor> {
             protected:
                 /*
                  init the event adapter
                  */
-                void init(void*) throw(CException);
+                void init(void*);
                 
                 /*
                  start the event adapter
                  */
-                void start() throw(CException);
+                void start();
                 
                 //-----------------------
-                void stop() throw(CException);
+                void stop();
                 
                 /*
                  deinit the event adapter
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptor *priorityElement,
-                                          ElementManagingPolicy& policy) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement);
                 
             public:
                 AsioImplEventClient(string alias);
                 ~AsioImplEventClient();
-                bool submitEvent(EventDescriptor *event)  throw(CException);
+                bool submitEvent(EventDescriptorSPtr event);
             private:
                 boost::asio::ip::udp::socket *socket_alert;
                 boost::asio::ip::udp::socket *socket_instrument;

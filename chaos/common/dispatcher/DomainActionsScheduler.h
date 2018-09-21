@@ -21,7 +21,7 @@
 
 #ifndef ChaosFramework_ActionsScheduler_h
 #define ChaosFramework_ActionsScheduler_h
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
@@ -41,7 +41,7 @@ namespace chaos {
      This class define an environment where an aciotn can be executed
      */
     class DomainActionsScheduler:
-    private CObjectProcessingQueue<chaos_data::CDataWrapper> {
+    private CObjectProcessingQueue<chaos::common::data::CDataWrapper> {
         friend class CommandDispatcher;
             //! indicate the armed stato of this scheduler
         bool armed;
@@ -54,13 +54,12 @@ namespace chaos {
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
     public:
-        virtual void processBufferElement(chaos_data::CDataWrapper*,
-										  ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(chaos::common::data::CDWShrdPtr element);
 		
 		//!call the action in an async way
         virtual void synchronousCall(const std::string& action,
-                                     chaos_data::CDataWrapper *message,
-                                     chaos_data::CDataWrapper *result);
+                                     chaos::common::data::CDWUniquePtr message,
+                                     chaos::common::data::CDWUniquePtr& result);
     public:
         /*!
          Default constructor
@@ -78,16 +77,16 @@ namespace chaos {
         /*!
          Initialization method
          */
-        virtual void init(int) throw(CException);
+        virtual void init(int);
         
         /*!
          Deinitialization method
          */
-        virtual void deinit() throw(CException);
+        virtual void deinit();
         /*!
          Push a new action pack into the queue
          */
-        bool push(chaos_data::CDataWrapper*) throw(CException);
+        bool push(chaos::common::data::CDWUniquePtr rpc_action_call);
         /*!
          Set the current dispatcher
          */

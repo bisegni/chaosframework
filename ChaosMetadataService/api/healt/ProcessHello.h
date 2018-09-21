@@ -35,14 +35,7 @@ namespace chaos {
                  common toolkit, in a synchronous way, call this api to register itself and to get tree 
                  server where publish healt information.
                  */
-                class ProcessHello:
-                public AbstractApi {
-                public:
-                    ProcessHello();
-                    ~ProcessHello();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(ProcessHello)
             }
         }
     }

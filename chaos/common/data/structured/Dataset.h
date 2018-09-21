@@ -25,6 +25,7 @@
 #include <chaos/common/chaos_constants.h>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
@@ -182,6 +183,38 @@ namespace chaos {
                         //set the wrapper as the
                         attribute_reference_wrapper() = *(*it)->dataset_attribute;
                     }
+                    return result;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
+                
+                //!define the information for store dataset in burst mode
+                typedef struct DatasetBurst {
+                    //!is the tag associated to the burst
+                    std::string tag;
+                    //!is the valued asscoiated to the burst type
+                    chaos::common::data::CDataVariant value;
+                    //!is the type the specified the burst function
+                    chaos::ControlUnitNodeDefinitionType::DSStorageBurstType type;
+                    
+                    DatasetBurst();
+                    DatasetBurst(const DatasetBurst& copy_src);
+                    DatasetBurst& operator=(DatasetBurst const &rhs);
+                } DatasetBurst;
+                
+                typedef ChaosSharedPtr<DatasetBurst> DatasetBurstShrdPtr;
+                
+                CHAOS_OPEN_SDWRAPPER(DatasetBurst)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    Subclass::dataWrapped().tag = CDW_GET_SRT_WITH_DEFAULT(serialized_data, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, "");
+                    Subclass::dataWrapped().type = static_cast<chaos::ControlUnitNodeDefinitionType::DSStorageBurstType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE, chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined));
+                    Subclass::dataWrapped().value = CDW_GET_VALUE_WITH_DEFAULT(serialized_data, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE, getVariantValue, CDataVariant());
+                }
+                
+                CDWUniquePtr serialize() {
+                    CDWUniquePtr result(new CDataWrapper());
+                    result->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TAG, Subclass::dataWrapped().tag);
+                    result->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_TYPE, Subclass::dataWrapped().type);
+                    result->addVariantValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE, Subclass::dataWrapped().value);
                     return result;
                 }
                 CHAOS_CLOSE_SDWRAPPER()

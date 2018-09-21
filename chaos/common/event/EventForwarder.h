@@ -40,8 +40,8 @@ namespace chaos {
                  @param newPack the new CDatawrapper instance pointer received by rpc server
                  @return a true value if the submitions to output queue has been done
                  */
-                //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-                virtual bool submitEvent(EventDescriptor *event)  throw(CException) = 0;
+                //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) = 0;
+                virtual bool submitEvent(EventDescriptorSPtr event)  = 0;
             };
         }
     }

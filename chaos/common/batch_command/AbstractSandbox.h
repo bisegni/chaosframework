@@ -74,7 +74,7 @@ n->fault_description.domain = d;
             struct CommandInfoAndImplementation {
                 chaos::common::data::CDataWrapper *cmdInfo;
                 BatchCommand *cmdImpl;
-                
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> command_and_fault;
                 CommandInfoAndImplementation(chaos::common::data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
                 ~CommandInfoAndImplementation();
                 
@@ -114,7 +114,7 @@ n->fault_description.domain = d;
                 
                 virtual void lockCurrentCommandFeature(bool lock) = 0;
                 
-                virtual void setCurrentCommandFeatures(features::Features& features) throw (CException) = 0;
+                virtual void setCurrentCommandFeatures(features::Features& features)  = 0;
                 
                 virtual void setDefaultStickyCommand(BatchCommand *sticky_command) = 0;
                 

@@ -32,7 +32,7 @@
 
 #include <boost/lockfree/queue.hpp>
 #include <boost/thread.hpp>
-
+#define COUCHBASE_DEFAULT_TIMEOUT 5000000
 namespace chaos {
     namespace data_service {
         namespace cache_system {
@@ -128,10 +128,10 @@ namespace chaos {
                 int updateConfig();
                 
                 //! init
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data);
                 
                 //!deinit
-                void deinit() throw (chaos::CException);
+                void deinit();
             };
         }
     }

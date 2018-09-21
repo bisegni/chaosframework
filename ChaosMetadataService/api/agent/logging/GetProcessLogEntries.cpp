@@ -36,15 +36,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetProcessLogEntries::GetProcessLogEntries():
-AbstractApi("getProcessLogEntries"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetProcessLogEntries, "getProcessLogEntries");
 
-GetProcessLogEntries::~GetProcessLogEntries() {
-}
-
-CDataWrapper *GetProcessLogEntries::execute(CDataWrapper *api_data,
-                                            bool& detach_data) {
+CDWUniquePtr GetProcessLogEntries::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_MANDATORY_KEY(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2);
@@ -76,5 +70,5 @@ CDataWrapper *GetProcessLogEntries::execute(CDataWrapper *api_data,
                                 lev_w()))){
         LOG_AND_TROW(ERR, -11, CHAOS_FORMAT("Error retrieving log entries for node %1%", %node_uid));
     }
-    return lev_w.serialize().release();
+    return lev_w.serialize();
 }

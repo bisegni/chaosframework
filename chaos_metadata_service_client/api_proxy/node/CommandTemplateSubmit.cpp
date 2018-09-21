@@ -31,16 +31,13 @@ API_PROXY_CD_DEFINITION(CommandTemplateSubmit,
                         "system",
                         "commandTemplateSubmit")
 
-/*!
- 
- */
 ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& submission_task_list) {
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
+    CDWUniquePtr message(new CDataWrapper());
     for(TemplateSubmissionListConstIterator it = submission_task_list.begin();
         it != submission_task_list.end();
         it++) {
         //compose submiossion task
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> submission_task(new CDataWrapper);
+        CDWUniquePtr submission_task(new CDataWrapper);
         submission_task->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->node_unique_id);
         submission_task->addStringValue("template_name", (*it)->template_name);
         submission_task->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
@@ -53,5 +50,5 @@ ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& subm
     }
     message->finalizeArrayForKey("submission_task");
     //call api
-    return callApi(message.release());
+    return callApi(message);
 }

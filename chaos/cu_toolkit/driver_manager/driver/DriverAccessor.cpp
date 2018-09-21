@@ -35,7 +35,8 @@ DriverAccessor::DriverAccessor(uint _accessor_index):
     messages_count(0),
     accessor_async_mq(),
     accessor_sync_mq(),
-    base_opcode_priority(0) {}
+    base_opcode_priority(0),
+    command_queue(NULL){}
 
 /*------------------------------------------------------
  

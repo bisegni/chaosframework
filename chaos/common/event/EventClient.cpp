@@ -32,20 +32,20 @@ threadNumber(0){}
 /*
  init the event adapter
  */
-void EventClient::init(void*) throw(CException) {
+void EventClient::init(void*) {
 }
 
 /*
  start the event adapter
  */
-void EventClient::start() throw(CException) {
+void EventClient::start() {
     
 }
 
 /*
  deinit the event adapter
  */
-void EventClient::deinit() throw(CException) {
+void EventClient::deinit() {
     LAPP_ << "Deinitializing Domain Actions Scheduler for domain:";
         //mutex::scoped_lock lockAction(actionAccessMutext);
 }

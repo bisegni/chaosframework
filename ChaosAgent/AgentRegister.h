@@ -74,14 +74,14 @@ namespace chaos {
             /*!
              receive the ack package for agent registration on the MDS
              */
-            chaos::common::data::CDataWrapper* registrationACK(chaos::common::data::CDataWrapper  *message_data, bool& detach);
+            chaos::common::data::CDWUniquePtr registrationACK(chaos::common::data::CDWUniquePtr  message_data);
         public:
             AgentRegister();
             ~AgentRegister();
-            void init(void *init_data) throw (chaos::CException);
-            void start() throw (chaos::CException);
-            void stop() throw (chaos::CException);
-            void deinit() throw (chaos::CException);
+            void init(void *init_data);
+            void start();
+            void stop();
+            void deinit();
             
             //!add a new agent
             void addWorker(WorkerSharedPtr new_worker);

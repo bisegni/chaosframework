@@ -50,7 +50,7 @@ MongoDBPersistenceDriver::~MongoDBPersistenceDriver() {
 	
 }
 
-void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
+void MongoDBPersistenceDriver::init(void *init_data)  {
     //call sublcass
     AbstractPersistenceDriver::init(init_data);
     
@@ -85,7 +85,7 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     getDataAccess<MongoDBAgentDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
 
-void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
+void MongoDBPersistenceDriver::deinit()  {
 	connection.reset();
     //call sublcass
     AbstractPersistenceDriver::deinit();

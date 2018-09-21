@@ -103,7 +103,7 @@ void URLServiceFeeder::clear(bool dispose_service) {
 	
 	for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//allocate space for new url service
-        if(service_list[idx]->service &&
+        if(service_list[idx] && service_list[idx]->service &&
            dispose_service) {
 			handler->disposeService(service_list[idx]->service);
 		}

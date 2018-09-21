@@ -39,8 +39,8 @@ namespace chaos {
                 ChaosSharedMutex init_mtx;
                 ChaosSharedPtr<chaos::common::io::ManagedDirectIODataDriver> shared_data_driver;
             public:
-                void init(void *data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *data);
+                void deinit();
                 const ChaosSharedPtr<chaos::common::io::ManagedDirectIODataDriver>& getSharedDriver();
             };
         }

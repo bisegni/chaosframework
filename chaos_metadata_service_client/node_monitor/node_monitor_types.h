@@ -38,11 +38,18 @@ namespace chaos {
                 OnlineStateOFF
             } OnlineState;
             
-            typedef struct ProcessResource{
+            typedef struct ProcessResource {
                 uint64_t            uptime;
                 double              usr_res;
                 double              sys_res;
                 uint64_t            swp_res;
+                
+                ProcessResource():
+                uptime(0),
+                usr_res(0),
+                sys_res(0),
+                swp_res(0){}
+                
                 ProcessResource& operator=(const ProcessResource& other) {
                     if (this == &other) return *this;
                     

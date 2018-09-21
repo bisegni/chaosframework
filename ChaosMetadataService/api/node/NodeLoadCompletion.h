@@ -31,18 +31,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class NodeLoadCompletion:
-                public AbstractApi {
-                    //! perform the completion for control unit type node
-                    chaos::common::data::CDataWrapper *controlUnitCompletion(chaos::common::data::CDataWrapper *api_data,
-                                                                             bool& detach_data) throw(chaos::CException);
-                public:
-                    NodeLoadCompletion();
-                    ~NodeLoadCompletion();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(NodeLoadCompletion);
             }
         }
     }

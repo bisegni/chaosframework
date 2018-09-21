@@ -23,6 +23,11 @@
 
 using namespace chaos;
 
+ActionExecutionSafetySystem::ActionExecutionSafetySystem():
+fired(false),
+enabled(false){}
+ActionExecutionSafetySystem::~ActionExecutionSafetySystem() {}
+
 bool ActionExecutionSafetySystem::isFired(){
     AESS_ReadLock lock(aessMutext);
     return fired;

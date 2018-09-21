@@ -26,7 +26,6 @@
 
 namespace chaos {
     namespace metadata_service {
-
         namespace api {
             namespace logging {
                 
@@ -34,14 +33,7 @@ namespace chaos {
                 /*!
                  The logging are paged so in query can be gave the last sequence id
                  */
-                class GetLogDomainForSourceUID:
-                public AbstractApi {
-                public:
-                    GetLogDomainForSourceUID();
-                    ~GetLogDomainForSourceUID();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetLogDomainForSourceUID)
             }
         }
     }

@@ -57,8 +57,8 @@ namespace chaos {
                     LuaScriptVM(const std::string& alias);
                     ~LuaScriptVM();
                 protected:
-                    void init(void *init_data) throw(chaos::CException);
-                    void deinit() throw(chaos::CException);
+                    void init(void *init_data);
+                    void deinit();
                     void allocationOf(ChaosLuaWrapperInterface *newAllocatedClass);
                     void deallocationOf(ChaosLuaWrapperInterface *deallocatedClass);
                 public:

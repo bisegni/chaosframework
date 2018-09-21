@@ -44,21 +44,21 @@ DefaultEventDispatcher::~DefaultEventDispatcher() {
     
 }
 
-void DefaultEventDispatcher::init(void* initData) throw(CException) {
+void DefaultEventDispatcher::init(void* initData) {
     eventScheduler = new EventTypeScheduler();
     if(!eventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");
     eventScheduler->init();
 
 }
 
-void DefaultEventDispatcher::start() throw(CException) {
+void DefaultEventDispatcher::start() {
 }
 
     //!DefaultEventDispatcher deinitialization
 /*!
  * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
  */
-void DefaultEventDispatcher::deinit() throw(CException) {
+void DefaultEventDispatcher::deinit() {
     if(eventScheduler) {
         eventScheduler->deinit();
         DELETE_OBJ_POINTER(eventScheduler);
@@ -69,11 +69,11 @@ void DefaultEventDispatcher::deinit() throw(CException) {
 /*
  Perform the registration of an handler
  */
-void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, EventType eventType, const char * const idntification)  throw(CException) {
+void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, EventType eventType, const char * const idntification)  {
     boost::shared_lock<boost::shared_mutex> lock(handlerVEctorMutext);
     
     EVTDISPAPP_ << "registerEventActionForEventType";
-    if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
+    if(!eventAction) {throw CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");}
     
     eventScheduler->installEventAction(eventAction);
 }
@@ -82,7 +82,7 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
 /*
  Perform the deregistration of an handler
  */
-void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  throw(CException) {
+void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  {
     EVTDISPAPP_ << "deregisterEventAction";
         //try to remove from all scheduler, becaus eone action can be mapped to all event type
     if(eventScheduler) {eventScheduler->removeEventAction(eventAction);}
@@ -92,7 +92,7 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
  Thsi is the methdo that is called when the specified event is recognized
  by dispatcher
  */
-void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
+void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  {
     eventScheduler->push(eventDescription);
 }
 
@@ -101,7 +101,7 @@ void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *ev
  Thsi is the methdo that is called when the specified event is recognized
  by dispatcher
  */
-void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
+void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  {
     eventScheduler->push(eventDescription);
 }
 
@@ -110,7 +110,7 @@ void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEven
  Thsi is the methdo that is called when the specified event is recognized
  by dispatcher
  */
-void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) {
+void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  {
 }
 
     //!Handler execution method
@@ -118,6 +118,6 @@ void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescript
  Thsi is the methdo that is called when the specified event is recognized
  by dispatcher
  */
-void DefaultEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) {
+void DefaultEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  {
 
 }

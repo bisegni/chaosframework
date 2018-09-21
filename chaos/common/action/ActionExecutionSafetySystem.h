@@ -53,6 +53,8 @@ namespace chaos {
         bool setEnabled(bool);
         
     public:
+        ActionExecutionSafetySystem();
+        ~ActionExecutionSafetySystem();
         bool isFired();
         bool isEnabled();
     };

@@ -28,17 +28,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-GetNodeNetworkAddress::GetNodeNetworkAddress():
-AbstractApi("getNodeNetworkAddress"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetNodeNetworkAddress, "getNodeNetworkAddress");
 
-GetNodeNetworkAddress::~GetNodeNetworkAddress() {
-    
-}
-
-chaos::common::data::CDataWrapper *GetNodeNetworkAddress::execute(chaos::common::data::CDataWrapper *api_data,
-                                                                  bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetNodeNetworkAddress::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, N_GNNA_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, N_GNNA_ERR, -2, "The ndk_unique_id key is mandatory")
     
@@ -60,5 +52,5 @@ chaos::common::data::CDataWrapper *GetNodeNetworkAddress::execute(chaos::common:
     } else {
         LOG_AND_TROW(N_GNNA_ERR, -3, "Node not found")
     }
-    return NULL;
+    return CDWUniquePtr();
 }

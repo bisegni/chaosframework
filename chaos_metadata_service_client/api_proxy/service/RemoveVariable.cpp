@@ -29,11 +29,9 @@ using namespace chaos::metadata_service_client::api_proxy::service;
 API_PROXY_CD_DEFINITION(RemoveVariable,
                         "service",
                         "removeVariable")
-/*!
- 
- */
+
 ApiProxyResult RemoveVariable::execute(const std::string& variable_name) {
-    CDataWrapper *message = new CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("variable_name", variable_name);
     return callApi(message);
 }

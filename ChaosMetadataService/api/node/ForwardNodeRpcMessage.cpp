@@ -40,8 +40,7 @@ AbstractApi(superclass_api_name){}
 
 ForwardNodeRpcMessage::~ForwardNodeRpcMessage() {}
 
-CDataWrapper *ForwardNodeRpcMessage::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr ForwardNodeRpcMessage::execute(CDWUniquePtr api_data) {
     int err = 0;
     uint64_t command_id = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found")
@@ -60,11 +59,9 @@ CDataWrapper *ForwardNodeRpcMessage::execute(CDataWrapper *api_data,
     } else if(alive == false){
         LOG_AND_TROW(ERR, -10, CHAOS_FORMAT("The %1% is not alive",%node_uid));
     } else {
-        detach_data = true;
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SendRpcCommand),
-                                                       api_data);
+                                                       api_data.release());
         INFO << CHAOS_FORMAT("SendRpcCommand submitted with id %1%", %command_id);
     }
-    
-    return NULL;
+    return CDWUniquePtr();
 }

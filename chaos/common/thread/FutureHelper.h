@@ -27,6 +27,7 @@
 #include <chaos/common/async_central/async_central.h>
 
 #include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/utility/SafeAsyncCall.h>
 #include <chaos/common/utility/InizializableService.h>
 
 #include <boost/multi_index/member.hpp>
@@ -48,20 +49,46 @@ namespace chaos{
             public:
                 typedef uint32_t CounterType;
                 //!define the types
-                typedef ChaosPromise< T >  Promise;
-                typedef ChaosSharedPtr< Promise > PromiseUPtr;
+                typedef ChaosPromise< T >           Promise;
+                typedef ChaosSharedPtr< Promise >   PromiseUPtr;
                 typedef ChaosSharedFuture< T >      Future;
+                
+                typedef ChaosFunction<void(const T&)> PromisesHandlerFunction;
+                typedef chaos::common::utility::SafeAsyncCall<PromisesHandlerFunction> PromisesHandler;
+                typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
+                typedef ChaosWeakPtr< PromisesHandler > PromisesHandlerWeakPtr;
             private:
                 struct PromisesInfo;
                 //typedef ChaosSharedPtr< PromisesInfo > PromisesInfoShrdPtr;
                 
+                class HandlerMessagePromise:
+                public Promise {
+                    PromisesHandlerWeakPtr promises_handler_weak;
+                public:
+                    HandlerMessagePromise(PromisesHandlerWeakPtr _promises_handler_weak):
+                    promises_handler_weak(_promises_handler_weak){}
+                    
+                    void set_value(const T& received_data) {
+                        PromisesHandlerSharedPtr shr_ptr = promises_handler_weak.lock();
+                        if(shr_ptr.get() != NULL) {
+                            shr_ptr->function(received_data);
+                        }
+                        Promise::set_value(received_data);
+                    }
+                };
+                
                 struct PromisesInfo {
-                    PromiseUPtr promise;
+                    ChaosSharedPtr< HandlerMessagePromise > promise;
                     int64_t timeout_ts;
                     CounterType promise_id;
                     
                     PromisesInfo():
-                    promise(new Promise()){}
+                    promise(new HandlerMessagePromise(PromisesHandlerWeakPtr())),
+                    promise_id(0){}
+                    
+                    PromisesInfo(PromisesHandlerWeakPtr weak_handler):
+                    timeout_ts(0),
+                    promise(new HandlerMessagePromise(weak_handler)){}
                     
                     PromisesInfo(const PromisesInfo& src):
                     timeout_ts(src.timeout_ts),
@@ -168,13 +195,13 @@ namespace chaos{
                 
                 virtual ~FutureHelper() {}
                 
-                void init(void *init_data) throw(chaos::CException) {
+                void init(void *init_data)  {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                                purge_delay,
                                                                                                purge_delay);
                 }
                 
-                void deinit() throw(chaos::CException) {
+                void deinit()  {
                     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
                     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
                     set_p().clear();
@@ -190,7 +217,8 @@ namespace chaos{
                     }
                 }
                 
-                void addNewPromise(CounterType& new_promise_id, Future& new_future) {
+                void addNewPromise(CounterType& new_promise_id,
+                                   Future& new_future) {
                     //store promises in result map
                     LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
                     PromisesInfo promise_info;
@@ -205,6 +233,26 @@ namespace chaos{
                         LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Promises with index %1% has not be added colliding with %2%", %new_promise_id%(*ires.first).promise_id);
                     }
                 }
+                
+                void addNewPromise(CounterType& new_promise_id,
+                                   Future& new_future,
+                                   PromisesHandlerWeakPtr weak_hadler_function) {
+                    //store promises in result map
+                    LSetPromiseWriteLock lmr_wl = set_p.getWriteLockObject();
+                    PromisesInfo promise_info(weak_hadler_function);
+                    promise_info.timeout_ts = chaos::common::utility::TimingUtil::getTimestampWithDelay(promise_timeout, true);
+                    promise_info.promise_id = new_promise_id = promises_counter++;
+                    new_future = promise_info.promise->get_future();
+                    std::pair<SetPromisesReqIdxIndexIter,bool> ires = set_p().insert(promise_info);
+                    //for debug print al the element
+                    SetPromisesReqIdxIndex& id_idx = boost::multi_index::get<tag_req_id>(set_p());
+                    SetPromisesReqIdxIndexIter it = id_idx.find(new_promise_id);
+                    if(it == id_idx.end()) {
+                        LDBG_ << DEFINE_LOG_HEADER(FutureHelper) << __FUNCTION__ << CHAOS_FORMAT("Promises with index %1% has not be added colliding with %2%", %new_promise_id%(*ires.first).promise_id);
+                    }
+                }
+                
+                
             };
         }
     }

@@ -37,10 +37,24 @@ last_total_time(0.0),
 last_sampling_time(0),
 creation_time(TimingUtil::getTimeStamp()/1000){}
 
+ProcStat::ProcStat(const ProcStat& ps_src):
+usr_time(ps_src.usr_time),
+sys_time(ps_src.sys_time),
+swap_rsrc(ps_src.swap_rsrc),
+uptime(ps_src.uptime),
+last_usr_time(ps_src.last_usr_time),
+last_sys_time(ps_src.last_sys_time),
+last_total_time(ps_src.last_total_time),
+last_sampling_time(ps_src.last_sampling_time),
+creation_time(ps_src.creation_time){}
+
 ProcStat& ProcStat::operator=(ProcStat const &rhs) {
-    usr_time = rhs.usr_time;
-    sys_time = rhs.sys_time;
-    swap_rsrc = rhs.swap_rsrc;
+    if(this != &rhs) {
+        usr_time = rhs.usr_time;
+        sys_time = rhs.sys_time;
+        swap_rsrc = rhs.swap_rsrc;
+        uptime = rhs.uptime;
+    }
     return *this;
 }
 
@@ -80,6 +94,5 @@ void ProcStatCalculator::update(ProcStat& stat) {
     stat.last_sys_time = local_sys_time;
     stat.last_sampling_time = sampling_time;
     stat.swap_rsrc = process_resurce_usage.ru_nswap;
-    
     stat.uptime = (stat.last_sampling_time-stat.creation_time);
 }

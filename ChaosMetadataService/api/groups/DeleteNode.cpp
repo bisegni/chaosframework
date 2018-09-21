@@ -31,16 +31,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::groups;
 using namespace chaos::metadata_service::persistence::data_access;
 
-DeleteNode::DeleteNode():
-AbstractApi("deleteNode"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(DeleteNode, "deleteNode")
 
-DeleteNode::~DeleteNode() {
-    
-}
-
-chaos::common::data::CDataWrapper *DeleteNode::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr DeleteNode::execute(CDWUniquePtr api_data) {
     int err = 0;
     CHECK_CDW_THROW_AND_LOG(api_data, G_DN_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, "node_name", G_DN_ERR, -2, "The node_name key is mandatory");
@@ -63,5 +56,5 @@ chaos::common::data::CDataWrapper *DeleteNode::execute(chaos::common::data::CDat
                                              node_parent_path))) {
         LOG_AND_TROW_FORMATTED(G_DN_ERR, err, "Error deleting node %1%/%2% in the domain %3%", %node_parent_path%node_name%node_domain);
     }
-    return NULL;
+    return CDWUniquePtr();
 }

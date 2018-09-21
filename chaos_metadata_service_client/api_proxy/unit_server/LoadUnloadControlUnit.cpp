@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos_metadata_service_client/api_proxy/unit_server/LoadUnloadControlUnit.h>
-
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::unit_server;
 
@@ -27,12 +27,9 @@ API_PROXY_CD_DEFINITION(LoadUnloadControlUnit,
                         "unit_server",
                         "loadUnloadControlUnit")
 
-/*!
-
- */
 ApiProxyResult LoadUnloadControlUnit::execute(const std::string& cu_instance_uid,
                                               const bool load_unload) {
-    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_instance_uid);
     message->addBoolValue("load", load_unload);
     return callApi(message);

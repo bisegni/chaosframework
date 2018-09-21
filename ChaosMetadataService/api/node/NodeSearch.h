@@ -27,17 +27,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                
-                class NodeSearch:
-                public AbstractApi {
-                    
-                public:
-                    NodeSearch();
-                    ~NodeSearch();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(NodeSearch);
             }
         }
     }

@@ -30,7 +30,8 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 TimerHandler::TimerHandler():
-timer(NULL){}
+timer(NULL),
+delay(0){}
 
 TimerHandler::~TimerHandler() {}
 

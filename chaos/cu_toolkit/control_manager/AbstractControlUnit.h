@@ -21,7 +21,7 @@
 
 #ifndef ControlUnit_H
 #define ControlUnit_H
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <map>
 #include <set>
@@ -44,6 +44,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
+#include <chaos/common/data/structured/Dataset.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/alarm/MultiSeverityAlarm.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
@@ -95,6 +96,36 @@ namespace chaos{
                 class SlowCommand;
                 class SlowCommandExecutor;
             }
+            
+            CHAOS_DEFINE_QUEUE_FOR_TYPE(chaos::common::data::structured::DatasetBurstShrdPtr, QueueBurst);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(QueueBurst, LQueueBurst);
+            
+            //!class that defin ethe abstraction of data storage burst
+            class StorageBurst {
+            public:
+                chaos::common::data::structured::DatasetBurstShrdPtr dataset_burst;
+                StorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~StorageBurst();
+                virtual bool active(void *data) = 0;
+            };
+            
+            class PushStorageBurst:
+            public StorageBurst {
+                uint32_t current_pushes;
+            public:
+                PushStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~PushStorageBurst();
+                bool active(void *data);
+            };
+            
+            class MSecStorageBurst:
+            public StorageBurst {
+                int64_t timeout_msec;
+            public:
+                MSecStorageBurst(chaos::common::data::structured::DatasetBurstShrdPtr _dataset_burst);
+                virtual ~MSecStorageBurst();
+                bool active(void *data);
+            };
             
             //!  Base class for control unit !CHAOS node
             /*!
@@ -171,22 +202,22 @@ namespace chaos{
                 const std::string& getCUType();
                 
                 //!push output dataset
-                virtual void pushOutputDataset();
+                virtual int pushOutputDataset();
                 
                 //!push system dataset
-                virtual void pushInputDataset();
+                virtual int pushInputDataset();
                 
                 //!push system dataset
-                virtual void pushCustomDataset();
+                virtual int pushCustomDataset();
                 
                 //!push system dataset
-                virtual void pushSystemDataset();
+                virtual int pushSystemDataset();
                 
                 //!push alarm dataset
-                virtual void pushCUAlarmDataset();
+                virtual int pushCUAlarmDataset();
                 
                 //!push alarm dataset
-                virtual void pushDevAlarmDataset();
+                virtual int pushDevAlarmDataset();
                 
                 //!copy into a CDataWrapper last received initialization package
                 void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
@@ -206,10 +237,10 @@ namespace chaos{
                     return -1;
                 }
                 
-                chaos::common::data::CDataWrapper *writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
-                                                                              int32_t dataset_type);
+                chaos::common::data::CDWShrdPtr writeCatalogOnCDataWrapper(chaos::common::alarm::AlarmCatalog& catalog,
+                                                                           int32_t dataset_type);
                 //check at initilization time ifr need to to a restore or only an apply
-                void checkForRestoreOnInit() throw(CException);
+                void checkForRestoreOnInit();
             private:
                 //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
@@ -227,12 +258,18 @@ namespace chaos{
                 //! control unit load param
                 std::string control_unit_param;
                 //!decode control unit paramete in json if conversion is applicable
-                bool                            is_control_unit_json_param;
-                Json::Reader					json_reader;
-                Json::Value						json_parameter_document;
+                bool            is_control_unit_json_param;
+                Json::Reader    json_reader;
+                Json::Value	    json_parameter_document;
                 
                 //specify the counter updated by the mds on every initilization that will represent the run of work
                 int64_t run_id;
+                
+                //!burst queue
+                LQueueBurst burst_queue;
+                
+                //!current scheduled burst
+                ChaosUniquePtr<StorageBurst> current_burst;
                 
                 //!logging channel
                 chaos::common::metadata_logging::StandardLoggingChannel *standard_logging_channel;
@@ -289,62 +326,62 @@ namespace chaos{
                 
                 //! init configuration
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> init_configuration;
-                void _initDrivers() throw(CException);
+                void _initDrivers();
                 void _initChecklist();
                 void _initPropertyGroup();
-                void doInitRpCheckList() throw(CException);
-                void doInitSMCheckList() throw(CException);
-                void doStartRpCheckList() throw(CException);
-                void doStartSMCheckList() throw(CException);
-                void redoInitRpCheckList(bool throw_exception = true) throw(CException);
-                void redoInitSMCheckList(bool throw_exception = true) throw(CException);
-                void redoStartRpCheckList(bool throw_exception = true) throw(CException);
-                void redoStartSMCheckList(bool throw_exception = true) throw(CException);
+                void doInitRpCheckList();
+                void doInitSMCheckList();
+                void doStartRpCheckList();
+                void doStartSMCheckList();
+                void redoInitRpCheckList(bool throw_exception = true);
+                void redoInitSMCheckList(bool throw_exception = true);
+                void redoStartRpCheckList(bool throw_exception = true);
+                void redoStartSMCheckList(bool throw_exception = true);
                 
                 /*!
                  Initialize the Custom Contro Unit and return the configuration
                  */
-                virtual chaos::common::data::CDataWrapper* _init(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _init(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Deinit the Control Unit
                  */
-                virtual chaos::common::data::CDataWrapper* _deinit(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _deinit(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Starto the  Control Unit scheduling for device
                  */
-                virtual chaos::common::data::CDataWrapper* _start(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _start(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Stop the Custom Control Unit scheduling for device
                  */
-                virtual chaos::common::data::CDataWrapper* _stop(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _stop(chaos::common::data::CDWUniquePtr data);
                 
                 //!Recover from a recoverable error state
-                virtual chaos::common::data::CDataWrapper* _recover(chaos::common::data::CDataWrapper *deinitParam, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _recover(chaos::common::data::CDWUniquePtr data);
                 /*!
                  Restore the control unit to a precise tag
                  */
-                virtual chaos::common::data::CDataWrapper* _unitRestoreToSnapshot(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                virtual chaos::common::data::CDWUniquePtr _unitRestoreToSnapshot(chaos::common::data::CDWUniquePtr data);
                 
                 /*!
                  Define the control unit DataSet and Action into
                  a CDataWrapper
                  */
-                void _undefineActionAndDataset() throw(CException);
+                void _undefineActionAndDataset();
                 
                 // Startable Service method
-                void init(void *initData) throw(CException);
+                void init(void *initData);
                 
                 // Startable Service method
-                void start() throw(CException);
+                void start();
                 
                 // Startable Service method
-                void stop() throw(CException);
+                void stop();
                 
                 // Startable Service method
-                void deinit() throw(CException);
+                void deinit();
                 
                 //! State machine is gone into recoverable error
                 void recoverableErrorFromState(int last_state, chaos::CException& ex);
@@ -412,7 +449,7 @@ namespace chaos{
                 /*!
                  This method configure the CDataWrapper whit all th einromation for describe the implemented device
                  */
-                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
+                virtual void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! Get all managed declare action instance
                 /*!
@@ -426,21 +463,27 @@ namespace chaos{
                  This method is called when the input attribute of the dataset need to be valorized,
                  subclass need to perform all the appropiate action to set these attribute
                  */
-                chaos::common::data::CDataWrapper* _setDatasetAttribute(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                chaos::common::data::CDWUniquePtr _setDatasetAttribute(chaos::common::data::CDWUniquePtr data);
                 
                 //! Return the state of the control unit
                 /*!
                  Return the current control unit state identifyed by ControlUnitState types
                  fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
                  */
-                chaos::common::data::CDataWrapper* _getState(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDWUniquePtr _getState(chaos::common::data::CDWUniquePtr data);
                 
                 //! Return the information about the type of the current instace of control unit
                 /*!
                  Return unit fitted into cdata wrapper:
                  CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
                  */
-                chaos::common::data::CDataWrapper* _getInfo(chaos::common::data::CDataWrapper*, bool& detachParam) throw(CException);
+                chaos::common::data::CDWUniquePtr _getInfo(chaos::common::data::CDWUniquePtr datadetachParam);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDWUniquePtr _submitStorageBurst(chaos::common::data::CDWUniquePtr data);
+                
+                //!start a new storicization burst execution
+                chaos::common::data::CDWUniquePtr _datasetTagManagement(chaos::common::data::CDWUniquePtr data);
                 
                 //! update the timestamp attribute of the output datapack
                 void _updateAcquistionTimestamp(uint64_t alternative_ts);
@@ -474,6 +517,7 @@ namespace chaos{
                 void _setBypassState(bool bypass_stage,
                                      bool high_priority = false);
             protected:
+                
                 void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
                 void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
                 //! Abstract Method that need to be used by the sublcass to define the dataset
@@ -481,7 +525,7 @@ namespace chaos{
                  Subclass, in this method can call the api to create the dataset, after this method
                  this class will collet all the information and send all to the MDS server.
                  */
-                virtual void unitDefineActionAndDataset() throw(CException) = 0;
+                virtual void unitDefineActionAndDataset() = 0;
                 
                 //! Abstract method for the definition of the driver
                 /*!
@@ -503,35 +547,35 @@ namespace chaos{
                  This is where the subclass need to be inizialize their environment, usually the hardware initialization. An exception
                  will stop the Control Unit live.
                  */
-                virtual void unitInit() throw(CException) = 0;
+                virtual void unitInit() = 0;
                 
                 //! Abstract method for the start of the control unit
                 /*!
                  This is where the subclass need to be start all the staff needed by normal control process. An exception
                  will stop the Control Unit live and perform the deinitialization of the control unit.
                  */
-                virtual void unitStart() throw(CException) = 0;
+                virtual void unitStart() = 0;
                 
                 //! Abstract method for the stop of the control unit
                 /*!
                  This is where the subclass need to be stop all the staff needed for pause the control process. An exception
                  will stop the Control Unit live and perform the deinitialization of the control unit.
                  */
-                virtual void unitStop() throw(CException) = 0;
+                virtual void unitStop() = 0;
                 
                 //! Abstract method for the deinit of the control unit
                 /*!
                  This is where the subclass need to be deinit all the staff that has been allocatate into the init method.
                  Usually the hardware deallocation etc..
                  */
-                virtual void unitDeinit() throw(CException) = 0;
+                virtual void unitDeinit() = 0;
                 
                 //! Abstract Method that need to be used by the sublcass to undefine ihis data
                 /*!
                  Subclass, in this method canclear all infromation defined into the deined event. This because
                  after this call can be called only a new define phase
                  */
-                virtual void unitUndefineActionAndDataset() throw(CException);
+                virtual void unitUndefineActionAndDataset();
                 
                 //!handler called for restore a control unit to a determinate point
                 /*!
@@ -541,24 +585,24 @@ namespace chaos{
                  that contain the four domain filled with the attribute/value faound
                  on saved tag
                  */
-                virtual bool unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException);
+                virtual bool unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache);
                 
                 //! this andler is called befor the input attribute will be updated
-                virtual void unitInputAttributePreChangeHandler() throw(CException);
+                virtual void unitInputAttributePreChangeHandler();
                 
                 //! attribute change handler
                 /*!
                  the handle is fired after the input attribute cache as been update triggere
                  by the rpc request for attribute change.
                  */
-                virtual void unitInputAttributeChangedHandler() throw(CException);
+                virtual void unitInputAttributeChangedHandler();
                 
                 //Abstract method used to sublcass to set theri needs
                 /*!
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                virtual chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper*, bool& detachParam) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr setDatasetAttribute(chaos::common::data::CDWUniquePtr data);
                 
                 // Infrastructure configuration update
                 /*!
@@ -566,7 +610,7 @@ namespace chaos{
                  checked to control waht is needed to update. Subclass that override this method need first inherited
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
-                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*, bool&) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr data);
                 
                 //!callback for put a veto on property value change request
                 virtual bool propertyChangeHandler(const std::string& group_name,
@@ -624,6 +668,12 @@ namespace chaos{
                 bool getStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,
                                               const unsigned int state_variable_ordered_id,
                                               common::alarm::MultiSeverityAlarmLevel& state_variable_severity);
+                
+                /*!
+                 manage the queue of burst information, need to be called by sub control unit classes
+                 to manage the burst
+                 */
+                void manageBurstQueue();
                 
                 //! set the value on the busy flag
                 void setBusyFlag(bool state);

@@ -49,8 +49,8 @@ namespace chaos {
                 AbstractMetricBackend(const std::string& _backend_indetity);
                 ~AbstractMetricBackend();
                 
-                void init(void *init_data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *init_data);
+                void deinit();
                 void addConfiguration(const std::string& configuraiton_name,
                                       const std::string& configuraiton_value);
                 void addConfiguration(const MapMetricBackendConfiguration& configuration);

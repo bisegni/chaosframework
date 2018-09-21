@@ -32,21 +32,16 @@ using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
-LoadFullScript::LoadFullScript():
-AbstractApi("loadFullScript"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadFullScript, "loadFullScript")
 
-LoadFullScript::~LoadFullScript() {
-}
-
-chaos::common::data::CDataWrapper *LoadFullScript::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr LoadFullScript::execute(CDWUniquePtr api_data) {
     int err = 0;
     
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
-    ScriptSDWrapper script_sdw(api_data);
-    ScriptBaseDescriptionSDWrapper script_description_sdw(api_data);
+    ScriptSDWrapper script_sdw(api_data.get());
+    ScriptBaseDescriptionSDWrapper script_description_sdw(api_data.get());
     
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
@@ -59,5 +54,5 @@ chaos::common::data::CDataWrapper *LoadFullScript::execute(CDataWrapper *api_dat
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error loading script %1%",%script_description_sdw.dataWrapped().name));
     }
     //return the script base description
-    return script_sdw.serialize().release();
+    return script_sdw.serialize();
 }

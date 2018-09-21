@@ -45,7 +45,7 @@ namespace chaos{
             
             //! pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
             struct PriorityCommandCompare {
-                bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
+                bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)& lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)& rhs) const {
                     if(lhs->priority < rhs->priority) {
                         return true;
                     } else if(lhs->priority == rhs->priority) {
@@ -56,8 +56,8 @@ namespace chaos{
                 }
             };
             
-            typedef std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
-            std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
+            typedef std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation),
+            std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)>,
             PriorityCommandCompare > CommandPriorityQueue;
             
             //stack that contains operation to do on wiating or running command by the sandox
@@ -87,10 +87,10 @@ namespace chaos{
                 bool            schedule_work_flag;
                 
                 //! default sticky command
-                ChaosUniquePtr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
+                PRIORITY_ELEMENT(CommandInfoAndImplementation)   default_sticky_command;
                 
                 //!point to the current executing command
-                PRIORITY_ELEMENT(CommandInfoAndImplementation)   *current_executing_command;
+                PRIORITY_ELEMENT(CommandInfoAndImplementation)   current_executing_command;
                 
                 boost::mutex                    mutext_access_current_command;
                 //boost::condition_variable_any   waithForNextCheck;
@@ -131,7 +131,7 @@ namespace chaos{
                 chaos::common::data::cache::AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
-                std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> command_stack;
+                std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)> command_stack;
                 
                 //-------------------- handler poiter --------------------
                 //! Pointer to the acquire pahse handler's of the current command
@@ -149,10 +149,10 @@ namespace chaos{
                  Perform th ecommand isntallation without check the condition. The handler
                  that are not implemented are managed according to the submition rule
                  */
-                inline bool installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+                inline bool installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) cmd_to_install);
 				
 				//! remove an handler fo a command
-                inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+                inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) cmd_to_install);
 				
 				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
@@ -198,16 +198,16 @@ namespace chaos{
                 void* sharedSettingPtr;
                 
                 //! Initialize instance
-                void init(void*) throw(chaos::CException);
+                void init(void*);
                 
                 // Start the implementation
-                virtual void start() throw(chaos::CException);
+                virtual void start();
                 
                 // Start the implementation
-                virtual void stop() throw(chaos::CException);
+                virtual void stop();
                 
                 // Deinit the implementation
-                void deinit() throw(chaos::CException);
+                void deinit();
                 
                 //! enqueue a new command
                 bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
@@ -225,11 +225,12 @@ namespace chaos{
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCurrentCommandFeatures(features::Features& features) throw (CException);
+                void setCurrentCommandFeatures(features::Features& features);
                 
                 void setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay);
                 
                 void lockCurrentCommandFeature(bool lock);
+
             };
         }
     }

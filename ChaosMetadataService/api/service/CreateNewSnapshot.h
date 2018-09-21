@@ -32,14 +32,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class CreateNewSnapshot:
-                public AbstractApi {
-                public:
-                    CreateNewSnapshot();
-                    ~CreateNewSnapshot();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-                };
-                
+                CHAOS_MDS_DEFINE_API_CLASS(CreateNewSnapshot)
             }
         }
     }

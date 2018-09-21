@@ -125,7 +125,7 @@ void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_delay) {
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
 }
 
@@ -136,7 +136,7 @@ AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
 /*!
  Init the  RT Control Unit scheduling for device
  */
-void RTAbstractControlUnit::init(void *initData) throw(CException) {
+void RTAbstractControlUnit::init(void *initData) {
     //call parent impl
     AbstractControlUnit::init(initData);
     
@@ -149,7 +149,7 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 /*!
  Starto the  Control Unit scheduling for device
  */
-void RTAbstractControlUnit::start() throw(CException) {
+void RTAbstractControlUnit::start() {
     //call parent impl
     AbstractControlUnit::start();
     
@@ -161,7 +161,7 @@ void RTAbstractControlUnit::start() throw(CException) {
 /*!
  Stop the Custom Control Unit scheduling for device
  */
-void RTAbstractControlUnit::stop() throw(CException) {
+void RTAbstractControlUnit::stop() {
     //manage the thread
     RTCULAPP_ << "Stopping thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(false);
@@ -173,7 +173,7 @@ void RTAbstractControlUnit::stop() throw(CException) {
 /*!
  Init the  RT Control Unit scheduling for device
  */
-void RTAbstractControlUnit::deinit() throw(CException) {
+void RTAbstractControlUnit::deinit() {
     //call parent impl
     AbstractControlUnit::deinit();
     
@@ -184,7 +184,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 /*!
  return the appropriate thread for the device
  */
-void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CException) {
+void RTAbstractControlUnit::threadStartStopManagment(bool startAction) {
     try{
         if(startAction) {
             if(scheduler_thread.get() && scheduler_run){

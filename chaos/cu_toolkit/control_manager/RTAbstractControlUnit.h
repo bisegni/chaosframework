@@ -56,19 +56,19 @@ namespace chaos {
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
 				 */
-				void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
+				void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
 				//! init rt control unit
-				void init(void *initData) throw(CException);
+				void init(void *initData);
 				
 				//! start rt control unit
-				void start() throw(CException);
+				void start();
 				
 				//! stop rt control unit
-				void stop() throw(CException);
+				void stop();
 				
 				//! deinit rt control unit
-				void deinit() throw(CException);
+				void deinit();
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
 			protected:
@@ -92,7 +92,7 @@ namespace chaos {
                                       const ControlUnitDriverList& _control_unit_drivers);
                 
 				//! schdule a run of the rt control unit
-				virtual void unitRun() throw(CException) = 0;
+				virtual void unitRun() = 0;
 				
 				//! set the dafult run schedule time intervall
 				void setDefaultScheduleDelay(uint64_t _defaultScheduleDelay);
@@ -100,7 +100,7 @@ namespace chaos {
 				/*
 				 return the appropriate thread for the device
 				 */
-				inline void threadStartStopManagment(bool startAction) throw(CException);
+				inline void threadStartStopManagment(bool startAction);
 				
                 //!inherited method by @AbstractControlUnit
                 void propertyUpdatedHandler(const std::string& group_name,

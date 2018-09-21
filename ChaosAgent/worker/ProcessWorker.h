@@ -46,24 +46,20 @@ namespace chaos {
                 LockableMapRespawnableNode map_respawnable_node;
             protected:
                 //! launch an data service
-                chaos::common::data::CDataWrapper *launchNode(chaos::common::data::CDataWrapper *data,
-                                                              bool& detach);
+                chaos::common::data::CDWUniquePtr launchNode(chaos::common::data::CDWUniquePtr data);
                 //! stop an data service
-                chaos::common::data::CDataWrapper *stopNode(chaos::common::data::CDataWrapper *data,
-                                                            bool& detach);
+                chaos::common::data::CDWUniquePtr stopNode(chaos::common::data::CDWUniquePtr data);
                 //! restart an data service
-                chaos::common::data::CDataWrapper *restartNode(chaos::common::data::CDataWrapper *data,
-                                                               bool& detach);
+                chaos::common::data::CDWUniquePtr restartNode(chaos::common::data::CDWUniquePtr data);
                 //! list all data service managed by the running instance
-                chaos::common::data::CDataWrapper *checkNodes(chaos::common::data::CDataWrapper *data,
-                                                              bool& detach);
+                chaos::common::data::CDWUniquePtr checkNodes(chaos::common::data::CDWUniquePtr data);
                 //!inherited by @TimerHandler
                 void timeout();
             public:
                 ProcessWorker();
                 ~ProcessWorker();
-                void init(void *data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *data);
+                void deinit();
                 
                 void addToRespawn(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 

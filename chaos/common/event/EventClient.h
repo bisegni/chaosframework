@@ -54,20 +54,20 @@ namespace chaos {
                 /*
                  init the event adapter
                  */
-                virtual void init(void*) throw(CException);
+                virtual void init(void*);
                 
                 /*
                  start the event adapter
                  */
-                virtual void start() throw(CException);
+                virtual void start();
                 
                 //-----------------------
-                virtual void stop() throw(CException){};
+                virtual void stop(){};
                 
                 /*
                  deinit the event adapter
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
                 
             public:
                 void setThreadNumber(unsigned int newThreadNumber);

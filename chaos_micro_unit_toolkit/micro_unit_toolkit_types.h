@@ -24,11 +24,11 @@ using ChaosUniquePtr = std::unique_ptr<T>;
   #else
     #define ChaosSharedPtr boost::shared_ptr
   #endif
-#define ChaosMoveOperator(x) std::move(x)
+#define MOVE(x) std::move(x)
 #else
 #define ChaosSharedPtr boost::shared_ptr
 #define ChaosUniquePtr std::auto_ptr
-#define ChaosMoveOperator(x) x
+#define MOVE(x) x
 #endif
         static unsigned int CommunicationTimeout = 5000;
     }

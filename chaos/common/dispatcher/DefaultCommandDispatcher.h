@@ -21,7 +21,7 @@
 
 #ifndef DefaultCommandDispatcher_H
 #define DefaultCommandDispatcher_H
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -74,27 +74,27 @@ namespace chaos{
         /*!
          Initialization method for output buffer
          */
-        void init(void *) throw(CException);
+        void init(void *);
         
         /*!
          Deinitialization method for output buffer
          */
-        void deinit() throw(CException);
+        void deinit();
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
-        virtual void registerAction(DeclareAction*)  throw(CException) ;
+        virtual void registerAction(DeclareAction*)  ;
         
         /*!
          Deregister actions for a determianted domain
          */
-        virtual void deregisterAction(DeclareAction*)  throw(CException) ;
+        virtual void deregisterAction(DeclareAction*)  ;
         
 		// inherited method
-        chaos::common::data::CDataWrapper* dispatchCommand(chaos::common::data::CDataWrapper*) throw(CException);
+        chaos::common::data::CDWUniquePtr dispatchCommand(chaos::common::data::CDWUniquePtr message_data);
 		
 		// inherited method
-		chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
+		chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr message_data);
         
         //inherited method
         uint32_t domainRPCActionQueued(const std::string& domain_name);

@@ -44,11 +44,11 @@ InizializableService::~InizializableService() {
 }
 
 //! Initialize instance
-void InizializableService::init(void*) throw(chaos::CException) {
+void InizializableService::init(void*)  {
 }
 
 //! Deinit the implementation
-void InizializableService::deinit() throw(chaos::CException) {
+void InizializableService::deinit()  {
     
 }
     //! Return the state
@@ -76,7 +76,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
 				impl->init(initData);
 			}catch(CException& ex) {
 				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinit());
-				throw ex;
+				throw;
 			}
             
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_INITIATED;
@@ -88,7 +88,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         IS_LERR  << "Error Initializing";
         DECODE_CHAOS_EXCEPTION_ON_LOG(IS_LERR, ex);
         impl->state_machine.process_event(service_state_machine::EventType::deinit());
-        throw ex;
+        throw;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
 		IS_LERR  << "Error Deinitializing " << ex.what();
 		throw CException(-3, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
@@ -113,7 +113,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
     } catch (CException& ex) {
         IS_LERR  << "Error Deinitializing";
         DECODE_CHAOS_EXCEPTION_ON_LOG(IS_LERR, ex);
-        throw ex;
+        throw;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
 		IS_LERR  << "Error Deinitializing " << ex.what();
 		throw CException(-3, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));

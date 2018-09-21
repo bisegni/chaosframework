@@ -47,7 +47,7 @@ ExternalUnitManager::~ExternalUnitManager() {
     
 }
 
-void ExternalUnitManager::init(void *init_data) throw (chaos::CException) {
+void ExternalUnitManager::init(void *init_data)  {
     LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
         end= map_protocol_adapter().end();
@@ -60,7 +60,7 @@ void ExternalUnitManager::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void ExternalUnitManager::deinit() throw (chaos::CException) {
+void ExternalUnitManager::deinit()  {
     LMapAdapterWriteLock wl = map_protocol_adapter.getWriteLockObject();
     for(MapAdapterIterator it = map_protocol_adapter().begin(),
         end= map_protocol_adapter().end();

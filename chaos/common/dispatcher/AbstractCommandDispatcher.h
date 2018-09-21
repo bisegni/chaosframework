@@ -57,8 +57,7 @@ namespace chaos{
     public:
         EchoRpcAction();
     protected:
-        chaos::common::data::CDataWrapper *echoAction(chaos::common::data::CDataWrapper *action_data,
-                                                      bool& detach);
+        chaos::common::data::CDWUniquePtr echoAction(chaos::common::data::CDWUniquePtr action_data);
     };
     
     //! class for the check if an RPC domain is alive
@@ -68,8 +67,7 @@ namespace chaos{
     public:
         CheckDomainRpcAction(AbstractCommandDispatcher *_dispatcher);
     protected:
-        chaos::common::data::CDataWrapper *checkDomain(chaos::common::data::CDataWrapper *action_data,
-                                                      bool& detach);
+        chaos::common::data::CDWUniquePtr checkDomain(chaos::common::data::CDWUniquePtr action_data);
     };
     
     //! Base class for the Chaos Action Dispatcher
@@ -101,20 +99,20 @@ namespace chaos{
         
         ~AbstractCommandDispatcher();
         
-        virtual void init(void *init_data)  throw(CException);
+        virtual void init(void *init_data);
         
         //-----------------------
-        virtual void start() throw(CException);
+        virtual void start();
         
         //-----------------------
-        virtual void stop() throw(CException);
+        virtual void stop();
         
-        virtual void deinit()  throw(CException);
+        virtual void deinit();
         
         /*
          update the dispatcher configuration
          */
-        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException);
+        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*);
         
         //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to
@@ -131,8 +129,8 @@ namespace chaos{
          \return boolean value to informa is the mesage has been submitted
          */
         bool submitMessage(const string& server_port,
-                           chaos::common::data::CDataWrapper* message,
-                           bool onThisThread = false) throw(CException);
+                           chaos::common::data::CDWUniquePtr message,
+                           bool onThisThread = false);
         
         //! Action registration
         /*
@@ -140,7 +138,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) = 0;
+        virtual void registerAction(DeclareAction *declareActionClass)  = 0;
         
         //! Action deregistration
         /*
@@ -148,7 +146,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) = 0;
+        virtual void deregisterAction(DeclareAction *declareActionClass)  = 0;
         
         virtual bool hasDomain(const std::string& domain_name) = 0;
         

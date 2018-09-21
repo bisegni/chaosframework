@@ -28,6 +28,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 using namespace chaos::cu::control_manager::execution_pool;
@@ -43,7 +44,7 @@ mds_message_channel(NULL){}
 
 ExecutionPoolManager::~ExecutionPoolManager() {}
 
-void ExecutionPoolManager::init(void *init_data) throw(chaos::CException) {
+void ExecutionPoolManager::init(void *init_data)  {
     int err = 0;
     unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
     
@@ -63,7 +64,7 @@ void ExecutionPoolManager::init(void *init_data) throw(chaos::CException) {
 }
 
 
-void ExecutionPoolManager::deinit() throw(chaos::CException) {
+void ExecutionPoolManager::deinit()  {
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
@@ -82,13 +83,13 @@ void ExecutionPoolManager::timeout() {
     if(eu_uid_list.size() == 0 &&
        execution_pool_list.size() == 0) return;
     
-    CDataWrapper hb_message;
+    CDWUniquePtr hb_message(new CDataWrapper());
     //collect proc stat
-    const ProcInfo cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
+    const ProcStat cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
     const double total_cpu_usage = cur_proc_stat.sys_time+cur_proc_stat.usr_time;
     
     //ad current unit server alias
-    hb_message.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT,
+    hb_message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT,
                               unit_server_alias);
     /*if(eu_uid_list.size()) {
         // make heart beat for the managed eu uid
@@ -112,13 +113,13 @@ void ExecutionPoolManager::timeout() {
             end = execution_pool_list.end();
             it != end;
             it++) {
-            hb_message.appendStringToArray(*it);
+            hb_message->appendStringToArray(*it);
         }
-        hb_message.finalizeArrayForKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST);
+        hb_message->finalizeArrayForKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST);
     }
     
     //send message to mds
     mds_message_channel->sendMessage("script",
                                      "executionPoolHeartbeat",
-                                     &hb_message);
+                                     MOVE(hb_message));
 }

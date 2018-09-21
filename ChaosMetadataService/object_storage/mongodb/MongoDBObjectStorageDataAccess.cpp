@@ -50,7 +50,8 @@ using namespace chaos::data_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
-storage_write_concern(&mongo::WriteConcern::unacknowledged){
+storage_write_concern(&mongo::WriteConcern::unacknowledged) {
+    shrd_key_manager.setZoneAlias(metadata_service::ChaosMetadataService::getInstance()->setting.ha_zone_name);
     obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_stoarge_kvp.count("mongodb_oswc")) {
         //set the custom write concern
@@ -74,15 +75,27 @@ storage_write_concern(&mongo::WriteConcern::unacknowledged){
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
 int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
+                                               const ChaosStringSetConstSPtr meta_tags,
                                                const CDataWrapper& stored_object) {
     int err = 0;
     try {
         int buffer_size = 0;
         const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
         const char *buffer = stored_object.getBSONRawData(buffer_size);
+        //add tags
+        mongo::BSONArrayBuilder tag_array_builder;
         mongo::BSONObjBuilder insert_builder;
         insert_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
         chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(now_in_ms);
+        if(meta_tags && meta_tags->size()) {
+            for(ChaosStringSetConstIterator it = meta_tags->begin(),
+                end = meta_tags->end();
+                it != end;
+                it++){
+                tag_array_builder << *it;
+            }
+        }
+        insert_builder << chaos::DataPackCommonKey::DPCK_DATASET_TAGS << tag_array_builder.arr();
         //add zone sharding information
         mongo::BSONObj zone_pack = shrd_key_manager.getNewDataPack(key,
                                                                    now_in_ms,
@@ -196,7 +209,7 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
            end_timestamp) {
             builder << chaos::DataPackCommonKey::DPCK_TIMESTAMP << time_query_builder.obj();
         }
-        
+        builder << "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr())));
         mongo::BSONObj q = builder.obj();
         
         DEBUG_CODE(DBG<<log_message("deleteObject",
@@ -218,8 +231,9 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
 }
 
 int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
-                                               uint64_t timestamp_from,
-                                               uint64_t timestamp_to,
+                                               const ChaosStringSet& meta_tags,
+                                               const uint64_t timestamp_from,
+                                               const uint64_t timestamp_to,
                                                const uint32_t page_len,
                                                object_storage::abstraction::VectorObject& found_object_page,
                                                SearchSequence& last_record_found_seq) {
@@ -227,6 +241,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
     std::vector<mongo::BSONObj> object_found;
     try {
         mongo::Query q;
+        mongo::BSONObjBuilder q_builder;
         bool reverse_order = false;
         const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
@@ -234,19 +249,29 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         reverse_order = timestamp_from>timestamp_to;
         
         if(reverse_order == false) {
-            q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+            q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                      chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
                                                                       "$lte" << mongo::Date_t(timestamp_to)) <<
                      run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter));
+                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
         } else {
-            BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
+            q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                  chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
                                                                   "$gte" << mongo::Date_t(timestamp_to)) <<
                  run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
-                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter));
+                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
         }
         
+        //add tags
+        if(meta_tags.size()) {
+            mongo::BSONArrayBuilder tags_arr_b;
+            for(auto& it: meta_tags) {
+                tags_arr_b << it;
+            }
+            q_builder << chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$all" << tags_arr_b.arr());
+        }
+        
+        q = q_builder.obj();
         if(reverse_order) {
             q = q.sort(BSON(run_key<<-1<<counter_key<<-1<<chaos::DataPackCommonKey::DPCK_TIMESTAMP<<-1));
         } else {
@@ -275,11 +300,9 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                 }
                 if( object_found[object_found.size()-1].getFieldDotted(run_key).type()==mongo::NumberInt){
                     last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Number();
-                    
                 } else {
                     last_record_found_seq.run_id = object_found[object_found.size()-1].getFieldDotted(run_key).Long();
                 }
-                
                 
                 if( object_found[object_found.size()-1].getFieldDotted(counter_key).type()==mongo::NumberInt){
                     last_record_found_seq.datapack_counter = object_found[object_found.size()-1].getFieldDotted(counter_key).Number();

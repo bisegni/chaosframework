@@ -30,7 +30,7 @@ subservice(NULL){}
 
 AbstractApiGroup::~AbstractApiGroup(){}
 
-void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
+void AbstractApiGroup::init(void *init_data)  {
     subservice = static_cast<ApiSubserviceAccessor*>(init_data);
     if(!subservice) throw chaos::CException(-1, "No subsystem has been set", __PRETTY_FUNCTION__);
     
@@ -49,5 +49,4 @@ void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void AbstractApiGroup::deinit()  throw (chaos::CException) {
-}
+void AbstractApiGroup::deinit()   {}

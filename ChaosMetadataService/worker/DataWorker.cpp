@@ -39,7 +39,8 @@ using namespace chaos::data_service::worker;
 
 DataWorker::DataWorker():
 work(false),
-max_element(1000){}
+max_element(1000),
+thread_cookie(NULL){}
 
 DataWorker::~DataWorker() {}
 
@@ -81,26 +82,26 @@ void DataWorker::consumeJob(void *cookie) {
     }
 }
 
-void DataWorker::init(void *init_data) throw (chaos::CException) {
+void DataWorker::init(void *init_data)  {
     job_in_queue = 0;
     thread_cookie = (void**)calloc(1, sizeof(void*)*ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
     DCLAPP_ << " Using " << ChaosMetadataService::getInstance()->setting.worker_setting.thread_number << " thread for consuming job";
 }
 
-void DataWorker::start() throw (chaos::CException) {
+void DataWorker::start()  {
     work = true;
     for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this, thread_cookie[idx]));
     }
 }
 
-void DataWorker::stop() throw (chaos::CException) {
+void DataWorker::stop()  {
     work = false;
     consume_job_condition.notify_all();
     job_thread_group.join_all();
 }
 
-void DataWorker::deinit() throw (chaos::CException) {
+void DataWorker::deinit()  {
     WorkerJobPtr thread_job = NULL;
     //empty the job queue deleting the non executed job
     if(job_queue.empty() == false) {

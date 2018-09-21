@@ -44,10 +44,11 @@ namespace chaos {
          */
         void decodeAction(AbstActionDescShrPtr&, chaos_data::CDataWrapper&) const;
     public:
+        DeclareAction();
         /*!
          Default destructor
          */
-        ~DeclareAction();
+        virtual ~DeclareAction();
         
         //!action definition helper
         /*!

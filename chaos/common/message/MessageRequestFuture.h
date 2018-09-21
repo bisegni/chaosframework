@@ -35,7 +35,7 @@ error_code = ErrorCode::EC_TIMEOUT;\
 local_result = true;\
 } else {\
 local_result = x->hasKey("__internal_redirect__");\
-if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) request_result.reset(x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));\
+if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) request_result.reset(x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE).release());\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) error_code = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)) error_message = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE);\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) error_domain = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN);\
@@ -61,7 +61,7 @@ namespace chaos {
                 MessageRequestDomainFutureHelper::Future message_future;
 
                     //! the result for the request
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> request_result;
+                chaos::common::data::CDWUniquePtr request_result;
                 
                     //!error code
                 int32_t error_code;
@@ -92,7 +92,7 @@ namespace chaos {
                 chaos::common::data::CDataWrapper *getResult();
 
                 
-                chaos::common::data::CDataWrapper *detachResult();
+                chaos::common::data::CDWUniquePtr detachResult();
 
                     //!return the request id
                 uint32_t const & getRequestID();

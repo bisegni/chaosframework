@@ -384,10 +384,10 @@ public:
 	ref_t operator[](size_t idx) { return _val[idx]; }
 
 	// Watch out, we've got a badass over here
-	T* operator&() {
-		_empty = false;
-		return &_val;
-	}
+//    T* operator&() {
+//        _empty = false;
+//        return &_val;
+//    }
 };
 
 // Default demangler implementation (do nothing).

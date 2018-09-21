@@ -55,21 +55,20 @@ namespace chaos {
             protected:
                 unsigned int thread_number;
                 //!inherited by CObjectProcessingPriorityQueue
-                virtual void processBufferElement(AsyncRunnable *next_job,
-                                                  ElementManagingPolicy& element_policy) throw(chaos::CException);
+                virtual void processBufferElement(ChaosSharedPtr<AsyncRunnable> next_job);
             public:
                 AsyncPoolRunner(unsigned int _thread_number);
                 ~AsyncPoolRunner();
                 
-                void init(void *init_data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *init_data);
+                void deinit();
                 
                 //! submit a new runnable
                 /*!
                  the ownership on runnable is kept by the runner that
                  will provi to delete the object
                  */
-                void submit(AsyncRunnable *runnable);
+                void submit(ChaosUniquePtr<AsyncRunnable> runnable);
             };
         }
     }

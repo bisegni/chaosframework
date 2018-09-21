@@ -36,14 +36,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-ManageNodeLogging::ManageNodeLogging():
-AbstractApi("manageNodeLogging"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(ManageNodeLogging, "manageNodeLogging")
 
-ManageNodeLogging::~ManageNodeLogging() {
-}
-
-CDataWrapper *ManageNodeLogging::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ManageNodeLogging::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_MANDATORY_KEY(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2);
@@ -62,5 +57,5 @@ CDataWrapper *ManageNodeLogging::execute(CDataWrapper *api_data, bool& detach_da
                                                batch_data.release(),
                                                0,
                                                1000);
-    return NULL;
+    return CDWUniquePtr();
 }

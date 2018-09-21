@@ -24,6 +24,7 @@
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/utility/ProcStat.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/healt_system/HealtMetric.h>
@@ -42,7 +43,7 @@ namespace chaos {
             
             class SendHealthStatAsyncJob:
             public chaos::common::async_central::AsyncRunnable {
-
+                
             protected:
                 void run();
             public:
@@ -50,25 +51,25 @@ namespace chaos {
                 ~SendHealthStatAsyncJob();
             };
             
-	  //retry for 12h
+            //retry for 12h
 #define HELLO_PHASE_RETRY            12*3600
-            struct ProcInfo {
-                double usr_time;
-                double sys_time;
-                double swap_rsrc;
-                
-                ProcInfo():
-                usr_time(0.0),
-                sys_time(0.0),
-                swap_rsrc(0.0){}
-                
-                ProcInfo& operator=(ProcInfo const &rhs) {
-                    usr_time = rhs.usr_time;
-                    sys_time = rhs.sys_time;
-                    swap_rsrc = rhs.swap_rsrc;
-                    return *this;
-                };
-            };
+//            struct ProcInfo {
+//                double usr_time;
+//                double sys_time;
+//                double swap_rsrc;
+//
+//                ProcInfo():
+//                usr_time(0.0),
+//                sys_time(0.0),
+//                swap_rsrc(0.0){}
+//
+//                ProcInfo& operator=(ProcInfo const &rhs) {
+//                    usr_time = rhs.usr_time;
+//                    sys_time = rhs.sys_time;
+//                    swap_rsrc = rhs.swap_rsrc;
+//                    return *this;
+//                };
+//            };
             
             //! define the map for the metric
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<HealtMetric>, HealtNodeElementMap)
@@ -149,12 +150,12 @@ namespace chaos {
                 inline void _publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
                                      uint64_t publish_ts);
                 
-                ProcInfo current_proc_info;
+                chaos::common::utility::ProcStat current_proc_info;
                 //last sampling resurce usage
-                double last_usr_time;
-                double last_sys_time;
-                double last_total_time;
-                uint64_t last_sampling_time;
+//                double last_usr_time;
+//                double last_sys_time;
+//                double last_total_time;
+//                uint64_t last_sampling_time;
                 //! update the information about process
                 inline void updateProcInfo();
             protected:
@@ -164,26 +165,26 @@ namespace chaos {
                 
                 //! timer handler for check what slot needs to be fired
                 void timeout();
-                chaos::common::data::CDataWrapper* prepareNodeDataPack(NodeHealtSet& node_health_set,
-                                                                       uint64_t push_timestamp);
+                chaos::common::data::CDWShrdPtr prepareNodeDataPack(NodeHealtSet& node_health_set,
+                                                                    uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
-                int sayHello() throw (chaos::CException);
+                int sayHello();
             public:
                 //! inherited method
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data);
                 
                 //! inherited method
-                void start() throw (chaos::CException);
+                void start();
                 
                 //! inherited method
-                void stop() throw (chaos::CException);
+                void stop();
                 
                 //! inherited method
-                void deinit() throw (chaos::CException);
+                void deinit();
                 
                 //! return the const info for the calculater proc info state
-                const ProcInfo& getLastProcInfo();
+                const chaos::common::utility::ProcStat& getLastProcInfo();
                 
                 //!add a new node to the healt system
                 void addNewNode(const std::string& node_uid);
@@ -272,7 +273,7 @@ namespace chaos {
                 //!publish health information for a node
                 /*!
                  \param node_uid the node identification id for which we need to
-                                    publish the healt data.
+                 publish the healt data.
                  */
                 void publishNodeHealt(const std::string& node_uid);
             };

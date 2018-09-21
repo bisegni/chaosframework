@@ -45,7 +45,7 @@ BasicIODriver::~BasicIODriver() {
 
 }
 
-void BasicIODriver::driverInit(const char *initParameter) throw(chaos::CException) {
+void BasicIODriver::driverInit(const char *initParameter)  {
   int ret;
   BasicIODriverLAPP_ << "Init driver:"<<initParameter;
   if ( (ret=initIO((void*)initParameter,(int)strlen(initParameter)))!=0){
@@ -56,7 +56,7 @@ void BasicIODriver::driverInit(const char *initParameter) throw(chaos::CExceptio
 	
 }
 
-void BasicIODriver::driverDeinit() throw(chaos::CException) {
+void BasicIODriver::driverDeinit()  {
 	BasicIODriverLAPP_ << "Deinit driver";
     deinitIO();
 

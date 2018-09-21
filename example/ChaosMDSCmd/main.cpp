@@ -132,7 +132,7 @@ int initialize_from_old_mds(std::string conf){
 	CMultiTypeDataArrayWrapperSPtr us = mdsconf.getVectorValue("us");
 	if(us.get()){
 		for(int cnt=0;(us.get()!=NULL)&&(cnt<us->size());cnt++){
-			std::auto_ptr<CDataWrapper> usw(us->getCDataWrapperElementAtIndex(cnt));
+			ChaosUniquePtr<CDataWrapper> usw(us->getCDataWrapperElementAtIndex(cnt));
 			GET_CONFIG_STRING(usw,unit_server_alias);
 			std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
 			//GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
@@ -145,7 +145,7 @@ int initialize_from_old_mds(std::string conf){
 			CMultiTypeDataArrayWrapperSPtr cu_l = usw->getVectorValue("cu_desc");
 			for(int cui=0;(cu_l.get() !=NULL) && (cui<cu_l->size());cui++){
 				api_proxy::control_unit::SetInstanceDescriptionHelper cud;
-				std::auto_ptr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
+				ChaosUniquePtr<CDataWrapper> cuw(cu_l->getCDataWrapperElementAtIndex(cui));
 				GET_CONFIG_STRING(cuw,cu_id);
 				GET_CONFIG_STRING(cuw,cu_type);
 				GET_CONFIG_STRING_DEFAULT(cuw,cu_param,"");
@@ -165,7 +165,10 @@ int initialize_from_old_mds(std::string conf){
 				cud.unit_server_uid=unit_server_alias;
 				cud.control_unit_implementation=cu_type;
 				cud.history_ageing=storage_ageing;
+				cud.restore_type=0;
+				cud.restore_apply=false;
 				cud.storage_type=(chaos::DataServiceNodeDefinitionType::DSStorageType)storage_type;
+				
 				//EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
 				//   EXECUTE_CHAOS_API(api_proxy::control_unit::DeleteInstance,3000,unit_server_alias,cu_id);
 				//   EXECUTE_CHAOS_API(api_proxy::control_unit::Delete,3000,cu_id);
@@ -176,7 +179,7 @@ int initialize_from_old_mds(std::string conf){
 				CMultiTypeDataArrayWrapperSPtr drv_l = cuw->getVectorValue("DriverDescription");
 
 				for(int drv=0;(drv_l.get() !=NULL) && (drv<drv_l->size());drv++){
-					std::auto_ptr<CDataWrapper> drv_w(drv_l->getCDataWrapperElementAtIndex(drv));
+					ChaosUniquePtr<CDataWrapper> drv_w(drv_l->getCDataWrapperElementAtIndex(drv));
 
 					GET_CONFIG_STRING(drv_w,DriverDescriptionName);
 					GET_CONFIG_STRING(drv_w,DriverDescriptionVersion);
@@ -187,7 +190,7 @@ int initialize_from_old_mds(std::string conf){
 
 				CMultiTypeDataArrayWrapperSPtr attr_l = cuw->getVectorValue("AttrDesc");
 				for(int attr=0;(attr_l.get() !=NULL) && (attr<attr_l->size());attr++){
-					std::auto_ptr<CDataWrapper> attr_w(attr_l->getCDataWrapperElementAtIndex(attr));
+					ChaosUniquePtr<CDataWrapper> attr_w(attr_l->getCDataWrapperElementAtIndex(attr));
 
 					GET_CONFIG_STRING(attr_w,ds_attr_name);
 					GET_CONFIG_STRING(attr_w,ds_default_value);

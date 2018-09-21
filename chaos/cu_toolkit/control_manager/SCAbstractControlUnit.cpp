@@ -93,7 +93,7 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
 }
 
 //! called whr the infrastructure need to know how is composed the control unit
-void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  {
     //add the batch command description to the configuration
     SCACU_LAPP_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
     installCommand(BATCH_COMMAND_GET_DESCRIPTION(SCWaitCommand), false);
@@ -122,7 +122,7 @@ AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void SCAbstractControlUnit::init(void *initData) throw(CException) {
+void SCAbstractControlUnit::init(void *initData) {
     //this need to be made first of AbstractControlUnit::init(initData); because
     //SlowCommandExecutor has his own instance of cache and this control unit need to
     //use that
@@ -146,7 +146,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 /*
  Deinit the Control Unit
  */
-void SCAbstractControlUnit::deinit() throw(CException) {
+void SCAbstractControlUnit::deinit() {
     //call parent impl
     
     if(slow_command_executor) {
@@ -164,7 +164,7 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 /*
  Starto the  Control Unit scheduling for node
  */
-void SCAbstractControlUnit::start() throw(CException) {
+void SCAbstractControlUnit::start() {
     //call parent impl
     AbstractControlUnit::start();
     
@@ -175,7 +175,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 /*
  Stop the Custom Control Unit scheduling for node
  */
-void SCAbstractControlUnit::stop() throw(CException) {
+void SCAbstractControlUnit::stop() {
     //call parent impl
     AbstractControlUnit::stop();
     
@@ -218,6 +218,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //command status
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_QUEUED_CMD, 0, DataType::TYPE_INT32);
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_STACK_CMD, 0, DataType::TYPE_INT32);
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS, 0, DataType::TYPE_STRING);
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {
@@ -240,7 +241,7 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                                uint32_t priority,
                                                uint32_t submission_rule,
                                                uint32_t submission_retry_delay,
-                                               uint64_t scheduler_step_delay)  throw (CException) {
+                                               uint64_t scheduler_step_delay)   {
     CHAOS_ASSERT(slow_command_executor)
     slow_command_executor->submitCommand(batch_command_alias,
                                          command_data,
@@ -256,15 +257,12 @@ ChaosUniquePtr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_
     return slow_command_executor->getStateForCommandID(command_id);
 }
 
-/*
- Receive the event for set the dataset input element
- */
-CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
+CDWUniquePtr SCAbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attribute_values) {
     uint64_t command_id =0;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result_for_command;
     
     //cal first the superclass method because the dataset_attribute_values is not detached
-    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
+    CDWUniquePtr result = AbstractControlUnit::setDatasetAttribute(MOVE(dataset_attribute_values->clone()));
     
     //check if we have a command
     if(dataset_attribute_values->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
@@ -274,12 +272,11 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
         //so we need to detach it
         // submit the detacched command to slow controll subsystem
         slow_command_executor->submitCommand(command_alias,
-                                             dataset_attribute_values,
+                                             dataset_attribute_values.release(),
                                              command_id);
-        detachParam = true;
         //construct the result if we don't already have it
-        if(!result) {
-            result = new CDataWrapper();
+        if(!result.get()) {
+            result.reset(new CDataWrapper());
         }
         //add command id into the result
         result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
@@ -313,14 +310,20 @@ void SCAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name
 void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescription> command_description,
                                            bool is_default,
                                            bool sticky,
+                                           bool auto_busy,
                                            unsigned int sandbox) {
     CHAOS_ASSERT(slow_command_executor)
+    //set custom attribute
+    bool loc_auto_busy = auto_busy;
     slow_command_executor->installCommand(command_description);
     if(is_default){
+        //default command usually doesn't need to show busy
+        loc_auto_busy = false;
         setDefaultCommand(command_description->getAlias(),
                           sticky,
                           sandbox);
     }
+    command_description->getCustomAttributeRef().insert(BCInstantiationAttributeMapPair("auto_busy", CDataVariant(loc_auto_busy)));
 }
 bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
     ChaosUniquePtr<CommandState> cmd_state;
@@ -350,6 +353,7 @@ bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
             case BatchCommandEventType::EVT_FAULT:
                 SCACU_LDBG_ << cmd_id << " -> FAULT";
                 break;
+            default: break;
         }
         //whait some times
         usleep(500000);

@@ -71,7 +71,7 @@ IOCU::~IOCU() {
  "Control Unit Definition Public API" module into html documentation
  (chaosframework/Documentation/html/group___control___unit___definition___api.html)
  */
-void IOCU::unitDefineActionAndDataset() throw(chaos::CException) {
+void IOCU::unitDefineActionAndDataset()  {
     int ret;
     IOCULAPP_ << "UnitDefine";
     ret=driver->getDataset(driver_dataset,driver_dataset_size);
@@ -128,18 +128,18 @@ void IOCU::unitDefineCustomAttribute() {
 }
 
 //!Initialize the Custom Control Unit
-void IOCU::unitInit() throw(chaos::CException) {
+void IOCU::unitInit()  {
     getAttributeCache()->resetChangedInputIndex();
     
 }
 
 //!Execute the work, this is called with a determinated delay, it must be as fast as possible
-void IOCU::unitStart() throw(chaos::CException) {
+void IOCU::unitStart()  {
     
 }
 
 //!Execute the Control Unit work
-void IOCU::unitRun() throw(chaos::CException) {
+void IOCU::unitRun()  {
     //get the output attribute pointer form the internal cache
     std::vector<int>::iterator i;
     int cnt,ret,changed=0;
@@ -160,22 +160,22 @@ void IOCU::unitRun() throw(chaos::CException) {
 }
 
 //!Execute the Control Unit work
-void IOCU::unitStop() throw(chaos::CException) {
+void IOCU::unitStop()  {
     
 }
 
 //!Deinit the Control Unit
-void IOCU::unitDeinit() throw(chaos::CException) {
+void IOCU::unitDeinit()  {
     
 }
 
 //! pre imput attribute change
-void IOCU::unitInputAttributePreChangeHandler() throw(chaos::CException) {
+void IOCU::unitInputAttributePreChangeHandler()  {
     
 }
 
 //! attribute changed handler
-void IOCU::unitInputAttributeChangedHandler() throw(chaos::CException) {
+void IOCU::unitInputAttributeChangedHandler()  {
     std::vector<VariableIndexType> changed;
     std::vector<VariableIndexType>::iterator j;
     getAttributeCache()->getChangedInputAttributeIndex(changed);

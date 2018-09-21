@@ -61,7 +61,7 @@ std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level
     return out;
 }
 
-void LogManager::init() throw(CException) {
+void LogManager::init() {
     //get the log configuration
     level::LogSeverityLevel     logLevel                =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_LEVEL)?static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL)):level::LSLInfo;
     bool                        logOnConsole            =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
@@ -103,7 +103,7 @@ void LogManager::init() throw(CException) {
     logger->set_logging_enabled(logOnConsole || logOnFile || logOnSyslog);
 }
 
-void LogManager::deinit() throw(CException) {
+void LogManager::deinit() {
     boost::shared_ptr< logging::core > logger = boost::log::core::get();
     if(console_sink.get()) {
         logger->remove_sink(console_sink);

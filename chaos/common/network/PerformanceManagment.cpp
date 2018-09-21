@@ -29,6 +29,7 @@
 #define PMLDBG_ LDBG_ << PM_LOG_HEAD << __FUNCTION__
 #define PMLERR_ LERR_ << PM_LOG_HEAD
 
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
@@ -37,7 +38,8 @@ using namespace chaos::common::async_central;
 PerformanceManagment::PerformanceManagment(NetworkBroker *_network_broker):
 network_broker(_network_broker),
 map_sessions(this),
-global_performance_connection(NULL){
+global_performance_connection(NULL),
+work_on_purge(false){
 	//create the description for init preformance session rpc action
 	AbstActionDescShrPtr
 	actionDescription = DeclareAction::addActionDescritionInstance<PerformanceManagment>(this,
@@ -56,28 +58,24 @@ PerformanceManagment::~PerformanceManagment() {
 }
 
 //init the implementation
-void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
+void PerformanceManagment::init(void *init_parameter)  {
 	//check the network broker setup
 	if(!network_broker) throw chaos::CException(-1, "NetworkBroker not set", __PRETTY_FUNCTION__);
-	
 	//register the action
 	network_broker->registerAction(this);
 }
 
 //Start the implementation
-void PerformanceManagment::start() throw(chaos::CException) {
+void PerformanceManagment::start()  {
 	PMLAPP_ << "Start the purger thread";
-	//work_on_purge = true;
-	//thread_purge.reset(new boost::thread(& PerformanceManagment::purge_worker, this));
+
     AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
 }
 
 //Stop the implementation
-void PerformanceManagment::stop() throw(chaos::CException) {
+void PerformanceManagment::stop()  {
 	PMLAPP_ << "Stop the purger thread";
-	//work_on_purge = false;
-	//purge_wait_semaphore.unlock();
-	//thread_purge->join();
+
     AsyncCentralManager::getInstance()->removeTimer(this);
 	PMLAPP_ << "Purger thread stoppped";
 	
@@ -86,23 +84,17 @@ void PerformanceManagment::stop() throw(chaos::CException) {
 }
 
 DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
-	boost::unique_lock<boost::mutex>(mutext_client_connection);
+	boost::unique_lock<boost::mutex> ul(mutext_client_connection);
 	if(!global_performance_connection) {
 		global_performance_connection = network_broker->getSharedDirectIOClientInstance();
-		//if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
-		//InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 	return global_performance_connection;
 }
 
 //Deinit the implementation
-void PerformanceManagment::deinit() throw(chaos::CException) {
+void PerformanceManagment::deinit()  {
 	//register the action
 	network_broker->deregisterAction(this);
-	
-	//if(global_performance_connection) {
-	//	InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
-	//}
 }
 
 void PerformanceManagment::timeout() {
@@ -131,7 +123,6 @@ void  PerformanceManagment::handleEvent(DirectIOClientConnection *client_connect
 	}
 	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), map_sessions.accessItem(client_connection->getURL())));
 	PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " added in purge map";
-	
 }
 
 void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *performance_node) {
@@ -141,7 +132,7 @@ void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *p
 		PMLAPP_ << "Dispose the performance node for "<<server_description;
 		InizializableService::initImplementation(performance_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 	}
-	catch(CException ex) {}
+	catch(CException& ex) {}
 	catch(...) {}
 	
 	//deregister the server
@@ -164,11 +155,11 @@ void  PerformanceManagment::freeObject(const PMKeyObjectContainer::TKOCElement& 
 	disposePerformanceNode(element_to_dispose.element);
 }
 
-chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
+CDWUniquePtr PerformanceManagment::startPerformanceSession(data::CDWUniquePtr param) {
     CHECK_CDW_THROW_AND_LOG(param, PMLERR_, -1, "No parameter has been set")
     CHECK_KEY_THROW_AND_LOG_FORMATTED(param, PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, PMLERR_, -2, "No %1% key has been set",%PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)
     
-	chaos_data::CDataWrapper *result = NULL;
+	CDWUniquePtr result;
 	
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
@@ -196,14 +187,14 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 		InizializableService::initImplementation(performace_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		
 		//set the result value to the local endpoint url
-		result = new chaos_data::CDataWrapper();
+		result.reset(new CDataWrapper());
 		result->addStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, server_endpoint->getUrl());
 		
-	} catch(CException ex) {
+	} catch(CException& ex) {
 		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
 		if(server_endpoint) network_broker->releaseDirectIOServerEndpoint(server_endpoint);
-		throw ex;
+		throw;
 	} catch(...) {
 		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
@@ -217,8 +208,8 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	return result;
 }
 
-chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
-	if(!param) return NULL;
+CDWUniquePtr PerformanceManagment::stopPerformanceSession(CDWUniquePtr param) {
+	if(!param.get()) return CDWUniquePtr();
 	if(!param->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION))
 		throw chaos::CException(-1, "Requester server description not found", __PRETTY_FUNCTION__);
 	//we can initiate performance session allcoation
@@ -232,5 +223,5 @@ chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_dat
 	
 	// dispose the sesison node
 	disposePerformanceNode(performace_node);
-	return NULL;
+	return CDWUniquePtr();
 }

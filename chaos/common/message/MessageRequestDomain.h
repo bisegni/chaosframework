@@ -58,15 +58,6 @@ namespace chaos {
             typedef ChaosSharedPtr< PromisesHandler > PromisesHandlerSharedPtr;
             typedef ChaosWeakPtr< PromisesHandler > PromisesHandlerWeakPtr;
             
-            //!promise subclass for manage the promise handler
-            class ChaosMessagePromises:
-            public MessageFuturePromise {
-                PromisesHandlerWeakPtr promises_handler_weak;
-            public:
-                ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak);
-                void set_value(const FuturePromiseData& received_data);
-            };
-            
             //! manage the RC domain for the request of a message channel
             class MessageRequestDomain:
             public DeclareAction {
@@ -77,8 +68,7 @@ namespace chaos {
                  Called when a response to a request is received, it will manage the search of
                  the apprioriate promis and answer to it
                  */
-                virtual chaos::common::data::CDataWrapper *response(chaos::common::data::CDataWrapper *reposnse_data,
-                                                                    bool &detach);
+                virtual chaos::common::data::CDWUniquePtr response(chaos::common::data::CDWUniquePtr reposnse_data);
             public:
                 MessageRequestDomain();
                 ~MessageRequestDomain();
@@ -87,7 +77,7 @@ namespace chaos {
                 
                 ChaosUniquePtr<MessageRequestFuture> getNewRequestMessageFuture(chaos::common::data::CDataWrapper& new_request_datapack,
                                                                                uint32_t& new_request_id,
-                                                                               PromisesHandlerWeakPtr promises_handler_weak);
+                                                                                MessageRequestDomainFutureHelper::PromisesHandlerWeakPtr promises_handler_weak);
             };
         }
     }

@@ -48,12 +48,12 @@ message_counter(0) {
 
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
-void ZMQDirectIOClientConnection::init(void *init_data) throw(chaos::CException) {
+void ZMQDirectIOClientConnection::init(void *init_data)  {
     int err = 0;
     if((err = ensureSocket()) != 0) throw CException(err, "Error configuring socket", __PRETTY_FUNCTION__);
 }
 
-void ZMQDirectIOClientConnection::deinit() throw(chaos::CException) {
+void ZMQDirectIOClientConnection::deinit()  {
     //disable monitor
     releaseSocketPair();
     INFO << "Disabled monitor socket for " << getServerDescription();
@@ -255,7 +255,7 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
     completeDataPack(*data_pack);
     return writeToSocket(socket_priority,
                          priority_identity,
-                         ChaosMoveOperator(data_pack));
+                         MOVE(data_pack));
 }
 // send the data to the server layer on priority channel
 int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
@@ -266,7 +266,7 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
     completeDataPack(*data_pack);
     err = writeToSocket(socket_priority,
                         priority_identity,
-                        ChaosMoveOperator(data_pack),
+                        MOVE(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //change id ofr socket
@@ -288,7 +288,7 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
     completeDataPack(*data_pack);
     return writeToSocket(socket_service,
                          service_identity,
-                         ChaosMoveOperator(data_pack));
+                         MOVE(data_pack));
 }
 
 // send the data to the server layer on the service channel
@@ -300,7 +300,7 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
     completeDataPack(*data_pack);
     err = writeToSocket(socket_service,
                         service_identity,
-                        ChaosMoveOperator(data_pack),
+                        MOVE(data_pack),
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //change id ofr socket
@@ -332,7 +332,7 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
     if((err = sendDatapack(socket,
-                           ChaosMoveOperator(data_pack)))) {
+                           MOVE(data_pack)))) {
         ERR << "Error sending datapack with code:" << err;
     }
     return err;
@@ -347,7 +347,7 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
     uint16_t current_counter = data_pack->header.dispatcher_header.fields.counter = message_counter++;
     int err = 0;
     if((err = sendDatapack(socket,
-                           ChaosMoveOperator(data_pack)))) {
+                           MOVE(data_pack)))) {
         ERR << "Error sending datapack with code:" << err;
     } else {
         //we need an aswer

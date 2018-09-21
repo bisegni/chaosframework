@@ -33,14 +33,18 @@
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::data_service;
-using namespace chaos::metadata_service;
+
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
+using namespace chaos::common::data::structured;
+
+using namespace chaos::data_service;
+
+using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
+
 using namespace chaos::service_common::persistence::data_access;
-using ChaosSharedPtr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 
@@ -51,21 +55,21 @@ WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosMetadataService::init(int argc, const char* argv[]) throw (CException) {
+void ChaosMetadataService::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosMetadataService>::init(argc, argv);
 }
 //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
-void ChaosMetadataService::init(istringstream &initStringStream) throw (CException) {
+void ChaosMetadataService::init(istringstream &initStringStream)  {
     ChaosCommon<ChaosMetadataService>::init(initStringStream);
 }
 
 /*
  *
  */
-void ChaosMetadataService::init(void *init_data)  throw(CException) {
+void ChaosMetadataService::init(void *init_data)  {
     try {
         ChaosCommon<ChaosMetadataService>::init(init_data);
         
@@ -166,11 +170,11 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 /*
  *
  */
-void ChaosMetadataService::start()  throw(CException) {
+void ChaosMetadataService::start()  {
     //lock o monitor for waith the end
     try {
         ChaosCommon<ChaosMetadataService>::start();
-        
+        std::vector<std::string> bestEndpoints;
         //start batch system
         api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
         data_consumer.start( __PRETTY_FUNCTION__);
@@ -183,10 +187,17 @@ void ChaosMetadataService::start()  throw(CException) {
         
         //register this process on persistence database
         persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-        ds_da->registerNode(api_subsystem_accessor.network_broker_service->getRPCUrl(),
+
+        ds_da->registerNode(setting.ha_zone_name,
+                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
                             api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
                             0);
-        
+
+       /* ds_da->registerNode(setting.ha_zone_name,
+                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            0);
+    */
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                    0,
@@ -210,19 +221,38 @@ void ChaosMetadataService::start()  throw(CException) {
 }
 
 void ChaosMetadataService::timeout() {
-    ProcStatCalculator::update(service_proc_stat);
+    int err = 0;
+    bool presence = false;
+    HealthStat service_proc_stat;
+    const std::string ds_uid = NetworkBroker::getInstance()->getRPCUrl();
     persistence::data_access::DataServiceDataAccess *ds_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::DataServiceDataAccess>();
-    ds_da->updateNodeStatistic(NetworkBroker::getInstance()->getRPCUrl(),
-                               NetworkBroker::getInstance()->getDirectIOUrl(),
-                               0,
-                               service_proc_stat);
+    persistence::data_access::NodeDataAccess *n_da = persistence::PersistenceManager::getInstance()->getDataAccess<persistence::data_access::NodeDataAccess>();
+    service_proc_stat.mds_received_timestamp = TimingUtil::getTimeStamp();
+    if(n_da->checkNodePresence(presence, ds_uid) != 0) {
+        LCND_LERR << CHAOS_FORMAT("Error check if this mds [%1%] description is registered", %NetworkBroker::getInstance()->getRPCUrl());
+        return;
+    }
     
+    if(presence == false) {
+        //reinsert mds
+        ds_da->registerNode(setting.ha_zone_name,
+                            api_subsystem_accessor.network_broker_service->getRPCUrl(),
+                            api_subsystem_accessor.network_broker_service->getDirectIOUrl(),
+                            0);
+    }
+    
+    //update proc stat
+    ProcStatCalculator::update(service_proc_stat);
+    if((err = n_da->setNodeHealthStatus(NetworkBroker::getInstance()->getRPCUrl(),
+                                        service_proc_stat))) {
+        LCND_LERR << CHAOS_FORMAT("error storing health data into database for this mds [%1%]", %NetworkBroker::getInstance()->getRPCUrl());
+    }
 }
 
 /*
  Stop the toolkit execution
  */
-void ChaosMetadataService::stop() throw(CException) {
+void ChaosMetadataService::stop() {
     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     
     //stop data consumer
@@ -239,7 +269,7 @@ void ChaosMetadataService::stop() throw(CException) {
 /*
  Deiniti all the manager
  */
-void ChaosMetadataService::deinit() throw(CException) {
+void ChaosMetadataService::deinit() {
     InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);

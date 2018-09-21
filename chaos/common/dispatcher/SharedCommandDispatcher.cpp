@@ -36,7 +36,7 @@ SharedCommandDispatcher::~SharedCommandDispatcher(){}
 /*
  Initialization method for output buffer
  */
-void SharedCommandDispatcher::init(void *initConfiguration) throw(CException) {
+void SharedCommandDispatcher::init(void *initConfiguration) {
     AbstractCommandDispatcher::init(initConfiguration);
 //    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_RPC_DOMAIN_QUEUE_THREAD));
 }
@@ -45,7 +45,7 @@ void SharedCommandDispatcher::init(void *initConfiguration) throw(CException) {
 /*
  Deinitialization method for output buffer
  */
-void SharedCommandDispatcher::deinit() throw(CException) {
+void SharedCommandDispatcher::deinit() {
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
     
     map_domain_actions().clear();
@@ -56,7 +56,7 @@ void SharedCommandDispatcher::deinit() throw(CException) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
+void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass)   {
     if(!declareActionClass) return;
     //we need to allocate the scheduler for every registered domain that doesn't exist
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
@@ -75,7 +75,7 @@ void SharedCommandDispatcher::registerAction(DeclareAction *declareActionClass) 
 /*
  Deregister actions for a determianted domain
  */
-void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
+void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  {
     if(!declareActionClass) return;
     //we need to allocate the scheduler for every registered domain that doesn't exist
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
@@ -95,51 +95,40 @@ void SharedCommandDispatcher::deregisterAction(DeclareAction *declareActionClass
 }
 
 
-CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message_data) {
+CDWUniquePtr SharedCommandDispatcher::executeCommandSync(CDWUniquePtr rpc_call_data) {
     MapDomainActionsLockedReadLock wl = map_domain_actions.getReadLockObject();
-    
     //allocate new Result Pack
-    bool message_has_been_detached = false;
-    CDataWrapper *result = new CDataWrapper();
+    CreateNewDataWrapper(result,);
     try{
         
-        if(!message_data) {
+        if(!rpc_call_data.get()) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
-        if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
+        if(!rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "Action call with no action domain", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
-        string action_domain = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+        string action_domain = rpc_call_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
-        if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
+        if(!rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -3, "Action Call with no action name", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
             return result;
         }
-        string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
-        ChaosUniquePtr<chaos::common::data::CDataWrapper>  action_message(message_data);
-        
-        
-        //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
+        string action_name = rpc_call_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
         if(!map_domain_actions().count(action_domain)) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+message_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
+            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+rpc_call_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
             return result;
         }
         
         if(map_domain_actions()[action_domain]->hasActionName(action_name) == false) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+message_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
-            DELETE_OBJ_POINTER(message_data)
+            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (data pack \""+rpc_call_data->getJSONString()+"\")", __PRETTY_FUNCTION__)
             return result;
         }
         
         //submit the action(Thread Safe)
         AbstActionDescShrPtr action_desc_ptr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> message_data(action_message->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        CDWUniquePtr rpc_action_message(rpc_call_data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         
         //lock the action for write, so we can schedule it
         ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -155,10 +144,10 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
         } else {
             //call and return
             try {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> action_result(action_desc_ptr->call(message_data.get(), message_has_been_detached));
+                CDWUniquePtr action_result = action_desc_ptr->call(MOVE(rpc_action_message));
                 if(action_result.get() &&
-                   action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
-                   action_message->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
+                   rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
+                   rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION)) {
                     result->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *action_result.get());
                 }
             } catch (CException& ex) {
@@ -171,12 +160,8 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
                 result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -3);
             }
         }
-        if(message_has_been_detached) {
-            message_data.release();
-        }
         //set hte action as no fired
         action_desc_ptr->setFired(false);
-        
         //tag message has submitted
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& ex){
@@ -187,25 +172,21 @@ CDataWrapper* SharedCommandDispatcher::executeCommandSync(CDataWrapper * message
     return result;
 }
 
-void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *actionDescription,
-                                                   ElementManagingPolicy &policy) throw(CException) {
+void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    CDataWrapper            *responsePack = NULL;
-    CDataWrapper            *subCommand = NULL;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionMessage;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  remoteActionResult;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper>  actionResult;
-    
-    //keep track for the retain of the message of the aciton description
-    ElementManagingPolicy               action_elementPolicy = {false};
+    CDWUniquePtr  sub_command;
+    CDWUniquePtr  action_message;
+    CDWUniquePtr  remote_action_result;
+    CDWUniquePtr  action_result;
+
     bool    needAnswer = false;
     //bool    detachParam = false;
     int     answer_id;
     string  answer_ip;
     string  answer_domain;
     string  answer_action;
-    string  action_domain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
-    string  action_name = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
+    string  action_domain = action_description->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+    string  action_name = action_description->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
     
     if(!map_domain_actions().count(action_domain)) {
         ERR_LOG(SharedCommandDispatcher) << "The rpc domain " << action_domain << " is not present";
@@ -217,47 +198,45 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
         return;
     }
 
-    
     //get the action reference
-    AbstActionDescShrPtr actionDescriptionPtr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
+    AbstActionDescShrPtr action_description_ptr = map_domain_actions()[action_domain]->getActionDescriptornFormActionName(action_name);
     
     //lock the action for write, so we can schedule it
-    ActionReadLock readLockForActionExecution(actionDescriptionPtr->actionAccessMutext);
+    ActionReadLock readLockForActionExecution(action_description_ptr->actionAccessMutext);
     
     //set hte action as fired
-    bool canFire = actionDescriptionPtr->setFired(true);
+    bool canFire = action_description_ptr->setFired(true);
     
     //if we can't fire we exit
     if(!canFire) return;
     
     try {
         //get the action message
-        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
+        if( action_description->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
             //there is a subcommand to submit
-            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+            action_message = action_description->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
         }
         
         //get sub command if present
         //check if we need to submit a sub command
-        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
+        if( action_description->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
             //there is a subcommand to submit
-            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
+            sub_command = action_description->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
         }
         
         //check if request has the rigth key to let chaos lib can manage the answer send operation
-        if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
-           actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
+        if(action_description->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
+           action_description->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
             //get infor for answer form the request
-            answer_id = actionDescription->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
-            answer_ip = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
+            answer_id = action_description->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID);
+            answer_ip = action_description->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP);
             
             //we must check this only if we have a destination ip to send the answer
-            if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
-               actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
+            if(action_description->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
+               action_description->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
                 //fill the action doma and name for the answer
-                answer_domain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
-                answer_action = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
-                
+                answer_domain = action_description->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN);
+                answer_action = action_description->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION);
                 //answer can be sent
                 needAnswer = true;
             }
@@ -267,79 +246,71 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
             //call function core part
             if(needAnswer){
                 //we need a response, so allocate the memory for it
-                remoteActionResult.reset(new CDataWrapper());
+                remote_action_result.reset(new CDataWrapper());
             }
             //synCronusly call the action in the current thread
-            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), action_elementPolicy.elementHasBeenDetached));
-            
+            action_result = action_description_ptr->call(MOVE(action_message));
             //check if we need to submit a sub command
-            if( subCommand ) {
+            if(sub_command.get()) {
                 //we can submit sub command
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> dispatchSubCommandResult(dispatchCommand(subCommand));
+                CDWUniquePtr dispatchSubCommandResult(dispatchCommand(MOVE(sub_command)));
             }
             
             if(needAnswer){
                 //we need an answer so add the submition result
                 //if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
                 //put the submissione result error to 0(all is gone well)
-                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *actionResult.get());
-                
-                remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
+                if(action_result.get()) remote_action_result->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *action_result.get());
+                remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {
             LAPP_ << "Error during action execution:"<<ex.what();
             DECODE_CHAOS_EXCEPTION(ex)
             //set error in response is it's needed
-            if(needAnswer && remoteActionResult.get()) {
-                DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remoteActionResult, ex)
+            if(needAnswer && remote_action_result.get()) {
+                DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remote_action_result, ex)
             }
         } catch(...){
             LAPP_ << "General error during action execution";
             //set error in response is it's needed
-            if(needAnswer) remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
+            if(needAnswer) remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
         }
         
         
-        if( needAnswer && remoteActionResult.get() ) {
+        if( needAnswer && remote_action_result.get() ) {
             //we need to construct the response pack
-            responsePack = new CDataWrapper();
+            CDWUniquePtr response_pack(new CDataWrapper());
             
             //fill answer with data for remote ip and request id
-            remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answer_id);
+            remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answer_id);
             //set the answer host ip as remote ip where to send the answere
-            responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answer_ip);
+            response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answer_ip);
             
             //check this only if we have a destinantion
             if(answer_domain.size() && answer_action.size()){
                 //set the domain for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answer_domain);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answer_domain);
                 
                 //set the name of the action for the answer
-                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answer_action);
+                response_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answer_action);
             }
             
             //add the action message
-            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
+            response_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remote_action_result.get());
             //in any case this result must be LOG
             //the result of the action action is sent using this thread
-            if(!submitMessage(answer_ip, responsePack, false)){
-                //the response has not been sent
-                DELETE_OBJ_POINTER(responsePack);
+            if(!submitMessage(answer_ip,
+                              MOVE(response_pack),
+                              false)){
+                LERR_ << CHAOS_FORMAT("Error submitting answer to %1%", %answer_ip);
             }
         }
     } catch (CException& ex) {
-        DELETE_OBJ_POINTER(responsePack);
         //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
-    
-    //check if we need to detach the action message
-    if(action_elementPolicy.elementHasBeenDetached){
-        actionMessage.release();
-    }
-    
     //set hte action as no fired
-    actionDescriptionPtr->setFired(false);
+    action_description_ptr->setFired(false);
 }
 
 /*
@@ -347,52 +318,43 @@ void SharedCommandDispatcher::processBufferElement(chaos_data::CDataWrapper *act
  the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
  will ever return an allocated object. The deallocaiton is demanded to caller
  */
-CDataWrapper *SharedCommandDispatcher::dispatchCommand(CDataWrapper *commandPack) throw(CException)  {
+CDWUniquePtr SharedCommandDispatcher::dispatchCommand(CDWUniquePtr rpc_call_data) {
     MapDomainActionsLockedWriteLock wl = map_domain_actions.getWriteLockObject();
-    
     //allocate new Result Pack
-    CDataWrapper *resultPack = new CDataWrapper();
-    bool sent = false;
+    CreateNewDataWrapper(result_pack,);
     try{
-        
-        if(!commandPack) return resultPack;
-        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
+        if(!rpc_call_data.get()) return result_pack;
+        if(!rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE, "Action Call with no action domain", __PRETTY_FUNCTION__);
         
-        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
+        if(!rpc_call_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
             throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action Call with no action name", __PRETTY_FUNCTION__);
-        const string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
-        const string actionName = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
+        const string actionDomain = rpc_call_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+        const string actionName = rpc_call_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(map_domain_actions().count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
+        if(map_domain_actions().count(actionDomain) == 0) throw CException(ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER, "Action Domain \""+actionDomain+"\" not registered (cmd pack \""+rpc_call_data->getJSONString()+"\")", __PRETTY_FUNCTION__);
         
-        if(map_domain_actions()[actionDomain]->hasActionName(actionName) == false) throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action \""+actionName+"\" not found (cmd pack \""+commandPack->getJSONString()+"\")", __PRETTY_FUNCTION__);
+        if(map_domain_actions()[actionDomain]->hasActionName(actionName) == false) throw CException(ErrorRpcCoce::EC_RPC_NO_ACTION_FOUND_IN_MESSAGE, "Action \""+actionName+"\" not found (cmd pack \""+rpc_call_data->getJSONString()+"\")", __PRETTY_FUNCTION__);
 
-        //DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<commandPack->getJSONString() << "\nReceived the message content:-------------------------END";)
+        //DEBUG_CODE(DBG_LOG(SharedCommandDispatcher)  << "Received the message content:-----------------------START\n"<<rpc_call_data->getJSONString() << "\nReceived the message content:-------------------------END";)
         
         //submit the action(Thread Safe)
-        ElementManagingPolicy policy;
-        processBufferElement(commandPack,
-                             policy);
-        if(policy.elementHasBeenDetached == false) {
-            delete(commandPack);
-        }
+        processBufferElement(MOVE(CDWShrdPtr(rpc_call_data.release())));
+
         //tag message has submitted
-        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
+        result_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorCode::EC_NO_ERROR);
     }catch(CException& ex){
-        if(!sent && commandPack) delete(commandPack);
-        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(resultPack, ex)
+        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result_pack, ex)
     } catch(...){
-        if(!sent && commandPack) delete(commandPack);
         //tag message has not submitted
-        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING);
+        result_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING);
         //set error to general exception error
-        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
+        result_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
     DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-----------------------START";)
-    DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << resultPack->getJSONString();)
+    DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << result_pack->getJSONString();)
     DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-------------------------END";)
-    return resultPack;
+    return result_pack;
 }
 
 uint32_t SharedCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {

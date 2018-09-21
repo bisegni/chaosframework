@@ -20,13 +20,11 @@
  */
 #include <chaos/common/data/broker/DataBroker.h>
 
-namespace chaos_data = chaos::common::data;
-namespace chaos_databroker = chaos::common::data::broker;
-
-
+using namespace chaos::common::data;
+using namespace chaos::common::data::broker;
 
     //! Initialize instance
-void chaos_databroker::DataBroker::init(void*) throw(chaos::CException) {
+void DataBroker::init(void*)  {
     
         //define the action for start the hadnshake
     AbstActionDescShrPtr actionDescription = DeclareAction::addActionDescritionInstance(this,
@@ -40,21 +38,18 @@ void chaos_databroker::DataBroker::init(void*) throw(chaos::CException) {
     actionDescription->addParam(REQUESTED_MODE, DataType::TYPE_INT32, "The request mode to use");
 }
 
-    //! Start the implementation
-void chaos_databroker::DataBroker::start() throw(chaos::CException) {
-    
+void DataBroker::start()  {
+    //not implemetned
 }
 
-    //! Start the implementation
-void chaos_databroker::DataBroker::stop() throw(chaos::CException) {
-
+void DataBroker::stop()  {
+    //not implemetned
 }
 
-    //! Deinit the implementation
-void chaos_databroker::DataBroker::deinit() throw(chaos::CException) {
-    
+void DataBroker::deinit()  {
+    //not implemetned
 }
 
-chaos_data::CDataWrapper *chaos_databroker::DataBroker::startHandshake(chaos_data::CDataWrapper *handshakeData, bool& detach) {
-    return NULL;
+CDWUniquePtr DataBroker::startHandshake(CDWUniquePtr handshake_data) {
+    return CDWUniquePtr();
 }

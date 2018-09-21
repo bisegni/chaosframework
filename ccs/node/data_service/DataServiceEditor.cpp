@@ -297,7 +297,7 @@ void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
         for(int i = 0;
             i < arr->size();
             i++) {
-            QSharedPointer<CDataWrapper> found_ds(arr->getCDataWrapperElementAtIndex(i));
+            QSharedPointer<CDataWrapper> found_ds(arr->getCDataWrapperElementAtIndex(i).release());
             QList<QStandardItem *> row_item;
             QStandardItem *item = NULL;
             row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(found_ds, NodeDefinitionKey::NODE_UNIQUE_ID, "never setuped"))));
@@ -327,7 +327,7 @@ void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
         for(int i = 0;
             i < arr->size();
             i++) {
-            QSharedPointer<CDataWrapper> found_ds(arr->getCDataWrapperElementAtIndex(i));
+            QSharedPointer<CDataWrapper> found_ds(arr->getCDataWrapperElementAtIndex(i).release());
             QList<QStandardItem *> row_item;
             QStandardItem *item = NULL;
             row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(found_ds, NodeDefinitionKey::NODE_UNIQUE_ID, "no found"))));

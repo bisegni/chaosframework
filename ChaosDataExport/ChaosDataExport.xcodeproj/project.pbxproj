@@ -353,12 +353,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = ../../usr/local/include;
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
-					"-lchaos_uitoolkit",
+					"-lchaos_metadata_service_client",
 					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -372,12 +369,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = ../../usr/local/include;
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
-					"-lchaos_uitoolkit",
+					"-lchaos_metadata_service_client",
 					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

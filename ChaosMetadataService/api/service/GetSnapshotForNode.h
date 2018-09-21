@@ -33,14 +33,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class GetSnapshotForNode:
-                public AbstractApi {
-                public:
-                    GetSnapshotForNode();
-                    ~GetSnapshotForNode();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(GetSnapshotForNode);
             }
         }
     }

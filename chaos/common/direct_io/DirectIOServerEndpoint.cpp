@@ -72,7 +72,6 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
     if(!channel_instance) return NULL;
     // gest exsclusive access
     DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
-    if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
     ChaosWriteLock rl(shared_mutex);
     channel_slot[channel_instance->getChannelRouterIndex()] = channel_instance;
     return channel_instance;
@@ -81,21 +80,20 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
 //! Dispose the channel
 void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
     if(!channel_instance) return;
-    if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return;
     ChaosWriteLock rl(shared_mutex);
     channel_slot[channel_instance->getChannelRouterIndex()] = NULL;
 }
 
 
 // New channel allocation by name
-channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name) throw (CException) {
+channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name)  {
     channel::DirectIOVirtualServerChannel *channel = ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name);
     registerChannelInstance(channel);
     return channel;
 }
 
 // New channel allocation by name
-void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException) {
+void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance)  {
     deregisterChannelInstance(channel_instance);
     if(channel_instance) delete(channel_instance);
 }
@@ -106,7 +104,7 @@ int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPackSPtr data_pack,
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+        err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(MOVE(data_pack),
                                                                                                                               synchronous_answer);
     }
     return err;
@@ -118,7 +116,7 @@ int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPackSPtr data_pack,
     int err = 0;
     ChaosReadLock rl(shared_mutex);
     if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
-        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(ChaosMoveOperator(data_pack),
+        err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(MOVE(data_pack),
                                                                                                                              synchronous_answer);
     }
     return err;

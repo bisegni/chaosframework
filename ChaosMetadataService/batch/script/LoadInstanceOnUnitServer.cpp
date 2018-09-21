@@ -47,7 +47,7 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
     int err = 0;
     MDSBatchCommand::setHandler(data);
     CDataWrapper *tmp_ptr = NULL;
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found");
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, ERR, -1, "No parameter found");
     
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_PARENT, ERR, -2, "The node parent key for unit server is mandatory");
     CHAOS_LASSERT_EXCEPTION(data->isStringValue(chaos::NodeDefinitionKey::NODE_PARENT), ERR, -3, CHAOS_FORMAT("%1% key need to be a string with the unit server uid", %chaos::NodeDefinitionKey::NODE_PARENT));
@@ -260,7 +260,7 @@ bool LoadInstanceOnUnitServer::loadScriptInstance() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        load_datapack.get());
+                        MOVE(load_datapack));
             result = true;
             break;
         }

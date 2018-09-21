@@ -32,17 +32,6 @@ using namespace chaos::common::message;
 #define MRDDBG_ DBG_LOG(MessageRequestDomain)
 #define MRDERR_ ERR_LOG(MessageRequestDomain)
 
-ChaosMessagePromises::ChaosMessagePromises(PromisesHandlerWeakPtr _promises_handler_weak):
-promises_handler_weak(_promises_handler_weak){}
-
-void ChaosMessagePromises::set_value(const FuturePromiseData& received_data) {
-    PromisesHandlerSharedPtr shr_ptr = promises_handler_weak.lock();
-    if(shr_ptr.get() != NULL) {
-        shr_ptr->function(received_data);
-    }
-   MessageFuturePromise::set_value(received_data);
-}
-
 MessageRequestDomain::MessageRequestDomain():
 domain_id(UUIDUtil::generateUUIDLite()){
     future_helper.init(NULL);
@@ -67,27 +56,24 @@ const std::string& MessageRequestDomain::getDomainID() {
     return domain_id;
 }
 
-/*!
- called when a result of a message is received
- */
-CDataWrapper *MessageRequestDomain::response(CDataWrapper *response_data, bool& detach) {
-    if(response_data == NULL) return NULL;
-    detach = true;
-    CDWShrdPtr response_data_sp(response_data);
-    if(!response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
-    uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+CDWUniquePtr MessageRequestDomain::response(CDWUniquePtr response_data) {
+    if(response_data.get() == NULL) return CDWUniquePtr();
+    CDWShrdPtr response_data_sp(response_data.release());
+    if(!response_data_sp->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return CDWUniquePtr();
+    uint32_t request_id = response_data_sp->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     future_helper.setDataForPromiseID(request_id, response_data_sp);
-    return NULL;
+    return CDWUniquePtr();
 }
 
 ChaosUniquePtr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFuture(CDataWrapper& new_request_datapack,
                                                                                       uint32_t& new_request_id,
-                                                                                      PromisesHandlerWeakPtr promises_handler_weak) {
+                                                                                      MessageRequestDomainFutureHelper::PromisesHandlerWeakPtr promises_handler_weak) {
     
     //create future and promises
-    ChaosSharedPtr<ChaosMessagePromises> promise(new ChaosMessagePromises(promises_handler_weak));
     MessageRequestDomainFutureHelper::Future request_future;
-    future_helper.addNewPromise(new_request_id, request_future);
+    future_helper.addNewPromise(new_request_id,
+                                request_future,
+                                promises_handler_weak);
     
     new_request_datapack.addInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID, new_request_id);
     new_request_datapack.addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, domain_id);

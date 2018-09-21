@@ -107,9 +107,9 @@ namespace chaos {
                     int releaseSocketPair();
                 protected:
                     
-                    void init(void *init_data) throw(chaos::CException);
+                    void init(void *init_data);
                     
-                    void deinit() throw(chaos::CException);
+                    void deinit();
                     
                     // send the data to the server layer on priority channel
                     int sendPriorityData(chaos::common::direct_io::DirectIODataPackSPtr data_pack);

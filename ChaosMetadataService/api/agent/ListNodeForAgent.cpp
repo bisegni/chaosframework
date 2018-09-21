@@ -36,14 +36,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 using namespace chaos::service_common::data::agent;
 
-ListNodeForAgent::ListNodeForAgent():
-AbstractApi(AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(ListNodeForAgent, AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LIST_NODE);
 
-ListNodeForAgent::~ListNodeForAgent() {
-}
-
-CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ListNodeForAgent::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -59,5 +54,5 @@ CDataWrapper *ListNodeForAgent::execute(CDataWrapper *api_data, bool& detach_dat
     if((err = a_da->getNodeListStatusForAgent(agent_uid, association_status_vec_sd_wrap()))) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading association status for agent %1%",%agent_uid));
     }
-    return association_status_vec_sd_wrap.serialize().release();
+    return association_status_vec_sd_wrap.serialize();
 }

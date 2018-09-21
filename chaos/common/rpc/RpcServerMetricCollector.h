@@ -52,22 +52,22 @@ namespace chaos {
                 /*
                  init the rpc adapter
                  */
-                virtual void init(void*) throw(CException);
+                virtual void init(void*);
                 
                 /*
                  start the rpc adapter
                  */
-                virtual void start() throw(CException);
+                virtual void start();
                 
                 /*
                  start the rpc adapter
                  */
-                virtual void stop() throw(CException);
+                virtual void stop();
                 
                 /*
                  deinit the rpc adapter
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
                 
                 /*!
                  Return the published port
@@ -81,10 +81,10 @@ namespace chaos {
                 
                 //-------server handler implementation method------------
                 // method called when the rpc server receive a new data
-                chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper * action_pack)  throw(CException);
+                chaos::common::data::CDWUniquePtr dispatchCommand(chaos::common::data::CDWUniquePtr action_pack);
                 
                 // execute an action in synchronous mode
-                chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack);
+                chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr action_pack);
             };
         }
     }

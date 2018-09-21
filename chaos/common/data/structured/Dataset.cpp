@@ -66,10 +66,12 @@ dataset_key(copy_src.dataset_key),
 type(copy_src.type){}
 
 Dataset& Dataset::operator=(Dataset const &rhs) {
-    name = rhs.name;
-    dataset_key = rhs.dataset_key;
-    type = rhs.type;
-    attribute_set = rhs.attribute_set;
+    if(this != &rhs) {
+        name = rhs.name;
+        dataset_key = rhs.dataset_key;
+        type = rhs.type;
+        attribute_set = rhs.attribute_set;
+    }
     return *this;
 }
 
@@ -122,4 +124,22 @@ void Dataset::setDatasetKey(const std::string& ds_key) {
 const std::string& Dataset::getDatasetKey() const {
     return dataset_key;
 }
+#pragma mark DatasetBurst
+DatasetBurst::DatasetBurst():
+tag(),
+value(),
+type(chaos::ControlUnitNodeDefinitionType::DSStorageBurstTypeUndefined){}
 
+DatasetBurst::DatasetBurst(const DatasetBurst& copy_src):
+tag(copy_src.tag),
+value(copy_src.value),
+type(copy_src.type){}
+
+DatasetBurst& DatasetBurst::operator=(DatasetBurst const &rhs) {
+    if(this != &rhs) {
+        tag = rhs.tag;
+        value = rhs.value;
+        type = rhs.type;
+    }
+    return *this;
+}

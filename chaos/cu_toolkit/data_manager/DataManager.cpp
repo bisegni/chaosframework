@@ -54,14 +54,14 @@ DataManager::~DataManager() {
 /*
  * Initzialize the datamanager
  */
-void DataManager::init(void *initParameter) throw(CException) {
+void DataManager::init(void *initParameter) {
     LAPP_ << "Starting Data Manager";
 }
 
 /*
  * Deinitzialize the datamanager
  */
-void DataManager::deinit() throw(CException) {
+void DataManager::deinit() {
     ChaosUniquePtr<KeyDataStorage> tmpKDS;
     map<string, KeyDataStorage*>::iterator iter = deviceIDKeyDataStorageMap.begin();
     
@@ -77,7 +77,7 @@ void DataManager::deinit() throw(CException) {
 /*
  * Start all sub process
  */
-void DataManager::start() throw(CException) {
+void DataManager::start() {
     
 }
 
@@ -101,7 +101,7 @@ CDataWrapper* DataManager::updateConfiguration(CDataWrapper *newConfiguration) {
 /*
  * Return an instance for the configured data live driver
  */
-IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
+IODataDriver *DataManager::getDataLiveDriverNewInstance() {
 	IODataDriver *result = NULL;
 	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 	
@@ -125,7 +125,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 /*
  * return a ne winstance of a MultiBufferDataStorage class
  */
-KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(const string& key) throw(CException) {
+KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(const string& key) {
     IODataDriver *outputDriver = getDataLiveDriverNewInstance();
     return new KeyDataStorage(key, outputDriver);
 }
@@ -133,7 +133,7 @@ KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(const string& ke
 /*
  Initialize a device id KeyDataStorageBuffer
  */
-void DataManager::initDeviceIDKeyDataStorage(const string& device_id, CDataWrapper *initializationParameter) throw(CException) {
+void DataManager::initDeviceIDKeyDataStorage(const string& device_id, CDataWrapper *initializationParameter) {
     if(deviceIDKeyDataStorageMap.count(device_id) > 0 ) return;
     
     LAPP_ << "Adding a new KeyDataStorage for device id key:" << device_id;
@@ -148,7 +148,7 @@ void DataManager::initDeviceIDKeyDataStorage(const string& device_id, CDataWrapp
 /*
  Initialize a device id KeyDataStorageBuffer
  */
-void DataManager::deinitDeviceIDKeyDataStorage(const string& device_id) throw(CException)  {
+void DataManager::deinitDeviceIDKeyDataStorage(const string& device_id)  {
     LAPP_ << "Deinit and Delete KeyDataStorage for device id key:" << device_id;
         //try to find the device id key
 
@@ -176,14 +176,14 @@ void DataManager::updateConfigurationForDeviceIdKey(const string& device_id, CDa
 /*
  Submit a CDataWrapper on device id KeyDataStorage
  */
-void DataManager::pushDeviceDataByIdKey(const string& device_id, CDataWrapper* deviceCDataWrapper) throw(CException) {
-        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, deviceCDataWrapper);
+void DataManager::pushDeviceDataByIdKey(const string& device_id, CDWShrdPtr dataset) {
+        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(dataset));
 }
 
 /*
  return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
+CDWShrdPtr DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
     return deviceIDKeyDataStorageMap[device_id]->getNewDataPackForDomain(KeyDataStorageDomainOutput);
 }

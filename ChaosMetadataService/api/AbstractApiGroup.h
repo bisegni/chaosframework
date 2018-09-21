@@ -41,7 +41,7 @@ namespace chaos {
             CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<AbstractApi>, ApiList)
 
 			class AbstractApiGroup:
-			public common::utility::NamedService,
+            public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService,
 			public chaos::DeclareAction {
                 friend class AbstractApi;
@@ -100,9 +100,9 @@ namespace chaos {
 				}
                 
                 
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data);
                 
-                void deinit()  throw (chaos::CException);
+                void deinit()  ;
 			};
 			
 		}

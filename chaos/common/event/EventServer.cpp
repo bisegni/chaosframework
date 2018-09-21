@@ -40,7 +40,7 @@ void EventServer::setEventHanlder(EventHandler *newEventHanlder) {
     rootEventHandler = newEventHanlder;
 }
 
-void EventServer::dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) throw (CException) {
+void EventServer::dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length)  {
     CHAOS_ASSERT(rootEventHandler && serializedEvent && length);
     try{
         if(*((uint16_t*)serializedEvent) != 0x4345) throw CException(2, "Bad event signature", "EventServer::dispatchEventToHandler");

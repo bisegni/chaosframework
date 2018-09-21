@@ -38,7 +38,7 @@ DirectIOServer::~DirectIOServer() {
 }
 
 // Initialize instance
-void DirectIOServer::init(void *init_data) throw(chaos::CException) {
+void DirectIOServer::init(void *init_data)  {
     if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
     StartableService::initImplementation(handler_impl, init_data, "DirectIOServer handler", __FUNCTION__);
     //construct the direct io service url
@@ -46,17 +46,17 @@ void DirectIOServer::init(void *init_data) throw(chaos::CException) {
 }
 
 // Start the implementation
-void DirectIOServer::start() throw(chaos::CException) {
+void DirectIOServer::start()  {
     StartableService::startImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Stop the implementation
-void DirectIOServer::stop() throw(chaos::CException) {
+void DirectIOServer::stop()  {
     StartableService::stopImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Deinit the implementation
-void DirectIOServer::deinit() throw(chaos::CException) {
+void DirectIOServer::deinit()  {
     StartableService::deinitImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 

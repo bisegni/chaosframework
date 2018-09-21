@@ -34,17 +34,13 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_GCTD_DBG  DBG_LOG(GetCommandAndTemplateDescription)
 #define N_GCTD_ERR  ERR_LOG(GetCommandAndTemplateDescription)
 
-GetCommandAndTemplateDescription::GetCommandAndTemplateDescription():
-AbstractApi("getCommandAndTemplateDescription"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(GetCommandAndTemplateDescription, "getCommandAndTemplateDescription");
 
-GetCommandAndTemplateDescription::~GetCommandAndTemplateDescription() {}
-
-CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
-                                                        bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr GetCommandAndTemplateDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     CDataWrapper *tmp_d_ptr = NULL;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> cmd_desc;
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> tmplt_cmd_desc;
+    CDWShrdPtr cmd_desc;
+    CDWShrdPtr tmplt_cmd_desc;
     CHECK_CDW_THROW_AND_LOG(api_data, N_GCTD_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "template_name", N_GCTD_ERR, -2, "The name of the template is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_GCTD_ERR, -3, "The unique id of the command is mandatory")
@@ -78,11 +74,11 @@ CDataWrapper *GetCommandAndTemplateDescription::execute(CDataWrapper *api_data,
     }
     
     //validate template with command
-    CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc.get(), tmplt_cmd_desc.get(), NULL);
+    CommandCommonUtility::validateCommandTemplateToDescription(cmd_desc, tmplt_cmd_desc, NULL);
     
     //we have either
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addCSDataValue("command_description", *cmd_desc);
     result->addCSDataValue("template_description", *tmplt_cmd_desc);
-    return result.release();
+    return result;
 }

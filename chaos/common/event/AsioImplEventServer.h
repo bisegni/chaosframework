@@ -63,27 +63,27 @@ namespace chaos {
                 /*
                  init the event adapter
                  */
-                void init(void*) throw(CException);
+                void init(void*);
                 
                 /*
                  start the event adapter
                  */
-                void start() throw(CException);
+                void start();
                 
                 /*
                  stop the event adapter
                  */
-                void stop() throw(CException);
+                void stop();
                 
                 /*
                  register or deregister for a kynd of event
                  */
-                virtual void listeForEventType(event::EventType type,  bool listen) throw(CException);
+                virtual void listeForEventType(event::EventType type,  bool listen);
                 
                 /*
                  deinit the event adapter
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 void sendEventDataToRootHandler(unsigned char * buff, uint16_t length);
             public:

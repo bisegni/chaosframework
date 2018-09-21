@@ -59,17 +59,17 @@ namespace chaos {
         /*
          init the rpc adapter
          */
-        virtual void init(void*) throw(CException) = 0;
+        virtual void init(void*) = 0;
         
         /*
          start the rpc adapter
          */
-        virtual void start() throw(CException) = 0;
+        virtual void start() = 0;
         
         /*
          deinit the rpc adapter
          */
-        virtual void deinit() throw(CException) = 0;
+        virtual void deinit() = 0;
         
     public:
         RpcServer(const std::string& alias);

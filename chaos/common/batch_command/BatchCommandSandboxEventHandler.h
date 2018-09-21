@@ -18,7 +18,7 @@ namespace chaos{
             
             //forward declaration
             class BatchCommandSandbox;
-            
+            class CommandInfoAndImplementation;
             
             struct BatchCommandStat {
                 uint32_t queued_commands;
@@ -44,7 +44,7 @@ namespace chaos{
                 virtual void handleCommandEvent(const std::string& command_alias,
                                                 uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                chaos::common::data::CDataWrapper *command_info,
+                                                chaos::common::batch_command::CommandInfoAndImplementation *command_info,
                                                 const BatchCommandStat& commands_stats) = 0;
 				
 				//! general sandbox event handler

@@ -27,10 +27,10 @@ AbstractCommandOutputStream::AbstractCommandOutputStream(){}
 
 AbstractCommandOutputStream::~AbstractCommandOutputStream(){}
 
-void AbstractCommandOutputStream::init(void *init_data) throw (chaos::CException) {
+void AbstractCommandOutputStream::init(void *init_data)  {
     
 }
 
-void AbstractCommandOutputStream::deinit() throw (chaos::CException) {
+void AbstractCommandOutputStream::deinit()  {
     
 }

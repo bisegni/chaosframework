@@ -22,16 +22,15 @@
 #ifndef __CHAOSFramework__BatchCommand__
 #define __CHAOSFramework__BatchCommand__
 
-#include <bitset>
-#include <vector>
-#include <string>
-#include <stdint.h>
-
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
+
+#include <bitset>
+#include <vector>
+#include <string>
+#include <stdint.h>
 
 namespace chaos{
     
@@ -49,14 +48,14 @@ namespace chaos{
 #define BC_END_RUNNING_PROPERTY     setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_END);
 #define BC_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FAULT);
 #define BC_FATAL_FAULT_RUNNING_PROPERTY   setRunningProperty(chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT);
-
+            
             //help madro to get the state
 #define BC_CHECK_EXEC_RUNNING_PROPERTY  (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_EXSC)
 #define BC_CHECK_NORMAL_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_NORMAL)
 #define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_END)
 #define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FAULT)
 #define BC_CHECK_FATAL_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT)
-
+            
             
             //! Collect the command timing stats
             typedef struct CommandTimingStats {
@@ -75,6 +74,7 @@ namespace chaos{
              - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
              */
             class BatchCommand {
+                friend class BatchCommandDescription;
                 friend class BatchCommandSandbox;
                 friend class RunningCommandStat;
                 friend class BatchCommandParallelSandbox;
@@ -83,9 +83,11 @@ namespace chaos{
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 friend struct EndFunctor;
-
                 friend struct CommandInfoAndImplementation;
+                
+                //!define if command is a sticky type
                 bool sticky;
+                
                 //!unique command id
                 uint64_t unique_id;
                 
@@ -132,47 +134,66 @@ namespace chaos{
                 //! shared setting across all slow command
                 chaos::common::data::cache::AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
-                //! called befor the command start the execution
-                void commandPre();
-                
-                //! called after the command step excecution
-                void commandPost();
-                
             protected:
-                
+                //!custom attribute fileld by implementations for custom purphoses
+                BCInstantiationAttributeMap instance_custom_attribute;
                 //! default constructor
                 BatchCommand();
                 
                 //! default destructor
                 virtual ~BatchCommand();
                 
-                virtual
-		  chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
+                //! return the cache to implementation
+                virtual chaos::common::data::cache::AbstractSharedDomainCache * const getSharedCacheInterface();
+                
+                
+                //! Notify the termination of the command execution
+                /*!
+                 This handle is called in command termination has the main purpose to end the command. All
+                 resources managed by command need to be deallocated here
+                 */
+                virtual void startHandler();
+                
+                //! Notify the termination of the command execution
+                /*!
+                 This handle is called in command termination has the main purpose to end the command. All
+                 resources managed by command need to be deallocated here
+                 */
+                virtual void endHandler();
+                
+                //! called after the command step excecution
+                virtual void commandPost();
                 
             public:
                 //! return the unique id for the command instance
                 uint64_t getUID();
+                
                 /**
                  * Return the alias of the command
                  * @return the alis name of the command
                  */
-                std::string getAlias(){return command_alias;}
+                std::string getAlias();
+                
                 //! return the identification of the device
-                std::string& getDeviceID();
+                std::string getDeviceID();
                 
                 //! return the set handler time in milliseocnds
-                uint64_t getSetTime();
+                const uint64_t getSetTime() const;
                 
                 //! return the start step time of the sandbox in milliseocnds
-                uint64_t getStartStepTime();
+                const uint64_t getStartStepTime() const;
                 
-                uint64_t getStepCounter();
+                //!count the number of cicle made by the command
+                const uint64_t getStepCounter() const;
                 
                 //! return the last step duration of the sandbox in microseconds
-                uint64_t getLastStepDuration();
+                const uint64_t getLastStepDuration() const;
                 
                 //! set the alias of the command
                 void setCommandAlias(const std::string& _command_alias);
+                
+                //!set the map of custom attribute for current instance
+                void setInstanceCustomAttribute(BCInstantiationAttributeMap& new_instance_custom_attribute);
                 
                 //! set the features with the uint32 value
                 /*!
@@ -280,14 +301,6 @@ namespace chaos{
                  */
                 virtual void setHandler(chaos::common::data::CDataWrapper *data);
                 
-
-                //! End the command execution
-                      /*!
-                         This handle is called in command termination has the main purpose to end the command. All the operation need to close the command.
-
-                    */
-               virtual void endHandler();
-
                 //! Aquire the necessary data for the command
                 /*!
                  The acquire handler has the purpose to get all necessary data need the by CC handler.

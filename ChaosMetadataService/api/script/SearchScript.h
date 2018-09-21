@@ -34,14 +34,7 @@ namespace chaos {
                 /*!
                  Search and return the scrip found according to search string
                  */
-                class SearchScript:
-                public AbstractApi {
-                public:
-                    SearchScript();
-                    ~SearchScript();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(SearchScript)
             }
         }
     }

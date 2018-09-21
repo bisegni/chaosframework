@@ -55,7 +55,7 @@ if(alert_event_channel) {NetworkBroker::getInstance()->disposeEventChannel(alert
 void AgentCheckAgentProcess::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!=NULL), ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The unique id of unit server is mandatory")
     
     int err = 0;
@@ -96,7 +96,7 @@ void AgentCheckAgentProcess::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
-                        message_data.get());
+                        MOVE(message_data));
         }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

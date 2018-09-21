@@ -92,7 +92,6 @@ namespace chaos{
                 chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
                 
                 WaitSemaphore wait_get_answer;
-                ChaosSharedMutex mutext_feeder;
                 
                 //query future management
                 ChaosSharedMutex                    map_query_future_mutex;
@@ -102,6 +101,7 @@ namespace chaos{
                 bool shutting_down;
             protected:
                 ChaosSharedMutex push_mutex;
+                ChaosSharedMutex mutext_feeder;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 void disposeService(void *service_ptr);
                 void* serviceForURL(const common::network::URL& url, uint32_t service_index);
@@ -118,34 +118,36 @@ namespace chaos{
                 /*
                  * Init method
                  */
-                void init(void *init_parameter) throw(CException);
+                void init(void *init_parameter);
                 
                 /*
                  * Deinit method
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
-                void storeHealthData(const std::string& key,
-                                     chaos_data::CDataWrapper & dataToStore,
-                                     DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
+                int storeHealthData(const std::string& key,
+                                     chaos_data::CDWShrdPtr data_to_store,
+                                     DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                     const ChaosStringSet& tag_set = ChaosStringSet());
                 
                 /*
                  * storeRawData
                  */
-                void storeRawData(const std::string& key,
-                                  chaos_data::SerializationBuffer *serialization,
-                                  DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException);
+                int storeData(const std::string& key,
+                               chaos_data::CDWShrdPtr data_to_store,
+                               DataServiceNodeDefinitionType::DSStorageType storage_type,
+                               const ChaosStringSet& tag_set = ChaosStringSet());
                 
                 int removeData(const std::string& key,
                                uint64_t start_ts,
-                               uint64_t end_ts) throw(CException);
+                               uint64_t end_ts);
                 int retriveMultipleData(const ChaosStringVector& key,
-                                        chaos::common::data::VectorCDWShrdPtr& result)  throw(CException);
+                                        chaos::common::data::VectorCDWShrdPtr& result);
                 /*
                  * retriveRawData
                  */
                 char * retriveRawData(const std::string& key,
-                                      size_t *dim=NULL)  throw(CException);
+                                      size_t *dim=NULL);
                 
                 //! restore from a tag a dataset associated to a key
                 int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
@@ -157,15 +159,33 @@ namespace chaos{
                  * updateConfiguration
                  */
                 chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-                
-                QueryCursor *performQuery(const std::string& key,
-                                          uint64_t start_ts,
-                                          uint64_t end_ts,uint32_t page=DEFAULT_PAGE_LEN);
 
-                QueryCursor *performQuery(const std::string& key,
-                                          uint64_t start_ts,
-                                          uint64_t end_ts,uint64_t sequid,uint64_t runid,uint32_t page=DEFAULT_PAGE_LEN);
-                
+                QueryCursor* performQuery(const std::string& key,
+                                          uint64_t           start_ts,
+                                          uint64_t           end_ts,
+                                          uint32_t           page = DEFAULT_PAGE_LEN);
+
+                QueryCursor* performQuery(const std::string&    key,
+                                          uint64_t              start_ts,
+                                          uint64_t              end_ts,
+                                          const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          uint32_t              page      = DEFAULT_PAGE_LEN);
+
+                QueryCursor* performQuery(const std::string& key,
+                                          uint64_t           start_ts,
+                                          uint64_t           end_ts,
+                                          uint64_t           sequid,
+                                          uint64_t           runid,
+                                          uint32_t           page = DEFAULT_PAGE_LEN);
+
+                QueryCursor* performQuery(const std::string&    key,
+                                          uint64_t              start_ts,
+                                          uint64_t              end_ts,
+                                          uint64_t              sequid,
+                                          uint64_t              runid,
+                                          const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          uint32_t              page      = DEFAULT_PAGE_LEN);
+
                 void releaseQuery(QueryCursor *query_cursor);
             };
         }

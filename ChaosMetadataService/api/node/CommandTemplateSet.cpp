@@ -33,17 +33,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define N_SCT_DBG  DBG_LOG(CommandTemplateSet)
 #define N_SCT_ERR  ERR_LOG(CommandTemplateSet)
 
-CommandTemplateSet::CommandTemplateSet():
-AbstractApi("commandTemplateSet"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(CommandTemplateSet, "commandTemplateSet");
 
-CommandTemplateSet::~CommandTemplateSet() {
-    
-}
-
-CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr CommandTemplateSet::execute(CDWUniquePtr api_data) {
     int err = 0;
     uint64_t sequence = 0;
     bool presence = false;
@@ -94,5 +86,5 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
             LOG_AND_TROW_FORMATTED(N_SCT_ERR, -9, "Error setting the template %1% of command uid %2%", %template_name%command_unique_id)
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }

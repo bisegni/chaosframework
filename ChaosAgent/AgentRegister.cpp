@@ -70,7 +70,7 @@ void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
     map_worker.insert(MapWorkerPair(new_worker->getName(), new_worker));
 }
 
-void AgentRegister::init(void *init_data) throw (chaos::CException) {
+void AgentRegister::init(void *init_data)  {
     //add all agent
     addWorker(WorkerSharedPtr(new worker::ProcessWorker()));
     
@@ -79,7 +79,7 @@ void AgentRegister::init(void *init_data) throw (chaos::CException) {
     CHECK_ASSERTION_THROW_AND_LOG((mds_message_channel != NULL), ERROR, -1, "Error creating new mds channel");
 }
 
-void AgentRegister::start() throw (chaos::CException) {
+void AgentRegister::start()  {
     //register rpc action
     NetworkBroker::getInstance()->registerAction(this);
     //start the registering state machine
@@ -89,7 +89,7 @@ void AgentRegister::start() throw (chaos::CException) {
                                                  SM_EXECTION_STEP_MS);
 }
 
-void AgentRegister::stop() throw (chaos::CException) {
+void AgentRegister::stop()  {
     //register rpc action
     NetworkBroker::getInstance()->deregisterAction(this);
     
@@ -106,15 +106,14 @@ void AgentRegister::stop() throw (chaos::CException) {
     
 }
 
-void AgentRegister::deinit() throw (chaos::CException) {
+void AgentRegister::deinit()  {
     if(mds_message_channel) {
         NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
         mds_message_channel = NULL;
     }
 }
 
-CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
-                                             bool& detach) {
+CDWUniquePtr AgentRegister::registrationACK(CDWUniquePtr  ack_pack) {
     const std::string& agent_uid = ChaosAgent::getInstance()->settings.agent_uid;
     CHECK_CDW_THROW_AND_LOG(ack_pack, ERROR, -1, CHAOS_FORMAT("ACK message with no contento for agent %1%", %agent_uid));
     CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, ERROR, -2, CHAOS_FORMAT("No identification of the device contained into the ack message for agent %1%", %agent_uid));
@@ -141,7 +140,7 @@ CDataWrapper* AgentRegister::registrationACK(CDataWrapper  *ack_pack,
                 break;
         }
     }
-    return NULL;
+    return CDWUniquePtr();
 }
 
 
@@ -198,8 +197,7 @@ void AgentRegister::timeout() {
         case AgentRegisterStateRegistering: {
             //send the rigstration pack
             if(((reg_retry_counter++)%max_reg_retry_counter) == 0) {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> reg = getAgentRegistrationPack();
-                mds_message_channel->sendNodeRegistration(*reg);
+                mds_message_channel->sendNodeRegistration(MOVE(getAgentRegistrationPack()));
                 HealtManager::getInstance()->addNewNode(agent_uid);
                 HealtManager::getInstance()->addNodeMetricValue(agent_uid,
                                                                 NodeHealtDefinitionKey::NODE_HEALT_STATUS,

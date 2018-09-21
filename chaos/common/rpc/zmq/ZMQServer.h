@@ -21,7 +21,7 @@
 
 #ifndef CHAOSFramework_ZMQServer_h
 #define CHAOSFramework_ZMQServer_h
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -53,19 +53,19 @@ namespace chaos {
         /*
          init the rpc adapter
          */
-        void init(void *init_data) throw(CException);
+        void init(void *init_data);
         /*
          start the rpc adapter
          */
-        void start() throw(CException);
+        void start();
         /*
          start the rpc adapter
          */
-        void stop() throw(CException);
+        void stop();
         /*
          deinit the rpc adapter
          */
-        void deinit() throw(CException);
+        void deinit();
         
             //server worker thread
         /*!

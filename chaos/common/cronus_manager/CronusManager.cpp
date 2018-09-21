@@ -36,14 +36,14 @@ scheduler_repeat_time(_scheduler_repeat_time){}
 
 CronusManager::~CronusManager() {}
 
-void CronusManager::init(void *init_data) throw (chaos::CException) {
+void CronusManager::init(void *init_data)  {
     //register as timer
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  scheduler_repeat_time,
                                                  scheduler_repeat_time);
 }
 
-void CronusManager::deinit() throw (chaos::CException) {
+void CronusManager::deinit()  {
     //register as timer
     AsyncCentralManager::getInstance()->removeTimer(this);
     

@@ -62,11 +62,11 @@ ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
-void ChaosMetadataServiceClient::init(int argc, const char* argv[]) throw (CException) {
+void ChaosMetadataServiceClient::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
 
-void ChaosMetadataServiceClient::init()  throw(CException) {
+void ChaosMetadataServiceClient::init()  {
 
 	if(mds_client_initialized){
 		CMSC_LDBG<<"Already initialized";
@@ -107,19 +107,17 @@ void ChaosMetadataServiceClient::init()  throw(CException) {
       }
 }
 
-void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
-
+void ChaosMetadataServiceClient::init(void *init_data)  {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         init();
-
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 
-void ChaosMetadataServiceClient::start()  throw(CException) {
+void ChaosMetadataServiceClient::start()  {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::start();
         
@@ -130,11 +128,11 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
         CMSC_LAPP << "-------------------------------------------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 
-void ChaosMetadataServiceClient::stop()   throw(CException) {
+void ChaosMetadataServiceClient::stop()   {
     try {
         //stop monitor manager
         if(monitoringIsStarted()) {
@@ -144,11 +142,11 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
         CHAOS_NOT_THROW( ChaosCommon<ChaosMetadataServiceClient>::stop();)
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
+        throw;
     }
 }
 
-void ChaosMetadataServiceClient::deinit()   throw(CException) {
+void ChaosMetadataServiceClient::deinit()   {
 
 	if(mds_client_deinitialized){
 		LDBG_<<"Already deinitialized";
@@ -182,19 +180,19 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
     api_proxy_manager->addServerAddress(server_address_and_port);
 }
 
-void ChaosMetadataServiceClient::enableMonitor() throw(CException) {
+void ChaosMetadataServiceClient::enableMonitor() {
     //configure data driver
     reconfigureMonitor();
     //start the monitor manager
     monitor_manager.start(__PRETTY_FUNCTION__);
 }
 
-void ChaosMetadataServiceClient::disableMonitor() throw(CException) {
+void ChaosMetadataServiceClient::disableMonitor() {
     CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
 }
 
 
-chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyChannelNewInstance() throw(CException){
+chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyChannelNewInstance(){
 	int poolsize=DPCK_LAST_DATASET_INDEX+1;
 	chaos::common::io::IODataDriverShrdPtr shret;
 	if(GlobalConfiguration::getInstance()->hasOption(POOL_SIZE_OPTION)){
@@ -202,8 +200,6 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 	}
 
 	if(iopool.size()<poolsize){
-
-
 		chaos::common::io::IODataDriver *result = NULL;
 		    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 		    result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
@@ -222,7 +218,6 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 		        iopool.push_back(shret);
 		        io_pool_req++;
 			    CMSC_LDBG<<"Allocating new iolive channel 0x"<<hex<<result<<dec<<", n:"<<iopool.size()<<" tot iorequest:"<<io_pool_req;
-
 		        return shret;
 		    }
 		    if(iopool.size()){
@@ -232,14 +227,13 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 	}
 	shret=iopool[io_pool_req%iopool.size()];
     CMSC_LDBG<<"Retriving iolive channel 0x"<<hex<<shret.get()<<dec<<", id:"<<io_pool_req%iopool.size() <<" tot iorequest:"<<io_pool_req;
-
 	io_pool_req++;
 	return shret;
 
 
 }
 
-void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
+void ChaosMetadataServiceClient::reconfigureMonitor() {
     std::vector<std::string> endpoints_list;
     
     CMSC_LDBG << "Ask to metadata server for cds enpoint for monitoring";

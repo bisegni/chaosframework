@@ -35,14 +35,7 @@ namespace chaos {
                 /*!
                  
                  */
-                class SaveNodeAssociation:
-                public AbstractApi {
-                public:
-                    SaveNodeAssociation();
-                    ~SaveNodeAssociation();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(SaveNodeAssociation)
             }
         }
     }

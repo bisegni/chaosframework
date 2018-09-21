@@ -21,7 +21,7 @@
 
 #ifndef ChaosMetadataService_H
 #define ChaosMetadataService_H
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include "mds_constants.h"
 #include "mds_types.h"
@@ -45,7 +45,7 @@ namespace chaos {
         public ChaosCommon<ChaosMetadataService>,
         public chaos::common::async_central::TimerHandler,
         public ServerDelegator {
-            friend class common::utility::Singleton<ChaosMetadataService>;
+            friend class chaos::common::utility::Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
             
@@ -53,12 +53,12 @@ namespace chaos {
             ApiSubserviceAccessor api_subsystem_accessor;
             
             //!persistence driver instance
-            common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
+            chaos::common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
             //! CDS data consumer that respond to data api
-            common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
+            chaos::common::utility::StartableServiceContainer<data_service::QueryDataConsumer> data_consumer;
             
             //keep track of process resource usage
-            ProcStat service_proc_stat;
+            //ProcStat service_proc_stat;
             
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};
@@ -77,16 +77,16 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, const char* argv[]) throw (CException);
+            void init(int argc, const char* argv[]);
             //!stringbuffer parser
             /*
              specialized option for string stream buffer with boost semantics
              */
-            void init(istringstream &initStringStream) throw (CException);
-            void init(void *init_data)  throw(CException);
-            void start()throw(CException);
-            void stop()throw(CException);
-            void deinit()throw(CException);
+            void init(istringstream &initStringStream);
+            void init(void *init_data);
+            void start();
+            void stop();
+            void deinit();
         };
     }
 }

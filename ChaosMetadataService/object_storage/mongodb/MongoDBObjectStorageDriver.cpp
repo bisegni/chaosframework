@@ -43,7 +43,7 @@ AbstractPersistenceDriver(name){}
 
 MongoDBObjectStorageDriver::~MongoDBObjectStorageDriver() {}
 
-void MongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CException) {
+void MongoDBObjectStorageDriver::init(void *init_data)  {
     //call sublcass
     AbstractPersistenceDriver::init(init_data);
     
@@ -56,7 +56,7 @@ void MongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CException)
     registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess(connection));
 }
 
-void MongoDBObjectStorageDriver::deinit() throw (chaos::CException) {
+void MongoDBObjectStorageDriver::deinit()  {
     //call sublcass
     AbstractPersistenceDriver::deinit();
     

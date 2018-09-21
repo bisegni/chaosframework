@@ -22,7 +22,7 @@
 #include <chaos/common/data/cache/AttributeValue.h>
 
 #include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetEvent.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetConsumer.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetConsumer.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::trigger;

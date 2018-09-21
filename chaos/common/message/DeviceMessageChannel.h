@@ -52,7 +52,7 @@ namespace chaos {
                 virtual void deviceAvailabilityChanged(const std::string& device_id,
                                                        const OnlineState availability) = 0;
             };
-
+            
             
             //! Message Channel specialize for metadataserver comunication
             /*!
@@ -91,12 +91,12 @@ namespace chaos {
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void init() throw(CException);
+                virtual void init();
                 
                 /*!
                  Initialization phase of the channel
                  */
-                virtual void deinit() throw(CException);
+                virtual void deinit();
                 
                 //! request result introspection
                 /*!
@@ -109,6 +109,8 @@ namespace chaos {
                 void fireToListener(unsigned int fire_code,
                                     chaos::common::utility::AbstractListener *listener_to_fire);
             public:
+                using NodeMessageChannel::echoTest;
+                
                 const std::string& getDeviceID() const;
                 //!Update the network address of the node
                 /*!
@@ -155,7 +157,8 @@ namespace chaos {
                  \param initData the pointer to the data for device initialization. The memory is not deallocate after the send operation
                  \millisecToWait the number of millisecond for waith the answer
                  */
-                int initDevice(common::data::CDataWrapper *initData, int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
+                int initDevice(chaos::common::data::CDWUniquePtr init_data,
+                               int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 //!Initialization of the device
                 /*!
@@ -217,7 +220,7 @@ namespace chaos {
                  All the CDataWrapper is sent as pack for the device attributes values, no check is done
                  \param attributesValues the container for the values of some dataset attributes
                  */
-                int setAttributeValue(common::data::CDataWrapper& attributesValues,
+                int setAttributeValue(chaos::common::data::CDWUniquePtr attribute_values,
                                       bool noWait,
                                       int32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
@@ -231,27 +234,24 @@ namespace chaos {
                  \brief send a message to a custom action
                  */
                 int sendCustomMessage(const std::string& action_name,
-                                      common::data::CDataWrapper* const);
+                                      chaos::common::data::CDWUniquePtr message_data);
                 
                 /*!
                  \brief send a request to a custom action
                  */
                 int sendCustomRequest(const std::string& action_name,
-                                      common::data::CDataWrapper* const,
-                                      common::data::CDataWrapper** result_data,
+                                      chaos::common::data::CDWUniquePtr message_data,
+                                      chaos::common::data::CDWUniquePtr& result_data,
                                       uint32_t millisec_to_wait = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
                 /*!
                  send a request to a custom action
                  */
                 ChaosUniquePtr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
-                                                                                 common::data::CDataWrapper *request_data);
+                                                                                  chaos::common::data::CDWUniquePtr request_data);
                 
                 //! Send a request for receive RPC information
                 ChaosUniquePtr<MessageRequestFuture> checkRPCInformation();
-                
-                //! Send a request for an echo test
-                ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data);
             };
         }
     }

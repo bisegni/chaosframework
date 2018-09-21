@@ -49,7 +49,7 @@ RpcClientMetricCollector::~RpcClientMetricCollector() {
 /*
  init the rpc adapter
  */
-void RpcClientMetricCollector::init(void *init_data) throw(CException) {
+void RpcClientMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapped_client)
     utility::StartableService::initImplementation(wrapped_client, init_data, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
@@ -57,7 +57,7 @@ void RpcClientMetricCollector::init(void *init_data) throw(CException) {
 /*
  start the rpc adapter
  */
-void RpcClientMetricCollector::start() throw(CException) {
+void RpcClientMetricCollector::start() {
     CHAOS_ASSERT(wrapped_client)
     startLogging();
     utility::StartableService::startImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
@@ -66,7 +66,7 @@ void RpcClientMetricCollector::start() throw(CException) {
 /*
  start the rpc adapter
  */
-void RpcClientMetricCollector::stop() throw(CException) {
+void RpcClientMetricCollector::stop() {
     CHAOS_ASSERT(wrapped_client)
     stopLogging();
     utility::StartableService::stopImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
@@ -75,7 +75,7 @@ void RpcClientMetricCollector::stop() throw(CException) {
 /*
  deinit the rpc adapter
  */
-void RpcClientMetricCollector::deinit() throw(CException) {
+void RpcClientMetricCollector::deinit() {
     CHAOS_ASSERT(wrapped_client)
     utility::StartableService::deinitImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
@@ -85,12 +85,13 @@ void RpcClientMetricCollector::setServerHandler(RpcServerHandler *_server_handle
     wrapped_client->setServerHandler(_server_handler);
 }
 
-bool RpcClientMetricCollector::submitMessage(chaos::common::network::NetworkForwardInfo *forward_info, bool on_this_thread) {
+bool RpcClientMetricCollector::submitMessage(chaos::common::network::NFISharedPtr forward_info, bool on_this_thread) {
     CHAOS_ASSERT(wrapped_client)
     int size = 0;
     bool result = true;
     
-    result = wrapped_client->submitMessage(forward_info, on_this_thread);
+    result = wrapped_client->submitMessage(MOVE(forward_info),
+                                           on_this_thread);
     
     //inrement packec count
     pack_count++;

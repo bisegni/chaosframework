@@ -50,16 +50,16 @@ namespace chaos {
                 cu::control_manager::slow_command::SlowCommandExecutor *slow_command_executor;
                 
                 // Startable Service method
-                void init(void *initData) throw(CException);
+                void init(void *initData);
                 
                 // Startable Service method
-                void start() throw(CException);
+                void start();
                 
                 // Startable Service method
-                void stop() throw(CException);
+                void stop();
                 
                 // Startable Service method
-                void deinit() throw(CException);
+                void deinit();
                 
                 //redefine private for protection
                 AbstractSharedDomainCache *_getAttributeCache();
@@ -68,7 +68,7 @@ namespace chaos {
                  Receive the event for set the dataset input element, this virtual method
                  is empty because can be used by controlunit implementation
                  */
-                chaos::common::data::CDataWrapper* setDatasetAttribute(chaos::common::data::CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr setDatasetAttribute(chaos::common::data::CDWUniquePtr dataset_attribute_values);
                 
                 //!inherited method by @AbstractControlUnit
                 void propertyUpdatedHandler(const std::string& group_name,
@@ -80,7 +80,7 @@ namespace chaos {
                 void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
                 
                 //! called whr the infrastructure need to know how is composed the control unit
-                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration)  throw(CException);
+                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! system dataset configuraiton overload
                 void initSystemAttributeOnSharedAttributeCache();
@@ -120,7 +120,7 @@ namespace chaos {
                                         uint32_t priority = 50,
                                         uint32_t submission_rule = chaos::common::batch_command::SubmissionRuleType::SUBMIT_NORMAL,
                                         uint32_t submission_retry_delay = 1000,
-                                        uint64_t scheduler_step_delay = 1000000)  throw (CException);
+                                        uint64_t scheduler_step_delay = 1000000)  ;
                 
                 //!return a command description for a determinate uid
                 ChaosUniquePtr<chaos::common::batch_command::CommandState> getStateForCommandID(uint64_t command_id);
@@ -150,15 +150,16 @@ namespace chaos {
                                        unsigned int sandbox_instance = 0);
                 void addExecutionChannels(unsigned int execution_channels=1);
                 
-                template<typename T>
-                void installCommand(const std::string& command_alias) {
-                    CHAOS_ASSERT(slow_command_executor)
-                    slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
-                }
+//                template<typename T>
+//                void installCommand(const std::string& command_alias) {
+//                    CHAOS_ASSERT(slow_command_executor)
+//                    slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
+//                }
                 
                 void installCommand(ChaosSharedPtr<chaos::common::batch_command::BatchCommandDescription> command_description,
                                     bool is_default = false,
                                     bool sticky = true,
+                                    bool auto_busy = true,
                                     unsigned int sandbox = 0);
                 
                 bool waitOnCommandID(uint64_t& cmd_id);

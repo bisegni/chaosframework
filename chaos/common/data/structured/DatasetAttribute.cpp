@@ -59,11 +59,13 @@ max_size(copy_src.max_size),
 binary_cardinality(copy_src.binary_cardinality){}
 
 DatasetAttribute& DatasetAttribute::operator=(DatasetAttribute const &rhs) {
-    name = rhs.name;
-    description = rhs.description;
-    direction = rhs.direction;
-    type = rhs.type;
-    binary_subtype_list = rhs.binary_subtype_list;
-    binary_cardinality = rhs.binary_cardinality;
+    if(this != &rhs) {
+        name = rhs.name;
+        description = rhs.description;
+        direction = rhs.direction;
+        type = rhs.type;
+        binary_subtype_list = rhs.binary_subtype_list;
+        binary_cardinality = rhs.binary_cardinality;
+    }
     return *this;
 };

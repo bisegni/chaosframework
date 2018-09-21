@@ -49,9 +49,7 @@ submissionRule(SubmissionRuleType::SUBMIT_NORMAL){
 }
 
 // default destructor
-BatchCommand::~BatchCommand() {
-    
-}
+BatchCommand::~BatchCommand() {}
 
 AbstractSharedDomainCache * const BatchCommand::getSharedCacheInterface() {
     return sharedAttributeCachePtr;
@@ -60,6 +58,10 @@ AbstractSharedDomainCache * const BatchCommand::getSharedCacheInterface() {
 //return the unique id
 uint64_t BatchCommand::getUID() {
 	return unique_id;
+}
+
+std::string BatchCommand::getAlias() {
+    return command_alias;
 }
 
 void BatchCommand::setCommandAlias(const std::string& _command_alias) {
@@ -85,22 +87,23 @@ void BatchCommand::setHandler(CDataWrapper *data) {}
 /*
  implement the data acquisition handler
  */
-void BatchCommand::acquireHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::acquireHandler() {}
 
 /*
  implement the data correlation handler
  */
-void BatchCommand::ccHandler() {BC_END_RUNNING_PROPERTY;}
+void BatchCommand::ccHandler() {}
 
 //timeout handler
 bool BatchCommand::timeoutHandler() {return false;}
 
 //! called befor the command start the execution
-void BatchCommand::commandPre() {
+void BatchCommand::startHandler() {
 	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicroseconds();
 }
-void BatchCommand::endHandler() {;
-}
+
+void BatchCommand::endHandler() {}
+
 #define SET_FAULT(c, m, d) \
 BC_FAULT_RUNNING_PROPERTY \
 BCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \
@@ -113,7 +116,7 @@ void BatchCommand::commandPost() {
             //timing_stats.command_running_time_usec += shared_stat->last_cmd_step_duration;
 		//check timeout
         int64_t time_offset = shared_stat->last_cmd_step_start_usec - timing_stats.command_set_time_usec;
-		if(time_offset  >= commandFeatures.featureCommandTimeout) {
+		if(time_offset >= commandFeatures.featureCommandTimeout) {
 			//call the timeout handler
 			try {
 				if(timeoutHandler()) {
@@ -131,20 +134,24 @@ void BatchCommand::commandPost() {
 }
 
 // return the set handler time
-uint64_t BatchCommand::getSetTime() {
+const uint64_t BatchCommand::getSetTime() const {
     return (timing_stats.command_set_time_usec/1000);
 }
 
-uint64_t BatchCommand::getStepCounter() {
+const uint64_t BatchCommand::getStepCounter() const {
     return timing_stats.command_step_counter;
 }
 
 //! return the start step time of the sandbox
-uint64_t BatchCommand::getStartStepTime() {
+const uint64_t BatchCommand::getStartStepTime() const {
     return (shared_stat->last_cmd_step_start_usec / 1000);
 }
 
 //! return the last step time of the sandbox
-uint64_t BatchCommand::getLastStepDuration() {
+const uint64_t BatchCommand::getLastStepDuration() const {
     return (shared_stat->last_cmd_step_duration_usec);
+}
+
+void BatchCommand::setInstanceCustomAttribute(BCInstantiationAttributeMap& new_instance_custom_attribute) {
+    instance_custom_attribute = new_instance_custom_attribute;
 }

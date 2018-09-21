@@ -34,7 +34,7 @@ ApiProxyManager::ApiProxyManager():
 mn_message_channel(NULL) {}
 ApiProxyManager::~ApiProxyManager() {}
 
-void ApiProxyManager::init(void *init_data) throw (chaos::CException) {
+void ApiProxyManager::init(void *init_data)  {
 
     APM_LAPP << "Get multi address message channel";
     mn_message_channel = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
@@ -49,7 +49,7 @@ void ApiProxyManager::init(void *init_data) throw (chaos::CException) {
     }
 }
 
-void ApiProxyManager::deinit() throw (chaos::CException) {
+void ApiProxyManager::deinit()  {
     if(mn_message_channel) {
         NetworkBroker::getInstance()->disposeMessageChannel(mn_message_channel);
         mn_message_channel = NULL;

@@ -92,7 +92,7 @@ int CacheDriverMetricCollector::updateConfig() {
     return wrapped_cache_driver->updateConfig();
 }
 
-void CacheDriverMetricCollector::init(void *init_data) throw (chaos::CException) {
+void CacheDriverMetricCollector::init(void *init_data)  {
     CHAOS_ASSERT(wrapped_cache_driver)
     InizializableService::initImplementation(wrapped_cache_driver,
                                               init_data,
@@ -100,7 +100,7 @@ void CacheDriverMetricCollector::init(void *init_data) throw (chaos::CException)
                                               __PRETTY_FUNCTION__);
 }
 
-void CacheDriverMetricCollector::deinit() throw (chaos::CException) {
+void CacheDriverMetricCollector::deinit()  {
     CHAOS_ASSERT(wrapped_cache_driver)
     InizializableService::deinitImplementation(wrapped_cache_driver,
                                                 wrapped_cache_driver->getName(),

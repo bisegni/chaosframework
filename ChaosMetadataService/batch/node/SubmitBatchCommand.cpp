@@ -42,10 +42,10 @@ void SubmitBatchCommand::setHandler(CDataWrapper *data) {
     int err = 0;
     CDataWrapper *tmp_ptr = NULL;
     
-    CHECK_CDW_THROW_AND_LOG(data, CU_SBC_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!=NULL), CU_SBC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, "submission_task", CU_SBC_ERR, -2, "The attribute node unique id is mandatory")
     CU_SBC_INFO << data->getJSONString();
-    command_instance.reset(data->getCSDataValue("submission_task"));
+    command_instance=data->getCSDataValue("submission_task");
     
     CHECK_KEY_THROW_AND_LOG(command_instance.get(), NodeDefinitionKey::NODE_UNIQUE_ID, CU_SBC_ERR, -2, "The attribute node unique id is mandatory")
     
@@ -72,7 +72,7 @@ void SubmitBatchCommand::acquireHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        command_instance.get());
+                        MOVE(command_instance));
             BC_END_RUNNING_PROPERTY
             break;
         }

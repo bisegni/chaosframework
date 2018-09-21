@@ -21,6 +21,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
+#include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/exception.h>
 
@@ -36,7 +37,10 @@ using namespace boost;
 using namespace chaos::common::data;
 
 static void my_free (void *data, void *hint) {
-    free (data);
+    if(hint) {
+        MemoryManagement *tmp = static_cast<MemoryManagement*>(hint);
+        delete(tmp);
+    } else {free(data);};
 }
 
 DEFINE_CLASS_FACTORY(ZMQServer, RpcServer);
@@ -53,7 +57,7 @@ ZMQServer::~ZMQServer() {
 }
 
 //init the server getting the configuration value
-void ZMQServer::init(void *init_data) throw(CException) {
+void ZMQServer::init(void *init_data) {
     //get portnumber and thread number
     CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQS_LAPP << "initialization";
@@ -100,16 +104,16 @@ void ZMQServer::init(void *init_data) throw(CException) {
 }
 
 //start the rpc adapter
-void ZMQServer::start() throw(CException) {
+void ZMQServer::start() {
 }
 
 //start the rpc adapter
-void ZMQServer::stop() throw(CException) {
+void ZMQServer::stop() {
     
 }
 
 //deinit the rpc adapter
-void ZMQServer::deinit() throw(CException) {
+void ZMQServer::deinit() {
     run_server = false;
     ZMQS_LAPP << "Stopping thread";
     //wiath all thread
@@ -216,21 +220,33 @@ void ZMQServer::worker() {
                 std::string error_message = zmq_strerror(sent_error);
                 ZMQS_LERR << "Error receiving message with code:" << sent_error << " message:" <<error_message;
             } else {
+                uint64_t seq_id=0;
                 if(zmq_msg_size(&request)>0) {
-                    ZMQS_LDBG << "Message Received";
-                    ChaosUniquePtr<chaos::common::data::CDataWrapper> result_data_pack;
+                    CDWShrdPtr result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
+                    if(message_data->hasKey("seq_id")){
+                        seq_id=message_data->getInt64Value("seq_id");
+                    } 
+                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
+                    const std::string msg_desc = message_data->getCompliantJSONString();
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
-                        result_data_pack.reset(command_handler->executeCommandSync(message_data.release()));
+                        result_data_pack = command_handler->executeCommandSync(MOVE(message_data));
                     } else {
-                        result_data_pack.reset(command_handler->dispatchCommand(message_data.release()));
+                        result_data_pack = command_handler->dispatchCommand(MOVE(message_data));
                     }
-                    //get serailizaiton
-                    ChaosUniquePtr<SerializationBuffer> result(result_data_pack->getBSONData());
                     //create zmq message
-                    err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
+                    if(result_data_pack.get()==NULL){
+                        ZMQS_LERR << "ERROR:"<<msg_desc;
+
+                    }
+                    result_data_pack->addInt64Value("seq_id",seq_id);
+                    err = zmq_msg_init_data(&response,
+                                            (void*)result_data_pack->getBSONRawData(),
+                                            result_data_pack->getBSONRawSize(),
+                                            my_free,
+                                            new MemoryManagement(result_data_pack));
                     if(err == -1) {
                         //there was an error
                         int32_t sent_error = zmq_errno();
@@ -238,28 +254,23 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
                     } else {
                         //no error on create message
-                        //at this time memory is managed by zmq
-                        result->disposeOnDelete = false;
-                        //ChaosUniquePtr<SerializationBuffer> result(result_data_pack->getBSONData());
-                        //result->disposeOnDelete = false;
-                        ZMQS_LDBG << "Send ack";
+                     //   ZMQS_LDBG << "Send ack";
                         err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
                         if(err == -1) {
                             int32_t sent_error = zmq_errno();
                             std::string error_message = zmq_strerror(sent_error);
                             ZMQS_LERR << "Error sending ack with code:" << sent_error << " message:" <<error_message;
                         }else {
-                            ZMQS_LDBG << "ACK Sent";
+                            ZMQS_LDBG << "ACK "<<seq_id<<" Sent";
                         }
                     }
-                }else {
+                } else {
                     ZMQS_LDBG << "Empty message received";
                 }
             }
             
             err = zmq_msg_close(&request);
             err = zmq_msg_close(&response);
-            
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

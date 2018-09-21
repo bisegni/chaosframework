@@ -27,15 +27,13 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                
                 //! Call feature api for the sandbox
                 class ClearCommandQueue:
-                public ForwardNodeRpcMessage  {
+                public ForwardNodeRpcMessage {
                 public:
                     ClearCommandQueue();
                     ~ClearCommandQueue();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

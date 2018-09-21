@@ -46,8 +46,8 @@ namespace chaos {
                     
                     void initNewInterpreter();
                 protected:
-                    void init(void *init_data) throw(chaos::CException);
-                    void deinit() throw(chaos::CException);
+                    void init(void *init_data);
+                    void deinit();
                 public:
                     int loadScript(const std::string& loadable_script);
                     

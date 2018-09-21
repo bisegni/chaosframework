@@ -122,16 +122,16 @@ namespace chaos {
 					virtual ~DataCache();
 					
 					//! Initialize instance
-					void init(void* initParam) throw(chaos::CException);
+					void init(void* initParam);
 					
 					//! Start the implementation
-					void start() throw(chaos::CException);
+					void start();
 					
 					//! Start the implementation
-					void stop() throw(chaos::CException);
+					void stop();
 					
 					//! Deinit the implementation
-					void deinit() throw(chaos::CException);
+					void deinit();
 					
 					//! get item
 					virtual int getItem(const char *key, uint32_t& buffLen, void *returnBuffer);

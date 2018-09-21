@@ -37,35 +37,45 @@ namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
+
+                /**
+                 * @brief websocket http client implementation for external unit
+                 * 
+                 */
                 class HTTPClientAdapter:
                 public HTTPBaseAdapter,
                 public AbstractClientAdapter {
+                    /**
+                     * @brief Identify the conenction requested to 
+                     * the adapter
+                     */
                     struct ConnectionInfo {
-                        std::string endpoint_url;
+                        ChaosSharedMutex smutex;
+                        const std::string endpoint_url;
                         uint64_t next_reconnection_retry_ts;
-                        ChaosSharedMutex smux;
-                        HTTPClientAdapter *class_instance;
-                        struct mg_connection *conn;
                         ChaosSharedPtr<ExternalUnitConnection> ext_unit_conn;
-                        
-                        ConnectionInfo():
+                        //!opocode sent to real connection
+                        OpcodeShrdPtrQueue opcode_queue;
+                        ConnectionInfo(const std::string& _endpoint_url):
+                        endpoint_url(_endpoint_url),
                         next_reconnection_retry_ts(0),
-                        class_instance(NULL),
-                        conn(NULL),
                         ext_unit_conn(){}
                     };
                     
                     typedef ChaosSharedPtr<ConnectionInfo> ConnectionInfoShrdPtr;
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(OpcodeShrdPtrQueue, LOpcodeShrdPtrQueue);
                     
-                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapReconnectionInfo);
-                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapReconnectionInfo, LMapReconnectionInfo);
+                    //!associate connection identifier to the connection info
+                    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ConnectionInfoShrdPtr, MapConnectionInfo);
+                    CHAOS_DEFINE_LOCKABLE_OBJECT(MapConnectionInfo, LMapConnectionInfo);
                     
                     bool run;
-                    struct mg_mgr mgr;
+                    
+                    ChaosAtomic<uint32_t> message_broadcasted;
                     uint32_t poll_counter;
                     uint32_t rest_poll_time;
                     //!map that hold the connection to use
-                    LMapReconnectionInfo map_connection;
+                    LMapConnectionInfo map_connection;
                     
                     void poller();
                     void performReconnection();
@@ -83,8 +93,8 @@ namespace chaos {
                 public:
                     HTTPClientAdapter();
                     ~HTTPClientAdapter();
-                    void init(void *init_data) throw (chaos::CException);
-                    void deinit() throw (chaos::CException);
+                    void init(void *init_data);
+                    void deinit();
                     int addNewConnectionForEndpoint(ExternalUnitClientEndpoint *endpoint,
                                                     const std::string& endpoint_url,
                                                     const std::string& serialization);

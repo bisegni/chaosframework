@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
@@ -39,7 +40,8 @@ using namespace chaos::metadata_service_client::monitor_system;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::common::utility;
 using namespace chaos::common::data;
-
+using namespace chaos::common::network;
+using namespace chaos::common::message;
 #define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
 #define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
 #define MSCT_ERR    INFO_LOG(MetadataServiceClientTest)
@@ -60,6 +62,7 @@ int main(int argc, const char *argv[]){
     uint32_t operation;
     std::string device_id;
     AlertLogHandlerImpl alert_log_handler;
+    ChaosStringVector attr_list;
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
                                                                                                      "Specify the operation to do[0-monitor a device id, 1-search node id]",
                                                                                                      &operation);
@@ -67,6 +70,10 @@ int main(int argc, const char *argv[]){
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>("device-id",
                                                                                                         "Specify the device",
                                                                                                         &device_id);
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<ChaosStringVector>("attribute-list",
+                                                                                                              "Specify the attribute list to show in realtime",
+                                                                                                              &attr_list);
     
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("qm",
                                                                                                      "Specify the quantum multiplier to use",
@@ -81,6 +88,22 @@ int main(int argc, const char *argv[]){
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
     ChaosMetadataServiceClient::getInstance()->start();
     ChaosMetadataServiceClient::getInstance()->enableMonitor();
+    
+
+//    DeviceMessageChannel *dmc = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress("rt_sin_a"), true);
+//    while (true) {
+//        ChaosUniquePtr<MessageRequestFuture> req = dmc->sendCustomRequestWithFuture("actionTestOne", CDWUniquePtr());
+//        if(req->wait(5000)) {
+//            if(req->getError() == 0 &&
+//               req->getResult()) {
+//                std::cout << req->getResult()->getJSONString() << std::endl;
+//            }
+//        }
+//        
+//        sleep(1);
+//    }
+//    NetworkBroker::getInstance()->disposeMessageChannel(dmc);
+    
     try{
         switch (operation){
             case 0:{
@@ -107,7 +130,7 @@ int main(int argc, const char *argv[]){
                 std::cout << "Start node monitor library test" << std::endl;
                 {
                     ChaosUniquePtr<NodeMonitorHandlerTest> nmt;
-                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
+                    nmt.reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit, attr_list));
                     sleep(wait_seconds);
                     //nmt[0].reset();
                     nmt.reset();

@@ -26,7 +26,9 @@ using namespace chaos::common::network;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::metadata_service::persistence;
-//! defaukt constructor with the alias of the api
+using namespace chaos::service_common::persistence::data_access;
+
+//! default constructor with the alias of the api
 AbstractApi::AbstractApi(const std::string& name):
 NamedService(name),
 subservice(NULL),
@@ -35,16 +37,14 @@ parent_group(NULL){}
 //default destructor
 AbstractApi::~AbstractApi(){deinit();}
 
-void AbstractApi::init(void *init_data) throw (chaos::CException) {
+void AbstractApi::init(void *init_data)  {
     subservice = static_cast<ApiSubserviceAccessor*>(init_data);
     if(!subservice) throw chaos::CException(-1, "No Persistence Driver has been set", __PRETTY_FUNCTION__);
 }
 
-void AbstractApi::deinit()  throw (chaos::CException) {
-    
-}
+void AbstractApi::deinit()   {}
 
-chaos::service_common::persistence::data_access::AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
+AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)
     return subservice->persistence_driver.get();
 }

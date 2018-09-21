@@ -41,12 +41,11 @@ server_handler(NULL){}
 /*!
  Forward to dispatcher the error during the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
-                                       CDataWrapper *submission_result) {
-    CHAOS_ASSERT(server_handler && submission_result)
+void RpcClient::forwadSubmissionResult(NFISharedPtr message_info,
+                                       CDWUniquePtr submission_result) {
+    CHAOS_ASSERT(server_handler && submission_result.get())
     //! chec if it is a request
     if(message_info->sender_node_id.size() == 0) {
-        DELETE_OBJ_POINTER(submission_result)
         return;
     }
     RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
@@ -55,16 +54,14 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
     submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_info->sender_request_id);
     
     //! there is an error during submission so we need to answer to request with this error
-    CDataWrapper *answer_to_send = new CDataWrapper();
+    CDWUniquePtr answer_to_send(new CDataWrapper());
     //set the domain and action name
     answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, message_info->sender_node_id);
     answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
     // add reuslt to answer
-    if(submission_result) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
+    if(submission_result.get()) {answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);}
     //forward answer to channel
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
-    
-    DELETE_OBJ_POINTER(submission_result)
+    CDWUniquePtr to_delete = server_handler->dispatchCommand(MOVE(answer_to_send));
 }
 
 /*!
@@ -72,15 +69,14 @@ void RpcClient::forwadSubmissionResult(NetworkForwardInfo *message_info,
  */
 void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
                                             uint32_t message_request_id,
-                                            CDataWrapper *submission_result) {
-    CHAOS_ASSERT(server_handler && submission_result)
+                                            CDWUniquePtr submission_result) {
+    CHAOS_ASSERT(server_handler && submission_result.get())
     //! chec if it is a request
     if(channel_node_id.size() == 0) {
-        DELETE_OBJ_POINTER(submission_result)
         return;
     }
-    
-    RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
+    //Print just when not ok, otherwise to many 
+    //RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
     
     if(submission_result->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
         int err=submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
@@ -90,32 +86,31 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
             submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_request_id);
             
             //! there is an error during submission so we need to answer to request with this error
-            CDataWrapper *answer_to_send = new CDataWrapper();
+            CreateNewDataWrapper(answer_to_send, );
+            //CDWUniquePtr answer_to_send(new CDataWrapper());
             //set the domain and action name
             answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, channel_node_id);
             answer_to_send->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
             // add reuslt to answer
             answer_to_send->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result);
             //forward answer to channel
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
+            CDWUniquePtr to_delete = server_handler->dispatchCommand(MOVE(answer_to_send));
         }
     } else{
         RPCC_LERR <<"NO "<<RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE;
     }
-    
-    DELETE_OBJ_POINTER(submission_result)
 }
 
 /*!
  Forward to dispatcher the error durngi the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
+void RpcClient::forwadSubmissionResultError(NFISharedPtr message_info,
                                             int32_t error_code,
                                             const std::string& error_message,
                                             const std::string& error_domain) {
     RPCC_LDBG << "Error on sending (code:" << error_code << " Message:" << error_message << ")";
     
-    CDataWrapper *answer = new CDataWrapper();
+    CDWUniquePtr answer(new CDataWrapper());
     
     //set the domain and action name
     answer->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, message_info->sender_node_id);
@@ -136,7 +131,7 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
     
     answer->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result.get());
     //forward answer to channel
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
+    CDWUniquePtr to_delete(server_handler->dispatchCommand(MOVE(answer)));
 }
 
 

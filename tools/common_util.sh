@@ -1,4 +1,5 @@
 
+
 OS=`uname -s`
 ARCH=`uname -m`
 export MYPID=$$
@@ -12,7 +13,11 @@ export LC_ALL="en_US.UTF-8"
 export CHAOS_OVERALL_OPT="--event-disable 1 --log-max-size 200"
 export CHAOS_MDS_OPT=""
 export CHAOS_DEBUG_CMD=""
+## CHAOS_RUN_ENV="" ## environment to apply to run appliction i.e checkers
+## CHAOS_SERVICE_ENV ## environment to apply to services (mds,webui,agent)
 export CHAOS_EXTERNAL_MDS=""
+
+
 if [ -n "$CHAOS_DEBUG_CMD_TOOL" ];then
     CHAOS_DEBUG_CMD=$CHAOS_DEBUG_CMD_TOOL
 fi
@@ -365,12 +370,17 @@ stop_proc(){
     pid=`get_pid "$1"`
     for p in $pid;do
 	if [ -n "$p" ]; then
-	    if ! kill -9 $p ; then
-		error_mesg "cannot kill process $p"
-		exit 1
-	    else
-		ok_mesg "process $1 ($p) killed"
+	    ## kill gently
+	    kill -SIGQUIT $p
+	    sleep 1
+	    pid=`get_pid "$p"`
+	    if [ -n "$pid" ]; then
+		if ! kill -9 $p ; then
+		    error_mesg "cannot kill process $p"
+		    exit 1
+		fi
 	    fi
+	    ok_mesg "process $1 ($p) killed"
 
 	else
 	    warn_mesg "process $1 ($p) " "not running"
@@ -435,11 +445,11 @@ check_proc(){
 		mem="\x1B[1m$mem%\x1B[22m"
 	    fi
 
-	    ok_mesg "process \x1B[1m$1\x1B[22m is running with pid \x1B[1m$p\x1B[22m cpu $cpu, mem $mem"
+	    ok_mesg "process $1 is running with pid $p cpu $cpu, mem $mem"
 
 	    proc_list+=($p)
 	else
-	    nok_mesg "process \x1B[1m$1\x1B[22m is not running"
+	    nok_mesg "process $1 is not running"
 	    ((xstatus++))
 	fi
     done
@@ -465,7 +475,10 @@ run_proc(){
     fi
     cmdline=""
     debug=""
-    if [ -n "$CHAOS_DEBUG_CMD" ];then
+    if [ -n "$GOOGLE_PROFILE" ];then
+	debug="$GOOGLE_PROFILE "
+	info_mesg "google heap check for '$process_name' " "enabled" 
+    elif [ -n "$CHAOS_DEBUG_CMD" ];then
 	echo "set disable-randomization off" > /tmp/gdbbatch
 	echo "run" >> /tmp/gdbbatch
 	echo "info threads" >> /tmp/gdbbatch
@@ -484,7 +497,10 @@ run_proc(){
 	cmdline="$debug $run_prefix $command_line"
 	
     fi
-   eval $cmdline
+    eval $cmdline
+    if [ -n "$GOOGLE_PROFILE" ];then
+	sleep 1
+    fi
    if [ $? -eq 0 ]; then
 	pid=$!
 	sleep 1
@@ -497,7 +513,7 @@ run_proc(){
 	if [ -n $pid ];then
 #	    local p=${pidl[$((${#pidl[@]} -1))]}
 	    p=$pid
-	    ok_mesg "process \x1B[32m\x1B[1m$process_name\x1B[21m\x1B[39m with pid \"$p\", started"
+	    ok_mesg "process $process_name with pid \"$p\", started"
 	    proc_pid=$p
 	    echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.$pid.log
 	    return 0
@@ -509,7 +525,7 @@ run_proc(){
 
    else
        echo "$cmdline" > $CHAOS_PREFIX/log/$process_name.cmdline.errlaunch.log
-	error_mesg "error lunching $process_name"
+	error_mesg "error lunching $process_name cmdline: '$cmdline'"
 	exit 1
     fi
     return 0
@@ -525,25 +541,33 @@ test_services(){
 	return 1
     fi
 }
-start_services(){
-
-    if $tools/chaos_services.sh start mds; then
-	ok_mesg "chaos start MDS/CDS"
+services(){
+	command_line="$1"
+	if $tools/chaos_services.sh $command_line mds; then
+	ok_mesg "chaos $command_line MDS/CDS"
 
     else
-	nok_mesg "chaos start MDS/CDS"
+	nok_mesg "chaos $command_line MDS/CDS"
 	return 1
     fi
 
     
-    if $tools/chaos_services.sh start webui; then
-	ok_mesg "chaos start WEBUI, sleeping 10s"
+    if $tools/chaos_services.sh $command_line webui; then
+	ok_mesg "chaos $command_line WEBUI, sleeping 10s"
 	sleep 10
     else
-	nok_mesg "chaos start WEBUI"
+	nok_mesg "chaos $command_line WEBUI"
 	return 1
     fi
     return 0
+}
+stop_services(){
+	services "stop"
+}
+
+start_services(){
+	services "start"
+    
 }
 start_mds(){
     if $tools/chaos_services.sh start mds; then
@@ -901,7 +925,7 @@ launch_us_cu(){
 
 	FILE_NAME=`echo $REAL_ALIAS|$SED 's/\//_/g'`
 #	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file 1 $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
-	if run_proc "$CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.$MYPID.stdout 2>&1 &" "$USNAME"; then
+	if run_proc "$CHAOS_SERVICE_ENV $CHAOS_PREFIX/bin/$USNAME --conf-file $CHAOS_PREFIX/etc/cu.cfg --log-on-file 1 $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.$MYPID.stdout 2>&1 &" "$USNAME"; then
 	    ok_mesg "$USNAME \"$REAL_ALIAS\" ($proc_pid) started"
 	    us_proc+=($proc_pid)
 	else

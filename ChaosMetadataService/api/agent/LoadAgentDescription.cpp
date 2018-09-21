@@ -32,12 +32,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-LoadAgentDescription::LoadAgentDescription():
-AbstractApi("loadAgentDescription"){}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadAgentDescription, "loadAgentDescription");
 
-LoadAgentDescription::~LoadAgentDescription(){}
-
-CDataWrapper *LoadAgentDescription::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr LoadAgentDescription::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -58,5 +55,5 @@ CDataWrapper *LoadAgentDescription::execute(CDataWrapper *api_data, bool& detach
                                          agent_instance_sd_wrapper()))) {
         LOG_AND_TROW(ERR, -5, CHAOS_FORMAT("Error loading full description for agent %1%",%agent_uid));
     }
-    return agent_instance_sd_wrapper.serialize().release();
+    return agent_instance_sd_wrapper.serialize();
 }

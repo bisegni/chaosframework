@@ -102,17 +102,17 @@ namespace chaos {
 				~DriverManager();
 				
                 // Initialize instance
-				void init(void *initParameter) throw(chaos::CException);
+				void init(void *initParameter);
 				
                 // Start the implementation
-				void start() throw(chaos::CException);
+				void start();
 				
                 // Stop the implementation
-				void stop() throw(chaos::CException);
+				void stop();
 				
 				
                 // Deinit the implementation
-				void deinit() throw(chaos::CException);
+				void deinit();
 				
 				
 				//! Get a new driver accessor for a driver instance
@@ -120,7 +120,7 @@ namespace chaos {
 				 checking the hashing of the input parameter is created (or got one) device driver instance,
 				 from this a new driver accessor is created
 				 */
-				chaos::cu::driver_manager::driver::DriverAccessor *getNewAccessorForDriverInstance(chaos::cu::driver_manager::driver::DrvRequestInfo& request_info) throw (chaos::CException);
+				chaos::cu::driver_manager::driver::DriverAccessor *getNewAccessorForDriverInstance(chaos::cu::driver_manager::driver::DrvRequestInfo& request_info);
 				
 				//! release the accessor instance
 				void releaseAccessor(chaos::cu::driver_manager::driver::DriverAccessor *accessor);
@@ -129,7 +129,7 @@ namespace chaos {
 				
 				//! Register a new driver
 				void registerDriver(ChaosSharedPtr< chaos::common::utility::ObjectInstancer<chaos::cu::driver_manager::driver::AbstractDriver> > instancer,
-									ChaosSharedPtr< chaos::common::plugin::PluginInspector > description) throw(chaos::CException);
+									ChaosSharedPtr< chaos::common::plugin::PluginInspector > description);
 
 			};
 		}

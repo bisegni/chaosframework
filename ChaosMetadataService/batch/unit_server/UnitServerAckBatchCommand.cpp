@@ -39,7 +39,6 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
-message_data(NULL),
 us_can_start(false),
 phase(USAP_ACK_US){
     list_autoload_cu_current = list_autoload_cu.end();
@@ -56,17 +55,18 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     if(data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         us_can_start = data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT) == ErrorCode::EC_MDS_NODE_REGISTRATION_OK;
     }
-    CHECK_CDW_THROW_AND_LOG(data, USAC_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!=NULL), USAC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, USAC_ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, USAC_ERR, -3, "The rpc address of unit server is mandatory")
     //CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, USAC_ERR, -4, "The rpc domain of unit server is mandatory")
     
     unit_server_uid = data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     
-    request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+    message_data.reset(new CDataWrapper(data->getBSONRawData()));
+    destination_address = message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+    request = createRequest(destination_address,
                             UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                             UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK);
-    message_data = data;
 }
 
 // inherited method
@@ -93,7 +93,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
                     sendMessage(*request,
-                                message_data);
+                                MOVE(message_data));
                     break;
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
@@ -161,7 +161,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*request,
-                                autoload_pack.get());
+                                MOVE(autoload_pack));
                     break;
                 }
                     
@@ -225,7 +225,7 @@ int UnitServerAckCommand::prepareInstance() {
         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
     } else {
         USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
-        request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+        request = createRequest(destination_address,
                                 UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                 UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
         //prepare auto init and autostart message into autoload pack

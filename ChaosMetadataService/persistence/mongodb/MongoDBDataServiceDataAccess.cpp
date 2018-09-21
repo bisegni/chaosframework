@@ -80,7 +80,7 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
             MDBDSDA_ERR << "no specific data service attribute found for " << ds_unique_id << " with error:" << err;
         } else {
             (*node_description)->addInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
-                                                result.getField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT).numberInt());
+                                               result.getField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT).numberInt());
         }
     } catch (const mongo::DBException &e) {
         MDBDSDA_ERR << e.what();
@@ -93,17 +93,21 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
     return err;
 }
 
-int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
+int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_zone,
+                                               const std::string& ds_unique_id,
                                                const std::string& ds_direct_io_addr,
                                                uint32_t endpoint) {
     int err = 0;
+    CHAOS_ASSERT(node_data_access)
+    
     try {
         //now update proprietary fields
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
         
         mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
-                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint));
+                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
+                                                    DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone));
         
         DEBUG_CODE(MDBDSDA_DBG<<log_message("registerNode",
                                             "update",
@@ -118,49 +122,6 @@ int MongoDBDataServiceDataAccess::registerNode(const std::string& ds_unique_id,
                                      true,
                                      false,
                                      &mongo::WriteConcern::journaled))){
-            MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
-        }
-    } catch (const mongo::DBException &e) {
-        MDBDSDA_ERR << e.what();
-        err = -1;
-    } catch (const chaos::CException &e) {
-        MDBDSDA_ERR << e.what();
-        err = e.errorCode;
-    }
-    return err;
-}
-
-int MongoDBDataServiceDataAccess::updateNodeStatistic(const std::string& ds_unique_id,
-                                                      const std::string& ds_direct_io_addr,
-                                                      const uint32_t endpoint,
-                                                      const ProcStat& process_resuorce_usage) {
-    CHAOS_ASSERT(node_data_access)
-    int err = 0;
-    try {
-        //now update proprietary fields
-        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
-                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
-        
-        mongo::BSONObj update = BSON("$set" << BSON(NodeDefinitionKey::NODE_DIRECT_IO_ADDR << ds_direct_io_addr <<
-                                                    DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << endpoint <<
-                                                    NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME <<(long long )process_resuorce_usage.uptime <<
-													NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << process_resuorce_usage.usr_time <<
-													NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << process_resuorce_usage.sys_time <<
-													NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP << process_resuorce_usage.swap_rsrc <<
-													NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp())));
-        
-        DEBUG_CODE(MDBDSDA_DBG<<log_message("updateExisting",
-                                            "update",
-                                            DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                                    "Update",
-                                                                    query.toString(),
-                                                                    update.jsonString()));)
-        
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
-                                     query,
-                                     update,
-                                     true,
-                                     false))){
             MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
         }
     } catch (const mongo::DBException &e) {
@@ -367,16 +328,18 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<ChaosSharedPtr
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
+int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
+                                                      std::vector<ChaosSharedPtr<common::data::CDataWrapper> >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
-    SearchResult            paged_result;
+    SearchResult paged_result;
     
     //almost we need toreturn one data service
     if(number_of_result == 0) return 0;
     try{
-        mongo::Query query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
-                                    NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
+        mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone <<
+                                  NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
+                                  CHAOS_FORMAT("health_stat.%1%", %NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimestampWithDelay(5000, false))));
         //filter on sequence
         mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
                                          NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
@@ -408,7 +371,8 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<ChaosSharedPtr
                 //add element to result
                 best_available_data_service.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
-           
+        } else {
+            MDBDSDA_ERR << "No data service has been selected";
         }
         
     } catch (const mongo::DBException &e) {
@@ -422,12 +386,14 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<ChaosSharedPtr
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&  best_available_data_service,
+int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone,
+                                                      std::vector<std::string >&  best_available_data_service,
                                                       unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
-    if((err = getBestNDataService(best_available_server,
+    if((err = getBestNDataService(ds_zone,
+                                  best_available_server,
                                   number_of_result))) {
         return err;
     }
@@ -448,12 +414,14 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<std::string >&
     return err;
 }
 
-int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(std::vector<std::string>&  best_available_data_service_endpoint,
+int MongoDBDataServiceDataAccess::getBestNDataServiceEndpoint(const std::string& ds_zone,
+                                                              std::vector<std::string>&  best_available_data_service_endpoint,
                                                               unsigned int number_of_result) {
     int err = 0;
     std::vector<ChaosSharedPtr<common::data::CDataWrapper> > best_available_server;
     
-    if((err = getBestNDataService(best_available_server,
+    if((err = getBestNDataService(ds_zone,
+                                  best_available_server,
                                   number_of_result))) {
         return err;
     }

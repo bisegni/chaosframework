@@ -213,60 +213,60 @@ namespace chaos {
                 /*!
 				 Action to poll status of a UnitServer and all CUs
 				 */
-                chaos::common::data::CDataWrapper* unitServerStatus(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
+                chaos::common::data::CDWUniquePtr unitServerStatus(chaos::common::data::CDWUniquePtr message_data);
 				
 				/*!
 				 Action that show the unit server registration result(success or failure)
 				 */
-				chaos::common::data::CDataWrapper* unitServerRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDWUniquePtr unitServerRegistrationACK(chaos::common::data::CDWUniquePtr message_data);
 				
 				/*!
 				 Action that get the work unit registration(success or failure)
 				 */
-				chaos::common::data::CDataWrapper* workUnitRegistrationACK(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDWUniquePtr workUnitRegistrationACK(chaos::common::data::CDWUniquePtr message_data);
 				
 				/*!
 				 Action for loading a control unit
 				 */
-				chaos::common::data::CDataWrapper* loadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDWUniquePtr loadControlUnit(chaos::common::data::CDWUniquePtr message_data);
 				
 				/*!
 				 Action for the unloading of a control unit
 				 The unload operation, check that the target control unit is in deinit state
 				 */
-				chaos::common::data::CDataWrapper* unloadControlUnit(chaos::common::data::CDataWrapper *message_data, bool &detach) throw (CException);
+				chaos::common::data::CDWUniquePtr unloadControlUnit(chaos::common::data::CDWUniquePtr message_data);
 				
 				/*!
 				 Configure the sandbox and all subtree of the CU
 				 */
-				chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper  *message_data, bool& detach);
+				chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr  message_data);
 				
                 /*
                  Submit a new Control unit instance
                  */
-                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance) throw(CException);
+                void submitControlUnit(ChaosSharedPtr<AbstractControlUnit> control_unit_instance);
 			public:
 				
 				/*
 				 Initialize the Control Manager
 				 */
-				void init(void *initParameter) throw(CException);
+				void init(void *initParameter);
 				
 				/*
 				 Start the Control Manager
 				 */
-				void start() throw(CException);
+				void start();
 				
 				
 				/*!
 				 Stop the control manager
 				 */
-				void stop() throw(CException);
+				void stop();
 				
 				/*
 				 Deinitialize the Control Manager
 				 */
-				void deinit() throw(CException);
+				void deinit();
 				
                 //! allota a new control unit proxy
                 void setProxyCreationHandler(ProxyLoadHandler load_handler);

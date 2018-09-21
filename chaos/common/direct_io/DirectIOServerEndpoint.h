@@ -81,13 +81,13 @@ namespace chaos {
 				/*!
 				 Allocate a new channel and initialize it
 				 */
-				channel::DirectIOVirtualServerChannel *getNewChannelInstance(std::string channel_name) throw (CException);
+				channel::DirectIOVirtualServerChannel *getNewChannelInstance(std::string channel_name);
 				
 				//! New channel allocation by name
 				/*!
 				 Allocate a new channel and initialize it
 				 */
-				void releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException);
+				void releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
 				
 				std::string getUrl();
 			};

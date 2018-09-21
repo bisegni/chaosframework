@@ -68,8 +68,8 @@ namespace chaos {
             public:
                 ExternaCommandExecutor();
                 ~ExternaCommandExecutor();
-                void init(void *data) throw(chaos::CException);
-                void deinit() throw(chaos::CException);
+                void init(void *data);
+                void deinit();
             };
         }
     }

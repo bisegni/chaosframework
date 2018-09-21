@@ -78,16 +78,16 @@ namespace chaos {
 					 \param initParam is the pointer to a LFDataCacheSettings
 					 structure
 					 */
-					void init(void* initParam) throw(chaos::CException);
+					void init(void* initParam);
 					
 					//! Start the implementation
-					void start() throw(chaos::CException);
+					void start();
 					
 					//! Start the implementation
-					void stop() throw(chaos::CException);
+					void stop();
 					
 					//! Deinit the implementation
-					void deinit() throw(chaos::CException);
+					void deinit();
 					
 					void garbageCache();
 					

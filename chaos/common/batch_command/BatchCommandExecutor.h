@@ -125,7 +125,7 @@ namespace chaos {
                 //command event handler
                 virtual void handleCommandEvent(uint64_t command_seq,
                                                 BatchCommandEventType::BatchCommandEventType type,
-                                                chaos::common::data::CDataWrapper *command_info,
+                                                CommandInfoAndImplementation *command_info,
                                                 const BatchCommandStat& commands_stats);
                 
                 //! general sandbox event handler
@@ -163,7 +163,7 @@ namespace chaos {
                  Return infromation about the execution statistic for the current running command, collected into the
                  chaos::cu::control_manager::slow_command::SandboxStat structure.
                  */
-                chaos_data::CDataWrapper* getCommandState(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr getCommandState(chaos::common::data::CDWUniquePtr params);
                 
                 
                 //! Command features modification rpc action
@@ -171,13 +171,13 @@ namespace chaos {
                  \ingroup API_Slow_Control
                  Updat ethe modiable features of the running command
                  */
-                chaos_data::CDataWrapper* setCommandFeatures(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr setCommandFeatures(chaos::common::data::CDWUniquePtr params);
                 
                 //! Command features modification rpc action
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features& features) throw (CException);
+                void setCommandFeatures(features::Features& features);
                 
                 //! Kill current command rpc action
                 /*!
@@ -186,7 +186,7 @@ namespace chaos {
                  from the scheduler. It waith the lock on the scehduler  and the provi to delete
                  the current command "as is".
                  */
-                chaos_data::CDataWrapper* killCurrentCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr killCurrentCommand(chaos::common::data::CDWUniquePtr params);
                 
                 //! remove all pendig command form queue
                 /*!
@@ -194,7 +194,7 @@ namespace chaos {
                  This METHOD perform the clean operation of the queue al the pending command will be deleted and not
                  will be executed.
                  */
-                chaos_data::CDataWrapper* clearCommandQueue(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr clearCommandQueue(chaos::common::data::CDWUniquePtr params);
                 
                 //! Flush the command state history
                 /*!
@@ -202,7 +202,7 @@ namespace chaos {
                  This METHOD perform the "flushing" of the command state queue (and hash). The flushing operation ensure that all,
                  non ended command state, will be remove from the history.
                  */
-                chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+                chaos::common::data::CDWUniquePtr flushCommandStates(chaos::common::data::CDWUniquePtr params);
                 
                 //!Inherited by TimerHandler for capper operation
                 void timeout();
@@ -216,16 +216,16 @@ namespace chaos {
                 virtual ~BatchCommandExecutor();
                 
                 // Initialize instance
-                virtual void init(void*) throw(chaos::CException);
+                virtual void init(void*);
                 
                 // Start the implementation
-                virtual void start() throw(chaos::CException);
+                virtual void start();
                 
                 // Start the implementation
-                virtual void stop() throw(chaos::CException);
+                virtual void stop();
                 
                 // Deinit the implementation
-                virtual void deinit() throw(chaos::CException);
+                virtual void deinit();
                 
                 //! Perform a command registration
                 /*!
@@ -279,7 +279,7 @@ namespace chaos {
                  */
                 void submitCommand(const std::string& batch_command_alias,
                                    chaos_data::CDataWrapper *command_data,
-                                   uint64_t& command_id)  throw (CException);
+                                   uint64_t& command_id)  ;
                 
                 //! Submit a batch command
                 /*!
@@ -302,7 +302,7 @@ namespace chaos {
                                    uint32_t priority = 50,
                                    uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
                                    uint32_t submission_retry_delay = 1000,
-                                   uint64_t scheduler_step_delay = 1000000)  throw (CException);
+                                   uint64_t scheduler_step_delay = 1000000)  ;
                 
                 //! return the state of a command
                 ChaosUniquePtr<CommandState> getStateForCommandID(uint64_t command_id);

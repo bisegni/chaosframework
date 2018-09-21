@@ -87,14 +87,14 @@ if(api_interface_pointer.get() == NULL) return x;
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void ProxyControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+void ProxyControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  {
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
 }
 
 /*!
  Init the  RT Control Unit scheduling for device
  */
-void ProxyControlUnit::init(void *initData) throw(CException) {
+void ProxyControlUnit::init(void *initData) {
     //call parent impl
     AbstractControlUnit::init(initData);
     PRXCUINFO << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
@@ -107,7 +107,7 @@ void ProxyControlUnit::init(void *initData) throw(CException) {
 /*!
  Starto the  Control Unit scheduling for device
  */
-void ProxyControlUnit::start() throw(CException) {
+void ProxyControlUnit::start() {
     //call parent impl
     AbstractControlUnit::start();
 }
@@ -115,7 +115,7 @@ void ProxyControlUnit::start() throw(CException) {
 /*!
  Stop the Custom Control Unit scheduling for device
  */
-void ProxyControlUnit::stop() throw(CException) {
+void ProxyControlUnit::stop() {
     //call parent impl
     AbstractControlUnit::stop();
 }
@@ -123,7 +123,7 @@ void ProxyControlUnit::stop() throw(CException) {
 /*!
  Init the  RT Control Unit scheduling for device
  */
-void ProxyControlUnit::deinit() throw(CException) {
+void ProxyControlUnit::deinit() {
     //call parent impl
     AbstractControlUnit::deinit();
     
@@ -136,12 +136,11 @@ void ProxyControlUnit::deinit() throw(CException) {
 /*!
  Event for update some CU configuration
  */
-CDataWrapper* ProxyControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
-    CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
-    return result;
+CDWUniquePtr ProxyControlUnit::updateConfiguration(CDWUniquePtr update_pack) {
+    return AbstractControlUnit::updateConfiguration(MOVE(update_pack));
 }
 
-void ProxyControlUnit::unitDefineActionAndDataset() throw(CException) {
+void ProxyControlUnit::unitDefineActionAndDataset() {
     GET_OR_RETURN()
     api_interface_pointer->fireEvent(ControlUnitProxyEventDefine);
 }
@@ -150,22 +149,22 @@ void ProxyControlUnit::unitDefineCustomAttribute() {
     
 }
 
-void ProxyControlUnit::unitInit() throw(CException) {
+void ProxyControlUnit::unitInit() {
     GET_OR_RETURN()
     api_interface_pointer->fireEvent(ControlUnitProxyEventInit);
 }
 
-void ProxyControlUnit::unitStart() throw(CException) {
+void ProxyControlUnit::unitStart() {
     GET_OR_RETURN()
     api_interface_pointer->fireEvent(ControlUnitProxyEventStart);
 }
 
-void ProxyControlUnit::unitStop() throw(CException) {
+void ProxyControlUnit::unitStop() {
     GET_OR_RETURN()
     api_interface_pointer->fireEvent(ControlUnitProxyEventStop);
 }
 
-void ProxyControlUnit::unitDeinit() throw(CException) {
+void ProxyControlUnit::unitDeinit() {
     GET_OR_RETURN()
     api_interface_pointer->fireEvent(ControlUnitProxyEventDeinit);
 }

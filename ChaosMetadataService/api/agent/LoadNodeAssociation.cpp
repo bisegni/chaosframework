@@ -34,14 +34,9 @@ using namespace chaos::service_common::data::agent;
 using namespace chaos::metadata_service::api::agent;
 using namespace chaos::metadata_service::persistence::data_access;
 
-LoadNodeAssociation::LoadNodeAssociation():
-AbstractApi("loadNodeAssociation"){
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(LoadNodeAssociation, "loadNodeAssociation")
 
-LoadNodeAssociation::~LoadNodeAssociation() {
-}
-
-CDataWrapper *LoadNodeAssociation::execute(CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr LoadNodeAssociation::execute(CDWUniquePtr api_data) {
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The key %1% is mandatory", %NodeDefinitionKey::NODE_UNIQUE_ID));
@@ -59,5 +54,5 @@ CDataWrapper *LoadNodeAssociation::execute(CDataWrapper *api_data, bool& detach_
     if((err = a_da->loadNodeAssociationForAgent(agent_uid, node_associated, assoc_sd_wrapper()))) {
         LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error loading association for node %1% into agent %2% with error %3%", %node_associated%agent_uid%err));
     }
-    return assoc_sd_wrapper.serialize().release();
+    return assoc_sd_wrapper.serialize();
 }

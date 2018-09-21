@@ -38,7 +38,7 @@ ApiManagment::~ApiManagment() {
 	clearGroupList();
 }
 
-void ApiManagment::init(void* init_data) throw (chaos::CException) {
+void ApiManagment::init(void* init_data)  {
     subservices = static_cast<ApiSubserviceAccessor*>(init_data);
     if(!subservices) throw chaos::CException(-1, "NO subservice has been set", __PRETTY_FUNCTION__);
     
@@ -58,7 +58,7 @@ void ApiManagment::init(void* init_data) throw (chaos::CException) {
 		addApiAgroup(instance);
 	}
 }
-void ApiManagment::deinit() throw (chaos::CException) {
+void ApiManagment::deinit()  {
 	clearGroupList();
 }
 

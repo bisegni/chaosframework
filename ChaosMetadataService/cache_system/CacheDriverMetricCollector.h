@@ -60,9 +60,9 @@ namespace chaos {
                 //!inherited method
                 int updateConfig();
                 //!inherited method
-                void init(void *init_data) throw (chaos::CException);
+                void init(void *init_data);
                 //!inherited method
-                void deinit() throw (chaos::CException);
+                void deinit();
             };
         }
     }

@@ -91,13 +91,13 @@ void MDSBatchExecutor::installCommand(const std::string& alias,
 }
 
 // Initialize instance
-void MDSBatchExecutor::init(void *init_data) throw(chaos::CException) {
+void MDSBatchExecutor::init(void *init_data)  {
     //initilize superclass
     BatchCommandExecutor::init(init_data);
 }
 
 // start instance
-void MDSBatchExecutor::start() throw(chaos::CException) {
+void MDSBatchExecutor::start()  {
     BatchCommandExecutor::start();
     //allocate channels
     message_channel_for_job = network_broker->getRawMessageChannel();
@@ -108,7 +108,7 @@ void MDSBatchExecutor::start() throw(chaos::CException) {
 }
 
 // stop instance
-void MDSBatchExecutor::stop() throw(chaos::CException) {
+void MDSBatchExecutor::stop()  {
     if(message_channel_for_job) {
         network_broker->disposeMessageChannel(message_channel_for_job);
         message_channel_for_job = NULL;
@@ -122,7 +122,7 @@ void MDSBatchExecutor::stop() throw(chaos::CException) {
 }
 
 // Deinitialize instance
-void MDSBatchExecutor::deinit() throw(chaos::CException) {
+void MDSBatchExecutor::deinit()  {
     
     //deinitilize superclass
     BatchCommandExecutor::deinit();
@@ -162,7 +162,7 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
 void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
                                           uint64_t command_seq,
                                           BatchCommandEventType::BatchCommandEventType type,
-                                          common::data::CDataWrapper *command_data,
+                                          CommandInfoAndImplementation *command_info,
                                           const common::batch_command::BatchCommandStat& commands_stat) {
     std::string type_string;
     switch(type){

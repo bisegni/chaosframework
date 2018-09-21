@@ -89,9 +89,9 @@ void ObjectStorageDriverPool::deallocateResource(const std::string& pool_identif
     delete(pooled_driver);
 }
 
-void ObjectStorageDriverPool::init(void *init_data) throw (chaos::CException) {}
+void ObjectStorageDriverPool::init(void *init_data)  {}
 
-void ObjectStorageDriverPool::deinit() throw (chaos::CException) {}
+void ObjectStorageDriverPool::deinit()  {}
 
 //-------------------------------------------cache pool---------------------------------------
 
@@ -166,13 +166,13 @@ void CacheDriverPool::deallocateResource(const std::string& pool_identification,
     delete(pooled_driver);
 }
 
-void CacheDriverPool::init(void *init_data) throw (chaos::CException) {
+void CacheDriverPool::init(void *init_data)  {
     //check for the presence of the cache server
     if(!ChaosMetadataService::getInstance()->setting.cache_driver_setting.cache_driver_impl.size()) {LOG_AND_TROW(DP_LOG_ERR, -1, "No cache implemetation provided");}
     if(!ChaosMetadataService::getInstance()->setting.cache_driver_setting.startup_chache_servers.size()) {LOG_AND_TROW(DP_LOG_ERR, -2, "No cache servers provided")}
 }
 
-void CacheDriverPool::deinit() throw (chaos::CException) {
+void CacheDriverPool::deinit()  {
     
 }
 
@@ -185,11 +185,11 @@ DriverPoolManager::~DriverPoolManager() {
     
 }
 
-void DriverPoolManager::init(void *init_data) throw (chaos::CException) {
+void DriverPoolManager::init(void *init_data)  {
     InizializableService::initImplementation(cache_pool, NULL, "CacheDriverPool", __PRETTY_FUNCTION__);
 }
 
-void DriverPoolManager::deinit() throw (chaos::CException) {
+void DriverPoolManager::deinit()  {
     CHAOS_NOT_THROW(InizializableService::deinitImplementation(cache_pool, "CacheDriverPool", __PRETTY_FUNCTION__);)
 }
 

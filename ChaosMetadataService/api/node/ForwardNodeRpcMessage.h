@@ -43,8 +43,7 @@ namespace chaos {
                     ForwardNodeRpcMessage();
                     ForwardNodeRpcMessage(const std::string& superclass_api_name);
                     ~ForwardNodeRpcMessage();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

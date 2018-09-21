@@ -53,7 +53,7 @@ message_channel(NULL) {
 
 MetadataLoggingManager::~MetadataLoggingManager() {}
 
-void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
+void MetadataLoggingManager::init(void *init_data)  {
     if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size() > 0) {
         message_channel = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
         if(message_channel) {
@@ -62,11 +62,11 @@ void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
             MLM_ERR << "We have had error opening a message channel so all log will be stored locally[in future release]";
         }
     }
-
+    
     CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
 
-void MetadataLoggingManager::deinit() throw(chaos::CException) {
+void MetadataLoggingManager::deinit()  {
     MLM_INFO << "Wait for queue will empty";
     CObjectProcessingPriorityQueue<CDataWrapper>::deinit(true);
     MLM_INFO << "Queue is empty";
@@ -119,17 +119,14 @@ void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_
     delete(channel_instance);
 }
 
-void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
-                                                  ElementManagingPolicy& element_policy) throw(CException) {
+void MetadataLoggingManager::processBufferElement(CDWShrdPtr log_entry) {
     CHAOS_ASSERT(getServiceState() == 1);
     int err = 0;
     DEBUG_CODE(MLM_DBG << "forwarding log entry " << log_entry->getJSONString());
     
     //detach the entry from the queue
-    element_policy.elementHasBeenDetached = true;
-    
     if(message_channel) {
-        if((err = sendLogEntry(log_entry))) {
+        if((err = sendLogEntry(MOVE(log_entry->clone())))) {
             MLM_ERR << "Error forwarding log entry with code:" << err;
             //log entry need to be resubmitted or stored on disk (in future version)
             //delete(log_entry);
@@ -140,25 +137,24 @@ void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
     } else {
         //no message channel available so we need to store the log
         MLM_DBG << "No channel for submitting log entry";
-        delete(log_entry);
     }
 }
 
-int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_entry) {
+int MetadataLoggingManager::sendLogEntry(CDWUniquePtr log_entry) {
     CHAOS_ASSERT(getServiceState() == 1);
-
+    
     int err = 0;
     //send message to mds and wait for ack
     ChaosUniquePtr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
-                                                                                                        MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
-                                                                                                        log_entry,
-                                                                                                        2000);
+                                                                                                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
+                                                                                                         MOVE(log_entry),
+                                                                                                         2000);
     //wait for ack
     if(log_future->wait()) {
         //we have got semthing
         /*DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
-                   "\n" << log_future->getErrorMessage() << "\n" <<
-                   log_future->getErrorDomain(););*/
+         "\n" << log_future->getErrorMessage() << "\n" <<
+         log_future->getErrorDomain(););*/
         if((err = log_future->getError())) {
             MLM_ERR << "Error forwarding log entry with code:" << err<<"Domain:"<<log_future->getErrorDomain()<<" msg:"<<log_future->getErrorMessage();
         } else {
@@ -178,7 +174,7 @@ int MetadataLoggingManager::pushLogEntry(chaos::common::data::CDataWrapper *log_
                                          int32_t priority) {
     CHAOS_ASSERT(getServiceState() == 1);
     if(log_entry == NULL) return -10000;
-    return CObjectProcessingPriorityQueue<CDataWrapper>::push(log_entry,
-                                                              priority,
-                                                              false);
+    PriorityQueuedElement<CDataWrapper>::PriorityQueuedElementType element(log_entry);
+    return CObjectProcessingPriorityQueue<CDataWrapper>::push(element,
+                                                              priority);
 }

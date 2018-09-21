@@ -83,7 +83,7 @@ namespace chaos {
                                        uint16_t priority,
                                        EventDataType value_type,
                                        const void *value_ptr,
-                                       uint16_t value_size = 0) throw (CException);
+                                       uint16_t value_size = 0);
                 };
                 
             }

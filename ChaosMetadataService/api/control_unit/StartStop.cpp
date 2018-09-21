@@ -31,18 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_STASTO_DBG  DBG_LOG(StartStop)
 #define CU_STASTO_ERR  ERR_LOG(StartStop)
 
-StartStop::StartStop():
-AbstractApi("startStop"){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(StartStop, "startStop");
 
-StartStop::~StartStop() {
-    
-}
-
-CDataWrapper *StartStop::execute(CDataWrapper *api_data,
-                                 bool& detach_data) throw(chaos::CException) {
-    
+CDWUniquePtr StartStop::execute(CDWUniquePtr api_data) {
     if(!api_data) {LOG_AND_TROW(CU_STASTO_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_STASTO_ERR, -2, "The ndk_unique_id key is mandatory");}
     if(!api_data->hasKey("start")) {LOG_AND_TROW(CU_STASTO_ERR, -3, "The start key is mandatory");}
@@ -74,5 +65,5 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     //launch initilization in background
     command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand)),
                                                    cu_base_description.release());
-    return NULL;
+    return CDWUniquePtr();
 }

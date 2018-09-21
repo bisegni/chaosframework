@@ -47,14 +47,14 @@ AsioImplEventServer::AsioImplEventServer(const string& alias):EventServer(alias)
 /*
  init the event adapter
  */
-void AsioImplEventServer::init(void*) throw(CException) {
+void AsioImplEventServer::init(void*) {
     threadNumber = 1;
 }
 
 /*
  start the event adapter
  */
-void AsioImplEventServer::start() throw(CException) {
+void AsioImplEventServer::start() {
     
         //listen for event
     listeForEventType(event::EventTypeAlert, true);
@@ -70,14 +70,14 @@ void AsioImplEventServer::start() throw(CException) {
 /*
  start the event adapter
  */
-void AsioImplEventServer::stop() throw(CException) {
+void AsioImplEventServer::stop() {
     
 }
 
 /*
  start the event adapter
  */
-void AsioImplEventServer::listeForEventType(event::EventType type,  bool listen) throw(CException) {
+void AsioImplEventServer::listeForEventType(event::EventType type,  bool listen) {
     switch (type) {
         case event::EventTypeAlert:
             if(listen){
@@ -132,7 +132,7 @@ void AsioImplEventServer::listeForEventType(event::EventType type,  bool listen)
 /*
  deinit the event adapter
  */
-void AsioImplEventServer::deinit() throw(CException) {
+void AsioImplEventServer::deinit() {
     
     //deregister all event listener
     try{listeForEventType(event::EventTypeAlert, false);}catch(...){}

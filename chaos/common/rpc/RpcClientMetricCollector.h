@@ -48,27 +48,28 @@ namespace chaos {
                 /*!
                  reimplementation of forwarder abstract method to collect the metric on sent message
                  */
-                bool submitMessage(chaos::common::network::NetworkForwardInfo *forward_info, bool on_this_thread=false);
+                bool submitMessage(chaos::common::network::NFISharedPtr forward_info,
+                                   bool on_this_thread=false);
                 
                 /*
                  init the rpc adapter
                  */
-                void init(void *init_data) throw(CException);
+                void init(void *init_data);
                 
                 /*
                  start the rpc adapter
                  */
-                void start() throw(CException);
+                void start();
                 
                 /*
                  start the rpc adapter
                  */
-                void stop() throw(CException);
+                void stop();
                 
                 /*
                  deinit the rpc adapter
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 void setServerHandler(RpcServerHandler *_server_handler);
             };

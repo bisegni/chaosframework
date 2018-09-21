@@ -212,7 +212,7 @@ LuaScriptVM::~LuaScriptVM() {
     if(ls){lua_close(ls);}
 }
 
-void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
+void LuaScriptVM::init(void *init_data)  {
     ls = luaL_newstate();
     const luaL_Reg *lib;
     /* "require" functions from 'loadedlibs' and set results to global table */
@@ -234,7 +234,7 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     
 }
 
-void LuaScriptVM::deinit() throw(chaos::CException) {
+void LuaScriptVM::deinit()  {
     if(ls){
         lua_close(ls);
         ls = NULL;

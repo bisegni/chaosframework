@@ -28,18 +28,19 @@ using namespace chaos::common::data;
 using namespace chaos::common::async_central;
 using namespace chaos::cu::driver_manager::driver;
 
-void AbstractClientRemoteIODriver::driverInit(const char *initParameter) throw (chaos::CException) {
+void AbstractClientRemoteIODriver::driverInit(const char *initParameter)  {
     LOG_AND_TROW(ERR, -1, "AbstractClientRemoteIODriver can be initilized only with json document");
 }
 
-void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter) throw(chaos::CException) {
+void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {
     int err = 0;
+    unsigned int iteration = 0;
     std::string content_type = "application/json";
     CHECK_MANDATORY_KEY(const_cast<const CDataWrapper *>(&init_parameter) , "url", ERR, -2);
     CHECK_TYPE_OF_KEY(const_cast<const CDataWrapper *>(&init_parameter), "url", String, ERR, -3);
 
     const std::string url = init_parameter.getStringValue("url");
-    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The uri parameter can't be empty string");
+    CHECK_ASSERTION_THROW_AND_LOG(url.size() != 0, ERR, -3, "The url parameter can't be empty string");
     //! end point identifier & authorization key
     if(init_parameter.hasKey("endpoint_name")){
         ExternalUnitClientEndpoint::endpoint_identifier = init_parameter.getStringValue("endpoint_name");
@@ -60,7 +61,9 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
     
     CHECK_ASSERTION_THROW_AND_LOG((ExternalUnitClientEndpoint::endpoint_identifier.size() > 0), ERR, -4, "The endpoint name is empty");
     
+    //initilize subclass
     ClientARIODriver::driverInit(init_parameter);
+    
     DBG <<"Initialize connection...";
     //register this driver as external endpoint
     err = chaos::common::external_unit::ExternalUnitManager::getInstance()->initilizeConnection(*this,
@@ -69,9 +72,20 @@ void AbstractClientRemoteIODriver::driverInit(const chaos::common::data::CDataWr
                                                                                                 url);
     DBG <<"Connection initialized with error:"<<err;
     CHECK_ASSERTION_THROW_AND_LOG(err == 0, ERR, -4, "Error creating connection");
+
+    
+    //waith at least 3 seconds for connection
+    while(conn_phase == RDConnectionPhaseConnected &&
+          iteration < 3) {
+        sleep(1);
+        iteration++;
+    }
+    //try anyway to send data
+    if((err = _sendAuthenticationRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -1, "Error sending autorization request");}
+    if((err = _sendInitRequest())) {LOG_AND_TROW(AbstractRemoteIODriver_ERR, -2, "Error sending initilization request");}
 }
 
-void AbstractClientRemoteIODriver::driverDeinit() throw (chaos::CException) {
+void AbstractClientRemoteIODriver::driverDeinit()  {
     //deinit driver  will send the deinitlization message to remote layer
     DBG<<"deinitializing  remote driver";
 

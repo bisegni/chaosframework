@@ -36,11 +36,11 @@ NodeMonitor::~NodeMonitor() {
     map_fetcher.clear();
 }
 
-void NodeMonitor::init(void *init_data) throw (chaos::CException) {
+void NodeMonitor::init(void *init_data)  {
     
 }
 
-void NodeMonitor::deinit() throw (chaos::CException) {
+void NodeMonitor::deinit()  {
 }
 
 bool NodeMonitor::addHandlerToNodeMonitor(const std::string& node_uid,

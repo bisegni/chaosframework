@@ -63,7 +63,7 @@ int EUPluginApiWrapper::execPlugin(const ScriptInParam& input_parameter,
         if((err = api_plugin->execute(input_json.c_str(), (uint32_t)input_json.size(), &output_data, &output_size)) == 0) {
             //we have data
             const std::string output_json((output_data?output_data:""), output_size);
-            output_parameter.push_back(CDataVariant(CDataBuffer::newOwnBufferFromBuffer(output_data, output_size)));
+            output_parameter.push_back(CDataVariant(MOVE(CDataBuffer::newOwnBufferFromBuffer(output_data, output_size))));
             output_parameter.push_back(CDataVariant(output_size));
             EUSW_DBG << CHAOS_FORMAT("Result EU plugin with ---->%1%", %output_json);
         }

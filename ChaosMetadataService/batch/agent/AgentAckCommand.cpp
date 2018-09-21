@@ -39,15 +39,14 @@ using namespace chaos::metadata_service::batch::agent;
 DEFINE_MDS_COMAMND_ALIAS(AgentAckCommand)
 
 AgentAckCommand::AgentAckCommand():
-MDSBatchCommand(),
-message_data(NULL){}
+MDSBatchCommand(){}
 
 AgentAckCommand::~AgentAckCommand() {}
 
 // inherited method
 void AgentAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!= NULL), ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, ERR, -3, "The rpc address of unit server is mandatory")
     
@@ -66,7 +65,7 @@ void AgentAckCommand::setHandler(CDataWrapper *data) {
     request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                             AgentNodeDomainAndActionRPC::RPC_DOMAIN_,
                             AgentNodeDomainAndActionRPC::ACTION_AGENT_REGISTRATION_ACK);
-    message_data = data;
+    message_data.reset(new CDataWrapper(data->getBSONRawData()));
 }
 
 // inherited method
@@ -79,7 +78,7 @@ void AgentAckCommand::ccHandler() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendMessage(*request,
-                        message_data);
+                        MOVE(message_data));
         }
             
         case MESSAGE_PHASE_SENT:

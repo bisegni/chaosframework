@@ -31,15 +31,13 @@ namespace chaos {
                 
                 class NewUS:
                 public AbstractApi {
-                    
                 public:
                     NewUS();
                     ~NewUS();
                     void performQuery(const std::string& uid,
                                       const string& desc,
                                       ChaosUniquePtr<chaos::common::data::CDataWrapper>& custom);
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr api_data);
                 };
             }
         }

@@ -51,29 +51,24 @@ online_retry(0){}
 /*!
  Initialization phase of the channel
  */
-void DeviceMessageChannel::init() throw(CException) {
+void DeviceMessageChannel::init() {
     DMCINFO<< "Try to allocate local mds channel";
     if(self_managed) {
         if((local_mds_channel = getBroker()->getMetadataserverMessageChannel(getMessageRequestDomain())) == NULL) {
             throw CException(-1, "Local metadata server channel not found", __PRETTY_FUNCTION__);
         }
         DMCINFO<< "Local MDS Channel allocated";
-        
-//        if(device_network_address->ip_port.size() == 0 ||
-//           device_network_address->node_id.size() == 0) {
-            //force to update the network id
         tryToReconnect();
-//        }
     }
 }
 
 /*!
  Initialization phase of the channel
  */
-void DeviceMessageChannel::deinit() throw(CException) {
+void DeviceMessageChannel::deinit() {
     if(self_managed) {
         async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-
+        
         if(local_mds_channel) {
             DMCINFO<< "Dispose local mds channel";
             getBroker()->disposeMessageChannel(local_mds_channel);
@@ -86,7 +81,7 @@ void DeviceMessageChannel::deinit() throw(CException) {
 void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *new_device_network_address) {
     NodeMessageChannel::setNewAddress(new_device_network_address);
     device_network_address = new_device_network_address;
-    DMCINFO << boost::str(boost::format("New netowrk address for device %1% has been set[%2%/%3%]")%device_network_address->device_id%device_network_address->node_id%device_network_address->ip_port);
+    DMCINFO << boost::str(boost::format("New network address for device %1% has been set[%2%/%3%]")%device_network_address->device_id%device_network_address->node_id%device_network_address->ip_port);
 }
 
 void DeviceMessageChannel::timeout() {
@@ -147,10 +142,10 @@ void DeviceMessageChannel::setOnline(OnlineState new_online_state) {
     if(new_online_state == OnlineStateOffline) {
         if(device_network_address&& device_network_address->device_id.size()){
             DMCINFO << CHAOS_FORMAT("Device %1% is offline",%device_network_address->device_id);
-
+            
         } else {
             DMCINFO << "Device NULL is offline";
-
+            
         }
         //enable auto reconnection if we need
         if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, MESSAGE_CHANNEL_FIRE_RECONNECT);}
@@ -187,7 +182,7 @@ void DeviceMessageChannel::tryToReconnect() {
                check_rpc_for_dev->getResult()->hasKey("alive")) {
                 setOnline(check_rpc_for_dev->getResult()->getBoolValue("alive")?OnlineStateOnline:OnlineStateOffline);
                 online_retry=0;
-
+                
             } else if(check_rpc_for_dev->getResult()  == NULL){
                 DMCINFO << "check update failed, retry:"<<online_retry;
                 if(online_retry>3){
@@ -199,7 +194,7 @@ void DeviceMessageChannel::tryToReconnect() {
             } else {
                 setOnline(OnlineStateOffline);
                 online_retry=0;
-
+                
             }
         } else {
             if(online_retry>3){
@@ -234,25 +229,24 @@ void DeviceMessageChannel::setSelfManaged(bool _self_managed) {
 
 #pragma device methods
 int DeviceMessageChannel::recoverDeviceFromError(int32_t millisec_to_wait){
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
     return getLastErrorCode();
 }
 
 //------------------------------------
-int DeviceMessageChannel::initDevice(CDataWrapper *initData, int32_t millisec_to_wait) {
-    CHAOS_ASSERT(initData)
+int DeviceMessageChannel::initDevice(CDWUniquePtr init_data,
+                                     int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> initResult(sendRequest(device_network_address->node_id,
-                                                  NodeDomainAndActionRPC::ACTION_NODE_INIT,
-                                                  initData,
-                                                  millisec_to_wait));
-    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+                                                                             NodeDomainAndActionRPC::ACTION_NODE_INIT,
+                                                                             MOVE(init_data),
+                                                                             millisec_to_wait));
     return getLastErrorCode();
 }
 
@@ -260,19 +254,18 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, int32_t millisec_to
 int DeviceMessageChannel::initDeviceToDefaultSetting(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     int err = ErrorCode::EC_NO_ERROR;
-    CDataWrapper *tmp_cdw_ptr = NULL;
+    CDWUniquePtr device_init_setting;
     if(local_mds_channel == NULL  || self_managed == false) return -100;
-    if((err = local_mds_channel->getLastDatasetForDevice(device_network_address->device_id, &tmp_cdw_ptr))){
+    if((err = local_mds_channel->getLastDatasetForDevice(device_network_address->device_id, device_init_setting))){
         //we have had error on comunication
         DMCERR << "Error getting device initialization parameter for " << device_network_address->node_id;
         return -101;
     }
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> device_init_setting(tmp_cdw_ptr);
     //we can proceed wi the initilization
     ChaosUniquePtr<chaos::common::data::CDataWrapper> initResult(sendRequest(device_network_address->node_id,
-                                                  NodeDomainAndActionRPC::ACTION_NODE_INIT,
-                                                  device_init_setting.get(),
-                                                  millisec_to_wait));
+                                                                             NodeDomainAndActionRPC::ACTION_NODE_INIT,
+                                                                             MOVE(device_init_setting),
+                                                                             millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
@@ -280,12 +273,12 @@ int DeviceMessageChannel::initDeviceToDefaultSetting(int32_t millisec_to_wait) {
 //------------------------------------
 int DeviceMessageChannel::deinitDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_DEINIT,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_DEINIT,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
@@ -293,12 +286,12 @@ int DeviceMessageChannel::deinitDevice(int32_t millisec_to_wait) {
 //------------------------------------
 int DeviceMessageChannel::startDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_START,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_START,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
@@ -306,12 +299,12 @@ int DeviceMessageChannel::startDevice(int32_t millisec_to_wait) {
 //------------------------------------
 int DeviceMessageChannel::stopDevice(int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_STOP,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_STOP,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
@@ -319,13 +312,13 @@ int DeviceMessageChannel::stopDevice(int32_t millisec_to_wait) {
 //------------------------------------
 int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    message_data.addStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG, restore_tag);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    message_data->addStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG, restore_tag);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
 }
@@ -334,9 +327,9 @@ int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, int
 int DeviceMessageChannel::getType(std::string& control_unit_type, int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
-                                              NULL,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
+                                                                         CDWUniquePtr(),
+                                                                         millisec_to_wait));
     if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         if(result.get() && result->hasKey(NodeDefinitionKey::NODE_TYPE)){
             control_unit_type = result->getStringValue(NodeDefinitionKey::NODE_TYPE);
@@ -349,13 +342,13 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, int32_t millis
 //------------------------------------
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
+    CDWUniquePtr message_data(new CDataWrapper());
     deviceState=CUStateKey::UNDEFINED;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         if(result.get() && result->hasKey(CUStateKey::CONTROL_UNIT_STATE)){
             deviceState = (CUStateKey::ControlUnitState)result->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
@@ -366,19 +359,22 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, in
 }
 
 //------------------------------------
-int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues,
+int DeviceMessageChannel::setAttributeValue(CDWUniquePtr attribute_values,
                                             bool noWait,
                                             int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     //create the pack
-    attributesValues.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    attribute_values->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+                                     device_network_address->device_id);
     if(noWait){
-        sendMessage(device_network_address->node_id, ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &attributesValues);
+        sendMessage(device_network_address->node_id,
+                    ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
+                    MOVE(attribute_values));
     } else {
         ChaosUniquePtr<chaos::common::data::CDataWrapper> initResult(sendRequest(device_network_address->node_id,
-                                                      ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                                      &attributesValues,
-                                                      millisec_to_wait));
+                                                                                 ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
+                                                                                 MOVE(attribute_values),
+                                                                                 millisec_to_wait));
     }
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
@@ -388,13 +384,13 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues,
 int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
                                            int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
-    message_data.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
+    CDWUniquePtr message_data(new CDataWrapper());
+    message_data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_network_address->device_id);
+    message_data->addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
     ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
-                                              &message_data,
-                                              millisec_to_wait));
+                                                                         NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
+                                                                         MOVE(message_data),
+                                                                         millisec_to_wait));
     //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
     return getLastErrorCode();
     
@@ -402,50 +398,38 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
 
 //------------------------------------
 int DeviceMessageChannel::sendCustomMessage(const std::string& action_name,
-                                            CDataWrapper* const message_data) {
+                                            CDWUniquePtr message_data) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     sendMessage(device_network_address->node_id,
                 action_name,
-                message_data);
+                MOVE(message_data));
     return 0;
 }
 
 //------------------------------------
 int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
-                                            CDataWrapper* const message_data,
-                                            CDataWrapper** result_data,
+                                            CDWUniquePtr message_data,
+                                            CDWUniquePtr& result_data,
                                             uint32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> result(sendRequest(device_network_address->node_id,
-                                              action_name,
-                                              message_data,
-                                              millisec_to_wait));
-    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
-        *result_data = result.release();
-    }
-    //setOnline(!CHAOS_IS_RPC_SERVER_OFFLINE(getLastErrorCode()));
+    result_data = sendRequest(device_network_address->node_id,
+                              action_name,
+                              MOVE(message_data),
+                              millisec_to_wait);
     return getLastErrorCode();
 }
 
 //------------------------------------
 ChaosUniquePtr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWithFuture(const std::string& action_name,
-                                                                                       common::data::CDataWrapper *request_data) {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
+                                                                                        CDWUniquePtr request_data) {
     return sendRequestWithFuture(device_network_address->node_id,
                                  action_name,
-                                 request_data);
+                                 MOVE(request_data));
 }
 
 //! Send a request for receive RPC information
 ChaosUniquePtr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
     return NodeMessageChannel::checkRPCInformation(device_network_address->node_id);
-}
-
-//! Send a request for an echo test
-ChaosUniquePtr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
-    //CHECK_ONLINE_OR_RETURN(ChaosUniquePtr<MessageRequestFuture>());
-    return NodeMessageChannel::echoTest(echo_data);
 }
 
 void DeviceMessageChannel::requestPromisesHandler(const FuturePromiseData& response_data) {

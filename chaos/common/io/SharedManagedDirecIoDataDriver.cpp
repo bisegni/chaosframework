@@ -23,14 +23,14 @@
 using namespace chaos::common::io;
 using namespace chaos::common::utility;
 
-void SharedManagedDirecIoDataDriver::init(void *data) throw(chaos::CException) {
+void SharedManagedDirecIoDataDriver::init(void *data)  {
     ChaosWriteLock wl(init_mtx);
     if(getServiceState() == CUStateKey::INIT) {return;}
     shared_data_driver.reset(new ManagedDirectIODataDriver());
     InizializableService::initImplementation(shared_data_driver.get(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
 }
 
-void SharedManagedDirecIoDataDriver::deinit() throw(chaos::CException) {
+void SharedManagedDirecIoDataDriver::deinit()  {
     ChaosWriteLock wl(init_mtx);
     if(getServiceState() == CUStateKey::DEINIT) {return;}
     InizializableService::deinitImplementation(shared_data_driver.get(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);

@@ -32,11 +32,11 @@ AbstractMetricBackend::~AbstractMetricBackend() {
     
 }
 
-void AbstractMetricBackend::init(void *init_data) throw(chaos::CException) {
+void AbstractMetricBackend::init(void *init_data)  {
     
 }
 
-void AbstractMetricBackend::deinit() throw(chaos::CException) {
+void AbstractMetricBackend::deinit()  {
     
 }
 

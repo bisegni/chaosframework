@@ -88,7 +88,7 @@ namespace chaos {
 #endif
     }
     
-#include <csignal>
+//#include <csignal>
 #ifndef CHAOS_NO_BACKTRACE
     class SignalHandling {
     public:
@@ -145,22 +145,25 @@ namespace chaos {
         bool loaded() const { return _loaded; }
         
         static void handleSignal(int, siginfo_t* info, void* _ctx) {
-            ucontext_t *uctx = (ucontext_t*) _ctx;
             
             backward::StackTrace st;
             void* error_addr = 0;
-#ifdef REG_RIP // x86_64
+#if defined(REG_RIP)// x86_64
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_RIP]);
 #elif defined(REG_EIP) // x86_32
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.gregs[REG_EIP]);
 #elif defined(__arm__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.arm_pc);
 #elif defined(__aarch64__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.pc);
 #elif defined(__ppc__) || defined(__powerpc) || defined(__powerpc__) || defined(__POWERPC__)
+            ucontext_t *uctx = (ucontext_t*) _ctx;
             error_addr = reinterpret_cast<void*>(uctx->uc_mcontext.regs->nip);
 #else
-#    warning ":/ sorry, ain't know no nothing none not of your architecture!"
 #endif
             if (error_addr) {
                 st.load_from(error_addr, 32);
@@ -266,7 +269,7 @@ namespace chaos {
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
-        void init(int argc, const char* argv[]) throw (CException) {
+        void init(int argc, const char* argv[])  {
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
@@ -277,7 +280,7 @@ namespace chaos {
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void init(std::istream &initStream) throw (CException) {
+        void init(std::istream &initStream)  {
             GlobalConfiguration::getInstance()->parseStringStream(initStream);
             init(NULL);
         }
@@ -287,7 +290,7 @@ namespace chaos {
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        void init(void *init_data) throw (CException) {
+        void init(void *init_data)  {
             int err = 0;
             struct utsname u_name;
             if(initialized)
@@ -365,14 +368,12 @@ namespace chaos {
                     //initialize the plugin manager
                     chaos::common::utility::InizializableService::initImplementation(chaos::common::plugin::PluginManager::getInstance(), NULL, "PluginManager", __PRETTY_FUNCTION__);
                 }
-            } catch(CException& ex) {
-                throw ex;
             } catch(...) {
                 throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
             }
         }
                 
-        void deinit() throw (CException) {
+        void deinit()  {
             if(deinitialized) return;
             deinitialized=true;
             initialized = false;
@@ -393,8 +394,8 @@ namespace chaos {
             chaos::common::log::LogManager::getInstance()->deinit();
         }
                 
-        void start() throw (CException) {}
-        void stop() throw (CException) {}
+        void start()  {}
+        void stop()  {}
                 
         GlobalConfiguration *getGlobalConfigurationInstance() {
             return GlobalConfiguration::getInstance();

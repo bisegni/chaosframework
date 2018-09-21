@@ -21,7 +21,7 @@
 
 #include <chaos_metadata_service_client/api_proxy/service/RestoreSnapshot.h>
 
-using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::service;
 
@@ -29,11 +29,8 @@ API_PROXY_CD_DEFINITION(RestoreSnapshot,
                         "service",
                         "restoreSnapshot")
 
-/*!
- 
- */
 ApiProxyResult RestoreSnapshot::execute(const std::string& snapshot_name) {
-    common::data::CDataWrapper *message = new common::data::CDataWrapper();
+    CDWUniquePtr message(new CDataWrapper());
     message->addStringValue("snapshot_name", snapshot_name);
     return callApi(message);
 }

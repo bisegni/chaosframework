@@ -117,7 +117,7 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 					void handleCommandEvent(const std::string& command_alias,
                                             uint64_t command_seq,
 											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
-                                            chaos::common::data::CDataWrapper *command_data,
+                                            chaos::common::batch_command::CommandInfoAndImplementation *command_info,
                                             const chaos_batch::BatchCommandStat& commands_stats);
 
 					//! general sandbox event handler
@@ -128,16 +128,16 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 public:
 
                     // Initialize instance
-                    void init(void*) throw(chaos::CException);
+                    void init(void*);
 
 					// Start the implementation
-					void start() throw(chaos::CException);
+					void start();
 
 					// Start the implementation
-					void stop() throw(chaos::CException);
+					void stop();
 
 					// Deinit instance
-					void deinit() throw(chaos::CException);
+					void deinit();
 
 					//! Install a command associated with a type
                     void installCommand(const std::string& alias,

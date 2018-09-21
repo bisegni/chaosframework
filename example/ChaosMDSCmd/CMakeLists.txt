@@ -12,5 +12,5 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(ChaosMDSCmd chaos_uitoolkit chaos_common chaos_metadata_service_client ${FrameworkLib})
+TARGET_LINK_LIBRARIES(ChaosMDSCmd chaos_common chaos_metadata_service_client ${FrameworkLib})
 INSTALL_TARGETS(/bin ChaosMDSCmd)

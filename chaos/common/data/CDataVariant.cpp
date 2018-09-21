@@ -122,15 +122,15 @@ std::string string_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffe
 
 
 #pragma mark CDataBuffervisitor
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const bool bv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&bv,sizeof(bool),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int32_t i32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i32v,sizeof(int32_t),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint32_t ui32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui32v,sizeof(uint32_t),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int64_t i64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i64v,sizeof(int64_t),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint64_t ui64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui64v,sizeof(uint64_t),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const double dv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&dv,sizeof(double),true));}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size(), true));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const bool bv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&bv,sizeof(bool)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int32_t i32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i32v,sizeof(int32_t)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint32_t ui32v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui32v,sizeof(uint32_t)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const int64_t i64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&i64v,sizeof(int64_t)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const uint64_t ui64v) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&ui64v,sizeof(uint64_t)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const double dv) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer((const char*)&dv,sizeof(double)));}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const std::string& str) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(str.c_str(), (uint32_t)str.size()));}
 ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const ChaosSharedPtr<CDataBuffer>& buffer) const {return buffer;}
-ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size(), true));;}
+ChaosSharedPtr<CDataBuffer> CDataBuffer_visitor::operator()(const ChaosSharedPtr<CDataWrapper>& buffer) const {return ChaosSharedPtr<CDataBuffer>(new CDataBuffer(buffer->getJSONString().c_str(), (uint32_t)buffer->getJSONString().size()));}
 
 #pragma mark CDataWrappervisitor
 ChaosSharedPtr<CDataWrapper> CDataWrapper_visitor::operator()(const bool bv) const {throw CFatalException(-1,"invalid conversion to CDataWrapper from bool",__PRETTY_FUNCTION__);return ChaosSharedPtr<CDataWrapper>(new CDataWrapper());}
@@ -187,9 +187,9 @@ CDataVariant::CDataVariant(const char * string_value):_internal_variant(std::str
     }
 }
 
-CDataVariant::CDataVariant(CDataBuffer *buffer_value):
+CDataVariant::CDataVariant(CDBufferUniquePtr buffer_value):
 type(DataType::TYPE_BYTEARRAY),
-_internal_variant(ChaosSharedPtr<CDataBuffer>(buffer_value)) { }
+_internal_variant(ChaosSharedPtr<CDataBuffer>(buffer_value.release())) { }
 
 CDataVariant::CDataVariant(CDataWrapper *buffer_value):
 type(DataType::TYPE_CLUSTER),
@@ -237,8 +237,7 @@ type(_type){
         }
         case DataType::TYPE_BYTEARRAY:{
             _internal_variant = ChaosSharedPtr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
-                                                                            _value_size,
-                                                                            true));
+                                                                            _value_size));
             break;
         }
         default:
@@ -254,9 +253,11 @@ bool CDataVariant::isValid() const{
     return (type != DataType::TYPE_UNDEFINED);
 }
 
-CDataVariant& CDataVariant::operator=(const CDataVariant& arg) {
-    type = arg.type;
-    _internal_variant = arg._internal_variant;
+CDataVariant& CDataVariant::operator=(const CDataVariant& rhs) {
+    if (this != &rhs) {
+        type = rhs.type;
+        _internal_variant = rhs._internal_variant;
+    }
     return *this;
 }
 
@@ -324,11 +325,11 @@ CDataVariant::operator const CDataBuffer*() const {
     return asCDataBuffer();
 }
 
-ChaosSharedPtr<CDataBuffer> CDataVariant::asCDataBufferShrdPtr() {
+CDBufferShrdPtr CDataVariant::asCDataBufferShrdPtr() {
     return boost::apply_visitor( CDataBuffer_visitor(), _internal_variant);
 }
 
-CDataVariant::operator ChaosSharedPtr<CDataBuffer>() {
+CDataVariant::operator CDBufferShrdPtr() {
     return asCDataBufferShrdPtr();
 }
 

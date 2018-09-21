@@ -31,17 +31,9 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_DI_DBG  DBG_LOG(GetInstance)
 #define CU_DI_ERR  ERR_LOG(GetInstance)
 
-DeleteInstance::DeleteInstance():
-AbstractApi("deleteInstance"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(DeleteInstance, "deleteInstance");
 
-}
-
-DeleteInstance::~DeleteInstance() {
-
-}
-
-CDataWrapper *DeleteInstance::execute(CDataWrapper *api_data,
-                                      bool& detach_data) throw(chaos::CException) {
+CDWUniquePtr DeleteInstance::execute(CDWUniquePtr api_data) {
     int err = 0;
     if(!api_data) {LOG_AND_TROW(CU_DI_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_DI_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
@@ -55,5 +47,5 @@ CDataWrapper *DeleteInstance::execute(CDataWrapper *api_data,
                                                cu_uid))){
         LOG_AND_TROW(CU_DI_ERR, err, boost::str(boost::format("Error removing the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % us_uid));
     }
-    return NULL;
+    return CDWUniquePtr();
 }

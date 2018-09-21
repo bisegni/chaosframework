@@ -60,10 +60,10 @@ namespace chaos {
 				AsyncCentralManager();
 				~AsyncCentralManager();
 				// Initialize instance
-				void init(void *inti_data) throw(chaos::CException);
+				void init(void *inti_data);
 				
 				// Deinit the implementation
-				void deinit() throw(chaos::CException);
+				void deinit();
 			public:
                 //!ad a timer specifying the timeout and repeat time in milliseconds
 				int addTimer(TimerHandler *timer_handler,
@@ -73,7 +73,7 @@ namespace chaos {
 				int removeTimer(TimerHandler *timer_handler);
                 
                 //!submit a runnable
-                void submitAsyncJob(AsyncRunnable *runnable);
+                void submitAsyncJob(ChaosUniquePtr<AsyncRunnable> runnable);
 			};
 		}
 	}

@@ -53,22 +53,22 @@ thread_run(false){}
 
 BatchCommandParallelSandbox::~BatchCommandParallelSandbox() {}
 
-void BatchCommandParallelSandbox::init(void *init_data) throw(CException) {
+void BatchCommandParallelSandbox::init(void *init_data) {
     
 }
 
-void BatchCommandParallelSandbox::start() throw(CException) {
+void BatchCommandParallelSandbox::start() {
     thread_run = true;
     thread_group.add_thread(new boost::thread(boost::bind(&BatchCommandParallelSandbox::runCommand, this)));
 }
 
-void BatchCommandParallelSandbox::stop() throw(CException) {
+void BatchCommandParallelSandbox::stop() {
     thread_run = false;
     sem_waith_for_job.unlock();
     thread_group.join_all();
 }
 
-void BatchCommandParallelSandbox::deinit() throw(CException) {
+void BatchCommandParallelSandbox::deinit() {
     
 }
 
@@ -109,7 +109,7 @@ void BatchCommandParallelSandbox::runCommand() {
                     event_handler->handleCommandEvent(submition_command_queue().front()->command_info.cmdImpl->command_alias,
                                                       submition_command_queue().front()->command_info.cmdImpl->unique_id,
                                                       BatchCommandEventType::EVT_RUNNING,
-                                                      submition_command_queue().front()->command_info.cmdInfo,
+                                                      &submition_command_queue().front()->command_info,
                                                       cmd_stat);
                 }
                 if(processCommand(true,
@@ -146,7 +146,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
     try{
         if(set_handler_call) {
             //run set handler
-            command_stat.command_info.cmdImpl->commandPre();
+            command_stat.command_info.cmdImpl->startHandler();
             command_stat.command_info.cmdImpl->setHandler(command_stat.command_info.cmdInfo);
             command_stat.command_info.cmdImpl->already_setupped = true;
             
@@ -192,7 +192,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                 event_handler->handleCommandEvent(command_stat.command_info.cmdImpl->command_alias,
                                                   command_stat.command_info.cmdImpl->unique_id,
                                                   BatchCommandEventType::EVT_FAULT,
-                                                  command_stat.command_info.cmdInfo,
+                                                  &command_stat.command_info,
                                                   cmd_stat);
             }
             result = false;
@@ -204,7 +204,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                 event_handler->handleCommandEvent(command_stat.command_info.cmdImpl->command_alias,
                                                   command_stat.command_info.cmdImpl->unique_id,
                                                   BatchCommandEventType::EVT_FATAL_FAULT,
-                                                  command_stat.command_info.cmdInfo,
+                                                  &command_stat.command_info,
                                                   cmd_stat);
             }
             result = false;
@@ -216,7 +216,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
                 event_handler->handleCommandEvent(command_stat.command_info.cmdImpl->command_alias,
                                                   command_stat.command_info.cmdImpl->unique_id,
                                                   BatchCommandEventType::EVT_COMPLETED,
-                                                  command_stat.command_info.cmdInfo,
+                                                  &command_stat.command_info,
                                                   cmd_stat);
             }
             result = false;
@@ -234,7 +234,7 @@ void BatchCommandParallelSandbox::killCurrentCommand() {}
 void BatchCommandParallelSandbox::clearCommandQueue() {}
 void BatchCommandParallelSandbox::setCurrentCommandScheduerStepDelay(uint64_t scheduler_step_delay) {}
 void BatchCommandParallelSandbox::lockCurrentCommandFeature(bool lock) {}
-void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features) throw (CException) {}
+void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features)  {}
 void BatchCommandParallelSandbox::setDefaultStickyCommand(BatchCommand *sticky_command) {}
 
 bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
@@ -244,14 +244,15 @@ bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
     LockableSubmissionQueueWriteLock wl = submition_command_queue.getWriteLockObject();
     cmd_stat.queued_commands++;
     addCommandID(command_impl);
-    submition_command_queue().push(RunningCommandStatShrdPtr(new RunningCommandStat(command_data, command_impl)));
+    RunningCommandStatShrdPtr element_to_push(new RunningCommandStat(command_data, command_impl));
     if (event_handler){
         event_handler->handleCommandEvent(command_impl->command_alias,
                                           command_impl->unique_id,
                                           BatchCommandEventType::EVT_QUEUED,
-                                          command_data,
+                                          &element_to_push->command_info,
                                           cmd_stat);
     }
+    submition_command_queue().push(element_to_push);
     sem_waith_for_job.unlock();
     return true;
 }

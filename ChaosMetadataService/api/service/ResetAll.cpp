@@ -31,20 +31,13 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< ChaosSharedPtr<CDataWrapper> > ResultVector;
 
-ResetAll::ResetAll():
-AbstractApi("resetAll"){
+CHAOS_MDS_DEFINE_API_CLASS_CD(ResetAll, "resetAll")
 
-}
-
-ResetAll::~ResetAll() {
-
-}
-
-chaos::common::data::CDataWrapper *ResetAll::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+CDWUniquePtr ResetAll::execute(CDWUniquePtr api_data) {
     int err = 0;
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -1);
     if((err = u_da->resetAllData())) {
         LOG_AND_TROW(S_RA_ERR, err, "Error resetting all data");
     }
-    return NULL;
+    return CDWUniquePtr();
 }

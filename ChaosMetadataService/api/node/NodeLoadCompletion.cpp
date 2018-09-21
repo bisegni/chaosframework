@@ -33,19 +33,10 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_LC_DBG  DBG_LOG(NodeLoadCompletion)
 #define CU_LC_ERR  ERR_LOG(NodeLoadCompletion)
 
-NodeLoadCompletion::NodeLoadCompletion():
-AbstractApi(chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION){
-    
-}
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeLoadCompletion, chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION)
 
-NodeLoadCompletion::~NodeLoadCompletion() {
-    
-}
-
-CDataWrapper *NodeLoadCompletion::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
-    chaos::common::data::CDataWrapper *result = NULL;
-    
+CDWUniquePtr NodeLoadCompletion::execute(CDWUniquePtr api_data) {
+    CDWUniquePtr result;
     CHECK_CDW_THROW_AND_LOG(api_data, CU_LC_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_LC_ERR, -2, "The ndk_uid key is mandatory");
     if(!api_data->isStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)){LOG_AND_TROW(CU_LC_ERR, -3, "The ndk_uid key need to be string");}
@@ -61,23 +52,9 @@ CDataWrapper *NodeLoadCompletion::execute(CDataWrapper *api_data,
         
     } else if(boost::starts_with(node_type, NodeType::NODE_TYPE_CONTROL_UNIT)) {
         //the control units type value start with the default but are followe by custom type
-        result = controlUnitCompletion(api_data,
-                                         detach_data);
+
     } else {
         throw CException(-3, "Type of node not managed for registration", __PRETTY_FUNCTION__);
     }
-
     return result;
-}
-
-//! perform the completion for control unit type node
-chaos::common::data::CDataWrapper *NodeLoadCompletion::controlUnitCompletion(chaos::common::data::CDataWrapper *api_data,
-                                                                               bool& detach_data) throw(chaos::CException) {
-    int                                         err                 = 0;
-    uint64_t                                    command_id          = 0;
-    CDataWrapper                                *tmp_ptr            = NULL;
-    std::string                                 temp_node_uid       = "";
-    std::string                                 cu_id               = "";
-    
-    return NULL;
 }

@@ -46,8 +46,7 @@ namespace chaos{
                           AbstractCommandDispatcher){
         MapDomainActionsLocked map_domain_actions;
     protected:
-        void processBufferElement(chaos_data::CDataWrapper*,
-                                  ElementManagingPolicy&) throw(CException);
+        void processBufferElement(chaos::common::data::CDWShrdPtr element);
     public:
         SharedCommandDispatcher(const string& alias);
         virtual ~SharedCommandDispatcher();
@@ -55,28 +54,28 @@ namespace chaos{
         /*!
          Initialization method for output buffer
          */
-        virtual void init(void *) throw(CException);
+        virtual void init(void *);
         
         /*!
          Deinitialization method for output buffer
          */
-        virtual void deinit() throw(CException);
+        virtual void deinit();
         
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
-        virtual void registerAction(DeclareAction*)  throw(CException) ;
+        virtual void registerAction(DeclareAction*)  ;
         
         /*!
          Deregister actions for a determianted domain
          */
-        virtual void deregisterAction(DeclareAction*)  throw(CException) ;
+        virtual void deregisterAction(DeclareAction*)  ;
         
         // inherited method
-        chaos::common::data::CDataWrapper* dispatchCommand(chaos::common::data::CDataWrapper*) throw(CException);
+        chaos::common::data::CDWUniquePtr dispatchCommand(chaos::common::data::CDWUniquePtr rpc_call_data);
         
         // inherited method
-        chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
+        chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr rpc_call_data);
         
         //inherited method
         uint32_t domainRPCActionQueued(const std::string& domain_name);

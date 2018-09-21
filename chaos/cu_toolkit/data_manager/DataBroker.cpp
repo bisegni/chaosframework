@@ -36,11 +36,11 @@ publishing_manager(dataset_manager.container_dataset){}
 
 DataBroker::~DataBroker() {}
 
-void DataBroker::init(void* init_data) throw(CException) {
+void DataBroker::init(void* init_data) {
     
 }
 
-void DataBroker::deinit() throw(CException) {
+void DataBroker::deinit() {
     
 }
 

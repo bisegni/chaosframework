@@ -21,16 +21,15 @@
 #ifndef CObjectProcessingQueue_H
 #define CObjectProcessingQueue_H
 
-#include <chaos/common/pqueue/CObjectProcessingQueueListener.h>
-#include <chaos/common/exception/exception.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
-
-#include <queue>
+#include <chaos/common/exception/exception.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
+
+#include <queue>
 
 #define LOG_HEAD "[CObjectProcessingQueue] - "
 #define COPQUEUE_LAPP_ LAPP_ << LOG_HEAD
@@ -39,234 +38,194 @@
 
 #define CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE 1000
 namespace chaos {
-	
-	
-	typedef struct ElementManagingPolicy {
-		bool elementHasBeenDetached;
-	} ElementManagingPolicy;
-	
-	
-	/*
-	 Base class for the Output Buffer structure
-	 */
-	template<typename T>
-	class CObjectProcessingQueue {
-		std::string uid;
-		//thread group
-		//CThreadGroup threadGroup;
-		boost::thread_group t_group;
-	protected:
-		std::queue<T*> bufferQueue;
-		bool in_deinit;
-		mutable boost::mutex qMutex;
-		boost::condition_variable liveThreadConditionLock;
-		boost::condition_variable emptyQueueConditionLock;
-		
-		CObjectProcessingQueueListener<T> *eventListener;
-		
-		/*
-		 Thread method that work on buffer item
-		 */
-		void executeOnThread() {
-			//get the oldest element
-			while(!in_deinit) {
-				T* dataRow = NULL;
-				ElementManagingPolicy elementPolicy;
-				//retrive the oldest element
-				dataRow = waitAndPop();
-				if(!dataRow) {
-					DEBUG_CODE(COPQUEUE_LDBG_<<"waitAndPop() return NULL object so we return";)
-					continue;
-				}
-				//Process the element
-				try {
-					if(eventListener &&
-					   !(*eventListener).elementWillBeProcessed(tag, dataRow)){
-						DELETE_OBJ_POINTER(dataRow);
-						continue;
-					}
-					elementPolicy.elementHasBeenDetached=false;
-					processBufferElement(dataRow, elementPolicy);
-					if(elementPolicy.elementHasBeenDetached) continue;
-				} catch (CException& ex) {
-					DECODE_CHAOS_EXCEPTION(ex)
-				} catch (...) {
-					COPQUEUE_LAPP_ << "Unkown exception";
-				}
-				
-				//if weg got a listener notify it
-				if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))continue;
-				
-				DELETE_OBJ_POINTER(dataRow);
-			}
-			DEBUG_CODE(COPQUEUE_LDBG_<< "executeOnThread ended";)
-		}
-		
-		/*
-		 Process the oldest element in buffer
-		 */
-		virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
-		
-	public:
-		int tag;
-		
-		CObjectProcessingQueue():
-		in_deinit(false),
-        tag(0),
-		eventListener(NULL),
-		uid(common::utility::UUIDUtil::generateUUIDLite()){}
-		
-		CObjectProcessingQueue(CObjectProcessingQueueListener<T> *_eventListener):
-        tag(0),
-		in_deinit(false),
-		eventListener(_eventListener),
-		uid(common::utility::UUIDUtil::generateUUIDLite()){}
-		
-		/*
-		 Set the internal thread delay for execute new task
-		 
-		 void setDelayBeetwenTask(long threadDelay){
-		 threadGroup.setDelayBeetwenTask(threadDelay);
-		 } */
-		
-		/*
-		 Initialization method for output buffer
-		 */
-		virtual void init(int threadNumber) throw(CException) {
-			in_deinit = false;
-			COPQUEUE_LDBG_ << "init";
-			//add the n thread on the threadgroup
-			COPQUEUE_LDBG_ << "creating and starting" << threadNumber << " thread";
-			for (int idx = 0; idx<threadNumber; idx++) {
-				t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
-			}
-			
-			COPQUEUE_LDBG_ << "Initialized";
-			}
-			
-			/*
-			 Deinitialization method for output buffer
-			 */
-			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				COPQUEUE_LDBG_ << "Deinitialization";
-				
-				if(waithForEmptyQueue){
-					COPQUEUE_LDBG_ << " wait until queue is empty";
-					while(!bufferQueue.empty()){
-						emptyQueueConditionLock.timed_wait(lock,
-														   boost::posix_time::milliseconds(500));
-						
-					}
-					COPQUEUE_LDBG_ << "queue is empty";
-				}
-				COPQUEUE_LDBG_ << "Stopping thread";
-				in_deinit = true;
-				liveThreadConditionLock.notify_all();
+    
+    typedef struct ElementManagingPolicy {
+        bool elementHasBeenDetached;
+    } ElementManagingPolicy;
+    
+    /*
+     Base class for the Output Buffer structure
+     */
+    template<typename T>
+    class CObjectProcessingQueue {
+    public:
+        typedef ChaosSharedPtr<T> QueueElementShrdPtr;
+    private:
+        const std::string uuid;
+        //thread group
+        //CThreadGroup threadGroup;
+        boost::thread_group t_group;
+    protected:
+        bool in_deinit;
+        mutable boost::mutex qMutex;
+        std::queue< QueueElementShrdPtr > buffer_queue;
+        boost::condition_variable liveThreadConditionLock;
+        boost::condition_variable emptyQueueConditionLock;
+        
+        /*
+         Thread method that work on buffer item
+         */
+        void executeOnThread() {
+            //get the oldest element
+            while(!in_deinit) {
+                //Process the element
                 try {
-                   if(lock.owns_lock()) lock.unlock();
+                    QueueElementShrdPtr element = MOVE(waitAndPop());
+                    if(!element.get()) {
+                        continue;
+                    }
+                    processBufferElement(MOVE(element));
+                } catch (CException& ex) {
+                    DECODE_CHAOS_EXCEPTION(ex)
+                } catch (...) {
+                    COPQUEUE_LAPP_ << "Unkown exception";
+                }
+            }
+            DEBUG_CODE(COPQUEUE_LDBG_<< "executeOnThread ended";)
+        }
+        
+        /*
+         Process the oldest element in buffer
+         */
+        virtual void processBufferElement(QueueElementShrdPtr element)  = 0;
+        
+    public:
+        CObjectProcessingQueue():
+        in_deinit(false),
+        uuid(common::utility::UUIDUtil::generateUUIDLite()){}
+        
+        const std::string& getUUID() const{
+            return uuid;
+        }
+        /*
+         Initialization method for output buffer
+         */
+        virtual void init(int threadNumber) {
+            in_deinit = false;
+            COPQUEUE_LDBG_ << "init";
+            //add the n thread on the threadgroup
+            COPQUEUE_LDBG_ << "creating and starting" << threadNumber << " thread";
+            for (int idx = 0; idx<threadNumber; idx++) {
+                t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
+            }
+            
+            COPQUEUE_LDBG_ << "Initialized";
+            }
+            
+            /*
+             Deinitialization method for output buffer
+             */
+            virtual void deinit(bool waithForEmptyQueue=true) {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                COPQUEUE_LDBG_ << "Deinitialization";
+                
+                if(waithForEmptyQueue){
+                    COPQUEUE_LDBG_ << " wait until queue is empty";
+                    while(!buffer_queue.empty()){
+                        emptyQueueConditionLock.timed_wait(lock,
+                                                           boost::posix_time::milliseconds(500));
+                        
+                    }
+                    COPQUEUE_LDBG_ << "queue is empty";
+                }
+                COPQUEUE_LDBG_ << "Stopping thread";
+                in_deinit = true;
+                liveThreadConditionLock.notify_all();
+                try {
+                    if(lock.owns_lock()) lock.unlock();
                 }catch(...) {
                     COPQUEUE_LERR_ << "Error unlocking";
                 }
-				COPQUEUE_LDBG_ << "join internal thread group";
-				t_group.join_all();
+                COPQUEUE_LDBG_ << "join internal thread group";
+                t_group.join_all();
                 COPQUEUE_LDBG_ << "deinitialized";
-			}
-			
-			/*
-			 push the row value into the buffer
-			 */
-			virtual bool push(T* data) throw(CException) {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				if(in_deinit ||
-				   bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
-				bufferQueue.push(data);
-				liveThreadConditionLock.notify_one();
-				return true;
-			}
-			
-			/*
-			 get the last insert data
-			 */
-			T* waitAndPop() {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				//output result poitner
-				T *oldestElement = NULL;
-				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
-				while(bufferQueue.empty() && !in_deinit) {
-					liveThreadConditionLock.wait(lock);
-				}
-				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
-				//get the oldest data ad copy the ahsred_ptr
-				if(bufferQueue.empty()) {
-					DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
-					return NULL;
-				}
-				//get the last pointer from the queue
-				oldestElement = bufferQueue.front();
-				
-				//remove the oldest data
-				bufferQueue.pop();
-				return oldestElement;
-			}
-			
-			/*
-			 check for empty buffer
-			 */
-			bool isEmpty() const {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				return bufferQueue.empty();
-			}
-			
-			/*
-			 check for empty buffer
-			 */
-			void waitForEmpty() {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				while(!bufferQueue.empty()){
-					emptyQueueConditionLock.timed_wait(lock,
-													   boost::posix_time::milliseconds(500));
-				}
-				return bufferQueue.empty();
-			}
-			
-			
-			/*
-			 clear the queue, remove all non processed element
-			 */
-			void clear() {
-				CHAOS_BOOST_LOCK_ERR(boost::unique_lock<boost::mutex> lock(qMutex);, COPQUEUE_LERR_ << "Error on lock";)
-				
-				//remove all element
-				while (!bufferQueue.empty()) {
-					T* to_delete = bufferQueue.front();
-					bufferQueue.pop();
-					DELETE_OBJ_POINTER(to_delete)
-				}
-			}
-			
-			/*
-			 Return le number of elementi into live data
-			 */
-			unsigned long queueSize() {
-				boost::unique_lock<boost::mutex> lock(qMutex);
-				return bufferQueue.size();
-			}
-			
-			/*
-			 Assign the elaboration Listener
-			 */
-			void setEndElaborationListener(CObjectProcessingQueueListener<T> *objPtr) {
-				eventListener = objPtr;
-			}
-			
-			/*
-			 Whait the thread termination
-			 */
-			void joinBufferThread() {
-				t_group.join_all();
-			}
-			};
-			}
+            }
+            
+            /*
+             push the row value into the buffer
+             */
+            virtual bool push(QueueElementShrdPtr data) {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                if(in_deinit ||
+                   buffer_queue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
+                buffer_queue.push(MOVE(data));
+                liveThreadConditionLock.notify_one();
+                return true;
+            }
+            
+            /*
+             get the last insert data
+             */
+            QueueElementShrdPtr waitAndPop() {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                //output result poitner
+                QueueElementShrdPtr element;
+                //DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
+                while(buffer_queue.empty() && !in_deinit) {
+                    liveThreadConditionLock.wait(lock);
+                }
+                //DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
+                //get the oldest data ad copy the ahsred_ptr
+                if(buffer_queue.empty()) {
+                    DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
+                    return QueueElementShrdPtr();
+                }
+                //get the last pointer from the queue
+                element = buffer_queue.front();
+                
+                //remove the oldest data
+                buffer_queue.pop();
+                return element;
+            }
+            
+            /*
+             check for empty buffer
+             */
+            bool isEmpty() const {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                return buffer_queue.empty();
+            }
+            
+            /*
+             check for empty buffer
+             */
+            void waitForEmpty() {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                while(!buffer_queue.empty()){
+                    emptyQueueConditionLock.timed_wait(lock,
+                                                       boost::posix_time::milliseconds(500));
+                }
+                return buffer_queue.empty();
+            }
+            
+            
+            /*
+             clear the queue, remove all non processed element
+             */
+            void clear() {
+                CHAOS_BOOST_LOCK_ERR(boost::unique_lock<boost::mutex> lock(qMutex);, COPQUEUE_LERR_ << "Error on lock";)
+                //remove all element
+                while (!buffer_queue.empty()) {
+                    //QueueElementShrdPtr tmp = MOVE(bufferQueue.front());
+                    buffer_queue.pop();
+                }
+            }
+            
+            /*
+             Return le number of elementi into live data
+             */
+            unsigned long queueSize() {
+                boost::unique_lock<boost::mutex> lock(qMutex);
+                return buffer_queue.size();
+            }
+            
+            /*
+             Whait the thread termination
+             */
+            void joinBufferThread() {
+                t_group.join_all();
+            }
+   };
+}
 #endif
-			
+            

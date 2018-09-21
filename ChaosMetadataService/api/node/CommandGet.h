@@ -28,14 +28,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                class CommandGet:
-                public AbstractApi {
-                public:
-                    CommandGet();
-                    ~CommandGet();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
+                CHAOS_MDS_DEFINE_API_CLASS(CommandGet);
             }
         }
     }

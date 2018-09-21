@@ -61,30 +61,28 @@ AbstractWorker(AgentNodeDomainAndActionRPC::DeployWorker::RPC_DOMAIN) {
 
 DeployWorker::~DeployWorker() {}
 
-void DeployWorker::init(void *data) throw(chaos::CException) {}
+void DeployWorker::init(void *data)  {}
 
-void DeployWorker::deinit() throw(chaos::CException) {}
+void DeployWorker::deinit()  {}
 
-CDataWrapper *DeployWorker::initDeploySession(CDataWrapper *data,
-                                              bool& detach) {
-    CHECK_CDW_THROW_AND_LOG(data,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+CDWUniquePtr DeployWorker::initDeploySession(CDWUniquePtr data) {
+    CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, ERROR, -3);
     
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, String, ERROR, -4);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, Int32, ERROR, -5);
-
-    return NULL;
+    
+    return CDWUniquePtr();
 }
 
-CDataWrapper *DeployWorker::uploadDeployChunk(CDataWrapper *data,
-                                              bool& detach) {
-    CHECK_CDW_THROW_AND_LOG(data,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+CDWUniquePtr DeployWorker::uploadDeployChunk(CDWUniquePtr data) {
+    CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, ERROR, -3);
@@ -95,20 +93,19 @@ CDataWrapper *DeployWorker::uploadDeployChunk(CDataWrapper *data,
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_NUMBER, Int32, ERROR, -7);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_OFFSET, Int32, ERROR, -8);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_CHUNK_DATA, Binary, ERROR, -9);
-
-    return NULL;
+    
+    return CDWUniquePtr();
 }
 
-CDataWrapper *DeployWorker::endDeploySession(CDataWrapper *data,
-                                             bool& detach) {
-    CHECK_CDW_THROW_AND_LOG(data,
-                            ERROR, -1,
-                            "Init session without data si not possible");
+CDWUniquePtr DeployWorker::endDeploySession(CDWUniquePtr data) {
+    CHECK_ASSERTION_THROW_AND_LOG(data.get()!=NULL,
+                                  ERROR, -1,
+                                  "Init session without data si not possible");
     
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, ERROR, -2);
     CHECK_MANDATORY_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_HASH, ERROR, -3);
     
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_ID, String, ERROR, -4);
     CHECK_TYPE_OF_KEY(data, AgentNodeDomainAndActionRPC::DeployWorker::ACTION_PARAM_SESSION_HASH, String, ERROR, -5);
-    return NULL;
+    return CDWUniquePtr();
 }

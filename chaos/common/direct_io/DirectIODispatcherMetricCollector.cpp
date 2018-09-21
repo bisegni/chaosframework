@@ -45,7 +45,7 @@ DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
 }
 
 // Start the implementation
-void DirectIODispatcherMetricCollector::start() throw(chaos::CException) {
+void DirectIODispatcherMetricCollector::start()  {
     //flow back to base class
     DirectIODispatcher::start();
     //start metric logging
@@ -53,7 +53,7 @@ void DirectIODispatcherMetricCollector::start() throw(chaos::CException) {
 }
 
 // Stop the implementation
-void DirectIODispatcherMetricCollector::stop() throw(chaos::CException) {
+void DirectIODispatcherMetricCollector::stop()  {
     //stop metric logging
     stopLogging();
     //flow back to base class
@@ -82,7 +82,7 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
     bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
-    return DirectIODispatcher::priorityDataReceived(ChaosMoveOperator(data_pack),
+    return DirectIODispatcher::priorityDataReceived(MOVE(data_pack),
                                                     synchronous_answer);
 }
 
@@ -96,7 +96,7 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
     bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
-    return DirectIODispatcher::serviceDataReceived(ChaosMoveOperator(data_pack),
+    return DirectIODispatcher::serviceDataReceived(MOVE(data_pack),
                                                    synchronous_answer);
 }
 

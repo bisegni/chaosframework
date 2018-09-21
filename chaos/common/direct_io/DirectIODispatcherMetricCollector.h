@@ -44,10 +44,10 @@ namespace chaos {
                 ~DirectIODispatcherMetricCollector();
                 
                 // Start the implementation
-                void start() throw(chaos::CException);
+                void start();
                 
                 // Stop the implementation
-                void stop() throw(chaos::CException);
+                void stop();
                 
                 //! Allocate a new endpoint
                 DirectIOServerEndpoint *getNewEndpoint();

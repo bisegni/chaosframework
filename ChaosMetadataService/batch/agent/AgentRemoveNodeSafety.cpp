@@ -56,7 +56,7 @@ AgentRemoveNodeSafety::~AgentRemoveNodeSafety() {
 void AgentRemoveNodeSafety::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     
-    CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG((data!=NULL), ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ERR, -2, CHAOS_FORMAT("The %1% key is mandatory",%chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     CHECK_KEY_THROW_AND_LOG(data, chaos::AgentNodeDefinitionKey::NODE_ASSOCIATED, ERR, -3, CHAOS_FORMAT("The %1% key is mandatory",%chaos::AgentNodeDefinitionKey::NODE_ASSOCIATED));
     int err = 0;
@@ -152,7 +152,7 @@ bool AgentRemoveNodeSafety::processStopOperationPhases() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             sendRequest(*request,
-                        message_data.get());
+                        MOVE(message_data));
         }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

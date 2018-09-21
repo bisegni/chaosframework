@@ -1,6 +1,27 @@
 cmake_minimum_required(VERSION 2.8)
 project(TestFramework)
+#find_package(GTest REQUIRED)
+IF( CHAOS_SANITIZER MATCHES ${PROJECT_NAME} )
+  MESG("ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address")
+  # IF( CMAKE_CXX_COMPILER_ID NOT MATCHES "Clang" )
+  #   MESG("Link asan SANITIZER for non llvm compiler")
+  #   SET(LinkedLibrary ${LinkedLibrary} asan)
+  # ENDFI()
+ENDIF()
 
+#example plugin
+SET(plugin_src plugin/ExamplePlugin.cpp )
+ADD_LIBRARY(ExamplePlugin SHARED ${plugin_src})
+set_target_properties(ExamplePlugin PROPERTIES PREFIX "" SUFFIX ".chaos_extension")
+
+TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common ${PluginTestLib})
+
+INSTALL_TARGETS(/lib ExamplePlugin)
+
+
+#tests EXECUTABLE
 SET(TestFrameworkSource main.cpp
                         plugin/TestPlugin.cpp
                         script/ScriptTest.cpp
@@ -38,6 +59,8 @@ if(UNIX AND NOT APPLE)
       LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib/x86_64-linux-gnu)
 endif()
 ADD_EXECUTABLE(TestFramework ${TestFrameworkSource})
+#gtest_discover_tests(TestFramework)
+add_dependencies(TestFramework ExamplePlugin)
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
@@ -53,6 +76,20 @@ ENDIF()
 IF(CLING_VIRTUAL_MACHINE_ENABLE)
     MESG("Link cling interpreter")
     SET(LinkedLibrary ${LinkedLibrary} clingInterpreter)
+ENDIF()
+IF (CHAOS_SANITIZER)
+  IF(DEFINED PROJECT_NAME)
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+      SET(LinkedLibrary asan ${LinkedLibrary})
+    ENDIF()
+
+    IF( ${CHAOS_SANITIZER} STREQUAL ${PROJECT_NAME} )
+      MESG("ENABLING SANITIZER FOR PROJECT ${PROJECT_NAME}")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address")
+      set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+    ENDIF()
+  ENDIF()
 ENDIF()
 
 TARGET_LINK_LIBRARIES(TestFramework ${LinkedLibrary})

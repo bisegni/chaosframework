@@ -9,7 +9,7 @@
 #ifndef CHAOSFramework_ZMQClient_h
 #define CHAOSFramework_ZMQClient_h
 
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -17,6 +17,7 @@
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/pool/ResourcePool.h>
 #include <chaos/common/chaos_types.h>
@@ -54,9 +55,10 @@ namespace chaos {
         uint32_t zmq_timeout;
         boost::shared_mutex map_socket_mutex;
         SocketMap map_socket;
+        ChaosAtomic<uint64_t> seq_id;
     protected:
         void *zmq_context;
-        virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(NFISharedPtr element);
         inline ZMQSocketPool::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
         inline void releaseSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
         inline void deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
@@ -69,33 +71,34 @@ namespace chaos {
         
         //timer handler
         void timeout();
+
     public:
         
         /*
          init the rpc adapter
          */
-        void init(void *init_data) throw(CException);
+        void init(void *init_data);
         
         /*
          start the rpc adapter
          */
-        void start() throw(CException);
+        void start();
         
         /*
          start the rpc adapter
          */
-        void stop() throw(CException);
+        void stop();
         
         /*
          deinit the rpc adapter
          */
-        void deinit() throw(CException);
+        void deinit();
         
         /*
          Submit the message to be send to a certain ip, the datawrapper must contains
          the key CS_CMDM_REMOTE_HOST_IP
          */
-        bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
+        bool submitMessage(NFISharedPtr forwardInfo, bool onThisThread=false);
         
         //inherited method
         virtual uint64_t getMessageQueueSize();

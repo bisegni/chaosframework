@@ -21,7 +21,7 @@
 
 #ifndef __CHAOSFramework__AsioEventForwarder__
 #define __CHAOSFramework__AsioEventForwarder__
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+//#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <iostream>
 #include <string>
@@ -47,12 +47,12 @@ namespace chaos {
                 /*!
                  init the asio event forwarder
                  */
-                void init() throw(CException);
+                void init();
                 
                 /*!
                  deinit the asio event forwarder
                  */
-                void deinit() throw(CException);
+                void deinit();
                 
                 
             public:
@@ -64,10 +64,10 @@ namespace chaos {
                 virtual ~AsioEventForwarder();
                 
                 //! submit the event
-                bool submitEventAsync(EventDescriptor *event);
+                bool submitEventAsync(EventDescriptorSPtr event);
                 
                 //! abstract queue action method implementation
-                void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
+                void processBufferElement(EventDescriptorSPtr priorityElement);
             private:
                 bool sent;
                 //! mutext used for unlock and wait esclusive access

@@ -28,29 +28,29 @@ uint32_t future_to_counter = 0;
 uint32_t promises_counter = 0;
 using namespace chaos::common::data;
 
-#define NUMBER_OF_TEST 1000000
+#define NUMBER_OF_TEST 1000
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-void CDWComsumerPromise::processBufferElement(PromiseInfo_t *pi, chaos::ElementManagingPolicy& policy) throw(chaos::CException) {
+void CDWComsumerPromise::processBufferElement(ChaosSharedPtr<PromiseInfo_t> promises_info) throw(chaos::CException) {
     promises_counter++;
     CDWShrdPtr result(new CDataWrapper());
-    result->addInt32Value("pid", pi->promise_id);
-    pi->future_helper->setDataForPromiseID(pi->promise_id, result);
+    result->addInt32Value("pid", promises_info->promise_id);
+    promises_info->future_helper->setDataForPromiseID(promises_info->promise_id, result);
 }
 
-void CDWComsumerFuture::processBufferElement(FutureInfo_t *fi, chaos::ElementManagingPolicy& policy) throw(chaos::CException) {
+void CDWComsumerFuture::processBufferElement(ChaosSharedPtr<FutureInfo_t> future_info) throw(chaos::CException) {
     ChaosFutureStatus fret = ChaosFutureStatus::deferred;
     CDWShrdPtr result;
     do{
-        ASSERT_NO_THROW(fret = fi->future.wait_for(ChaosCronoMilliseconds(1000)));
+        ASSERT_NO_THROW(fret = future_info->future.wait_for(ChaosCronoMilliseconds(1000)));
         if(fret == ChaosFutureStatus::ready) {
             try{
-                ASSERT_NO_THROW(result = fi->future.get());
+                ASSERT_NO_THROW(result = future_info->future.get());
                 ASSERT_TRUE(result.get());
                 ASSERT_TRUE(result->hasKey("pid"));
-                ASSERT_TRUE(result->getInt32Value("pid") == fi->promise_id);
+                ASSERT_TRUE(result->getInt32Value("pid") == future_info->promise_id);
                 future_counter++;
             }catch(...){future_excpt_counter++;}
         } else if(fret == ChaosFutureStatus::timeout) {
@@ -63,6 +63,10 @@ TEST(FutureHelperTests, Base) {
     //boost::thread_group threads;
     CDWComsumerPromise pq;
     CDWComsumerFuture fq;
+    future_counter = 0;
+    future_excpt_counter = 0;
+    future_to_counter = 0;
+    promises_counter = 0;
     ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
     MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(5000,30000));
     MessageRequestDomainFutureHelper::Future        new_shared_future;
@@ -74,13 +78,11 @@ TEST(FutureHelperTests, Base) {
     for (int i = 0; i < NUMBER_OF_TEST; ++i){
         //generate new future
         helper_test->addNewPromise(new_id, new_shared_future);
-        ChaosUniquePtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
-        ChaosUniquePtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
-        while(fq.push(fi.get()) == false);
-        fi.release();
+        ChaosSharedPtr<PromiseInfo> pi(new PromiseInfo(new_id, helper_test));
+        ChaosSharedPtr<FutureInfo> fi(new FutureInfo(new_id, new_shared_future));
+        while(fq.push(MOVE(fi)) == false);
         //usleep(100);
-        while(pq.push(pi.get()) == false);
-        pi.release();
+        while(pq.push(MOVE(pi)) == false);
     }
     ASSERT_NO_THROW(pq.deinit());
     ASSERT_NO_THROW(fq.deinit());

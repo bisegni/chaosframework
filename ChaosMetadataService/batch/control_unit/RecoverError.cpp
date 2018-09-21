@@ -40,7 +40,7 @@ RecoverError::~RecoverError() {}
 // inherited method
 void RecoverError::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    CHECK_CDW_THROW_AND_LOG(data, CU_RE_BC_ERR, -1, "No parameter found")
+    CHECK_ASSERTION_THROW_AND_LOG(data!=NULL, CU_RE_BC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_RE_BC_ERR, -2, "The ndk_uid key is mandatory")
     if(!data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vectoro of string", __PRETTY_FUNCTION__);
     

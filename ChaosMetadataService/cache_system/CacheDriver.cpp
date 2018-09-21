@@ -32,11 +32,11 @@ CacheDriver::~CacheDriver() {}
 /*!
  Need a point to a structure DBDriverSetting for the setting
  */
-void CacheDriver::init(void *init_data) throw (chaos::CException) {
+void CacheDriver::init(void *init_data)  {
 	cache_settings = static_cast<CacheDriverSetting*>(init_data);
 }
 
 //! deinit
-void CacheDriver::deinit() throw (chaos::CException) {
+void CacheDriver::deinit()  {
 	
 }

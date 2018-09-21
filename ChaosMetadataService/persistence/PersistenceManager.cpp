@@ -34,7 +34,7 @@ PersistenceManager::~PersistenceManager() {
     
 }
 
-void PersistenceManager::init(void* init_data) throw (chaos::CException) {
+void PersistenceManager::init(void* init_data)  {
     const std::string impl_name = ChaosMetadataService::getInstance()->setting.persistence_implementation+"PersistenceDriver";
     persistence_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(impl_name),
                              impl_name);
@@ -42,6 +42,6 @@ void PersistenceManager::init(void* init_data) throw (chaos::CException) {
     persistence_driver.init(NULL, __PRETTY_FUNCTION__);
 }
 
-void PersistenceManager::deinit() throw (chaos::CException) {
+void PersistenceManager::deinit()  {
     persistence_driver.deinit(__PRETTY_FUNCTION__);
 }

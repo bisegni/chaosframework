@@ -50,39 +50,38 @@ namespace chaos {
                  Define the control unit DataSet and Action into
                  a CDataWrapper
                  */
-                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
+                void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration);
                 
                 //! init rt control unit
-                void init(void *initData) throw(CException);
+                void init(void *initData);
                 
                 //! start rt control unit
-                void start() throw(CException);
+                void start();
                 
                 //! stop rt control unit
-                void stop() throw(CException);
+                void stop();
                 
                 //! deinit rt control unit
-                void deinit() throw(CException);
+                void deinit();
 
             protected:
 
-                void unitDefineActionAndDataset() throw(CException);
+                void unitDefineActionAndDataset();
                 
                 void unitDefineCustomAttribute();
                 
-                void unitInit() throw(CException);
+                void unitInit();
                 
-                void unitStart() throw(CException);
+                void unitStart();
                 
-                void unitStop() throw(CException);
+                void unitStop();
                 
-                void unitDeinit() throw(CException);
+                void unitDeinit();
                 
                 /*!
                  Event for update some CU configuration
                  */
-                virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper* update_pack,
-                                                                               bool& detach_param) throw (CException);
+                virtual chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr update_pack);
                 
                 
             public:

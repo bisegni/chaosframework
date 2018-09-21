@@ -16,7 +16,7 @@ void CommandTemplateListModel::updateSearchPage(const QSharedPointer<CDataWrappe
     for(int idx = 0;
         idx < result_page->size();
         idx++) {
-        QSharedPointer<CDataWrapper> element_found(result_page->getCDataWrapperElementAtIndex(idx));
+        QSharedPointer<CDataWrapper> element_found(result_page->getCDataWrapperElementAtIndex(idx).release());
         page_element.push_back(element_found);
     }
     endResetModel();

@@ -41,7 +41,7 @@ EventDispatchManager::~EventDispatchManager() {
     
 }
 
-void EventDispatchManager::init(void *init_data) throw (chaos::CException) {
+void EventDispatchManager::init(void *init_data)  {
     
     //allcoate the event channel
     alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
@@ -50,7 +50,7 @@ void EventDispatchManager::init(void *init_data) throw (chaos::CException) {
     
 }
 
-void EventDispatchManager::deinit() throw (chaos::CException) {
+void EventDispatchManager::deinit()  {
     if(alert_event_channel) {
         alert_event_channel->deactivateChannelEventReception(this);
         NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);
