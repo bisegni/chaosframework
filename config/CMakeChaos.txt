@@ -64,9 +64,14 @@ ADD_DEFINITIONS(-DCSLIB_BUILD_ID=${CHAOS_BUILD_ID})
 
 if(CMAKE_BUILD_TYPE MATCHES PROFILE)
    MESG("ENABLING PROFILE on ${PROJECT_NAME}")
-   set (CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-   set (CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-   set (CHAOS_LINKER_FLAGS "${CHAOS_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+   SET(GCC_COVERAGE_COMPILE_FLAGS "-O0 -fprofile-arcs -ftest-coverage")
+#   SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
+   SET(GCC_COVERAGE_LINK_LIB    "gcov")
+
+   SET(GCC_COVERAGE_LINK_FLAGS    "-fprofile-arcs -ftest-coverage -coverage")
+#   ADD_DEFINITIONS(${GCC_COVERAGE_COMPILE_FLAGS})
+   SET(CHAOS_LINKER_FLAGS  "${CHAOS_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
+
 ENDIF()
    
 
@@ -125,17 +130,17 @@ ENDIF()
 IF(${SYSTEM_NAME} MATCHES "Darwin")
   # Mac OS X specific code
   MESG("enabling MAC compilation")
-  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic boost_random jsoncpp pthread dl)
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic boost_random jsoncpp pthread dl ${GCC_COVERAGE_LINK_LIB})
   SET(CHAOS_BOOST_FLAGS toolset=clang)
   CheckCompiler("CXX" clang++)
   CheckCompiler("C" clang)
   SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS} -stdlib=libc++")
   SET(CHAOS_C_FLAGS "${CHAOS_C_FLAGS} -stdlib=libc++")
-  set(CHAOS_LINKER_FLAGS "-stdlib=libc++")
+  set(CHAOS_LINKER_FLAGS "${CHAOS_LINKER_FLAGS} -stdlib=libc++")
 
 ELSE()
 
-  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic boost_random jsoncpp pthread rt dl)
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic boost_random jsoncpp pthread rt dl ${GCC_COVERAGE_LINK_LIB})
 
 ENDIF()
 
