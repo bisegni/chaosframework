@@ -1,4 +1,5 @@
 # !CHAOS Framework
+*release 1.0.0 (beta 2)*
 
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
@@ -41,5 +42,3 @@ Experimental  | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/cha
 [![coverage report](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/coverage.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 
 [4416b59a]: https://chaos-lnf-control.baltig-pages.infn.it/chaosframework/ "Experimental Code Coverage"
-
-*release 1.0.0 (beta 1)*
