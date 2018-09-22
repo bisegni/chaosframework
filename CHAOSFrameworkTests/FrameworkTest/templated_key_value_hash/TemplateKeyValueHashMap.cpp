@@ -27,7 +27,10 @@
 
 
 
-TestTemplateKeyValueHashMap::TestTemplateKeyValueHashMap(){}
+TestTemplateKeyValueHashMap::TestTemplateKeyValueHashMap():
+number_of_producer(),
+number_of_production(),
+number_of_consumer(){}
 
 void TestTemplateKeyValueHashMap::SetUp() {
     error_count          = 0;

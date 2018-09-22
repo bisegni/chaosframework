@@ -21,7 +21,11 @@
 
 #include "QueuePriorityTest.h"
 
-QueuePriorityTest::QueuePriorityTest(){}
+QueuePriorityTest::QueuePriorityTest():
+last_sequence(0),
+last_priority(0),
+max_priority(0),
+number_of_production(0){}
 QueuePriorityTest::~QueuePriorityTest(){}
 
 void QueuePriorityTest::processBufferElement(ChaosSharedPtr<TestPriorityElement> element) throw(chaos::CException) {

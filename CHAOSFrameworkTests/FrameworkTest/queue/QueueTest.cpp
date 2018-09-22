@@ -21,7 +21,11 @@
 
 #include "QueueTest.h"
 #include <boost/thread.hpp>
-QueueTest::QueueTest(){}
+QueueTest::QueueTest():
+number_of_consumer(0),
+number_of_producer(0),
+number_of_production(0),
+second_to_wait(0){}
 QueueTest::~QueueTest() {}
 
 void QueueTest::SetUp() {

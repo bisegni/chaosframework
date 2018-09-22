@@ -71,7 +71,9 @@ namespace chaos {
                     //some opcode need to notify the termination
                     chaos::WaitSemaphore wait_termination_semaphore;
                     
-                    Opcode(){}
+                    Opcode():
+                    op_type(OpcodeInfoTypeSend),
+                    data_opcode(EUCMessageOpcodeWhole){}
                     virtual ~Opcode(){}
                 };
                 
