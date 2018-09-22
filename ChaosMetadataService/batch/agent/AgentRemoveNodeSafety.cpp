@@ -42,6 +42,7 @@ DEFINE_MDS_COMAMND_ALIAS(AgentRemoveNodeSafety)
 
 AgentRemoveNodeSafety::AgentRemoveNodeSafety():
 MDSBatchCommand(),
+scan_phase(ScanPhaseNext),
 agent_uid(),
 associated_nodes(),
 alert_event_channel(NULL){

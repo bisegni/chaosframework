@@ -84,6 +84,7 @@ namespace chaos{
                     
                     PromisesInfo():
                     promise(new HandlerMessagePromise(PromisesHandlerWeakPtr())),
+                    timeout_ts(0),
                     promise_id(0){}
                     
                     PromisesInfo(PromisesHandlerWeakPtr weak_handler):

@@ -41,6 +41,7 @@ KeyDataStorage::KeyDataStorage(const std::string& _key,
 key(_key),
 io_data_driver(_io_data_driver),
 storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
+override_storage_everride(DataServiceNodeDefinitionType::DSStorageTypeUndefined),
 storage_history_time(0),
 storage_history_time_last_push(0),
 storage_live_time(0),
@@ -172,8 +173,8 @@ CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain do
 }
 
 int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
-                                                      CDWShrdPtr dataset,
-                                                      DataServiceNodeDefinitionType::DSStorageType storage_type) {
+                                                     CDWShrdPtr dataset,
+                                                     DataServiceNodeDefinitionType::DSStorageType storage_type) {
     
     uint64_t now = TimingUtil::getTimeStampInMicroseconds();
     int effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeUndefined;
@@ -181,14 +182,14 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive ||
        override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeLive) {
         //live is enbaled
-//        if(use_timing_info) {
+        //        if(use_timing_info) {
         if((now - storage_live_time_last_push) >= storage_live_time) {
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
             storage_live_time_last_push = now;
         }
-//        } else {
-//            effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
-//        }
+        //        } else {
+        //            effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
+        //        }
     }
     
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory ||
@@ -206,15 +207,15 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
     
     if(effective_storage_type) {
         err=io_data_driver->storeData(key,
-                                  MOVE(dataset),
-                                  static_cast<DataServiceNodeDefinitionType::DSStorageType>(effective_storage_type),
-                                  current_tags());
+                                      MOVE(dataset),
+                                      static_cast<DataServiceNodeDefinitionType::DSStorageType>(effective_storage_type),
+                                      current_tags());
     }
     return err;
 }
 
 int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
-                                 CDWShrdPtr dataset) {
+                                CDWShrdPtr dataset) {
     CHAOS_ASSERT(io_data_driver.get());
     LChaosStringSetReadLock wl = current_tags.getReadLockObject();
     int err=0;
@@ -223,48 +224,48 @@ int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
     switch(domain) {
         case KeyDataStorageDomainOutput:
             err=pushDataWithControlOnHistoryTime(output_key,
-                                             MOVE(dataset),
-                                             storage_type);
+                                                 MOVE(dataset),
+                                                 storage_type);
             break;
         case KeyDataStorageDomainInput:
             //input channel need to be push ever either in live and in history
             err=io_data_driver->storeData(input_key,
-                                      MOVE(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                                      current_tags());
+                                          MOVE(dataset),
+                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          current_tags());
             break;
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(system_key,
-                                      MOVE(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                                      current_tags());
+                                          MOVE(dataset),
+                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          current_tags());
             break;
         case KeyDataStorageDomainCUAlarm:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(cu_alarm_key,
-                                      MOVE(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                                      current_tags());
+                                          MOVE(dataset),
+                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          current_tags());
             break;
         case KeyDataStorageDomainDevAlarm:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(dev_alarm_key,
-                                      MOVE(dataset),
-                                      DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                                      current_tags());
+                                          MOVE(dataset),
+                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          current_tags());
             break;
         case KeyDataStorageDomainHealth:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeHealthData(health_key,
-                                            MOVE(dataset),
-                                            DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                                            current_tags());
+                                                MOVE(dataset),
+                                                DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                                current_tags());
             break;
         case KeyDataStorageDomainCustom:
             err=pushDataWithControlOnHistoryTime(custom_key,
-                                             MOVE(dataset),
-                                             storage_type);
+                                                 MOVE(dataset),
+                                                 storage_type);
             break;
     }
     return err;
@@ -348,20 +349,20 @@ ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePo
                                                                                     KeyDataStorageDomain domain) {
     if(!restore_point_map.count(restore_point_tag)) {
         return ChaosSharedPtr<chaos_data::CDataWrapper>();
-    }
-    
-    switch(domain) {
-        case KeyDataStorageDomainOutput:
-            return restore_point_map[restore_point_tag][output_key];
-        case KeyDataStorageDomainInput:
-            return restore_point_map[restore_point_tag][input_key];
-        case KeyDataStorageDomainCustom:
-            return restore_point_map[restore_point_tag][custom_key];
-        case KeyDataStorageDomainSystem:
-            return restore_point_map[restore_point_tag][system_key];
-        default:
-            CHAOS_ASSERT(false)
-            break;
+    } else {
+        switch(domain) {
+            case KeyDataStorageDomainOutput:
+                return restore_point_map[restore_point_tag][output_key];
+            case KeyDataStorageDomainInput:
+                return restore_point_map[restore_point_tag][input_key];
+            case KeyDataStorageDomainCustom:
+                return restore_point_map[restore_point_tag][custom_key];
+            case KeyDataStorageDomainSystem:
+                return restore_point_map[restore_point_tag][system_key];
+            default:
+                return ChaosSharedPtr<chaos_data::CDataWrapper>();
+                break;
+        }
     }
 }
 
