@@ -321,6 +321,7 @@ SET(common_lib_src ${common_lib_src}
 
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
+
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp

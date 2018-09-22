@@ -47,12 +47,14 @@ namespace chaos {
                     ProcStat(),
                     node_uid(),
                     timestamp(0),
+                    mds_received_timestamp(0),
                     health_status(){}
                     
                     HealthStat(const HealthStat& health_stat_src):
                     ProcStat(health_stat_src),
                     node_uid(health_stat_src.node_uid),
                     timestamp(health_stat_src.timestamp),
+                    mds_received_timestamp(health_stat_src.mds_received_timestamp),
                     health_status(health_stat_src.health_status){}
                 };
                 

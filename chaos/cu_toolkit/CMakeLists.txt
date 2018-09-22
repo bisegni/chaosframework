@@ -67,7 +67,8 @@ SET(cu_lib_src ${cu_lib_src}
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)
- IF (BUILD_FORCE_STATIC)
+
+IF (BUILD_FORCE_STATIC)
      ADD_LIBRARY(${PROJECT_NAME} STATIC ${cu_lib_src})
  ELSE ()
      ADD_LIBRARY(${PROJECT_NAME} SHARED ${cu_lib_src})
