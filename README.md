@@ -42,3 +42,7 @@ Experimental  | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/cha
 [![coverage report](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/coverage.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 
 [4416b59a]: https://chaos-lnf-control.baltig-pages.infn.it/chaosframework/ "Experimental Code Coverage"
+
+
+### keep-a-changelog  (https://getcomposer.org)
+keep-a-changelog is a tool for managing the change logs, to install it install composer and then, whitin root chaos directory type: "**_composer install_**"
