@@ -86,3 +86,5 @@ moc_*.cpp
 ccs_automoc.cpp
 ccs/ccs
 ccs/qt_build*
+vendor
+composer.lock

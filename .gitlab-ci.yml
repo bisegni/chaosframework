@@ -253,7 +253,7 @@ test_c7:
 
 deploy_c7:
   dependencies:
-    - test_c7
+    - build_c7
   allow_failure: true
   tags:
     - chaos
