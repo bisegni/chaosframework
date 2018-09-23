@@ -31,7 +31,7 @@ ELSE()
 ENDIF()
 if(CMAKE_BUILD_TYPE MATCHES PROFILE)
    MESSAGE(STATUS "ENABLING PROFILE on ${PROJECT_NAME}")
-   SET(GCC_COVERAGE_COMPILE_FLAGS "-O0 -fprofile-arcs -ftest-coverage")
+   SET(GCC_COVERAGE_COMPILE_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage")
    SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
    SET(GCC_COVERAGE_LINK_LIB    "gcov")
 
