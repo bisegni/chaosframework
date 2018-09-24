@@ -166,6 +166,7 @@ int IODirectIODriver::storeData(const std::string& key,
         }
     } else {
         DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
+        err++;
     }
     return err;
 }
