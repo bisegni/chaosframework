@@ -1,0 +1,57 @@
+#!/bin/bash -e
+
+
+pushd `dirname $0` >& /dev/null
+mydir=`pwd -P`
+popd >& /dev/null
+
+curr_dir=`pwd`
+
+function checkForGem(){
+  if ! hash gem /dev/null 2>&1; then
+    echo "Ruby on rail not installed!"
+    return 1
+  fi
+
+  if ! gem spec codelog > /dev/null 2>&1; then
+    echo "Gem codelog is not installed-> install it"
+    if ! gem install codelog > /dev/null 2>&1; then
+      echo "Error installing codelog"
+      return 1
+    fi
+  fi
+  return 0
+}
+
+function addNewEntry() {
+  if [ checkForGem ]; then
+    #we can proceed
+    read -p "Start creation of changelog entry $1? " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+      [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+    else
+      exec codelog new -i $1
+    fi
+  else
+    return 1
+  fi
+
+}
+
+while getopts sha: opt; do
+    case $opt in
+	s)
+	    checkForGem
+	    ;;
+
+  a)  addNewEntry $OPTARG
+      ;;
+
+	h)
+	    echo -e "Usage is $0 -s \n-s setup environment for changelog management"
+	    exit 0;
+	    ;;
+    esac
+done
