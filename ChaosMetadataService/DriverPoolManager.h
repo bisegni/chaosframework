@@ -29,8 +29,6 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>
 
-#include <chaos/common/pool/ResourcePool.h>
-#include <chaos/common/async_central/async_central.h>
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos{
@@ -43,7 +41,6 @@ namespace chaos{
         //!base singleto class for driver pool system
         class DriverPoolManager:
         public chaos::common::utility::Singleton<DriverPoolManager>,
-        public chaos::common::async_central::TimerHandler,
         public chaos::common::utility::InizializableService {
             friend class chaos::common::utility::Singleton<DriverPoolManager>;
             chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
@@ -54,7 +51,6 @@ namespace chaos{
             ~DriverPoolManager();
         protected:
             //timer handler
-            void timeout();
             void init(void *init_data);
             void deinit();
             
