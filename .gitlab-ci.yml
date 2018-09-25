@@ -45,8 +45,10 @@ build_u_14_04_gcc49:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_14_04_gcc49:
@@ -88,8 +90,10 @@ test_u_14_04_gcc49:
     expire_in: 2 hour
   coverage: /^TOTAL.*\s+(\d+\%)$/
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_u_16_04_gcc5:
@@ -117,8 +121,10 @@ build_u_16_04_gcc5:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_16_04_gcc5_test:
@@ -141,8 +147,10 @@ test_u_16_04_gcc5_test:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_u_18_04_gcc73:
@@ -170,8 +178,10 @@ build_u_18_04_gcc73:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_18_04_gcc73:
@@ -194,11 +204,13 @@ test_u_18_04_gcc73:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
-build_c7:
+build_dbg_c7:
   tags:
     - chaos
     - docker
@@ -223,13 +235,15 @@ build_c7:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
-test_c7:
+test_dbg_c7:
   dependencies:
-    - build_c7
+    - build_dbg_c7
   tags:
     - chaos
     - docker
@@ -247,45 +261,15 @@ test_c7:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
-  retry: 2
-
-deploy_c7:
-  dependencies:
-    - build_c7
-  allow_failure: true
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-    - infncc
-    - lnf
-  stage: deploy
-  image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
-  script:
-    - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
-    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
-    - ls -la
-    - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
-    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
-    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
-    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
-  only:
     refs:
-      - master
-      - developemnt
-      - experimental
       - web
     variables:
-      - $RELEASE_OP == "deploy"
-      - $CI_COMMIT_MESSAGE =~ /(\[deploy\]|(merge))/  
+      - $BUILD_TYPE == "test"
   retry: 2
 
 regression_c7:
   dependencies:
-    - test_c7
+    - test_dbg_c7
   allow_failure: true
   tags:
     - chaos
@@ -310,7 +294,95 @@ regression_c7:
     refs:
       - web
     variables:
-      - $RELEASE_OP == "regression"
+      - $BUILD_TYPE == "test"
+      - $TARGET_TYPE == "regression"
+  retry: 2
+
+build_rel_c7:
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
+  script:
+    - tools/chaos_clean.sh
+    - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON .
+    - make clean
+    - make  -j $NPROC
+    - make install
+  cache:
+    key: x86_64_centos7_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  artifacts:
+    paths:
+        - chaos
+        - CHAOSFrameworkTests
+        - 'chaos-distrib-x86_64-Linux'
+    expire_in: 8 hour
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
+  retry: 2
+
+test_rel_c7:
+  dependencies:
+    - build_rel_c7
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: test
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
+  script:
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+    - export HEAPCHECK=normal
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
+    expire_in: 8 hour
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
+  retry: 2
+
+deploy_rel_c7:
+  dependencies:
+    - build_rel_c7
+  allow_failure: false
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+    - infncc
+    - lnf
+  stage: deploy
+  image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
+  script:
+    - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
+    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
+    - ls -la
+    - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
+    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest"
+    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest"
+    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
+  environment:
+    name: $BUILD_ENVIRONMENT
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
   retry: 2
 
 build_u_14_04_gcc48_c98:
@@ -336,8 +408,10 @@ build_u_14_04_gcc48_c98:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_14_04_gcc48_c98:
@@ -356,8 +430,10 @@ test_u_14_04_gcc48_c98:
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_arm:
@@ -383,8 +459,10 @@ build_arm:
         - 'chaos-distrib-armhf'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_x86_64_llvm:
@@ -412,8 +490,10 @@ build_x86_64_llvm:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_x86_64_llvm:
@@ -432,8 +512,10 @@ test_x86_64_llvm:
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 exp_llvm_scan_coverity:
@@ -458,7 +540,11 @@ exp_llvm_scan_coverity:
         - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   only:
-    - schedules
+    refs:
+      - schedules
+      - web
+    variables:
+      - $BUILD_TYPE == "coverity"
   retry: 2
 
 pages:
@@ -473,5 +559,7 @@ pages:
       - public
     expire_in: 7 days
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
