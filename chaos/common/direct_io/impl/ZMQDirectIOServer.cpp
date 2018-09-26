@@ -267,7 +267,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     worker_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
     
     if((worker_socket = zmq_socket(zmq_context,
-                                   ZMQ_REP)) == NULL) {
+                                   ZMQ_DEALER)) == NULL) {
         ZMQDIO_SRV_LAPP_ << "Error creating worker socket";
         return;
     }
