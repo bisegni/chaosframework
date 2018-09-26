@@ -320,7 +320,7 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
     //we heva received the message now check the size aspected
     if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int))) {
         err = zmq_errno();
-        ZMQDIO_BASE_LERR_ << "Error checking the send more option on socket with error:" << PRINT_ZMQ_ERR(err);
+        ZMQDIO_BASE_LERR_ << "Error checking if are present more submessage with error:" << PRINT_ZMQ_ERR(err);
     } else {
         more_to_read = (bool)option_result;
     }
@@ -430,17 +430,18 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     
     if(DIRECT_IO_HEADER_SIZE != readed_byte) {
         ZMQDIO_BASE_LERR_<< "The header read phase has reported a different size of '"<<readed_byte<<"' bytes";
-        //consume other messages if are present because the request is not conform to protobols
+        //consume other messages if are present because the request is not conform to protocols
         do {
             have_more_message = false;
             if((err = moreMessageToRead(socket, have_more_message))) {
                 ZMQDIO_BASE_LAPP_ << "Error reading if there are other mesages to read";
-                return -13001;
+                break;
             } else if(have_more_message) {
                 //!consume messages
                 BufferSPtr msg_buffer;
                 if((err = readMessage(socket, msg_buffer))) {
                     ZMQDIO_BASE_LAPP_ << "Error consuming unrecognized messages";
+                    break;
                 }
             }
         }while(have_more_message);
