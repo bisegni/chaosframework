@@ -253,7 +253,22 @@ instance_created(0),
 minimum_instance_in_pool(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number),
 pool("couchbase_cache_driver",
      this,
-     minimum_instance_in_pool) {}
+     minimum_instance_in_pool) {
+    
+    all_server_to_use = ChaosMetadataService::getInstance()->setting.cache_driver_setting.startup_chache_servers;
+    
+    if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("bucket")) {
+        bucket_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["bucket"];
+    }
+    
+    if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("user")) {
+        bucket_user = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["user"];
+    }
+    
+    if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("pwd")) {
+        bucket_pwd = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["pwd"];
+    }
+}
 
 CouchbaseDriverPool::~CouchbaseDriverPool() {}
 
@@ -262,9 +277,6 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
     lcb_t*                      new_instance;
     struct lcb_create_st        create_options;
     lcb_error_t                 last_err = LCB_SUCCESS;
-    std::string                 bucket_name;
-    std::string                 bucket_user;
-    std::string                 bucket_pwd;
     std::string                 all_server_str;
     
     DEBUG_CODE(CCDLAPP_ << "New pool request allocation for couchbase driver";)
@@ -278,18 +290,6 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
     
     try{
         new_instance = new lcb_t();
-        
-        if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("bucket")) {
-            bucket_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["bucket"];
-        }
-        
-        if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("user")) {
-            bucket_user = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["user"];
-        }
-        
-        if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("pwd")) {
-            bucket_pwd = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["pwd"];
-        }
         
         //clear the configuration
         memset(&create_options, 0, sizeof(create_options));

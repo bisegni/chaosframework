@@ -47,7 +47,7 @@ void DriverPoolManager::init(void *init_data)  {
     const std::string cache_impl_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.cache_driver_impl+"CacheDriver";
     cache_driver.reset(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name),
                              cache_impl_name);
-    persistence_driver.init(NULL, __PRETTY_FUNCTION__);
+    cache_driver.init(NULL, __PRETTY_FUNCTION__);
     //init dirver instace
     const std::string persistence_impl_name = ChaosMetadataService::getInstance()->setting.persistence_implementation+"PersistenceDriver";
     persistence_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_impl_name),

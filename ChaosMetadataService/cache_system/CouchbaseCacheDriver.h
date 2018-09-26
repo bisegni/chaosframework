@@ -53,6 +53,10 @@ namespace chaos {
                 //!keep track of how many instance in pol need to be present at startup
                 unsigned int minimum_instance_in_pool;
                 
+                std::string                 bucket_name;
+                std::string                 bucket_user;
+                std::string                 bucket_pwd;
+                
                 //pool container
                 ChaosStringVector           all_server_to_use;
             protected:
