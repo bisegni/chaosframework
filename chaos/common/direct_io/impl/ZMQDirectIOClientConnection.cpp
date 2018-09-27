@@ -38,8 +38,8 @@ socket_service(NULL),
 message_counter(0) {
     monitor_info.monitor_socket = NULL;
     default_configuration["ZMQ_LINGER"] = "0";
-    default_configuration["ZMQ_RCVHWM"] = "1";
-    default_configuration["ZMQ_SNDHWM"] = "1";
+    default_configuration["ZMQ_RCVHWM"] = "3";
+    default_configuration["ZMQ_SNDHWM"] = "3";
     default_configuration["ZMQ_RCVTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
     default_configuration["ZMQ_SNDTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
     default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
@@ -273,10 +273,6 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
         if((ZMQBaseClass::setAndReturnID(socket_priority,
                                          service_identity))) {
             ERR << "Error configuring new id for socker :" << service_endpoint;
-        } else {
-            ZMQBaseClass::resetOutputQueue(socket_service,
-                                           default_configuration,
-                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
         }
     }
     return err;
@@ -307,10 +303,6 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
         if((ZMQBaseClass::setAndReturnID(socket_service,
                                          service_identity))) {
             ERR << "Error configuring new id for socker :" << service_endpoint;
-        } else {
-            ZMQBaseClass::resetOutputQueue(socket_service,
-                                           default_configuration,
-                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
         }
     }
     return err;

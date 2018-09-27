@@ -69,10 +69,6 @@ namespace chaos {
                     //!
                     int closeSocketNoWhait (void *socket);
                     
-                    int resetOutputQueue(void *socket,
-                                         MapZMQConfiguration &default_conf,
-                                         const MapZMQConfiguration &startup_conf);
-                    
                     inline int readMessage(void *socket,
                                            chaos::common::data::BufferSPtr& msg_buffer);
                     
