@@ -57,7 +57,7 @@ ChaosMetadataServiceClient::ChaosMetadataServiceClient(){
 	 io_pool_req=0;
 	 GlobalConfiguration::getInstance()->addOption<int>(POOL_SIZE_OPTION,
 	                                                         "number of independent live channels to fetch data",
-															 DPCK_LAST_DATASET_INDEX);
+															 16);
 }
 
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
