@@ -69,7 +69,7 @@ namespace chaos {
                 void deallocateResource(const std::string& pool_identification,
                                         lcb_t *pooled_driver);
             public:
-                CouchbasePool pool;
+                ChaosUniquePtr<CouchbasePool> pool;
                 CouchbaseDriverPool();
                 ~CouchbaseDriverPool();
                 void init(void *init_data);

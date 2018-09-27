@@ -157,7 +157,7 @@ int CouchbaseCacheDriver::putData(const std::string& key,
     cmd.v.v0.nbytes = data_to_store->size();
     cmd.v.v0.operation = LCB_SET;
     //!get new instance
-    CouchbasePoolSlot *pool_element = driver_pool.pool.getNewResource();
+    CouchbasePoolSlot *pool_element = driver_pool.pool->getNewResource();
     if(pool_element) {
         err = lcb_store(*pool_element->resource_pooled, &result_wrap, 1, commands);
         err = lcb_wait(*pool_element->resource_pooled);
@@ -168,7 +168,7 @@ int CouchbaseCacheDriver::putData(const std::string& key,
     } else {
         err = -1;
     }
-    driver_pool.pool.releaseResource(pool_element);
+    driver_pool.pool->releaseResource(pool_element);
     return err;
 }
 
@@ -184,7 +184,7 @@ int CouchbaseCacheDriver::getData(const std::string& key,
     cmd.v.v0.key = key.c_str();
     cmd.v.v0.nkey = key.size();
     
-    CouchbasePoolSlot *pool_element = driver_pool.pool.getNewResource();
+    CouchbasePoolSlot *pool_element = driver_pool.pool->getNewResource();
     if(pool_element) {
         err = lcb_get(*pool_element->resource_pooled, &result_wrap, 1, commands);
         err = lcb_wait(*pool_element->resource_pooled);
@@ -200,7 +200,7 @@ int CouchbaseCacheDriver::getData(const std::string& key,
     } else {
         err = -1;
     }
-    driver_pool.pool.releaseResource(pool_element);
+    driver_pool.pool->releaseResource(pool_element);
     return err;
 }
 
@@ -208,7 +208,7 @@ int CouchbaseCacheDriver::getData(const ChaosStringVector& keys,
                                   MultiCacheData& multi_data) {
     //crate vrapper result
     int err = 0;
-    CouchbasePoolSlot *pool_element = driver_pool.pool.getNewResource();
+    CouchbasePoolSlot *pool_element = driver_pool.pool->getNewResource();
     if(pool_element) {
         MultiGetResult result_wrap(multi_data);
         for(ChaosStringVectorConstIterator it = keys.begin(),
@@ -250,10 +250,7 @@ static void couchbaseInstanceDeallocator(lcb_t *cb_ist) {
 
 CouchbaseDriverPool::CouchbaseDriverPool():
 instance_created(0),
-minimum_instance_in_pool(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number),
-pool("couchbase_cache_driver",
-     this,
-     minimum_instance_in_pool) {
+minimum_instance_in_pool(ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number) {
     
     all_server_to_use = ChaosMetadataService::getInstance()->setting.cache_driver_setting.startup_chache_servers;
     
@@ -268,13 +265,17 @@ pool("couchbase_cache_driver",
     if(ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param.count("pwd")) {
         bucket_pwd = ChaosMetadataService::getInstance()->setting.cache_driver_setting.key_value_custom_param["pwd"];
     }
+    
+    pool.reset(new CouchbasePool("couchbase_cache_driver",
+                                 this,
+                                 minimum_instance_in_pool));
 }
 
 CouchbaseDriverPool::~CouchbaseDriverPool() {}
 
 lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identification,
                                              uint32_t& alive_for_ms) {
-    lcb_t*                      new_instance;
+    ChaosUniquePtr<lcb_t>       new_instance;
     struct lcb_create_st        create_options;
     lcb_error_t                 last_err = LCB_SUCCESS;
     std::string                 all_server_str;
@@ -289,7 +290,7 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
     }
     
     try{
-        new_instance = new lcb_t();
+        new_instance.reset(new lcb_t());
         
         //clear the configuration
         memset(&create_options, 0, sizeof(create_options));
@@ -318,7 +319,7 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
         create_options.v.v3.connstr = all_server_str.c_str();
         
         //create the instance
-        last_err = lcb_create(new_instance, &create_options);
+        last_err = lcb_create(new_instance.get(), &create_options);
         if (last_err != LCB_SUCCESS) {
             throw CException(-1, CHAOS_FORMAT("Error initializing the session params: %1% - %2%", %create_options.v.v3.connstr%lcb_strerror(NULL, last_err)), __PRETTY_FUNCTION__);
         } else {
@@ -342,7 +343,7 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
         }
         
         /* Set up the handler to catch all errors! */
-        lcb_set_error_callback(*new_instance, CouchbaseCacheDriver::errorCallback);
+        //lcb_set_error_callback(*new_instance, CouchbaseCacheDriver::errorCallback);
         /* run the event loop and wait until we've connected */
         last_err = lcb_wait(*new_instance);
         
@@ -367,13 +368,13 @@ lcb_t* CouchbaseDriverPool::allocateResource(const std::string& pool_identificat
     } catch(chaos::CException& ex) {
         DEBUG_CODE(CCDLERR_ << CHAOS_FORMAT("Error allocating new cache instance", %ex.what());)
         lcb_destroy(*new_instance);
-        delete(new_instance);
+        new_instance.reset();
     } catch(...) {
         DEBUG_CODE(CCDLERR_ << "Generic error allocating new cache instance";)
         lcb_destroy(*new_instance);
-        delete(new_instance);
+        new_instance.reset();
     }
-    return new_instance;
+    return new_instance.release();
 }
 
 void CouchbaseDriverPool::deallocateResource(const std::string& pool_identification,
