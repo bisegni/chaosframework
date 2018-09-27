@@ -127,6 +127,10 @@ namespace chaos {
                     int setAndReturnID(void *socket,
                                        std::string& new_id);
                     
+                    int resetOutputQueue(void *socket,
+                                         MapZMQConfiguration &default_conf,
+                                         const MapZMQConfiguration &startup_conf);
+                    
                     //! send the start of the zmq envelop start
                     /*!
                      This method need to be called befor message forwarding,

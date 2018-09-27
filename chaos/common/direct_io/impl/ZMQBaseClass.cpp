@@ -352,6 +352,23 @@ int ZMQBaseClass::setAndReturnID(void *socket,
     return zmq_setsockopt (socket, ZMQ_IDENTITY, new_id.c_str(), new_id.size());
 }
 
+int ZMQBaseClass::resetOutputQueue(void *socket,
+                                   MapZMQConfiguration &default_conf,
+                                   const MapZMQConfiguration &startup_conf) {
+    int err = 0;
+    int prop_value = 0;
+    err = zmq_setsockopt(socket, ZMQ_RCVHWM, &prop_value, sizeof(int));
+    if(err == 0) {
+        err = setSocketOption(socket,
+                              default_conf,
+                              startup_conf,
+                              ZMQ_RCVHWM,
+                              "ZMQ_RCVHWM",
+                              "resetOutputQueue");
+    }
+    return err;
+}
+
 int ZMQBaseClass::sendStartEnvelop(void *socket) {
     //sending envelop delimiter
     return stringSendMore(socket, EmptyMessage);

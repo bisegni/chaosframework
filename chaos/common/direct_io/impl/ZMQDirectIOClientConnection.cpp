@@ -273,6 +273,11 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
         if((ZMQBaseClass::setAndReturnID(socket_priority,
                                          service_identity))) {
             ERR << "Error configuring new id for socker :" << service_endpoint;
+        } else {
+            ZMQBaseClass::resetOutputQueue(socket_service,
+                                           default_configuration,
+                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+
         }
     }
     return err;
@@ -303,6 +308,11 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
         if((ZMQBaseClass::setAndReturnID(socket_service,
                                          service_identity))) {
             ERR << "Error configuring new id for socker :" << service_endpoint;
+        } else {
+            ZMQBaseClass::resetOutputQueue(socket_service,
+                                           default_configuration,
+                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+
         }
     }
     return err;
