@@ -22,7 +22,7 @@
 #include "CacheDriverMetricCollector.h"
 #include <chaos/common/global.h>
 
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 
 // static initialization
 ChaosSharedPtr<CacheDriverSharedMetricIO> CacheDriverMetricCollector::shared_collector;
@@ -85,11 +85,6 @@ int CacheDriverMetricCollector::addServer(std::string server_desc) {
 int CacheDriverMetricCollector::removeServer(std::string server_desc) {
     CHAOS_ASSERT(wrapped_cache_driver)
     return wrapped_cache_driver->removeServer(server_desc);
-}
-
-int CacheDriverMetricCollector::updateConfig() {
-    CHAOS_ASSERT(wrapped_cache_driver)
-    return wrapped_cache_driver->updateConfig();
 }
 
 void CacheDriverMetricCollector::init(void *init_data)  {

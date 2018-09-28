@@ -173,6 +173,7 @@ namespace chaos {
         	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
         	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
             static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
+            static const unsigned int ChacheTimeoutinMSec                       = 5000;
             //!time to wait for queue can accept new data to push in object storage
             /*!
              Mds when receive a new dataset to store on history, it is push on hst sublayer

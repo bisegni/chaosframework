@@ -42,7 +42,6 @@ namespace chaos {
             private:
                 MDSCronusManager();
                 ~MDSCronusManager();
-                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             public:
                 void init(void *init_data);
                 void deinit();

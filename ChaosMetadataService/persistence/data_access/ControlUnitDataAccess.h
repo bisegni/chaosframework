@@ -28,6 +28,7 @@
 #include <chaos/common/data/structured/Dataset.h>
 
 #include <chaos_service_common/data/data.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
 #include <boost/smart_ptr.hpp>
 

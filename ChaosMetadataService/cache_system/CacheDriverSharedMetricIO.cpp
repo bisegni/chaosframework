@@ -25,7 +25,7 @@
 #include <boost/format.hpp>
 
 using namespace chaos::metadata_service;
-using namespace chaos::data_service::cache_system;
+using namespace chaos::metadata_service::cache_system;
 
 #define CACHDRVMC_INFO INFO_LOG(CacheDriverSharedMetricIO)
 #define CACHDRVMC_DBG_ DBG_LOG(CacheDriverSharedMetricIO)

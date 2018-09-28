@@ -27,7 +27,7 @@
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             namespace mongodb {
 

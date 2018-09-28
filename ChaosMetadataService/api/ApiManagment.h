@@ -40,9 +40,6 @@ namespace chaos {
 			
 			class ApiManagment:
 			public chaos::common::utility::InizializableService {
-				
-                //! pointe to the root subservice struct
-                ApiSubserviceAccessor *subservices;
                 
 				//! api group list
 				ApiGroupList installed_api_group_list;
@@ -57,9 +54,7 @@ namespace chaos {
 				
 				//! install an instance of an api group
 				void addApiAgroup(AbstractApiGroup *instance) {
-					CHAOS_ASSERT(subservices)
-					if(!instance) return;
-					subservices->network_broker_service->registerAction(instance);
+                    chaos::common::network::NetworkBroker::getInstance()->registerAction(instance);
 					//we have an instance so we can register that action
 					installed_api_group_list.push_back(ChaosSharedPtr<AbstractApiGroup>(instance));
 				}
@@ -67,14 +62,13 @@ namespace chaos {
 				//! install a class as api group
 				template<typename T>
 				void addApiAgroup() {
-					CHAOS_ASSERT(subservices)
 					//allcoate the instsancer for the AbstractApi depending by the template
 					ChaosUniquePtr<INSTANCER(T, AbstractApiGroup)> i(ALLOCATE_INSTANCER(T, AbstractApiGroup));
 					
 					//get api instance
 					T *instance = (T*)i->getInstance();
 					if(instance) {
-						subservices->network_broker_service->registerAction(instance);
+						chaos::common::network::NetworkBroker::getInstance()->registerAction(instance);
 						//we have an instance so we can register that action
 						installed_api_group_list.push_back(ChaosSharedPtr<AbstractApiGroup>(instance));
 					}
