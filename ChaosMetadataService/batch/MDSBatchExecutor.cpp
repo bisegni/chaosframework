@@ -40,10 +40,8 @@ new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchComm
 
 #define MDS_DEFAULT_BATCH_SANDBOX_COUNT 1
 
-MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
-                                   chaos::common::network::NetworkBroker *_network_broker):
-BatchCommandExecutor(executor_id, false),
-network_broker(_network_broker),
+MDSBatchExecutor::MDSBatchExecutor():
+BatchCommandExecutor("mds_batch", false),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
 abstract_persistance_driver(NULL),
@@ -100,21 +98,21 @@ void MDSBatchExecutor::init(void *init_data)  {
 void MDSBatchExecutor::start()  {
     BatchCommandExecutor::start();
     //allocate channels
-    message_channel_for_job = network_broker->getRawMessageChannel();
+    message_channel_for_job = NetworkBroker::getInstance()->getRawMessageChannel();
     if(!message_channel_for_job) throw chaos::CException(-1, "Error allcoating Message channel", __PRETTY_FUNCTION__);
     
-    multiaddress_message_channel_for_job = network_broker->getRawMultiAddressMessageChannel();
+    multiaddress_message_channel_for_job = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
     if(!multiaddress_message_channel_for_job) throw chaos::CException(-2, "Error allcoating Multiaddress Message channel", __PRETTY_FUNCTION__);
 }
 
 // stop instance
 void MDSBatchExecutor::stop()  {
     if(message_channel_for_job) {
-        network_broker->disposeMessageChannel(message_channel_for_job);
+        NetworkBroker::getInstance()->disposeMessageChannel(message_channel_for_job);
         message_channel_for_job = NULL;
     }
     if(multiaddress_message_channel_for_job) {
-        network_broker->disposeMessageChannel(multiaddress_message_channel_for_job);
+        NetworkBroker::getInstance()->disposeMessageChannel(multiaddress_message_channel_for_job);
         multiaddress_message_channel_for_job = NULL;
     }
     //deallcoate channels
@@ -153,7 +151,6 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;
-        result->abstract_persistance_driver = abstract_persistance_driver;
     }
     return result;
 }
@@ -173,6 +170,7 @@ void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: type_string = "Command is completed"; break;
         case common::batch_command::BatchCommandEventType::EVT_FAULT: type_string = "Command has fault"; break;
         case common::batch_command::BatchCommandEventType::EVT_KILLED: type_string = "Command killed"; break;
+        default: break;
     }
     BCE_INFO << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type_string;
 }

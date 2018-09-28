@@ -24,7 +24,7 @@
 #include "GetAssociationByDS.h"
 #include "GetAllDataService.h"
 #include "GetBestEndpoints.h"
-using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::api::metadata_service;
 DEFINE_CLASS_FACTORY_NO_ALIAS(DataServiceApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 DataServiceApiGroup::DataServiceApiGroup():

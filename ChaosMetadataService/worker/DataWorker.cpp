@@ -29,7 +29,7 @@
 
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service;
-using namespace chaos::data_service::worker;
+using namespace chaos::metadata_service::worker;
 
 #define DataWorker_LOG_HEAD "[DataWorker] - "
 

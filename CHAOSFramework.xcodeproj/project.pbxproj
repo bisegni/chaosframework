@@ -460,7 +460,6 @@
 		326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA01E0159C600AD011E /* DeviceSharedDataWorker.cpp */; };
 		326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */; };
 		326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */; };
-		326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */; };
 		326BB29E1E3753DB00BFA602 /* ProxyControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */; };
 		326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */; };
 		326BB2A31E37572C00BFA602 /* ControlUnitApiInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */; };
@@ -1803,8 +1802,6 @@
 		326ACFA31E0159C600AD011E /* DeviceSharedDataWorkerMetric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetric.h; sourceTree = "<group>"; };
 		326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorkerMetricCollector.cpp; sourceTree = "<group>"; };
 		326ACFA51E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetricCollector.h; sourceTree = "<group>"; };
-		326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistenceManager.cpp; sourceTree = "<group>"; };
-		326ACFAE1E016D9000AD011E /* PersistenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistenceManager.h; sourceTree = "<group>"; };
 		326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyControlUnit.cpp; sourceTree = "<group>"; };
 		326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyControlUnit.h; sourceTree = "<group>"; };
 		326BB2A11E37572B00BFA602 /* ControlUnitApiInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitApiInterface.h; sourceTree = "<group>"; };
@@ -5147,8 +5144,6 @@
 		32C7EAE01A5EC0D60008DFE8 /* persistence */ = {
 			isa = PBXGroup;
 			children = (
-				326ACFAD1E016D9000AD011E /* PersistenceManager.cpp */,
-				326ACFAE1E016D9000AD011E /* PersistenceManager.h */,
 				32809C761A97647F00C02C12 /* persistence_types.h */,
 				3235FDCB1A6FF51D00EC83A9 /* persistence.h */,
 				3235FDCC1A6FF53600EC83A9 /* mongodb */,
@@ -6458,7 +6453,6 @@
 				326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				32B6B79D213EA6DD00D7ECF8 /* SearchScript.cpp in Sources */,
-				326ACFAF1E016D9000AD011E /* PersistenceManager.cpp in Sources */,
 				32B6B737213E736D00D7ECF8 /* SubmitEntry.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
 				325F0247213EE20400270077 /* UnitServerApiGroup.cpp in Sources */,

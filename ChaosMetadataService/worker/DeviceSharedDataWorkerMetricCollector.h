@@ -30,7 +30,7 @@
 #include <boost/thread.hpp>
 
 namespace chaos{
-    namespace data_service {
+    namespace metadata_service {
         namespace worker {
             
             class DeviceSharedDataWorkerMetricCollector:
