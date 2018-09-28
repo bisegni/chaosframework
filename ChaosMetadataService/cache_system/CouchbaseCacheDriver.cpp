@@ -23,7 +23,7 @@
 #include "../ChaosMetadataService.h"
 
 #include <chaos/common/global.h>
-
+#include <chaos/common/chaos_constants.h>
 #include <string>
 
 #include <boost/regex.hpp>
@@ -229,6 +229,7 @@ int CouchbaseCacheDriver::getData(const ChaosStringVector& keys,
     } else {
         err = -1;
     }
+    driver_pool.pool->releaseResource(pool_element);
     return err;
 }
 

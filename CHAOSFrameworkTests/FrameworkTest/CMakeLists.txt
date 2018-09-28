@@ -41,6 +41,7 @@ SET(TestFrameworkSource main.cpp
                         templated_key_value_hash/TemplateKeyValueHashMap.cpp
                         trigger/TriggerTest.cpp
                         utility/FutureHelperTest.cpp
+                        utility/TemplatedMapTest.cpp
                         direct_io/DirectIOTest.cpp
                         direct_io/DirectIODeviceServerChannelTest.cpp
                         direct_io/DirectIOSystemServerChannelTest.cpp

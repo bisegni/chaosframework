@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32061745215E46BF00A78401 /* TemplatedMapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32061744215E46BF00A78401 /* TemplatedMapTest.cpp */; };
 		3206CE281FA1DA9B0059A4A4 /* TestCDataWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */; };
 		322B16F920B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322B16F820B054B3001E5B16 /* DirectIODeviceServerChannelTest.cpp */; };
 		322EE8811F825D8000D89824 /* MemcachedEmbedded.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EE8801F825D8000D89824 /* MemcachedEmbedded.cpp */; };
@@ -71,6 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32061744215E46BF00A78401 /* TemplatedMapTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TemplatedMapTest.cpp; sourceTree = "<group>"; };
 		3206CE271FA1DA9B0059A4A4 /* TestCDataWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestCDataWrapper.cpp; sourceTree = "<group>"; };
 		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
 		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 			children = (
 				32F8425D20162B54004D582D /* FutureHelperTest.cpp */,
 				32F8425C20162B54004D582D /* FutureHelperTest.h */,
+				32061744215E46BF00A78401 /* TemplatedMapTest.cpp */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -474,6 +477,7 @@
 				32C180EF1FAB33CD00AFCC15 /* TestPlugin.cpp in Sources */,
 				32639FF51F6ACAC70049089C /* TestURLFeeder.cpp in Sources */,
 				32818B451F828FDB004A409E /* TestBatchCommand.cpp in Sources */,
+				32061745215E46BF00A78401 /* TemplatedMapTest.cpp in Sources */,
 				327A4D241F90CB3200DA800C /* ExternalUnitTest.cpp in Sources */,
 				32818B431F828FDB004A409E /* TestCommandExecutor.cpp in Sources */,
 				32B8223420F6776E002BBCBA /* RPCTest.cpp in Sources */,
