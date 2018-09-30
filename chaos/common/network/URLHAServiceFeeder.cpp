@@ -105,31 +105,31 @@ void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
 void URLHAServiceFeeder::checkForAliveService() {
     
     uint64_t current_ts = TimingUtil::getTimeStamp();
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
     size_t max_element = retry_queue.size();
-
-    while (max_element > 0) {
-        boost::unique_lock<boost::mutex> wrr(mutex_queue);
+    
+    while (retry_queue.size() &&
+           max_element-- > 0) {
         ChaosSharedPtr<ServiceRetryInformation> sri = retry_queue.front();retry_queue.pop();
-        max_element = retry_queue.size();
-        // NOTE: dava heap use after free
-        if(sri.get()==NULL){
-            continue;
-        }
+        wr.unlock();
         if(current_ts>= sri->retry_timeout) {
             sri->retry_times++;
             URLHASF_INFO << "Check if service " << sri->offline_url << " has respawn";
             if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri->offline_index))){
                 //!service returned online
                 URLHASF_INFO << "Service " << sri->offline_url << " returned online";
+                wr.lock();
                 respawned_queue.push(sri->offline_index);
             } else {
                 //service still in offline
                 sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * 1000)%10000);
                 
                 URLHASF_INFO << "Service " << sri->offline_url << " still offline wait for " << sri->retry_timeout-current_ts << " milliseocnds";
+                wr.lock();
                 retry_queue.push(sri);
             }
         }else{
+            wr.lock();
             retry_queue.push(sri);
         }
     }
