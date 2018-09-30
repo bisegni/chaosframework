@@ -54,8 +54,8 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
                                        const void *cookie,
                                        lcb_error_t error,
                                        const lcb_get_resp_t *resp) {
+    if(cookie == nullptr) return;
     const Result *result = reinterpret_cast<const Result*>(cookie);
-    
     switch(result->return_type) {
         case ResultTypeGet: {
             const GetResult * gr_ptr = dynamic_cast<const GetResult *>(result);
@@ -94,6 +94,7 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
                                        lcb_storage_t operation,
                                        lcb_error_t error,
                                        const lcb_store_resp_t *resp) {
+    if(cookie == nullptr) return;
     const Result *result = reinterpret_cast<const Result*>(cookie);
     if((result->err = error) != LCB_SUCCESS) {
         result->err_str = lcb_strerror(instance, error);

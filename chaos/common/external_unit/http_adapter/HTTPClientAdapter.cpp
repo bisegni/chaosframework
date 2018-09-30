@@ -37,11 +37,11 @@ using namespace chaos::common::external_unit::http_adapter;
 static const char *web_socket_option="Content-Type: application/bson-json\r\n";
 HTTPClientAdapter::HTTPClientAdapter():
 run(false),
+poll_counter(0),
+rest_poll_time(1000),
 message_broadcasted(0){
     if(GlobalConfiguration::getInstance()->hasOption(chaos::InitOption::OPT_REST_POLL_TIME_US)){
         rest_poll_time=GlobalConfiguration::getInstance()->getOption<uint32_t>(chaos::InitOption::OPT_REST_POLL_TIME_US);
-    } else {
-        rest_poll_time=1000;
     }
 }
 

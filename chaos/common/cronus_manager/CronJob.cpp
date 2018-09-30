@@ -36,6 +36,7 @@ using namespace chaos::common::utility;
 CronJob::CronJob(chaos::common::data::CDataWrapper *job_parameter):
 run_state(CronJobStateWaiting),
 next_ts_start(0),
+repeat_delay(0),
 job_index(UUIDUtil::generateUUIDLite()) {
     //inizilize job map
     parserCDataWrapperForMapParameter(job_parameter);
