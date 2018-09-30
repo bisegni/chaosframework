@@ -49,22 +49,21 @@ namespace chaos{
         
         class ChaosDataService;
         
+        typedef ChaosSharedPtr<chaos::metadata_service::worker::DataWorker> DataWorkerSharedPtr;
+        CHAOS_DEFINE_VECTOR_FOR_TYPE(DataWorkerSharedPtr, DataWorkerVec);
         class QueryDataConsumer:
         protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
         protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
         public StartableService {
             friend class ChaosDataService;
             
-            std::string cache_impl_name;
-            std::string db_impl_name;
-            service_common::persistence::data_access::AbstractPersistenceDriver *object_storage_driver;
             DirectIOServerEndpoint					*server_endpoint;
             DirectIODeviceServerChannel				*device_channel;
             DirectIOSystemAPIServerChannel			*system_api_channel;
             
             
             boost::atomic<uint16_t>                 device_data_worker_index;
-            chaos::metadata_service::worker::DataWorker	**device_data_worker;
+            DataWorkerVec	device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(const std::string& key,

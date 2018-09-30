@@ -29,7 +29,10 @@ using namespace chaos::common::external_unit;
 #define ECHO_KEY_MESSAGE    "this is the message"
 #pragma mark ServerEndpoint
 ServerEndpoint::ServerEndpoint():
-ExternalUnitServerEndpoint("/test"){
+ExternalUnitServerEndpoint("/test"),
+connection_event_counter(0),
+disconnection_event_counter(0),
+received_message_counter(0){
     connection_event_counter = 0;
     disconnection_event_counter = 0;
     received_message_counter = 0;
@@ -53,7 +56,8 @@ int ServerEndpoint::handleReceivedeMessage(const std::string& connection_identif
 
 #pragma mark ExternalUnitTest
 ExternalUnitTest::ExternalUnitTest():
-ExternalUnitClientEndpoint("EchoTest"){}
+ExternalUnitClientEndpoint("EchoTest"),
+echo_received(false){}
 
 ExternalUnitTest::~ExternalUnitTest(){}
 

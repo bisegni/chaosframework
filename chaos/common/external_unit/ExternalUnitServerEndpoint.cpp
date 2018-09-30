@@ -23,7 +23,8 @@
 using namespace chaos::common::data;
 using namespace chaos::common::external_unit;
 
-ExternalUnitServerEndpoint::ExternalUnitServerEndpoint() {}
+ExternalUnitServerEndpoint::ExternalUnitServerEndpoint():
+number_of_connection_accepted(-1){}
 
 ExternalUnitServerEndpoint::ExternalUnitServerEndpoint(const std::string& _endpoint_identifier):
 endpoint_identifier(_endpoint_identifier),
