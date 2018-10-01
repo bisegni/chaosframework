@@ -214,13 +214,15 @@ namespace chaos {
 #endif
     protected:
         bool initialized,deinitialized;
-        
+        //!ingore unregistered program option
+        bool ingore_unreg_po;
         //! Constructor Method
         /*!
          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the
          allocation of the startup framework parameter
          */
         ChaosCommon():
+        ingore_unreg_po(false),
         initialized(false),
         deinitialized(false){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
@@ -272,7 +274,11 @@ namespace chaos {
         void init(int argc, const char* argv[])  {
             preparseCommandOption(argc, argv);
             if(argv != NULL) {
-                GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+                if(ingore_unreg_po) {
+                    GlobalConfiguration::getInstance()->parseStartupParametersAllowingUnregistered(argc, argv);
+                } else {
+                    GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+                }
             }
             init(NULL);
         }

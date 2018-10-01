@@ -49,9 +49,6 @@ GlobalConfiguration::GlobalConfiguration():
 desc("!CHAOS Framework Allowed options"){}
 GlobalConfiguration::~GlobalConfiguration(){}
 
-/*
- 
- */
 void GlobalConfiguration::preParseStartupParameters()  {
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
@@ -111,24 +108,18 @@ void GlobalConfiguration::preParseStartupParameters()  {
     }
 }
 
-/*!
- Specialized option for startup c and cpp program main options parameter
- */
+void GlobalConfiguration::parseStartupParametersAllowingUnregistered(int argc, const char* argv[])  {
+    parseParameter(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run());
+}
+
 void GlobalConfiguration::parseStartupParameters(int argc, const char* argv[])  {
     parseParameter(po::parse_command_line(argc, argv, desc));
 }
-//!stringbuffer parser
-/*
- specialized option for string stream buffer with boost semantics
- */
+
 void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions)  {
     parseParameter(po::parse_config_file(sStreamOptions, desc));
 }
 
-//!conver user input into enumeration
-/*
- Conver the string into enumeration for the log level
- */
 int32_t GlobalConfiguration::filterLogLevel(string& levelStr)  {
     chaos::common::log::level::LogSeverityLevel level = chaos::common::log::level::LSLInfo;
     
@@ -196,9 +187,6 @@ void GlobalConfiguration::scanOption()   {
     
 }
 
-/*
- parse the tandard startup parameters
- */
 void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) {
     //int rpcServerPort;
     //int rpcServerThreadNumber;
