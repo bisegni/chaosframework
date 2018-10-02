@@ -8,9 +8,6 @@
       location = "group:CHAOSFramework.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:CHAOSFrameworkTests/CHAOSFrameworkTests.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:ChaosDataExport/ChaosDataExport.xcodeproj">
    </FileRef>
 </Workspace>
