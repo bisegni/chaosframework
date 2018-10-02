@@ -379,7 +379,6 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
                 exectuion_pool_manager->registerUID(i->second->work_unit_instance->getCUID());
             }
             
-            
             //remove the iterator
             map_cuid_reg_unreg_instance.erase(i++); // first is executed the uncrement that return
             // a copy of the original iterator
@@ -416,6 +415,9 @@ void ControlManager::manageControlUnit() {
         //lock queue
         lock.lock();
         
+        //migrate stable <-> unstable
+        migrateStableAndUnstableSMCUInstance();
+        
         //try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
         while(!queue_submitted_cu.empty()) {
             //we have new instance to manage
@@ -451,9 +453,6 @@ void ControlManager::manageControlUnit() {
             map_cuid_reg_unreg_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
         }
         lock.unlock();
-        
-        //migrate stable <-> unstable
-        migrateStableAndUnstableSMCUInstance();
         
         //! lock the registering (unstable sm) hastable
         ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
