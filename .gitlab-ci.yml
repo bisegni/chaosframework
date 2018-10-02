@@ -81,7 +81,7 @@ test_u_14_04_gcc49:
       -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.cfamily.threads=$NPROC
       -Dsonar.cfamily.gcov.reportsPath=.
-      -Dsonar.tests=CHAOSFrameworkTests/FrameworkTest
+      -Dsonar.tests=TestFramework
       -Dsonar.cxx.xunit.provideDetails=true
       -Dsonar.cxx.xunit.reportPath=report_test.xml
   artifacts:
