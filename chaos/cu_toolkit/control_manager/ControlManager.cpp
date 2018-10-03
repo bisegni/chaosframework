@@ -412,11 +412,27 @@ void ControlManager::manageControlUnit() {
     
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu, boost::defer_lock);
     while(thread_run) {
-        //lock queue
-        lock.lock();
+        
+        //! lock the registering (unstable sm) hastable
+        ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
+        
+        //schedule unstable state machine steps
+        if(map_cuid_reg_unreg_instance.size()) {
+            //whe have control unit isntance with unstable state machine
+            makeSMSteps();
+            //waith some time to retry the state machine
+            thread_waith_semaphore.wait(2000);
+        } else {
+            //we don'need to do anything else
+            thread_waith_semaphore.wait();
+        }
+        
         
         //migrate stable <-> unstable
         migrateStableAndUnstableSMCUInstance();
+        
+        //lock queue
+        lock.lock();
         
         //try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
         while(!queue_submitted_cu.empty()) {
@@ -453,19 +469,6 @@ void ControlManager::manageControlUnit() {
             map_cuid_reg_unreg_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
         }
         lock.unlock();
-        
-        //! lock the registering (unstable sm) hastable
-        ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
-        //schedule unstable state machine steps
-        if(map_cuid_reg_unreg_instance.size()) {
-            //whe have control unit isntance with unstable state machine
-            makeSMSteps();
-            //waith some time to retry the state machine
-            thread_waith_semaphore.wait(2000);
-        } else {
-            //we don'need to do anything else
-            thread_waith_semaphore.wait();
-        }
     }
 }
 
