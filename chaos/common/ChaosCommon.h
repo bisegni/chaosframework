@@ -209,22 +209,23 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
+        //!ingore unregistered program option
+        bool ingore_unreg_po;
 #ifndef CHAOS_NO_BACKTRACE
         SignalHandling sign_handling;
 #endif
     protected:
         bool initialized,deinitialized;
-        //!ingore unregistered program option
-        bool ingore_unreg_po;
+
         //! Constructor Method
         /*!
          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the
          allocation of the startup framework parameter
          */
         ChaosCommon():
-        ingore_unreg_po(false),
         initialized(false),
-        deinitialized(false){
+        deinitialized(false),
+        ingore_unreg_po(false){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
             initialized=deinitialized=false;
         }
@@ -236,6 +237,15 @@ namespace chaos {
          */
         virtual ~ChaosCommon() {};
     public:
+        //! set the ingore unregistered option feature
+        /*
+         this need to be called before @init(int argc, const char* argv[]) method, otherwise
+         will be used the default values (false)
+         */
+        void setIngoreUnregisteredProgramOption(bool _ingore_unreg_po) {
+            ingore_unreg_po = _ingore_unreg_po;
+        }
+        
         /*!
          parse a config file before initializzation
          */
