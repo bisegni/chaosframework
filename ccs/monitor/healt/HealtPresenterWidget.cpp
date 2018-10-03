@@ -30,6 +30,10 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
 
     ui->ledIndicatorHealt->setNodeUID(node_uid);
     ui->ledIndicatorHealt->initChaosContent();
+
+    ui->ledIndicatorBusy->setNodeUID(node_uid);
+    ui->ledIndicatorBusy->initChaosContent();
+
     connect(ui->ledIndicatorHealt,
             SIGNAL(changedOnlineStatus(QString,chaos::metadata_service_client::node_monitor::OnlineState)),
             SLOT(changedOnlineStatus(QString,chaos::metadata_service_client::node_monitor::OnlineState)));
@@ -48,6 +52,11 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     ui->nodeResourceWidget->updateChaosContent();
 
     ui->widgetCommandStatistic->setNodeUID(node_uid);
+
+    //running command
+    ui->labelCurAliasInfo->setNodeUID(node_uid);
+    ui->labelCurAliasInfo->setDatasetType(CControlUnitDatasetLabel::DatasetTypeSystem);
+    ui->labelCurAliasInfo->setDatasetAttributeName(chaos::ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS);
 
     //force start refresh also if node is down
     changedOnlineStatus(node_uid,
@@ -71,7 +80,10 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
 HealtPresenterWidget::~HealtPresenterWidget() {
     ui->nodeResourceWidget->deinitChaosContent();
     ui->ledIndicatorHealt->deinitChaosContent();
+    ui->ledIndicatorBusy->deinitChaosContent();
     ui->labelStatus->deinitChaosContent();
+    ui->labelCurAliasInfo->deinitChaosContent();
+    ui->widgetCommandStatistic->deinitChaosContent();
     chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(node_uid.toStdString(),
                                                                                                           node_monitor::ControllerTypeNode,
                                                                                                           this);
@@ -103,10 +115,15 @@ void HealtPresenterWidget::onApiDone(const QString& api_tag,
             is_ds = (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0);
 
             ui->widgetCommandStatistic->setVisible(is_sc_cu);
+            ui->labelCurAlias->setVisible(is_sc_cu);
+            ui->labelCurAliasInfo->setVisible(is_sc_cu);
+
             if(ui->widgetCommandStatistic->isVisible()) {
                 ui->widgetCommandStatistic->initChaosContent();
-            } else {
-                ui->widgetCommandStatistic->deinitChaosContent();
+            }
+
+            if(ui->labelCurAliasInfo->isVisible()) {
+                ui->labelCurAliasInfo->initChaosContent();
             }
 
             if(is_cu ||
