@@ -452,11 +452,18 @@ void ControlManager::manageControlUnit() {
         lock.unlock();
         
         //! lock the registering (unstable sm) hastable
-        ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
+        
         //schedule unstable state machine steps
         if(map_cuid_reg_unreg_instance.size()) {
             //whe have control unit isntance with unstable state machine
-            makeSMSteps();
+            {
+                ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
+                makeSMSteps();
+            }
+            
+            //migrate stable <-> unstable
+            migrateStableAndUnstableSMCUInstance();
+            
             //waith some time to retry the state machine
             thread_waith_semaphore.wait(2000);
         } else {
@@ -464,8 +471,6 @@ void ControlManager::manageControlUnit() {
             thread_waith_semaphore.wait();
         }
         
-        //migrate stable <-> unstable
-        migrateStableAndUnstableSMCUInstance();
     }
 }
 
