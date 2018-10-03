@@ -327,9 +327,9 @@ void WorkUnitManagement::scheduleSM()  {
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
             //set healt to unload
-//            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
-//                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-//                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOADING);
             break;
         }
     }
