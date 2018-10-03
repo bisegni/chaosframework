@@ -456,10 +456,7 @@ void ControlManager::manageControlUnit() {
         //schedule unstable state machine steps
         if(map_cuid_reg_unreg_instance.size()) {
             //whe have control unit isntance with unstable state machine
-            {
-                ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
-                makeSMSteps();
-            }
+            makeSMSteps();
             
             //migrate stable <-> unstable
             migrateStableAndUnstableSMCUInstance();
