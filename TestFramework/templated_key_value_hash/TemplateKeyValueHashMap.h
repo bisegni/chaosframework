@@ -31,8 +31,8 @@
 
 
 typedef struct TemplateKeyValueHashMapElement {
-    int product_id;
-    boost::atomic<int> access_count;
+    uint64_t product_id;
+    boost::atomic<uint64_t> access_count;
 } TemplatTemplateKeyValueHashMapeKeyValueHashMapElement;
 
 class TestTemplateKeyValueHashMap:
@@ -44,13 +44,12 @@ public chaos::common::utility::TemplatedKeyValueHashMap<TemplateKeyValueHashMapE
 protected:
     virtual void SetUp();
 
-    int number_of_producer;
-    int number_of_production;
-    int number_of_consumer;
+    uint64_t number_of_producer;
+    uint64_t number_of_production;
+    uint64_t number_of_consumer;
     
-    boost::atomic<int> production_id;
-    boost::atomic<int> product_id_sum;
-    boost::atomic<int> error_count;
+    boost::atomic<uint64_t> production_id;
+    boost::atomic<uint64_t> error_count;
     boost::thread_group producer_thread_group;
     boost::thread_group consumer_thread_group;
 

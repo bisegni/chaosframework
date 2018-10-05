@@ -92,6 +92,7 @@
 		3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */; };
 		3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCDB1B03402800F9B80E /* QuantumKeyConsumer.cpp */; };
 		3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */; };
+		32140ED521663F6600C62C23 /* ChaosCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32140ED421663F6600C62C23 /* ChaosCommon.cpp */; };
 		3214E7401DC1081100A67414 /* AlarmDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E73E1DC1081100A67414 /* AlarmDescription.cpp */; };
 		3214E7411DC1081100A67414 /* AlarmDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214E73F1DC1081100A67414 /* AlarmDescription.h */; };
 		3214E7441DC10B9500A67414 /* MultiSeverityAlarm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */; };
@@ -1344,6 +1345,7 @@
 		3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetBestEndpoints.h; sourceTree = "<group>"; };
 		3211CCDB1B03402800F9B80E /* QuantumKeyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumKeyConsumer.cpp; sourceTree = "<group>"; };
 		3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumKeyConsumer.h; sourceTree = "<group>"; };
+		32140ED421663F6600C62C23 /* ChaosCommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosCommon.cpp; sourceTree = "<group>"; };
 		3214E73E1DC1081100A67414 /* AlarmDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AlarmDescription.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3214E73F1DC1081100A67414 /* AlarmDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AlarmDescription.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3214E7421DC10B9500A67414 /* MultiSeverityAlarm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MultiSeverityAlarm.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4157,6 +4159,7 @@
 			isa = PBXGroup;
 			children = (
 				3294905A159AF4BF00E86BD1 /* CMakeLists.txt */,
+				32140ED421663F6600C62C23 /* ChaosCommon.cpp */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* chaos_constants.h */,
 				329DEB721D2E457F0050E914 /* chaos_errors.cpp */,
@@ -7010,6 +7013,7 @@
 				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
 				32C25DF41DB90C3200A46C2B /* StandardLoggingChannel.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
+				32140ED521663F6600C62C23 /* ChaosCommon.cpp in Sources */,
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
 				326420651F8A1CD200B58E3E /* ExternalEchoEndpoint.cpp in Sources */,
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
