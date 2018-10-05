@@ -279,6 +279,7 @@ set(sources
     widget/StateImageIndicatorWidget.cpp
     widget/WidgetDynamicList.cpp
     widget/StorageBurst.cpp
+    widget/CLedIndicatorCUBusy.cpp
     resources.qrc
     ${ccs_include_moc}
 )

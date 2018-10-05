@@ -35,10 +35,9 @@ number_of_consumer(){}
 void TestTemplateKeyValueHashMap::SetUp() {
     error_count          = 0;
     production_id        = 0;
-    product_id_sum       = 0;
-    number_of_producer   = 10;
-    number_of_production = 100;
-    number_of_consumer   = 10;
+    number_of_producer   = 100;
+    number_of_production = 10000;
+    number_of_consumer   = 1;
 }
 
 void TestTemplateKeyValueHashMap::producer() {
@@ -49,27 +48,26 @@ void TestTemplateKeyValueHashMap::producer() {
         element->product_id = production_id++;
         
         std::string element_key = std::string("element_") + boost::lexical_cast<std::string>(element->product_id);
-        addElement(element_key.c_str(), (uint32_t)element_key.size(), element);
+        if(addElement(element_key.c_str(), (uint32_t)element_key.size(), element) != 0) {
+            error_count++;
+        }
     }
 }
 
 void TestTemplateKeyValueHashMap::consumer() {
-    TemplateKeyValueHashMapElement *element_found = NULL;
+    int err = 0;
     for(int            idx            = 0;
         idx < production_id;
         idx++) {
-        
+        TemplateKeyValueHashMapElement *element_found = NULL;
         std::string element_key = std::string("element_") + boost::lexical_cast<std::string>(idx);
         
-        if(getElement(element_key.c_str(),
-                      (uint32_t)element_key.size(),
-                      &element_found) == 0){
+        if((err = getElement(element_key.c_str(),
+                             (uint32_t)element_key.size(),
+                             &element_found)) == 0){
             //ok
             ASSERT_TRUE(element_found);
             ASSERT_EQ(idx, element_found->product_id);
-            
-            //sum the product id
-            product_id_sum += element_found->product_id;
         }
         else {
             error_count++;
@@ -78,8 +76,8 @@ void TestTemplateKeyValueHashMap::consumer() {
 }
 
 void TestTemplateKeyValueHashMap::clearHashTableElement(const void *key,
-                                                    uint32_t key_len,
-                                                    TemplateKeyValueHashMapElement *element) {
+                                                        uint32_t key_len,
+                                                        TemplateKeyValueHashMapElement *element) {
     assert(element);
     free(element);
 }
@@ -103,9 +101,9 @@ TEST_F(TestTemplateKeyValueHashMap, TestTemplateKeyValueHashMap) {
         idx++) {
         consumer_thread_group.add_thread(new boost::thread(boost::bind(&TestTemplateKeyValueHashMap::consumer, this)));
     }
-    
     //waith that all insert has been done
     consumer_thread_group.join_all();
-    ASSERT_EQ(0, error_count);
     clear();
+    ASSERT_EQ(number_of_producer*number_of_production, production_id);
+    ASSERT_EQ(0, error_count);
 }

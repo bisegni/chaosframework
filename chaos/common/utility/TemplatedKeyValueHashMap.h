@@ -51,7 +51,7 @@ namespace chaos {
 			template<typename T>
 			struct HashHeadElementList {
 				//!list mutext
-				boost::shared_mutex	mutex_list;
+				boost::mutex	mutex_list;
 				
 				//! list point to the head element
 				KeyValueHashElement<T> *head;
@@ -83,8 +83,8 @@ namespace chaos {
 				//! flag for memory the allcoation state of the memory
 				bool			allocation_success;
 				
-				boost::shared_mutex	mutex_hash;
-				
+				boost::mutex	mutex_hash;
+                
 				//! get the has for the key
 				inline uint32_t getHashForKey(const void * key, const uint32_t key_len) {
 					return H::hash(key, key_len, 0);
@@ -97,8 +97,8 @@ namespace chaos {
 				inline HashList *getListByHash(uint32_t hash_value) {
 					HashList *_list_head = hash_vector[hash_value & hash_mask];
 					if(!_list_head) {
-						hash_vector[hash_value & hash_mask] = _list_head = new HashList();
-						_list_head->head = NULL;
+                            hash_vector[hash_value & hash_mask] = _list_head = new HashList();
+                            _list_head->head = NULL;
 					}
 					return _list_head;
 				}
@@ -174,23 +174,26 @@ namespace chaos {
 				 Get element by his key
 				 */
 				int getElement(const void * key, const uint32_t key_len, T *element_ptr) {
+                    boost::unique_lock<boost::mutex>  wl(mutex_hash);
 					int err = -3;
 					//get the list for the has value
 					HashList *_list_head = getListByHash(getHashForKey(key, key_len));
 					
 					// che if the key has an attacched list
-					if(!_list_head) return -1;
-					
+                    if(!_list_head) {
+                        return -1;
+                    }
+                    
 					//lock the list in read
-					boost::shared_lock<boost::shared_mutex> readLock(_list_head->mutex_list);
-					if(!_list_head->head) return -2;
-					
+					//boost::shared_lock<boost::mutex> readLock(_list_head->mutex_list);
+                    if(!_list_head->head) {
+                        return -2;
+                    }
 					//appo var for cicling element
 					HashedStruct *_cur_hash_element = _list_head->head;
 					
 					//search need element with key
 					while (_cur_hash_element) {
-						
 						//!compare the length of the key and the memory
 						if ((key_len == _cur_hash_element->key_len) &&
 							(memcmp(key, _cur_hash_element->key, key_len) == 0)) {
@@ -201,7 +204,6 @@ namespace chaos {
 						_cur_hash_element = _cur_hash_element->next;
 					}
 					return err;
-					
 				}
 				
 				/*!
@@ -214,7 +216,7 @@ namespace chaos {
 						//another element with the same key is preset
 						return -1;
 					}
-					
+                    boost::unique_lock<boost::mutex>  wl(mutex_hash);
 					//get the list for the has value
 					HashList *_list_head = getListByHash(getHashForKey(key, key_len));
 					
@@ -222,7 +224,7 @@ namespace chaos {
 					if(!_list_head) return -1;
 					
 					//get the write lock
-					boost::unique_lock<boost::shared_mutex> writeLock(_list_head->mutex_list);
+					boost::unique_lock<boost::mutex> writeLock(_list_head->mutex_list);
 					
 					//allocate new struct for the element
 					HashedStruct *new_element = new HashedStruct();
@@ -256,6 +258,7 @@ namespace chaos {
 				 Remove the element identified by key
 				 */
 				void removeElement(const void *key, const uint32_t key_len) {
+                    boost::unique_lock<boost::mutex>  wl(mutex_hash);
 					//get the list for the has value
 					HashList *_list_head = getListByHash(getHashForKey(key, key_len));
 					
@@ -263,14 +266,16 @@ namespace chaos {
 					if(!_list_head) return;
 					
 					//get the write lock
-					boost::unique_lock<boost::shared_mutex> writeLock(_list_head->mutex_list);
+					//boost::unique_lock<boost::shared_mutex> writeLock(_list_head->mutex_list);
 					
 					HashedStruct *element_to_delete = NULL;
 					HashedStruct *_cur_hash_element = _list_head->head;
 					while (_cur_hash_element) {
-						if ((key_len == _cur_hash_element->key_len) && (memcmp(key, _cur_hash_element->key, key_len) == 0)) {
+						if ((key_len == _cur_hash_element->key_len) &&
+                            (memcmp(key, _cur_hash_element->key, key_len) == 0)) {
 							element_to_delete = _cur_hash_element;
-							if(_cur_hash_element->prev) {
+							if(_cur_hash_element->prev &&
+                               _cur_hash_element->next) {
 								_cur_hash_element->next->prev = _cur_hash_element->prev;
 							} else {
 								//is the first of the list so set the next as first
@@ -291,7 +296,7 @@ namespace chaos {
 				
 				//!clear all hash table
 				void clear() {
-					
+                    boost::unique_lock<boost::mutex>  wl(mutex_hash);
 					//clear all element(not the hash vector)
 					for(int idx = 0; idx < hashsize(hash_hashpower); idx++) {
 						
@@ -302,7 +307,7 @@ namespace chaos {
 						HashedStruct *cur_slot = hash_vector[idx]->head;
 						
 						//achieve a write lock for access list
-						boost::unique_lock<boost::shared_mutex> readLock(hash_vector[idx]->mutex_list);
+						//boost::unique_lock<boost::shared_mutex> readLock(hash_vector[idx]->mutex_list);
 						
 						while(cur_slot) {
 							//get reference to slot that need to be deleted
