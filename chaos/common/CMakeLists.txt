@@ -50,9 +50,10 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
   ENDIF()
 ENDIF()
 
-SET(common_lib_src chaos_errors.cpp
-                   log/LogManager.cpp
-                   log/ChaosLoggingBackend.cpp)
+SET(common_lib_src  ChaosCommon.cpp
+                    chaos_errors.cpp
+                    log/LogManager.cpp
+                    log/ChaosLoggingBackend.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     additional_lib/mongoose.c
