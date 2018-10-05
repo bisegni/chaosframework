@@ -69,7 +69,7 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
 
     instance_description.addInt32Value(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, api_data.restore_type);
     instance_description.addBoolValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, api_data.restore_apply);
-
+    instance_description.addBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE,false);
         //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();
