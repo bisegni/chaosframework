@@ -59,6 +59,8 @@ public:
 
 TEST_F(DirectIOTest, Echo) {
     DirectIOEchoHandler handler;
+    handler.eco_count=0;
+    lost_eco_message = 0;
     DirectIOSystemAPIClientChannel *client_channel = NULL;
     
     std::string message_string_echo = "test_echo";
@@ -74,14 +76,17 @@ TEST_F(DirectIOTest, Echo) {
     
     message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
     
-    ASSERT_EQ(client_channel->echo(message_buffer, message_buffer_echo), 0);
-    
-    ASSERT_TRUE(message_buffer_echo);
-    ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
+    if((client_channel->echo(message_buffer, message_buffer_echo) == 0) {
+        ASSERT_TRUE(message_buffer_echo);
+        ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
+    } else {
+        lost_eco_message++;
+    }
     
     const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
     ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
-    
+    std::cout <<"[          ] " << "eco_count = " << handler.eco_count << std::endl;
+    std::cout <<"[          ] " << "lost_eco_message = " << lost_eco_message << std::endl;
     if(client_channel){
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
