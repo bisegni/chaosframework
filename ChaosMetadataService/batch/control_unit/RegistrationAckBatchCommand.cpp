@@ -39,7 +39,9 @@ static const char * const RegistrationAckBatchCommand_NO_RPC_DOM = "No rpc domai
 static const char * const RegistrationAckBatchCommand_NO_RESULT_FOUND = "No ack result found";
 
 RegistrationAckBatchCommand::RegistrationAckBatchCommand():
-MDSBatchCommand(){}
+MDSBatchCommand(),
+control_unit_address(NULL),
+reg_result(0){}
 RegistrationAckBatchCommand::~RegistrationAckBatchCommand() {}
 
 // inherited method

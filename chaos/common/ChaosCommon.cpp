@@ -162,6 +162,7 @@ void ChaosAbstractCommon::init(void *init_data)  {
     int err = 0;
     struct utsname u_name;
     struct sigaction sigact;
+    std::memset(&sigact, 0, sizeof(struct sigaction));
     sigact.sa_sigaction = crit_err_hdlr;
     sigact.sa_flags = SA_RESTART | SA_SIGINFO;
     

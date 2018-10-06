@@ -41,7 +41,8 @@ DEFINE_MDS_COMAMND_ALIAS(CreateSnapshotBatch)
 CreateSnapshotBatch::CreateSnapshotBatch():
 MDSBatchCommand(),
 work_id(UUIDUtil::generateUUID()),
-curren_node_id(-1){}
+curren_node_id(-1),
+phase(SnapshotCreationPhaseFetchDataset){}
 
 CreateSnapshotBatch::~CreateSnapshotBatch() {}
 

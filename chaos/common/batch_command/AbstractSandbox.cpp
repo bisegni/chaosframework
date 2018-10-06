@@ -89,7 +89,8 @@ void CommandInfoAndImplementation::deleteImpl() {
 }
 
 AbstractSandbox::AbstractSandbox():
-command_sequence_id(0){}
+command_sequence_id(0),
+event_handler(NULL){}
 
 AbstractSandbox::~AbstractSandbox(){}
 

@@ -56,6 +56,7 @@ IDSTControlUnitBatchCommand::IDSTControlUnitBatchCommand():
 MDSBatchCommand(),
 retry_number(0),
 cu_id(),
+control_unit_address(NULL),
 action(ACTION_INIT) {}
 
 IDSTControlUnitBatchCommand::~IDSTControlUnitBatchCommand() {}

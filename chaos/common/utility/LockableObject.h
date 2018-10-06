@@ -47,11 +47,11 @@ typedef chaos::common::utility::LockableObject<x>::LockableObjectWriteLock n ## 
                 ChaosSharedMutex mutex_container_dataset;
             public:
                 
-                LockableObject(){}
+                LockableObject():
+                container_object(){}
                 
-                LockableObject(const T& src){
-                    container_object = src;
-                }
+                LockableObject(const T& src):
+                container_object(src){}
                 
                 //!readable lock class
                 class ReadLock {
