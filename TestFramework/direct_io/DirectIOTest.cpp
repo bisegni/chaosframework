@@ -98,22 +98,24 @@ void echoClientEchoMultiThreadingSameChannel(DirectIOSystemAPIClientChannel *cli
         
         message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
         
-        ASSERT_EQ(client_channel->echo(message_buffer, message_buffer_echo), 0);
-        
-        ASSERT_TRUE(message_buffer_echo);
-        ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
-        
-        const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
-        ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
-        
+        if(client_channel->echo(message_buffer, message_buffer_echo) == 0) {
+            ASSERT_TRUE(message_buffer_echo);
+            ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
+            
+            const std::string echo_message_string(message_buffer_echo->data(), message_buffer_echo->size());
+            ASSERT_STREQ(echo_message_string.c_str(), message_string_echo.c_str());
+        } else {
+            lost_eco_message++;
+        }
         boost::this_thread::sleep_for(boost::chrono::microseconds(rnd.rand()));
     }
 }
 
 TEST_F(DirectIOTest, EchoMultiThreadingSameChannel) {
     DirectIOEchoHandler handler;
+    handler.eco_count = 0;
+    lost_eco_message = 0;
     DirectIOSystemAPIClientChannel *client_channel = NULL;
-    
     //register echo handler
     server_channel->setHandler(&handler);
     
@@ -125,7 +127,8 @@ TEST_F(DirectIOTest, EchoMultiThreadingSameChannel) {
         tg.add_thread(new boost::thread(echoClientEchoMultiThreadingSameChannel, client_channel));
     }
     tg.join_all();
-    
+    std::cout <<"[          ] " << "eco_count = " << handler.eco_count << std::endl;
+    std::cout <<"[          ] " << "lost_eco_message = " << lost_eco_message << std::endl;
     if(client_channel){
         ASSERT_NO_THROW(connection->releaseChannelInstance(client_channel););
         client_channel = NULL;
@@ -163,6 +166,7 @@ void echoClientEchoMultiThreadingDifferentChannel(chaos::common::direct_io::Dire
 TEST_F(DirectIOTest, EchoMultiThreadingDifferentChannel) {
     DirectIOEchoHandler handler;
     handler.eco_count = 0;
+    lost_eco_message = 0;
     //register echo handler
     server_channel->setHandler(&handler);
     boost::thread_group tg;
