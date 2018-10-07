@@ -76,7 +76,7 @@ TEST_F(DirectIOTest, Echo) {
     
     message_buffer->append(message_string_echo.c_str(), message_string_echo.size());
     
-    if((client_channel->echo(message_buffer, message_buffer_echo) == 0) {
+    if(client_channel->echo(message_buffer, message_buffer_echo) == 0) {
         ASSERT_TRUE(message_buffer_echo);
         ASSERT_EQ(message_buffer_echo->size(), message_string_echo.size());
     } else {
