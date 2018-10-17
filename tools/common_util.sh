@@ -485,7 +485,9 @@ run_proc(){
 	echo "where" >> /tmp/gdbbatch
 	echo "quit" >> /tmp/gdbbatch
 	echo "y" >> /tmp/gdbbatch
-	debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+	if echo $command_line | grep -v ".sh" >& /dev/null;then
+	    debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+	fi
     fi
     if [ -z "$run_prefix" ];then
 	cmdline="$debug $command_line"
