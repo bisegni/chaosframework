@@ -560,7 +560,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     
     //get priority if submitted
     uint32_t priority = commandDescription->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
-    BCELDBG_ << "Submit new command "<<batch_command_alias << "with info:" << commandDescription->getJSONString();
+    BCELDBG_ << "Submit new command \""<<batch_command_alias << "\" with info:" << commandDescription->getJSONString();
     //queue the command
     BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
     if(cmd_instance) {

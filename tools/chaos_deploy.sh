@@ -59,7 +59,7 @@ if [ -z "$listupdate" ];then
 fi
  
 if [ ! -e "$conf" ]; then
-    nok_mesg "You must specify a valid configuration file"
+    nok_mesg "\"$conf\" does not exist!! you must specify a valid configuration file "
     exit 1
 fi
 
