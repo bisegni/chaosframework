@@ -65,8 +65,6 @@ namespace  chaos {
                 StateVariableTypeAlarmDEV
             } StateVariableType;
             
-            static const char * const StateVariableTypeAlarmCULabel = "cu_alarm";
-            static const char * const StateVariableTypeAlarmDEVLabel   = "device_alarm";
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosSharedPtr<chaos::common::data::CDataWrapper>, ACUStartupCommandList);
             

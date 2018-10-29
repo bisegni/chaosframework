@@ -1060,10 +1060,21 @@ CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restorePar
     
     metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                     CHAOS_FORMAT("Start restoring snapshot tag for: %1%", %restore_snapshot_tag));
-    
+   
+    attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_TAG)->setStringValue(restore_snapshot_tag, true, true);
+    *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointRestoreStarted; //start
+
+    attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+    pushSystemDataset();
+
     //load snapshot to restore
     if((err = key_data_storage->loadRestorePoint(restore_snapshot_tag))) {
         ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
+        *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointErrorOnInit; //error
+
+        attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+        pushSystemDataset();
+
         throw MetadataLoggingCException(getCUID(), err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
     } else {
         
@@ -1081,16 +1092,26 @@ CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restorePar
                                                    *restore_cache.get());
             }
         }
-        
+        *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointRestoreRunning; //running
+        attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+        pushSystemDataset();
+
         try {
             //unitRestoreToSnapshot
             if(unitRestoreToSnapshot(restore_cache.get())){
                 metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelInfo,
                                 CHAOS_FORMAT("Restore for %1% has been run successfully", %restore_snapshot_tag));
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointRestoreReached; //end
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
+
             } else {
                 metadataLogging(chaos::common::metadata_logging::StandardLoggingChannel::LogLevelError,
                                 CHAOS_FORMAT("Restore for %1% has been faulted", %restore_snapshot_tag));
                 
+                *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointErrorOnStart; //error
+                attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+                pushSystemDataset();
                 //input dataset need to be update
                 AttributeCache& ac_src = restore_cache->getSharedDomain(DOMAIN_INPUT);
                 AttributeCache& ac_dst = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
@@ -1098,8 +1119,14 @@ CDWUniquePtr AbstractControlUnit::_unitRestoreToSnapshot(CDWUniquePtr restorePar
                 
             }
         } catch (MetadataLoggingCException& ex) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointErrorOnRunning; //error
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
             throw;
         }  catch (CException& ex) {
+            *attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>() = ControlUnitNodeDefinitionType::SetpointErrorException; //error
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
             MetadataLoggingCException loggable_exception(getCUID(),
                                                          ex.errorCode,
                                                          ex.errorMessage,
@@ -1411,11 +1438,23 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //add bypass state
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BYPASS_STATE, 0, DataType::TYPE_BOOLEAN);
     
+    //add AlarmCU state
+    domain_attribute_setting.addAttribute(chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL, 0, DataType::TYPE_INT32);
+    
+    //add AlarmDev state
+    domain_attribute_setting.addAttribute(chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL, 0, DataType::TYPE_INT32);
+    
     //add burst operation state
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BURST_STATE, 0, DataType::TYPE_BOOLEAN);
     
     //add burst operation tag
     domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::BURST_TAG, 0, DataType::TYPE_STRING);
+    
+    //add setpoint operation state
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::SETPOINT_STATE, 0, DataType::TYPE_INT32);
+    
+    //add setpoint operation tag
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::SETPOINT_TAG, 0, DataType::TYPE_STRING);
     
     //add storage type
     domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, 0, DataType::TYPE_INT32);
@@ -1572,6 +1611,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 void AbstractControlUnit::_completeDatasetAttribute() {
     
     //add global alarm checn
+   /*
     DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmCU),
                                      "Activated when some warning has been issued",
                                      DataType::TYPE_INT32,
@@ -1580,6 +1620,7 @@ void AbstractControlUnit::_completeDatasetAttribute() {
                                      "Activated when some alarm has been issued",
                                      DataType::TYPE_INT32,
                                      DataType::Output);
+    */
 }
 
 void AbstractControlUnit::_setBypassState(bool bypass_stage,
@@ -2083,8 +2124,14 @@ void AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_ty
                                                    const common::alarm::MultiSeverityAlarmLevel state_variable_severity) {
     GET_CAT_OR_EXIT(variable_type, )
     catalog.setAllAlarmSeverity(state_variable_severity);
+    
+    /*
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+    */
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+    
 }
 
 bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_type,
@@ -2095,8 +2142,13 @@ bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_ty
     if(alarm == NULL) return false;
     alarm->setCurrentSeverity(state_variable_severity);
     //update global alarm output attribute
+   /*
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+   */
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+
     return true;
 }
 
@@ -2108,8 +2160,13 @@ bool AbstractControlUnit::setStateVariableSeverity(StateVariableType variable_ty
     if(alarm == NULL) return false;
     alarm->setCurrentSeverity(state_variable_severity);
     //update global alarm output attribute
+   /*
     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
+   */
+     AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.isCatalogClear()==false));
+
     return true;
 }
 
@@ -2159,6 +2216,8 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
             pushDevAlarmDataset();
             break;
     }
+    attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+    pushSystemDataset();
 }
 
 void AbstractControlUnit::setBusyFlag(bool state) {

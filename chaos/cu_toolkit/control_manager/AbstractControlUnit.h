@@ -225,15 +225,15 @@ namespace chaos{
                 inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
                     switch(type) {
                         case  chaos::cu::control_manager::StateVariableTypeAlarmCU:
-                            return chaos::cu::control_manager::StateVariableTypeAlarmCULabel;
+                            return chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL;
                         case   chaos::cu::control_manager::StateVariableTypeAlarmDEV:
-                            return chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel;
+                            return chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL;
                     }
                 }
                 
                 inline int stateVariableNameToEnum(const std::string& name) {
-                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmCULabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
-                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
+                    if(name.compare(chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
+                    if(name.compare(chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
                     return -1;
                 }
                 

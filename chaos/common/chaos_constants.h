@@ -773,6 +773,18 @@ namespace chaos {
             DSStorageBurstTypeNPush,
             DSStorageBurstTypeMSec
         } DSStorageBurstType;
+
+        typedef enum SetpointState {
+            //!no storage behaviour defined
+            SetpointErrorException = -100,
+            SetpointErrorOnRunning = -3,
+            SetpointErrorOnStart = -2,
+            SetpointErrorOnInit = -1,
+            SetpointUnknown = 0,
+            SetpointRestoreStarted=1,
+            SetpointRestoreRunning=2,
+            SetpointRestoreReached=3
+        } SetpointState;
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     namespace ControlUnitNodeDomainAndActionRPC {
@@ -847,6 +859,14 @@ namespace chaos {
         static const char * const BURST_STATE               = "cudk_burst_state";
         //! is the tag associated to the current burst oepration
         static const char * const BURST_TAG                 = "cudk_burst_tag";
+        //! is the device alarm state (0=no alarm)
+        static const char * const DEV_ALRM_LEVEL           = "cudk_dalrm_lvl";
+        //! is the cu alarm level state (0= no alarm)
+        static const char * const CU_ALRM_LEVEL            = "cudk_calrm_lvl";
+        //! is the snapshot/setpoint restore state (0=nothing,1=started,2=running,3=end,-1 error [sticky till next operation])
+        static const char * const SETPOINT_STATE               = "cudk_set_state";
+        //! is the snapshot/setpoint set point last tag
+        static const char * const SETPOINT_TAG                 = "cudk_set_tag";
         //! is the tag associated to the current running command alias(in the case of slow contro unit)
         static const char * const RUNNING_COMMAND_ALIAS     = "running_cmd_alias";
         
