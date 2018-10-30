@@ -4514,54 +4514,6 @@
 		    ],
 		    "AttrDesc": []
 		},
-		{		    "unit_server_alias": "TEST",
-				    "cu_id": "BTF/MOTOR",
-				    "cu_type": "::driver::actuator::SCActuatorControlUnit",
-				    "cu_param": "",
-				    "auto_load": true,
-				    "storage_type": 2,
-				    "storage_ageing": 36000,
-		      		    "default_schedule_delay": 2000000,	
-				    "DriverDescription": [
-					{
-					    "DriverDescriptionName": "ActuatorSim",
-					    "DriverDescriptionVersion": "1.0.0",
-					    "DriverDescriptionInitParam": "14,0,115200,/dev/ttyr11c"
-					}
-				    ],
-				    "AttrDesc": [
-					{		    
-					    "ds_attr_name": "ConfigString",
-					    "ds_max_range": "",
-					    "ds_min_range": "",
-					    "ds_default_value": "14,/home/chaos/chaos-distrib/etc/common_actuators_technosoft/1setup001.t.zip"
-					},
-					{
-					    "ds_attr_name": "axisID",
-					    "ds_max_range": "255",
-					    "ds_min_range": "0",
-					    "ds_default_value": "14"
-					},
-					{
-					    "ds_attr_name": "__positionWarningTHR",
-					    "ds_max_range": "10",
-					    "ds_min_range": "0",
-					    "ds_default_value": "0.01"
-					},
-					{
-					    "ds_attr_name": "__positionWarningTHR_Timeout",
-					    "ds_max_range": "10000",
-					    "ds_min_range": "0",
-					    "ds_default_value": "1"
-					},
-					{
-					    "ds_attr_name": "__mov_rel/offset_mm",
-					    "ds_max_range": "1000",
-					    "ds_min_range": "-1000",
-					    "ds_default_value": "0"
-					}
-				    ]
-		},
 		{
 		    "unit_server_alias": "TEST",
 		    "cu_id": "FLAME/CAMERA/LASER001",
