@@ -451,13 +451,13 @@ namespace chaos {
                             chaos::common::data::CDWShrdPtr message_response;
                             AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
                             if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
-                                                            "init",
+                                                            "driverInit",
                                                             MOVE(conf_msg),
                                                             message_response)) == 0 ){
                                 if(checkConfigurationState(message_response)) {
                                     conn_phase = RDConnectionPhaseConfigured;
                                 } else {
-                                    AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
+                                    AbstractRemoteIODriver_ERR<<" driverInit Fails, Not Configured";
                                     err = AR_ERROR_NOT_CONFIGURED;
                                 }
                             }
@@ -474,7 +474,7 @@ namespace chaos {
                             chaos::common::data::CDWUniquePtr deinit_msg(new chaos::common::data::CDataWrapper());
                             chaos::common::data::CDWShrdPtr message_response;
                             if((err = _sendRawOpcodeRequest(remote_uri_instance,
-                                                            "deinit",
+                                                            "driverDeinit",
                                                             MOVE(deinit_msg),
                                                             message_response)) == 0){
                                 // AbstractRemoteIODriver_ERR << CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifie());

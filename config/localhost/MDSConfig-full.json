@@ -3193,6 +3193,148 @@
 			    "ds_default_value": "1"
 			}
 		    ]
+		},	{
+		    "unit_server_alias": "TEST",
+		    "cu_id": "TEST/QUADRUPOLE/EXTERNAL_PS",
+		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
+		    "cu_param": "",
+		    "auto_load": false,
+		    "auto_start": false,
+		    "auto_init": false,
+		    "storage_type": 2,
+		    "storage_ageing": 3600,
+		    "default_schedule_delay": 1000000,	
+		    "DriverDescription": [
+			{
+			    "DriverDescriptionName": "ChaosPowerSupplyRemoteClientDriver",
+			    "DriverDescriptionVersion": "1.0.0",
+			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8091/powersupply\",  \"ih_par\": {    \"transport\": \"eth\",    \"hostname\": \"127.0.0.1\",    \"port\": 1  },  \"endpoint_name\": \"PSSimul\",  \"uri\": \"/powersupply\",  \"conn_param\": {    \"connPar\": \"pluto\"  },  \"opc_param\": {    \"opcPar\": \"minnie\"  }}"
+			    
+			}
+		    ],
+		    "AttrDesc": [
+		    	{
+			    "ds_attr_name": "polFromSet",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "polSwSign",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "stbyOnPol",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "zeroOnStby",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "bypass",
+			    "ds_max_range": "1",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "unit",
+			    "ds_max_range": "",
+			    "ds_min_range": "",
+			    "ds_default_value": "A"
+			},
+			{
+			    "ds_attr_name": "scale",
+			    "ds_max_range": "1000000",
+			    "ds_min_range": "1",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "minimumWorkingValue",
+			    "ds_max_range": "700",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "maximumWorkingValue",
+			    "ds_max_range": "700",
+			    "ds_min_range": "0",
+			    "ds_default_value": "700"
+			},
+			{
+			    "ds_attr_name": "warningThreshold",
+			    "ds_max_range": "10",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0.5"
+			},
+			{
+			    "ds_attr_name": "warningThresholdTimeout",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1000"
+			},
+			{
+			    "ds_attr_name": "warningThresholdTimeout",
+			    "ds_max_range": "2000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1000"
+			},
+			{
+			    "ds_attr_name": "setTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "60000"
+			},
+			{
+			    "ds_attr_name": "getTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+			{
+			    "ds_attr_name": "driverTimeout",
+			    "ds_max_range": "1200000000",
+			    "ds_min_range": "0",
+			    "ds_default_value": "10000"
+			},
+
+			{
+			    "ds_attr_name": "conversionFactor",
+			    "ds_max_range": "",
+			    "ds_min_range": "0",
+			    "ds_default_value": "1.0"
+			},
+			{
+			    "ds_attr_name": "resolution",
+			    "ds_max_range": "",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0.001"
+			},
+			{
+			    "ds_attr_name": "current",
+			    "ds_max_range": "100",
+			    "ds_min_range": "0",
+			    "ds_default_value": "0"
+			},
+			{
+			    "ds_attr_name": "rampDownRate",
+			    "ds_max_range": "10",
+			    "ds_min_range": "5",
+			    "ds_default_value": "1"
+			},
+			{
+			    "ds_attr_name": "rampUpRate",
+			    "ds_max_range": "10",
+			    "ds_min_range": "5",
+			    "ds_default_value": "1"
+			}
+		    ]
 		},
 		{
 		    "unit_server_alias": "TEST",
