@@ -43,6 +43,7 @@ namespace chaos {
                      \param uid_list a stirng list that contains the uid to include into the search
                      */
                     ApiProxyResult execute(const TemplateSubmissionList& submission_task_list);
+                    ApiProxyResult execute(common::data::CDWUniquePtr& command);
                 };
             }
         }

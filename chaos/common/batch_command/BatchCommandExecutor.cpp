@@ -588,13 +588,16 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     WriteLock lock(sandbox_map_mutex);
     
     ChaosSharedPtr<AbstractSandbox> sandbox_ptr = sandbox_map[execution_channel];
-    
-    BCELDBG_ << "Submit new command "<< batch_command_alias <<
-    "with execution_channel:" << execution_channel <<
+    std::string params="";
+    if(command_data){
+        params=command_data->getCompliantJSONString();
+    }
+    BCELDBG_ << "Submit new command \""<< batch_command_alias <<
+    "\" with execution_channel:" << execution_channel <<
     " priority:"<<priority<<
     " submission_rule:"<<submission_rule<<
     " submission_retry_delay:"<<submission_retry_delay<<
-    " scheduler_step_delay:"<<scheduler_step_delay;
+    " scheduler_step_delay:"<<scheduler_step_delay <<" params:"<<params;
     
     //queue the command
     BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias,

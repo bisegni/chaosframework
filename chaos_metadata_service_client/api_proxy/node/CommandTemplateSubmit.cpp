@@ -52,3 +52,10 @@ ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& subm
     //call api
     return callApi(message);
 }
+ApiProxyResult CommandTemplateSubmit::execute(CDWUniquePtr& command){
+     CDWUniquePtr message(new CDataWrapper());
+     message->addCSDataValue("submission_command",*(command.get()));
+     
+    //call api
+    return callApi(message);
+}

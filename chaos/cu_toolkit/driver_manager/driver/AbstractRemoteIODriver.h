@@ -37,8 +37,8 @@
 #include <boost/multi_index/hashed_index.hpp>
 
 #define AUTHORIZATION_KEY           "message_data"
-#define INIT_HARDWARE_PARAM         "conn_param"
-#define OPCODE_HARDWARE_PARAM       "opc_param"
+#define INIT_HARDWARE_PARAM         "driver_param"
+#define OPCODE_HARDWARE_PARAM       "device_param"
 #define AUTHORIZATION_STATE         "authorization_state"
 #define CONFIGURATION_STATE         "configuration_state"
 #define MESSAGE                     "msg"

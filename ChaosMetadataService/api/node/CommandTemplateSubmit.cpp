@@ -44,11 +44,22 @@ AbstractApi("commandTemplateSubmit"){}
 CommandTemplateSubmit::~CommandTemplateSubmit() {}
 
 CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
-    CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -3, "The list of submission task is mandatory")
+    CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found");
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
+    if(api_data->hasKey("submission_command")){
+        // command is a raw command
+        CDWUniquePtr cmd=api_data->getCSDataValue("submission_command");
+        N_CTS_DBG <<" raw command:"<<cmd->getJSONString();
+       
+        getBatchExecutor()->submitCommand(cmd->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS),
+                                                      cmd.release());
+        return CDWUniquePtr();
+
+    }
+    CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -3, "The list of submission task is mandatory")
+
     //list of command instance
     CommandInstanceList command_instance_list;
     

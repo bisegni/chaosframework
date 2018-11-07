@@ -3208,7 +3208,7 @@
 			{
 			    "DriverDescriptionName": "ChaosPowerSupplyRemoteClientDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8091/powersupply\",  \"ih_par\": {    \"transport\": \"eth\",    \"hostname\": \"127.0.0.1\",    \"port\": 1  },  \"endpoint_name\": \"PSSimul\",  \"uri\": \"/powersupply\",  \"conn_param\": {    \"connPar\": \"pluto\"  },  \"opc_param\": {    \"opcPar\": \"minnie\"  }}"
+			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8123/powersupply\",  \"endpoint_name\": \"PSSimul\",  \"uri\": \"/powersupply\",  \"driver_param\": {    \"tty\": \"/dev/ttyS0\",\"baudrate\":9600  },  \"device_param\": {    \"slaveid\": 12  }}"
 			    
 			}
 		    ],
