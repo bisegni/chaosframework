@@ -62,7 +62,7 @@ CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
         
         CreateNewDataWrapper(rpc_command,);
         rpc_command->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
-                                    rpc_command->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+                                    api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
         rpc_command->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME,
                                     ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET);
         
