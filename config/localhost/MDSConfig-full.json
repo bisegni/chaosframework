@@ -3198,9 +3198,9 @@
 		    "cu_id": "TEST/QUADRUPOLE/EXTERNAL_PS",
 		    "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
 		    "cu_param": "",
-		    "auto_load": false,
-		    "auto_start": false,
-		    "auto_init": false,
+		    "auto_load": true,
+		    "auto_start": true,
+		    "auto_init": true,
 		    "storage_type": 2,
 		    "storage_ageing": 3600,
 		    "default_schedule_delay": 1000000,	
@@ -3208,7 +3208,7 @@
 			{
 			    "DriverDescriptionName": "ChaosPowerSupplyRemoteClientDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8123/powersupply\",  \"endpoint_name\": \"PSSimul\",  \"uri\": \"/powersupply\",  \"driver_param\": {    \"tty\": \"/dev/ttyS0\",\"baudrate\":9600  },  \"device_param\": {    \"slaveid\": 12  }}"
+			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8123/powersupply/SimpleSim\",  \"uri\": \"/powersupply/SimpleSim\",  \"driver_param\": {    \"tty\": \"/dev/ttyS0\",\"baudrate\":9600  },  \"device_param\": {    \"slaveid\": 12  }}"
 			    
 			}
 		    ],
