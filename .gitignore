@@ -89,3 +89,4 @@ ccs/ccs
 ccs/qt_build*
 vendor
 composer.lock
+config/localhost/#cu.cfg#
