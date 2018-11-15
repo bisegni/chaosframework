@@ -113,7 +113,11 @@ AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
                                          const std::string& _control_unit_param):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_key("none"),
-control_unit_instance(UUIDUtil::generateUUIDLite()),
+#ifdef CONTROL_UNIT_INSTANCE_RANDOM
+    control_unit_instance(UUIDUtil::generateUUIDLite()),
+#else
+    control_unit_instance(_control_unit_id),
+#endif
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
@@ -143,7 +147,11 @@ AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
                                          const ControlUnitDriverList& _control_unit_drivers):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_key("none"),
+#ifdef CONTROL_UNIT_INSTANCE_RANDOM
 control_unit_instance(UUIDUtil::generateUUIDLite()),
+#else
+control_unit_instance(_control_unit_id),
+#endif
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
