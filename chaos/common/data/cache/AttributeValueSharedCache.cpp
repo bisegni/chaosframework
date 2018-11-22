@@ -91,6 +91,7 @@ AttributeCache& AttributeValueSharedCache::getSharedDomain(SharedCacheDomain dom
             return custom_set;
             break;
     }
+    return output_set;
 }
 
 /*---------------------------------------------------------------------------------
