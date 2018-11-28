@@ -67,7 +67,11 @@ namespace chaos {
             
             class LogManager:
             public chaos::common::utility::Singleton<LogManager>{
+#ifdef _WIN32
+				friend class Singleton;
+#else
                 friend class Singleton<LogManager>;
+#endif
                 template<class T>
                 friend class chaos::ChaosCommon;
                 boost::shared_ptr< boost::log::sinks::synchronous_sink< boost::log::sinks::text_ostream_backend > >  console_sink;
