@@ -20,7 +20,11 @@
  */
 #ifndef ChaosFramework_TimingUtil_h
 #define ChaosFramework_TimingUtil_h
-
+#ifdef _WIN32
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__  __FUNCSIG__
+#endif
+#endif
 #include <stdint.h>
 
 #include <chaos/common/global.h>
