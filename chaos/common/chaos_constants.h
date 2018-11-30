@@ -291,6 +291,8 @@ namespace chaos {
          other chaos node.
          */
         static const char * const NODE_TYPE_CONTROL_UNIT    = "nt_control_unit";
+
+       
         //! identify an user itnerface node
         /*!
          An user interface is a node that can control other nodes and show
@@ -327,6 +329,11 @@ namespace chaos {
         static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
         static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_sc_cu";
         static const char * const NODE_SUBTYPE_PROXY_CONTROL_UNIT           = "nt_proxy_cu";
+          //! identify a DAQ unit node
+        /*!
+         A DAQ unit node is a tipical !CHAOS node that acquires data without any command
+         */
+        static const char * const NODE_SUBTYPE_DAQ_CONTROL_UNIT    = "nt_daq_unit";
     }
     /** @} */ // end of NodeType
     
