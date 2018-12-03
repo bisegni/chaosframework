@@ -163,6 +163,8 @@ namespace chaos {
 //                uint64_t last_sampling_time;
                 //! update the information about process
                 inline void updateProcInfo();
+                //! timer handler for check what slot needs to be fired
+                void timeout();
             protected:
                 //! default constructor and destructor
                 HealtManager();
@@ -174,9 +176,9 @@ namespace chaos {
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
                 int sayHello();
+                
             public:
-             //! timer handler for check what slot needs to be fired
-                void timeout();
+         
 
                 //! inherited method
                 void init(void *init_data);
