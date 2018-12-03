@@ -56,8 +56,6 @@ if(tmp)tmp->value = v;
 Int64HealtMetric *ts_tmp = static_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
 ts_tmp->value = TimingUtil::getTimeStamp();
 
-#define HEALT_FIRE_TIMEOUT 6 //timeout for next healt fire for every registered node
-#define HEALT_FIRE_SLOTS 3 //define slot by a seconds
 
 
 #pragma mark SendHealthStatAsyncJob
@@ -417,9 +415,9 @@ CDWShrdPtr HealtManager::prepareNodeDataPack(NodeHealtSet& node_health_set,
         //add dataset type
         node_data_pack->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH);
         
-        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, cur_ts_usec);
+        node_data_pack->addInt64Value(DataPackCommonKey::DPCK_SEQ_ID, ++node_health_set.pckt_id);
         
-        node_data_pack->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, (int64_t)0);
+        node_data_pack->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, (int64_t)node_health_set.startup_time);
         
         //set sequence id to the timestamp microseconds
         node_data_pack->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_ts_usec);
