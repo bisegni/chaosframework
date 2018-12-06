@@ -32,6 +32,12 @@
 #include <boost/shared_ptr.hpp>
 #include <utility>
 
+#ifdef _WIN32
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__  __FUNCSIG__
+#endif
+#endif
+
 #if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
 // See libmongoc.hh for details on this diagnostic suppression
 #pragma GCC diagnostic push

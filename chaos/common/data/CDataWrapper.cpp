@@ -603,7 +603,11 @@ void CDataWrapper::addBoolValue(const std::string& key, bool value) {
  Return the Serialized buffer object taht contain the memory,
  the requester of this method shuld be deallocate the object
  */
+#ifndef _WIN32
 __attribute__((__deprecated__))
+#else
+__declspec(deprecated)
+#endif
 SerializationBufferUPtr CDataWrapper::getBSONData() const{
     const char * buff = reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
     if(!buff) return SerializationBufferUPtr();
