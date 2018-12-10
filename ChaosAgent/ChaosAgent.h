@@ -29,9 +29,14 @@
 #include "chaos_agent_types.h"
 #include "AgentRegister.h"
 #include "external_command_pipe/ExternaCommandExecutor.h"
+
+
+
 namespace chaos {
     namespace agent {
-        
+        namespace utility{
+        class ProcRestUtil;
+        };
         //! main class for chaos agent process
         class ChaosAgent:
         public ChaosCommon<ChaosAgent>,
@@ -40,7 +45,14 @@ namespace chaos {
             
             static WaitSemaphore wait_close_semaphore;
             common::utility::StartableServiceContainer<AgentRegister> agent_register;
+#ifdef OLD_PROCESS_MANAGEMENT
             common::utility::InizializableServiceContainer<external_command_pipe::ExternaCommandExecutor> external_cmd_executor;
+#else
+            ChaosSharedPtr <utility::ProcRestUtil> procRestUtil;
+            public:
+            ChaosSharedPtr <utility::ProcRestUtil> getProcessManager();
+
+#endif
         private:
             ChaosAgent();
             ~ChaosAgent();

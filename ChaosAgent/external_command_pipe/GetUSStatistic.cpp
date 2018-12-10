@@ -21,8 +21,11 @@
 
 #include "GetUSStatistic.h"
 #include "../ChaosAgent.h"
+#ifdef OLD_PROCESS_MANAGEMENT
 #include "../utility/ProcUtil.h"
-
+#else
+#include "../utility/ProcRestUtil.h"
+#endif
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos_service_common/data/node/Agent.h>
@@ -76,7 +79,7 @@ int GetUSStatistic::execute(ChaosStringVector input_parameter) {
             end = ass_vec.end();
             it != end;
             it++) {
-            bool alive = utility::ProcUtil::checkProcessAlive(*it);
+            bool alive = CHECK_PROCESS(*it);
             tmp_out += CHAOS_FORMAT("%1%|%2%|", %it->associated_node_uid%alive);
         }
         println(tmp_out);

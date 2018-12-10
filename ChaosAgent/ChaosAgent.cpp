@@ -20,12 +20,12 @@
  */
 
 #include "ChaosAgent.h"
-
+#include "chaos_agent_constants.h"
 #include <chaos/common/utility/FSUtility.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
+#include "utility/ProcRestUtil.h"
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
 #define DBG     DBG_LOG(ChaosAgent)
@@ -75,27 +75,48 @@ void ChaosAgent::init(void *init_data)  {
     agent_register.reset(new AgentRegister(), "AgentRegister");
     CHECK_ASSERTION_THROW_AND_LOG((agent_register.get() != NULL), ERROR, -1, "AgentRegister instantiation failed");
     agent_register.init(NULL, __PRETTY_FUNCTION__);
-    
+#ifdef OLD_PROCESS_MANAGEMENT
+
     external_cmd_executor.reset(new external_command_pipe::ExternaCommandExecutor(), "ExternaCommandExecutor");
     CHECK_ASSERTION_THROW_AND_LOG((external_cmd_executor.get() != NULL), ERROR, -2, "ExternaCommandExecutor instantiation failed");
     external_cmd_executor.init(NULL, __PRETTY_FUNCTION__);
+#else
+    int restport=8071;
+    if(GlobalConfiguration::getInstance()->hasOption(OPT_REST_PORT)) {
+           restport=getGlobalConfigurationInstance()->getOption< int >(OPT_REST_PORT);
+    }
+    procRestUtil=ChaosMakeSharedPtr<utility::ProcRestUtil>(restport);
+#endif
 }
 
 void ChaosAgent::start() {
     StartableService::startImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__);
     ChaosCommon<ChaosAgent>::start();
     agent_register.start(__PRETTY_FUNCTION__);
+#ifndef OLD_PROCESS_MANAGEMENT
+
+    procRestUtil->start(true); // start in background
+#endif
     wait_close_semaphore.wait();
+}
+ChaosSharedPtr <utility::ProcRestUtil> ChaosAgent::getProcessManager(){
+    return procRestUtil;
 }
 
 void ChaosAgent::stop() {
     CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.stop(__PRETTY_FUNCTION__);
+#ifndef OLD_PROCESS_MANAGEMENT
+    procRestUtil->stop();
+#endif
     CHAOS_NOT_THROW(ChaosCommon<ChaosAgent>::stop(););
 }
 
 void ChaosAgent::deinit() {
+#ifdef OLD_PROCESS_MANAGEMENT
+
     CHAOS_NOT_THROW(external_cmd_executor.deinit(__PRETTY_FUNCTION__););
+#endif
     CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     InizializableService::deinitImplementation(SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
     agent_register.deinit(__PRETTY_FUNCTION__);
