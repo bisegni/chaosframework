@@ -23,6 +23,9 @@
 #include <chaos/common/global.h>
 #include <boost/format.hpp>
 
+#ifdef _WIN32
+using namespace chaos::common::data;
+#endif
 using namespace chaos::common::data::cache;
 using namespace std;
 
