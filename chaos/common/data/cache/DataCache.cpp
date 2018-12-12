@@ -7,11 +7,19 @@
 //
 
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <sys/signal.h>
 #include <sys/resource.h>
+#else
+#include <WinSock2.h>
+#include <signal.h>
+#endif
+
+
 #include <fcntl.h>
-#include <netinet/in.h>
+
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>

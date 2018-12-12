@@ -22,7 +22,9 @@
 #ifndef __CHAOSFramework__FastHash__
 #define __CHAOSFramework__FastHash__
 #include <stdint.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 namespace chaos {
 	namespace common {

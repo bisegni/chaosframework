@@ -22,11 +22,19 @@
 #include <chaos/common/global.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <sys/signal.h>
-#include <sys/resource.h>
-#include <fcntl.h>
 #include <netinet/in.h>
+#include <sys/resource.h>
+
+#else
+#include <WinSock2.h>
+#include <signal.h>
+#endif
+
+#include <fcntl.h>
+
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -268,7 +276,11 @@ void *ManagedMemory::do_slabs_alloc(const size_t size, unsigned int id) {
         assert(p->end_page_ptr != NULL);
         ret = p->end_page_ptr;
         if (--p->end_page_free != 0) {
+#ifndef _WIN32
             p->end_page_ptr = ((caddr_t)p->end_page_ptr) + p->size;
+#else
+			p->end_page_ptr = ((char*)p->end_page_ptr) + p->size;
+#endif
         } else {
             p->end_page_ptr = 0;
         }
