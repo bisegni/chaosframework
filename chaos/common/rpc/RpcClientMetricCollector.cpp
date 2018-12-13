@@ -80,7 +80,7 @@ void RpcClientMetricCollector::deinit() {
     utility::StartableService::deinitImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
 
-void RpcClientMetricCollector::setServerHandler(RpcServerHandler *_server_handler) {
+void RpcClientMetricCollector::setServerHandler(chaos::RpcServerHandler *_server_handler) {
     CHAOS_ASSERT(wrapped_client)
     wrapped_client->setServerHandler(_server_handler);
 }
