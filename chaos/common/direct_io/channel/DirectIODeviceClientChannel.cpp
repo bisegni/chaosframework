@@ -60,7 +60,7 @@ DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {}
 int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,
                                                                 void *buffer,
                                                                 uint32_t buffer_len,
-                                                                DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                                chaos::DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                                 const ChaosStringSet& tag_set,
                                                                 bool wait_result) {
     int err = 0;
@@ -109,7 +109,7 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
 int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
                                                          void *buffer,
                                                          uint32_t buffer_len,
-                                                         DataServiceNodeDefinitionType::DSStorageType _put_mode,
+                                                         chaos::DataServiceNodeDefinitionType::DSStorageType _put_mode,
                                                          const ChaosStringSet& tag_set,
                                                          bool wait_result) {
     int err = 0;

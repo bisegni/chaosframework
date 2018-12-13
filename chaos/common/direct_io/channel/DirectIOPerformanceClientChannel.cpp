@@ -110,6 +110,9 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers:
 }
 
 //! default data deallocator implementation
-void DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
+
+void DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator::freeSentData(void* sent_data_ptr, ::chaos::common::direct_io::DisposeSentMemoryInfo *free_info_ptr) {
 	free(sent_data_ptr);
 }
+
+
