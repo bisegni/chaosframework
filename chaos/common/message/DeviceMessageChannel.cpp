@@ -340,7 +340,7 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, int32_t millis
 }
 
 //------------------------------------
-int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, int32_t millisec_to_wait) {
+int DeviceMessageChannel::getState(chaos::CUStateKey::ControlUnitState& deviceState, int32_t millisec_to_wait) {
     CHECK_ONLINE_OR_RETURN(ErrorRpcCoce::EC_RPC_CHANNEL_OFFLINE);
     CDWUniquePtr message_data(new CDataWrapper());
     deviceState=CUStateKey::UNDEFINED;
