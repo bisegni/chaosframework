@@ -375,7 +375,7 @@ std::string NetworkBroker::getDirectIOUrl() {
  \param eventAction the actio to register
  \param eventType a type for the event for which the user want to register
  */
-void NetworkBroker::registerEventAction(EventAction *eventAction, event::EventType eventType, const char * const identification) {
+void NetworkBroker::registerEventAction(EventAction *eventAction, common::event::EventType eventType, const char * const identification) {
     CHAOS_ASSERT(event_dispatcher && eventAction && !GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     event_dispatcher->registerEventAction(eventAction, eventType, identification);
 }
@@ -395,14 +395,14 @@ void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
  \param eventType is one of the value listent in EventType enum that specify the
  type of the eventfor wich we want a channel
  */
-channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
+channel::EventChannel *NetworkBroker::getNewEventChannelFromType(common::event::EventType  event_type) {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
-    event::channel::EventChannel *new_event_channel = NULL;
+    common::event::channel::EventChannel *new_event_channel = NULL;
     switch (event_type) {
-        case event::EventTypeAlert:
+	case common::event::EventTypeAlert:
             new_event_channel = new event::channel::AlertEventChannel(this);
             break;
-        case event::EventTypeInstrument:
+	case common::event::EventTypeInstrument:
             new_event_channel = new event::channel::InstrumentEventChannel(this);
             break;
         default:
@@ -446,7 +446,7 @@ InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
 /*!
  Perform the event channel deallocation
  */
-void NetworkBroker::disposeEventChannel(event::channel::EventChannel *event_channel_to_dispose) {
+void NetworkBroker::disposeEventChannel(common::event::channel::EventChannel *event_channel_to_dispose) {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     if(!event_channel_to_dispose) return;
     
@@ -470,7 +470,7 @@ void NetworkBroker::disposeEventChannel(event::channel::EventChannel *event_chan
  Submit an event
  \param event the new evento to submit
  */
-bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
+bool NetworkBroker::submitEvent(common::event::EventDescriptor *event) {
     CHAOS_ASSERT(event_client && !GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     bool result = true;
     try{

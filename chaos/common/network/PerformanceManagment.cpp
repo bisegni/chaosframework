@@ -155,7 +155,7 @@ void  PerformanceManagment::freeObject(const PMKeyObjectContainer::TKOCElement& 
 	disposePerformanceNode(element_to_dispose.element);
 }
 
-CDWUniquePtr PerformanceManagment::startPerformanceSession(data::CDWUniquePtr param) {
+CDWUniquePtr PerformanceManagment::startPerformanceSession(chaos::common::data::CDWUniquePtr param) {
     CHECK_CDW_THROW_AND_LOG(param, PMLERR_, -1, "No parameter has been set")
     CHECK_KEY_THROW_AND_LOG_FORMATTED(param, PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, PMLERR_, -2, "No %1% key has been set",%PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)
     
