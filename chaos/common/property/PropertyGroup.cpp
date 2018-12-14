@@ -37,7 +37,7 @@ value_updated_function(src.value_updated_function){}
 
 bool PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
-                                const DataType::DataType property_type,
+                                const chaos::DataType::DataType property_type,
                                 const uint32_t flag,
                                 const CDataVariant& property_default_value) {
     //add property

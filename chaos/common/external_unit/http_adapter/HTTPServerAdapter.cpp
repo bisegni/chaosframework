@@ -35,6 +35,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::external_unit;
 using namespace chaos::common::external_unit::http_adapter;
 
 #define INFO    INFO_LOG(HTTPServerAdapter)

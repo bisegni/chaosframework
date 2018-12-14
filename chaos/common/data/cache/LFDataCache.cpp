@@ -25,7 +25,8 @@
 
 using namespace chaos::common::data::cache;
 
-LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):
+
+LFDataCache::LFDataCache(::chaos::memory::ManagedMemory *_memoryPool):
 writeIndex(0),
 readIndex(1),
 memoryPool(_memoryPool),
