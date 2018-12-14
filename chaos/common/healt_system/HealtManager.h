@@ -35,7 +35,9 @@
 
 #include <boost/thread.hpp>
 
+#ifndef _WIN32
 #include <sys/resource.h>
+#endif
 
 namespace chaos {
     namespace common{
