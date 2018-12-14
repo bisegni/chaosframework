@@ -18,6 +18,14 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+
+#ifdef _WIN32
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__  __FUNCSIG__
+#endif
+#endif
+
+
 #include <chaos/common/global.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/network/URLServiceFeeder.h>
