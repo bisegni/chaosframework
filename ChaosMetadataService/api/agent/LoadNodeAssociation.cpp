@@ -54,5 +54,6 @@ CDWUniquePtr LoadNodeAssociation::execute(CDWUniquePtr api_data) {
     if((err = a_da->loadNodeAssociationForAgent(agent_uid, node_associated, assoc_sd_wrapper()))) {
         LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error loading association for node %1% into agent %2% with error %3%", %node_associated%agent_uid%err));
     }
+    DBG<<"LoadNodeAssociation:"<<agent_uid<<" -"<<node_associated<<" value:"<< assoc_sd_wrapper.serialize()->getJSONString();
     return assoc_sd_wrapper.serialize();
 }

@@ -109,10 +109,12 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         init_file_stream.close();
         //create the named pipe
         //ProcRestUtil::createNamedPipe(queue_file.string());
-        std::string upid=execProcess(exec_command);
-        if(upid.size()>0){
-            m_uid2upid[node_association_info.association_unique_id]=upid;
-            LDBG_<<"New process created \""<<upid<<"\" unique id:"<<node_association_info.association_unique_id;
+        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".");
+        if(ret==0){
+            LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
+        } else {
+         throw chaos::CException(-1, CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id), __PRETTY_FUNCTION__);
+
         }
 
     } catch(std::exception& ex) {
@@ -122,24 +124,14 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
 
 bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
     int pid;
-    bool found = false;
-    i_uid2upid_t t=m_uid2upid.find(node_association_info.association_unique_id);
-    if(t==m_uid2upid.end()){
-        LDBG_<<"process  with unique id:"<<node_association_info.association_unique_id<< " NOT PRESENT";
-        return false;
-    }
-    ::restConsole::RestProcessManager::process_state_t proc=getState(t->second);
+   
+    ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
     
     return (proc==::restConsole::RestProcessManager::PROCESS_STARTED);
 }
 
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
-    bool found = false;
-    i_uid2upid_t t=m_uid2upid.find(node_association_info.association_unique_id);
-    if(t==m_uid2upid.end()){
-        LDBG_<<"process  with unique id:"<<node_association_info.association_unique_id<< " NOT PRESENT";
-        return false;
-    }
-    return (killProcess(t->second) == 0);
+ 
+    return (killProcess(node_association_info.association_unique_id) == 0);
 }

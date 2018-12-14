@@ -236,13 +236,7 @@ void AgentRegister::timeout() {
                     it++) {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
-#ifdef OLD_PROCESS_MANAGEMENT
-
-                         ProcUtil::launchProcess(*it);
-#else
-                        ChaosAgent::getInstance()->getProcessManager()->launchProcess(*it);
-
-#endif
+                        LAUNCH_PROCESS(*it);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }
