@@ -68,7 +68,8 @@ namespace chaos {
             class LogManager:
             public chaos::common::utility::Singleton<LogManager>{
 #ifdef _WIN32
-				friend class Singleton;
+				typedef Singleton<LogManager> SingleLogManager;
+				friend class SingleLogManager;
 #else
                 friend class Singleton<LogManager>;
 #endif
