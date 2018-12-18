@@ -835,6 +835,13 @@ namespace chaos {
      */
     //! Name space for grupping control unit system property
     namespace ControlUnitPropertyKey {
+#ifdef _WIN32
+#ifdef NCB_INCLUDED
+#undef GROUP_NAME
+#endif
+
+#endif
+
         static const char * const GROUP_NAME                            = "property_abstract_control_unit";
         //! represent the type of initialization restore
         static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";

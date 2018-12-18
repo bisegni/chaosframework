@@ -25,12 +25,22 @@
 #include <fstream>
 #include <csignal>
 //#include <signal.h>
-#include <csignal>
+//#include <csignal>
+#ifndef _WIN32
+
 #include <execinfo.h>
 #include <sys/utsname.h>
+#else
 
+#include <windows.h>
+#include <signal.h>
+#include <DbgHelp.h>
+#include "ChaosCommonWin.h"
+
+#endif
 using namespace chaos;
 
+#ifndef _WIN32
 //http://stackoverflow.com/questions/11465148/using-sigaction-c-cpp
 void crit_err_hdlr(int sig_num, siginfo_t * info, void * ucontext) {
     std::cerr << "signal " << sig_num
@@ -38,8 +48,9 @@ void crit_err_hdlr(int sig_num, siginfo_t * info, void * ucontext) {
     << info->si_addr << std::endl << std::endl;
     
     void * array[50];
+
     int size = backtrace(array, 50);
-    
+   
     char ** messages = backtrace_symbols(array, size);
     
     // skip first stack frame (points here)
@@ -105,7 +116,39 @@ void crit_err_hdlr(int sig_num, siginfo_t * info, void * ucontext) {
     
     exit(EXIT_FAILURE);
 }
+#else
 
+void crit_err_hdlr(int sig_num) {
+	std::cerr << "signal " << sig_num << " (" << strsignal(sig_num) << ")" ;
+
+	void * array[50];
+	SYMBOL_INFO  * symbol;
+	HANDLE         process;
+
+	process = GetCurrentProcess();
+
+	SymInitialize(process, NULL, TRUE);
+	int size = CaptureStackBackTrace(0, 50, array, NULL);
+	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+	symbol->MaxNameLen = 255;
+	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+	// skip first stack frame (points here)
+	for (int i = 1; i < size; i++)
+	{
+		SymFromAddr(process, (DWORD64)(array[i]), 0, symbol);
+
+		//printf("%i: %s - 0x%0X\n", size - i - 1, symbol->Name, symbol->Address);
+		std::cerr << "[bt]: (" << i << ") " << symbol->Name << " : "
+			<< symbol->Address << std::endl;
+	}
+
+	free(symbol);
+	std::cerr << std::endl;
+
+	
+	exit(EXIT_FAILURE);
+}
+#endif
 ChaosAbstractCommon::ChaosAbstractCommon():
 ingore_unreg_po(false),
 initialized(false),
@@ -161,11 +204,12 @@ void ChaosAbstractCommon::init(std::istream &initStream)  {
 void ChaosAbstractCommon::init(void *init_data)  {
     int err = 0;
     struct utsname u_name;
+#ifndef _WIN32
     struct sigaction sigact;
     std::memset(&sigact, 0, sizeof(struct sigaction));
     sigact.sa_sigaction = crit_err_hdlr;
     sigact.sa_flags = SA_RESTART | SA_SIGINFO;
-    
+#endif
     if(initialized)
         return;
     try {
@@ -186,10 +230,16 @@ void ChaosAbstractCommon::init(void *init_data)  {
         
         //print chaos library header
         PRINT_LIB_HEADER
-        
+#ifndef _WIN32
         if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
             LERR_ << "error setting signal handler for SIGSEGV";
         }
+#else
+			if (signal(SIGSEGV, crit_err_hdlr) == SIG_ERR)
+			{
+				LERR_ << "error setting signal handler for SIGSEGV";
+			}
+#endif
         
         err = uname(&u_name);
         if(err==-1){
