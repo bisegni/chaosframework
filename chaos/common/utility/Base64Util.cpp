@@ -65,10 +65,13 @@ class buffer_inserter :
 public std::iterator<std::output_iterator_tag, char>{
     Buffer &b;
 public:
-    buffer_inserter(Buffer &_b) : b(_b) { }
+    buffer_inserter( Buffer &_b) : b(_b) { }
     buffer_inserter operator ++ (int) { return *this; }
     buffer_inserter operator ++ () { return *this; }
     buffer_inserter operator * () { return *this; }
+#ifdef _WIN32
+	buffer_inserter& operator = (const buffer_inserter &val) { b.append(val.b); return *this; };
+#endif
     void operator = (const char &val) {
         b.append(&val, 1);
     }

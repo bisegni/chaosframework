@@ -98,6 +98,10 @@ void ChaosAgent::start() {
     procRestUtil->start(true); // start in background
 #endif
     wait_close_semaphore.wait();
+     #ifndef OLD_PROCESS_MANAGEMENT
+    procRestUtil->stop();
+    procRestUtil.reset();
+    #endif
 }
 ChaosSharedPtr <utility::ProcRestUtil> ChaosAgent::getProcessManager(){
     return procRestUtil;
@@ -124,5 +128,6 @@ void ChaosAgent::deinit() {
 }
 
 void ChaosAgent::signalHanlder(int signal_number) {
+   
     wait_close_semaphore.unlock();
 }

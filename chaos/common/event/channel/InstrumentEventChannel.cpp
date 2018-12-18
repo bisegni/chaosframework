@@ -39,7 +39,7 @@ InstrumentEventChannel::~InstrumentEventChannel() {
     
 }
 
-void InstrumentEventChannel::handleEvent(const event::EventDescriptor * const event) {
+void InstrumentEventChannel::handleEvent(const chaos::common::event::EventDescriptor * const event) {
     LAPP_ << "InstrumentEventChannel::handleEvent";
 }
 

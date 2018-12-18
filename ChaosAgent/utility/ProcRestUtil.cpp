@@ -19,30 +19,24 @@
  * permissions and limitations under the Licence.
  */
 
+
 #include "ProcRestUtil.h"
 #include "../ChaosAgent.h"
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
 #include <boost/algorithm/string/replace.hpp>
-
 #define READ   0
 #define WRITE  1
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
 using namespace std;
-
 using namespace chaos::common;
-
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
-
 
 std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;
@@ -78,8 +72,7 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
         
         //enable log on console that will be redirected on named pipe
-        init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
-        
+        init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
         //check for syslog setting of the agent that will be reflect on managed us
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
@@ -123,15 +116,17 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
 }
 
 bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
-    int pid;
-   
+    bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
-    
-    return (proc==::restConsole::RestProcessManager::PROCESS_STARTED);
+    alive=(proc==::restConsole::RestProcessManager::PROCESS_STARTED);
+    LDBG_<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive<<" process state:"<<getProcessJsonString(node_association_info.association_unique_id);
+
+    return alive;
 }
 
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
- 
+     LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
+
     return (killProcess(node_association_info.association_unique_id) == 0);
 }
