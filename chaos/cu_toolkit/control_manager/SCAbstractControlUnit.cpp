@@ -288,7 +288,7 @@ void SCAbstractControlUnit::propertyUpdatedHandler(const std::string& group_name
                                                    const std::string& property_name,
                                                    const CDataVariant& old_value,
                                                    const CDataVariant& new_value) {
-    if(group_name.compare(chaos::ControlUnitPropertyKey::GROUP_NAME) == 0) {
+    if(group_name.compare(chaos::ControlUnitPropertyKey::P_GROUP_NAME) == 0) {
         key_data_storage->updateConfiguration(property_name, new_value);
         //is my group
         if(property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {

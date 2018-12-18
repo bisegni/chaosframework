@@ -1106,7 +1106,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
                     it != end;
                     it++) {
                     const std::string& pg_name = it->getGroupName();
-                    if(pg_name.compare(ControlUnitPropertyKey::GROUP_NAME) == 0) {
+                    if(pg_name.compare(ControlUnitPropertyKey::P_GROUP_NAME) == 0) {
                         if(it->hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
                             //we have ageing data
                             control_unit_ageing_time = (uint32_t)it->getPropertyValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).asInt32();

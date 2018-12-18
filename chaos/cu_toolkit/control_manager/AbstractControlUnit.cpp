@@ -225,7 +225,7 @@ void AbstractControlUnit::_initChecklist() {
 }
 
 void AbstractControlUnit::_initPropertyGroup() {
-    PropertyGroup& pg_abstract_cu = addGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    PropertyGroup& pg_abstract_cu = addGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pg_abstract_cu.addProperty(ControlUnitDatapackSystemKey::BYPASS_STATE, "Put control unit in bypass state", DataType::TYPE_BOOLEAN, 0, CDataVariant((bool)false));
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, "Set the control unit storage type", DataType::TYPE_INT32, 0, CDataVariant((int32_t)0));
     pg_abstract_cu.addProperty(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, "Set the control unit storage type", DataType::TYPE_INT64, 0, CDataVariant((int64_t)0));
@@ -499,7 +499,7 @@ void AbstractControlUnit::doInitRpCheckList() {
             updateConfiguration(MOVE(init_configuration->clone()));
             
             //check if we need to do a restore on first start
-            PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+            PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
             if(cug.get()) {
                 if(cug->hasProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY) &&
                    cug->getProperty(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY).getPropertyValue().isValid() &&

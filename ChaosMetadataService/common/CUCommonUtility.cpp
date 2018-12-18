@@ -239,9 +239,9 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         //check for restore option
         if((err = n_da->getPropertyGroup(PropertyTypeDefaultValues,
                                          cu_uid,
-                                         chaos::ControlUnitPropertyKey::GROUP_NAME,
+                                         chaos::ControlUnitPropertyKey::P_GROUP_NAME,
                                          control_unit_property_group))) {
-            LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching defaults value for properti group %1% for control unit %2%", %chaos::ControlUnitPropertyKey::GROUP_NAME%cu_uid));
+            LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error fetching defaults value for properti group %1% for control unit %2%", %chaos::ControlUnitPropertyKey::P_GROUP_NAME%cu_uid));
         }
         
         CMultiTypeDataArrayWrapperSPtr dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
