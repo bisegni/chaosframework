@@ -16,7 +16,7 @@ before_script:
   - export HEAPCHECK=strict
   - git config --global user.name "Claudio Bisegni"
   - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
-  
+
 build_u_14_04_gcc49:
   tags:
     - chaos
