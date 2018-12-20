@@ -9,7 +9,6 @@ or non-scientific, infrastructure.
 scalable provider offering to a general class of clients high-performance services such us data sharing, commands
 dispatching, continuous historical data archiving, configuration tools, middle-layer resource management etc.  
 
-
 Key features and development strategies of !CHAOS are:  
 
 - scalability of performances and size

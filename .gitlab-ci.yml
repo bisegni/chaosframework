@@ -14,6 +14,8 @@ before_script:
   - export ARCH=`uname -m`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
+  - git config --global user.name "Claudio Bisegni"
+  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
 
 build_u_14_04_gcc49:
   tags:
@@ -25,7 +27,7 @@ build_u_14_04_gcc49:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
     - tools/chaos_clean.sh
-    - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake  -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
@@ -220,7 +222,7 @@ build_dbg_c7:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+    - cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
     - make clean
     - make  -j $NPROC
     - make install
@@ -395,7 +397,7 @@ build_u_14_04_gcc48_c98:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - make  -j $NPROC
     - make install
@@ -446,7 +448,7 @@ build_arm:
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_TARGET=armhf -DCHAOS_MDS=OFF .
+    - cmake -DCHAOS_TARGET=armhf -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF .
     - make clean
     - make  -j $NPROC
     - make install
