@@ -65,7 +65,6 @@ max_reg_retry_counter(5){
 }
 
 AgentRegister::~AgentRegister() {}
-
 void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
     if(new_worker.get() == NULL) return;
     if(map_worker.count(new_worker->getName()) != 0) return;
