@@ -40,7 +40,7 @@ LuaModuleManager::LuaModuleManager() {
              ++it) {
             const boost::filesystem::path plugin_path = it->path();
             const boost::filesystem::path extension = it->path().extension();
-            if(extension.compare(".lua") != 0) continue;
+            if(extension.compare((std::string)".lua") != 0) continue;
             
             //we have a lua module to register
             map_lua_module.insert(MapLuaModulePair(plugin_path.filename().string(), plugin_path));
