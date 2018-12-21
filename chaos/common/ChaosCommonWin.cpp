@@ -58,9 +58,9 @@ int uname(struct utsname* out)
 		char tmpName[65];
 		wcstombs(tmpName, pBuf->wki100_computername, 65);
 		strncpy(out->nodename, tmpName, 65);
-		itoa(pBuf->wki100_ver_major, tmpVer, 10);
+		_itoa(pBuf->wki100_ver_major, tmpVer, 10);
 		strncpy(out->release, tmpVer, 65);
-		itoa(pBuf->wki100_ver_minor, tmpVer, 10);
+		_itoa(pBuf->wki100_ver_minor, tmpVer, 10);
 		strncpy(out->version, tmpVer, 65);
 		return 0;
 	}
