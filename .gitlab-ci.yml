@@ -14,9 +14,7 @@ before_script:
   - export ARCH=`uname -m`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
-  - if [ -x "$(command -v git)" ]; then git config --global user.name "Claudio Bisegni" fi
-  - if [ -x "$(command -v git)" ]; then git config --global user.email "Claudio.Bisegni@lnf.infn.it" fi
-  
+
 build_u_14_04_gcc49:
   tags:
     - chaos
@@ -26,6 +24,8 @@ build_u_14_04_gcc49:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake  -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
@@ -64,6 +64,8 @@ test_u_14_04_gcc49:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - apt-get update
     - apt-get -y install lcov gcovr
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
@@ -107,6 +109,8 @@ build_u_16_04_gcc5:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
     - make clean
@@ -140,6 +144,8 @@ test_u_16_04_gcc5_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
+  - git config --global user.name "Claudio Bisegni"
+  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
   - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
   - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
   - export HEAPCHECK=normal
@@ -164,6 +170,8 @@ build_u_18_04_gcc73:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
     - make clean
@@ -197,6 +205,8 @@ test_u_18_04_gcc73:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
+  - git config --global user.name "Claudio Bisegni"
+  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
   - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
   - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
   - export HEAPCHECK=normal
@@ -221,6 +231,8 @@ build_dbg_c7:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
     - make clean
@@ -254,6 +266,8 @@ test_dbg_c7:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
@@ -283,6 +297,8 @@ regression_c7:
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
     - ls -la
@@ -309,6 +325,8 @@ build_rel_c7:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
@@ -342,6 +360,8 @@ test_rel_c7:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
@@ -371,6 +391,8 @@ deploy_rel_c7:
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
     - ls -la
@@ -396,6 +418,8 @@ build_u_14_04_gcc48_c98:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
@@ -427,6 +451,8 @@ test_u_14_04_gcc48_c98:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
@@ -447,6 +473,8 @@ build_arm:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCHAOS_TARGET=armhf -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF .
     - make clean
@@ -476,6 +504,8 @@ build_x86_64_llvm:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
     - make clean
@@ -509,6 +539,8 @@ test_x86_64_llvm:
   dependencies:
     - build_x86_64_llvm
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
@@ -529,6 +561,8 @@ exp_llvm_scan_coverity:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - mkdir -p /tmp/cov-int
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
