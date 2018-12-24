@@ -14,9 +14,9 @@ before_script:
   - export ARCH=`uname -m`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`;
   - export HEAPCHECK=strict
-  - git config --global user.name "Claudio Bisegni"
-  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
-
+  - if [ -x "$(command -v git)" ]; then git config --global user.name "Claudio Bisegni" fi
+  - if [ -x "$(command -v git)" ]; then git config --global user.email "Claudio.Bisegni@lnf.infn.it" fi
+  
 build_u_14_04_gcc49:
   tags:
     - chaos
