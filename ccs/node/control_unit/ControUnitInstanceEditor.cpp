@@ -284,7 +284,7 @@ void ControUnitInstanceEditor::fillUIFromPropertyInfo(QSharedPointer<chaos::comm
 }
 
 QSharedPointer<PropertyGroup> ControUnitInstanceEditor::preparePropertyGroup() {
-    QSharedPointer<PropertyGroup> result(new PropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME));
+    QSharedPointer<PropertyGroup> result(new PropertyGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME));
     result->addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(ui->lineEditDefaultScheduleTime->text().toULongLong())));
     result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, CDataVariant(ui->comboBoxStorageType->currentIndex()));
     result->addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, CDataVariant(ui->lineEditHistoryAgeing->text().toUInt()));
@@ -589,7 +589,7 @@ void ControUnitInstanceEditor::on_pushButtonSaveApplyProperty_clicked() {
 void ControUnitInstanceEditor::on_pushButtonUpdateLiveTime_clicked() {
     CPropertyTextEdit *pte = new  CPropertyTextEdit(this);
     pte->setNodeUID(ui->lineEditControlUnitUniqueID->text());
-    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
     pte->initChaosContent();
 
@@ -604,7 +604,7 @@ void ControUnitInstanceEditor::on_pushButtonUpdateLiveTime_clicked() {
 void ControUnitInstanceEditor::on_pushButtonUpdateStorageTime_clicked() {
     CPropertyTextEdit *pte = new  CPropertyTextEdit(this);
     pte->setNodeUID(ui->lineEditControlUnitUniqueID->text());
-    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte->setPropertyGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pte->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
     pte->initChaosContent();
     CPopupWidgetContainer *wc = new CPopupWidgetContainer(this);

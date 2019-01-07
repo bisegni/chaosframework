@@ -191,7 +191,7 @@ void ChaosStorageTypeWidget::on_pushButton_clicked(bool clicked) {
 
 void ChaosStorageTypeWidget::sendStorageType(chaos::DataServiceNodeDefinitionType::DSStorageType type,
                                              const QString& event_tag) {
-    PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    PropertyGroup pg(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pg.addProperty(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, CDataVariant(type));
 
     submitApiResult(event_tag,
@@ -199,9 +199,9 @@ void ChaosStorageTypeWidget::sendStorageType(chaos::DataServiceNodeDefinitionTyp
                                                                                                                 pg));
 }
 
-void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {}
+void ChaosStorageTypeWidget::apiHasStarted(const QString& api_tag) {Q_UNUSED(api_tag)}
 
-void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {}
+void ChaosStorageTypeWidget::apiHasEnded(const QString& api_tag) {Q_UNUSED(api_tag)}
 
 void ChaosStorageTypeWidget::apiHasEndedWithError(const QString& api_tag,
                                                   QSharedPointer<chaos::CException> api_exception) {
@@ -217,13 +217,13 @@ void ChaosStorageTypeWidget::on_pushButtonEdit_clicked() {
 
     CPropertyTextEdit *pte_live_time = new  CPropertyTextEdit(wc);
     pte_live_time->setNodeUID(nodeUID());
-    pte_live_time->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte_live_time->setPropertyGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pte_live_time->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME);
     pte_live_time->initChaosContent();
 
     CPropertyTextEdit *pte_history_time = new  CPropertyTextEdit(wc);
     pte_history_time->setNodeUID(nodeUID());
-    pte_history_time->setPropertyGroup(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    pte_history_time->setPropertyGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pte_history_time->setPropertyName(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
     pte_history_time->initChaosContent();
 
