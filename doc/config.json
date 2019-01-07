@@ -1,0 +1,32 @@
+{
+    "title": "!CHAOS Control System",
+    "tagline": "Control system based on Highly Abstracted and Open Structure",
+    "author": "Claudio Bisegni",
+    "image": "logo_chaos_col.png",
+    "ignore": {
+            "files": ["Work_In_Progress.md"],
+            "folders": ["99_Not_Ready"]
+    },
+    "live": {
+        "clean_urls": true
+    },
+    "html": {
+        "theme": "daux-blue",
+        "breadcrumbs": true,
+        "breadcrumb_separator": "Chevrons",
+        "toggle_code": false,
+        "date_modified": true,
+        "float": true,
+        "inherit_index": true,
+        "links": {
+            "INFN Repo": "https://baltig.infn.it/chaos-lnf-control/chaosframework",
+            "INFN Doc Repo":"https://baltig.infn.it:chaos-lnf-control/chaosframework-doc",
+            "Help/Support/Bugs": "https://baltig.infn.it/chaos-lnf-control/chaosframework/issues",
+            "Made by INFN": "http://www.infn.it"
+        },
+        "edit_on": {
+          "name": "Gitlab",
+          "basepath": "https://baltig.infn.it/chaos-lnf-control/chaosframework"
+        }
+    }
+}
