@@ -20,11 +20,14 @@
  */
 
 #include "MDSHistoryAgeingManagement.h"
+#include "../../DriverPoolManager.h"
 
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::cron_job;
+using namespace chaos::metadata_service::persistence::data_access;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 MDSHistoryAgeingManagement::MDSHistoryAgeingManagement(chaos::common::data::CDataWrapper *param):
 MDSCronJob(param){}
@@ -45,10 +48,15 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
     uint32_t control_unit_ageing_time = 0;
     uint64_t last_ageing_perform_time = 0;
     uint64_t now = TimingUtil::getTimeStamp();
-    if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->reserveControlUnitForAgeingManagement(last_sequence_found,
-                                                                                                                      control_unit_found,
-                                                                                                                      control_unit_ageing_time,
-                                                                                                                      last_ageing_perform_time))){
+
+    auto *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<ObjectStorageDataAccess>();
+    auto *metadata_cu_da = DriverPoolManager::getInstance()->getPersistenceDrv().getDataAccess<ControlUnitDataAccess>();
+    CHAOS_ASSERT(obj_storage_da && metadata_cu_da);
+    
+    if((err = metadata_cu_da->reserveControlUnitForAgeingManagement(last_sequence_found,
+                                                                    control_unit_found,
+                                                                    control_unit_ageing_time,
+                                                                    last_ageing_perform_time))){
         log(CHAOS_FORMAT("Error %1% reserving control unit for ageing management", %err));
     } else if(control_unit_found.size()){
         const std::string output_key    = control_unit_found + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
@@ -62,44 +70,52 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
         log(CHAOS_FORMAT("Processing ageing for control unit %1% removing all data before %2% [now:(ms)%3%-(ms ageing time)%4%]", %control_unit_found%TimingUtil::toString(remove_until_ts)%now%AGEING_TO_MS(control_unit_ageing_time)));
         try {
             log(CHAOS_FORMAT("Remove data for key %1%", %output_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(output_key,
-                                                                                                                     remove_until_ts))){
+            
+            if((err = obj_storage_da->deleteObject(output_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %input_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(input_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(input_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %input_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %system_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(system_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(system_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %system_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %custom_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(custom_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(custom_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %custom_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %health_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(health_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(health_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %dev_alarm_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(dev_alarm_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(dev_alarm_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %dev_alarm_key%control_unit_found%err));
             }
             
             log(CHAOS_FORMAT("Remove data for key %1%", %cu_alarm_key));
-            if((err = getDataAccess<persistence::data_access::ControlUnitDataAccess>()->eraseControlUnitDataBeforeTS(cu_alarm_key,
-                                                                                                                     remove_until_ts))){
+            if((err = obj_storage_da->deleteObject(cu_alarm_key,
+                                                   0,
+                                                   remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %cu_alarm_key%control_unit_found%err));
             }
             

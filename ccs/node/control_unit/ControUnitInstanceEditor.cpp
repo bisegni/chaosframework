@@ -333,7 +333,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
 
 void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
     submitApiResult(QString("save_instance"),
-                    GET_CHAOS_API_PTR(control_unit::SetInstanceDescription)->execute(prepareSetInstanceApi()));
+                    GET_CHAOS_API_PTR(control_unit::SetInstanceDescription)->execute(prepareSetInstanceApi(), false));
 
     submitApiResult(QString("save_property_defaults"),
                     GET_CHAOS_API_PTR(node::UpdatePropertyDefaultValues)->execute(ui->lineEditControlUnitUniqueID->text().toStdString(), *preparePropertyGroup().data()));

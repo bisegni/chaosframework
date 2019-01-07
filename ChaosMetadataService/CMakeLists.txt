@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
+#add module path for permi to find lirary
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+set(CMAKE_MACOSX_RPATH ON)
+MESG("Configure Metadata Service")
 option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
+option(USE_MONGODB3_DRIVER "Chaos MetaData Service new mongodb driver" OFF)
+option(USE_CASSANDRA_DRIVER "Chaos MetaData Service new cassandra driver" OFF)
+
 
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
@@ -8,7 +15,7 @@ ENDIF()
 
 
 IF (COMPILE_HAZELCAST_LIVE_DRIVER)
-  MESG("Download hazelcast c++ client")
+  MESG("Install hazelcast c++ client")
   ExternalProject_Add(
      hazelcast
      GIT_REPOSITORY https://github.com/hazelcast/hazelcast-cpp-client.git
@@ -18,8 +25,8 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/hazelcast-build"
      CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-      -DHZ_LIB_TYPE=STATIC 
-      -DHZ_BIT=64 
+      -DHZ_LIB_TYPE=STATIC
+      -DHZ_BIT=64
       -DCMAKE_BUILD_TYPE=Release
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
@@ -39,6 +46,82 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
      MESG("${HAZELCAST_LIBRARY}")
 ENDIF()
 
+IF(USE_MONGODB3_DRIVER)
+  MESG("Install c mongodb driver")
+  ExternalProject_Add(
+     mongo-c-driver
+     GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
+     GIT_TAG 1.10.2
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_BSON=ONLY
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+  MESG("Install cxx mongodb driver")
+  ExternalProject_Add(
+     mongo-cxx-driver
+     DEPENDS mongo-c-driver
+     GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
+     GIT_TAG r3.2.0
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+  #    find_package(libmongocxx REQUIRED)
+  #    find_package(libbsoncxx REQUIRED)
+     include_directories(${LIBMONGOCXX_INCLUDE_DIR})
+     include_directories(${LIBBSONCXX_INCLUDE_DIR})
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/mongocxx/v_noabi")
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/bsoncxx/v_noabi")
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/libmongoc-1.0")
+     include_directories("${CMAKE_INSTALL_PREFIX}/include/libbson-1.0")
+     include_directories("${CMAKE_INSTALL_PREFIX}/lib")
+ENDIF()
+
+IF(USE_CASSANDRA_DRIVER)
+  MESG("Install libuv driver for cassandra dependecy")
+  ExternalProject_Add(
+     libuv-driver
+     GIT_REPOSITORY https://github.com/libuv/libuv.git
+     GIT_TAG v1.24.0
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+  MESG("Install Cassandra driver")
+  ExternalProject_Add(
+     cassandra-driver
+     DEPENDS libuv-driver
+     GIT_REPOSITORY https://github.com/datastax/cpp-driver.git
+     GIT_TAG 2.10.0
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      -DLIBUV_ROOT_DIR=${CMAKE_INSTALL_PREFIX}
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+
+     include_directories(${LIBMONGOCXX_INCLUDE_DIR})
+     include_directories(${LIBBSONCXX_INCLUDE_DIR})
+ENDIF()
+
 INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(cnd_src				main.cpp
@@ -49,8 +132,13 @@ SET(cnd_src				main.cpp
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
 
+IF(USE_MONGODB3_DRIVER)
+  MESG("Enable MongoDBCXXDriver")
+  SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.cpp)
+ENDIF()
+
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-						 ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						            ../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
 SET(cnd_src  ${cnd_src}	cron_job/MDSCronusManager.cpp
                         cron_job/MDSCronJob.cpp
@@ -119,8 +207,9 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/CopyInstance.cpp
                         api/control_unit/RecoverError.cpp
                         api/control_unit/GetCurrentDataset.cpp
-						api/control_unit/GetFullDescription.cpp
+						            api/control_unit/GetFullDescription.cpp
                         api/control_unit/SendStorageBurst.cpp)
+
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
@@ -144,7 +233,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/KillCurrentCommand.cpp
                         api/node/ClearCommandQueue.cpp
                         api/node/ForwardNodeRpcMessage.cpp
-			            api/node/GetPropertyDefaultValues.cpp
+                        api/node/GetPropertyDefaultValues.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
@@ -187,9 +276,9 @@ SET(cnd_src  ${cnd_src} persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-						persistence/data_access/TreeGroupDataAccess.cpp
+						            persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-						persistence/data_access/ScriptDataAccess.cpp
+						            persistence/data_access/ScriptDataAccess.cpp
                         persistence/data_access/AgentDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
@@ -201,7 +290,7 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						persistence/mongodb/MongoDBScriptDataAccess.cpp
+						            persistence/mongodb/MongoDBScriptDataAccess.cpp
                         persistence/mongodb/MongoDBAgentDataAccess.cpp)
 #Caching
 SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
@@ -216,6 +305,13 @@ SET(cnd_src  ${cnd_src}	object_storage/abstraction/ObjectStorageDataAccess.cpp)
 SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cpp
                         object_storage/mongodb/MongoDBObjectStorageDriver.cpp
                         object_storage/mongodb/ShardKeyManagement.cpp)
+
+IF(USE_MONGODB3_DRIVER)
+  MESG("Enable mongodb_3 driver source code")
+  SET(cnd_src  ${cnd_src}	object_storage/mongodb_3/MongoDBObjectStorageDataAccess.cpp
+                          object_storage/mongodb_3/NewMongoDBObjectStorageDriver.cpp
+                          object_storage/mongodb_3/ShardKeyManagement.cpp)
+ENDIF()
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -256,5 +352,18 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} boost_random chaos_common mongoclient couchbaseS ${FrameworkLib})
+SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} chaos_common)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongoclient)
+
+IF(USE_MONGODB3_DRIVER)
+  MESG("Enable link to mongocxx and bsoncxx library")
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE USE_MONGODB3_DRIVER=1)
+ENDIF()
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})

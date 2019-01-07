@@ -28,7 +28,7 @@ ccs/*moc_*
 ccs/*ui_*
 ccs/.qmake.stash
 example/build-UIToolkitTest-*
-ccs/ccs.pro.user
+ccs/ccs.pro.user*
 build-ccs-*
 *nbproject/private/*
 build

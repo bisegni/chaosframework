@@ -212,7 +212,7 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
         builder << "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr())));
         mongo::BSONObj q = builder.obj();
         
-        DEBUG_CODE(DBG<<log_message("deleteObject",
+        DEBUG_CODE(DBG<<log_message(__func__,
                                     "delete",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
                                                             q.jsonString()));)

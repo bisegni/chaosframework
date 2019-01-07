@@ -34,10 +34,11 @@ MDSCronusManager::~MDSCronusManager() {}
 void MDSCronusManager::init(void *init_data)  {
     CronusManager::init(init_data);
     std::string job_string;
+    unsigned int timeout = ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time*1000;
     addJob(new MDSHistoryAgeingManagement(NULL),
            job_string,
-           ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time*1000,
-           ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time*1000);
+           timeout,
+           timeout);
 }
 
 void MDSCronusManager::deinit()  {

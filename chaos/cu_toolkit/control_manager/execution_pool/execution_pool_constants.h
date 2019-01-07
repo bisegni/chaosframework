@@ -27,7 +27,7 @@ namespace chaos{
             namespace execution_pool {
                 
 #define CONTROL_MANAGER_EXECUTION_POOLS                 "execution_pools"
-#define CONTROL_MANAGER_EXECUTION_POOLS_DESC            "Is the lis tof execution pool to use for request job"
+#define CONTROL_MANAGER_EXECUTION_POOLS_DESC            "Is the list of execution pool to use for request job"
                 
 #define CONTROL_MANAGER_EXECUTION_POOLS_CHECK_TIME      30000
                 
