@@ -22,7 +22,7 @@ Key features and development strategies of !CHAOS are:
 "BSON" stands for "binary JSON" - a binary storage format that is JSON inspired.
 This distribution merely rips it out of the bson repository into its own.
 
-Read the [Documentation](control-unit/index.md)
+Read the [Documentation](doc/index.md)
 
 For further documentation please visit:
 
