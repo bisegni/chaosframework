@@ -33,6 +33,7 @@ see documentation [here](micro-unit-toolkit/index.md)
 is aimed to manage configuration metadata of the other components of the architecture. The required characteristics are:
 High availability
 High scalability is not required since the load of the metadata server is not proportional to the workload of the control system, but is only related to the number of system components.
+see documentation [here](mds/index.md)
 
 ## CHAOS Data Server (CDS)
 is responsible of data archiving and distribution from and to the Control Units, Execution Units and User Interfaces. Data management includes the following activities:
