@@ -43,7 +43,6 @@ std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     boost::replace_all(result,"/","_");
     return result;
 }
-
 void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
     std::string exec_command;
@@ -96,18 +95,19 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
             mds_it++) {
             init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
         }
-        
+    
         //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
         //create the named pipe
+
         //ProcRestUtil::createNamedPipe(queue_file.string());
         int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".");
         if(ret==0){
             LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
         } else {
-         throw chaos::CException(-1, CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id), __PRETTY_FUNCTION__);
-
+      //   throw chaos::CException(-1, CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id), __PRETTY_FUNCTION__);
+        LERR_<< CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id);
         }
 
     } catch(std::exception& ex) {
