@@ -18,10 +18,12 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include "CassandraObjectStorageTypes.h"
+
 #if USE_CASSANDRA_DRIVER
-static void cassandraClusterDeallocator(CassCluster* cluster) {cass_cluster_free(cluster);}
-static void cassandraSessionDeallocator(CassSession* session) {cass_session_free(session);}
-static void cassandraFutureDeallocator(CassFuture* future) {cass_future_free(future);}
-static void cassandraPreparedDeallocator(CassPrepared* prepared){cass_prepared_free(prepared);};
+#include "CassandraObjectStorageTypes.h"
+using namespace chaos::metadata_service::object_storage::cassandra;
+//static void cassandraClusterDeallocator(CassCluster* cluster) {cass_cluster_free(cluster);}
+//static void cassandraSessionDeallocator(CassSession* session) {cass_session_free(session);}
+//static void cassandraFutureDeallocator(CassFuture* future) {cass_future_free(future);}
+//static void cassandraPreparedDeallocator(CassPrepared* prepared){cass_prepared_free(prepared);};
 #endif
