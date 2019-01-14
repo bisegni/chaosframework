@@ -324,19 +324,19 @@ namespace chaos {
                             //error msg key is mandatory
                             //EndpointType::sendError(connection_identifier,
                             //                        -1, "message field is mandatory", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection, received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         } else if(message->isCDataWrapperValue(MESSAGE) == false) {
                             //error message need to be an object
                             //EndpointType::sendError(connection_identifier,
                             //                        -2, "message field need to be an object type", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type, received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         } else if(message->hasKey(REQUEST_IDENTIFICATION)) {
                             //we have a request
                             if(message->isInt32Value(REQUEST_IDENTIFICATION) == false) {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -3, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type", %connection_identifier);
+                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                             }  else {
                                 //we can forward
                                 const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
@@ -349,7 +349,7 @@ namespace chaos {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -4, "msg_type field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type", %connection_identifier);
+                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                             }
                             asyncMessageReceived(MOVE(message));
                         } else {
@@ -357,7 +357,7 @@ namespace chaos {
                             //error request id need to be a int32 value
                             //EndpointType::sendError(connection_identifier,
                             //                        -5, "remote layer side message lack of msg_type key", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         }
                         return 0;
                     }

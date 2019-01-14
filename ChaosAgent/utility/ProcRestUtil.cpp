@@ -100,9 +100,8 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
         //create the named pipe
-
         //ProcRestUtil::createNamedPipe(queue_file.string());
-        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".");
+        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".","nt_unit_server",node_association_info.associated_node_uid);
         if(ret==0){
             LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
         } else {
