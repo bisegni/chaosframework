@@ -48,6 +48,10 @@ namespace chaos {
                     ~CassandraObjectStorageDataAccess();
                 public:
                     //inhertied method
+                    /*!
+                        partition key device_id
+                        cluster run_id, seq_id, ats
+                     */
                     int pushObject(const std::string&                       key,
                                    const ChaosStringSetConstSPtr            meta_tags,
                                    const chaos::common::data::CDataWrapper& stored_object);
