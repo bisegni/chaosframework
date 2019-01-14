@@ -33,10 +33,10 @@ namespace chaos {
                 typedef ChaosSharedPtr<CassFuture> CassFutureShrdPtr;
                 typedef ChaosSharedPtr<CassPrepared> CassPreparedShrdPtr;
                 
-                void cassandraClusterDeallocator(CassCluster* cluster);
-                void cassandraSessionDeallocator(CassSession* session);
-                void cassandraFutureDeallocator(CassFuture* future);
-                void cassandraPreparedDeallocator(CassPrepared* future);
+                static void cassandraClusterDeallocator(CassCluster* cluster) {cass_cluster_free(cluster);}
+                static void cassandraSessionDeallocator(CassSession* session) {cass_session_free(session);}
+                static void cassandraFutureDeallocator(CassFuture* future) {cass_future_free(future);}
+                static void cassandraPreparedDeallocator(CassPrepared* prepared){cass_prepared_free(prepared);};
                 
 #define ALLOCATE_CLUSTER() CassClusterShrdPtr(cass_cluster_new(), &cassandraClusterDeallocator)
 #define ALLOCATE_SESSION() CassSessionShrdPtr(cass_session_new(), &cassandraSessionDeallocator)

@@ -313,6 +313,13 @@ IF(USE_MONGODB3_DRIVER)
                           object_storage/mongodb_3/ShardKeyManagement.cpp)
 ENDIF()
 
+IF(USE_CASSANDRA_DRIVER)
+  MESG("Enable cassandra driver source code")
+  SET(cnd_src  ${cnd_src}	object_storage/cassandra/CassandraObjectStorageDataAccess.cpp
+                          object_storage/cassandra/CassandraObjectStorageDriver.cpp
+                          object_storage/cassandra/CassandraObjectStorageTypes.cpp)
+ENDIF()
+
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
 
@@ -363,6 +370,12 @@ IF(USE_MONGODB3_DRIVER)
   SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
   SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
   target_compile_definitions(${PROJECT_NAME} PRIVATE USE_MONGODB3_DRIVER=1)
+ENDIF()
+
+IF(USE_CASSANDRA_DRIVER)
+  MESG("Enable link to cassandra and bsoncxx library")
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} cassandra)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CASSANDRA_DRIVER=1)
 ENDIF()
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
