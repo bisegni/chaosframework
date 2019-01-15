@@ -1155,7 +1155,7 @@ namespace chaos {
         //!scrip api consstants
         namespace script {
             namespace search_script {
-                static const char * const  FOUND_SCRIPT_LIST = "found_sript_list";
+                static const char * const  FOUND_SCRIPT_LIST = "found_script_list";
             }
         }
     }
