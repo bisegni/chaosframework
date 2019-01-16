@@ -240,6 +240,7 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //unlock the condition for end start method
     //endWaithCondition.notify_one();
     //waitCloseSemaphore.unlock();
+    sigignore(signalNumber);
     waitCloseSemaphore.unlock();
     
     if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
