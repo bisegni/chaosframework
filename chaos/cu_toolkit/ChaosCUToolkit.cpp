@@ -179,8 +179,9 @@ void ChaosCUToolkit::start(){
         //at this point i must with for end signal
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-        exit(1);
+        DECODE_CHAOS_EXCEPTION(ex);
+        waitCloseSemaphore.unlock();
+
     }
     //execute the stop and the deinitialization of the toolkit
     stop();
@@ -240,7 +241,7 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //endWaithCondition.notify_one();
     //waitCloseSemaphore.unlock();
     waitCloseSemaphore.unlock();
-    sleep(1);
+    
     if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
         LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: "<< signalNumber;
 
@@ -252,4 +253,5 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
         //exit(0);
         
     }
+    sleep(1);
 }
