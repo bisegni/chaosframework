@@ -50,7 +50,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the string key
                     template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
+                    void getReadonlyCachedAttributeValue(const std::string& ds_name,
                                                         const std::string& attr_name,
                                                         const T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingByName(attr_name);
@@ -61,7 +61,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the index of the variable
                     template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
+                    void getReadonlyCachedAttributeValue(const std::string& ds_name,
                                                         unsigned int attr_index,
                                                         const T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingForIndex(attr_index);
@@ -72,7 +72,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the string key
                     template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
+                    void getCachedCustomAttributeValue(const std::string& ds_name,
                                                       const std::string& attr_name,
                                                       T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingByName(attr_name);
@@ -83,7 +83,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the index of the variable
                     template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
+                    void getCachedCustomAttributeValue(const std::string& ds_name,
                                                       unsigned int attr_index,
                                                       T*** value_ptr) {
                         //we have the dataset
