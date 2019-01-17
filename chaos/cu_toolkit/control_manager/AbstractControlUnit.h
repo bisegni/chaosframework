@@ -223,12 +223,11 @@ namespace chaos{
                 void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
                 
                 inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
-                    switch(type) {
-                        case  chaos::cu::control_manager::StateVariableTypeAlarmCU:
-                            return chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL;
-                        case   chaos::cu::control_manager::StateVariableTypeAlarmDEV:
-                            return chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL;
+                    if(type==chaos::cu::control_manager::StateVariableTypeAlarmDEV){
+                        return chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL;
+ 
                     }
+                    return chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL;
                 }
                 
                 inline int stateVariableNameToEnum(const std::string& name) {
