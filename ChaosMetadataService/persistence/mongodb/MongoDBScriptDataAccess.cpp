@@ -57,6 +57,7 @@ MongoDBScriptDataAccess::~MongoDBScriptDataAccess() {}
 
 int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
     int err = 0;
+    int size;
     uint64_t sequence_id;
     mongo::BSONObjBuilder builder;
     CHAOS_ASSERT(utility_data_access)
@@ -84,10 +85,17 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
         */
        // better have as unique name the timestamp that tracks also when the script was inserted
         builder << "seq" <<(long long)TimingUtil::getTimeStamp();
-        builder << CHAOS_SBD_NAME << script_entry.script_description.name
+       /* builder << CHAOS_SBD_NAME << script_entry.script_description.name
         << CHAOS_SBD_DESCRIPTION << script_entry.script_description.description
         <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<< script_entry.script_description.language;
+        */
+        ScriptSDWrapper s_dw;
+        s_dw.dataWrapped() = script_entry;
+    
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
         
+        mongo::BSONObj u(serialization->getBSONRawData(size));
+        builder.appendElements(u);
         mongo::BSONObj i = builder.obj();
         DEBUG_CODE(SDA_DBG<<log_message("insertNewScript",
                                         "insert",
