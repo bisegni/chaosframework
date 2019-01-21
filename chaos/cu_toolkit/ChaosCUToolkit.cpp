@@ -180,7 +180,8 @@ void ChaosCUToolkit::start(){
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex);
-        waitCloseSemaphore.unlock();
+    } catch(...){
+        LERR_ << "unexpected exeception";
 
     }
     //execute the stop and the deinitialization of the toolkit
@@ -240,14 +241,22 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //unlock the condition for end start method
     //endWaithCondition.notify_one();
     //waitCloseSemaphore.unlock();
-    sigignore(signalNumber);
-    waitCloseSemaphore.unlock();
+    
     
     if((signalNumber==SIGABRT) || (signalNumber==SIGSEGV)){
         LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: "<< signalNumber;
+        sigignore(signalNumber);
 
+	    waitCloseSemaphore.unlock();
+        sleep(5);
         exit(1);
         //throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
+    } else if((signalNumber==SIGTERM) || (signalNumber==SIGINT)) {
+        sigignore(signalNumber);
+        LAPP_ << "CATCH Interrupting signal  exiting ...";
+        waitCloseSemaphore.unlock();
+        sleep(5);
+        exit(0);
     } else {
         LAPP_ << "CATCH SIGNAL "<< signalNumber;
             
