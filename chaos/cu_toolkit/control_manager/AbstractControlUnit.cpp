@@ -2224,6 +2224,9 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
             pushDevAlarmDataset();
             break;
     }
+    AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
+    output_cache.getValueSettingByName(stateVariableEnumToName((StateVariableType)variable_type))->setValue(CDataVariant(catalog.max()));
+
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     pushSystemDataset();
 }
