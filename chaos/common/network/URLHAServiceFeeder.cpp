@@ -88,7 +88,7 @@ void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
     
     retry_queue.push(sri);
     
-    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after " <<sri->retry_timeout;
+    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after "<<min_retry_time<<" ms at " <<sri->retry_timeout;
 }
 
 //! set url has offline
@@ -99,7 +99,7 @@ void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
                                                                                getURLForIndex(remote_index)));
     sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     retry_queue.push(sri);
-    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after " <<sri->retry_timeout;
+    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after:"<<min_retry_time<<" ms at " <<sri->retry_timeout;
 }
 
 void URLHAServiceFeeder::checkForAliveService() {
@@ -122,7 +122,7 @@ void URLHAServiceFeeder::checkForAliveService() {
                 respawned_queue.push(sri->offline_index);
             } else {
                 //service still in offline
-                sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * 1000)%10000);
+                sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * min_retry_time)%10000);
                 
                 URLHASF_INFO << "Service " << sri->offline_url << " still offline wait for " << sri->retry_timeout-current_ts << " milliseocnds";
                 wr.lock();
