@@ -40,7 +40,17 @@ namespace chaos {
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class CassandraObjectStorageDriver;
                     CassSessionShrdPtr cass_sess_shrd_ptr;
+
                     const CassPrepared *insert_daq_prepared;
+                    const CassPrepared *get_daq_prepared;
+                    const CassPrepared *delete_daq_prepared;
+                    const CassPrepared *get_last_daq_prepared;
+                    const CassPrepared *find_daq_prepared;
+                    const CassPrepared *find_daq_prepared_reverse;
+                    const CassPrepared *count_daq_prepared;
+
+
+
 //                    ShardKeyManagement shrd_key_manager;
                     
                 protected:
