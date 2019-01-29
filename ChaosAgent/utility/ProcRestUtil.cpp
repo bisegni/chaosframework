@@ -38,6 +38,7 @@ using namespace chaos::common;
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
 
+
 std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;
     boost::replace_all(result,"/","_");
@@ -49,11 +50,12 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
+        
         if(checkProcessAlive(node_association_info) == true) return;
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
-        
+      
         boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
         if (boost::filesystem::exists(init_file_parent_path) == false &&
             boost::filesystem::create_directory(init_file_parent_path) == false) {
