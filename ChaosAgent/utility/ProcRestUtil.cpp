@@ -78,7 +78,7 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
         }
-        
+
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
         }
@@ -115,7 +115,6 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         throw ex;
     }
 }
-
 bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
