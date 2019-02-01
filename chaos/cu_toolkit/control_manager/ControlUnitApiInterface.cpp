@@ -106,8 +106,8 @@ void ControlUnitApiInterface::pushInputDataset() {
 
 void ControlUnitApiInterface::addAttributeToDataSet(const std::string& attribute_name,
                                                     const std::string& attribute_description,
-                                                    DataType::DataType attribute_type,
-                                                    DataType::DataSetAttributeIOAttribute attribute_direction,
+                                                    chaos::DataType::DataType attribute_type,
+                                                    chaos::DataType::DataSetAttributeIOAttribute attribute_direction,
                                                     uint32_t maxSize) {
     GET_OR_RETURN();
     control_unit_pointer()->addAttributeToDataSet(attribute_name,
@@ -118,9 +118,9 @@ void ControlUnitApiInterface::addAttributeToDataSet(const std::string& attribute
 }
 void ControlUnitApiInterface::addBinaryAttributeAsSubtypeToDataSet(const std::string& attribute_name,
                                                                    const std::string& attribute_description,
-                                                                   DataType::BinarySubtype               subtype,
+                                                                   chaos::DataType::BinarySubtype               subtype,
                                                                    int32_t    cardinality,
-                                                                   DataType::DataSetAttributeIOAttribute attribute_direction) {
+                                                                   chaos::DataType::DataSetAttributeIOAttribute attribute_direction) {
     GET_OR_RETURN();
     control_unit_pointer()->addBinaryAttributeAsSubtypeToDataSet(attribute_name,
                                                                  attribute_description,
@@ -132,7 +132,7 @@ void ControlUnitApiInterface::addBinaryAttributeAsSubtypeToDataSet(const std::st
                                                                    const std::string&            attribute_description,
                                                                    const std::vector<int32_t>&   subtype_list,
                                                                    int32_t                       cardinality,
-                                                                   DataType::DataSetAttributeIOAttribute attribute_direction) {
+                                                                   chaos::DataType::DataSetAttributeIOAttribute attribute_direction) {
     GET_OR_RETURN();
     control_unit_pointer()->addBinaryAttributeAsSubtypeToDataSet(attribute_name,
                                                                  attribute_description,
@@ -144,7 +144,7 @@ void ControlUnitApiInterface::addBinaryAttributeAsSubtypeToDataSet(const std::st
 void ControlUnitApiInterface::addBinaryAttributeAsMIMETypeToDataSet(const std::string& attribute_name,
                                                                     const std::string& attribute_description,
                                                                     const std::string& mime_type,
-                                                                    DataType::DataSetAttributeIOAttribute attribute_direction) {
+                                                                    chaos::DataType::DataSetAttributeIOAttribute attribute_direction) {
     GET_OR_RETURN();
     control_unit_pointer()->addBinaryAttributeAsMIMETypeToDataSet(attribute_name,
                                                                   attribute_description,
@@ -158,7 +158,7 @@ void ControlUnitApiInterface::getDatasetAttributesName(ChaosStringVector& attrib
 }
 
 
-void ControlUnitApiInterface::getDatasetAttributesName(DataType::DataSetAttributeIOAttribute directionType,
+void ControlUnitApiInterface::getDatasetAttributesName(chaos::DataType::DataSetAttributeIOAttribute directionType,
                                                        ChaosStringVector& attributesName) {
     GET_OR_RETURN();
     control_unit_pointer()->getDatasetAttributesName(directionType,
@@ -187,7 +187,7 @@ void ControlUnitApiInterface::setAttributeRangeValueInfo(const std::string& attr
 }
 
 int ControlUnitApiInterface::getAttributeDirection(const std::string& attribute_name,
-                                                   DataType::DataSetAttributeIOAttribute& directionType) {
+                                                   chaos::DataType::DataSetAttributeIOAttribute& directionType) {
     GET_OR_RETURN(-1);
     return control_unit_pointer()->getAttributeDirection(attribute_name,
                                                          directionType);

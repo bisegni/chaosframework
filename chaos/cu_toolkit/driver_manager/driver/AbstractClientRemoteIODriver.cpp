@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractClientRemoteIODriver.h>
-
+#include "../../windowsCompliant.h"
 #define INFO    INFO_LOG(AbstractClientRemoteIODriver)
 #define DBG     DBG_LOG(AbstractClientRemoteIODriver)
 #define ERR     ERR_LOG(AbstractClientRemoteIODriver)
