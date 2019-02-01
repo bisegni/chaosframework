@@ -71,8 +71,8 @@ int EUDSValueManagement::addDatasetAttribute(const ScriptInParam& input_paramete
 }
 
 //! return the value of an dataset attribute
-int EUDSValueManagement::setOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
-                                                 common::script::ScriptOutParam& output_parameter) {
+int EUDSValueManagement::setOutputAttributeValue(const chaos::common::script::ScriptInParam& input_parameter,
+                                                 chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 2) {
         EUSW_LERR << "Bad number of parameter for setOutputAttributeValue";
         return -1;
@@ -87,8 +87,8 @@ int EUDSValueManagement::setOutputAttributeValue(const common::script::ScriptInP
 }
 
 //! return the value of an dataset attribute
-int EUDSValueManagement::getOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
-                                                 common::script::ScriptOutParam& output_parameter) {
+int EUDSValueManagement::getOutputAttributeValue(const chaos::common::script::ScriptInParam& input_parameter,
+                                                 chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 1) {
         EUSW_LERR << "Bad number of parameter for getOutputAttributeValue";
         return -1;
@@ -103,8 +103,8 @@ int EUDSValueManagement::getOutputAttributeValue(const common::script::ScriptInP
     return 0;
 }
 
-int EUDSValueManagement::getInputAttributeValue(const common::script::ScriptInParam& input_parameter,
-                                                common::script::ScriptOutParam& output_parameter) {
+int EUDSValueManagement::getInputAttributeValue(const chaos::common::script::ScriptInParam& input_parameter,
+                                                chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 1) {
         EUSW_LERR << "Bad number of parameter for getInputAttributeValue";
         return -1;

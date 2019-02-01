@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data::structured;
 using namespace chaos::cu::data_manager::manipulation;
+using namespace chaos::cu::data_manager;
 
 #define INFO    INFO_LOG(DatasetEditor)
 #define DBG     DBG_LOG(DatasetEditor)
@@ -62,12 +63,12 @@ int DatasetEditor::addAttributeToDataset(const std::string& attr_name,
 
 int DatasetEditor::addBinaryAttributeAsSubtypeToDataSet(const std::string&          attr_name,
                                                         const std::string&          attr_description,
-                                                        DataType::BinarySubtype     attr_subtype,
+                                                        chaos::DataType::BinarySubtype     attr_subtype,
                                                         int32_t                     attr_cardinality) {
     //add the attribute
     int err = addAttributeToDataset(attr_name,
                                     attr_description,
-                                    DataType::TYPE_BYTEARRAY);
+                                    chaos::DataType::TYPE_BYTEARRAY);
     if(err) {return err;}
     
 

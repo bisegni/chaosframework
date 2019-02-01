@@ -99,8 +99,8 @@ void EUSearch::removeCursor(uint32_t cursor_id) {
 }
 
 #pragma mark API
-int EUSearch::newSearch(const common::script::ScriptInParam& input_parameter,
-                        common::script::ScriptOutParam& output_parameter) {
+int EUSearch::newSearch(const chaos::common::script::ScriptInParam& input_parameter,
+                        chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 4) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -130,8 +130,8 @@ int EUSearch::newSearch(const common::script::ScriptInParam& input_parameter,
     return 0;
 }
 
-int EUSearch::newSearchSinceSeconds(const common::script::ScriptInParam& input_parameter,
-                                    common::script::ScriptOutParam& output_parameter) {
+int EUSearch::newSearchSinceSeconds(const chaos::common::script::ScriptInParam& input_parameter,
+                                    chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 3) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -163,8 +163,8 @@ int EUSearch::newSearchSinceSeconds(const common::script::ScriptInParam& input_p
     return 0;
 }
 
-int EUSearch::closeSearch(const common::script::ScriptInParam& input_parameter,
-                          common::script::ScriptOutParam& output_parameter) {
+int EUSearch::closeSearch(const chaos::common::script::ScriptInParam& input_parameter,
+                          chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 1) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -177,8 +177,8 @@ int EUSearch::closeSearch(const common::script::ScriptInParam& input_parameter,
     return 0;
 }
 
-int EUSearch::hasNext(const common::script::ScriptInParam& input_parameter,
-                      common::script::ScriptOutParam& output_parameter) {
+int EUSearch::hasNext(const chaos::common::script::ScriptInParam& input_parameter,
+                      chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 1) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -193,8 +193,8 @@ int EUSearch::hasNext(const common::script::ScriptInParam& input_parameter,
     return 0;
 }
 
-int EUSearch::next(const common::script::ScriptInParam& input_parameter,
-                   common::script::ScriptOutParam& output_parameter) {
+int EUSearch::next(const chaos::common::script::ScriptInParam& input_parameter,
+                   chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 1) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -213,8 +213,8 @@ int EUSearch::next(const common::script::ScriptInParam& input_parameter,
     return 0;
 }
 
-int EUSearch::getAttributeValue(const common::script::ScriptInParam& input_parameter,
-                                common::script::ScriptOutParam& output_parameter) {
+int EUSearch::getAttributeValue(const chaos::common::script::ScriptInParam& input_parameter,
+                                chaos::common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 2) {
         EUSW_LERR << "Bad number of parameter";
         return -1;
@@ -236,8 +236,8 @@ int EUSearch::getAttributeValue(const common::script::ScriptInParam& input_param
     return 0;
 }
 
-int EUSearch::runAlgoSearchSinceSeconds(const common::script::ScriptInParam& input_parameter,
-                                        common::script::ScriptOutParam& output_parameter) {
+int EUSearch::runAlgoSearchSinceSeconds(const chaos::common::script::ScriptInParam& input_parameter,
+                                        chaos::common::script::ScriptOutParam& output_parameter) {
     QueryCursor *cursor = NULL;
     uint64_t processed_lement = 0;
     ChaosStringVector attribute_name;
