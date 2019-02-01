@@ -77,6 +77,4 @@ CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.wo
 #define CHECK_PROCESS  ChaosAgent::getInstance()->getProcessManager()->checkProcessAlive
 #define LAUNCH_PROCESS ChaosAgent::getInstance()->getProcessManager()->launchProcess
 #define QUIT_PROCESS   ChaosAgent::getInstance()->getProcessManager()->quitProcess
-
-
 #endif /* __CHAOSFramework_D11D47EC_B834_406C_897C_8191C80B6D8B_ProcRestUtil_h */
