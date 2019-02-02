@@ -26,16 +26,16 @@ SET(agent_src  ${agent_src}	worker/ProcessWorker.cpp
 
 MESG("Add Log Rest Support Tools as external project")
 ExternalProject_Add(
-rest-process-manager
-GIT_REPOSITORY https://baltig.infn.it/chaos-lnf-control/rest-process-manager.git
-GIT_TAG master
-PREFIX "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-prefix"
-SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-src"
-BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-src"
-CONFIGURE_COMMAND cmake -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-LOG_DOWNLOAD ON
-LOG_CONFIGURE ON
-LOG_BUILD ON)
+					rest-process-manager
+					GIT_REPOSITORY https://baltig.infn.it/chaos-lnf-control/rest-process-manager.git
+					GIT_TAG master
+					PREFIX "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-prefix"
+					SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-src"
+					BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/rest-process-manager-src"
+					CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+					LOG_DOWNLOAD ON
+					LOG_CONFIGURE ON
+					LOG_BUILD ON)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${agent_src})
 

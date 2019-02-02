@@ -1,3 +1,4 @@
+.vscode/
 ccs/compile_commands.json
 .scannerwork
 asan_leak_suppression.txt
