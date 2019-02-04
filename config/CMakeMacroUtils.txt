@@ -220,6 +220,11 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
 
+execute_process(
+      COMMAND ln -sf ./localhost/chaos_root.cfg ./chaos_root.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+
     execute_process(
       COMMAND ln -sf ./ChaosWANProxy ./wan
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin

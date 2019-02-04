@@ -50,12 +50,12 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
-        
+
         if(checkProcessAlive(node_association_info) == true) return;
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
-      
+    
         boost::filesystem::path init_file_parent_path = INIT_FILE_PATH();
         if (boost::filesystem::exists(init_file_parent_path) == false &&
             boost::filesystem::create_directory(init_file_parent_path) == false) {
@@ -71,14 +71,12 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-        
         //enable log on console that will be redirected on named pipe
         init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
         //check for syslog setting of the agent that will be reflect on managed us
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
         }
-
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
         }
@@ -115,7 +113,6 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         throw ex;
     }
 }
-
 bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
@@ -124,11 +121,9 @@ bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_in
 
     return alive;
 }
-
-
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
-     LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
 
+     LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
     return (killProcess(node_association_info.association_unique_id) == 0);
 }
