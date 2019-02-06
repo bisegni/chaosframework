@@ -124,7 +124,6 @@ bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_in
 }
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
-
      LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
     return (killProcess(node_association_info.association_unique_id) == 0);
 }
