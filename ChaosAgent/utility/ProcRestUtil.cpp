@@ -118,8 +118,7 @@ bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_in
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
     alive=(proc==::restConsole::RestProcessManager::PROCESS_STARTED);
-    LDBG_<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive<<" process state:"<<getProcessJsonString(node_association_info.association_unique_id);
-
+    LDBG_<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive;
     return alive;
 }
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
