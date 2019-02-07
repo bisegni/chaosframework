@@ -44,7 +44,6 @@ std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     boost::replace_all(result,"/","_");
     return result;
 }
-
 void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
     std::string exec_command;
@@ -68,7 +67,7 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
             boost::filesystem::create_directory(queue_file_parent_path) == false) {
             throw chaos::CException(-1, CHAOS_FORMAT("Queue path %1% can't be created",%queue_file_parent_path), __PRETTY_FUNCTION__);
         }
-        
+     
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
