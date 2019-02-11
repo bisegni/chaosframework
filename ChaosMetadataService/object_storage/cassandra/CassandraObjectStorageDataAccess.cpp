@@ -35,6 +35,10 @@
 using namespace chaos::metadata_service::object_storage::cassandra;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
+#define CHECK_FUTURE(x, pf, err1, err2) \
+if((err = cass_future_error_code(pf.get())) != CASS_OK) {LOG_AND_TROW(ERR, err1, cass_error_desc(err));}\
+x = MAKE_MANAGED_PREPARED(cass_future_get_prepared(pf.get()));
+
 /* Constructor */
 CassandraObjectStorageDataAccess::CassandraObjectStorageDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr):
 cass_sess_shrd_ptr(_cass_sess_shrd_ptr){
@@ -42,40 +46,34 @@ cass_sess_shrd_ptr(_cass_sess_shrd_ptr){
 
 
     /* INSERT: Prepare the statement on the Cassandra cluster */
-    CassFuture* prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "INSERT INTO "+DAQ_COLL_NAME+" ("+chaos::DataPackCommonKey::DPCK_DEVICE_ID+", 
-                                                                                                  "+chaos::DataPackCommonKey::DPCK_TIMESTAMP+", 
-                                                                                                  "+chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID+", 
-                                                                                                  "+chaos::DataPackCommonKey::DPCK_SEQ_ID+", 
-                                                                                                  "+DAQ_DATA_FIELD+") 
-                                                                                          VALUES (?, ?, ?, ?, ?);");
+    MAKE_MANAGED_FUTURE(prepare_future, cass_session_prepare(cass_sess_shrd_ptr.get(), CHAOS_FORMAT("INSERT INTO %1% (%2%, %3%, %4%, %5%, %6%) VALUES (?, ?, ?, ?, ?)",
+                                                                                                        %DAQ_COLL_NAME
+                                                                                                        %chaos::DataPackCommonKey::DPCK_DEVICE_ID
+                                                                                                        %chaos::DataPackCommonKey::DPCK_TIMESTAMP
+                                                                                                        %chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID
+                                                                                                        %chaos::DataPackCommonKey::DPCK_SEQ_ID
+                                                                                                        %DAQ_DATA_FIELD).c_str()));
     
-    
-    if ((err = cass_future_error_code(prepare_future)) == CASS_OK) insert_daq_prepared = cass_future_get_prepared(prepare_future);
-    cass_future_free(prepare_future);
-    if(err != CASS_OK)  LOG_AND_TROW(ERR, -2, cass_error_desc(err));
-
-
+    CHECK_FUTURE(insert_daq_prepared, prepare_future, -1, -2);
 
     /* GET: */
-    prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "SELECT * FROM "+DAQ_COLL_NAME+" where "+std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID)+" = ? and "+td::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" = ? ");
-    if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  get_daq_prepared = cass_future_get_prepared(prepare_future);
-    
-    cass_future_free(prepare_future);
-    if(err != CASS_OK) LOG_AND_TROW(ERR, -3, cass_error_desc(err));
+    MAKE_MANAGED_FUTURE(prepare_future_1, cass_session_prepare(cass_sess_shrd_ptr.get(), CHAOS_FORMAT("SELECT * FROM %1% WHERE %2% = ? and %3% = ?",
+                                                                                                     %DAQ_COLL_NAME
+                                                                                                     %chaos::DataPackCommonKey::DPCK_DEVICE_ID
+                                                                                                     %chaos::DataPackCommonKey::DPCK_TIMESTAMP).c_str()));
+    CHECK_FUTURE(get_daq_prepared, prepare_future_1, -2, -3);
 
 
     /* DELETE: */
     prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "DELETE  FROM "+DAQ_COLL_NAME+" where "+std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" >= ? and "+td::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" <= ? IF EXISTS ");
     if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  delete_daq_prepared = cass_future_get_prepared(prepare_future);
     
-    cass_future_free(prepare_future);
     if(err != CASS_OK) LOG_AND_TROW(ERR, -4, cass_error_desc(err));
 
     /* GET LAST: */
     prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "SELECT * FROM "+DAQ_COLL_NAME+" where "+std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID)+" = ? and "+td::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" = ? LIMIT 1 ");
     if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  get_last_daq_prepared = cass_future_get_prepared(prepare_future);
     
-    cass_future_free(prepare_future);
     if(err != CASS_OK) LOG_AND_TROW(ERR, -5, cass_error_desc(err));
 
 
@@ -85,12 +83,10 @@ cass_sess_shrd_ptr(_cass_sess_shrd_ptr){
     //NORMAL
     prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "SELECT * FROM "+DAQ_COLL_NAME+" where "+std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" >= ? and "+td::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" <= ? and "+run_key+" >= ? and "+counter_key+ " >= ?");
     if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  find_daq_prepared = cass_future_get_prepared(prepare_future);
-    cass_future_free(prepare_future);
     if(err != CASS_OK) LOG_AND_TROW(ERR, -6, cass_error_desc(err));
     //REVERSE
     prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "SELECT * FROM "+DAQ_COLL_NAME+" where "+std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" >= ? and "+td::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP)+" <= ? "+" and "+run_key+" <= ? and "+counter_key+ " <= ?");
     if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  find_daq_prepared_reverse = cass_future_get_prepared(prepare_future);
-    cass_future_free(prepare_future);
     if(err != CASS_OK) LOG_AND_TROW(ERR, -6, cass_error_desc(err));
 
 
@@ -98,15 +94,11 @@ cass_sess_shrd_ptr(_cass_sess_shrd_ptr){
     prepare_future = cass_session_prepare(cass_sess_shrd_ptr.get(), "SELECT COUNT(*) FROM "+DAQ_COLL_NAME);
     if ((err = cass_future_error_code(prepare_future)) == CASS_OK)  count_daq_prepared = cass_future_get_prepared(prepare_future);
     
-    cass_future_free(prepare_future);
     if(err != CASS_OK) LOG_AND_TROW(ERR, -7, cass_error_desc(err));
 
-
 }
 
-CassandraObjectStorageDataAccess::~CassandraObjectStorageDataAccess() {
-    cass_prepared_free(insert_daq_prepared);
-}
+CassandraObjectStorageDataAccess::~CassandraObjectStorageDataAccess() {}
 
 int CassandraObjectStorageDataAccess::pushObject(const std::string&                       key,
                                                  const ChaosStringSetConstSPtr            meta_tags,

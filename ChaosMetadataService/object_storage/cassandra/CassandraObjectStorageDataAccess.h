@@ -41,13 +41,13 @@ namespace chaos {
                     friend class CassandraObjectStorageDriver;
                     CassSessionShrdPtr cass_sess_shrd_ptr;
 
-                    const CassPrepared *insert_daq_prepared;
-                    const CassPrepared *get_daq_prepared;
-                    const CassPrepared *delete_daq_prepared;
-                    const CassPrepared *get_last_daq_prepared;
-                    const CassPrepared *find_daq_prepared;
-                    const CassPrepared *find_daq_prepared_reverse;
-                    const CassPrepared *count_daq_prepared;
+                    CassPreparedShrdPtr insert_daq_prepared;
+                    CassPreparedShrdPtr get_daq_prepared;
+                    CassPreparedShrdPtr delete_daq_prepared;
+                    CassPreparedShrdPtr get_last_daq_prepared;
+                    CassPreparedShrdPtr find_daq_prepared;
+                    CassPreparedShrdPtr find_daq_prepared_reverse;
+                    CassPreparedShrdPtr count_daq_prepared;
 
 
 
