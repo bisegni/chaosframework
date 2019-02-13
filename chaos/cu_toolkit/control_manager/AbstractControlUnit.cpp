@@ -1842,7 +1842,10 @@ int AbstractControlUnit::pushOutputDataset() {
   r_lock->lock();
 
   //check if something as changed
-  if (!output_attribute_cache.hasChanged()) return err;
+  if (!output_attribute_cache.hasChanged()) {
+   // ACULDBG_<<"Nothing to Push";
+    return err;
+  }
 
   CDWShrdPtr output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
   if (!output_attribute_dataset) return err;
@@ -1903,7 +1906,6 @@ int AbstractControlUnit::pushOutputDataset() {
 
   //update counter
   push_dataset_counter++;
-
   //reset chagned attribute into output dataset
   output_attribute_cache.resetChangedIndex();
   return err;
