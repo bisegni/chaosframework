@@ -181,6 +181,8 @@ namespace chaos {
                 bool getBoolValue(const std::string&) const;
                 //get a json value
                 std::string getJsonValue(const std::string&) const;
+                // return key as a double value or nan if cannot convert
+                double getAsRealValue(const std::string& key) const;
 
 #define THROW_TYPE_EXC(type)\
 std::stringstream ss;\

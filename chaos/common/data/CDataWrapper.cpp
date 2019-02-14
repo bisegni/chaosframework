@@ -834,6 +834,22 @@ bool  CDataWrapper::isJsonValue(const std::string& key) const{
     return jr.parse(cptr, cptr+getValueSize(key), v);
 }
 
+double CDataWrapper::getAsRealValue(const std::string& key) const{
+    if(isDoubleValue(key)){
+        return getDoubleValue(key);
+    }
+    if(isInt32Value(key)){
+        return (double)getInt32Value(key);
+    }
+    if(isInt64Value(key)){
+        return (double)getInt64Value(key);
+    }
+    if(isBoolValue(key)){
+        return (double)getBoolValue(key);
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
 void CDataWrapper::addJsonValue(const std::string& key, const string& val){
     CDataWrapper tmp;
     tmp.setSerializedJsonData(val.c_str());
