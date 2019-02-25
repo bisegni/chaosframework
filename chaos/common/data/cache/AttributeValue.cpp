@@ -77,18 +77,6 @@ AttributeValue::~AttributeValue() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool AttributeValue::grow(uint32_t value_size) {
-    if(size<value_size){
-        if(setNewSize(value_size,false)==false){
-            return false;
-        }
-    }
-    return true;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 bool AttributeValue::setValue(const void* value_ptr,
                               uint32_t value_size,
                               bool tag_has_changed) {
@@ -210,11 +198,21 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+bool AttributeValue::grow(uint32_t value_size) {
+    if(setNewSize(value_size,false)==false){
+        return false;
+    }
+    return true;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool AttributeValue::setNewSize(uint32_t _new_size,
                                 bool clear_mem) {
     bool result = true;
     if(_new_size<=buf_size){
-        size=_new_size;
+        size =_new_size;
         return true;
     }
     // generate aligned memory allocations
