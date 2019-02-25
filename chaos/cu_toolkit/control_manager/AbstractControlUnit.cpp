@@ -1578,14 +1578,14 @@ void AbstractControlUnit::_updatePushRateMetric() {
   uint64_t rate_acq_ts    = TimingUtil::getTimeStamp();
   double   time_offset    = (double(rate_acq_ts - last_push_rate_grap_ts)) / 1000.0;     //time in seconds
   double   output_ds_rate = (time_offset > 0) ? push_dataset_counter / time_offset : 0;  //rate in seconds
-  double   output_size_rate = (time_offset > 0) ? push_dataset_size / time_offset : 0;  //rate in seconds
+  int32_t   output_size_rate = (time_offset > 0) ? push_dataset_size / push_dataset_counter : 0;  //rate in seconds
 
   HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                   ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                   output_ds_rate);
   HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                   ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
-                                                  output_ds_rate);
+                                                  output_size_rate);
 
   //keep track of acquire timestamp
   last_push_rate_grap_ts = rate_acq_ts;
@@ -1908,11 +1908,12 @@ int AbstractControlUnit::pushOutputDataset() {
   //manage the burst information
   manageBurstQueue();
   //now we nede to push the outputdataset
+  push_dataset_size+=output_attribute_dataset->getBSONRawSize();
   err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(output_attribute_dataset));
 
   //update counter
   push_dataset_counter++;
-  push_dataset_size+=output_attribute_dataset->getBSONRawSize();
+
   //reset chagned attribute into output dataset
   output_attribute_cache.resetChangedIndex();
   return err;
