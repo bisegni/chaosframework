@@ -383,6 +383,8 @@ namespace chaos {
     namespace ControlUnitHealtDefinitionValue {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_SIZE  = "cuh_dso_size";
+
         
     }
     /** @} */ // end of NodeHealtDefinitionValue

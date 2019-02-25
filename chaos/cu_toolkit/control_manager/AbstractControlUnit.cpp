@@ -132,6 +132,7 @@ AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
     , standard_logging_channel()
     , alarm_logging_channel()
     , push_dataset_counter(0)
+    , push_dataset_size(0)
     , last_push_rate_grap_ts(0)
     , attribute_value_shared_cache()
     , attribute_shared_cache_wrapper()
@@ -1577,15 +1578,20 @@ void AbstractControlUnit::_updatePushRateMetric() {
   uint64_t rate_acq_ts    = TimingUtil::getTimeStamp();
   double   time_offset    = (double(rate_acq_ts - last_push_rate_grap_ts)) / 1000.0;     //time in seconds
   double   output_ds_rate = (time_offset > 0) ? push_dataset_counter / time_offset : 0;  //rate in seconds
+  double   output_size_rate = (time_offset > 0) ? push_dataset_size / time_offset : 0;  //rate in seconds
 
   HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                   ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
+                                                  output_ds_rate);
+  HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                  ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
                                                   output_ds_rate);
 
   //keep track of acquire timestamp
   last_push_rate_grap_ts = rate_acq_ts;
   //reset pushe count
   push_dataset_counter = 0;
+  push_dataset_size=0;
 }
 
 //!put abstract control unit state machine in recoverable error
@@ -1906,6 +1912,7 @@ int AbstractControlUnit::pushOutputDataset() {
 
   //update counter
   push_dataset_counter++;
+  push_dataset_size+=output_attribute_dataset->getBSONRawSize();
   //reset chagned attribute into output dataset
   output_attribute_cache.resetChangedIndex();
   return err;
