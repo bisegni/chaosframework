@@ -1578,7 +1578,7 @@ void AbstractControlUnit::_updatePushRateMetric() {
   uint64_t rate_acq_ts    = TimingUtil::getTimeStamp();
   double   time_offset    = (double(rate_acq_ts - last_push_rate_grap_ts)) / 1000.0;     //time in seconds
   double   output_ds_rate = (time_offset > 0) ? push_dataset_counter / time_offset : 0;  //rate in seconds
-  int32_t   output_size_rate = (time_offset > 0) ? push_dataset_size / push_dataset_counter : 0;  //rate in seconds
+  int32_t   output_size_rate = (push_dataset_counter > 0) ? push_dataset_size / push_dataset_counter : 0;  //rate in seconds
 
   HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                   ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
