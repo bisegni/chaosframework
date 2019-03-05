@@ -320,6 +320,8 @@ SET(common_lib_src ${common_lib_src}
                     trigger/trigger_types.cpp)
 
 
+SET(common_lib_src ${common_lib_src}
+		ChaosCommonWin.cpp)
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 
