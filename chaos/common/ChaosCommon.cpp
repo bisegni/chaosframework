@@ -205,7 +205,7 @@ void ChaosAbstractCommon::init(void *init_data) {
     std::string lockFileName = "/tmp/chaos_init.lock";
 #endif
     //lock file for permit to choose different tcp port for services
-    std::fstream                                                     domain_file_lock_stream(lockFileName,
+    std::fstream                                                     domain_file_lock_stream(lockFileName.c_str(),
                                          std::ios_base::out |
                                              std::ios_base::binary);  //check if we have got the lock
     boost::interprocess::file_lock                                   flock(lockFileName.c_str());
