@@ -31,18 +31,21 @@ namespace chaos {
                 typedef ChaosSharedPtr<CassCluster> CassClusterShrdPtr;
                 typedef ChaosSharedPtr<CassSession> CassSessionShrdPtr;
                 typedef ChaosSharedPtr<CassFuture> CassFutureShrdPtr;
-                typedef ChaosSharedPtr<const CassPrepared> CassPreparedShrdPtr;
+                typedef ChaosSharedPtr<CassPrepared> CassPreparedShrdPtr;
+                typedef ChaosSharedPtr<CassStatement> CassStatementShrdPtr;
                 
                 static void cassandraClusterDeallocator(CassCluster* cluster) {cass_cluster_free(cluster);}
                 static void cassandraSessionDeallocator(CassSession* session) {cass_session_free(session);}
                 static void cassandraFutureDeallocator(CassFuture* future) {cass_future_free(future);}
                 static void cassandraPreparedDeallocator(CassPrepared* prepared){cass_prepared_free(prepared);};
+                static void cassandraStatementDeallocator(CassStatement* statement){cass_statement_free(statement);};
                 
 #define ALLOCATE_CLUSTER() CassClusterShrdPtr(cass_cluster_new(), &cassandraClusterDeallocator)
 #define ALLOCATE_SESSION() CassSessionShrdPtr(cass_session_new(), &cassandraSessionDeallocator)
 #define MAKE_MANAGED_FUTURE(n,x) CassFutureShrdPtr n = CassFutureShrdPtr(x, &cassandraFutureDeallocator)
 #define MAKE_NEW_MANAGED_PREPARED(n,x) CassPreparedShrdPtr n = CassPreparedShrdPtr(x, &cassandraPreparedDeallocator)
 #define MAKE_MANAGED_PREPARED(x) CassPreparedShrdPtr(x, &cassandraPreparedDeallocator)
+#define MAKE_MANAGED_STATEMENT(x) CassStatementShrdPtr(x, &cassandraStatementDeallocator)
                 
             }
         }
