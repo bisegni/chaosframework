@@ -6,7 +6,7 @@ stages:
   - publish
 
 before_script:
-  - export NOW=$(date +"%Y%m%d-%H%M%S")
+  - export NOW=$(date +"%Y%m%d")
   - export TAR_NAME_POSTFIX=$NOW
   - export SYS=`uname -s`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`
