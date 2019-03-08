@@ -38,13 +38,14 @@ namespace chaos {
                 namespace mongodb_cxx {
                     class BaseMongoDBDiver {
                         static mongocxx::instance       drv_instance;
-                        ChaosUniquePtr<mongocxx::pool>  pool_unique_ptr;
+                        ChaosSharedPtr<mongocxx::pool>  pool_shared_ptr;
                     protected:
                         void initPool(const ChaosStringVector& url_list,
                                       const std::string& user,
                                       const std::string& password,
                                       const std::string& database);
                         mongocxx::pool& getPool();
+                        ChaosSharedPtr<mongocxx::pool> getSharedPool();
                     public:
                         BaseMongoDBDiver();
                         virtual ~BaseMongoDBDiver();

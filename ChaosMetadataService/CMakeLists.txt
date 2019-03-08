@@ -5,8 +5,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MACOSX_RPATH ON)
 MESG("Configure Metadata Service")
 option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
-option(USE_MONGODB3_DRIVER "Chaos MetaData Service new mongodb driver" OFF)
-option(USE_CASSANDRA_DRIVER "Chaos MetaData Service new cassandra driver" OFF)
+option(USE_MONGODB3_DRIVER "Chaos MetaData Service new mongodb driver" ON)
+option(USE_CASSANDRA_DRIVER "Chaos MetaData Service new cassandra driver" ON)
 
 
 IF (DEFINED ENV{CHAOS_BUNDLE} )
