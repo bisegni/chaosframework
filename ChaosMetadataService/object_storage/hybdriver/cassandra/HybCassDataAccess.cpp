@@ -50,7 +50,7 @@ session_shrd_ptr(_cass_sess_shrd_ptr){
                                                                                                     %DAQ_DATA_FIELD).c_str()));
     CHECK_FUTURE(insert_daq_prepared, prepare_future, -1);
     /* GET: */
-    MAKE_MANAGED_FUTURE(prepare_future_1, cass_session_prepare(session_shrd_ptr.get(), CHAOS_FORMAT("SELECT %1% FROM %2% WHERE %3% = ? and %4% = ? and %5% = ?, and %6% = ?",
+    MAKE_MANAGED_FUTURE(prepare_future_1, cass_session_prepare(session_shrd_ptr.get(), CHAOS_FORMAT("SELECT %1% FROM %2% WHERE %3% = ? and %4% = ? and %5% = ? and %6% = ?",
                                                                                                     %DAQ_DATA_FIELD
                                                                                                     %DAQ_TABLE_NAME
                                                                                                     %chaos::DataPackCommonKey::DPCK_DEVICE_ID
@@ -58,6 +58,15 @@ session_shrd_ptr(_cass_sess_shrd_ptr){
                                                                                                     %chaos::ControlUnitDatapackCommonKey::RUN_ID
                                                                                                     %chaos::DataPackCommonKey::DPCK_SEQ_ID).c_str()));
     CHECK_FUTURE(get_daq_prepared, prepare_future_1, -2);
+    
+    //delete
+    MAKE_MANAGED_FUTURE(prepare_future_2, cass_session_prepare(session_shrd_ptr.get(), CHAOS_FORMAT("DELETE FROM %1% WHERE %2% = ? and %3% = ? and %4% = ? and %5% = ?",
+                                                                                                    %DAQ_TABLE_NAME
+                                                                                                    %chaos::DataPackCommonKey::DPCK_DEVICE_ID
+                                                                                                    %DAQ_SHARD_FIELD
+                                                                                                    %chaos::ControlUnitDatapackCommonKey::RUN_ID
+                                                                                                    %chaos::DataPackCommonKey::DPCK_SEQ_ID).c_str()));
+    CHECK_FUTURE(delete_daq_prepared, prepare_future_2, -3);
 }
 
 int HybCassDataAccess::storeData(const std::string& key,

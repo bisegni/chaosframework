@@ -30,7 +30,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 using namespace std;
 using namespace chaos;
 
@@ -109,13 +109,17 @@ void ChaosMetadataService::init(void *init_data)  {
         
         
         if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
-            fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
-                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
+            GlobalConfiguration::getInstance()->fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
+                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP), "");
+//            fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
+//                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
         }
         
         if(getGlobalConfigurationInstance()->hasOption(OPT_OBJ_STORAGE_DRIVER_KVP)) {
-            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
-                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
+            GlobalConfiguration::getInstance()->fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP), "");
+//            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+//                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
         }
         
         //initilize driver pool manager
@@ -280,6 +284,8 @@ void ChaosMetadataService::fillKVParameter(std::map<std::string, std::string>& k
         it++) {
         
         const std::string& param_key = *it;
+        
+        
         
         if(!regex_match(param_key, KVParamRegex)) {
             throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);

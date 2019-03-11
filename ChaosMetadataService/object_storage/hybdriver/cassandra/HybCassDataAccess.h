@@ -36,6 +36,7 @@ namespace chaos {
                         CassSessionShrdPtr session_shrd_ptr;
                         CassPreparedShrdPtr insert_daq_prepared;
                         CassPreparedShrdPtr get_daq_prepared;
+                        CassPreparedShrdPtr delete_daq_prepared;
                     protected:
                         int storeData(const std::string& key,
                                       const int64_t& shard_value,

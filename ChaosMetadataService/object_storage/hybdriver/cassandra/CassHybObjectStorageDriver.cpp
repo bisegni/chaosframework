@@ -19,14 +19,14 @@
  * permissions and limitations under the Licence.
  */
 
-#include "HybCassDriver.h"
+#include "CassHybObjectStorageDriver.h"
 #include "HybCassDataAccess.h"
 
 #include "../../../ChaosMetadataService.h"
 
-#define INFO    INFO_LOG(HybCassDriver)
-#define DBG     DBG_LOG(HybCassDriver)
-#define ERR     ERR_LOG(HybCassDriver)
+#define INFO    INFO_LOG(CassHybObjectStorageDriver)
+#define DBG     DBG_LOG(CassHybObjectStorageDriver)
+#define ERR     ERR_LOG(CassHybObjectStorageDriver)
 
 
 using namespace chaos::metadata_service::object_storage::abstraction;
@@ -35,22 +35,21 @@ using namespace chaos::metadata_service::object_storage::hybdriver;
 using namespace chaos::metadata_service::object_storage::hybdriver::cassandra;
 
 chaos::common::utility::ObjectFactoryInstancer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver>
-HybCassDriverObjectFactoryInstancer(new chaos::common::utility::ObjectFactoryAliasInstantiation<HybCassDriver>("HybCassDriver"));
+CassHybObjectStorageDriverObjectFactoryInstancer(new chaos::common::utility::ObjectFactoryAliasInstantiation<CassHybObjectStorageDriver>("CassHybObjectStorageDriver"));
 
-HybCassDriver::HybCassDriver(const std::string& name):
+CassHybObjectStorageDriver::CassHybObjectStorageDriver(const std::string& name):
 HybBaseDriver(name){}
 
-HybCassDriver::~HybCassDriver(){}
+CassHybObjectStorageDriver::~CassHybObjectStorageDriver(){}
 
-void HybCassDriver::init(void *init_data) throw (chaos::CException) {
+void CassHybObjectStorageDriver::init(void *init_data) throw (chaos::CException) {
     CassError err = CASS_OK;
-    HybBaseDriver::init(init_data);
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     
     ChaosStringVector url_list = ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list;
     const std::string user = obj_stoarge_kvp["cass_user"];
     const std::string password = obj_stoarge_kvp["cass_pwd"];
-    const std::string keyspace = obj_stoarge_kvp["cass_dp"];
+    const std::string keyspace = obj_stoarge_kvp["cass_db"];
     const std::string url = obj_stoarge_kvp["cass_url"];
     
     cluster_shrd_ptr = ALLOCATE_CLUSTER();
@@ -73,13 +72,16 @@ void HybCassDriver::init(void *init_data) throw (chaos::CException) {
     if ((err = cass_future_error_code(connect_future.get())) != CASS_OK) {
         LOG_AND_TROW(ERR, -2, cass_error_desc(err))
     }
+    
+    
+    HybBaseDriver::init(init_data);
 }
 
-void HybCassDriver::deinit() throw (chaos::CException) {
+void CassHybObjectStorageDriver::deinit() throw (chaos::CException) {
      HybBaseDriver::deinit();
 }
 
-HybBaseDataAccess *HybCassDriver::dataAccessImpl() {
+HybBaseDataAccess *CassHybObjectStorageDriver::dataAccessImpl() {
     ChaosUniquePtr<HybBaseDataAccess> da(new HybCassDataAccess(session_shrd_ptr));
     return da.release();
 }

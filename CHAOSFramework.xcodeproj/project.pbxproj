@@ -215,7 +215,7 @@
 		323BC2881EE05A8B00B4D602 /* EUPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */; };
 		323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28A1EE06E7500B4D602 /* plugin_constants.h */; };
 		323BC2901EE0705500B4D602 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28E1EE0705500B4D602 /* plugin.h */; };
-		323E23C52232BE96001D0851 /* HybCassDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C32232BE96001D0851 /* HybCassDriver.cpp */; };
+		323E23C52232BE96001D0851 /* CassHybObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */; };
 		323E23C82232C982001D0851 /* HybCassDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C62232C982001D0851 /* HybCassDataAccess.cpp */; };
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
@@ -1528,8 +1528,8 @@
 		323BC2861EE05A8B00B4D602 /* EUPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EUPluginLoader.h; sourceTree = "<group>"; };
 		323BC28A1EE06E7500B4D602 /* plugin_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_constants.h; sourceTree = "<group>"; };
 		323BC28E1EE0705500B4D602 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
-		323E23C32232BE96001D0851 /* HybCassDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HybCassDriver.cpp; sourceTree = "<group>"; };
-		323E23C42232BE96001D0851 /* HybCassDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HybCassDriver.h; sourceTree = "<group>"; };
+		323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassHybObjectStorageDriver.cpp; sourceTree = "<group>"; };
+		323E23C42232BE96001D0851 /* CassHybObjectStorageDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassHybObjectStorageDriver.h; sourceTree = "<group>"; };
 		323E23C62232C982001D0851 /* HybCassDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HybCassDataAccess.cpp; sourceTree = "<group>"; };
 		323E23C72232C982001D0851 /* HybCassDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HybCassDataAccess.h; sourceTree = "<group>"; };
 		323E23C92232CBCA001D0851 /* HybCassandraDataType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HybCassandraDataType.h; sourceTree = "<group>"; };
@@ -3560,8 +3560,8 @@
 		323E23C22232BE69001D0851 /* cassandra */ = {
 			isa = PBXGroup;
 			children = (
-				323E23C32232BE96001D0851 /* HybCassDriver.cpp */,
-				323E23C42232BE96001D0851 /* HybCassDriver.h */,
+				323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */,
+				323E23C42232BE96001D0851 /* CassHybObjectStorageDriver.h */,
 				323E23C62232C982001D0851 /* HybCassDataAccess.cpp */,
 				323E23C72232C982001D0851 /* HybCassDataAccess.h */,
 				323E23C92232CBCA001D0851 /* HybCassandraDataType.h */,
@@ -6938,7 +6938,7 @@
 				3247DD3F21B03A19000C20AF /* CassandraObjectStorageDriver.cpp in Sources */,
 				325F022B213ED99C00270077 /* SetVariable.cpp in Sources */,
 				32B6B770213E8C7600D7ECF8 /* NodeGroup.cpp in Sources */,
-				323E23C52232BE96001D0851 /* HybCassDriver.cpp in Sources */,
+				323E23C52232BE96001D0851 /* CassHybObjectStorageDriver.cpp in Sources */,
 				32B6B71B213E71EC00D7ECF8 /* GetDomains.cpp in Sources */,
 				325F0231213ED99C00270077 /* DeleteSnapshot.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
@@ -7642,6 +7642,7 @@
 					"-lboost_random",
 					"-lmongocxx",
 					"-lbsoncxx",
+					"-lboost_timer",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7686,6 +7687,7 @@
 					"-lboost_random",
 					"-lmongocxx",
 					"-lbsoncxx",
+					"-lboost_timer",
 					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

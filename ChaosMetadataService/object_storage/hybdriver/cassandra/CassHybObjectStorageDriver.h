@@ -34,7 +34,7 @@ namespace chaos {
                 namespace cassandra {
                     extern chaos::common::utility::ObjectFactoryInstancer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> HybCassDriverObjectFactoryInstancer;
                     
-                    class HybCassDriver:
+                    class CassHybObjectStorageDriver:
                     public HybBaseDriver {
                         friend class chaos::common::utility::ObjectFactoryAliasInstantiation<chaos::service_common::persistence::data_access::AbstractPersistenceDriver>;
                         
@@ -44,8 +44,8 @@ namespace chaos {
                     protected:
                         virtual HybBaseDataAccess *dataAccessImpl();
                     public:
-                        HybCassDriver(const std::string& name);
-                        ~HybCassDriver();
+                        CassHybObjectStorageDriver(const std::string& name);
+                        ~CassHybObjectStorageDriver();
                         
                         //! Initialize the driver
                         void init(void *init_data) throw (chaos::CException);

@@ -29,6 +29,7 @@
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
 #include <mongocxx/pool.hpp>
+#include <mongocxx/bulk_write.hpp>
 
 #include "ShardKeyManagement.h"
 
@@ -42,6 +43,9 @@ namespace chaos {
                 class HybBaseDataAccess:
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class HybBaseDriver;
+                    bool batch_insert;
+                    unsigned int batch_size;
+                    mongocxx::bulk_write _bulk_write;
                     ChaosSharedPtr<mongocxx::pool> pool_ref;
                     ShardKeyManagement shrd_key_manager;
 

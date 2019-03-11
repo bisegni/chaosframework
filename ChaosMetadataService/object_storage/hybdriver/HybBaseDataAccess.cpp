@@ -44,6 +44,8 @@
 #include <mongocxx/exception/server_error_code.hpp>
 #include <mongocxx/exception/logic_error.hpp>
 
+#include <boost/timer/timer.hpp>
+
 //using namespace chaos::data_service::object_storage::mongodb;
 
 #define INFO INFO_LOG(HybBaseDataAccess)
@@ -71,7 +73,24 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 using namespace chaos::metadata_service::object_storage::hybdriver;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
-HybBaseDataAccess::HybBaseDataAccess(){}
+using boost::timer::cpu_timer;
+using boost::timer::cpu_times;
+using boost::timer::nanosecond_type;
+
+HybBaseDataAccess::HybBaseDataAccess():
+batch_insert(false){
+//    if(batch_insert) {
+//        //get client the connection
+//        auto client = pool_ref->acquire();
+//
+//        //access to database
+//        auto db = (*client)[MONGODB_DB_NAME];
+//        //access a collection
+//        collection coll = db[MONGODB_DAQ_COLL_NAME];
+//
+//        _bulk_write = coll.create_bulk_write();
+//    }
+}
 HybBaseDataAccess::~HybBaseDataAccess() {}
 
 int HybBaseDataAccess::pushObject(const std::string&            key,
@@ -91,7 +110,6 @@ int HybBaseDataAccess::pushObject(const std::string&            key,
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-    
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
     
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
@@ -116,21 +134,41 @@ int HybBaseDataAccess::pushObject(const std::string&            key,
     bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize(), shard_value);
     builder.append(bsoncxx::builder::concatenate(zone_pack.view()));
     
-    //bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
-    //builder.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     try {
         //insert index data
-        coll.insert_one(builder.view());
-        
-        //insert data operation is demanded to sublcass
-        if((err = storeData(key,
-                            shard_value,
-                            stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID),
-                            stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID),
-                            stored_object))) {
-            //errore in pushing
-            ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+//        if(batch_insert) {
+////            mongocxx::model::insert_one insert_op{builder.view()};
+//             _bulk_write.append(mongocxx::model::insert_one(builder.view()));
+//            if(batch_size>100) {
+//                auto bulk_result = coll.bulk_write(_bulk_write);
+//                for (const auto& id : bulk_result->upserted_ids()) {
+//                    std::cout << "Bulk write index: " << id.first << std::endl
+//                    << (id.second.get_oid().value.to_string()) << std::endl;
+//                }
+//            }
+//        } else {
+
+        cpu_timer cpu_timer_push;
+        auto insert_one_result = coll.insert_one(builder.view());
+        cpu_times const elapsed_times(cpu_timer_push.elapsed());
+        INFO << "Index time:" << elapsed_times.system+elapsed_times.user;
+        if(insert_one_result->result().inserted_count()==0) {
+            ERR << "Data not inserted";
+        } else {
+            cpu_timer cpu_timer_store;
+            //insert data operation is demanded to sublcass
+            if((err = storeData(key,
+                                shard_value,
+                                stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID),
+                                stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID),
+                                stored_object))) {
+                //errore in pushing, data need to bedeleted
+                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+            }
+            cpu_times const elapsed_times_store(cpu_timer_store.elapsed());
+            INFO << "Store time:" << elapsed_times_store.system+elapsed_times_store.user;
         }
+//        }
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();
         ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
@@ -179,9 +217,7 @@ int HybBaseDataAccess::getObject(const std::string& key,
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
-        
     }
-    
     return err;
 }
 
