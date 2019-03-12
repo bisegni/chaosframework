@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-
+MESSAGE("framework CMakeLists")
+IF(WIN32)
+include(config/CMakeChaosWin.txt)
+ELSE(WIN32)
 include(config/CMakeChaos.txt)
+ENDIF(WIN32)
 project(chaosframework)
 include(ExternalProject)
 #include(CTest)
@@ -17,17 +21,24 @@ option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
+if (WIN32)
+option(CHAOS_MDS "Chaos Data Service" OFF)
+option(CHAOS_AGENT "Chaos Agent Service" OFF)
+option(CHAOS_DATA_EXPORT "Chaos Data Export" OFF)
+option(CHAOS_EXAMPLES "Chaos Examples" OFF)
+else (WIN32)
 option(CHAOS_MDS "Chaos Data Service" ON)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
+endif(WIN32)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
 if(NOT QMAKE_PATH)
   set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
 ENDIF()
 
 EXECUTE_PROCESS(
-COMMAND ./version.sh
+COMMAND sh ./version.sh
 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/chaos/common/
 RESULT_VARIABLE err
     OUTPUT_VARIABLE out
@@ -39,9 +50,11 @@ if(err)
 ENDIF()
 
 ###### Required Libraries
+if (NOT WIN32)
 CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
 
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+endif()
 #########
 
 #IF(CHAOS_ARCHITECTURE_TEST)
@@ -131,11 +144,13 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
+  if (NOT WIN32)
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+  endif()
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
@@ -154,9 +169,10 @@ IF (CHAOS_MDS AND
 ENDIF()
 
 IF(NOT CHAOS_ONLY_DEPENDECY)
+  if (NOT WIN32)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
-
+  endif()
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")
     ADD_SUBDIRECTORY(ChaosDataExport)
@@ -188,7 +204,7 @@ IF (CHAOS_ARCHITECTURE_TEST)
 ENDIF()
 
 MESG("Done")
-
+IF (NOT WIN32)
 if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
   IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
     FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
@@ -205,7 +221,9 @@ if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
     MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
   ENDIF()
 ENDIF()
+
 ENDIF()
+ENDIF(WIN32)
   IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED.")
     IF(EXISTS "${QMAKE_PATH}/qmake")
