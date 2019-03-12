@@ -45,7 +45,7 @@ namespace chaos {
                 
                 typedef struct DaqIndex {
                     std::string key;
-                    int64_t shard_value;
+                    CInt64 shard_value;
                     CInt64 run_id;
                     CInt64 seq_id;
                     DaqIndex& operator=(DaqIndex&& copy) {
@@ -83,10 +83,7 @@ namespace chaos {
                     
                     virtual int storeData(const std::set<DaqBlobSPtr>& blob_set) = 0;
                     
-                    virtual int retrieveData(const std::string& key,
-                                             const int64_t& shard_value,
-                                             const CInt64& run_id,
-                                             const CInt64& seq_id,
+                    virtual int retrieveData(const DaqIndex& index,
                                              chaos::common::data::CDWUniquePtr& object) = 0;
                     //execute the push of the data
                     void executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_set_uptr);

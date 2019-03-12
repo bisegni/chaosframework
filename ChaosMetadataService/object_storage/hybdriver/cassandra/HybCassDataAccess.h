@@ -40,10 +40,7 @@ namespace chaos {
                     protected:
                         int storeData(const std::set<DaqBlobSPtr>& blob_set);
                         
-                        int retrieveData(const std::string& key,
-                                         const int64_t& shard_value,
-                                         const CInt64& run_id,
-                                         const CInt64& seq_id,
+                        int retrieveData(const DaqIndex& index,
                                          chaos::common::data::CDWUniquePtr& object);
                     public:
                         HybCassDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr);

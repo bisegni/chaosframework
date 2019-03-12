@@ -131,6 +131,8 @@ int HybBaseDataAccess::pushObject(const std::string&            key,
     
     daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
     daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+    daq_blob->mongo_document.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID)));
+    daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)));
     //appends tag
     using bsoncxx::builder::basic::sub_array;
     if(meta_tags && meta_tags->size()) {
@@ -179,6 +181,7 @@ int HybBaseDataAccess::getObject(const std::string& key,
                                  CDWShrdPtr& object_ptr_ref) {
     
     int err = 0;
+    CDWUniquePtr found_element;
     //get client the connection
     auto client = pool_ref->acquire();
     //access to database
@@ -186,28 +189,29 @@ int HybBaseDataAccess::getObject(const std::string& key,
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
     
-    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
-    auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
+    auto target_ms = b_date(std::chrono::milliseconds(timestamp));
     
     try {
-        auto cursor = coll.find(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key),
-                                              kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson)));
+        auto element = coll.find_one(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key),
+                                                   kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), target_ms)));
         
-        bool found = false;
-        for(auto && document : cursor){
-            found = true;
-            auto element = document[MONGODB_DAQ_DATA_FIELD];
-            if(element.type() == bsoncxx::type::k_document){
-                auto sub_doc = element.get_document();
-                auto json_string = bsoncxx::to_json(sub_doc);
-                object_ptr_ref.reset(new CDataWrapper(json_string.data()));
+        if(element){
+            auto view = element->view();
+            auto did = view[chaos::DataPackCommonKey::DPCK_DEVICE_ID];
+            auto shard_key = view["shard_key"];
+            auto run_id = view[chaos::ControlUnitDatapackCommonKey::RUN_ID];
+            auto seq_id = view[chaos::DataPackCommonKey::DPCK_SEQ_ID];
+            DaqIndex index = {did.get_utf8().value.to_string(),
+                shard_key.get_int64(),
+                run_id.get_int64(),
+                seq_id.get_int64()};
+            if((err = retrieveData(index,
+                                   found_element))) {
+                ERR << CHAOS_FORMAT("Error %1% retriving data from storage layer", %err);
+            } else {
+                object_ptr_ref = CDWShrdPtr(found_element.release());
             }
         }
-        
-        if(!found){
-            DBG << "No data has been found";
-        }
-        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
@@ -217,46 +221,44 @@ int HybBaseDataAccess::getObject(const std::string& key,
 
 int HybBaseDataAccess::getLastObject(const std::string& key,
                                      CDWShrdPtr& object_ptr_ref) {
-    
     int err = 0;
+    CDWUniquePtr found_element;
     //get client the connection
     auto client = pool_ref->acquire();
-    
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-    
     try {
-        
         auto query = make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
         auto opts  = options::find{};
         opts.sort(make_document(kvp("$natural", -1)));
         
         DEBUG_CODE(DBG<<log_message("getLastObject", "findOne", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(query.view()))));
         
-        auto cursor = coll.find(query.view(),opts);
+        auto bson_element = coll.find_one(query.view(),opts);
         
-        bool found = false;
-        for(auto && document : cursor){
-            found = true;
-            auto element = document[MONGODB_DAQ_DATA_FIELD];
-            if(element.type() == bsoncxx::type::k_document){
-                auto sub_doc = element.get_document();
-                auto json_string = bsoncxx::to_json(sub_doc);
-                object_ptr_ref.reset(new CDataWrapper(json_string.data()));
+        if(bson_element){
+            auto view = bson_element->view();
+            auto did = view[chaos::DataPackCommonKey::DPCK_DEVICE_ID];
+            auto shard_key = view["shard_key"];
+            auto run_id = view[chaos::ControlUnitDatapackCommonKey::RUN_ID];
+            auto seq_id = view[chaos::DataPackCommonKey::DPCK_SEQ_ID];
+            DaqIndex index = {did.get_utf8().value.to_string(),
+                shard_key.get_int64(),
+                run_id.get_int64(),
+                seq_id.get_int64()};
+            if((err = retrieveData(index,
+                                   found_element))) {
+                ERR << CHAOS_FORMAT("Error %1% retriving data from storage layer", %err);
+            } else {
+                object_ptr_ref = CDWShrdPtr(found_element.release());
             }
         }
-        
-        if(!found){
-            DBG << "No data has been found";
-        }
-        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-    
     return err;
     
 }
@@ -305,16 +307,10 @@ int HybBaseDataAccess::deleteObject(const std::string& key,
         auto dop = options::delete_options();
         dop.write_concern(wc);
         auto result= coll.delete_many(builder.view(), dop);
-        
-        if(result){
-            ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% from %2% to %3%", %key%start_timestamp%end_timestamp);
-        }
-        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-    
     return err;
     
 }
@@ -326,8 +322,6 @@ int HybBaseDataAccess::findObject(const std::string&                            
                                   const uint32_t                                              page_len,
                                   abstraction::VectorObject&                                  found_object_page,
                                   common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
-    
-    
     int err = 0;
     auto client  = pool_ref->acquire();
     //access to database
@@ -338,8 +332,6 @@ int HybBaseDataAccess::findObject(const std::string&                            
     try{
         
         bool reverse_order = false;
-        const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
-        const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
         //we have the intervall
         reverse_order = timestamp_from>timestamp_to;
         if(reverse_order == false) {
@@ -347,14 +339,14 @@ int HybBaseDataAccess::findObject(const std::string&                            
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_from))))));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_to))))));
             
-            builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
+            builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), make_document(kvp("$gte", last_record_found_seq.run_id))));
+            builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
         }else{
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_from))))));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_to))))));
-            builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
+            builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),     make_document(kvp("$lte", last_record_found_seq.run_id))));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
         }
         
         if(meta_tags.size()) {
@@ -380,26 +372,31 @@ int HybBaseDataAccess::findObject(const std::string&                            
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
         auto cursor = coll.find(builder.view(),opts);
-        //get the size
-        //uint64_t size  = (uint64_t)std::distance(cursor.begin(),cursor.end());
-        //uint64_t this_index = 1;
-        
         //if(size) {
+        CDWUniquePtr found_element;
         for(auto && document : cursor){
-            auto element = document[MONGODB_DAQ_DATA_FIELD];
-            if(element.type() == bsoncxx::type::k_document &&
-               !element.get_document().view().empty()){
-                CDWShrdPtr new_obj(new CDataWrapper((const char *)element.get_document().view().data()));
-                found_object_page.push_back(new_obj);
+            last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
+            last_record_found_seq.datapack_counter = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
+            auto did = document[chaos::DataPackCommonKey::DPCK_DEVICE_ID];
+            auto shard_key = document["shard_key"];
+            auto run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID];
+            auto seq_id = document[chaos::DataPackCommonKey::DPCK_SEQ_ID];
+            DaqIndex index = {did.get_utf8().value.to_string(),
+                shard_key.get_int64(),
+                run_id.get_int64(),
+                seq_id.get_int64()};
+            if((err = retrieveData(index,
+                                   found_element))) {
+                ERR << CHAOS_FORMAT("Error %1% retriving data from storage layer", %err);
+            } else {
+                found_object_page.push_back(CDWShrdPtr(found_element.release()));
             }
-            last_record_found_seq.run_id = document["data"]["dpck_seq_id"].get_int64();
-            last_record_found_seq.datapack_counter = document["data"]["cudk_run_id"].get_int64();
+
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-    
     return err;
 }
 
