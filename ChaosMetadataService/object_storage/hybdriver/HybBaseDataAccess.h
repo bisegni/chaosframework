@@ -25,13 +25,17 @@
 #include "../abstraction/ObjectStorageDataAccess.h"
 #include "../object_storage_types.h"
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/Buffer.hpp>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
 #include <mongocxx/pool.hpp>
 #include <mongocxx/bulk_write.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
 
 #include "ShardKeyManagement.h"
+
+#include <future>
 
 namespace chaos {
     namespace metadata_service {
@@ -39,27 +43,53 @@ namespace chaos {
             namespace hybdriver {
                 class NewMongoDBObjectStorageDriver;
                 
+                typedef struct DaqIndex {
+                    std::string key;
+                    int64_t shard_value;
+                    CInt64 run_id;
+                    CInt64 seq_id;
+                    DaqIndex& operator=(DaqIndex&& copy) {
+                        key         = std::move(copy.key);
+                        shard_value = std::move(copy.shard_value);
+                        run_id      = std::move(copy.run_id);
+                        seq_id      = std::move(copy.seq_id);
+                        return *this;
+                    }
+                } DaqIndex;
+                
+                typedef struct {
+                    DaqIndex index;
+                    bsoncxx::builder::basic::document mongo_document;
+                    chaos::common::data::BufferUPtr data_blob;
+                } DaqBlob;
+                
+                typedef ChaosSharedPtr<DaqBlob> DaqBlobSPtr;
+                
                 //! Data Access for producer manipulation data
                 class HybBaseDataAccess:
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class HybBaseDriver;
-                    bool batch_insert;
-                    unsigned int batch_size;
+                    //size of the batch
+                    CUInt32 batch_size;
+                    //batch timeout in milliseconds
+                    CUInt32 batch_timeout;
+                    CInt64  next_timeout;
                     mongocxx::bulk_write _bulk_write;
                     ChaosSharedPtr<mongocxx::pool> pool_ref;
                     ShardKeyManagement shrd_key_manager;
-
-                    virtual int storeData(const std::string& key,
-                                          const int64_t& shard_value,
-                                          const CInt64& run_id,
-                                          const CInt64& seq_id,
-                                          const common::data::CDataWrapper& object) = 0;
+                    
+                    ChaosUniquePtr<std::set<DaqBlobSPtr>> blob_set_uptr;
+                    std::future<void> current_push_future;
+                    
+                    virtual int storeData(const std::set<DaqBlobSPtr>& blob_set) = 0;
                     
                     virtual int retrieveData(const std::string& key,
                                              const int64_t& shard_value,
                                              const CInt64& run_id,
                                              const CInt64& seq_id,
                                              chaos::common::data::CDWUniquePtr& object) = 0;
+                    //execute the push of the data
+                    void executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_set_uptr);
                 public:
                     HybBaseDataAccess();
                     ~HybBaseDataAccess();

@@ -38,11 +38,7 @@ namespace chaos {
                         CassPreparedShrdPtr get_daq_prepared;
                         CassPreparedShrdPtr delete_daq_prepared;
                     protected:
-                        int storeData(const std::string& key,
-                                      const int64_t& shard_value,
-                                      const CInt64& run_id,
-                                      const CInt64& seq_id,
-                                      const common::data::CDataWrapper& object);
+                        int storeData(const std::set<DaqBlobSPtr>& blob_set);
                         
                         int retrieveData(const std::string& key,
                                          const int64_t& shard_value,

@@ -26,9 +26,6 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
-
-#include <iostream>
-
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
@@ -44,7 +41,7 @@
 #include <mongocxx/exception/server_error_code.hpp>
 #include <mongocxx/exception/logic_error.hpp>
 
-#include <boost/timer/timer.hpp>
+#include <boost/lexical_cast.hpp>
 
 //using namespace chaos::data_service::object_storage::mongodb;
 
@@ -56,6 +53,9 @@
 #define MONGODB_DAQ_COLL_NAME       "daq"
 #define MONGODB_DAQ_DATA_FIELD      "data"
 #define DEFAULT_QUANTIZATION        100
+
+#define DEFAULT_BATCH_SIZE          40
+#define DEFAULT_BATCH_TIMEOUT_MS    1000
 
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::make_array;
@@ -73,55 +73,68 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 using namespace chaos::metadata_service::object_storage::hybdriver;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
-using boost::timer::cpu_timer;
-using boost::timer::cpu_times;
-using boost::timer::nanosecond_type;
-
 HybBaseDataAccess::HybBaseDataAccess():
-batch_insert(false){
-//    if(batch_insert) {
-//        //get client the connection
-//        auto client = pool_ref->acquire();
-//
-//        //access to database
-//        auto db = (*client)[MONGODB_DB_NAME];
-//        //access a collection
-//        collection coll = db[MONGODB_DAQ_COLL_NAME];
-//
-//        _bulk_write = coll.create_bulk_write();
-//    }
+batch_timeout(DEFAULT_BATCH_TIMEOUT_MS),
+blob_set_uptr(new std::set<DaqBlobSPtr>()){
+    MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+    try{
+        batch_size = boost::lexical_cast<CUInt32>(obj_stoarge_kvp["batch_size"]);
+    } catch(...) {
+        batch_size = DEFAULT_BATCH_SIZE;
+    }
+    next_timeout = TimingUtil::getTimeStamp() + batch_timeout;
 }
-HybBaseDataAccess::~HybBaseDataAccess() {}
+HybBaseDataAccess::~HybBaseDataAccess(){}
+
+
+void HybBaseDataAccess::executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_set_uptr) {
+    int err = 0;
+    try{
+        if(!_blob_set_uptr.get()) return;
+        //get client the connection
+        auto client = pool_ref->acquire();
+        auto db = (*client)[MONGODB_DB_NAME];
+        collection coll = db[MONGODB_DAQ_COLL_NAME];
+        auto bulk_write = coll.create_bulk_write();
+        
+        //create batch insert data
+        std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write](const DaqBlobSPtr& blob){bulk_write.append(model::insert_one(blob->mongo_document.view()));});
+        auto bulk_result = coll.bulk_write(bulk_write);
+        
+        if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
+            ERR << "Data not inserted";
+        } else {
+            //insert data operation is demanded to sublcass
+            if((err = storeData(*_blob_set_uptr))) {
+                //errore in pushing, data need to bedeleted
+                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+            }
+        }
+    } catch (const bulk_write_exception& e) {
+        err =  e.code().value();
+        ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
+    }
+}
 
 int HybBaseDataAccess::pushObject(const std::string&            key,
                                   const ChaosStringSetConstSPtr meta_tags,
                                   const CDataWrapper&           stored_object) {
     int err = 0;
+    DaqBlobSPtr daq_blob = std::make_shared<DaqBlob>();
     int64_t shard_value;
     if(stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) == false ||
        stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID) == false) {
-            return -1;
+        return -1;
     }
-    
-    //get client the connection
-    auto client = pool_ref->acquire();
-    
-    //access to database
-    auto db = (*client)[MONGODB_DB_NAME];
-    //access a collection
-    collection coll = db[MONGODB_DAQ_COLL_NAME];
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
-    
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
-    // basic::document builds a BSON document.
-    auto builder = builder::basic::document{};
-    builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-    builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+    daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
+    daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
     //appends tag
     using bsoncxx::builder::basic::sub_array;
     if(meta_tags && meta_tags->size()) {
-        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), [](sub_array subarr, const ChaosStringSetConstSPtr meta_tags) {
+        daq_blob->mongo_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), [](sub_array subarr, const ChaosStringSetConstSPtr meta_tags) {
             for(ChaosStringSetConstIterator it = meta_tags->begin(),
                 end = meta_tags->end();
                 it != end;
@@ -132,47 +145,31 @@ int HybBaseDataAccess::pushObject(const std::string&            key,
     }
     
     bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize(), shard_value);
-    builder.append(bsoncxx::builder::concatenate(zone_pack.view()));
+    daq_blob->mongo_document.append(bsoncxx::builder::concatenate(zone_pack.view()));
     
-    try {
-        //insert index data
-//        if(batch_insert) {
-////            mongocxx::model::insert_one insert_op{builder.view()};
-//             _bulk_write.append(mongocxx::model::insert_one(builder.view()));
-//            if(batch_size>100) {
-//                auto bulk_result = coll.bulk_write(_bulk_write);
-//                for (const auto& id : bulk_result->upserted_ids()) {
-//                    std::cout << "Bulk write index: " << id.first << std::endl
-//                    << (id.second.get_oid().value.to_string()) << std::endl;
-//                }
-//            }
-//        } else {
-
-        cpu_timer cpu_timer_push;
-        auto insert_one_result = coll.insert_one(builder.view());
-        cpu_times const elapsed_times(cpu_timer_push.elapsed());
-        INFO << "Index time:" << elapsed_times.system+elapsed_times.user;
-        if(insert_one_result->result().inserted_count()==0) {
-            ERR << "Data not inserted";
-        } else {
-            cpu_timer cpu_timer_store;
-            //insert data operation is demanded to sublcass
-            if((err = storeData(key,
-                                shard_value,
-                                stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID),
-                                stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID),
-                                stored_object))) {
-                //errore in pushing, data need to bedeleted
-                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
-            }
-            cpu_times const elapsed_times_store(cpu_timer_store.elapsed());
-            INFO << "Store time:" << elapsed_times_store.system+elapsed_times_store.user;
+    //create data blob
+    daq_blob->index = (DaqIndex){key,
+        shard_value,
+        stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID),
+        stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)};
+    daq_blob->data_blob = stored_object.getBSONDataBuffer();
+    
+    //add blob to set
+    blob_set_uptr->insert(daq_blob);
+    if(blob_set_uptr->size() >= 40 ||
+       now_in_ms >= next_timeout) {
+        if(current_push_future.valid()) {
+            current_push_future.wait();
         }
-//        }
-    } catch (const bulk_write_exception& e) {
-        err =  e.code().value();
-        ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
+        current_push_future = std::async(std::launch::async,
+                                         &HybBaseDataAccess::executePush,
+                                         this,
+                                         std::move(blob_set_uptr));
+        blob_set_uptr.reset(new std::set<DaqBlobSPtr>());
+        //reset timeout endtime
+        next_timeout = now_in_ms + batch_timeout;
     }
+    
     return err;
 }
 
@@ -193,12 +190,10 @@ int HybBaseDataAccess::getObject(const std::string& key,
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
     try {
-        
         auto cursor = coll.find(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key),
                                               kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson)));
         
         bool found = false;
-        
         for(auto && document : cursor){
             found = true;
             auto element = document[MONGODB_DAQ_DATA_FIELD];
@@ -207,7 +202,6 @@ int HybBaseDataAccess::getObject(const std::string& key,
                 auto json_string = bsoncxx::to_json(sub_doc);
                 object_ptr_ref.reset(new CDataWrapper(json_string.data()));
             }
-            
         }
         
         if(!found){
