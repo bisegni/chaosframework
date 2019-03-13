@@ -82,6 +82,6 @@ void CassHybObjectStorageDriver::deinit() throw (chaos::CException) {
 }
 
 HybBaseDataAccess *CassHybObjectStorageDriver::dataAccessImpl() {
-    ChaosUniquePtr<HybBaseDataAccess> da(new HybCassDataAccess(session_shrd_ptr));
+    ChaosUniquePtr<HybBaseDataAccess> da(new CassHybDataAccess(session_shrd_ptr));
     return da.release();
 }
