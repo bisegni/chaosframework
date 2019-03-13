@@ -19,15 +19,15 @@
  * permissions and limitations under the Licence.
  */
 
-#include "HybCassDataAccess.h"
+#include "CassHybDataAccess.h"
 
 #define DAQ_SHARD_FIELD "shard"
 #define DAQ_DATA_FIELD  "data"
 #define DAQ_TABLE_NAME  "daq"
 
-#define INFO    INFO_LOG(HybCassDataAccess)
-#define DBG     DBG_LOG(HybCassDataAccess)
-#define ERR     ERR_LOG(HybCassDataAccess)
+#define INFO    INFO_LOG(CassHybDataAccess)
+#define DBG     DBG_LOG(CassHybDataAccess)
+#define ERR     ERR_LOG(CassHybDataAccess)
 
 #define CHECK_FUTURE(x, pf, err1) \
 if((err = cass_future_error_code(pf.get())) != CASS_OK) {LOG_AND_TROW(ERR, err1, cass_error_desc(err));}\
@@ -38,7 +38,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::object_storage::hybdriver;
 using namespace chaos::metadata_service::object_storage::hybdriver::cassandra;
 
-HybCassDataAccess::HybCassDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr):
+CassHybDataAccess::CassHybDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr):
 session_shrd_ptr(_cass_sess_shrd_ptr){
     CassError err = CASS_OK;
     MAKE_MANAGED_FUTURE(prepare_future, cass_session_prepare(session_shrd_ptr.get(), CHAOS_FORMAT("INSERT INTO %1% (%2%, %3%, %4%, %5%, %6%) VALUES (?, ?, ?, ?, ?)",
@@ -69,7 +69,7 @@ session_shrd_ptr(_cass_sess_shrd_ptr){
     CHECK_FUTURE(delete_daq_prepared, prepare_future_2, -3);
 }
 
-int HybCassDataAccess::storeData(const std::set<DaqBlobSPtr>& blob_set) {
+int CassHybDataAccess::storeData(const std::set<DaqBlobSPtr>& blob_set) {
     CassError err = CASS_OK;
     //    CassBatch* batch = cass_batch_new(CASS_BATCH_TYPE_LOGGED);
     std::set<CassFutureShrdPtr> futures;
@@ -109,7 +109,7 @@ int HybCassDataAccess::storeData(const std::set<DaqBlobSPtr>& blob_set) {
     return err;
 }
 
-int HybCassDataAccess::retrieveData(const DaqIndex& index,
+int CassHybDataAccess::retrieveData(const DaqIndex& index,
                                     CDWUniquePtr& object) {
     /* The prepared object can now be used to create statements that can be executed */
     CassStatementShrdPtr statement = MAKE_MANAGED_STATEMENT(cass_prepared_bind(this->get_daq_prepared.get()));

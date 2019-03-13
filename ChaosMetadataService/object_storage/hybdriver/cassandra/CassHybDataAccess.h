@@ -19,8 +19,8 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef HybCassDataAccess_hpp
-#define HybCassDataAccess_hpp
+#ifndef CassHybDataAccess_hpp
+#define CassHybDataAccess_hpp
 
 #include "../HybBaseDataAccess.h"
 #include "HybCassandraDataType.h"
@@ -31,7 +31,7 @@ namespace chaos {
             namespace hybdriver {
                 namespace cassandra {
                     
-                    class HybCassDataAccess:
+                    class CassHybDataAccess:
                     public HybBaseDataAccess {
                         CassSessionShrdPtr session_shrd_ptr;
                         CassPreparedShrdPtr insert_daq_prepared;
@@ -43,7 +43,7 @@ namespace chaos {
                         int retrieveData(const DaqIndex& index,
                                          chaos::common::data::CDWUniquePtr& object);
                     public:
-                        HybCassDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr);
+                        CassHybDataAccess(CassSessionShrdPtr& _cass_sess_shrd_ptr);
                     };
                 }
             }
@@ -51,4 +51,4 @@ namespace chaos {
     }
 }
 
-#endif /* HybCassDataAccess_hpp */
+#endif /* CassHybDataAccess_hpp */

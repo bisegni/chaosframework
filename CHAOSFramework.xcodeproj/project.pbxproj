@@ -216,7 +216,7 @@
 		323BC28C1EE06E7500B4D602 /* plugin_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28A1EE06E7500B4D602 /* plugin_constants.h */; };
 		323BC2901EE0705500B4D602 /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 323BC28E1EE0705500B4D602 /* plugin.h */; };
 		323E23C52232BE96001D0851 /* CassHybObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */; };
-		323E23C82232C982001D0851 /* HybCassDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C62232C982001D0851 /* HybCassDataAccess.cpp */; };
+		323E23C82232C982001D0851 /* CassHybDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323E23C62232C982001D0851 /* CassHybDataAccess.cpp */; };
 		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
 		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
 		32401CBD1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */; };
@@ -244,9 +244,6 @@
 		324544FD1D4A56170081F90B /* AbstractListenerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544FB1D4A56170081F90B /* AbstractListenerContainer.h */; };
 		324545011D4A676A0081F90B /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FF1D4A676A0081F90B /* EventManager.cpp */; };
 		324545021D4A676A0081F90B /* EventManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545001D4A676A0081F90B /* EventManager.h */; };
-		3247DD3F21B03A19000C20AF /* CassandraObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3247DD3E21B03A19000C20AF /* CassandraObjectStorageDriver.cpp */; };
-		3247DD4221B14F26000C20AF /* CassandraObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3247DD4121B14F26000C20AF /* CassandraObjectStorageDataAccess.cpp */; };
-		3247DD4521B16C55000C20AF /* CassandraObjectStorageTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3247DD4421B16C55000C20AF /* CassandraObjectStorageTypes.cpp */; };
 		3249282D1F5465CA00409E83 /* BaseBypassDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3249282B1F5465CA00409E83 /* BaseBypassDriver.h */; };
 		324928331F54696200409E83 /* BaseBypassDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */; };
 		324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324928511F597E4500409E83 /* PropertyCollector.cpp */; };
@@ -1530,8 +1527,8 @@
 		323BC28E1EE0705500B4D602 /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
 		323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassHybObjectStorageDriver.cpp; sourceTree = "<group>"; };
 		323E23C42232BE96001D0851 /* CassHybObjectStorageDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassHybObjectStorageDriver.h; sourceTree = "<group>"; };
-		323E23C62232C982001D0851 /* HybCassDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HybCassDataAccess.cpp; sourceTree = "<group>"; };
-		323E23C72232C982001D0851 /* HybCassDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HybCassDataAccess.h; sourceTree = "<group>"; };
+		323E23C62232C982001D0851 /* CassHybDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassHybDataAccess.cpp; sourceTree = "<group>"; };
+		323E23C72232C982001D0851 /* CassHybDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassHybDataAccess.h; sourceTree = "<group>"; };
 		323E23C92232CBCA001D0851 /* HybCassandraDataType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HybCassandraDataType.h; sourceTree = "<group>"; };
 		32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
 		32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
@@ -1562,12 +1559,6 @@
 		324544FB1D4A56170081F90B /* AbstractListenerContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListenerContainer.h; sourceTree = "<group>"; };
 		324544FF1D4A676A0081F90B /* EventManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventManager.cpp; sourceTree = "<group>"; };
 		324545001D4A676A0081F90B /* EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventManager.h; sourceTree = "<group>"; };
-		3247DD3D21B03A19000C20AF /* CassandraObjectStorageDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassandraObjectStorageDriver.h; sourceTree = "<group>"; };
-		3247DD3E21B03A19000C20AF /* CassandraObjectStorageDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassandraObjectStorageDriver.cpp; sourceTree = "<group>"; };
-		3247DD4021B14F26000C20AF /* CassandraObjectStorageDataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassandraObjectStorageDataAccess.h; sourceTree = "<group>"; };
-		3247DD4121B14F26000C20AF /* CassandraObjectStorageDataAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassandraObjectStorageDataAccess.cpp; sourceTree = "<group>"; };
-		3247DD4321B14F95000C20AF /* CassandraObjectStorageTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CassandraObjectStorageTypes.h; sourceTree = "<group>"; };
-		3247DD4421B16C55000C20AF /* CassandraObjectStorageTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CassandraObjectStorageTypes.cpp; sourceTree = "<group>"; };
 		3249282A1F5465CA00409E83 /* BaseBypassDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseBypassDriver.cpp; sourceTree = "<group>"; };
 		3249282B1F5465CA00409E83 /* BaseBypassDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBypassDriver.h; sourceTree = "<group>"; };
 		324928511F597E4500409E83 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
@@ -3562,8 +3553,8 @@
 			children = (
 				323E23C32232BE96001D0851 /* CassHybObjectStorageDriver.cpp */,
 				323E23C42232BE96001D0851 /* CassHybObjectStorageDriver.h */,
-				323E23C62232C982001D0851 /* HybCassDataAccess.cpp */,
-				323E23C72232C982001D0851 /* HybCassDataAccess.h */,
+				323E23C62232C982001D0851 /* CassHybDataAccess.cpp */,
+				323E23C72232C982001D0851 /* CassHybDataAccess.h */,
 				323E23C92232CBCA001D0851 /* HybCassandraDataType.h */,
 			);
 			path = cassandra;
@@ -3588,19 +3579,6 @@
 				326933EC1D5089590033D9E9 /* trigger_system.h */,
 			);
 			path = trigger_system;
-			sourceTree = "<group>";
-		};
-		3247DD3C21B0395F000C20AF /* cassandra */ = {
-			isa = PBXGroup;
-			children = (
-				3247DD3E21B03A19000C20AF /* CassandraObjectStorageDriver.cpp */,
-				3247DD3D21B03A19000C20AF /* CassandraObjectStorageDriver.h */,
-				3247DD4121B14F26000C20AF /* CassandraObjectStorageDataAccess.cpp */,
-				3247DD4021B14F26000C20AF /* CassandraObjectStorageDataAccess.h */,
-				3247DD4421B16C55000C20AF /* CassandraObjectStorageTypes.cpp */,
-				3247DD4321B14F95000C20AF /* CassandraObjectStorageTypes.h */,
-			);
-			path = cassandra;
 			sourceTree = "<group>";
 		};
 		324D08941F30CD7A00836E29 /* chaos_micro_unit_toolkit */ = {
@@ -4187,7 +4165,6 @@
 			children = (
 				326ACF751E01525D00AD011E /* abstraction */,
 				327B55D822324B73008E4896 /* hybdriver */,
-				3247DD3C21B0395F000C20AF /* cassandra */,
 				326ACF781E01525D00AD011E /* mongodb */,
 				3232860921A6C5C000EEF662 /* mongodb_3 */,
 				326ACF7D1E01525D00AD011E /* object_storage.h */,
@@ -6768,7 +6745,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3247DD4221B14F26000C20AF /* CassandraObjectStorageDataAccess.cpp in Sources */,
 				32FF2A5B1E6579A400117985 /* NodeOperation.cpp in Sources */,
 				32B6B70C213E710100D7ECF8 /* UploadChunk.cpp in Sources */,
 				32BE0ACC1E4B44B90007764C /* AgentApiGroup.cpp in Sources */,
@@ -6869,7 +6845,7 @@
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32BE0AD01E4B45DB0007764C /* ListNodeForAgent.cpp in Sources */,
-				323E23C82232C982001D0851 /* HybCassDataAccess.cpp in Sources */,
+				323E23C82232C982001D0851 /* CassHybDataAccess.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				325F022F213ED99C00270077 /* RestoreSnapshot.cpp in Sources */,
@@ -6878,7 +6854,6 @@
 				32B6B71A213E71EC00D7ECF8 /* DeleteNode.cpp in Sources */,
 				32B6B70B213E710100D7ECF8 /* EndUploadSession.cpp in Sources */,
 				32F9F8231D9031E90023948D /* MDSCronJob.cpp in Sources */,
-				3247DD4521B16C55000C20AF /* CassandraObjectStorageTypes.cpp in Sources */,
 				326ACFA81E0159C600AD011E /* DataWorker.cpp in Sources */,
 				32AC6F171EC4A79300FCCD85 /* SetManagementConfiguration.cpp in Sources */,
 				32B6B7A0213EA6DD00D7ECF8 /* ExecutionPoolHeartbeat.cpp in Sources */,
@@ -6935,7 +6910,6 @@
 				32A626C5213FBBA000D63009 /* CopyInstance.cpp in Sources */,
 				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
 				325F0244213EE20400270077 /* LoadUnloadControlUnit.cpp in Sources */,
-				3247DD3F21B03A19000C20AF /* CassandraObjectStorageDriver.cpp in Sources */,
 				325F022B213ED99C00270077 /* SetVariable.cpp in Sources */,
 				32B6B770213E8C7600D7ECF8 /* NodeGroup.cpp in Sources */,
 				323E23C52232BE96001D0851 /* CassHybObjectStorageDriver.cpp in Sources */,
