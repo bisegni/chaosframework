@@ -20,7 +20,7 @@
  */
 
 #include "CassHybObjectStorageDriver.h"
-#include "HybCassDataAccess.h"
+#include "CassHybDataAccess.h"
 
 #include "../../../ChaosMetadataService.h"
 
