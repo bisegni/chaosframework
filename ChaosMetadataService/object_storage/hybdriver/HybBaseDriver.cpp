@@ -26,8 +26,6 @@
 #include "HybBaseDriver.h"
 #include "HybBaseDataAccess.h"
 
-#include "MongoDBObjectStorageDataAccess.h"
-
 using namespace chaos;
 
 using namespace chaos::service_common::persistence::data_access;
@@ -63,8 +61,8 @@ void HybBaseDriver::init(void *init_data) throw (chaos::CException) {
         if(obj_stoarge_kvp["mongodb_oswc"].compare("unacknowledged") == 0) {
         } else if(obj_stoarge_kvp["mongodb_oswc"].compare("acknowledged") == 0) {
         } else if(obj_stoarge_kvp["mongodb_oswc"].compare("journaled") == 0) {
-        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
-        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
         } else {
             //LOG_AND_THROW(ERR, -1, CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]));
         }
