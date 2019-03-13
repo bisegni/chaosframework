@@ -6,7 +6,8 @@ stages:
   - publish
 
 before_script:
-  - export NOW=$(date +"%Y%m%d")
+  - export GNOW=$(date +"%Y%m%d")
+  - export NOW=$(date +"%Y%m%d-%H%M%S")
   - export TAR_NAME_POSTFIX=$NOW
   - export SYS=`uname -s`
   - export CHAOS_LIB_HASH=`git log -n 1 --pretty="%h"`
@@ -306,8 +307,8 @@ regression_c7:
     - ssh chaosweb@opensource.lnf.infn.it "mkdir -p /var/www/html/binary/chaos/short_branch/x86_64/centos/7"
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
     - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/short_branch/x86_64/centos/7/*"
-    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/short_branch/x86_64/centos/7/latest"
-    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "variables[CHAOS_DISTRIB_NAME]=short_branch/x86_64/centos/7/latest" -F "ref=$REGRESSION_BRANCH" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
+    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/short_branch/x86_64/centos/7/latest.tar.gz"
+    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "variables[CHAOS_DISTRIB_NAME]=short_branch/x86_64/centos/7/latest.tar.gz" -F "ref=$REGRESSION_BRANCH" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
   only:
     refs:
       - web
@@ -397,8 +398,8 @@ deploy_rel_c7:
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
     - ls -la
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
-    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest"
-    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest"
+    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest.tar.gz"
+    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest.tar.gz"
     - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
   environment:
     name: $BUILD_ENVIRONMENT
