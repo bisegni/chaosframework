@@ -507,6 +507,12 @@ deploy_install(){
     else
 	nok_mesg "agent configuration $dest_prefix/tools/config/lnf/$cuconfig/agent.cfg"
     fi    
+
+    if ssh $DEPLOY_USER@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/chaos_root.cfg etc/";then
+	ok_mesg "agent.cfg configuration $dest_prefix/tools/config/lnf/$cuconfig/chaos_root.cfg"
+    else
+	nok_mesg "agent configuration $dest_prefix/tools/config/lnf/$cuconfig/chaos_root.cfg"
+    fi    
     
 
     if [ "$type" == "cu" ];then
