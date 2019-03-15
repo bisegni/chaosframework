@@ -155,7 +155,20 @@ namespace chaos {
                            message_response->isInt32Value("err")) {
                             int err;
                             if((err=message_response->getInt32Value("err")) != 0) {
-                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<err;
+                                // handle the case when the CU attempt to reconnect to an already existing driver
+                                if(message_response->hasKey(MESSAGE_URI) &&
+                                    message_response->isStringValue(MESSAGE_URI)) {
+                                    remote_uri_instance = message_response->getStringValue(MESSAGE_URI);
+                                    if(remote_uri_instance.size()>0){
+                                        AbstractRemoteIODriver_INFO <<" Returned not zero, Reconnecting  err="<<message_response->getJSONString() ;
+                                        return true;
+                                    }
+                                } else {
+
+                                    remote_uri_instance.clear();
+                                }
+                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<message_response->getJSONString();
+
                                 return false;
                             }
                         }
