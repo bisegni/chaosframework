@@ -82,7 +82,6 @@ ExternalProject_Add(
  include_directories("${CMAKE_INSTALL_PREFIX}/include/libbson-1.0")
  include_directories("${CMAKE_INSTALL_PREFIX}/lib")
 
-
 MESG("Install libuv driver for cassandra dependecy")
 ExternalProject_Add(
  libuv-driver
@@ -117,7 +116,8 @@ ExternalProject_Add(
  include_directories(${LIBBSONCXX_INCLUDE_DIR})
 
 
-INCLUDE_DIRECTORIES(chaos/common ../)
+include_directories(chaos/common ../)
+link_directories(${CMAKE_INSTALL_PREFIX}/lib64)
 
 SET(cnd_src	main.cpp
             ChaosMetadataService.cpp
