@@ -495,62 +495,62 @@ build_arm:
       - $BUILD_TYPE == "test"
   retry: 2
 
-build_x86_64_llvm:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  script:
-    - git config --global user.name "Claudio Bisegni"
-    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
-    - tools/chaos_clean.sh
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
-    - make clean
-    - make  -j $NPROC
-    - make install
-  cache:
-    key: llvm_x86_64_$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  artifacts:
-    paths:
-        - chaos
-        - CHAOSFrameworkTests
-        - 'chaos-distrib-x86_64-Linux'
-    expire_in: 8 hour
-  only:
-    refs:
-      - web
-    variables:
-      - $BUILD_TYPE == "test"
-  retry: 2
+# build_x86_64_llvm:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#     - fast
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   script:
+#     - git config --global user.name "Claudio Bisegni"
+#     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+#     - tools/chaos_clean.sh
+#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
+#     - make clean
+#     - make  -j $NPROC
+#     - make install
+#   cache:
+#     key: llvm_x86_64_$CI_BUILD_REF_NAME
+#     paths:
+#         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+#   artifacts:
+#     paths:
+#         - chaos
+#         - CHAOSFrameworkTests
+#         - 'chaos-distrib-x86_64-Linux'
+#     expire_in: 8 hour
+#   only:
+#     refs:
+#       - web
+#     variables:
+#       - $BUILD_TYPE == "test"
+#   retry: 2
 
-test_x86_64_llvm:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: test
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  dependencies:
-    - build_x86_64_llvm
-  script:
-    - git config --global user.name "Claudio Bisegni"
-    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
-    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
-    - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
-  only:
-    refs:
-      - web
-    variables:
-      - $BUILD_TYPE == "test"
-  retry: 2
+# test_x86_64_llvm:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#     - fast
+#   stage: test
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   dependencies:
+#     - build_x86_64_llvm
+#   script:
+#     - git config --global user.name "Claudio Bisegni"
+#     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+#     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+#     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+#     - export HEAPCHECK=normal
+#     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
+#   only:
+#     refs:
+#       - web
+#     variables:
+#       - $BUILD_TYPE == "test"
+#   retry: 2
 
 exp_llvm_scan_coverity:
   tags:
