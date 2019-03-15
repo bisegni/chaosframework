@@ -367,6 +367,7 @@ SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
 target_compile_definitions(${PROJECT_NAME} PRIVATE USE_MONGODB3_DRIVER=1)
 
 MESG("Enable link to cassandra and bsoncxx library")
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} uv)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} cassandra)
 target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CASSANDRA_DRIVER=1)
 
