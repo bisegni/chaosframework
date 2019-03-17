@@ -889,7 +889,7 @@ namespace chaos {
     //! Name space for grupping control unit system property
     namespace ControlUnitDatapackCommonKey {
         //!specify an initialization id for the node[int64]
-        static const char * const RUN_ID                          = "cudk_run_id";
+        static const char * const RUN_ID                          = ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID;
     }
     
     /** @} */ // end of ControlUnitNodeDefinitionKey

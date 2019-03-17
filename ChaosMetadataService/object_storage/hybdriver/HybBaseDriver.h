@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 29/11/2018 INFN
+ * Copyright 2012, 25/05/2018 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,47 +19,50 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework_E92255B7_1CA0_802F_AA20_DD63646EA30A_CassandraObjectStorageDriver_h
-#define __CHAOSFramework_E92255B7_1CA0_802F_AA20_DD63646EA30A_CassandraObjectStorageDriver_h
-#if USE_CASSANDRA_DRIVER
-#include "CassandraObjectStorageTypes.h"
+#ifndef chaos_metadata_service_object_storage_hybdriver_HybBaseDriver_h
+#define chaos_metadata_service_object_storage_hybdriver_HybBaseDriver_h
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <cassandra.h>
+#include <chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.h>
+#include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
+
+#include "../abstraction/ObjectStorageDataAccess.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
-            namespace cassandra {
+            namespace hybdriver {
+                class HybBaseDataAccess;
                 //! new mongodb implementation of persistence driver
                 /*!
                  The driver is define as class in the object factor
                  */
-                DECLARE_CLASS_FACTORY(CassandraObjectStorageDriver,
-                                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver){
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CassandraObjectStorageDriver)
-                    
-                    CassClusterShrdPtr cluster_shrd_ptr;
-                    CassSessionShrdPtr session_shrd_ptr;
-                    
-                    //! Construct the driver
-                    CassandraObjectStorageDriver(const std::string& name);
-                    
-                    //!dispose the driver
-                    ~CassandraObjectStorageDriver();
+                class HybBaseDriver :
+                    public chaos::service_common::persistence::data_access::AbstractPersistenceDriver,
+                    public chaos::service_common::persistence::mongodb::mongodb_cxx::BaseMongoDBDiver {
                     
                     //!inherited by AbstractPersistenceDriver
                     void deleteDataAccess(void *instance);
+                protected:
+                        virtual HybBaseDataAccess *dataAccessImpl() = 0;
                 public:
+                    //! Construct the driver
+                    HybBaseDriver(const std::string& name);
+                    
+                    //!dispose the driver
+                    ~HybBaseDriver();
+                        
                     //! Initialize the driver
                     void init(void *init_data) throw (chaos::CException);
                     
                     //!deinitialize the driver
                     void deinit() throw (chaos::CException);
                 };
+                
             }
         }
     }
 }
-#endif
-#endif /* __CHAOSFramework_E92255B7_1CA0_802F_AA20_DD63646EA30A_CassandraObjectStorageDriver_h */
+
+#endif /* chaos_metadata_service_object_storage_hybdriver_HybBaseDriver_h */

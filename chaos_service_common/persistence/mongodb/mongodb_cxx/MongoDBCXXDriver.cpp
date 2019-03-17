@@ -18,7 +18,6 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#if USE_MONGODB3_DRIVER
 #include <chaos_service_common/persistence/mongodb/mongodb_cxx/MongoDBCXXDriver.h>
 
 #include <chaos/common/global.h>
@@ -62,11 +61,14 @@ void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list,
     }
     uri_string.append("?minPoolSize=%2%&maxPoolSize=%3%");
     mongocxx::uri uri{CHAOS_FORMAT(uri_string,%host_composed_url%100%100)};
-    pool_unique_ptr.reset(new mongocxx::pool(uri));
+    pool_shared_ptr = ChaosSharedPtr<mongocxx::pool>(new mongocxx::pool(uri));
 }
 
 mongocxx::pool& BaseMongoDBDiver::getPool() {
-    CHAOS_ASSERT(pool_unique_ptr)
-    return *pool_unique_ptr;
+    CHAOS_ASSERT(pool_shared_ptr)
+    return *pool_shared_ptr;
 }
-#endif
+
+ChaosSharedPtr<mongocxx::pool> BaseMongoDBDiver::getSharedPool() {
+    return pool_shared_ptr;
+}
