@@ -205,53 +205,49 @@ ENDIF()
 
 MESG("Done")
 IF (NOT WIN32)
-if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
-  IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
-    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
-    MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-   execute_process(
-     COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
-     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-     RESULT_VARIABLE err
-     OUTPUT_VARIABLE out
-     )
-   IF(err)
-     ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-   ELSE()
-    MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-  ENDIF()
+    IF( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
+      IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
+            FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
+            MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+           execute_process(
+             COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
+             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+             RESULT_VARIABLE err
+             OUTPUT_VARIABLE out
+             )
+           IF(err)
+             ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+           ELSE()
+            MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+          ENDIF()
+        ENDIF()
+    ENDIF()
 ENDIF()
 
-ENDIF()
-ENDIF(WIN32)
-  IF(CHAOS_CCS)
+IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED.")
     IF(EXISTS "${QMAKE_PATH}/qmake")
       MESG("Found 'qmake' in ${QMAKE_PATH}")
-
       execute_process(
-	COMMAND ${QMAKE_PATH}/qmake
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
-	RESULT_VARIABLE err
-	OUTPUT_VARIABLE out
-	)
-      if( err)
-	ERROR("error generating QT stubs error: ${out}")
-      endif()
+        COMMAND ${QMAKE_PATH}/qmake
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+        RESULT_VARIABLE err
+        OUTPUT_VARIABLE out
+        )
+        if(err)
+            ERROR("error generating QT stubs error: ${out}")
+        endif()
 
        add_custom_target(ccs
-       	COMMAND make -j ${PROCESSOR_COUNT}
-       	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
-       	DEPENDS chaos_common
-       	COMMENT "compiling CCS"
-       	)
-
-
+        COMMAND make -j ${PROCESSOR_COUNT}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+        DEPENDS chaos_common
+        COMMENT "compiling CCS"
+        )
     ELSE()
       ERROR("missing ${QMAKE_PATH}/qmake")
     ENDIF()
-
-  ENDIF()
+ENDIF()
 
   IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ccs/ccs)
     MESG("copying ccs to ${CMAKE_INSTALL_PREFIX}/bin")
