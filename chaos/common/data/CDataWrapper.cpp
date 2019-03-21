@@ -989,6 +989,14 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
     }
     return -1;
 }
+int CDataWrapper::setBson(const bson_iter_t *v ,const CDataWrapper* val){
+    if(ITER_TYPE(v)== BSON_TYPE_DOCUMENT){
+        const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
+        memcpy((void*)(v->raw + v->d1), (void*)val,vv->value.v_doc.data_len);
+        return vv->value.v_doc.data_len;
+    }
+    return -1;
+}
 
 #pragma mark CMultiTypeDataArrayWrapper
 CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(const ChaosBsonShrdPtr& _document_shrd_ptr,
