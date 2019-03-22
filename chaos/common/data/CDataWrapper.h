@@ -103,6 +103,8 @@ namespace chaos {
                 int setBson(const bson_iter_t *,const bool& val);
                 int setBson(const bson_iter_t * ,const std::string& val);
                 int setBson(const bson_iter_t * ,const void* val);
+                int setBson(const bson_iter_t *v ,const CDataWrapper* val);
+
             public:
                 CDataWrapper();
                 explicit CDataWrapper(const char* mem_ser,
