@@ -81,7 +81,7 @@ namespace chaos {
                     ChaosUniquePtr<std::set<DaqBlobSPtr>> blob_set_uptr;
                     std::future<void> current_push_future;
                     
-                    virtual int storeData(const std::set<DaqBlobSPtr>& blob_set) = 0;
+                    virtual int storeData(const DaqBlob& daq_blob) = 0;
                     
                     virtual int retrieveData(const DaqIndex& index,
                                              chaos::common::data::CDWUniquePtr& object) = 0;

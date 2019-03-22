@@ -54,7 +54,7 @@
 #define MONGODB_DAQ_DATA_FIELD      "data"
 #define DEFAULT_QUANTIZATION        100
 
-#define DEFAULT_BATCH_SIZE          40
+#define DEFAULT_BATCH_SIZE          10
 #define DEFAULT_BATCH_TIMEOUT_MS    1000
 
 using bsoncxx::builder::basic::kvp;
@@ -98,17 +98,21 @@ void HybBaseDataAccess::executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_
         auto bulk_write = coll.create_bulk_write();
         
         //create batch insert data
-        std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write](const DaqBlobSPtr& blob){bulk_write.append(model::insert_one(blob->mongo_document.view()));});
+        std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write, this](const DaqBlobSPtr& blob){
+            int err = 0;
+            //insert data operation is demanded to sublcass
+            if((err = storeData(*blob))) {
+                //errore in pushing, data need to bedeleted
+                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+            } else {
+                //append data to bulk
+                bulk_write.append(model::insert_one(blob->mongo_document.view()));
+            }
+        });
         auto bulk_result = coll.bulk_write(bulk_write);
         
         if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
             ERR << "Data not inserted";
-        } else {
-            //insert data operation is demanded to sublcass
-            if((err = storeData(*_blob_set_uptr))) {
-                //errore in pushing, data need to bedeleted
-                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
-            }
         }
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();
@@ -158,7 +162,7 @@ int HybBaseDataAccess::pushObject(const std::string&            key,
     
     //add blob to set
     blob_set_uptr->insert(daq_blob);
-    if(blob_set_uptr->size() >= 40 ||
+    if(blob_set_uptr->size() >= batch_size ||
        now_in_ms >= next_timeout) {
         if(current_push_future.valid()) {
             current_push_future.wait();

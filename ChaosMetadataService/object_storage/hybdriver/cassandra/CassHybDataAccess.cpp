@@ -69,42 +69,32 @@ session_shrd_ptr(_cass_sess_shrd_ptr){
     CHECK_FUTURE(delete_daq_prepared, prepare_future_2, -3);
 }
 
-int CassHybDataAccess::storeData(const std::set<DaqBlobSPtr>& blob_set) {
+int CassHybDataAccess::storeData(const DaqBlob& daq_blob) {
     CassError err = CASS_OK;
     //    CassBatch* batch = cass_batch_new(CASS_BATCH_TYPE_LOGGED);
-    std::set<CassFutureShrdPtr> futures;
-    std::for_each(blob_set.begin(), blob_set.end(), [=, &futures](const DaqBlobSPtr& blob){
-        /* The prepared object can now be used to create statements that can be executed */
-        CassStatementShrdPtr statement = MAKE_MANAGED_STATEMENT(cass_prepared_bind(this->insert_daq_prepared.get()));
-        
-        /* Bind variables by name this time (this can only be done with prepared statements)*/
-        cass_statement_bind_string_by_name(statement.get(),
-                                           chaos::DataPackCommonKey::DPCK_DEVICE_ID,
-                                           blob->index.key.c_str());
-        cass_statement_bind_int64_by_name(statement.get(),
-                                          DAQ_SHARD_FIELD,
-                                          blob->index.shard_value);
-        cass_statement_bind_int64_by_name(statement.get(),
-                                          chaos::ControlUnitDatapackCommonKey::RUN_ID,
-                                          blob->index.run_id);
-        cass_statement_bind_int64_by_name(statement.get(),
-                                          chaos::DataPackCommonKey::DPCK_SEQ_ID,
-                                          blob->index.seq_id);
-        
-        cass_statement_bind_bytes_by_name(statement.get(),
-                                          DAQ_DATA_FIELD,
-                                          (const std::uint8_t*)blob->data_blob->data(),
-                                          blob->data_blob->size());
-        
-        MAKE_MANAGED_FUTURE(query_future, cass_session_execute(session_shrd_ptr.get(), statement.get()));
-        futures.insert(query_future);
-    });
-    
-    std::for_each(futures.begin(), futures.end(), [&err](const CassFutureShrdPtr& future){
-        if((err = cass_future_error_code(future.get()))) {
-            printf("Query result: %s\n", cass_error_desc(err));
-        }
-    });
+    /* The prepared object can now be used to create statements that can be executed */
+    CassStatementShrdPtr statement = MAKE_MANAGED_STATEMENT(cass_prepared_bind(this->insert_daq_prepared.get()));
+    /* Bind variables by name this time (this can only be done with prepared statements)*/
+    cass_statement_bind_string_by_name(statement.get(),
+                                       chaos::DataPackCommonKey::DPCK_DEVICE_ID,
+                                       daq_blob.index.key.c_str());
+    cass_statement_bind_int64_by_name(statement.get(),
+                                      DAQ_SHARD_FIELD,
+                                      daq_blob.index.shard_value);
+    cass_statement_bind_int64_by_name(statement.get(),
+                                      chaos::ControlUnitDatapackCommonKey::RUN_ID,
+                                      daq_blob.index.run_id);
+    cass_statement_bind_int64_by_name(statement.get(),
+                                      chaos::DataPackCommonKey::DPCK_SEQ_ID,
+                                      daq_blob.index.seq_id);
+    cass_statement_bind_bytes_by_name(statement.get(),
+                                      DAQ_DATA_FIELD,
+                                      (const std::uint8_t*)daq_blob.data_blob->data(),
+                                      daq_blob.data_blob->size());
+    MAKE_MANAGED_FUTURE(query_future, cass_session_execute(session_shrd_ptr.get(), statement.get()));
+    if((err = cass_future_error_code(query_future.get()))) {
+        printf("Query result: %s\n", cass_error_desc(err));
+    }
     //wait on futures
     return err;
 }
