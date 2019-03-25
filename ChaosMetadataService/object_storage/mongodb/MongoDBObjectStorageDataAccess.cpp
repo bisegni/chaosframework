@@ -250,16 +250,16 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         
         if(reverse_order == false) {
             q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                     chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
-                                                                      "$lte" << mongo::Date_t(timestamp_to)) <<
-                     run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
+            chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
+                                                             "$lte" << mongo::Date_t(timestamp_to)) <<
+            run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+            counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
         } else {
             q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
-                                                                  "$gte" << mongo::Date_t(timestamp_to)) <<
-                 run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
-                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
+            chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
+                                                             "$gte" << mongo::Date_t(timestamp_to)) <<
+            run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
+            counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
         }
         
         //add tags
@@ -318,6 +318,19 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         err = e.getCode();
     }
     return err;
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
+                                                    VectorObject& found_object_page,
+                                                    chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+    
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
+                                                     VectorObject& found_object_page) {
+    
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,

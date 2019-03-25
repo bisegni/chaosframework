@@ -18,7 +18,6 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#if USE_MONGODB3_DRIVER
 #include <chaos/common/global.h>
 
 #include "MongoDBObjectStorageDataAccess.h"
@@ -51,7 +50,7 @@
 #define DBG  DBG_LOG(MongoDBObjectStorageDataAccess)
 #define ERR  ERR_LOG(MongoDBObjectStorageDataAccess)
 
-#define MONGODB_DB_NAME       "chaos"
+#define MONGODB_DB_NAME             "chaos"
 #define MONGODB_DAQ_COLL_NAME       "daq"
 #define MONGODB_DAQ_DATA_FIELD      "data"
 #define DEFAULT_QUANTIZATION        100
@@ -85,16 +84,16 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
     int err = 0;
     //get client the connection
     auto client = pool_ref.acquire();
-
+    
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-
+    
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
-
+    
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
-
+    
     // basic::document builds a BSON document.
     auto builder = builder::basic::document{};
     builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
@@ -111,10 +110,10 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
             }
         }));
     }
-
+    
     bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize());
     builder.append(bsoncxx::builder::concatenate(zone_pack.view()));
-
+    
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
     builder.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     try {
@@ -130,7 +129,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
 int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
                                               const uint64_t& timestamp,
                                               CDWShrdPtr& object_ptr_ref) {
-
+    
     int err = 0;
     //get client the connection
     auto client = pool_ref.acquire();
@@ -138,17 +137,17 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-
+    
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
-
+    
     try {
-
+        
         auto cursor = coll.find(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key),
                                               kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson)));
-
+        
         bool found = false;
-
+        
         for(auto && document : cursor){
             found = true;
             auto element = document[MONGODB_DAQ_DATA_FIELD];
@@ -157,44 +156,44 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
                 auto json_string = bsoncxx::to_json(sub_doc);
                 object_ptr_ref.reset(new CDataWrapper(json_string.data()));
             }
-
+            
         }
-
+        
         if(!found){
             DBG << "No data has been found";
         }
-
+        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
-
+        
     }
-
+    
     return err;
 }
 
 int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
                                                   CDWShrdPtr& object_ptr_ref) {
-
+    
     int err = 0;
     //get client the connection
     auto client = pool_ref.acquire();
-
+    
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-
+    
     try {
-
+        
         auto query = make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
         auto opts  = options::find{};
         opts.sort(make_document(kvp("$natural", -1)));
-
+        
         DEBUG_CODE(DBG<<log_message("getLastObject", "findOne", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(query.view()))));
-
+        
         auto cursor = coll.find(query.view(),opts);
-
+        
         bool found = false;
         for(auto && document : cursor){
             found = true;
@@ -205,18 +204,18 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
                 object_ptr_ref.reset(new CDataWrapper(json_string.data()));
             }
         }
-
+        
         if(!found){
             DBG << "No data has been found";
         }
-
+        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-
+    
     return err;
-
+    
 }
 
 
@@ -229,52 +228,52 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
-
+    
     auto builder = builder::basic::document{};
-
+    
     try{
-
+        
         builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
         if(start_timestamp != 0)
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(start_timestamp))))));
         if(end_timestamp != 0)
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(end_timestamp))))));
-
+        
         // array builder
         //TODO: translate BSON("$eq" << mongo::BSONArrayBuilder().arr()) per adesso ho messo 1
         auto empty_array = builder::basic::array{};
-
+        
         builder.append(kvp("$or",make_array(
                                             make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$exists",false)))),
                                             make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$eq",empty_array.view()))))
                                             )
-                          )
-                     );
-
+                           )
+                       );
+        
         DEBUG_CODE(DBG<<log_message(__func__,
                                     "delete",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
                                                             bsoncxx::to_json(builder.view()))));
-
-
+        
+        
         // delete
         write_concern wc;
         wc.acknowledge_level(write_concern::level::k_unacknowledged);
         auto dop = options::delete_options();
         dop.write_concern(wc);
         auto result= coll.delete_many(builder.view(), dop);
-
+        
         if(result){
             ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% from %2% to %3%", %key%start_timestamp%end_timestamp);
         }
-
+        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-
+    
     return err;
-
+    
 }
 
 int MongoDBObjectStorageDataAccess::findObject(const std::string&                                          key,
@@ -284,8 +283,6 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
                                                const uint32_t                                              page_len,
                                                abstraction::VectorObject&                                  found_object_page,
                                                common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
-
-
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -294,7 +291,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
     collection coll = db[MONGODB_DAQ_COLL_NAME];
     auto builder = builder::basic::document{};
     try{
-
+        
         bool reverse_order = false;
         const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
@@ -304,7 +301,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_from))))));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_to))))));
-
+            
             builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
             builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
         }else{
@@ -314,7 +311,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
             builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
         }
-
+        
         if(meta_tags.size()) {
             auto array_builder = bsoncxx::builder::basic::array{};
             for(auto& it: meta_tags) {
@@ -335,13 +332,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         } else {
             opts.sort(make_document(kvp("counter_key",  1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
         }
-
+        
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
         auto cursor = coll.find(builder.view(),opts);
         //get the size
         //uint64_t size  = (uint64_t)std::distance(cursor.begin(),cursor.end());
         //uint64_t this_index = 1;
-
+        
         //if(size) {
         for(auto && document : cursor){
             auto element = document[MONGODB_DAQ_DATA_FIELD];
@@ -357,8 +354,97 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         ERR << e.what();
         err = e.code().value();
     }
-
     return err;
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
+                                                    VectorObject& found_object_page,
+                                                    chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+    int err = 0;
+    auto client  = pool_ref.acquire();
+    //access to database
+    auto db = (*client)[MONGODB_DB_NAME];
+    //access a collection
+    collection coll = db[MONGODB_DAQ_COLL_NAME];
+    auto builder = builder::basic::document{};
+    try{
+        
+        bool reverse_order = false;
+        const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
+        const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
+        //we have the intervall
+        reverse_order = search.timestamp_from>search.timestamp_to;
+        if(reverse_order == false) {
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), search.key));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_from))))));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_to))))));
+            
+            builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
+            builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
+        }else{
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), search.key));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_from))))));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_to))))));
+            builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
+            builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
+        }
+        
+        if(search.meta_tags.size()) {
+            auto array_builder = bsoncxx::builder::basic::array{};
+            for(auto& it: search.meta_tags) {
+                array_builder.append(it);
+            }
+            builder.append(kvp("$all",make_array(array_builder)));
+        }
+        //create find option
+        auto opts  = options::find{};
+        //set page len
+        opts.limit(search.page_len);
+        //not return the data field
+        opts.projection(bsoncxx::builder::basic::make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1)));
+        opts.projection(bsoncxx::builder::basic::make_document(kvp("zone_key", 1)));
+        opts.projection(bsoncxx::builder::basic::make_document(kvp("shard_key", 1)));
+        opts.projection(bsoncxx::builder::basic::make_document(kvp(run_key, 1)));
+        opts.projection(bsoncxx::builder::basic::make_document(kvp(counter_key, 1)));
+        //set read form secondary
+        read_preference secondary;
+        secondary.mode(read_preference::read_mode::k_secondary);
+        opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+        if(reverse_order) {
+            opts.sort(make_document(kvp("counter_key", -1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));
+        } else {
+            opts.sort(make_document(kvp("counter_key",  1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+        }
+        
+        DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
+        auto cursor = coll.find(builder.view(),opts);
+        //get the size
+        
+        //if(size) {
+        for(auto && document : cursor){
+            auto new_obj = ChaosMakeSharedPtr<CDataWrapper>();
+            
+            new_obj->append(chaos::DataPackCommonKey::DPCK_DEVICE_ID, document[chaos::DataPackCommonKey::DPCK_DEVICE_ID].get_utf8().value.to_string());
+            new_obj->append("zone_key", document["zone_key"].get_utf8().value.to_string());
+            new_obj->append("shard_key", document["shard_key"].get_utf8().value.to_string());
+            new_obj->append("cudk_run_id", document["data"]["cudk_run_id"].get_int64());
+            new_obj->append("dpck_seq_id", document["data"]["dpck_seq_id"].get_int64());
+            found_object_page.push_back(new_obj);
+            last_record_found_seq.run_id = document["data"]["dpck_seq_id"].get_int64();
+            last_record_found_seq.datapack_counter = document["data"]["cudk_run_id"].get_int64();
+        }
+    } catch (const mongocxx::exception &e) {
+        ERR << e.what();
+        err = e.code().value();
+    }
+    return err;
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
+                                                     VectorObject& found_object_page) {
+    return -1;
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,
@@ -367,7 +453,6 @@ int MongoDBObjectStorageDataAccess::countObject(const std::string& key,
                                                 const uint64_t& object_count) {
     int err = 0;
     auto client  = pool_ref.acquire();
-
+    
     return err;
 }
-#endif

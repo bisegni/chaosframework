@@ -264,7 +264,6 @@ int HybBaseDataAccess::getLastObject(const std::string& key,
         err = e.code().value();
     }
     return err;
-    
 }
 
 
@@ -395,13 +394,26 @@ int HybBaseDataAccess::findObject(const std::string&                            
             } else {
                 found_object_page.push_back(CDWShrdPtr(found_element.release()));
             }
-
+            
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
     return err;
+}
+
+//inhertied method
+int HybBaseDataAccess::findObjectIndex(const DataSearch& search,
+                                       VectorObject& found_object_page,
+                                       chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+    return -1;
+}
+
+//inhertied method
+int HybBaseDataAccess::getObjectByIndex(const VectorObject& search,
+                                        VectorObject& found_object_page) {
+    return -1;
 }
 
 int HybBaseDataAccess::countObject(const std::string& key,

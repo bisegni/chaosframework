@@ -19,7 +19,6 @@
  * permissions and limitations under the Licence.
  */
 
-#ifdef USE_MONGODB3_DRIVER
 #include <chaos/common/global.h>
 #include <ChaosMetadataService/object_storage/mongodb_3/ShardKeyManagement.h>
 
@@ -103,4 +102,3 @@ bsoncxx::builder::basic::document ShardKeyManagement::getNewDataPack(const std::
     return builder;
 
 }
-#endif

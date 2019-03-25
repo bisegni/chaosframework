@@ -37,6 +37,15 @@ namespace chaos {
                 //!Object vector
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDWShrdPtr, VectorObject);
                 
+                //!informtion needed for the data search
+                typedef struct DataSearch {
+                    const std::string key;
+                    const ChaosStringSet meta_tags;
+                    const CUInt64 timestamp_from;
+                    const CUInt64 timestamp_to;
+                    const CUInt32 page_len;
+                } DataSearch;
+                
                 //!CHaos abstraction for store time series data wintin a persistence sublayer
                 class ObjectStorageDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
@@ -75,6 +84,23 @@ namespace chaos {
                                            const uint32_t page_len,
                                            VectorObject& found_object_page,
                                            chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) = 0;
+                    
+                    //!fast search object into object persistence layer
+                    /*!
+                     Fast search return only data index to the client, in this csae client ned to use api to return the single
+                     or grouped data
+                     */
+                    virtual int findObjectIndex(const DataSearch& search,
+                                                VectorObject& found_object_page,
+                                                chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) = 0;
+                    
+                    //! return the object asosciated with the index array
+                    /*!
+                     For every index object witl be returned the associated data object, if no data is received will be
+                     insert an empty object
+                     */
+                    virtual int getObjectByIndex(const VectorObject& search,
+                                                VectorObject& found_object_page) = 0;
                     
                     //!return the number of object for a determinated key that are store for a time range
                     virtual int countObject(const std::string& key,

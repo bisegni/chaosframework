@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#if USE_MONGODB3_DRIVER
+
 //#include <chaos/common/global.h>
 
 #include "../../ChaosMetadataService.h"
@@ -90,4 +90,3 @@ void NewMongoDBObjectStorageDriver::deleteDataAccess(void *instance) {
     AbstractDataAccess *da_instance = static_cast<AbstractDataAccess*>(instance);
     if(da_instance != NULL)delete(da_instance);
 }
-#endif

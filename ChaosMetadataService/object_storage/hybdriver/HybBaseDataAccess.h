@@ -115,6 +115,16 @@ namespace chaos {
                                    const uint32_t                                                  page_len,
                                    metadata_service::object_storage::abstraction::VectorObject&    found_object_page,
                                    common::direct_io::channel::opcode_headers::SearchSequence&     last_record_found_seq);
+                    
+                    //inhertied method
+                    int findObjectIndex(const abstraction::DataSearch& search,
+                                        abstraction::VectorObject& found_object_page,
+                                        chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+                    
+                    //inhertied method
+                    int getObjectByIndex(const abstraction::VectorObject& search,
+                                         abstraction::VectorObject& found_object_page);
+                    
                     //inhertied method
                     int countObject(const std::string& key,
                                     const uint64_t     timestamp_from,
