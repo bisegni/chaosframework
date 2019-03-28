@@ -108,7 +108,7 @@ namespace chaos {
                 ~QueryCursor();
                 
                 int64_t fetchNewPage();
-                
+                virtual int64_t fetchData();
             public:
                 const std::string& queryID() const;
                 
