@@ -45,7 +45,7 @@ namespace chaos {
 #define DEFAULT_PAGE_LEN 100
             class QueryCursor {
                 friend class IODirectIODriver;
-                
+            protected:
                 struct ResultPage {
                     unsigned int current_fetched;
                     direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;

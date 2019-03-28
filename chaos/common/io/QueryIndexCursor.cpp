@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/io/QueryIndexCursor.h>
+#include <chaos/common/io/IODirectIODriver.h>
 
 using namespace chaos::common::io;
 using namespace chaos::common::data;
@@ -27,7 +28,7 @@ using namespace chaos::common::network;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
-int QueryIndexCursor::fetchData() {
+int64_t QueryIndexCursor::fetchData() {
     IODirectIODriverClientChannels *next_client = NULL;
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
 //    if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
