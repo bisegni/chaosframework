@@ -26,12 +26,14 @@ namespace chaos {
                      Opcode used by the DirectIO device channel
                      */
                     typedef enum DeviceChannelOpcode {
-                        DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
-                        DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
-                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key [synchronous]*/
-                        DeviceChannelOpcodeDeleteDataCloud			= 8,    /**< delete the data associated with a key [synchronous]*/
-                        DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset [synchronous]*/
-                        DeviceChannelOpcodeMultiGetLastOutput       = 32	/**< request the last output dataset from live cache for a set of key[synchronous]*/
+                        DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset*/
+                        DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache*/
+                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data associated to a key*/
+                        DeviceChannelOpcodeDeleteDataCloud			= 8,    /**< delete the data associated with a key*/
+                        DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset */
+                        DeviceChannelOpcodeMultiGetLastOutput       = 32,	/**< request the last output dataset from live cache for a set of key*/
+                        DeviceChannelOpcodeQueryDataCloudIndex      = 64,    /**< query the chaos data associated to a key and return only the index of the data*/
+                        DeviceChannelOpcodeGetDataByIndex           = 128    /**< get the data asssociated to the index*/
                     } DeviceChannelOpcode;
                     
                     /*!

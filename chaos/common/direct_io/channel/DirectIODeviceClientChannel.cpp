@@ -68,7 +68,7 @@ int DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::strin
     
     DataBuffer data_buffer;
     DirectIODataPackSPtr answer;
-
+    
     //write mode and tags number
     data_buffer.writeInt8((int8_t) _put_mode);
     data_buffer.writeInt16(tag_set.size());
@@ -116,7 +116,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
     if(key.size() > 250) return -1;
     DataBuffer data_buffer;
     DirectIODataPackSPtr answer;
-
+    
     //write mode and tags number
     data_buffer.writeInt8((int8_t) _put_mode);
     data_buffer.writeInt16(tag_set.size());
@@ -250,7 +250,8 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                                                 const uint64_t end_ts,
                                                 const uint32_t page_dimension,
                                                 SearchSequence& last_sequence_id,
-                                                QueryResultPage& found_element_page) {
+                                                QueryResultPage& found_element_page,
+                                                bool only_index) {
     int err = 0;
     DirectIODataPackSPtr answer;
     CDataWrapper query_description;
@@ -274,7 +275,9 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //copy the query id on header
     query_data_cloud_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>()->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode
-    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(only_index?
+                                                                                     opcode::DeviceChannelOpcodeQueryDataCloudIndex:
+                                                                                     opcode::DeviceChannelOpcodeQueryDataCloud);
     
     BufferSPtr channel_data = ChaosMakeSharedPtr<Buffer>(query_description.getBSONRawData(),
                                                          query_description.getBSONRawSize());
@@ -303,6 +306,51 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                     found_element_page.push_back(last_record);
                     //clear current record
                     current_data_prt += last_record->getBSONRawSize();
+                }
+            }
+        }
+    }
+    return err;
+}
+
+int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
+                                                VectorCDWShrdPtr& results) {
+    int err = 0;
+    CDataWrapper index_data;
+    DirectIODataPackSPtr answer;
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
+
+    //fill the query CDataWrapper
+    for_each(indexs.begin(), indexs.end(), [&index_data](const CDWShrdPtr& index){
+        index_data.appendCDataWrapperToArray(*index);
+    });
+    index_data.finalizeArrayForKey("index_array");
+
+    
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetDataByIndex);
+   
+    BufferSPtr channel_data = BufferSPtr(index_data.getBSONDataBuffer().release());
+    //set header and data for the query
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
+    if((err = sendServiceData(MOVE(data_pack), answer))) {
+        //error getting last value
+        DIODCCLERR_ << CHAOS_FORMAT("Error executing query for get data by index with error %1%",%err);
+    } else {
+        //we got answer
+        if(answer) {
+            //get the header
+            DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *result_header = answer->channel_header_data->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
+            uint32_t result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->result_data_size);
+            uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
+            if(numer_of_record_found &&
+               result_data_size) {
+                //scan all result
+                char *current_data_prt = (char*)answer->channel_data->data();
+                for(int idx = 0; idx < numer_of_record_found; idx++) {
+                    CDWShrdPtr last_record = ChaosMakeSharedPtr<CDataWrapper>(current_data_prt);
+                    //!at this time cdata wrapper copy the data
+                    results.push_back(last_record);
                 }
             }
         }

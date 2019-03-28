@@ -444,7 +444,39 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
 //inhertied method
 int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
                                                      VectorObject& found_object_page) {
-    return -1;
+    int err = 0;
+    auto client  = pool_ref.acquire();
+    //access to database
+    auto db = (*client)[MONGODB_DB_NAME];
+    //access a collection
+    collection coll = db[MONGODB_DAQ_COLL_NAME];
+    auto opts  = options::find{};
+    opts.projection(bsoncxx::builder::basic::make_document(kvp(MONGODB_DAQ_DATA_FIELD, 1)));
+    
+    const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    const std::string seq_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
+    try{
+        std::for_each(search.begin(), search.end(), [&run_key, &seq_key, &coll, &opts, &found_object_page](const CDWShrdPtr& index){
+            auto builder = builder::basic::document{};
+            builder.append("zone_key", index->getStringValue("zone_key"));
+            builder.append("shard_key", index->getStringValue("shard_key"));
+            builder.append(run_key, index->getStringValue("cudk_run_id"));
+            builder.append(seq_key, index->getStringValue("dpck_seq_id"));
+            auto result = coll.find_one(builder.view(), opts);
+            if(result) {
+                //we have found data
+                auto result_view = result.value().view()[MONGODB_DAQ_DATA_FIELD];
+                found_object_page.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)result_view.raw()));
+            } else {
+                //create empty object for not found data
+                found_object_page.push_back(ChaosMakeSharedPtr<CDataWrapper>());
+            }
+        });
+    } catch (const mongocxx::exception &e) {
+        ERR << e.what();
+        err = e.code().value();
+    }
+    return err;
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,

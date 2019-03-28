@@ -121,6 +121,36 @@ namespace chaos {
                                                           opcode_headers::QueryResultPage& result_page)
                         {return -1;};
                         
+                        //! Execute a paged query into a time intervall returning only indexes
+                        /*!
+                         Execute a paged query in sinchronous way
+                         \param query_header of the request containing the naswer information
+                         \param search_key the key that we need to query
+                         \param search_start_ts the start of the time that delimit the lower time stamp of result
+                         \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
+                         \param
+                         */
+                        virtual int consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                                               const std::string& search_key,
+                                                               const ChaosStringSet& meta_tags,
+                                                               const uint64_t search_start_ts,
+                                                               const uint64_t search_end_ts,
+                                                               opcode_headers::SearchSequence& last_element_found_seq,
+                                                               opcode_headers::QueryResultPage& result_page)
+                        {return -1;};
+                        
+                        
+                        //! Execute a paged query into a time intervall returning only indexes
+                        /*!
+                         Return data associated to the index, in fo ndata is found for a specific
+                         index, an empty object will be created
+                         \param indexes vector contains cdata wrapper abstraction for data index
+                         \param data array taht will be filled with found data for each index
+                         */
+                        virtual int getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexes,
+                                                   chaos::common::data::VectorCDWShrdPtr& data)
+                        {return -1;};
+                        
                         //! Delete the data for a key delimited into a time intervall
                         /*!
                          \param search_key the key for wich we need to delete data
