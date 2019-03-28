@@ -424,7 +424,6 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         //if(size) {
         for(auto && document : cursor){
             auto new_obj = ChaosMakeSharedPtr<CDataWrapper>();
-            
             new_obj->append(chaos::DataPackCommonKey::DPCK_DEVICE_ID, document[chaos::DataPackCommonKey::DPCK_DEVICE_ID].get_utf8().value.to_string());
             new_obj->append("zone_key", document["zone_key"].get_utf8().value.to_string());
             new_obj->append("shard_key", document["shard_key"].get_utf8().value.to_string());
@@ -442,8 +441,8 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
 }
 
 //inhertied method
-int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
-                                                     VectorObject& found_object_page) {
+int MongoDBObjectStorageDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+                                                     CDWShrdPtr& found_object) {
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -456,22 +455,20 @@ int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
     const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
     const std::string seq_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
     try{
-        std::for_each(search.begin(), search.end(), [&run_key, &seq_key, &coll, &opts, &found_object_page](const CDWShrdPtr& index){
-            auto builder = builder::basic::document{};
-            builder.append("zone_key", index->getStringValue("zone_key"));
-            builder.append("shard_key", index->getStringValue("shard_key"));
-            builder.append(run_key, index->getStringValue("cudk_run_id"));
-            builder.append(seq_key, index->getStringValue("dpck_seq_id"));
-            auto result = coll.find_one(builder.view(), opts);
-            if(result) {
-                //we have found data
-                auto result_view = result.value().view()[MONGODB_DAQ_DATA_FIELD];
-                found_object_page.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)result_view.raw()));
-            } else {
-                //create empty object for not found data
-                found_object_page.push_back(ChaosMakeSharedPtr<CDataWrapper>());
-            }
-        });
+        auto builder = builder::basic::document{};
+        builder.append(kvp(std::string("zone_key"), index->getStringValue("zone_key")));
+        builder.append(kvp(std::string("shard_key"), index->getStringValue("shard_key")));
+        builder.append(kvp(run_key, index->getStringValue("cudk_run_id")));
+        builder.append(kvp(seq_key, index->getStringValue("dpck_seq_id")));
+        auto result = coll.find_one(builder.view(), opts);
+        if(result) {
+            //we have found data
+            auto result_view = result.value().view()[MONGODB_DAQ_DATA_FIELD];
+            found_object = ChaosMakeSharedPtr<CDataWrapper>((const char *)result_view.raw());
+        } else {
+            //create empty object for not found data
+            found_object = ChaosMakeSharedPtr<CDataWrapper>();
+        }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();

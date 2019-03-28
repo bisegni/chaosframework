@@ -324,13 +324,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
 int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
                                                     VectorObject& found_object_page,
                                                     chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
-    
+    return -1;
 }
 
 //inhertied method
-int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
-                                                     VectorObject& found_object_page) {
-    
+int MongoDBObjectStorageDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+                                                     CDWShrdPtr& found_object) {
+    return -1;
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,

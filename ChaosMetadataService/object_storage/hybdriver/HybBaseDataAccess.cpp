@@ -421,8 +421,8 @@ int HybBaseDataAccess::findObjectIndex(const DataSearch& search,
 }
 
 //inhertied method
-int HybBaseDataAccess::getObjectByIndex(const VectorObject& search,
-                                        VectorObject& found_object_page) {
+int HybBaseDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+                                        CDWShrdPtr& found_object) {
     return -1;
 }
 

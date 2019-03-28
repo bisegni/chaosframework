@@ -241,6 +241,49 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
         }
             
         case opcode::DeviceChannelOpcodeGetDataByIndex: {
+            VectorCDWShrdPtr indexes_vec;
+            VectorCDWShrdPtr data_found;
+            CDWUniquePtr query(new CDataWrapper(data_pack->channel_data->data()));
+            CDWUniquePtr indexes(new CDataWrapper(data_pack->channel_data->data()));
+            if(!indexes->hasKey("indexes") ||
+               !indexes->isVectorValue("indexes")) {
+                //we have wrong type of indexe serialized
+                return -1000;
+            }
+            CMultiTypeDataArrayWrapperSPtr indexes_vec_in = indexes->getVectorValue("indexes");
+            for(int idx = 0 ; idx < indexes_vec_in->size(); idx++) {
+                CUInt32 tmp_size = 0;
+                indexes_vec.push_back(ChaosMakeSharedPtr<CDataWrapper>(indexes_vec_in->getRawValueAtIndex(idx, tmp_size)));
+            }
+            if((err = handler->getDataByIndex(indexes_vec,
+                                              data_found))) {
+                //in case of error
+                return err;
+            }
+            
+            BufferSPtr result_data = ChaosMakeSharedPtr<Buffer>();
+            BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
+            DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult  *result_header_t = result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
+            result_header->fill(0);
+            if((result_header_t->numer_of_record_found = (uint32_t)data_found.size())){
+                //we successfully have perform query
+                result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size = 0;
+                for(VectorCDWShrdPtrIterator it = data_found.begin(),
+                    end = data_found.end();
+                    it != end;
+                    it++) {
+                    //write result into mresults memory
+                    int element_bson_size = 0;
+                    const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
+                    result_data->append(element_bson_mem, element_bson_size);
+                    result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=element_bson_size;
+                }
+            }
+            //set the result header and data
+            DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size());
+            DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, (uint32_t)result_data->size());
+            result_header_t->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->result_data_size);
+            result_header_t->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->numer_of_record_found);
             break;
         }
             

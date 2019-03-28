@@ -324,7 +324,7 @@ int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
     for_each(indexs.begin(), indexs.end(), [&index_data](const CDWShrdPtr& index){
         index_data.appendCDataWrapperToArray(*index);
     });
-    index_data.finalizeArrayForKey("index_array");
+    index_data.finalizeArrayForKey("indexes");
 
     
     //set opcode
