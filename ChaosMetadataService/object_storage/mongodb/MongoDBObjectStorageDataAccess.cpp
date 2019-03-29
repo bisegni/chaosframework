@@ -263,7 +263,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         }
         
         //add tags
-        if(meta_tags.size()) {
+        if(!meta_tags.empty()) {
             mongo::BSONArrayBuilder tags_arr_b;
             for(auto& it: meta_tags) {
                 tags_arr_b << it;
@@ -325,11 +325,14 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
                                                     VectorObject& found_object_page,
                                                     chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
     
+                                                        return 0;
 }
 
 //inhertied method
 int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
                                                      VectorObject& found_object_page) {
+                                    return 0;
+
     
 }
 
