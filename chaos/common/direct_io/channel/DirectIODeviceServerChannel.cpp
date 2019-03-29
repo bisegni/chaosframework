@@ -24,6 +24,10 @@
 #include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 
+#define INFO    INFO_LOG(DirectIODeviceServerChannel)
+#define DBG     DBG_LOG(DirectIODeviceServerChannel)
+#define ERR     ERR_LOG(DirectIODeviceServerChannel)
+
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
@@ -193,7 +197,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                                                  end_ts,
                                                                  last_sequence_info,//in-out
                                                                  result_page);
-                        } else if(channel_opcode == opcode::DeviceChannelOpcodeQueryDataCloud) {
+                        } else if(channel_opcode == opcode::DeviceChannelOpcodeQueryDataCloudIndex) {
                             err = handler->consumeDataIndexCloudQuery(*header,
                                                                  key,
                                                                  meta_tags,
@@ -217,10 +221,9 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                 it != end;
                                 it++) {
                                 //write result into mresults memory
-                                int element_bson_size = 0;
-                                const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
-                                result_data->append(element_bson_mem, element_bson_size);
-                                result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=element_bson_size;
+                                BufferUPtr buf = (*it)->getBSONDataBuffer();
+                                result_data->append(*buf);
+                                result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=buf->size();
                             }
                         }
                         
@@ -253,7 +256,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             CMultiTypeDataArrayWrapperSPtr indexes_vec_in = indexes->getVectorValue("indexes");
             for(int idx = 0 ; idx < indexes_vec_in->size(); idx++) {
                 CUInt32 tmp_size = 0;
-                indexes_vec.push_back(ChaosMakeSharedPtr<CDataWrapper>(indexes_vec_in->getRawValueAtIndex(idx, tmp_size)));
+                indexes_vec.push_back(CDWShrdPtr(indexes_vec_in->getCDataWrapperElementAtIndex(idx).release()));
             }
             if((err = handler->getDataByIndex(indexes_vec,
                                               data_found))) {
@@ -273,10 +276,9 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                     it != end;
                     it++) {
                     //write result into mresults memory
-                    int element_bson_size = 0;
-                    const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
-                    result_data->append(element_bson_mem, element_bson_size);
-                    result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=element_bson_size;
+                    BufferUPtr buf = (*it)->getBSONDataBuffer();
+                    result_data->append(*buf);
+                    result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=buf->size();
                 }
             }
             //set the result header and data

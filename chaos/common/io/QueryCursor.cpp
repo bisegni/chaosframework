@@ -47,8 +47,8 @@ QueryCursor::ResultPage::~ResultPage() {}
 const bool QueryCursor::ResultPage::hasNext() const {
     return current_fetched < found_element_page.size();
 }
-uint32_t QueryCursor::ResultPage::size() const {
-    return found_element_page.size();
+CUInt32 QueryCursor::ResultPage::size() const {
+    return (CUInt32)found_element_page.size();
 }
 ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() {
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
@@ -59,9 +59,9 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next(
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
-                         uint64_t _start_ts,
-                         uint64_t _end_ts,
-                         uint32_t default_page_len):
+                         CUInt64 _start_ts,
+                         CUInt64 _end_ts,
+                         CUInt32 default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
 node_id(_node_id),
@@ -77,10 +77,10 @@ api_error(0){}
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
-                         uint64_t _start_ts,
-                         uint64_t _end_ts,
+                         CUInt64 _start_ts,
+                         CUInt64 _end_ts,
                          const ChaosStringSet& _meta_tags,
-                         uint32_t default_page_len):
+                         CUInt32 default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
 node_id(_node_id),
@@ -96,11 +96,11 @@ api_error(0){}
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
-                         uint64_t _start_ts,
-                         uint64_t _end_ts,
-                         uint64_t _sequid,
-                         uint64_t _runid,
-                         uint32_t default_page_len):
+                         CUInt64 _start_ts,
+                         CUInt64 _end_ts,
+                         CUInt64 _sequid,
+                         CUInt64 _runid,
+                         CUInt32 default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
 node_id(_node_id),
@@ -122,12 +122,12 @@ api_error(0){
 QueryCursor::QueryCursor(const std::string& _query_id,
                          URLServiceFeeder& _connection_feeder,
                          const std::string& _node_id,
-                         uint64_t _start_ts,
-                         uint64_t _end_ts,
-                         uint64_t _sequid,
-                         uint64_t _runid,
+                         CUInt64 _start_ts,
+                         CUInt64 _end_ts,
+                         CUInt64 _sequid,
+                         CUInt64 _runid,
                          const ChaosStringSet& _meta_tags,
-                         uint32_t default_page_len):
+                         CUInt32 default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
 node_id(_node_id),
@@ -151,7 +151,7 @@ QueryCursor::~QueryCursor() {}
 const std::string& QueryCursor::queryID() const {
     return query_id;
 }
-uint32_t  QueryCursor::size()const{
+CUInt32  QueryCursor::size()const{
     return result_page.size();
 }
 
@@ -179,7 +179,7 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next()  {
 }
 
 #pragma mark private methods
-int64_t QueryCursor::fetchNewPage() {
+int QueryCursor::fetchNewPage() {
     result_page.found_element_page.clear();
     //fetch the new page
     switch(phase) {
@@ -207,7 +207,7 @@ int64_t QueryCursor::fetchNewPage() {
     return fetchData();
 }
 
-int64_t QueryCursor::fetchData() {
+int QueryCursor::fetchData() {
     IODirectIODriverClientChannels *next_client = NULL;
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
@@ -229,15 +229,15 @@ int64_t QueryCursor::fetchData() {
     return api_error;
 }
 
-void QueryCursor::getIndexes(uint64_t& runid,uint64_t& seqid){
+void QueryCursor::getIndexes(CUInt64& runid,CUInt64& seqid){
     runid = result_page.last_record_found_seq.run_id;
     seqid =result_page.last_record_found_seq.datapack_counter;
 }
 
-const uint32_t QueryCursor::getPageLen() const {
+const CUInt32 QueryCursor::getPageLen() const {
     return page_len;
 }
 
-void QueryCursor::setPageDimension(uint32_t new_page_len) {
+void QueryCursor::setPageDimension(CUInt32 new_page_len) {
     page_len = new_page_len;
 }

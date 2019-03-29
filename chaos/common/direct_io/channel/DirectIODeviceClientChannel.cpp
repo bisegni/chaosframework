@@ -358,6 +358,42 @@ int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
     return err;
 }
 
+int DirectIODeviceClientChannel::getDataByIndex(const CDWShrdPtr& index,
+                                                CDWShrdPtr& result) {
+    int err = 0;
+    CDataWrapper index_data;
+    DirectIODataPackSPtr answer;
+    DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
+    
+    //fill the query CDataWrapper
+    index_data.appendCDataWrapperToArray(*index);
+    index_data.finalizeArrayForKey("indexes");
+    
+    //set opcode
+    data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetDataByIndex);
+    
+    BufferSPtr channel_data = BufferSPtr(index_data.getBSONDataBuffer().release());
+    //set header and data for the query
+    DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
+    if((err = sendServiceData(MOVE(data_pack), answer))) {
+        //error getting last value
+        DIODCCLERR_ << CHAOS_FORMAT("Error executing query for get data by index with error %1%",%err);
+    } else {
+        //we got answer
+        if(answer) {
+            //get the header
+            DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *result_header = answer->channel_header_data->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>();
+            uint32_t result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->result_data_size);
+            uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
+            if(numer_of_record_found &&
+               result_data_size) {
+                result = ChaosMakeSharedPtr<CDataWrapper>(answer->channel_data->data());
+            }
+        }
+    }
+    return err;
+}
+
 int DirectIODeviceClientChannel::deleteDataCloud(const std::string& key,
                                                  uint64_t start_ts,
                                                  uint64_t end_ts) {

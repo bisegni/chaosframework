@@ -105,6 +105,15 @@ namespace chaos {
                     int getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexs,
                                        chaos::common::data::VectorCDWShrdPtr& results);
                     
+                    //! Fetch the data associated to the indexs
+                    /*!
+                     If no data is found for and index, an emtpy object is created for that not found data
+                     \param indexs vector of CDataWrapper that is found by @queryDataCloudIndexOnly
+                     \param results the foudn data for the index
+                     */
+                    int getDataByIndex(const chaos::common::data::CDWShrdPtr& index,
+                                       chaos::common::data::CDWShrdPtr& result);
+                    
                     //! Perform a temporal data delete operation on a key
                     /*!
                      \param key to search

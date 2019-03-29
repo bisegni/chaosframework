@@ -1075,6 +1075,12 @@ cu_prof_t CUController::getProfileInfo(){
     return p;
 }
 
+void CUController::setQueryOnIndex(bool use_index) {
+    if(ioLiveDataDriver.get()) {
+        ioLiveDataDriver->setQueryOnIndex(use_index);
+    }
+}
+
 //! get datapack between time itervall
 void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t      start_ts,
