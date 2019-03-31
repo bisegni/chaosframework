@@ -155,6 +155,7 @@ for test in ${final_test_list[@]};do
 	info_mesg "\e[31mTEST \"$test\" ($exec_time s) FAILED\e[39m"
 
 	if [ -n "$stop_on_error" ];then
+	    info_mesg "exiting on first failure!"
 	    exit 1
 	fi
     fi

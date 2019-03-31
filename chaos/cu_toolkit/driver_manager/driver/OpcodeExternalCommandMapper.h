@@ -65,7 +65,9 @@ namespace chaos {
                     virtual void driverInit(const chaos::common::data::CDataWrapper& init_parameter);
                     
                     virtual void driverDeinit();
-                    
+                    virtual int sendInit(cu::driver_manager::driver::DrvMsgPtr cmd);
+                
+                    virtual int sendDeinit(cu::driver_manager::driver::DrvMsgPtr cmd);
                     virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
                 };
                 

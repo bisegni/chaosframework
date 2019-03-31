@@ -22,7 +22,13 @@
 #ifndef __CHAOSFramework__ManagedMemory__
 #define __CHAOSFramework__ManagedMemory__
 
-#include <unistd.h>
+#ifndef _WIN32
+ #include <unistd.h>
+#else
+//#ifndef _INC_TIME
+#define _TIMESPEC_DEFINED
+//#endif
+#endif
 #include <pthread.h>
 #include <boost/atomic/atomic.hpp>
 #include <boost/thread.hpp>
@@ -36,7 +42,7 @@ namespace chaos {
         #define CHUNK_ALIGN_BYTES 8
         #define DONT_PREALLOC_SLABS
         #define MAX_NUMBER_OF_SLAB_CLASSES (POWER_LARGEST + 1)
-        
+		
         /*! powers-of-N allocation structures */
         
         typedef struct {

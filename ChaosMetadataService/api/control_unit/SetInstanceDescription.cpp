@@ -76,7 +76,7 @@ CDWUniquePtr SetInstanceDescription::execute(CDWUniquePtr api_data) {
     }
     
     //for compativbility  update here the default porperty values
-    PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    PropertyGroup pg(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     if(instance_desc->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
         pg.addProperty(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_desc->getVariantValue(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     }

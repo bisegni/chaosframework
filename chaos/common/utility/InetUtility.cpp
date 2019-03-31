@@ -25,6 +25,8 @@
 
 using namespace chaos::common::utility;
 
+
+#ifndef _WIN32
 std::string InetUtility::scanForLocalNetworkAddress(const std::string& _eth_interface_name){
     std::string ip_port;
     void * tmp_addr_ptr=NULL;
@@ -89,7 +91,74 @@ std::string InetUtility::scanForLocalNetworkAddress(const std::string& _eth_inte
     }
     return ip_port;
 }
+#else
+std::string InetUtility::scanForLocalNetworkAddress(const std::string& _eth_interface_name) {
+	std::string ip_port;
+	
+	std::string eth_interface_name;
+	std::vector<InterfaceInfo> interface_infos;
 
+	//check if we have a preferred name to use
+	if (_eth_interface_name.size()) {
+		interface_infos.push_back(InterfaceInfo(_eth_interface_name, ""));
+	}
+
+	//default names append to the end of the set
+	interface_infos.push_back(InterfaceInfo("en", ""));
+	interface_infos.push_back(InterfaceInfo("em", ""));
+	interface_infos.push_back(InterfaceInfo("eth", ""));
+	interface_infos.push_back(InterfaceInfo("tun", ""));
+	interface_infos.push_back(InterfaceInfo("utun", ""));
+	// loopback if no other found
+	interface_infos.push_back(InterfaceInfo("lo", ""));
+	LAPP_ << "Scan for local network interface and ip";
+
+	ULONG outBufLen;
+	PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+	IP_ADAPTER_INFO *pAdapterInfo;
+	DWORD dwRetVal;
+	pAdapterInfo = (IP_ADAPTER_INFO *)malloc(sizeof(IP_ADAPTER_INFO));
+	outBufLen = sizeof(IP_ADAPTER_INFO);
+	if (GetAdaptersInfo(pAdapterInfo, &outBufLen) != ERROR_SUCCESS)
+	{
+		free(pAdapterInfo);
+		pAdapterInfo = (IP_ADAPTER_INFO*)malloc(outBufLen);
+	}
+	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &outBufLen) != ERROR_SUCCESS))
+	{
+		LERR_ << "GetAdaptersInfo call failed with code " << dwRetVal;
+	}
+	IP_ADAPTER_INFO * addIter = pAdapterInfo;
+	while (addIter)
+	{
+		checkInterfaceName(interface_infos, addIter->AdapterName, addIter->IpAddressList.IpAddress.String);
+
+		addIter = addIter->Next;
+	}
+	if (pAdapterInfo)
+		free(pAdapterInfo);
+	//check the first priority address to get
+	for (std::vector<InterfaceInfo>::const_iterator it = interface_infos.begin();
+		it != interface_infos.end();
+		it++) 
+	{
+		if (it->address.size())
+		{
+			ip_port = it->address;
+			LAPP_ << "The choosen address is:" << it->address << " his interface is:" << it->interface_name;
+			break;
+		}
+	}
+	//in case we don't have found anything fall to de loopback ip
+	if (ip_port.size() == 0) 
+	{
+		// no ip was found go to localhost
+		ip_port.assign("127.0.0.1");
+	}
+	return ip_port;
+
+}
+#endif
 int InetUtility::scanForLocalFreePort(int basePort) {
     int sockfd, portno;
     struct sockaddr_in serv_addr;
@@ -103,7 +172,11 @@ int InetUtility::scanForLocalFreePort(int basePort) {
         serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
         serv_addr.sin_port = htons(portno);
         err = connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr));
+#ifdef _WIN32
+		closesocket(sockfd);
+#else
         close(sockfd);
+#endif
         if(err>=0)portno++;
     }
     return portno;

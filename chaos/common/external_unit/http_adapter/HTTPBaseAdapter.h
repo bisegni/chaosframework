@@ -37,7 +37,7 @@ namespace chaos {
     namespace common {
         namespace external_unit {
             namespace http_adapter {
-
+				
                 /**
                  * @brief tag the conenction to be identified with the
                  * connection virtualization within the http adapter instance
@@ -71,7 +71,9 @@ namespace chaos {
                     //some opcode need to notify the termination
                     chaos::WaitSemaphore wait_termination_semaphore;
                     
-                    Opcode(){}
+                    Opcode():
+                    op_type(OpcodeInfoTypeSend),
+                    data_opcode(EUCMessageOpcodeWhole){}
                     virtual ~Opcode(){}
                 };
                 
@@ -81,9 +83,12 @@ namespace chaos {
                 
                 /*!
                  */
+				
                 class HTTPBaseAdapter {
-                    friend class ExternalUnitConnection;
+					friend class ExternalUnitConnection;
+					
                 protected:
+					
                     struct mg_mgr mgr;
                     //!operation posted during poll execution to send with the nex one
                     LOpcodeShrdPtrQueue post_evt_op_queue;
@@ -96,18 +101,28 @@ namespace chaos {
 
                     virtual int closeConnection(const std::string& connection_identifier) = 0;
 
-                    //!find conneciton by uuid
-                    template<typename T>
-                    struct mg_connection* findConnection(const std::string& conenction_uuid) {
+                    
+					
+					//!find connection by uuid
+#ifdef _WIN32
+					typedef struct mg_connection*  MGCPTR;
+                    template<typename T> 
+					/*struct mg_connection* */MGCPTR findConnection(const std::string& conenction_uuid) {
+#else
+					template<typename T>
+					struct mg_connection*  findConnection(const std::string& conenction_uuid) {
+#endif
                         struct mg_connection *c = NULL;
                         for (c = mg_next(&mgr, NULL); c != NULL; c = mg_next(&mgr, c)) {
                             if(!c->user_data) continue;
-                            ConnectionMetadata<T> *conn_metadata = static_cast<ConnectionMetadata<T> * >(c->user_data);
+							
+							ConnectionMetadata<T> * conn_metadata = static_cast<ConnectionMetadata<T> * >(c->user_data);
                             if(conn_metadata->conn_uuid.compare(conenction_uuid) == 0) {
                                 break;
                             }
                         }
                         return c;
+						
                     }
                     
                     void sendHTTPJSONError(mg_connection *nc,

@@ -35,6 +35,7 @@ RunningCommandStat::RunningCommandStat(CDataWrapper *_cmd_data,
 command_info(_cmd_data,
              _cmd_impl),
 next_exec_timestamp(0){
+    std::memset(&stat, 0, sizeof(SandboxStat));
     command_info.cmdImpl->shared_stat = &stat;
 }
 

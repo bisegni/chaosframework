@@ -23,8 +23,11 @@
 #include "AbstractWorker.h"
 #include "ChaosAgent.h"
 #include "worker/ProcessWorker.h"
+#ifdef OLD_PROCESS_MANAGEMENT
 #include "utility/ProcUtil.h"
-
+#else
+#include "utility/ProcRestUtil.h"
+#endif
 #include <chaos/common/global.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/healt_system/HealtManager.h>
@@ -62,7 +65,6 @@ max_reg_retry_counter(5){
 }
 
 AgentRegister::~AgentRegister() {}
-
 void AgentRegister::addWorker(WorkerSharedPtr new_worker) {
     if(new_worker.get() == NULL) return;
     if(map_worker.count(new_worker->getName()) != 0) return;
@@ -233,7 +235,7 @@ void AgentRegister::timeout() {
                     it++) {
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
-                        ProcUtil::launchProcess(*it);
+                        LAUNCH_PROCESS(*it);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }

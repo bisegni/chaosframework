@@ -15,7 +15,8 @@ public:
     enum DatasetType {
         DatasetTypeOutput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
         DatasetTypeInput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
-        DatasetTypeSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM
+        DatasetTypeSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+        DatasetTypeHealth = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH
     };
 
     explicit CControlUnitDatasetLabel(QWidget *parent = 0);

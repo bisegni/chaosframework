@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__CommandTemplateSubmit__
 #define __CHAOSFramework__CommandTemplateSubmit__
 
+#include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
 
 #include <string>
@@ -43,6 +44,18 @@ namespace chaos {
                      \param uid_list a stirng list that contains the uid to include into the search
                      */
                     ApiProxyResult execute(const TemplateSubmissionList& submission_task_list);
+                    
+                    //
+                    /*!
+                     
+                     */
+                    ApiProxyResult execute(const std::string& node_uid,
+                                           const std::string& command_alias,
+                                           const chaos::common::batch_command::SubmissionRuleType::SubmissionRule submission_rule,
+                                           const uint32_t priority,
+                                           const uint64_t scheduler_steps_delay,
+                                           const uint32_t submission_checker_steps_delay,
+                                           common::data::CDWUniquePtr& slow_command_data);
                 };
             }
         }

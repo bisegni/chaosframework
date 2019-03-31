@@ -137,6 +137,7 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 }
 
 void MultiAddressMessageChannel::timeout() {
+   
     service_feeder.checkForAliveService();
     if(service_feeder.getOfflineSize() == 0) {
         AsyncCentralManager::getInstance()->removeTimer(this);

@@ -21,7 +21,11 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
 
+#ifdef _WIN32
+using namespace chaos;
+#endif
 using namespace chaos::common::data;
+
 
 DatasetDB::DatasetDB(bool onMemory):CUSchemaDB(onMemory) {
     

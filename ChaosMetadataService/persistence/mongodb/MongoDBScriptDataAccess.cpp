@@ -57,6 +57,7 @@ MongoDBScriptDataAccess::~MongoDBScriptDataAccess() {}
 
 int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
     int err = 0;
+    int size;
     uint64_t sequence_id;
     mongo::BSONObjBuilder builder;
     CHAOS_ASSERT(utility_data_access)
@@ -73,16 +74,28 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
         }
         
         CHAOS_ASSERT(utility_data_access)
-        if(utility_data_access->getNextSequenceValue("script", sequence_id)) {
+       // NOTE: have a sequence allows to have many scripts with the name that's dangerous
+
+       /* if(utility_data_access->getNextSequenceValue("script", sequence_id)) {
             SDA_ERR << "Error getting new sequence for node";
             return err;
         } else {
             builder << "seq" << (long long)sequence_id;
         }
+        */
+       // better have as unique name the timestamp that tracks also when the script was inserted
+        builder << "seq" <<(long long)TimingUtil::getTimeStamp();
+       /* builder << CHAOS_SBD_NAME << script_entry.script_description.name
+        << CHAOS_SBD_DESCRIPTION << script_entry.script_description.description
+        <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<< script_entry.script_description.language;
+        */
+        ScriptSDWrapper s_dw;
+        s_dw.dataWrapped() = script_entry;
+    
+        ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
         
-        builder << CHAOS_SBD_NAME << script_entry.script_description.name
-        << CHAOS_SBD_DESCRIPTION << script_entry.script_description.description;
-        
+        mongo::BSONObj u(serialization->getBSONRawData(size));
+        builder.appendElements(u);
         mongo::BSONObj i = builder.obj();
         DEBUG_CODE(SDA_DBG<<log_message("insertNewScript",
                                         "insert",
@@ -128,7 +141,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
                                      q,
                                      u))) {
-            SDA_ERR << "Error Updating sript content";
+            SDA_ERR << "Error Updating script content";
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();

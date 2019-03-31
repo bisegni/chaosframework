@@ -27,7 +27,7 @@
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             namespace mongodb {
 
@@ -63,7 +63,5 @@ namespace chaos {
         }
     }
 }
-
-
 
 #endif /* __CHAOSFramework_E927A5B7_1CA0_402F_AA20_DD63646EA30A_MongoDBObjectStorageDriver_h */

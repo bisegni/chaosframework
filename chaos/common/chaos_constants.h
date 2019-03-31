@@ -172,7 +172,9 @@ namespace chaos {
         	static const unsigned int AgentTimersTimeoutinMSec                  = 5000;
         	static const unsigned int CUTimersTimeoutinMSec                     = 5000;
         	static const unsigned int PerformanceManagerTimersTimeoutinMSec     = 5000;
-            static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
+
+		    static const unsigned int ObjectStorageTimeoutinMSec                = 5000;
+            static const unsigned int ChacheTimeoutinMSec                       = 5000;
             //!time to wait for queue can accept new data to push in object storage
             /*!
              Mds when receive a new dataset to store on history, it is push on hst sublayer
@@ -180,7 +182,7 @@ namespace chaos {
              mds to permit queue to can accept this new dataset. after that the new dataset
              is nto accepted by sublayer.
              */
-            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 5000;
+            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 15000;
     	}
 
     };
@@ -289,6 +291,8 @@ namespace chaos {
          other chaos node.
          */
         static const char * const NODE_TYPE_CONTROL_UNIT    = "nt_control_unit";
+
+       
         //! identify an user itnerface node
         /*!
          An user interface is a node that can control other nodes and show
@@ -325,6 +329,11 @@ namespace chaos {
         static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
         static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_sc_cu";
         static const char * const NODE_SUBTYPE_PROXY_CONTROL_UNIT           = "nt_proxy_cu";
+          //! identify a DAQ unit node
+        /*!
+         A DAQ unit node is a tipical !CHAOS node that acquires data without any command
+         */
+        static const char * const NODE_SUBTYPE_DAQ_CONTROL_UNIT    = "nt_daq_unit";
     }
     /** @} */ // end of NodeType
     
@@ -374,6 +383,8 @@ namespace chaos {
     namespace ControlUnitHealtDefinitionValue {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_SIZE  = "cuh_dso_size";
+
         
     }
     /** @} */ // end of NodeHealtDefinitionValue
@@ -771,6 +782,18 @@ namespace chaos {
             DSStorageBurstTypeNPush,
             DSStorageBurstTypeMSec
         } DSStorageBurstType;
+
+        typedef enum SetpointState {
+            //!no storage behaviour defined
+            SetpointErrorException = -100,
+            SetpointErrorOnRunning = -3,
+            SetpointErrorOnStart = -2,
+            SetpointErrorOnInit = -1,
+            SetpointUnknown = 0,
+            SetpointRestoreStarted=1,
+            SetpointRestoreRunning=2,
+            SetpointRestoreReached=3
+        } SetpointState;
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     namespace ControlUnitNodeDomainAndActionRPC {
@@ -814,7 +837,7 @@ namespace chaos {
      */
     //! Name space for grupping control unit system property
     namespace ControlUnitPropertyKey {
-        static const char * const GROUP_NAME                            = "property_abstract_control_unit";
+        static const char * const P_GROUP_NAME                            = "property_abstract_control_unit";
         //! represent the type of initialization restore
         static const char * const INIT_RESTORE_OPTION                   = "cudk_init_restore_option";
         static const unsigned int INIT_RESTORE_OPTION_TYPE_STATIC       = 0;
@@ -845,6 +868,14 @@ namespace chaos {
         static const char * const BURST_STATE               = "cudk_burst_state";
         //! is the tag associated to the current burst oepration
         static const char * const BURST_TAG                 = "cudk_burst_tag";
+        //! is the device alarm state (0=no alarm)
+        static const char * const DEV_ALRM_LEVEL           = "cudk_dalrm_lvl";
+        //! is the cu alarm level state (0= no alarm)
+        static const char * const CU_ALRM_LEVEL            = "cudk_calrm_lvl";
+        //! is the snapshot/setpoint restore state (0=nothing,1=started,2=running,3=end,-1 error [sticky till next operation])
+        static const char * const SETPOINT_STATE               = "cudk_set_state";
+        //! is the snapshot/setpoint set point last tag
+        static const char * const SETPOINT_TAG                 = "cudk_set_tag";
         //! is the tag associated to the current running command alias(in the case of slow contro unit)
         static const char * const RUNNING_COMMAND_ALIAS     = "running_cmd_alias";
         
@@ -858,7 +889,7 @@ namespace chaos {
     //! Name space for grupping control unit system property
     namespace ControlUnitDatapackCommonKey {
         //!specify an initialization id for the node[int64]
-        static const char * const RUN_ID                          = "cudk_run_id";
+        static const char * const RUN_ID                          = ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID;
     }
     
     /** @} */ // end of ControlUnitNodeDefinitionKey
@@ -1126,7 +1157,7 @@ namespace chaos {
         //!scrip api consstants
         namespace script {
             namespace search_script {
-                static const char * const  FOUND_SCRIPT_LIST = "found_sript_list";
+                static const char * const  FOUND_SCRIPT_LIST = "found_script_list";
             }
         }
     }

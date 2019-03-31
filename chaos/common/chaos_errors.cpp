@@ -24,6 +24,12 @@
 
 #include <limits.h>
 
+#ifdef _WIN32
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__  __FUNCSIG__
+#endif
+#endif
+
 using namespace chaos::error;
 
 ChaosErrorCodeMapping::ChaosErrorCodeMapping() {}

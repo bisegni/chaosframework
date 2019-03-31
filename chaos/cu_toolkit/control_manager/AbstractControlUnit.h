@@ -223,17 +223,16 @@ namespace chaos{
                 void copyInitConfiguraiton(chaos::common::data::CDataWrapper& copy);
                 
                 inline const char * const stateVariableEnumToName(chaos::cu::control_manager::StateVariableType type) {
-                    switch(type) {
-                        case  chaos::cu::control_manager::StateVariableTypeAlarmCU:
-                            return chaos::cu::control_manager::StateVariableTypeAlarmCULabel;
-                        case   chaos::cu::control_manager::StateVariableTypeAlarmDEV:
-                            return chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel;
+                    if(type==chaos::cu::control_manager::StateVariableTypeAlarmDEV){
+                        return chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL;
+ 
                     }
+                    return chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL;
                 }
                 
                 inline int stateVariableNameToEnum(const std::string& name) {
-                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmCULabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
-                    if(name.compare(chaos::cu::control_manager::StateVariableTypeAlarmDEVLabel) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
+                    if(name.compare(chaos::ControlUnitDatapackSystemKey::CU_ALRM_LEVEL) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmCU;}
+                    if(name.compare(chaos::ControlUnitDatapackSystemKey::DEV_ALRM_LEVEL) == 0) {return chaos::cu::control_manager::StateVariableTypeAlarmDEV;}
                     return -1;
                 }
                 
@@ -288,7 +287,7 @@ namespace chaos{
                 //! keep track of how many push has been done for every dataset
                 //! 0 - output, 1-input, 2-custom
                 uint32_t    push_dataset_counter;
-                
+                uint64_t    push_dataset_size;
                 //! identify last timestamp whene the push rate has been acquired;
                 uint64_t    last_push_rate_grap_ts;
                 

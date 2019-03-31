@@ -22,7 +22,7 @@
 #include "GetAssociationByDS.h"
 #include <boost/format.hpp>
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::api::metadata_service;
 using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_GET_ASSOC_INFO INFO_LOG(GetAssociationByDS)

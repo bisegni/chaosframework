@@ -130,7 +130,7 @@ namespace chaos {
                     /*!
                      Set the isntance
                      */
-                    ApiProxyResult execute(SetInstanceDescriptionHelper& api_data);
+                    ApiProxyResult execute(SetInstanceDescriptionHelper& api_data, bool legacy_support = true);
                     ApiProxyResult execute(const std::string& uid,chaos::common::data::CDataWrapper& cu);
 
                 };

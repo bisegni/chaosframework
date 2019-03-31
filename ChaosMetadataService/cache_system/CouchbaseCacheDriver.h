@@ -28,14 +28,55 @@
 
 #include <libcouchbase/couchbase.h>
 
+#include <chaos/common/pool/ResourcePool.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/lockfree/queue.hpp>
 #include <boost/thread.hpp>
+
 #define COUCHBASE_DEFAULT_TIMEOUT 5000000
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace cache_system {
+            typedef chaos::common::pool::ResourcePool< lcb_t > CouchbasePool;
+            typedef CouchbasePool::ResourcePoolHelper CouchbasePoolHelper;
+            typedef CouchbasePool::ResourceSlot CouchbasePoolSlot;
+            
+            //! cache driver pool implementation
+            class CouchbaseDriverPool:
+            public CouchbasePoolHelper,
+            public chaos::common::utility::InizializableService {
+                friend class DriverPoolManager;
+                //!created instances
+                unsigned int instance_created;
+                
+                //!keep track of how many instance in pol need to be present at startup
+                unsigned int minimum_instance_in_pool;
+                
+                std::string                 bucket_name;
+                std::string                 bucket_user;
+                std::string                 bucket_pwd;
+                
+                //pool container
+                ChaosStringVector           all_server_to_use;
+            protected:
+
+                bool validateString(std::string& server_description);
+                
+                //resource pool handler
+                lcb_t *allocateResource(const std::string& pool_identification,
+                                             uint32_t& alive_for_ms);
+                void deallocateResource(const std::string& pool_identification,
+                                        lcb_t *pooled_driver);
+            public:
+                ChaosUniquePtr<CouchbasePool> pool;
+                CouchbaseDriverPool();
+                ~CouchbaseDriverPool();
+                void init(void *init_data);
+                void deinit();
+                int addServer(std::string server_desc);
+                int removeServer(std::string server_desc);
+            };
             
             typedef enum ResultType {
                 ResultTypeGet,
@@ -68,34 +109,16 @@ namespace chaos {
                 StoreResult();
             };
             
-            //#define COOKIY_TO_
-            
-            //! Abstraction of the chache driver
+            //! Couchbase implementation for cache driver
             /*!
-             This class represent the abstraction of the
-             work to do on cache. Cache system is to be intended as global
-             to all CacheDriver instance.
+             This driver uses couchbase for implementa cache driver.
              */
             DECLARE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)
-                lcb_t					instance;
-                struct lcb_create_st	create_options;
-                lcb_error_t				last_err;
-                std::string				last_err_str;
-                
-                std::string				bucket_name;
-                std::string				bucket_user;
-                std::string				bucket_pwd;
-                
-                std::string all_server_str;
-                boost::shared_mutex	mutex_server;
-                std::vector<std::string> all_server_to_use;
-                typedef std::vector<std::string>::iterator ServerIterator;
-                
+                friend class CouchbaseDriverPool;
+
+                CouchbaseDriverPool driver_pool;
                 CouchbaseCacheDriver(std::string alias);
-                
-                
-                bool validateString(std::string& server_description);
                 
                 static void errorCallback(lcb_t instance,
                                           lcb_error_t err,
@@ -121,11 +144,9 @@ namespace chaos {
                 int getData(const ChaosStringVector& keys,
                             MultiCacheData& multi_data);
                 
-                int addServer(std::string server_desc);
+                int addServer(const std::string& server_desc);
                 
-                int removeServer(std::string server_desc);
-                
-                int updateConfig();
+                int removeServer(const std::string& server_desc);
                 
                 //! init
                 void init(void *init_data);

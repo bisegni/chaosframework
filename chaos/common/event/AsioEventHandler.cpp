@@ -23,7 +23,11 @@
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#ifndef _WIN32
 #include <netinet/in.h>
+#else
+#include <Winsock2.h>
+#endif
 using namespace boost;
 using namespace chaos;
 using namespace chaos::common::utility;

@@ -87,5 +87,8 @@ CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.wo
         }
     }
 }
+#define CHECK_PROCESS ProcUtil::checkProcessAlive
+#define LAUNCH_PROCESS ProcUtil::launchProcess
+#define QUIT_PROCESS ProcUtil::quitProcess
 
 #endif /* __CHAOSFramework_D11D47EC_B834_406C_897C_8191C80B6D8B_ProcUtil_h */

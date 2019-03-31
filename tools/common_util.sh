@@ -92,8 +92,8 @@ else
     fi
 fi
 if [ -n "$CHAOS_PREFIX" ];then
-    export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib
-    export DYLD_LIBRARY_PATH=$CHAOS_PREFIX/lib
+    export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib:$CHAOS_PREFIX/lib64
+    export DYLD_LIBRARY_PATH=$CHAOS_PREFIX/lib:$CHAOS_PREFIX/lib64
 fi
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
@@ -285,10 +285,11 @@ function saveEnv(){
 	echo "export CHAOS_STATIC=true" >> $PREFIX/chaos_env.sh
     else
 	if [[ "$CHAOS_TARGET" =~ Linux ]];then
-	    echo "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib" >> $PREFIX/chaos_env.sh
+	    echo "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib:\$CHAOS_PREFIX/lib64" >> $PREFIX/chaos_env.sh
+
 	else
-	    echo "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib" >> $PREFIX/chaos_env.sh
-	    echo "export DYLD_LIBRARY_PATH=\$CHAOS_PREFIX/lib" >> $PREFIX/chaos_env.sh
+	    echo "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib:\$CHAOS_PREFIX/lib64" >> $PREFIX/chaos_env.sh
+	    echo "export DYLD_LIBRARY_PATH=\$CHAOS_PREFIX/lib:\$CHAOS_PREFIX/lib64" >> $PREFIX/chaos_env.sh
 	fi
 
     fi
@@ -485,7 +486,9 @@ run_proc(){
 	echo "where" >> /tmp/gdbbatch
 	echo "quit" >> /tmp/gdbbatch
 	echo "y" >> /tmp/gdbbatch
-	debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+	if echo $command_line | grep -v ".sh" >& /dev/null;then
+	    debug="$CHAOS_DEBUG_CMD -q -batch -x /tmp/gdbbatch --args"
+	fi
     fi
     if [ -z "$run_prefix" ];then
 	cmdline="$debug $command_line"
@@ -952,23 +955,28 @@ launch_us_cu(){
 	if [ -n "$CHECK_REGISTRATION" ];then
 	    local old_reg=-1
 	    local curr_reg=0
+	    local max_registered=0
 	    var1="((\`grep \"successfully registered\" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l\` >= $NCU))"
 	    while [ $curr_reg -gt $old_reg ] && [ $curr_reg -lt $NCU ] ;do
-		execute_command_until_ok "$var1" 20
+		execute_command_until_ok "$var1" 10
 		old_reg=$curr_reg
 		curr_reg=`grep "successfully registered" $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.$MYPID.log |wc -l`
 		echo ""
+		if [ $curr_reg -gt $max_registered ];then
+		    max_registered=$curr_reg;
+		fi
 		if [ $curr_reg -lt $NCU ] ;then
-		    info_mesg "registered till now ..." "$curr_reg"
+		    info_mesg "registered till now ..." "$max_registered"
+		    
 		fi
 
 
 	    done
-	    if [ $curr_reg -gt 0 ];then
+	    if [ $max_registered -gt 0 ];then
 		t=$(end_profile_time)
-		ok_mesg "$curr_reg  registered in $t"
+		ok_mesg "$max_registered  registered in $t"
 	    else
-		nok_mesg "$curr_reg/$NCU  registered in $t"
+		nok_mesg "$max_registered/$NCU  registered in $t"
 		return 1
 	    fi
 	fi

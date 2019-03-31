@@ -69,10 +69,6 @@ namespace chaos {
                     //!
                     int closeSocketNoWhait (void *socket);
                     
-                    int resetOutputQueue(void *socket,
-                                         MapZMQConfiguration &default_conf,
-                                         const MapZMQConfiguration &startup_conf);
-                    
                     inline int readMessage(void *socket,
                                            chaos::common::data::BufferSPtr& msg_buffer);
                     
@@ -130,6 +126,10 @@ namespace chaos {
                      */
                     int setAndReturnID(void *socket,
                                        std::string& new_id);
+                    
+                    int resetOutputQueue(void *socket,
+                                         MapZMQConfiguration &default_conf,
+                                         const MapZMQConfiguration &startup_conf);
                     
                     //! send the start of the zmq envelop start
                     /*!

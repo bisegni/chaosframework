@@ -26,7 +26,9 @@ using namespace chaos::common::data;
 using namespace chaos::common::property;
 
 //! default constructor
-PropertyDescription::PropertyDescription(){}
+PropertyDescription::PropertyDescription():
+type(DataType::TYPE_UNDEFINED),
+flag(0){}
 
 //! default constructor with the alias of the command
 PropertyDescription::PropertyDescription(const std::string& _name,

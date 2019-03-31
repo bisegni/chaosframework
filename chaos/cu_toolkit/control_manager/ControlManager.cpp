@@ -326,6 +326,9 @@ void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> contr
     HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
                                                ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                chaos::DataType::TYPE_DOUBLE);
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
+                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
+                                               chaos::DataType::TYPE_INT32);
     
     queue_submitted_cu.push(control_unit_instance);
     
@@ -378,7 +381,6 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
                 //for the relative script
                 exectuion_pool_manager->registerUID(i->second->work_unit_instance->getCUID());
             }
-            
             
             //remove the iterator
             map_cuid_reg_unreg_instance.erase(i++); // first is executed the uncrement that return
@@ -452,21 +454,23 @@ void ControlManager::manageControlUnit() {
         }
         lock.unlock();
         
-        //migrate stable <-> unstable
-        migrateStableAndUnstableSMCUInstance();
-        
         //! lock the registering (unstable sm) hastable
-        ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
+        
         //schedule unstable state machine steps
         if(map_cuid_reg_unreg_instance.size()) {
             //whe have control unit isntance with unstable state machine
             makeSMSteps();
+            
+            //migrate stable <-> unstable
+            migrateStableAndUnstableSMCUInstance();
+            
             //waith some time to retry the state machine
             thread_waith_semaphore.wait(2000);
         } else {
             //we don'need to do anything else
             thread_waith_semaphore.wait();
         }
+        
     }
 }
 

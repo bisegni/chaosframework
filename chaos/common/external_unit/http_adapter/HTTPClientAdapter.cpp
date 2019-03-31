@@ -32,16 +32,17 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::external_unit;
 using namespace chaos::common::external_unit::http_adapter;
 
 static const char *web_socket_option="Content-Type: application/bson-json\r\n";
 HTTPClientAdapter::HTTPClientAdapter():
 run(false),
+poll_counter(0),
+rest_poll_time(1000),
 message_broadcasted(0){
     if(GlobalConfiguration::getInstance()->hasOption(chaos::InitOption::OPT_REST_POLL_TIME_US)){
         rest_poll_time=GlobalConfiguration::getInstance()->getOption<uint32_t>(chaos::InitOption::OPT_REST_POLL_TIME_US);
-    } else {
-        rest_poll_time=1000;
     }
 }
 
@@ -66,7 +67,14 @@ void HTTPClientAdapter::poller() {
     while (run) {
         mg_mgr_poll(&mgr, 0);
         if(rest_poll_time>0){
+#ifndef _WIN32
             usleep(rest_poll_time);
+#else
+			unsigned long msecToWait = (int) (rest_poll_time / 1000);
+			msecToWait = (msecToWait > 1) ? msecToWait : 1;
+			Sleep(msecToWait);
+
+#endif
             if(poll_counter++ % (rest_poll_time)*10000000){performReconnection();}
         }
         

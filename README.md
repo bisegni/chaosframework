@@ -9,7 +9,6 @@ or non-scientific, infrastructure.
 scalable provider offering to a general class of clients high-performance services such us data sharing, commands
 dispatching, continuous historical data archiving, configuration tools, middle-layer resource management etc.  
 
-
 Key features and development strategies of !CHAOS are:  
 
 - scalability of performances and size
@@ -23,6 +22,7 @@ Key features and development strategies of !CHAOS are:
 "BSON" stands for "binary JSON" - a binary storage format that is JSON inspired.
 This distribution merely rips it out of the bson repository into its own.
 
+Read the [Documentation](doc/index.md)
 
 For further documentation please visit:
 
@@ -42,3 +42,7 @@ Experimental  | [![pipeline status](https://baltig.infn.it/chaos-lnf-control/cha
 [![coverage report](https://baltig.infn.it/chaos-lnf-control/chaosframework/badges/experimental/coverage.svg)](https://baltig.infn.it/chaos-lnf-control/chaosframework/commits/experimental)
 
 [4416b59a]: https://chaos-lnf-control.baltig-pages.infn.it/chaosframework/ "Experimental Code Coverage"
+
+
+### keep-a-changelog  (https://getcomposer.org)
+keep-a-changelog is a tool for managing the change logs, to install it install composer and then, whitin root chaos directory type: "**_composer install_**"

@@ -29,7 +29,9 @@
 
 #if defined(BSON_HAVE_CLOCK_GETTIME)
 #include <time.h>
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 #endif
 
 #include "bson-clock.h"

@@ -20,6 +20,8 @@
  */
 
 #include "AbstractApi.h"
+#include "../DriverPoolManager.h"
+#include "../batch/MDSBatchExecutor.h"
 
 using namespace chaos::common::network;
 
@@ -31,30 +33,23 @@ using namespace chaos::service_common::persistence::data_access;
 //! default constructor with the alias of the api
 AbstractApi::AbstractApi(const std::string& name):
 NamedService(name),
-subservice(NULL),
 parent_group(NULL){}
 
 //default destructor
 AbstractApi::~AbstractApi(){deinit();}
 
-void AbstractApi::init(void *init_data)  {
-    subservice = static_cast<ApiSubserviceAccessor*>(init_data);
-    if(!subservice) throw chaos::CException(-1, "No Persistence Driver has been set", __PRETTY_FUNCTION__);
-}
+void AbstractApi::init(void *init_data)  {}
 
-void AbstractApi::deinit()   {}
+void AbstractApi::deinit() {}
 
 AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
-    CHAOS_ASSERT(subservice)
-    return subservice->persistence_driver.get();
+    return &DriverPoolManager::getInstance()->getPersistenceDrv();
 }
 
 MDSBatchExecutor *AbstractApi::getBatchExecutor() {
-    CHAOS_ASSERT(subservice)
-    return subservice->batch_executor.get();
+    return MDSBatchExecutor::getInstance();
 }
 
 NetworkBroker *AbstractApi::getNetworkBroker() {
-    CHAOS_ASSERT(subservice)
-    return subservice->network_broker_service;
+    return NetworkBroker::getInstance();
 }

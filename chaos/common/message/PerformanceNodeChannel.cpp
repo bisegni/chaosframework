@@ -33,6 +33,7 @@ PerformanceNodeChannel::PerformanceNodeChannel(NetworkBroker *msg_broker,
 MessageChannel(msg_broker,
                _new_message_request_domain),
 node_network_address(_node_network_address),
+local_performance_session(NULL),
 client_instance(_client_instance) {}
 
 PerformanceNodeChannel::~PerformanceNodeChannel() {

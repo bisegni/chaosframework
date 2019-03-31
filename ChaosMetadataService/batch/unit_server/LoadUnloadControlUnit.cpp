@@ -42,7 +42,8 @@ static const char * const LoadUnloadControlUnit_NO_RPC_ADDRESS = "No unit server
 static const char * const LoadUnloadControlUnit_NO_LOAD_UNLOAD = "No load or unload has been specified";
 
 LoadUnloadControlUnit::LoadUnloadControlUnit():
-MDSBatchCommand() {}
+MDSBatchCommand(),
+load(false){}
 LoadUnloadControlUnit::~LoadUnloadControlUnit() {}
 
 int LoadUnloadControlUnit::prepareInstanceScriptForLoad(const std::string& instance_name) {

@@ -62,7 +62,7 @@ PublishableElement::PublishableElement(const PublishableElement& _dataset_elemen
 dataset_ptr(_dataset_element.dataset_ptr),
 attribute(_dataset_element.attribute){}
 
-PublishableElement::PublishableElement(const DatasetElement& _dataset_reference,
+PublishableElement::PublishableElement(const chaos::cu::data_manager::DatasetElement& _dataset_reference,
                                        const PublishElementAttribute& _attribute):
 dataset_ptr(&_dataset_reference),
 attribute(_attribute){}
@@ -114,7 +114,7 @@ void PublishTarget::setAttributeOnDataset(const std::string& dataset_name,
     map_publishable_element[dataset_name].attribute = publishable_attribute;
 }
 
-void PublishTarget::addDataset(const DatasetElement &publishable_dataset,
+void PublishTarget::addDataset(const chaos::cu::data_manager::DatasetElement &publishable_dataset,
                                const PublishElementAttribute& publishable_attribute) {
     ChaosWriteLock rl(mutext_map_pub);
     map_publishable_element.insert(PublishableElementMapPair(publishable_dataset.dataset->getDatasetName(),

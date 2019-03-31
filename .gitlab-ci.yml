@@ -6,6 +6,7 @@ stages:
   - publish
 
 before_script:
+  - export GNOW=$(date +"%Y%m%d")
   - export NOW=$(date +"%Y%m%d-%H%M%S")
   - export TAR_NAME_POSTFIX=$NOW
   - export SYS=`uname -s`
@@ -24,8 +25,10 @@ build_u_14_04_gcc49:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake  -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
@@ -45,8 +48,10 @@ build_u_14_04_gcc49:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_14_04_gcc49:
@@ -60,6 +65,8 @@ test_u_14_04_gcc49:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - apt-get update
     - apt-get -y install lcov gcovr
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
@@ -79,7 +86,7 @@ test_u_14_04_gcc49:
       -Dsonar.cfamily.build-wrapper-output=bw-output
       -Dsonar.cfamily.threads=$NPROC
       -Dsonar.cfamily.gcov.reportsPath=.
-      -Dsonar.tests=CHAOSFrameworkTests/FrameworkTest
+      -Dsonar.tests=TestFramework
       -Dsonar.cxx.xunit.provideDetails=true
       -Dsonar.cxx.xunit.reportPath=report_test.xml
   artifacts:
@@ -88,8 +95,10 @@ test_u_14_04_gcc49:
     expire_in: 2 hour
   coverage: /^TOTAL.*\s+(\d+\%)$/
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_u_16_04_gcc5:
@@ -101,6 +110,8 @@ build_u_16_04_gcc5:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
     - make clean
@@ -117,8 +128,10 @@ build_u_16_04_gcc5:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_16_04_gcc5_test:
@@ -132,6 +145,8 @@ test_u_16_04_gcc5_test:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
+  - git config --global user.name "Claudio Bisegni"
+  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
   - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
   - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
   - export HEAPCHECK=normal
@@ -141,8 +156,10 @@ test_u_16_04_gcc5_test:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_u_18_04_gcc73:
@@ -154,6 +171,8 @@ build_u_18_04_gcc73:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
     - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
     - make clean
@@ -170,8 +189,10 @@ build_u_18_04_gcc73:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_18_04_gcc73:
@@ -185,6 +206,8 @@ test_u_18_04_gcc73:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
+  - git config --global user.name "Claudio Bisegni"
+  - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
   - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
   - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
   - export HEAPCHECK=normal
@@ -194,11 +217,13 @@ test_u_18_04_gcc73:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
-build_c7:
+build_dbg_c7:
   tags:
     - chaos
     - docker
@@ -207,8 +232,10 @@ build_c7:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DUSE_GPT=ON .
+    - cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
     - make clean
     - make  -j $NPROC
     - make install
@@ -223,13 +250,15 @@ build_c7:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
-test_c7:
+test_dbg_c7:
   dependencies:
-    - build_c7
+    - build_dbg_c7
   tags:
     - chaos
     - docker
@@ -238,6 +267,8 @@ test_c7:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
@@ -247,44 +278,15 @@ test_c7:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
-  retry: 2
-
-deploy_c7:
-  dependencies:
-    - build_c7
-  allow_failure: true
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-    - infncc
-    - lnf
-  stage: deploy
-  image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
-  script:
-    - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
-    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
-    - ls -la
-    - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
-    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
-    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$CI_COMMIT_REF_NAME/x86_64/centos/7/latest"
-    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
-  only:
     refs:
-      - master
-      - developemnt
-      - experimental
       - web
     variables:
-      - $RELEASE_OP == "deploy"
+      - $BUILD_TYPE == "test"
   retry: 2
 
 regression_c7:
   dependencies:
-    - test_c7
+    - test_dbg_c7
   allow_failure: true
   tags:
     - chaos
@@ -296,6 +298,8 @@ regression_c7:
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
     - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
     - ls -la
@@ -303,13 +307,107 @@ regression_c7:
     - ssh chaosweb@opensource.lnf.infn.it "mkdir -p /var/www/html/binary/chaos/short_branch/x86_64/centos/7"
     - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
     - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/short_branch/x86_64/centos/7/*"
-    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/short_branch/x86_64/centos/7/latest"
-    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "variables[CHAOS_DISTRIB_NAME]=short_branch/x86_64/centos/7/latest" -F "ref=$REGRESSION_BRANCH" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
+    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/short_branch/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/short_branch/x86_64/centos/7/latest.tar.gz"
+    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "variables[CHAOS_DISTRIB_NAME]=short_branch/x86_64/centos/7/latest.tar.gz" -F "ref=$REGRESSION_BRANCH" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
   only:
     refs:
       - web
     variables:
-      - $RELEASE_OP == "regression"
+      - $BUILD_TYPE == "test"
+      - $TARGET_TYPE == "regression"
+  retry: 2
+
+build_rel_c7:
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: build
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
+  script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+    - tools/chaos_clean.sh
+    - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON .
+    - make clean
+    - make  -j $NPROC
+    - make install
+  cache:
+    key: x86_64_centos7_$CI_BUILD_REF_NAME
+    paths:
+        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+  artifacts:
+    paths:
+        - chaos
+        - CHAOSFrameworkTests
+        - 'chaos-distrib-x86_64-Linux'
+    expire_in: 8 hour
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
+  retry: 2
+
+test_rel_c7:
+  dependencies:
+    - build_rel_c7
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+  stage: test
+  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
+  script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+    - export HEAPCHECK=normal
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
+  artifacts:
+    paths:
+        - 'chaos-distrib-x86_64-Linux'
+    expire_in: 8 hour
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
+  retry: 2
+
+deploy_rel_c7:
+  dependencies:
+    - build_rel_c7
+  allow_failure: false
+  tags:
+    - chaos
+    - docker
+    - linux
+    - fast
+    - infncc
+    - lnf
+  stage: deploy
+  image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
+  script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+    - echo "Prearing deploy for chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz"
+    - tar cfz chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaos-distrib-x86_64-Linux
+    - ls -la
+    - scp chaos-distrib-x86_64-centos7_$TAR_NAME_POSTFIX.tar.gz chaosweb@opensource.lnf.infn.it:/var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz
+    - ssh chaosweb@opensource.lnf.infn.it "rm -f /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest.tar.gz"
+    - ssh chaosweb@opensource.lnf.infn.it "ln -sf /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/chaos-distrib-$TAR_NAME_POSTFIX.tar.gz /var/www/html/binary/chaos/$BUILD_ENVIRONMENT/x86_64/centos/7/latest.tar.gz"
+    - curl -X POST -F token=d42ffdee47536fd7cfac5ec4df9af2 -F "ref=$CI_COMMIT_REF_NAME" https://baltig.infn.it/api/v4/projects/1328/trigger/pipeline
+  environment:
+    name: $BUILD_ENVIRONMENT
+  only:
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "deploy"
   retry: 2
 
 build_u_14_04_gcc48_c98:
@@ -321,8 +419,10 @@ build_u_14_04_gcc48_c98:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
+    - cmake -DCHAOS_ENABLE_C11=OFF -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
     - make clean
     - make  -j $NPROC
     - make install
@@ -335,8 +435,10 @@ build_u_14_04_gcc48_c98:
         - 'chaos-distrib-x86_64-Linux'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 test_u_14_04_gcc48_c98:
@@ -350,13 +452,17 @@ test_u_14_04_gcc48_c98:
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
 build_arm:
@@ -368,8 +474,10 @@ build_arm:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_TARGET=armhf -DCHAOS_MDS=OFF .
+    - cmake -DCHAOS_TARGET=armhf -DCHAOS_AGENT=OFF -DCHAOS_MDS=OFF .
     - make clean
     - make  -j $NPROC
     - make install
@@ -382,58 +490,68 @@ build_arm:
         - 'chaos-distrib-armhf'
     expire_in: 8 hour
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"
   retry: 2
 
-build_x86_64_llvm:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: build
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  script:
-    - tools/chaos_clean.sh
-    - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
-    - make clean
-    - make  -j $NPROC
-    - make install
-  cache:
-    key: llvm_x86_64_$CI_BUILD_REF_NAME
-    paths:
-        - /builds/chaos-lnf-control/chaosframework/config/CACHE/
-  artifacts:
-    paths:
-        - chaos
-        - CHAOSFrameworkTests
-        - 'chaos-distrib-x86_64-Linux'
-    expire_in: 8 hour
-  only:
-    - tags
-    - web
-  retry: 2
+# build_x86_64_llvm:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#     - fast
+#   stage: build
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   script:
+#     - git config --global user.name "Claudio Bisegni"
+#     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+#     - tools/chaos_clean.sh
+#     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
+#     - make clean
+#     - make  -j $NPROC
+#     - make install
+#   cache:
+#     key: llvm_x86_64_$CI_BUILD_REF_NAME
+#     paths:
+#         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
+#   artifacts:
+#     paths:
+#         - chaos
+#         - CHAOSFrameworkTests
+#         - 'chaos-distrib-x86_64-Linux'
+#     expire_in: 8 hour
+#   only:
+#     refs:
+#       - web
+#     variables:
+#       - $BUILD_TYPE == "test"
+#   retry: 2
 
-test_x86_64_llvm:
-  tags:
-    - chaos
-    - docker
-    - linux
-    - fast
-  stage: test
-  image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
-  dependencies:
-    - build_x86_64_llvm
-  script:
-    - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
-    - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
-  only:
-    - tags
-    - web
-  retry: 2
+# test_x86_64_llvm:
+#   tags:
+#     - chaos
+#     - docker
+#     - linux
+#     - fast
+#   stage: test
+#   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
+#   dependencies:
+#     - build_x86_64_llvm
+#   script:
+#     - git config --global user.name "Claudio Bisegni"
+#     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+#     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
+#     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+#     - export HEAPCHECK=normal
+#     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
+#   only:
+#     refs:
+#       - web
+#     variables:
+#       - $BUILD_TYPE == "test"
+#   retry: 2
 
 exp_llvm_scan_coverity:
   tags:
@@ -444,6 +562,8 @@ exp_llvm_scan_coverity:
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
+    - git config --global user.name "Claudio Bisegni"
+    - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - mkdir -p /tmp/cov-int
     - cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
@@ -457,7 +577,11 @@ exp_llvm_scan_coverity:
         - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   only:
-    - schedules
+    refs:
+      - schedules
+      - web
+    variables:
+      - $BUILD_TYPE == "coverity"
   retry: 2
 
 pages:
@@ -472,5 +596,7 @@ pages:
       - public
     expire_in: 7 days
   only:
-    - tags
-    - web
+    refs:
+      - web
+    variables:
+      - $BUILD_TYPE == "test"

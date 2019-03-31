@@ -35,7 +35,7 @@
 #include "cache_system_types.h"
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace cache_system {
             
             typedef chaos::common::data::BufferSPtr CacheData;
@@ -49,8 +49,8 @@ namespace chaos {
              to all CacheDriver instance.
              */
             class CacheDriver :
-			public common::utility::NamedService,
-			public common::utility::InizializableService {
+            public chaos::common::utility::NamedService,
+			public chaos::common::utility::InizializableService {
 			protected:
 				CacheDriverSetting *cache_settings;
 				CacheDriver(std::string alias);
@@ -66,11 +66,9 @@ namespace chaos {
                 virtual int getData(const ChaosStringVector&    keys,
                                     MultiCacheData&             multi_data) = 0;
 
-                virtual int addServer(std::string server_desc) = 0;
+                virtual int addServer(const std::string& server_desc) = 0;
                 
-                virtual int removeServer(std::string server_desc) = 0;
-				
-				virtual int updateConfig() = 0;
+                virtual int removeServer(const std::string& server_desc) = 0;
 				
 				//! init
 				/*!

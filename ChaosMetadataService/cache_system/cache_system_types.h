@@ -24,7 +24,7 @@
 #include "../worker/DataWorker.h"
 
 namespace chaos {
-	namespace data_service {
+	namespace metadata_service {
 		namespace cache_system {
 			
 			typedef std::vector<std::string>			CacheServerList;

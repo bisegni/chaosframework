@@ -38,8 +38,8 @@ socket_service(NULL),
 message_counter(0) {
     monitor_info.monitor_socket = NULL;
     default_configuration["ZMQ_LINGER"] = "0";
-    default_configuration["ZMQ_RCVHWM"] = "1";
-    default_configuration["ZMQ_SNDHWM"] = "1";
+    default_configuration["ZMQ_RCVHWM"] = "3";
+    default_configuration["ZMQ_SNDHWM"] = "3";
     default_configuration["ZMQ_RCVTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
     default_configuration["ZMQ_SNDTIMEO"] = boost::lexical_cast<std::string>(DirectIOConfigurationKey::GlobalDirectIOTimeoutinMSec);
     default_configuration["ZMQ_RECONNECT_IVL"] = "5000";
@@ -277,6 +277,7 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
             ZMQBaseClass::resetOutputQueue(socket_service,
                                            default_configuration,
                                            chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+
         }
     }
     return err;
@@ -311,6 +312,7 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
             ZMQBaseClass::resetOutputQueue(socket_service,
                                            default_configuration,
                                            chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+
         }
     }
     return err;
@@ -327,7 +329,7 @@ bool ZMQDirectIOClientConnection::ensureSocket() {
 //send data with zmq tech
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
-                                               DirectIODataPackSPtr data_pack) {
+											   chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
@@ -340,8 +342,8 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
 //send data with zmq tech
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
-                                               DirectIODataPackSPtr data_pack,
-                                               DirectIODataPackSPtr& synchronous_answer) {
+                                               chaos::common::direct_io::DirectIODataPackSPtr data_pack,
+											   chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);
     uint16_t current_counter = data_pack->header.dispatcher_header.fields.counter = message_counter++;

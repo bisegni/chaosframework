@@ -25,28 +25,23 @@ using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 
 AbstractApiGroup::AbstractApiGroup(const std::string& name):
-NamedService(name),
-subservice(NULL){}
+NamedService(name){}
 
 AbstractApiGroup::~AbstractApiGroup(){}
 
 void AbstractApiGroup::init(void *init_data)  {
-    subservice = static_cast<ApiSubserviceAccessor*>(init_data);
-    if(!subservice) throw chaos::CException(-1, "No subsystem has been set", __PRETTY_FUNCTION__);
-    
     for(ApiListIterator it = api_instance.begin();
         it != api_instance.end();
         it++) {
-        ChaosSharedPtr<AbstractApi> api = *it;
         
         //initilize api
-        InizializableService::initImplementation(api.get(),
-                                                 static_cast<void*>(subservice),
-                                                 api->getName(),
+        InizializableService::initImplementation((*it).get(),
+                                                 NULL,
+                                                 (*it)->getName(),
                                                  __PRETTY_FUNCTION__);
         //connect parent group to api
-        api->parent_group = this;
+        (*it)->parent_group = this;
     }
 }
 
-void AbstractApiGroup::deinit()   {}
+void AbstractApiGroup::deinit() {}

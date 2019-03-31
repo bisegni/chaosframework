@@ -35,7 +35,9 @@
 
 #include <boost/thread.hpp>
 
+#ifndef _WIN32
 #include <sys/resource.h>
+#endif
 
 namespace chaos {
     namespace common{
@@ -53,6 +55,10 @@ namespace chaos {
             
             //retry for 12h
 #define HELLO_PHASE_RETRY            12*3600
+
+#define HEALT_FIRE_TIMEOUT 6 //timeout for next healt fire for every registered node
+#define HEALT_FIRE_SLOTS 3 //define slot by a seconds
+
 //            struct ProcInfo {
 //                double usr_time;
 //                double sys_time;
@@ -95,12 +101,13 @@ namespace chaos {
                 
                 //!keep track of how is the start valu eof the counter
                 unsigned int fire_slot;
-                
+                int64_t pckt_id;
                 NodeHealtSet(const std::string& _node_uid):
                 has_changed(false),
                 node_uid(_node_uid),
                 node_publish_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
                 fire_slot(0),
+                pckt_id(0),
                 startup_time(chaos::common::utility::TimingUtil::getTimeStamp()){}
                 
                 ~NodeHealtSet() {
@@ -158,19 +165,23 @@ namespace chaos {
 //                uint64_t last_sampling_time;
                 //! update the information about process
                 inline void updateProcInfo();
+                //! timer handler for check what slot needs to be fired
+                void timeout();
             protected:
                 //! default constructor and destructor
                 HealtManager();
                 ~HealtManager();
                 
-                //! timer handler for check what slot needs to be fired
-                void timeout();
+               
                 chaos::common::data::CDWShrdPtr prepareNodeDataPack(NodeHealtSet& node_health_set,
                                                                     uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
                 int sayHello();
+                
             public:
+         
+
                 //! inherited method
                 void init(void *init_data);
                 

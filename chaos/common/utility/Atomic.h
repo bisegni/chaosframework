@@ -69,13 +69,21 @@ namespace chaos {
 			static inline
 			atomic_int_type atomic_increment(volatile atomic_int_type* p)
 			{
+#ifndef _WIN32
 				return boost::interprocess::detail::atomic_inc32(p);
+#else
+				return boost::interprocess::ipcdetail::atomic_inc32(p);
+#endif
 			}
 			
 			static inline
 			atomic_int_type atomic_decrement(volatile atomic_int_type* p)
 			{
+#ifndef _WIN32
 				return boost::interprocess::detail::atomic_decrement(p);
+#else
+				return boost::interprocess::ipcdetail::atomic_dec32(p);
+#endif
 			}
 #endif
 		}

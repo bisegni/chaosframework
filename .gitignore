@@ -1,3 +1,5 @@
+.vscode/
+ccs/compile_commands.json
 .scannerwork
 asan_leak_suppression.txt
 ccs_error
@@ -27,7 +29,7 @@ ccs/*moc_*
 ccs/*ui_*
 ccs/.qmake.stash
 example/build-UIToolkitTest-*
-ccs/ccs.pro.user
+ccs/ccs.pro.user*
 build-ccs-*
 *nbproject/private/*
 build
@@ -86,3 +88,6 @@ moc_*.cpp
 ccs_automoc.cpp
 ccs/ccs
 ccs/qt_build*
+vendor
+composer.lock
+config/localhost/#cu.cfg#

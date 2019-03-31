@@ -23,9 +23,11 @@
 #define __CHAOSFramework__C1FF86D_40E3_45CC_9BAD_551F0A5629B7_ProcStat_h
 
 #include <stdint.h>
-
+#ifndef _WIN32
 #include <sys/resource.h>
-
+#else
+#include <WinSock2.h>
+#endif
 namespace chaos {
     namespace common {
         namespace utility {

@@ -29,7 +29,8 @@ using namespace chaos::common::metadata_logging;
 
 #pragma mark StandardLoggingChannel
 StandardLoggingChannel::StandardLoggingChannel():
-AbstractMetadataLogChannel(){}
+AbstractMetadataLogChannel(),
+current_logging_level(LogLevelInfo){}
 
 StandardLoggingChannel::~StandardLoggingChannel() {}
 
