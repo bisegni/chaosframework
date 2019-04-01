@@ -326,7 +326,7 @@ int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
         end = indexs.end();
         it != end;
         it ++){
-            index_data.appendCDataWrapperToArray(*it);
+            index_data.appendCDataWrapperToArray(*(*it));
         }
     index_data.finalizeArrayForKey("indexes");
 
