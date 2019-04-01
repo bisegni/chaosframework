@@ -322,11 +322,11 @@ int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
     DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
 
     //fill the query CDataWrapper
-    for(VectorCDWShrdPtrIterator it = indexs.begin(),
-        end = indexs.begin();
+    for(VectorCDWShrdPtrConstIterator it = indexs.begin(),
+        end = indexs.end();
         it != end;
         it ++){
-            index_data.appendCDataWrapperToArray(*index);
+            index_data.appendCDataWrapperToArray(*it);
         }
     index_data.finalizeArrayForKey("indexes");
 
