@@ -284,6 +284,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
+    DIODCCLDBG_<<"Send query:"<<query_description.getJSONString();
     if((err = sendServiceData(MOVE(data_pack), answer))) {
         //error getting last value
         DIODCCLERR_ << CHAOS_FORMAT("Error executing query for key %1%",%key);

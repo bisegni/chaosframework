@@ -263,7 +263,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         }
         
         //add tags
-        if(meta_tags.size()) {
+        if(!meta_tags.empty()) {
             mongo::BSONArrayBuilder tags_arr_b;
             for(auto& it: meta_tags) {
                 tags_arr_b << it;
