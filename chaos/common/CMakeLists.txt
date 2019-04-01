@@ -239,6 +239,7 @@ SET(common_lib_src ${common_lib_src}
                     io/IODirectIODriver.cpp
                     io/ManagedDirectIODataDriver.cpp
                     io/QueryCursor.cpp
+                    io/QueryIndexCursor.cpp
                     io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
