@@ -41,9 +41,9 @@ namespace chaos {
                 typedef struct DataSearch {
                     std::string key;
                     ChaosStringSet meta_tags;
-                    CUInt64 timestamp_from;
-                    CUInt64 timestamp_to;
-                    CUInt32 page_len;
+                    uint64_t timestamp_from;
+                    uint64_t timestamp_to;
+                    uint32_t page_len;
                 } DataSearch;
                 
                 //!CHaos abstraction for store time series data wintin a persistence sublayer

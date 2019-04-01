@@ -78,7 +78,7 @@ batch_timeout(DEFAULT_BATCH_TIMEOUT_MS),
 blob_set_uptr(new std::set<DaqBlobSPtr>()){
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     try{
-        batch_size = boost::lexical_cast<CUInt32>(obj_stoarge_kvp["batch_size"]);
+        batch_size = boost::lexical_cast<uint32_t>(obj_stoarge_kvp["batch_size"]);
     } catch(...) {
         batch_size = DEFAULT_BATCH_SIZE;
     }

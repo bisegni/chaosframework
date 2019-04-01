@@ -108,7 +108,7 @@ using ChaosFunction = std::function< R >;
 #define CInt64  int64_t
 #define CUint64 uint64_t
 #define CInt32  int32_t
-#define CUint32 uint32_t
+#define CUInt32 uint32_t
 #define CDouble double
 
 #include <boost/shared_ptr.hpp>
