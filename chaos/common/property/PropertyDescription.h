@@ -80,7 +80,7 @@ namespace chaos {
                 if(serialized_data == NULL) return;
                 Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_name", "");
                 Subclass::dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_description", "");
-                Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
+                Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", DataType::TYPE_UNDEFINED);
                 Subclass::dataWrapped().flag = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
                 if(serialized_data->hasKey("property_value")){
                     Subclass::dataWrapped().property_value = serialized_data->getVariantValue("property_value");

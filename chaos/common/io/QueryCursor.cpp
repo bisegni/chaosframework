@@ -171,6 +171,7 @@ const bool QueryCursor::hasNext() {
         case QueryPhaseEnded:
             return result_page.hasNext();
     }
+    return false;
 }
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next()  {

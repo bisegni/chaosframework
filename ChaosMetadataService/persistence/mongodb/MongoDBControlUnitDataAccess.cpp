@@ -1106,7 +1106,7 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
                     it != end;
                     it++) {
                     const std::string& pg_name = it->getGroupName();
-                    if(pg_name.compare(ControlUnitPropertyKey::GROUP_NAME) == 0) {
+                    if(pg_name.compare(ControlUnitPropertyKey::P_GROUP_NAME) == 0) {
                         if(it->hasProperty(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
                             //we have ageing data
                             control_unit_ageing_time = (uint32_t)it->getPropertyValue(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING).asInt32();
@@ -1166,31 +1166,6 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
     } catch (const CException &e) {
         MDBCUDA_ERR << e.what();
         err = e.errorCode;
-    }
-    return err;
-}
-
-int MongoDBControlUnitDataAccess::eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
-                                                               uint64_t unit_ts) {
-    int err = 0;
-    try {
-        mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << control_unit_id <<
-                                DataPackCommonKey::DPCK_TIMESTAMP << BSON( "$lte" << mongo::Date_t(unit_ts)) <<
-                                "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr()))));
-        DEBUG_CODE(MDBCUDA_DBG<<log_message(__func__,
-                                            "delete",
-                                            DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                    q.jsonString()));)
-        //remove in unacknowledge way if something goes wrong successive query will delete it
-        if((err = connection->remove(MONGO_DB_COLLECTION_NAME("daq"),
-                                     q,
-                                     false,
-                                     &mongo::WriteConcern::unacknowledged))){
-            MDBCUDA_ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% up to %2%", %control_unit_id%unit_ts);
-        }
-    } catch (const mongo::DBException &e) {
-        MDBCUDA_ERR << e.what();
-        err = e.getCode();
     }
     return err;
 }

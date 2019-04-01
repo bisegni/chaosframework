@@ -133,6 +133,12 @@ x = hasOption(y);
         void preParseStartupParameters();
         //! C and C++ attribute parser
         /*!
+         Specialized option for startup c and cpp program main options parameter, this mthdo will
+         allow to use unregistered parameter that will be ignored
+         */
+        void parseStartupParametersAllowingUnregistered(int, const char* argv[]);
+        //! C and C++ attribute parser
+        /*!
          Specialized option for startup c and cpp program main options parameter
          */
         void parseStartupParameters(int, const char* argv[]);

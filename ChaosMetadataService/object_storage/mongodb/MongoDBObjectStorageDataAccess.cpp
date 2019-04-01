@@ -27,7 +27,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 
-using namespace chaos::data_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::mongodb;
 
 
 #define INFO INFO_LOG(MongoDBObjectStorageDataAccess)
@@ -45,8 +45,8 @@ using namespace chaos::common::batch_command;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 using namespace chaos::service_common::persistence::mongodb;
-using namespace chaos::data_service::object_storage::mongodb;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::mongodb;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
@@ -212,7 +212,7 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
         builder << "$or" << BSON_ARRAY(BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$exists" << false)) << BSON(chaos::DataPackCommonKey::DPCK_DATASET_TAGS << BSON("$eq" << mongo::BSONArrayBuilder().arr())));
         mongo::BSONObj q = builder.obj();
         
-        DEBUG_CODE(DBG<<log_message("deleteObject",
+        DEBUG_CODE(DBG<<log_message(__func__,
                                     "delete",
                                     DATA_ACCESS_LOG_1_ENTRY("Query",
                                                             q.jsonString()));)
@@ -250,20 +250,20 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         
         if(reverse_order == false) {
             q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                     chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
-                                                                      "$lte" << mongo::Date_t(timestamp_to)) <<
-                     run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-                     counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
+            chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
+                                                             "$lte" << mongo::Date_t(timestamp_to)) <<
+            run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
+            counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
         } else {
             q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
-                                                                  "$gte" << mongo::Date_t(timestamp_to)) <<
-                 run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
-                 counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
+            chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
+                                                             "$gte" << mongo::Date_t(timestamp_to)) <<
+            run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
+            counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
         }
         
         //add tags
-        if(meta_tags.size()) {
+        if(!meta_tags.empty()) {
             mongo::BSONArrayBuilder tags_arr_b;
             for(auto& it: meta_tags) {
                 tags_arr_b << it;
@@ -318,6 +318,22 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         err = e.getCode();
     }
     return err;
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
+                                                    VectorObject& found_object_page,
+                                                    chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+    
+                                                        return 0;
+}
+
+//inhertied method
+int MongoDBObjectStorageDataAccess::getObjectByIndex(const VectorObject& search,
+                                                     VectorObject& found_object_page) {
+                                    return 0;
+
+    
 }
 
 int MongoDBObjectStorageDataAccess::countObject(const std::string& key,

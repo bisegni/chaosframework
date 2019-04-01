@@ -61,7 +61,7 @@ namespace chaos{
 					std::string driver_uuid;
 					
                     //! index of the accessor for the driver
-                    uint accessor_index;
+                    unsigned int accessor_index;
 
                     
                     //! Number of the command sent
@@ -95,7 +95,7 @@ namespace chaos{
                     DriverQueueType *command_queue;
                     
                     //Private constructor
-                    DriverAccessor(uint _accessor_index);
+                    DriverAccessor(unsigned int _accessor_index);
                     
                     //Private destructor
                     ~DriverAccessor();

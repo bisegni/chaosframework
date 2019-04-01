@@ -26,7 +26,7 @@
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace data_service {
+            namespace metadata_service {
 
                     //! api group for the managment of the UnitServer
                 DECLARE_CLASS_FACTORY(DataServiceApiGroup, AbstractApiGroup) {

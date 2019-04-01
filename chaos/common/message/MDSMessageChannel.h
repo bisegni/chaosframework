@@ -31,8 +31,8 @@ namespace chaos {
     namespace common {
         namespace message {
             
-            using namespace std;
-            using namespace chaos::common::data;
+          //  using namespace std;
+//using namespace chaos::common::data;
             //! Message Channel specialize for metadataserver comunication
             /*!
              This class represent a message chanel for comunication with the Metadata Server
@@ -68,7 +68,7 @@ namespace chaos {
                 void sendHeartBeatForDeviceID(const std::string& identification_id);
                 
                 //!Send echo message to one of mds
-                int sendEchoMessage(CDWUniquePtr data,
+                int sendEchoMessage(chaos::common::data::CDWUniquePtr data,
                                     chaos::common::data::CDWUniquePtr& result);
                 
                 //! Send Unit server registration to MDS
@@ -78,7 +78,7 @@ namespace chaos {
                  \param requestCheck flasg the message has request if it is true
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
-                int sendNodeRegistration(CDWUniquePtr node_description,
+                int sendNodeRegistration(chaos::common::data::CDWUniquePtr node_description,
                                          bool requestCheck = false,
                                          uint32_t millisec_to_wait = 5000);
                 
@@ -89,7 +89,7 @@ namespace chaos {
                  \param requestCheck flasg the message has request if it is true
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
-                int sendNodeLoadCompletion(CDWUniquePtr node_information,
+                int sendNodeLoadCompletion(chaos::common::data::CDWUniquePtr node_information,
                                            bool requestCheck = false,
                                            uint32_t millisec_to_wait = 5000);
                 
@@ -101,12 +101,12 @@ namespace chaos {
                  \param millisec_to_wait delay after wich the wait is interrupt
                  */
                 
-                int sendUnitServerCUStates(CDWUniquePtr deviceDataset,
+                int sendUnitServerCUStates(chaos::common::data::CDWUniquePtr deviceDataset,
                                            bool requestCheck = false,
                                            uint32_t millisec_to_wait=5000);
                 
                 //!sendNode heartbeat
-                int sentNodeHealthStatus(CDWUniquePtr node_health_data,
+                int sentNodeHealthStatus(chaos::common::data::CDWUniquePtr node_health_data,
                                          bool request_check = false,
                                          uint32_t millisec_to_wait=5000);
                 
@@ -140,7 +140,7 @@ namespace chaos {
                  \return error code
                  */
                 int getLastDatasetForDevice(const std::string& identificationID,
-                                            CDWUniquePtr& device_definition,
+                                            chaos::common::data::CDWUniquePtr& device_definition,
                                             uint32_t millisec_to_wait=5000);
                 
                 //! Get full node description
@@ -152,13 +152,13 @@ namespace chaos {
                  \return error code
                  */
                 int getFullNodeDescription(const std::string& identificationID,
-                                           CDWUniquePtr& device_definition,
+                                           chaos::common::data::CDWUniquePtr& device_definition,
                                            uint32_t millisec_to_wait=5000);
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
                  */
-                int getDataDriverBestConfiguration(CDWUniquePtr& device_definition,
+                int getDataDriverBestConfiguration(chaos::common::data::CDWUniquePtr& device_definition,
                                                    uint32_t millisec_to_wait=5000);
                 
                 //!Create a new snapshot

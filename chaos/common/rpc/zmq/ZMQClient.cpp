@@ -56,7 +56,9 @@ static void my_free (void *data, void *hint) {
 ZMQClient::ZMQClient(const string& alias):
 RpcClient(alias),
 zmq_context(NULL),
-zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){}
+zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){    
+    seq_id=0;
+}
 
 ZMQClient::~ZMQClient(){}
 
@@ -65,6 +67,7 @@ ZMQClient::~ZMQClient(){}
  */
 void ZMQClient::init(void *init_data) {
     CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
+    seq_id=0;
     ZMQC_LAPP << "initialization";
     int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
     ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";

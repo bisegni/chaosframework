@@ -52,9 +52,9 @@ base_source=`basename $source`
 echo "* md5: $md5"
 for s in $list;do
      if [ -n "$dest" ];then
-     	rmd5=`ssh $user@$s "md5sum $dest/$base_source|cut -d ' ' -f 1"`
+     	rmd5=`ssh $user@$s "if [ -e $dest/$base_source ]; then md5sum $dest/$base_source|cut -d ' ' -f 1; fi"`
      else
-     	 rmd5=`ssh $user@$s "md5sum $base_source|cut -d ' ' -f 1"`
+     	 rmd5=`ssh $user@$s "if [ -e $dest/$base_source ]; then md5sum $base_source|cut -d ' ' -f 1;fi"`
 
     fi
     if ! [ "$rmd5" == "$md5" ];then

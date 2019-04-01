@@ -26,6 +26,9 @@ using namespace std;
 using namespace boost;
 using namespace chaos;
 using namespace chaos::common::event;
+#ifdef _WIN32
+using namespace chaos::common;
+#endif
 
 #define DEFAULT_ALERT_EVENT_PORT        5000
 #define DEFAULT_INSTRUMENT_EVENT_PORT   5001

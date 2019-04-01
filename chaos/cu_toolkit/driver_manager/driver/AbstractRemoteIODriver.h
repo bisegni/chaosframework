@@ -37,8 +37,8 @@
 #include <boost/multi_index/hashed_index.hpp>
 
 #define AUTHORIZATION_KEY           "message_data"
-#define INIT_HARDWARE_PARAM         "conn_param"
-#define OPCODE_HARDWARE_PARAM       "opc_param"
+#define INIT_HARDWARE_PARAM         "driver_param"
+#define OPCODE_HARDWARE_PARAM       "device_param"
 #define AUTHORIZATION_STATE         "authorization_state"
 #define CONFIGURATION_STATE         "configuration_state"
 #define MESSAGE                     "msg"
@@ -155,7 +155,20 @@ namespace chaos {
                            message_response->isInt32Value("err")) {
                             int err;
                             if((err=message_response->getInt32Value("err")) != 0) {
-                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<err;
+                                // handle the case when the CU attempt to reconnect to an already existing driver
+                                if(message_response->hasKey(MESSAGE_URI) &&
+                                    message_response->isStringValue(MESSAGE_URI)) {
+                                    remote_uri_instance = message_response->getStringValue(MESSAGE_URI);
+                                    if(remote_uri_instance.size()>0){
+                                        AbstractRemoteIODriver_INFO <<" Returned not zero, Reconnecting  err="<<message_response->getJSONString() ;
+                                        return true;
+                                    }
+                                } else {
+
+                                    remote_uri_instance.clear();
+                                }
+                                AbstractRemoteIODriver_ERR <<" Returned not zero err="<<message_response->getJSONString();
+
                                 return false;
                             }
                         }
@@ -324,19 +337,19 @@ namespace chaos {
                             //error msg key is mandatory
                             //EndpointType::sendError(connection_identifier,
                             //                        -1, "message field is mandatory", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field is mandatory on connection, received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         } else if(message->isCDataWrapperValue(MESSAGE) == false) {
                             //error message need to be an object
                             //EndpointType::sendError(connection_identifier,
                             //                        -2, "message field need to be an object type", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]Message field need to be an object type, received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         } else if(message->hasKey(REQUEST_IDENTIFICATION)) {
                             //we have a request
                             if(message->isInt32Value(REQUEST_IDENTIFICATION) == false) {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -3, "request_id field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type", %connection_identifier);
+                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]request_id field need to be a int32 type,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                             }  else {
                                 //we can forward
                                 const uint32_t req_index = message->getUInt32Value(REQUEST_IDENTIFICATION);
@@ -349,7 +362,7 @@ namespace chaos {
                                 //error request id need to be a int32 value
                                 //EndpointType::sendError(connection_identifier,
                                 //                        -4, "msg_type field need to be a int32 type", __PRETTY_FUNCTION__);
-                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type", %connection_identifier);
+                                AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]msg_type field need to be a int32 type,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                             }
                             asyncMessageReceived(MOVE(message));
                         } else {
@@ -357,7 +370,7 @@ namespace chaos {
                             //error request id need to be a int32 value
                             //EndpointType::sendError(connection_identifier,
                             //                        -5, "remote layer side message lack of msg_type key", __PRETTY_FUNCTION__);
-                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key", %connection_identifier);
+                            AbstractRemoteIODriver_ERR<< CHAOS_FORMAT("[%1%]remote layer side message lack of msg_type key,received:'%2%'", %connection_identifier%message->getCompliantJSONString());
                         }
                         return 0;
                     }
@@ -451,13 +464,13 @@ namespace chaos {
                             chaos::common::data::CDWShrdPtr message_response;
                             AbstractRemoteIODriver_DBG<<" Authorization OK, configuring...";
                             if((err = _sendRawOpcodeRequest((remote_uri_instance.size()?remote_uri_instance:remote_uri),
-                                                            "init",
+                                                            "driverInit",
                                                             MOVE(conf_msg),
                                                             message_response)) == 0 ){
                                 if(checkConfigurationState(message_response)) {
                                     conn_phase = RDConnectionPhaseConfigured;
                                 } else {
-                                    AbstractRemoteIODriver_ERR<<" Init Fails, Not Configured";
+                                    AbstractRemoteIODriver_ERR<<" driverInit Fails, Not Configured";
                                     err = AR_ERROR_NOT_CONFIGURED;
                                 }
                             }
@@ -474,7 +487,7 @@ namespace chaos {
                             chaos::common::data::CDWUniquePtr deinit_msg(new chaos::common::data::CDataWrapper());
                             chaos::common::data::CDWShrdPtr message_response;
                             if((err = _sendRawOpcodeRequest(remote_uri_instance,
-                                                            "deinit",
+                                                            "driverDeinit",
                                                             MOVE(deinit_msg),
                                                             message_response)) == 0){
                                 // AbstractRemoteIODriver_ERR << CHAOS_FORMAT("[%1%]Error deinitilizing remote driver on connection", %current_connection_identifie());

@@ -30,8 +30,7 @@ using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
 
 //! default consturctor
-ApiManagment::ApiManagment():
-subservices(NULL){}
+ApiManagment::ApiManagment(){}
 
 //! default destructor
 ApiManagment::~ApiManagment() {
@@ -39,8 +38,6 @@ ApiManagment::~ApiManagment() {
 }
 
 void ApiManagment::init(void* init_data)  {
-    subservices = static_cast<ApiSubserviceAccessor*>(init_data);
-    if(!subservices) throw chaos::CException(-1, "NO subservice has been set", __PRETTY_FUNCTION__);
     
 	//register all available api group
 	std::vector<std::string> all_registered_groups;
@@ -51,7 +48,7 @@ void ApiManagment::init(void* init_data)  {
         
         //initialize the api group
         InizializableService::initImplementation(instance,
-                                                 static_cast<void*>(subservices),
+                                                 NULL,
                                                  instance->getName(),
                                                  __PRETTY_FUNCTION__);
         //register the api group
@@ -63,7 +60,6 @@ void ApiManagment::deinit()  {
 }
 
 void ApiManagment::clearGroupList() {
-	CHAOS_ASSERT(subservices)
 	for(ApiGroupListIterator it = installed_api_group_list.begin();
 		it != installed_api_group_list.end();
 		it++) {
@@ -71,7 +67,7 @@ void ApiManagment::clearGroupList() {
         ApiGroupListElement group = *it;
         
         //deregister the action
-		subservices->network_broker_service->deregisterAction((*it).get());
+        NetworkBroker::getInstance()->deregisterAction((*it).get());
         
         //initialize the api group
         InizializableService::deinitImplementation(group.get(),

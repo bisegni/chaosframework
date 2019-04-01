@@ -25,13 +25,21 @@
 #include <string>
 #include <vector>
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-#include <netinet/in.h>
-#include <string.h>
 #include <arpa/inet.h>
+#else
+#include <winsock2.h>
+#include <iphlpapi.h>
+#include <ws2tcpip.h>
+#define bzero(b,len) (memset((b),'\0',(len)),(void) 0)
+#endif
+
+#include <string.h>
+
 #include <stdlib.h>
 #include <chaos/common/global.h>
 

@@ -15,9 +15,7 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineState status){
     switch(status){
-        case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
-            return "Unknown";
-            break;
+    
         case chaos::metadata_service_client::node_monitor::OnlineStateON:
             return "Status ON";
             break;
@@ -28,6 +26,7 @@ std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineSt
             return "No status data found";
             break;
     }
+    return "Unknown";
 }
 
 std::string getDatasetDesc(int dataset_type){

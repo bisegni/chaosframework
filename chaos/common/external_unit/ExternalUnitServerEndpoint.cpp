@@ -23,7 +23,8 @@
 using namespace chaos::common::data;
 using namespace chaos::common::external_unit;
 
-ExternalUnitServerEndpoint::ExternalUnitServerEndpoint() {}
+ExternalUnitServerEndpoint::ExternalUnitServerEndpoint():
+number_of_connection_accepted(-1){}
 
 ExternalUnitServerEndpoint::ExternalUnitServerEndpoint(const std::string& _endpoint_identifier):
 endpoint_identifier(_endpoint_identifier),
@@ -37,10 +38,14 @@ int ExternalUnitServerEndpoint::sendMessage(const std::string& connection_identi
     LMapConnectionReadLock rl;
     do {
         rl = map_connection.getReadLockObject(utility::ChaosLockTypeTry);
+#ifndef _WIN32
         usleep(10000);
+#else
+		Sleep(10);
+#endif
     }while(rl->owns_lock() == false);
     if(map_connection().count(connection_identifier) == 0) return -1;
-    //send data to the coneection
+    //send data to the connection
     return map_connection()[connection_identifier]->sendData(MOVE(message),
                                                              opcode);
 }
@@ -53,7 +58,11 @@ int ExternalUnitServerEndpoint::addConnection(ExternalUnitConnection& new_connec
     LMapConnectionWriteLock wl;
     do {
         wl = map_connection.getWriteLockObject(utility::ChaosLockTypeTry);
-        usleep(10000);
+#ifndef _WIN32
+		usleep(10000);
+#else
+		Sleep(10);
+#endif
     }while(wl->owns_lock() == false);
     map_connection().insert(MapConnectionPair(new_connection.connection_identifier, &new_connection));
     wl->unlock();

@@ -32,6 +32,12 @@
 #include <boost/shared_ptr.hpp>
 #include <utility>
 
+#ifdef _WIN32
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__  __FUNCSIG__
+#endif
+#endif
+
 #if defined(__GNUC__) && (__GNUC__ >= 6) && !defined(__clang__)
 // See libmongoc.hh for details on this diagnostic suppression
 #pragma GCC diagnostic push
@@ -97,6 +103,8 @@ namespace chaos {
                 int setBson(const bson_iter_t *,const bool& val);
                 int setBson(const bson_iter_t * ,const std::string& val);
                 int setBson(const bson_iter_t * ,const void* val);
+                int setBson(const bson_iter_t *v ,const CDataWrapper* val);
+
             public:
                 CDataWrapper();
                 explicit CDataWrapper(const char* mem_ser,
@@ -175,6 +183,8 @@ namespace chaos {
                 bool getBoolValue(const std::string&) const;
                 //get a json value
                 std::string getJsonValue(const std::string&) const;
+                // return key as a double value or nan if cannot convert
+                double getAsRealValue(const std::string& key) const;
 
 #define THROW_TYPE_EXC(type)\
 std::stringstream ss;\

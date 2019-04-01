@@ -28,7 +28,7 @@ using namespace chaos::cu::data_manager::manipulation;
 #define DBG     DBG_LOG(DatasetCacheWrapper)
 #define ERR     ERR_LOG(DatasetCacheWrapper)
 
-DatasetCacheWrapper::DatasetCacheWrapper(DatasetElement::DatasetElementPtr& _dataset_element):
+DatasetCacheWrapper::DatasetCacheWrapper(chaos::cu::data_manager::DatasetElement::DatasetElementPtr& _dataset_element):
 dataset_element(_dataset_element){}
 
 DatasetCacheWrapper::~DatasetCacheWrapper(){}

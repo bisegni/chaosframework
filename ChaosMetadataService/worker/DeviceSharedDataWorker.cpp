@@ -30,9 +30,9 @@
 #include <boost/lexical_cast.hpp>
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service;
-using namespace chaos::data_service::worker;
+using namespace chaos::metadata_service::worker;
 using namespace chaos::service_common::persistence::data_access;
-using namespace chaos::data_service::object_storage::abstraction;
+using namespace chaos::metadata_service::object_storage::abstraction;
 
 
 #define INFO INFO_LOG(DeviceSharedDataWorker)

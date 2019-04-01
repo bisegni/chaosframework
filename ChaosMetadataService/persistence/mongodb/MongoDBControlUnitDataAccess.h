@@ -120,14 +120,11 @@ namespace chaos {
                                                               std::string& control_unit_found,
                                                               uint32_t& control_unit_ageing_time,
                                                               uint64_t& last_ageing_perform_time,
-                                                              uint64_t timeout_for_checking = 30000,
-                                                              uint64_t delay_next_check = 3600000);
+                                                              uint64_t timeout_for_checking,
+                                                              uint64_t delay_next_check);
                     
                     int releaseControlUnitForAgeingManagement(std::string& control_unit_found,
                                                               bool performed);
-                    
-                    int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
-                                                     uint64_t unit_ts);
                     
                     int getNextRunID(const std::string& control_unit_id, int64_t& run_id);
                 };

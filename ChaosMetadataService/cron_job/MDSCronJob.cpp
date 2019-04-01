@@ -20,7 +20,6 @@
  */
 
 #include "MDSCronJob.h"
-
 using namespace chaos::metadata_service::cron_job;
 
 MDSCronJob::MDSCronJob(chaos::common::data::CDataWrapper *param):

@@ -35,6 +35,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::external_unit;
 using namespace chaos::common::external_unit::http_adapter;
 
 #define INFO    INFO_LOG(HTTPServerAdapter)
@@ -45,7 +46,7 @@ using namespace chaos::common::external_unit::http_adapter;
 
 HTTPServerAdapter::HTTPServerAdapter():
 run(false),
-root_connection(0){}
+root_connection(NULL){}
 
 HTTPServerAdapter::~HTTPServerAdapter() {}
 
@@ -71,8 +72,6 @@ void HTTPServerAdapter::init(void *init_data)  {
     root_connection->user_data = new ConnectionMetadata<HTTPServerAdapter>("", this);
     
     mg_set_protocol_http_websocket(root_connection);
-    s_http_server_opts.document_root = "";  // Serve current directory
-    s_http_server_opts.enable_directory_listing = "no";
     //
     CObjectProcessingQueue<ServerWorkRequest>::init(setting.thread_number);
     

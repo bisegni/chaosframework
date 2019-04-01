@@ -44,7 +44,7 @@ auto_remove(_auto_remove){}
 
 #pragma mark PublishingManager Public Method
 
-PublishingManager::PublishingManager(LockableObject<DatasetElementContainer>& _container_dataset):
+PublishingManager::PublishingManager(LockableObject<chaos::cu::data_manager::DatasetElementContainer>& _container_dataset):
 container_dataset(_container_dataset){}
 
 PublishingManager::~PublishingManager(){}

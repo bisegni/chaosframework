@@ -26,6 +26,10 @@ using namespace chaos::agent;
 
 int main(int argc, const char * argv[]) {
     try {
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< int >(OPT_REST_PORT,
+                                                                                              "Port to query process management",
+                                                                                              8071,
+                                                                                              &ChaosAgent::getInstance()->settings.restport);
         //data worker
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,
                                                                                               "Working directory for agent",

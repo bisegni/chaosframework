@@ -28,6 +28,7 @@
 #include <chaos/common/data/structured/Dataset.h>
 
 #include <chaos_service_common/data/data.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
 
 #include <boost/smart_ptr.hpp>
 
@@ -126,18 +127,10 @@ namespace chaos {
                                                                       uint32_t& control_unit_ageing_time,
                                                                       uint64_t& last_ageing_perform_time,
                                                                       uint64_t timeout_for_checking = 30000,
-                                                                      uint64_t delay_next_check = 3600000) = 0;
+                                                                      uint64_t delay_next_check = 60000) = 0;
                     
                     virtual int releaseControlUnitForAgeingManagement(std::string& control_unit_found,
                                                                       bool performed) = 0;
-                    
-                    //!Remove all data befor the unit_ts timestamp
-                    /*!
-                     \param control_unit_id the unique id of the control unit
-                     \param unit_ts is the timestamp befor wich we want to erase all data(included it)
-                     */
-                    virtual int eraseControlUnitDataBeforeTS(const std::string& control_unit_id,
-                                                             uint64_t unit_ts) = 0;
                     
                     //! increment and return the control unit run id
                     virtual int getNextRunID(const std::string& control_unit_id, int64_t& run_id) = 0;

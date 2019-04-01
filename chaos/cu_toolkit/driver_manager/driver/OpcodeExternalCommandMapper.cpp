@@ -21,6 +21,40 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/OpcodeExternalCommandMapper.h>
 using namespace chaos::cu::driver_manager::driver;
+using namespace chaos::common::data;
+#define DBG DBG_LOG(OpcodeExternalCommandMapper)
+
+#define WRITE_ERR_ON_CMD(r, c, m, d)\
+cmd->ret = c;\
+snprintf(cmd->err_msg, 255, "%s", m);\
+snprintf(cmd->err_dom, 255, "%s", d);
+
+#define RETURN_ERROR(r, c, m, d)\
+WRITE_ERR_ON_CMD(r, c, m, d)\
+return cmd->ret;
+
+#define SEND_REQUEST_OPC(opc,c, r,a) {\
+    int err;\
+try { \
+if((err=sendOpcodeRequest(opc,ChaosMoveOperator(r),a))) {\
+WRITE_ERR_ON_CMD(err, -1, "Error from from remote driver", __PRETTY_FUNCTION__);\
+}else {\
+    if(response->hasKey("err")) {\
+    if(response->isInt32Value("err") == false)  {\
+    WRITE_ERR_ON_CMD(c, -3, "'err' key need to be an int32 value", __PRETTY_FUNCTION__);\
+    } else {\
+    c->ret = response->getInt32Value("err");\
+    }\
+    } else {\
+    WRITE_ERR_ON_CMD(c, -2, "'err' key not found on external driver return package", __PRETTY_FUNCTION__);\
+    }}\
+	}\
+    catch (...) \
+    {	\
+DBG << "Exception catched in send request opc" ; \
+WRITE_ERR_ON_CMD(err, -6, "Exception from remote driver", __PRETTY_FUNCTION__);\
+    }\
+}
 
 OpcodeExternalCommandMapper::OpcodeExternalCommandMapper(RemoteIODriverProtocol *_driver_protocol):
 driver_protocol(_driver_protocol){CHAOS_ASSERT(driver_protocol)}
@@ -70,4 +104,30 @@ int OpcodeExternalCommandMapper::sendInitRequest() {
 int OpcodeExternalCommandMapper::sendDeinitRequest() {
     CHAOS_ASSERT(driver_protocol)
     return driver_protocol->sendDeinitRequest();
+}
+
+int OpcodeExternalCommandMapper::sendInit(cu::driver_manager::driver::DrvMsgPtr cmd){
+  common::data::CDWShrdPtr response;
+
+    common::data::CDWUniquePtr init_pack(new CDataWrapper());
+
+    cmd->ret =  0;
+    SEND_REQUEST_OPC("init",cmd, init_pack, response);
+
+    //if(response.get()){DBG << response->getJSONString();}
+
+    return cmd->ret;
+}
+                
+int OpcodeExternalCommandMapper::sendDeinit(cu::driver_manager::driver::DrvMsgPtr cmd){
+      common::data::CDWShrdPtr response;
+
+    common::data::CDWUniquePtr init_pack(new CDataWrapper());
+
+    cmd->ret =  0;
+    SEND_REQUEST_OPC("deinit",cmd, init_pack, response);
+
+    //if(response.get()){DBG << response->getJSONString();}
+
+    return cmd->ret;
 }

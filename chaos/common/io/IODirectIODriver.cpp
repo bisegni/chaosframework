@@ -166,6 +166,7 @@ int IODirectIODriver::storeData(const std::string& key,
         }
     } else {
         DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
+        err++;
     }
     return err;
 }
@@ -303,7 +304,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
                 continue;
             }
             if(connectionFeeder.hasURL(serverDesc)) {
-                IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is laredy instaleld in driver";
+               // IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is already installed in driver";
                 continue;
             }
             IODirectIODriver_LINFO_ << CHAOS_FORMAT("Add server %1% to IODirectIODriver", %serverDesc);

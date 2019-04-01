@@ -19,8 +19,9 @@
  * permissions and limitations under the Licence.
  */
 
-#include "CommandTemplateSubmit.h"
 #include "CommandCommonUtility.h"
+#include "CommandTemplateSubmit.h"
+#include "../../batch/node/SendRpcCommand.h"
 #include "../../batch/node/SubmitBatchCommand.h"
 
 #include <boost/format.hpp>
@@ -44,11 +45,36 @@ AbstractApi("commandTemplateSubmit"){}
 CommandTemplateSubmit::~CommandTemplateSubmit() {}
 
 CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
-    CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -3, "The list of submission task is mandatory")
+    uint64_t command_id = 0;
+    CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -1, "No parameter found");
     
-    GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -2)
     
+    if(api_data->hasKey("direct_mode") &&
+       api_data->isNullValue("direct_mode")){
+        // command is a raw command
+        CHECK_KEY_THROW_AND_LOG(api_data,
+                                NodeDefinitionKey::NODE_UNIQUE_ID,
+                                N_CTS_ERR,
+                                -3,
+                                "The list of submission task is mandatory")
+        N_CTS_DBG <<"Direct command submition:"<<api_data->getJSONString();
+        
+        CreateNewDataWrapper(rpc_command,);
+        rpc_command->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+                                    api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+        rpc_command->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME,
+                                    ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET);
+        
+        rpc_command->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *api_data);
+        
+        command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SendRpcCommand),
+                                                       rpc_command.release());
+        return CDWUniquePtr();
+
+    }
+    CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -4, "The list of submission task is mandatory")
+
     //list of command instance
     CommandInstanceList command_instance_list;
     
@@ -67,7 +93,6 @@ CDWUniquePtr CommandTemplateSubmit::execute(CDWUniquePtr api_data) {
     //if we have reaced this point we should have all instance well formed
     //so we can forward to respective node
     N_CTS_DBG << "Forward all command instance";
-    uint64_t command_id;
     for(CommandInstanceListIterator it = command_instance_list.begin();
         it != command_instance_list.end();
         it++) {

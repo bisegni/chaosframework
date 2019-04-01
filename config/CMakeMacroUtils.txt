@@ -183,7 +183,7 @@ IF (NOT CACHE_DIR)
 
       FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export DYLD_LIBRARY_PATH=\$CHAOS_PREFIX/lib\n")
     ELSE()
-      FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib\n")
+      FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LD_LIBRARY_PATH=\$CHAOS_PREFIX/lib:$CHAOS_PREFIX/lib64\n")
     ENDIF()
     FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export PATH=\$PATH:\$CHAOS_PREFIX/bin\n")
     FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LC_ALL=\"en_US.UTF-8\"\n")
@@ -217,6 +217,11 @@ IF (NOT CACHE_DIR)
 
     execute_process(
       COMMAND ln -sf ./localhost/agent.cfg ./agent.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+
+execute_process(
+      COMMAND ln -sf ./localhost/chaos_root.cfg ./chaos_root.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
       )
 

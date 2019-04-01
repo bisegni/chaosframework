@@ -42,7 +42,9 @@ QuantumSlotScheduler::QuantumSlotScheduler(chaos::common::network::NetworkBroker
 network_broker(_network_broker),
 queue_active_slot(100),
 set_slots_index_quantum(boost::multi_index::get<ss_current_quantum>(set_slots)),
-set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {}
+set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)),
+work_on_scan(false),
+work_on_fetch(false){}
 
 QuantumSlotScheduler::~QuantumSlotScheduler() {}
 

@@ -59,7 +59,7 @@ if [ -z "$listupdate" ];then
 fi
  
 if [ ! -e "$conf" ]; then
-    nok_mesg "You must specify a valid configuration file"
+    nok_mesg "\"$conf\" does not exist!! you must specify a valid configuration file "
     exit 1
 fi
 
@@ -456,12 +456,23 @@ md5=`md5sum $TMPDIR/$name.tgz | cut -d ' ' -f 1`
 extract(){
     host=$1
 
-    
+    info_mesg "extracting in " "$host"
     if ssh $DEPLOY_USER@$host "test -f $DEPLOY_PREFIX_DIR/$name.tgz"; then
 	ver="installed "`date`" MD5:$md5"
-	if ssh $DEPLOY_USER@$host "cd $DEPLOY_PREFIX_DIR;tar xfz $name.tgz;ln -sf $name $dest_prefix;echo \"$ver\" > README.install;rm $name.tgz"; then
+	if ssh $DEPLOY_USER@$host "cd $DEPLOY_PREFIX_DIR;tar xfz $name.tgz"; then
 	    ok_mesg "extracting $name in $host"
+	    if ssh $DEPLOY_USER@$host "cd $DEPLOY_PREFIX_DIR;ln -sf $name $dest_prefix;echo \"$ver\" > README.install;rm $name.tgz"; then
+		ok_mesg "setup&cleanup $name in $host "
+	    else
+		nok_mesg "setup&cleanup $name in $host "
+	    fi
+
+	else
+	    nok_mesg "extracting $name in $host"
 	fi
+
+    else
+	echo "## $DEPLOY_PREFIX_DIR/$name.tgz not present"
     fi
 
 }
@@ -495,6 +506,12 @@ deploy_install(){
 	ok_mesg "agent.cfg configuration $dest_prefix/tools/config/lnf/$cuconfig/agent.cfg"
     else
 	nok_mesg "agent configuration $dest_prefix/tools/config/lnf/$cuconfig/agent.cfg"
+    fi    
+
+    if ssh $DEPLOY_USER@$host "cd $dest_prefix;ln -sf \$PWD/tools/config/lnf/$cuconfig/chaos_root.cfg etc/";then
+	ok_mesg "agent.cfg configuration $dest_prefix/tools/config/lnf/$cuconfig/chaos_root.cfg"
+    else
+	nok_mesg "agent configuration $dest_prefix/tools/config/lnf/$cuconfig/chaos_root.cfg"
     fi    
     
 

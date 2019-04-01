@@ -35,6 +35,7 @@ DEFINE_MDS_COMAMND_ALIAS(ApplyChangeSet)
 ApplyChangeSet::ApplyChangeSet():
 MDSBatchCommand(),
 retry_number(0),
+control_unit_address(NULL),
 cu_id(){}
 
 ApplyChangeSet::~ApplyChangeSet() {}

@@ -38,7 +38,11 @@ DEFINE_MDS_COMAMND_ALIAS(LoadInstanceOnUnitServer)
 
 LoadInstanceOnUnitServer::LoadInstanceOnUnitServer():
 MDSBatchCommand(),
-last_sequence_id(0){}
+last_sequence_id(0),
+search_script_phase(SearchScriptPhaseLoadScriptPage),
+instance_work_phase(InstanceWorkPhasePrepare),
+current_script_idx(-1),
+current_instance_idx(-1){}
 
 LoadInstanceOnUnitServer::~LoadInstanceOnUnitServer() {}
 

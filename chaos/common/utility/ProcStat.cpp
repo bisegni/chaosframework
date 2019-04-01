@@ -60,6 +60,7 @@ ProcStat& ProcStat::operator=(ProcStat const &rhs) {
 
 #define COMPUTE_RESOURCE(m,u) (double)m + ((double)u / 1000000.0)
 
+#ifndef _WIN32
 void ProcStatCalculator::update(ProcStat& stat) {
     //used to compute the resource occupaiton between sampling time
     struct rusage process_resurce_usage;
@@ -96,3 +97,40 @@ void ProcStatCalculator::update(ProcStat& stat) {
     stat.swap_rsrc = process_resurce_usage.ru_nswap;
     stat.uptime = (stat.last_sampling_time-stat.creation_time);
 }
+#else
+void ProcStatCalculator::update(ProcStat& stat) {
+	//used to compute the resource occupaiton between sampling time
+	
+	SYSTEMTIME sys_time;
+	SYSTEMTIME usr_time;
+	FILETIME ftCreation, ftExit, ftKernel, ftUser;
+	double local_usr_time = 0;
+	double local_sys_time = 0;
+	//samplig time in seconds
+	uint64_t sampling_time = TimingUtil::getTimeStamp() / 1000;
+	GetProcessTimes(GetCurrentProcess(), &ftCreation, &ftExit, &ftKernel, &ftUser);
+	FileTimeToSystemTime(&ftKernel, &sys_time);
+	FileTimeToSystemTime(&ftUser, &usr_time);
+	local_usr_time = COMPUTE_RESOURCE(usr_time.wSecond, usr_time.wMilliseconds * 1000);
+	local_sys_time = COMPUTE_RESOURCE(sys_time.wSecond, sys_time.wMilliseconds * 1000);
+	if (stat.last_usr_time &&
+		stat.last_sys_time &&
+		stat.last_sampling_time) {
+		uint64_t temp_ts = (sampling_time - stat.last_sampling_time);
+		if (temp_ts > 0) {
+			stat.usr_time = 100 * (local_usr_time - stat.last_usr_time) / (double)temp_ts;
+			stat.sys_time = 100 * (local_sys_time - stat.last_sys_time) / (double)temp_ts;
+		}
+		else {
+			stat.usr_time = stat.sys_time = 0;
+		}
+
+	}
+	stat.last_usr_time = local_usr_time;
+	stat.last_sys_time = local_sys_time;
+	stat.last_sampling_time = sampling_time;
+	//ATTENZIONE. Attualmente non so come ottenere questa info su windows. Set -1
+	stat.swap_rsrc = -1;
+	stat.uptime = (stat.last_sampling_time - stat.creation_time);
+}
+#endif

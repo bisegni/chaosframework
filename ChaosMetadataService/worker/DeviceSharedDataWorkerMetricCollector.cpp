@@ -25,7 +25,7 @@
 
 #include <chaos/common/global.h>
 
-using namespace chaos::data_service::worker;
+using namespace chaos::metadata_service::worker;
 
 DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric):
 DeviceSharedDataWorker(),

@@ -52,3 +52,28 @@ ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& subm
     //call api
     return callApi(message);
 }
+
+ApiProxyResult CommandTemplateSubmit::execute(const std::string& node_uid,
+                                              const std::string& command_alias,
+                                              const SubmissionRuleType::SubmissionRule submission_rule,
+                                              const uint32_t priority,
+                                              const uint64_t scheduler_steps_delay,
+                                              const uint32_t submission_checker_steps_delay,
+                                              common::data::CDWUniquePtr& slow_command_data){
+     CDWUniquePtr message(new CDataWrapper());
+    //this key need only to inform mds to redirect to node the slowcomand without porcess it
+    message->addNullValue("direct_mode");
+    // set the default slow command information
+    message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    message->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, command_alias);
+    message->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submission_rule);
+    message->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
+    
+    if(scheduler_steps_delay) message->addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+    if(submission_checker_steps_delay) message->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
+    if(slow_command_data.get()) {
+        message->appendAllElement(*slow_command_data);
+    }
+    //call api
+    return callApi(message);
+}

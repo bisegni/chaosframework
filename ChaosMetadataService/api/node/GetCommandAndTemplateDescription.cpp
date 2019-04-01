@@ -68,7 +68,7 @@ CDWUniquePtr GetCommandAndTemplateDescription::execute(CDWUniquePtr api_data) {
                                        &tmp_d_ptr))){
         LOG_AND_TROW_FORMATTED(N_GCTD_ERR, -7, "Error checking the presence of the template %1% for command uid %2%", %template_name%command_unique_id)
     } else if(!tmp_d_ptr) {
-        LOG_AND_TROW_FORMATTED(N_GCTD_ERR, -8, "The tempalte '%1%' for the command uid '%2%' is not present", %template_name%command_unique_id)
+        LOG_AND_TROW_FORMATTED(N_GCTD_ERR, -8, "The template '%1%' for the command uid '%2%' is not present", %template_name%command_unique_id)
     } else {
         tmplt_cmd_desc.reset(tmp_d_ptr);
     }

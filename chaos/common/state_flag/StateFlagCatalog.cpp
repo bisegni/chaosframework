@@ -72,7 +72,7 @@ void StateFlagCatalog::stateFlagUpdated(const FlagDescription       flag_descrip
     StateFlagElementContainerFlaUUIDIndex& uuid_index = catalog_container().get<mitag_flag_uuid>();
     StateFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_description.uuid);
     if(src_flag_it == uuid_index.end()) return;
-    SLC_DBG << "Signal from " << (*src_flag_it)->flag_name << "with severity" << current_level_severity;
+    SLC_DBG << "Signal from \"" << (*src_flag_it)->flag_name << "\" with severity:" << current_level_severity;
     
     for(int s = StateFlagServerityRegular;
         s != StateFlagServerityUndefuned;

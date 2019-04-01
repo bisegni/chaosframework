@@ -10,7 +10,9 @@
 #define __CHAOSFramework__DataCache__
 
 #include <stdint.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 //#include <pthread.h>
 #include <chaos/common/data/cache/CacheGlobal.h>
 #include <chaos/common/data/cache/FastHash.h>

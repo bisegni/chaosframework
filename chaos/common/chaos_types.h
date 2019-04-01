@@ -37,9 +37,9 @@
 #if __cplusplus >= 201103L
 
 #define CInt64  std::int64_t
-#define CUint64 std::uint64_t
+#define CUInt64 std::uint64_t
 #define CInt32  std::int32_t
-#define CUint32 std::uint32_t
+#define CUInt32 std::uint32_t
 #define CDouble double
 
 #ifndef FORCE_BOOST_SHPOINTER

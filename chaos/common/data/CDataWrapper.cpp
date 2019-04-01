@@ -603,7 +603,11 @@ void CDataWrapper::addBoolValue(const std::string& key, bool value) {
  Return the Serialized buffer object taht contain the memory,
  the requester of this method shuld be deallocate the object
  */
+#ifndef _WIN32
 __attribute__((__deprecated__))
+#else
+__declspec(deprecated)
+#endif
 SerializationBufferUPtr CDataWrapper::getBSONData() const{
     const char * buff = reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
     if(!buff) return SerializationBufferUPtr();
@@ -830,6 +834,22 @@ bool  CDataWrapper::isJsonValue(const std::string& key) const{
     return jr.parse(cptr, cptr+getValueSize(key), v);
 }
 
+double CDataWrapper::getAsRealValue(const std::string& key) const{
+    if(isDoubleValue(key)){
+        return getDoubleValue(key);
+    }
+    if(isInt32Value(key)){
+        return (double)getInt32Value(key);
+    }
+    if(isInt64Value(key)){
+        return (double)getInt64Value(key);
+    }
+    if(isBoolValue(key)){
+        return (double)getBoolValue(key);
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
 void CDataWrapper::addJsonValue(const std::string& key, const string& val){
     CDataWrapper tmp;
     tmp.setSerializedJsonData(val.c_str());
@@ -966,6 +986,14 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
         const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
         memcpy((void*)(v->raw + v->d3), (void*)val,vv->value.v_binary.data_len);
         return vv->value.v_binary.data_len;
+    }
+    return -1;
+}
+int CDataWrapper::setBson(const bson_iter_t *v ,const CDataWrapper* val){
+    if(ITER_TYPE(v)== BSON_TYPE_DOCUMENT){
+        const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
+        memcpy((void*)(v->raw + v->d1), (void*)val,vv->value.v_doc.data_len);
+        return vv->value.v_doc.data_len;
     }
     return -1;
 }

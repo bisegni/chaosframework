@@ -27,7 +27,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace object_storage {
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string,

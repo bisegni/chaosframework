@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-
+MESSAGE("framework CMakeLists")
+IF(WIN32)
+include(config/CMakeChaosWin.txt)
+ELSE(WIN32)
 include(config/CMakeChaos.txt)
+ENDIF(WIN32)
 project(chaosframework)
 include(ExternalProject)
 #include(CTest)
@@ -17,18 +21,24 @@ option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
-option(CHAOS_CDS "Chaos Data Service" ON)
-option(CHAOS_MDS "Chaos MetaData Service" ON)
+if (WIN32)
+option(CHAOS_MDS "Chaos Data Service" OFF)
+option(CHAOS_AGENT "Chaos Agent Service" OFF)
+option(CHAOS_DATA_EXPORT "Chaos Data Export" OFF)
+option(CHAOS_EXAMPLES "Chaos Examples" OFF)
+else (WIN32)
+option(CHAOS_MDS "Chaos Data Service" ON)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
+endif(WIN32)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
 if(NOT QMAKE_PATH)
   set(QMAKE_PATH /usr/local/chaos/qt-56/bin)
 ENDIF()
 
 EXECUTE_PROCESS(
-COMMAND ./version.sh
+COMMAND sh ./version.sh
 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/chaos/common/
 RESULT_VARIABLE err
     OUTPUT_VARIABLE out
@@ -40,9 +50,11 @@ if(err)
 ENDIF()
 
 ###### Required Libraries
+if (NOT WIN32)
 CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
 
 CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+endif()
 #########
 
 #IF(CHAOS_ARCHITECTURE_TEST)
@@ -132,16 +144,18 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
+  if (NOT WIN32)
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
+  endif()
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
-MESG("Configure Chaos Agent Service")
-ADD_SUBDIRECTORY(ChaosAgent)
+  MESG("Configure Chaos Agent Service")
+  ADD_SUBDIRECTORY(ChaosAgent)
 ENDIF()
 
 IF (CHAOS_MDS AND
@@ -155,9 +169,10 @@ IF (CHAOS_MDS AND
 ENDIF()
 
 IF(NOT CHAOS_ONLY_DEPENDECY)
+  if (NOT WIN32)
   MESG("Configure Chaos Metadata Service Client Library Test Application")
   ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
-
+  endif()
   IF (CHAOS_DATA_EXPORT)
     MESG("Configure Chaos Data Export ")
     ADD_SUBDIRECTORY(ChaosDataExport)
@@ -175,7 +190,7 @@ IF (CHAOS_ARCHITECTURE_TEST)
     set_directory_properties(PROPERTIES GTEST_INCLUDE_DIR ${GTEST_INCLUDE_DIR}
                                         GTEST_LIBRARY_DIR ${GTEST_LIBRARY_DIR}
                                         GTEST_LIBRARY_PATH ${GTEST_LIBRARY_PATH})
-    ADD_SUBDIRECTORY(CHAOSFrameworkTests/FrameworkTest)
+    ADD_SUBDIRECTORY(TestFramework)
 #    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
 #    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
 #    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
@@ -189,52 +204,50 @@ IF (CHAOS_ARCHITECTURE_TEST)
 ENDIF()
 
 MESG("Done")
+IF (NOT WIN32)
+    IF( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
+      IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
+            FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
+            MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+           execute_process(
+             COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
+             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+             RESULT_VARIABLE err
+             OUTPUT_VARIABLE out
+             )
+           IF(err)
+             ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+           ELSE()
+            MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+          ENDIF()
+        ENDIF()
+    ENDIF()
+ENDIF()
 
-if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
-  IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
-    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
-    MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-   execute_process(
-     COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
-     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-     RESULT_VARIABLE err
-     OUTPUT_VARIABLE out
-     )
-   IF(err)
-     ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-   ELSE()
-    MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-  ENDIF()
-ENDIF()
-ENDIF()
-  IF(CHAOS_CCS)
+IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED.")
     IF(EXISTS "${QMAKE_PATH}/qmake")
       MESG("Found 'qmake' in ${QMAKE_PATH}")
-
       execute_process(
-	COMMAND ${QMAKE_PATH}/qmake
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
-	RESULT_VARIABLE err
-	OUTPUT_VARIABLE out
-	)
-      if( err)
-	ERROR("error generating QT stubs error: ${out}")
-      endif()
+        COMMAND ${QMAKE_PATH}/qmake
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+        RESULT_VARIABLE err
+        OUTPUT_VARIABLE out
+        )
+        if(err)
+            ERROR("error generating QT stubs error: ${out}")
+        endif()
 
        add_custom_target(ccs
-       	COMMAND make -j ${PROCESSOR_COUNT}
-       	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
-       	DEPENDS chaos_common
-       	COMMENT "compiling CCS"
-       	)
-
-
+        COMMAND make -j ${PROCESSOR_COUNT}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+        DEPENDS chaos_common
+        COMMENT "compiling CCS"
+        )
     ELSE()
       ERROR("missing ${QMAKE_PATH}/qmake")
     ENDIF()
-
-  ENDIF()
+ENDIF()
 
   IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ccs/ccs)
     MESG("copying ccs to ${CMAKE_INSTALL_PREFIX}/bin")

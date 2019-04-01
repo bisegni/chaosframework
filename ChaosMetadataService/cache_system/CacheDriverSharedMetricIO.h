@@ -28,7 +28,7 @@
 #include <boost/thread.hpp>
 
 namespace chaos {
-    namespace data_service {
+    namespace metadata_service {
         namespace cache_system {
             class CacheDriverSharedMetricIO:
             public chaos::common::metric::MetricCollectorIO {

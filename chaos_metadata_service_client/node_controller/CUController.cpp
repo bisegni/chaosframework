@@ -171,7 +171,7 @@ void CUController::updateChannel() {
 
 int CUController::setScheduleDelay(uint64_t microseconds) {
     
-    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, CDataVariant(static_cast<uint64_t>(microseconds)));
     DBGET<<chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY<<":"<<microseconds;
     EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,devId,pg);
@@ -179,7 +179,7 @@ int CUController::setScheduleDelay(uint64_t microseconds) {
 }
 
 int CUController::setBypass(bool onoff){
-    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::GROUP_NAME);
+    chaos::common::property::PropertyGroup pg(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
     pg.addProperty(chaos::ControlUnitDatapackSystemKey::BYPASS_STATE, CDataVariant(static_cast<bool>(onoff)));
     
     EXECUTE_CHAOS_API(chaos::metadata_service_client::api_proxy::node::UpdateProperty,millisecToWait,devId,pg);

@@ -57,7 +57,8 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
     
     if(script_base_descrition.unique_id == 0 ||
        script_base_descrition.name.size() == 0) {
-        LOG_AND_TROW(ERR, -1, "Invalid script description");
+           ScriptBaseDescriptionSDWrapper isdw(script_base_descrition);
+        LOG_AND_TROW(ERR, -1, "Invalid script description:" +isdw.serialize()->getJSONString());
     }
     
     if((err = s_da->getScriptInstance(instance.instance_name,

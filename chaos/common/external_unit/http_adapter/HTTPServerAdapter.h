@@ -65,7 +65,7 @@ namespace chaos{
                     HTTPServerAdapterSetting setting;
 
                     struct mg_connection *root_connection;
-                    struct mg_serve_http_opts s_http_server_opts;
+
 
                     void poller();
                     static const std::string getSerializationType(http_message *http_message);

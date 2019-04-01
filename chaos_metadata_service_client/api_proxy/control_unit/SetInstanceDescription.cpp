@@ -35,42 +35,44 @@ ChaosUniquePtr<SetInstanceDescriptionHelper> SetInstanceDescription::getNewHelpe
 }
 
 
-ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api_data) {
+ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api_data, bool legacy_support) {
     chaos::common::data::CDataWrapper instance_description;
     CDWUniquePtr message(new CDataWrapper());
-        //add the control unit unique id
+    //add the control unit unique id
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, api_data.control_unit_uid);
-        // set the type for control unit
+    // set the type for control unit
     message->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-        // add the unit server as parent
+    // add the unit server as parent
     instance_description.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, api_data.unit_server_uid);
-        //add the control unit implementation
+    //add the control unit implementation
     instance_description.addStringValue("control_unit_implementation", api_data.control_unit_implementation);
-        //add the auto load setting
+    //add the auto load setting
     instance_description.addBoolValue("auto_load", api_data.auto_load);
-        //add the auto init setting
+    //add the auto init setting
     instance_description.addBoolValue("auto_init", api_data.auto_init);
-        //add the auto start setting
+    //add the auto start setting
     instance_description.addBoolValue("auto_start", api_data.auto_start);
-    	// add the description field
+    // add the description field
     instance_description.addStringValue("desc", api_data.desc);
-        // set the load parameter
+    // set the load parameter
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
-        //add the deafult scheduler delay
+    //add the deafult scheduler delay
     instance_description.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, api_data.default_schedule_delay);
-    //add the storage type
-    instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, api_data.storage_type);
-    //add the ageing
-    instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, api_data.history_ageing);
-    //add the history rate
-    instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, api_data.history_time);
-    //add the live rate
-    instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, api_data.live_time);
-
-    instance_description.addInt32Value(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, api_data.restore_type);
-    instance_description.addBoolValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, api_data.restore_apply);
-
-        //add driver description
+    if(legacy_support) {
+        //add the storage type
+        instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, api_data.storage_type);
+        //add the ageing
+        instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, api_data.history_ageing);
+        //add the history rate
+        instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, api_data.history_time);
+        //add the live rate
+        instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_LIVE_TIME, api_data.live_time);
+        
+        instance_description.addInt32Value(chaos::ControlUnitPropertyKey::INIT_RESTORE_OPTION, api_data.restore_type);
+        instance_description.addBoolValue(chaos::ControlUnitPropertyKey::INIT_RESTORE_APPLY, api_data.restore_apply);
+        instance_description.addBoolValue(ControlUnitDatapackSystemKey::BYPASS_STATE,false);
+    }
+    //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();
             it != api_data.driver_descriptions.end();
@@ -79,7 +81,7 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
         }
         instance_description.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
     }
-        //add attribute description
+    //add attribute description
     if(api_data.attribute_value_descriptions.size()>0) {
         for(CDWListIterator it = api_data.attribute_value_descriptions.begin();
             it != api_data.attribute_value_descriptions.end();
@@ -88,29 +90,29 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
         }
         instance_description.finalizeArrayForKey("attribute_value_descriptions");
     }
-
+    
     instance_description.addCSDataValue(NodeDefinitionKey::NODE_CUSTOM_PARAM,api_data.control_unit_custom_param);
-
-
-        //add instance description to the message
+    
+    
+    //add instance description to the message
     message->addCSDataValue("instance_description", instance_description);
     return callApi(message);
 }
 
 ApiProxyResult SetInstanceDescription::execute(const std::string& uid,chaos::common::data::CDataWrapper& instance_description){
-	 CDWUniquePtr message(new CDataWrapper());
-	        //add the control unit unique id
-	message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, uid);
-	        // set the type for control unit
-	message->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-
-
-	message->addCSDataValue("instance_description", instance_description);
-	return callApi(message);
+    CDWUniquePtr message(new CDataWrapper());
+    //add the control unit unique id
+    message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, uid);
+    // set the type for control unit
+    message->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+    
+    
+    message->addCSDataValue("instance_description", instance_description);
+    return callApi(message);
 }
 
 
-    //----------------------------------------------------
+//----------------------------------------------------
 
 SetInstanceDescriptionHelper::SetInstanceDescriptionHelper():
 control_unit_uid(""),
@@ -131,7 +133,7 @@ load_parameter(""){}
 
 SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
 
-    //!add a new driver description
+//!add a new driver description
 void SetInstanceDescriptionHelper::addDriverDescription(const std::string& driver_name,
                                                         const std::string& driver_version,
                                                         const std::string& driver_init_parameter) {
@@ -142,12 +144,12 @@ void SetInstanceDescriptionHelper::addDriverDescription(const std::string& drive
     driver_descriptions.push_back(dd.release());
 }
 
-    //! clear all previously added driver descriptions
+//! clear all previously added driver descriptions
 void SetInstanceDescriptionHelper::clearAllDriverDescriptions() {
     driver_descriptions.clear();
 }
 
-    //! add an attribute range value description for the default value and range
+//! add an attribute range value description for the default value and range
 void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribute_name,
                                                       const std::string& attribute_default_value,
                                                       const std::string& attribute_max_range,
@@ -158,9 +160,9 @@ void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribu
     if(attribute_max_range.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, attribute_max_range);
     if(attribute_min_range.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, attribute_min_range);
     attribute_value_descriptions.push_back(attr.release());
-
+    
 }
-    //! remove all previously added attribute range value description
+//! remove all previously added attribute range value description
 void SetInstanceDescriptionHelper::clearAllAttributeConfig() {
     attribute_value_descriptions.clear();
 }

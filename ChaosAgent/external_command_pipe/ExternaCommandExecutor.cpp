@@ -44,7 +44,8 @@ using namespace chaos::agent::external_command_pipe;
 
 
 ExternaCommandExecutor::ExternaCommandExecutor():
-dummy_work(io_service){}
+dummy_work(io_service),
+mds_message_channel(NULL){}
 
 ExternaCommandExecutor::~ExternaCommandExecutor(){}
 

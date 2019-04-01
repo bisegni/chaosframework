@@ -45,7 +45,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::common::metadata_logging;
 
 SlowCommandExecutor::SlowCommandExecutor(const std::string& _executorID,
-                                         SCAbstractControlUnit *_control_unit_instance):
+                                         chaos::cu::control_manager::SCAbstractControlUnit *_control_unit_instance):
 BatchCommandExecutor(_executorID),
 attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
 control_unit_instance(_control_unit_instance),
@@ -192,6 +192,11 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
         }
         case BatchCommandEventType::EVT_RUNNING:{
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue(command_info->cmdImpl->getAlias(), true, true);
+           if(*sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>()==3){
+               // in case we have successfully reached a setpoint, a command will reset the tags and state
+                   sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::SETPOINT_TAG)->setStringValue("", true, true);
+                *sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::SETPOINT_STATE)->getValuePtr<int32_t>()=ControlUnitNodeDefinitionType::SetpointUnknown;
+           }
             break;
         }
         default:
