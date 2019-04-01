@@ -457,6 +457,8 @@ namespace chaos {
                              chaos::common::data::CDWUniquePtr& echo_data_result,
                              uint32_t timeout = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 
+                void setQueryOnIndex(bool use_index);
+                
                 //! get datapack between time itervall
                 void executeTimeIntervallQuery(const DatasetDomain              domain,
                                                const uint64_t                   start_ts,

@@ -42,6 +42,7 @@
 #include <mongocxx/exception/logic_error.hpp>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/timer/timer.hpp>
 
 //using namespace chaos::data_service::object_storage::mongodb;
 
@@ -54,7 +55,7 @@
 #define MONGODB_DAQ_DATA_FIELD      "data"
 #define DEFAULT_QUANTIZATION        100
 
-#define DEFAULT_BATCH_SIZE          10
+#define DEFAULT_BATCH_SIZE          40
 #define DEFAULT_BATCH_TIMEOUT_MS    1000
 
 using bsoncxx::builder::basic::kvp;
@@ -98,21 +99,30 @@ void HybBaseDataAccess::executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_
         auto bulk_write = coll.create_bulk_write();
         
         //create batch insert data
-        std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write, this](const DaqBlobSPtr& blob){
-            int err = 0;
-            //insert data operation is demanded to sublcass
-            if((err = storeData(*blob))) {
-                //errore in pushing, data need to bedeleted
-                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
-            } else {
-                //append data to bulk
-                bulk_write.append(model::insert_one(blob->mongo_document.view()));
+        {
+            boost::timer::cpu_timer timer;
+            std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write, this](const DaqBlobSPtr& blob){
+                int err = 0;
+                //insert data operation is demanded to sublcass
+                if((err = storeData(*blob))) {
+                    //errore in pushing, data need to bedeleted
+                    ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+                } else {
+                    //append data to bulk
+                    bulk_write.append(model::insert_one(blob->mongo_document.view()));
+                }
+            });
+            DBG << "Cassandra push and batch prepare: " + timer.format();
+        }
+        {
+            boost::timer::cpu_timer timer;
+            
+            auto bulk_result = coll.bulk_write(bulk_write);
+            
+            if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
+                ERR << "Data not inserted";
             }
-        });
-        auto bulk_result = coll.bulk_write(bulk_write);
-        
-        if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
-            ERR << "Data not inserted";
+            DBG << "Mongodb insert batch: " + timer.format();
         }
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();
@@ -411,8 +421,8 @@ int HybBaseDataAccess::findObjectIndex(const DataSearch& search,
 }
 
 //inhertied method
-int HybBaseDataAccess::getObjectByIndex(const VectorObject& search,
-                                        VectorObject& found_object_page) {
+int HybBaseDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+                                        CDWShrdPtr& found_object) {
     return -1;
 }
 

@@ -128,6 +128,8 @@ namespace chaos{
                 virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
                 
                 
+                virtual void setQueryOnIndex(bool _use_index) = 0;
+                
                 //! perform a query since and
                 virtual QueryCursor *performQuery(const std::string& key,
                                                   const uint64_t start_ts,

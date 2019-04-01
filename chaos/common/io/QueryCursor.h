@@ -45,7 +45,7 @@ namespace chaos {
 #define DEFAULT_PAGE_LEN 100
             class QueryCursor {
                 friend class IODirectIODriver;
-                
+            protected:
                 struct ResultPage {
                     unsigned int current_fetched;
                     direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
@@ -54,72 +54,72 @@ namespace chaos {
                     ResultPage();
                     ~ResultPage();
                     const bool hasNext() const;
-                    uint32_t size() const;
+                    CUInt32 size() const;
                     ChaosSharedPtr<chaos::common::data::CDataWrapper> next()  ;
                 };
                 
                 const std::string query_id;
                 const std::string node_id;
-                uint64_t start_ts;
-                uint64_t end_ts;
-                uint64_t start_seq;
-                uint64_t runid_seq;
+                CUInt64 start_ts;
+                CUInt64 end_ts;
+                CUInt64 start_seq;
+                CUInt64 runid_seq;
                 const ChaosStringSet meta_tags;
                 //!is the reuslt page dimension
-                uint32_t page_len;
+                CUInt32 page_len;
                 QueryPhase phase;
                 ResultPage result_page;
-                int64_t api_error;
+                int api_error;
                 chaos::common::network::URLServiceFeeder& connection_feeder;
                 
                 QueryCursor(const std::string& _query_id,
                             chaos::common::network::URLServiceFeeder& _connection_feeder,
                             const std::string& _node_id,
-                            uint64_t _start_ts,
-                            uint64_t _end_ts,
-                            uint32_t page_len=DEFAULT_PAGE_LEN);
+                            CUInt64 _start_ts,
+                            CUInt64 _end_ts,
+                            CUInt32 page_len=DEFAULT_PAGE_LEN);
 
                 QueryCursor(const std::string&                        _query_id,
                             chaos::common::network::URLServiceFeeder& _connection_feeder,
                             const std::string&                        _node_id,
-                            uint64_t                                  _start_ts,
-                            uint64_t                                  _end_ts,
+                            CUInt64                                  _start_ts,
+                            CUInt64                                  _end_ts,
                             const ChaosStringSet&                     _meta_tags,
-                            uint32_t                                  page_len = DEFAULT_PAGE_LEN);
+                            CUInt32                                  page_len = DEFAULT_PAGE_LEN);
 
                 QueryCursor(const std::string&                        _query_id,
                             chaos::common::network::URLServiceFeeder& _connection_feeder,
                             const std::string&                        _node_id,
-                            uint64_t                                  _start_ts,
-                            uint64_t                                  _end_ts,
-                            uint64_t                                  _sequid,
-                            uint64_t                                  _runid,
-                            uint32_t                                  page_len = DEFAULT_PAGE_LEN);
+                            CUInt64                                  _start_ts,
+                            CUInt64                                  _end_ts,
+                            CUInt64                                  _sequid,
+                            CUInt64                                  _runid,
+                            CUInt32                                  page_len = DEFAULT_PAGE_LEN);
 
                 QueryCursor(const std::string& _query_id,
                             chaos::common::network::URLServiceFeeder& _connection_feeder,
                             const std::string& _node_id,
-                            uint64_t _start_ts,
-                            uint64_t _end_ts,
-                            uint64_t _sequid,
-                            uint64_t _runid,
+                            CUInt64 _start_ts,
+                            CUInt64 _end_ts,
+                            CUInt64 _sequid,
+                            CUInt64 _runid,
                             const ChaosStringSet& _meta_tags,
-                            uint32_t page_len=DEFAULT_PAGE_LEN);
+                            CUInt32 page_len=DEFAULT_PAGE_LEN);
                 ~QueryCursor();
                 
-                int64_t fetchNewPage();
-                
+                int fetchNewPage();
+                virtual int fetchData();
             public:
                 const std::string& queryID() const;
                 
                 const bool hasNext();
                 const int32_t getError();
                 ChaosSharedPtr<chaos::common::data::CDataWrapper> next();
-                uint32_t size()const;
-                const uint32_t getPageLen() const;
+                CUInt32 size()const;
+                const CUInt32 getPageLen() const;
                 
-                void setPageDimension(uint32_t new_page_len);
-                void getIndexes(uint64_t& runid,uint64_t& seqid);
+                void setPageDimension(CUInt32 new_page_len);
+                void getIndexes(CUInt64& runid,CUInt64& seqid);
             };
             
         }

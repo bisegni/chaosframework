@@ -98,6 +98,7 @@ namespace chaos{
                 std::map<std::string, QueryCursor*>	map_query_future;
                 
                 std::string uuid;
+                bool use_index;
                 bool shutting_down;
             protected:
                 ChaosSharedMutex push_mutex;
@@ -125,6 +126,9 @@ namespace chaos{
                  */
                 void deinit();
                 
+                /**
+                 *
+                 */
                 int storeHealthData(const std::string& key,
                                      chaos_data::CDWShrdPtr data_to_store,
                                      DataServiceNodeDefinitionType::DSStorageType storage_type,
@@ -137,12 +141,19 @@ namespace chaos{
                                chaos_data::CDWShrdPtr data_to_store,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                const ChaosStringSet& tag_set = ChaosStringSet());
-                
+                /**
+                 *
+                 */
                 int removeData(const std::string& key,
                                uint64_t start_ts,
                                uint64_t end_ts);
+                
+                /**
+                 *
+                 */
                 int retriveMultipleData(const ChaosStringVector& key,
                                         chaos::common::data::VectorCDWShrdPtr& result);
+                
                 /*
                  * retriveRawData
                  */
@@ -159,7 +170,12 @@ namespace chaos{
                  * updateConfiguration
                  */
                 chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-
+                
+                void setQueryOnIndex(bool _use_index);
+                
+                /**
+                 *
+                 */
                 QueryCursor* performQuery(const std::string& key,
                                           uint64_t           start_ts,
                                           uint64_t           end_ts,

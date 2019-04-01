@@ -264,7 +264,7 @@ int main(int argc, const char* argv[]) {
         CUController *controller = NULL;
         ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id, &controller);
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
-        
+        controller->setQueryOnIndex(true);
         ChaosStringSet search_tags;
         chaos::common::io::QueryCursor *query_cursor = NULL;
         for(ChaosStringVectorIterator it = meta_tags.begin(),

@@ -34,7 +34,7 @@ namespace chaos {
     namespace common {
         namespace direct_io {
             namespace channel {
-        
+                
                 CHAOS_DEFINE_SET_FOR_TYPE(chaos::common::utility::DataBuffer, SetDataBuffer);
                 
                 //! Class for the managment of pushing data for the device dataset
@@ -83,7 +83,7 @@ namespace chaos {
                      \param end_ts end of the timestamp where limit the search
                      \param last_sequence is an input-outpu field that permit to give sequence of the last found
                      element and will be filled with last element's sequencefo the current found page
-                     \param result_handler has the found element page
+                     \param found_element_page the page that contins the found data
                      \return error
                      */
                     int queryDataCloud(const std::string& key,
@@ -92,7 +92,27 @@ namespace chaos {
                                        const uint64_t end_ts,
                                        const uint32_t page_dimension,
                                        opcode_headers::SearchSequence& last_sequence,
-                                       opcode_headers::QueryResultPage& found_element_page);
+                                       opcode_headers::QueryResultPage& found_element_page,
+                                       bool only_index = false);
+                    
+                    
+                    //! Fetch the data associated to the indexs
+                    /*!
+                     If no data is found for and index, an emtpy object is created for that not found data
+                     \param indexs vector of CDataWrapper that is found by @queryDataCloudIndexOnly
+                     \param results the foudn data for the index
+                     */
+                    int getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexs,
+                                       chaos::common::data::VectorCDWShrdPtr& results);
+                    
+                    //! Fetch the data associated to the indexs
+                    /*!
+                     If no data is found for and index, an emtpy object is created for that not found data
+                     \param indexs vector of CDataWrapper that is found by @queryDataCloudIndexOnly
+                     \param results the foudn data for the index
+                     */
+                    int getDataByIndex(const chaos::common::data::CDWShrdPtr& index,
+                                       chaos::common::data::CDWShrdPtr& result);
                     
                     //! Perform a temporal data delete operation on a key
                     /*!
