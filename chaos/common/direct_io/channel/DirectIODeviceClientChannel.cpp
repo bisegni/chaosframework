@@ -320,20 +320,20 @@ int DirectIODeviceClientChannel::getDataByIndex(const VectorCDWShrdPtr& indexs,
     CDataWrapper index_data;
     DirectIODataPackSPtr answer;
     DirectIODataPackSPtr data_pack = ChaosMakeSharedPtr<DirectIODataPack>();
-
+    
     //fill the query CDataWrapper
     for(VectorCDWShrdPtrConstIterator it = indexs.begin(),
         end = indexs.end();
         it != end;
         it ++){
-            index_data.appendCDataWrapperToArray(*(*it));
-        }
+        index_data.appendCDataWrapperToArray(*(*it));
+    }
     index_data.finalizeArrayForKey("indexes");
-
+    
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetDataByIndex);
-   
+    
     BufferSPtr channel_data = BufferSPtr(index_data.getBSONDataBuffer().release());
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_DATA(data_pack, channel_data, (uint32_t)channel_data->size());
