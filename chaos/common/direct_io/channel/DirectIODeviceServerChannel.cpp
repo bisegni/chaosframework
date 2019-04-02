@@ -255,7 +255,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             }
             CMultiTypeDataArrayWrapperSPtr indexes_vec_in = indexes->getVectorValue("indexes");
             for(int idx = 0 ; idx < indexes_vec_in->size(); idx++) {
-                CUInt32 tmp_size = 0;
+                uint32_t tmp_size = 0;
                 indexes_vec.push_back(CDWShrdPtr(indexes_vec_in->getCDataWrapperElementAtIndex(idx).release()));
             }
             if((err = handler->getDataByIndex(indexes_vec,

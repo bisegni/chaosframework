@@ -42,7 +42,6 @@
 #include <mongocxx/exception/logic_error.hpp>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/timer/timer.hpp>
 
 //using namespace chaos::data_service::object_storage::mongodb;
 
@@ -79,7 +78,7 @@ batch_timeout(DEFAULT_BATCH_TIMEOUT_MS),
 blob_set_uptr(new std::set<DaqBlobSPtr>()){
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     try{
-        batch_size = boost::lexical_cast<CUInt32>(obj_stoarge_kvp["batch_size"]);
+        batch_size = boost::lexical_cast<uint32_t>(obj_stoarge_kvp["batch_size"]);
     } catch(...) {
         batch_size = DEFAULT_BATCH_SIZE;
     }
@@ -99,30 +98,22 @@ void HybBaseDataAccess::executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_
         auto bulk_write = coll.create_bulk_write();
         
         //create batch insert data
-        {
-            boost::timer::cpu_timer timer;
-            std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write, this](const DaqBlobSPtr& blob){
-                int err = 0;
-                //insert data operation is demanded to sublcass
-                if((err = storeData(*blob))) {
-                    //errore in pushing, data need to bedeleted
-                    ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
-                } else {
-                    //append data to bulk
-                    bulk_write.append(model::insert_one(blob->mongo_document.view()));
-                }
-            });
-            DBG << "Cassandra push and batch prepare: " + timer.format();
-        }
-        {
-            boost::timer::cpu_timer timer;
-            
-            auto bulk_result = coll.bulk_write(bulk_write);
-            
-            if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
-                ERR << "Data not inserted";
+        std::for_each(_blob_set_uptr->begin(), _blob_set_uptr->end(), [&bulk_write, this](const DaqBlobSPtr& blob){
+            int err = 0;
+            //insert data operation is demanded to sublcass
+            if((err = storeData(*blob))) {
+                //errore in pushing, data need to bedeleted
+                ERR << CHAOS_FORMAT("Error %1% during data storage", %err);
+            } else {
+                //append data to bulk
+                bulk_write.append(model::insert_one(blob->mongo_document.view()));
             }
-            DBG << "Mongodb insert batch: " + timer.format();
+        });
+        
+        auto bulk_result = coll.bulk_write(bulk_write);
+        
+        if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
+            ERR << "Data not inserted";
         }
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();

@@ -37,13 +37,13 @@ namespace chaos {
              */
             class Random {
                 static boost::random_device rd;
-                boost::random::uniform_int_distribution<CInt64> rnd_gen_int64;
+                boost::random::uniform_int_distribution<int64_t> rnd_gen_int64;
             public:
                 Random();
-                explicit Random(CInt64 min, CInt64 max);
+                explicit Random(int64_t min, int64_t max);
                 ~Random();
                 
-                CInt64 rand() const;
+                int64_t rand() const;
             };
         }
     }

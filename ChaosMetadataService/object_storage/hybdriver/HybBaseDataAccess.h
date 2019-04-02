@@ -45,9 +45,9 @@ namespace chaos {
                 
                 typedef struct DaqIndex {
                     std::string key;
-                    CInt64 shard_value;
-                    CInt64 run_id;
-                    CInt64 seq_id;
+                    int64_t shard_value;
+                    int64_t run_id;
+                    int64_t seq_id;
                     DaqIndex& operator=(DaqIndex&& copy) {
                         key         = std::move(copy.key);
                         shard_value = std::move(copy.shard_value);
@@ -70,10 +70,10 @@ namespace chaos {
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
                     friend class HybBaseDriver;
                     //size of the batch
-                    CUInt32 batch_size;
+                    uint32_t batch_size;
                     //batch timeout in milliseconds
-                    CUInt32 batch_timeout;
-                    CInt64  next_timeout;
+                    uint32_t batch_timeout;
+                    int64_t  next_timeout;
                     mongocxx::bulk_write _bulk_write;
                     ChaosSharedPtr<mongocxx::pool> pool_ref;
                     ShardKeyManagement shrd_key_manager;

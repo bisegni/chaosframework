@@ -35,36 +35,36 @@ namespace chaos {
                 QueryIndexCursor(const std::string& _query_id,
                                  chaos::common::network::URLServiceFeeder& _connection_feeder,
                                  const std::string& _node_id,
-                                 CUInt64 _start_ts,
-                                 CUInt64 _end_ts,
-                                 CUInt32 page_len=DEFAULT_PAGE_LEN);
+                                 uint64_t _start_ts,
+                                 uint64_t _end_ts,
+                                 uint32_t page_len=DEFAULT_PAGE_LEN);
                 
                 QueryIndexCursor(const std::string&                        _query_id,
                                  chaos::common::network::URLServiceFeeder& _connection_feeder,
                                  const std::string&                        _node_id,
-                                 CUInt64                                  _start_ts,
-                                 CUInt64                                  _end_ts,
+                                 uint64_t                                  _start_ts,
+                                 uint64_t                                  _end_ts,
                                  const ChaosStringSet&                     _meta_tags,
-                                 CUInt32                                  page_len = DEFAULT_PAGE_LEN);
+                                 uint32_t                                  page_len = DEFAULT_PAGE_LEN);
                 
                 QueryIndexCursor(const std::string&                        _query_id,
                                  chaos::common::network::URLServiceFeeder& _connection_feeder,
                                  const std::string&                        _node_id,
-                                 CUInt64                                  _start_ts,
-                                 CUInt64                                  _end_ts,
-                                 CUInt64                                  _sequid,
-                                 CUInt64                                  _runid,
-                                 CUInt32                                  page_len = DEFAULT_PAGE_LEN);
+                                 uint64_t                                  _start_ts,
+                                 uint64_t                                  _end_ts,
+                                 uint64_t                                  _sequid,
+                                 uint64_t                                  _runid,
+                                 uint32_t                                  page_len = DEFAULT_PAGE_LEN);
                 
                 QueryIndexCursor(const std::string& _query_id,
                                  chaos::common::network::URLServiceFeeder& _connection_feeder,
                                  const std::string& _node_id,
-                                 CUInt64 _start_ts,
-                                 CUInt64 _end_ts,
-                                 CUInt64 _sequid,
-                                 CUInt64 _runid,
+                                 uint64_t _start_ts,
+                                 uint64_t _end_ts,
+                                 uint64_t _sequid,
+                                 uint64_t _runid,
                                  const ChaosStringSet& _meta_tags,
-                                 CUInt32 page_len=DEFAULT_PAGE_LEN);
+                                 uint32_t page_len=DEFAULT_PAGE_LEN);
             };
         }
     }
