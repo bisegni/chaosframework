@@ -94,9 +94,6 @@ namespace chaos {
                 //! point to current host and port
                 std::string published_host_and_port;
                 
-                //!name of direct io client implementation to use
-                std::string direct_io_client_impl;
-                
 				//!Direct IO server interface
 				chaos::common::direct_io::DirectIOServer *direct_io_server;
                 

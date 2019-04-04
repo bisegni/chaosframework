@@ -47,7 +47,13 @@ namespace ext_unt = chaos::common::external_unit;
 
 GlobalConfiguration::GlobalConfiguration():
 desc("!CHAOS Framework Allowed options"){}
-GlobalConfiguration::~GlobalConfiguration(){}
+
+GlobalConfiguration::~GlobalConfiguration(){
+    map_system_feature[SystemFeatureDirectIOClient] = CDataVariant(false);
+    map_system_feature[SystemFeatureDirectIOServer] = CDataVariant(false);
+    map_system_feature[SystemFeatureEventClient] = CDataVariant(false);
+    map_system_feature[SystemFeatureEventServer] = CDataVariant(false);
+}
 
 void GlobalConfiguration::preParseStartupParameters()  {
     try{
@@ -122,7 +128,6 @@ void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions)  {
 
 int32_t GlobalConfiguration::filterLogLevel(string& levelStr)  {
     chaos::common::log::level::LogSeverityLevel level = chaos::common::log::level::LSLInfo;
-    
     if (levelStr == "info")
         level = chaos::common::log::level::LSLInfo;
     else if (levelStr == "debug")
@@ -135,13 +140,11 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr)  {
         level = chaos::common::log::level::LSLFatal;
     else
         throw chaos::CException(1, "Invalid log level", "GlobalConfiguration::filterLogLevel");
-    
     return static_cast< int32_t >(level);
 }
 
 void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
     try{
-        //
         po::store(po::parse_command_line(argc, argv, desc), vm);
         po::notify(vm);
     }catch (po::error &e) {
@@ -153,14 +156,12 @@ void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
 
 void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
     try{
-        //
         po::store(po::parse_config_file(config_file, desc), vm);
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
-        
     }
 }
 
@@ -175,23 +176,15 @@ void GlobalConfiguration::scanOption()   {
             std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " BuildID:"<<CSLIB_BUILD_ID<< " BuildDate:"<<__DATE__ <<" " <<__TIME__<<"\n";
             exit(0);
             return;
-            
         }
     } catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
-        
     }
-    
-    
 }
 
 void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) {
-    //int rpcServerPort;
-    //int rpcServerThreadNumber;
-    //string metadataServerAddress;
-    //vector<string> liveDataServer;
     try{
         //
         po::store(optionsParser, vm);
@@ -200,15 +193,13 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
-        
     }
-    
     //scan option
     scanOption();
-    
     //check the default option
     checkDefaultOption();
 }
+
 void GlobalConfiguration::checkDefaultOption()  {
     configuration.reset(new CDataWrapper());
     //now we can fill the gloabl configuration
@@ -359,10 +350,6 @@ void GlobalConfiguration::checkDefaultOption()  {
     }
 }
 
-
-/*
- Add a custom option
- */
 void GlobalConfiguration::addOption(const char* name,
                                     const char* description) {
     try{
@@ -372,9 +359,6 @@ void GlobalConfiguration::addOption(const char* name,
     }
 }
 
-/*
- Add a custom option
- */
 void GlobalConfiguration::addOption(const char* name,
                                     const po::value_semantic* s,
                                     const char* description) {
@@ -385,9 +369,6 @@ void GlobalConfiguration::addOption(const char* name,
     }
 }
 
-/*
- Add a custom option
- */
 void GlobalConfiguration::addOptionZeroTokens(const char* name,
                                               const char* description,
                                               bool *default_variable)   {
@@ -548,4 +529,8 @@ MapStrKeyStrValue& GlobalConfiguration::getDirectIOClientImplKVParam() {
 
 MapStrKeyStrValue& GlobalConfiguration::getScriptVMKVParam() {
     return map_kv_param_script_vm;
+}
+
+MapSysFeatureKeyVariantValue& GlobalConfiguration::getSystemFeature() {
+    return map_system_feature;
 }

@@ -26,6 +26,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
@@ -47,6 +48,13 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
     
     using namespace std;
+    
+    typedef enum SystemFeature {
+        SystemFeatureDirectIOClient,
+        SystemFeatureDirectIOServer,
+        SystemFeatureEventClient,
+        SystemFeatureEventServer
+    } SystemFeature;
     
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x = z;\
@@ -78,12 +86,13 @@ x = hasOption(y);
     
     CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::network::CNetworkAddress, VectorMetadatserver);
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapStrKeyStrValue);
-    
+    CHAOS_DEFINE_MAP_FOR_TYPE(SystemFeature, chaos::common::data::CDataVariant, MapSysFeatureKeyVariantValue);
     /*
      Central class for all CHOAS framework configuraitons
      */
     class GlobalConfiguration:
     public chaos::common::utility::Singleton<GlobalConfiguration> {
+        friend class ChaosAbstractCommon;
         //for program option
         po::variables_map vm;
         po::options_description desc;
@@ -117,10 +126,8 @@ x = hasOption(y);
         //!map for key value used by script virtual machine
         MapStrKeyStrValue map_kv_param_script_vm;
         
-        //fill the rpc
-//        void fillKVParameter(std::map<std::string, std::string>& kvmap,
-//                             const std::string& kv_string,
-//                             const std::string& regex);
+        //map for system feature
+        MapSysFeatureKeyVariantValue map_system_feature;
     public:
         void loadStartupParameter(int, const char* argv[]);
         void loadStreamParameter(std::istream &config_file);
@@ -330,6 +337,8 @@ x = hasOption(y);
         
         //! return the script virtualmachine key value parameter
         MapStrKeyStrValue& getScriptVMKVParam();
+        
+        MapSysFeatureKeyVariantValue& getSystemFeature();
         
         static void fillKVParameter(std::map<std::string, std::string>& kvmap,
                                     const std::vector<std::string>& kv_vector,

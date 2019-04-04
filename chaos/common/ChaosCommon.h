@@ -106,6 +106,8 @@ namespace chaos {
         void stop();
         
         GlobalConfiguration* getGlobalConfigurationInstance();
+        
+        void setSystemFeature(SystemFeature, bool on);
     };
     
     //templated class to force singleton on master
