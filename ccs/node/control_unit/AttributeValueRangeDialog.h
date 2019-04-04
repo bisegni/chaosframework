@@ -11,10 +11,10 @@ class AttributeValueRangeDialog : public QDialog
 {
     Q_OBJECT
     int current_row;
-    const QString& attribute_name;
-    const QString& attribute_default_value;
-    const QString& attribute_default_max_value;
-    const QString& attribute_default_min_value;
+    const QString attribute_name;
+    const QString attribute_default_value;
+    const QString attribute_default_max_value;
+    const QString attribute_default_min_value;
 public:
     AttributeValueRangeDialog(QWidget *parent = 0);
     AttributeValueRangeDialog(int _current_row,

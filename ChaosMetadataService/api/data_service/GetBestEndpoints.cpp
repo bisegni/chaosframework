@@ -60,6 +60,7 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
     
     if(now >= nu_cache_ts ||
        data_services.size() == 0) {
+        data_services.clear();
         GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -1)
         
         if((err = ds_da->getBestNDataService(ha_zone_name,
@@ -74,6 +75,7 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
     //constructs the result
     result.reset(new CDataWrapper());
     if(data_services.size()>0) {
+        GBE_INFO << CHAOS_FORMAT("Found %1% data services available", %data_services.size());
         BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
             if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                ds_element->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)){

@@ -92,6 +92,7 @@ deviceChannel(NULL),devId(_deviceID) {
                                                  __PRETTY_FUNCTION__);
     CDWUniquePtr tmp_data_handler;
     if(!mdsChannel->getDataDriverBestConfiguration(tmp_data_handler, millisecToWait)){
+        LDBG_ << tmp_data_handler->getJSONString();
         ioLiveDataDriver->updateConfiguration(tmp_data_handler.get());
     }
     
