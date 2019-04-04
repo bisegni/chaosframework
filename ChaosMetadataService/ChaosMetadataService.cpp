@@ -169,10 +169,10 @@ void ChaosMetadataService::start()  {
         //register this process on persistence database
         persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
 
-//        ds_da->registerNode(setting.ha_zone_name,
-//                            NetworkBroker::getInstance()->getRPCUrl(),
-//                            NetworkBroker::getInstance()->getDirectIOUrl(),
-//                            0);
+        ds_da->registerNode(setting.ha_zone_name,
+                            NetworkBroker::getInstance()->getRPCUrl(),
+                            NetworkBroker::getInstance()->getDirectIOUrl(),
+                            0);
 
         //at this point i must with for end signal
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
@@ -197,32 +197,32 @@ void ChaosMetadataService::start()  {
 }
 
 void ChaosMetadataService::timeout() {
-//    int err = 0;
-//    bool presence = false;
-//    HealthStat service_proc_stat;
-//    const std::string ds_uid = NetworkBroker::getInstance()->getRPCUrl();
-//    persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
-//    persistence::data_access::NodeDataAccess *n_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::NodeDataAccess>();
-//    service_proc_stat.mds_received_timestamp = TimingUtil::getTimeStamp();
-//    if(n_da->checkNodePresence(presence, ds_uid) != 0) {
-//        LCND_LERR << CHAOS_FORMAT("Error check if this mds [%1%] description is registered", %NetworkBroker::getInstance()->getRPCUrl());
-//        return;
-//    }
-//
-//    if(presence == false) {
-//        //reinsert mds
-//        ds_da->registerNode(setting.ha_zone_name,
-//                            NetworkBroker::getInstance()->getRPCUrl(),
-//                            NetworkBroker::getInstance()->getDirectIOUrl(),
-//                            0);
-//    }
-//
-//    //update proc stat
-//    ProcStatCalculator::update(service_proc_stat);
-//    if((err = n_da->setNodeHealthStatus(NetworkBroker::getInstance()->getRPCUrl(),
-//                                        service_proc_stat))) {
-//        LCND_LERR << CHAOS_FORMAT("error storing health data into database for this mds [%1%]", %NetworkBroker::getInstance()->getRPCUrl());
-//    }
+    int err = 0;
+    bool presence = false;
+    HealthStat service_proc_stat;
+    const std::string ds_uid = NetworkBroker::getInstance()->getRPCUrl();
+    persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
+    persistence::data_access::NodeDataAccess *n_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::NodeDataAccess>();
+    service_proc_stat.mds_received_timestamp = TimingUtil::getTimeStamp();
+    if(n_da->checkNodePresence(presence, ds_uid) != 0) {
+        LCND_LERR << CHAOS_FORMAT("Error check if this mds [%1%] description is registered", %NetworkBroker::getInstance()->getRPCUrl());
+        return;
+    }
+
+    if(presence == false) {
+        //reinsert mds
+        ds_da->registerNode(setting.ha_zone_name,
+                            NetworkBroker::getInstance()->getRPCUrl(),
+                            NetworkBroker::getInstance()->getDirectIOUrl(),
+                            0);
+    }
+
+    //update proc stat
+    ProcStatCalculator::update(service_proc_stat);
+    if((err = n_da->setNodeHealthStatus(NetworkBroker::getInstance()->getRPCUrl(),
+                                        service_proc_stat))) {
+        LCND_LERR << CHAOS_FORMAT("error storing health data into database for this mds [%1%]", %NetworkBroker::getInstance()->getRPCUrl());
+    }
 }
 
 /*

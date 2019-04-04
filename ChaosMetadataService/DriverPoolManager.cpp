@@ -47,17 +47,20 @@ void DriverPoolManager::init(void *init_data)  {
     const std::string cache_impl_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.cache_driver_impl+"CacheDriver";
     cache_driver.reset(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name),
                              cache_impl_name);
+    if(cache_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Cache Driver found", %cache_impl_name), __PRETTY_FUNCTION__);
     cache_driver.init(NULL, __PRETTY_FUNCTION__);
+    
     //init dirver instace
     const std::string persistence_impl_name = ChaosMetadataService::getInstance()->setting.persistence_implementation+"PersistenceDriver";
     persistence_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_impl_name),
                              persistence_impl_name);
-    if(persistence_driver.get() == NULL) throw chaos::CException(-1, "No Persistence driver found", __PRETTY_FUNCTION__);
+    if(persistence_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Persistence Driver found", %persistence_impl_name), __PRETTY_FUNCTION__);
     persistence_driver.init(NULL, __PRETTY_FUNCTION__);
     
     const std::string storage_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl + "ObjectStorageDriver";
     storage_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(storage_impl_name),
                              storage_impl_name);
+    if(storage_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Object Storage Driver found", %storage_impl_name), __PRETTY_FUNCTION__);
     storage_driver.init(NULL, __PRETTY_FUNCTION__);
 }
 
