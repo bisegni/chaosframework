@@ -170,10 +170,13 @@ void ControlUnitEditor::initUI() {
     ui->labelRunScheduleDelaySet->setDatasetAttributeName(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
     ui->labelRunScheduleDelaySet->setDatasetType(CControlUnitDatasetLabel::DatasetTypeSystem);
 
-    //chaos label for the current output dataset push rate
+    //chaos label for the current output dataset push rate and size
     ui->chaosLabelDSOutputPushRate->setNodeUID(control_unit_unique_id);
     ui->chaosLabelDSOutputPushRate->setHealthAttribute(CNodeHealthLabel::HealthCustomAttribute);
     ui->chaosLabelDSOutputPushRate->setCustomHealthAttribute(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+    ui->chaosLabelDSOutputPushSize->setNodeUID(control_unit_unique_id);
+    ui->chaosLabelDSOutputPushSize->setHealthAttribute(CNodeHealthLabel::HealthCustomAttribute);
+    ui->chaosLabelDSOutputPushSize->setCustomHealthAttribute(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE);
 
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
@@ -245,6 +248,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelRunScheduleDelaySet->initChaosContent();
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->initChaosContent();
+        ui->chaosLabelDSOutputPushSize->initChaosContent();
         ui->widgetStorageType->initChaosContent();
         ui->pushButtonDriverBypass->initChaosContent();
     }else{
@@ -265,6 +269,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelRunScheduleDelaySet->deinitChaosContent();
         ui->ledIndicatorHealtTSControlUnit->deinitChaosContent();
         ui->chaosLabelDSOutputPushRate->deinitChaosContent();
+        ui->chaosLabelDSOutputPushSize->deinitChaosContent();
     }
 }
 

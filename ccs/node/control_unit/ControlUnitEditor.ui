@@ -561,7 +561,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,1,0,0,0,0,0">
          <property name="spacing">
           <number>8</number>
          </property>
@@ -628,6 +628,30 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>/</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="CNodeHealthLabel" name="chaosLabelDSOutputPushSize">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0</string>
            </property>
           </widget>
          </item>
