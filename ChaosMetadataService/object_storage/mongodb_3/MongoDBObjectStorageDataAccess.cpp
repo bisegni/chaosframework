@@ -317,7 +317,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             for(auto& it: meta_tags) {
                 array_builder.append(it);
             }
-            builder.append(kvp("$all",make_array(array_builder)));
+            builder.append(kvp("$all", array_builder));
         }
         //create find option
         auto opts  = options::find{};
@@ -396,7 +396,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
             for(auto& it: search.meta_tags) {
                 array_builder.append(it);
             }
-            builder.append(kvp("$all",make_array(array_builder)));
+            builder.append(kvp("$all", array_builder));
         }
         //create find option
         auto opts  = options::find{};
