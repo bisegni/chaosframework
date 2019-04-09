@@ -105,16 +105,13 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
     builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
     builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
     //appends tag
-    using bsoncxx::builder::basic::sub_array;
-    if(meta_tags && meta_tags->size()) {
-        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), [](sub_array subarr, const ChaosStringSetConstSPtr meta_tags) {
-            for(ChaosStringSetConstIterator it = meta_tags->begin(),
-                end = meta_tags->end();
-                it != end;
-                it++){
-                subarr.append(*it);
-            }
-        }));
+    if(meta_tags &&
+       meta_tags->size()) {
+        auto array_builder = bsoncxx::builder::basic::array{};
+        for(auto& it: *meta_tags) {
+            array_builder.append(it);
+        }
+        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
     }
     
     bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize());
