@@ -1,4 +1,5 @@
 ### MACRO
+SET(LOGFILE /tmp/cmake_$ENV{USER}.log)
 macro (MESG parm)
 #    get_filename_component(WHERE ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
   SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
@@ -14,7 +15,7 @@ endmacro()
 macro (ERROR parm)
     # get_filename_component(WHERE ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
     SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
-    MESSAGE(FATAL_ERROR "[${WHERE}] ### ${parm}, /tmp/cmake.log for details")
+    MESSAGE(FATAL_ERROR "[${WHERE}] ### ${parm}, ${LOGFILE} for details")
 endmacro()
 
 MACRO (SUBDIRLIST result curdir)
@@ -72,8 +73,8 @@ IF (NOT CACHE_DIR)
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
-	  OUTPUT_FILE /tmp/cmake.log
-	  ERROR_FILE /tmp/cmake.log
+	  OUTPUT_FILE ${LOGFILE}
+	  ERROR_FILE ${LOGFILE}
 	  )
 	if( err)
 	  ERROR("cloning  from ${arg1} error ${out}")
@@ -88,8 +89,8 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE ${LOGFILE}
+	ERROR_FILE ${LOGFILE}
 	)
       if( err)
 	ERROR("cloning  from ${arg1} error :${out}")
@@ -119,8 +120,8 @@ IF (NOT CACHE_DIR)
 	WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE ${LOGFILE}
+	ERROR_FILE ${LOGFILE}
 	)
       if( err)
 	ERROR("wget failed  error ${out}")
@@ -142,8 +143,8 @@ IF (NOT CACHE_DIR)
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE ${LOGFILE}
+      ERROR_FILE ${LOGFILE}
       )
     if( err)
       ERROR("tar ${opt} failed  error ${out}")
@@ -262,8 +263,8 @@ execute_process(
 	    WORKING_DIRECTORY ${CHAOS_BUNDLE}
 	    RESULT_VARIABLE err
 	    OUTPUT_VARIABLE out
-	    OUTPUT_FILE /tmp/cmake.log
-	    ERROR_FILE /tmp/cmake.log
+	    OUTPUT_FILE ${LOGFILE}
+	    ERROR_FILE ${LOGFILE}
 	    )
 	   if( err)
 	     MESSAGE("generation  error ${out}")
@@ -288,8 +289,8 @@ MESSAGE("ALEDEBUG adding UnitServer at " ${TOP_DIRECTORY} )
       WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE ${LOGFILE}
+      ERROR_FILE ${LOGFILE}
       )
     if( err)
       ERROR("checkout  error ${out}")
@@ -305,8 +306,8 @@ MESSAGE("ALEDEBUG adding UnitServer at " ${TOP_DIRECTORY} )
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE mod
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE ${LOGFILE}
+	ERROR_FILE ${LOGFILE}
 	)
 
       IF( err)
@@ -325,8 +326,8 @@ MESSAGE("ALEDEBUG adding UnitServer at " ${TOP_DIRECTORY} )
 	  WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	  RESULT_VARIABLE err
 	  OUTPUT_VARIABLE out
-	  OUTPUT_FILE /tmp/cmake.log
-	  ERROR_FILE /tmp/cmake.log
+	  OUTPUT_FILE ${LOGFILE}
+	  ERROR_FILE ${LOGFILE}
 	  )
 	IF (err)
 	  ERROR("[${arg}] cleaning b2 ${out}")
@@ -362,8 +363,8 @@ MESSAGE("ALEDEBUG adding UnitServer at " ${TOP_DIRECTORY} )
       COMMAND ${CONFPARM}
       WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
-      OUTPUT_FILE /tmp/cmake.log
-      ERROR_FILE /tmp/cmake.log
+      OUTPUT_FILE ${LOGFILE}
+      ERROR_FILE ${LOGFILE}
       )
 
     if( err)
@@ -376,8 +377,8 @@ MESSAGE("ALEDEBUG adding UnitServer at " ${TOP_DIRECTORY} )
 	COMMAND make install -j ${PROCESSOR_COUNT}
 	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err2
-	OUTPUT_FILE /tmp/cmake.log
-	ERROR_FILE /tmp/cmake.log
+	OUTPUT_FILE ${LOGFILE}
+	ERROR_FILE ${LOGFILE}
 	)
       if( err2)
 	ERROR("[${arg}] compiling ")
