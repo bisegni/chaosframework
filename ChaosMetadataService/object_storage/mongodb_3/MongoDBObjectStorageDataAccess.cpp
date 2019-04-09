@@ -59,6 +59,12 @@ using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::make_array;
 using bsoncxx::builder::basic::make_document;
 using bsoncxx::types::b_date;
+using bsoncxx::builder::stream::close_array;
+using bsoncxx::builder::stream::close_document;
+using bsoncxx::builder::stream::document;
+using bsoncxx::builder::stream::finalize;
+using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::stream::open_document;
 
 using namespace mongocxx;
 using namespace bsoncxx;
@@ -317,7 +323,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             for(auto& it: meta_tags) {
                 array_builder.append(it);
             }
-            builder.append(kvp("$all", array_builder));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$all", array_builder))));
         }
         //create find option
         auto opts  = options::find{};
@@ -396,7 +402,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
             for(auto& it: search.meta_tags) {
                 array_builder.append(it);
             }
-            builder.append(kvp("$all", array_builder));
+            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$all", array_builder))));
         }
         //create find option
         auto opts  = options::find{};
