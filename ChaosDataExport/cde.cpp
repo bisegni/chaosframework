@@ -264,7 +264,7 @@ int main(int argc, const char* argv[]) {
         CUController *controller = NULL;
         ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id, &controller);
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
-        //controller->setQueryOnIndex(true);
+//        controller->setQueryOnIndex(true);
         ChaosStringSet search_tags;
         chaos::common::io::QueryCursor *query_cursor = NULL;
         for(ChaosStringVectorIterator it = meta_tags.begin(),
@@ -322,7 +322,7 @@ int main(int argc, const char* argv[]) {
                             //JSON
                         case 1:{
                             std::string ser_str = q_result->getJSONString();
-                            //ser = ChaosMakeSharedPtr<SerializationBuffer>(ser_str.c_str(), ser_str.size()));
+                            ser.reset(new SerializationBuffer(ser_str.c_str(), ser_str.size()));
                             break;
                         }
                             //CSV
@@ -339,7 +339,6 @@ int main(int argc, const char* argv[]) {
                 }
                 printNumberOfExportedElement(exported);
             }
-            printNumberOfExportedElement(exported);
             std::cout << std::endl;
             std::cout << "Releasing query" << std::endl;
             controller->releaseQuery(query_cursor);

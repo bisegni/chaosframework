@@ -293,28 +293,25 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
     auto builder = builder::basic::document{};
+    auto time_builder = builder::basic::document{};
     try{
-        
         bool reverse_order = false;
+        
         const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
         //we have the intervall
         reverse_order = timestamp_from>timestamp_to;
+        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
         if(reverse_order == false) {
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_from))))));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_to))))));
-            
-            builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
+            time_builder.append(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_from))));
+            time_builder.append(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_to))));
         }else{
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_from))))));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_to))))));
-            builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
+            time_builder.append(kvp("$lte", b_date(std::chrono::milliseconds(timestamp_from))));
+            time_builder.append(kvp("$gte", b_date(std::chrono::milliseconds(timestamp_to))));
         }
-        
+        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), time_builder.view()));
+        builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
+        builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
         if(meta_tags.size()) {
             auto array_builder = bsoncxx::builder::basic::array{};
             for(auto& it: meta_tags) {
@@ -371,6 +368,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
     //access a collection
     collection coll = db[MONGODB_DAQ_COLL_NAME];
     auto builder = builder::basic::document{};
+    auto time_builder = builder::basic::document{};
     auto builder_project = builder::basic::document{};
     try{
         
@@ -379,21 +377,17 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         const std::string counter_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
         //we have the intervall
         reverse_order = search.timestamp_from>search.timestamp_to;
+        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), search.key));
         if(reverse_order == false) {
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), search.key));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_from))))));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_to))))));
-            
-            builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
+            time_builder.append(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_from))));
+            time_builder.append(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_to))));
         }else{
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), search.key));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_from))))));
-            builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), make_document(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_to))))));
-            builder.append(kvp(run_key,     make_document(kvp("$lte", last_record_found_seq.run_id))));
-            builder.append(kvp(counter_key, make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
+            time_builder.append(kvp("$lte", b_date(std::chrono::milliseconds(search.timestamp_from))));
+            time_builder.append(kvp("$gte", b_date(std::chrono::milliseconds(search.timestamp_to))));
         }
-        
+        builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), time_builder.view()));
+        builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
+        builder.append(kvp(counter_key, make_document(kvp("$gte", last_record_found_seq.datapack_counter ))));
         if(search.meta_tags.size()) {
             auto array_builder = bsoncxx::builder::basic::array{};
             for(auto& it: search.meta_tags) {
@@ -472,7 +466,7 @@ int MongoDBObjectStorageDataAccess::getObjectByIndex(const CDWShrdPtr& index,
         builder.append(kvp(seq_key, index->getInt64Value("dpck_seq_id")));
         
         DEBUG_CODE(DBG<<log_message("getObjectByIndex", "find", DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                                  bsoncxx::to_json(builder.view()))));
+                                                                                        bsoncxx::to_json(builder.view()))));
         
         auto result = coll.find_one(builder.view(), opts);
         if(result) {
