@@ -305,15 +305,15 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
                         synchronous_answer);
     if(err > 0 /*resource not available*/) {
         //change id ofr socket
-        if((ZMQBaseClass::setAndReturnID(socket_service,
-                                         service_identity))) {
-            ERR << "Error configuring new id for socker :" << service_endpoint;
-        } else {
-            ZMQBaseClass::resetOutputQueue(socket_service,
-                                           default_configuration,
-                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
-
-        }
+//        if((ZMQBaseClass::setAndReturnID(socket_service,
+//                                         service_identity))) {
+//            ERR << "Error configuring new id for socker :" << service_endpoint;
+//        } else {
+//            ZMQBaseClass::resetOutputQueue(socket_service,
+//                                           default_configuration,
+//                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+//
+//        }
     }
     return err;
 }

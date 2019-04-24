@@ -7522,6 +7522,7 @@
 					.,
 					usr/local/include,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -7568,6 +7569,7 @@
 					.,
 					usr/local/include,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;

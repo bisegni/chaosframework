@@ -459,7 +459,6 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     std::string             empty_delimiter;
     bool                    have_more_message = false;
     size_t                  readed_byte;
-    char					header_buffer[DIRECT_IO_HEADER_SIZE];
     zmq_msg_t               header_message;
     //read header
     if((err = readMessage(socket, header_message))){
@@ -492,8 +491,8 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     //manage little endina conversion for header
     memcpy(&data_pack_handle->header, (const char *)zmq_msg_data(&header_message), zmq_msg_size(&header_message));
     DIRECT_IO_DATAPACK_DISPATCH_HEADER_FROM_ENDIAN(data_pack_handle);
-    data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-    data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
+    data_pack_handle->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(data_pack_handle->header.channel_data_size);
+    data_pack_handle->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(data_pack_handle->header.channel_header_size);
     
     //check what i need to reice
     switch(data_pack_handle->header.dispatcher_header.fields.channel_part) {
@@ -568,7 +567,7 @@ int ZMQBaseClass::sendDatapack(void *socket,
                                DirectIODataPackSPtr data_pack) {
     //send identity
     int err = 0;
-    if((err = sendMessage(socket, identity.c_str(), identity.size(), true))) {
+    if((err = sendMessage(socket, (void*)identity.c_str(), identity.size(), true))) {
         return err;
     }
     //read the direct io datapack with zmq messages
