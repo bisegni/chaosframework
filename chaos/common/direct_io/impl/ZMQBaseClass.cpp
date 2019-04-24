@@ -208,44 +208,6 @@ int ZMQBaseClass::readMessage(void *socket,
     return err;
 }
 
-int ZMQBaseClass::readMessage(void *socket,
-                              BufferSPtr& msg_buffer) {
-    int err = 0;
-    /* Create an empty ØMQ message to hold the message part */
-    zmq_msg_t part;
-    if((err = readMessage(socket,
-                          part))) {
-        return err;
-    }
-    msg_buffer = ChaosMakeSharedPtr<Buffer>();
-    msg_buffer->append(zmq_msg_data(&part), zmq_msg_size(&part));
-    zmq_msg_close(&part);
-    return err;
-}
-
-int ZMQBaseClass::readMessage(void * socket,
-                              void *message_data,
-                              size_t message_max_size,
-                              size_t& message_size_read) {
-    int err = 0;
-    //no we can read the message
-    if((err = zmq_recv(socket,
-                       message_data,
-                       message_max_size,
-                       0)) == -1) {
-        //we got an error
-        err = zmq_errno();
-        ZMQDIO_BASE_LERR_ << "Error receiving data from socket with code:" << PRINT_ZMQ_ERR(err);
-        message_size_read=0;
-        return err;
-    } else {
-        //take the readed byte
-        message_size_read = err;
-    }
-    //return success
-    return 0;
-}
-
 int ZMQBaseClass::sendMessage(void *socket,
                               zmq_msg_t& message,
                               int flag) {
@@ -327,102 +289,18 @@ int ZMQBaseClass::sendMessage(void *socket,
     return err;
 }
 
-int ZMQBaseClass::moreMessageToRead(void * socket,
-                                    bool& more_to_read) {
-    int err = 0;
-    int option_result = 0;
-    size_t size_int = sizeof(int);
-    more_to_read=false;
-    //we heva received the message now check the size aspected
-    if((err = zmq_getsockopt(socket, ZMQ_RCVMORE, &option_result, &size_int))) {
-        err = zmq_errno();
-        ZMQDIO_BASE_LERR_ << "Error checking if are present more submessage with error:" << PRINT_ZMQ_ERR(err);
-    } else {
-        more_to_read = (bool)option_result;
-    }
-    return err;
-}
-
 bool ZMQBaseClass::moreMessageToRead(zmq_msg_t& cur_msg) {
     return zmq_msg_more(&cur_msg);
 }
 
-//  Receive 0MQ string from socket and convert into C string
-//  Caller must free returned string. Returns NULL if the context
-//  is being terminated.
-int ZMQBaseClass::stringReceive(void *socket, std::string& received_string) {
-    char buffer [256];
-    size_t readed_byte = 0;
-    buffer[sizeof(buffer)-1]=0;
-    buffer[0]=0;
-    
-    //read message and check the error
-    int err = readMessage(socket, buffer, sizeof(buffer)-1, readed_byte);
-    if(err) return err;
-    
-    //we got string so cap it for nullify at the end
-    buffer[readed_byte] = 0;
-    //return the string
-    received_string = buffer;
-    //return success
-    return 0;
-}
-
-//  Convert C string to 0MQ string and send to socket
-int ZMQBaseClass::stringSend(void *socket, const char *string) {
-    return sendMessage(socket, (void*)string, strlen(string), false);
-}
-
-//  Sends string as 0MQ string, as multipart non-terminal
-int ZMQBaseClass::stringSendMore(void *socket, const char *string) {
-    return sendMessage(socket, (void*)string, strlen(string), true);
-}
-
-int ZMQBaseClass::setID(void *socket) {
-    std::string uid = UUIDUtil::generateUUIDLite();
-    return zmq_setsockopt (socket, ZMQ_IDENTITY, uid.c_str(), uid.size());
+BufferSPtr ZMQBaseClass::zmqMsgToBufferShrdPtr(zmq_msg_t& msg) {
+    return ChaosMakeSharedPtr<Buffer>((const char*)zmq_msg_data(&msg), zmq_msg_size(&msg));
 }
 
 int ZMQBaseClass::setAndReturnID(void *socket,
                                  std::string& new_id) {
     new_id = UUIDUtil::generateUUIDLite();
     return zmq_setsockopt (socket, ZMQ_IDENTITY, new_id.c_str(), new_id.size());
-}
-
-int ZMQBaseClass::resetOutputQueue(void *socket,
-                                   MapZMQConfiguration &default_conf,
-                                   const MapZMQConfiguration &startup_conf) {
-    int err = 0;
-    int prop_value = 0;
-    err = zmq_setsockopt(socket, ZMQ_RCVHWM, &prop_value, sizeof(int));
-    if(err == 0) {
-        err = setSocketOption(socket,
-                              default_conf,
-                              startup_conf,
-                              ZMQ_RCVHWM,
-                              "ZMQ_RCVHWM",
-                              "resetOutputQueue");
-    }
-    return err;
-}
-
-int ZMQBaseClass::sendStartEnvelop(void *socket) {
-    //sending envelop delimiter
-    return stringSendMore(socket, EmptyMessage);
-}
-
-int ZMQBaseClass::receiveStartEnvelop(void *socket) {
-    std::string empty_delimiter;
-    int err = 0;
-    if((err = stringReceive(socket, empty_delimiter))){
-        return err;
-    }
-    //assert on different delimiter size
-    if(empty_delimiter.size() != 0) {
-        ZMQDIO_BASE_LERR_<<"invalid start envelop";
-        err = -10000;
-    }
-    return err;
 }
 
 int ZMQBaseClass::reveiceDatapack(void *socket,
@@ -456,9 +334,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
 int ZMQBaseClass::reveiceDatapack(void *socket,
                                   DirectIODataPackSPtr& data_pack_handle) {
     int                     err = 0;
-    std::string             empty_delimiter;
     bool                    have_more_message = false;
-    size_t                  readed_byte;
     zmq_msg_t               header_message;
     //read header
     if((err = readMessage(socket, header_message))){
@@ -498,66 +374,87 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     switch(data_pack_handle->header.dispatcher_header.fields.channel_part) {
         case DIRECT_IO_CHANNEL_PART_EMPTY:
             break;
-        case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-            
+        case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:{
+            zmq_msg_t message_header_data;
             //check if we have header message
-            EXIT_IF_NO_MORE_MESSAGE(-13002, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_ONLY");
-            
-            //init header data buffer
-            data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
-            
-            //read the channel header
+            EXIT_IF_NO_MORE_MESSAGE_MSG_T(header_message, -13002, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_ONLY");
+            //get hedaer part
             if((err = readMessage(socket,
-                                  data_pack_handle->channel_header_data->data(),
-                                  data_pack_handle->header.channel_header_size,
-                                  readed_byte))){
-                ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-            }
-            break;
-        case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-            
-            //check if we have data message
-            EXIT_IF_NO_MORE_MESSAGE(-13003, "No other message after header for DIRECT_IO_CHANNEL_PART_DATA_ONLY");
-            
-            //init data buffer
-            data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
-            
-            //read data part
-            if((err = readMessage(socket,
-                                  data_pack_handle->channel_data->data(),
-                                  data_pack_handle->header.channel_data_size,
-                                  readed_byte))){
-                ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
-            }
-            break;
-        case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-            //check if we have header message
-            EXIT_IF_NO_MORE_MESSAGE(-13004, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
-            
-            //allocate header buffer
-            data_pack_handle->channel_header_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_header_size);
-            
-            if((err = readMessage(socket,
-                                  data_pack_handle->channel_header_data->data(),
-                                  data_pack_handle->header.channel_header_size,
-                                  readed_byte))){
+                                  message_header_data))) {
                 ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
             } else {
-                //check if we have data message
-                EXIT_IF_NO_MORE_MESSAGE(-13005, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
-                
-                //allocate data buffer
-                data_pack_handle->channel_data = ChaosMakeSharedPtr<Buffer>(data_pack_handle->header.channel_data_size);
-                
-                //read data part
-                if((err = readMessage(socket,
-                                      data_pack_handle->channel_data->data(),
-                                      data_pack_handle->header.channel_data_size,
-                                      readed_byte))){
-                    ZMQDIO_BASE_LERR_<< "Error reading the channel header with code:"<<err;
+                if(zmq_msg_size(&message_header_data) !=
+                   data_pack_handle->header.channel_header_size) {
+                    ZMQDIO_BASE_LERR_<< CHAOS_FORMAT("Header part size received %1% expeted %2%:", %zmq_msg_size(&message_header_data)%data_pack_handle->header.channel_header_size);
+                    err = -13003;
+                } else {
+                    //get header buffer
+                    data_pack_handle->channel_header_data = zmqMsgToBufferShrdPtr(message_header_data);
                 }
             }
             break;
+        }
+        case DIRECT_IO_CHANNEL_PART_DATA_ONLY:{
+            zmq_msg_t message_data;
+            //check if we have data message
+            EXIT_IF_NO_MORE_MESSAGE_MSG_T(header_message, -13004, "No other message after header for DIRECT_IO_CHANNEL_PART_DATA_ONLY");
+            //read data part
+            if((err = readMessage(socket,
+                                  message_data))) {
+                ZMQDIO_BASE_LERR_<< "Error reading the channel data with code:"<<err;
+            } else {
+                if(zmq_msg_size(&message_data) !=
+                   data_pack_handle->header.channel_data_size) {
+                    ZMQDIO_BASE_LERR_<< CHAOS_FORMAT("Data part size received %1% expeted %2%:", %zmq_msg_size(&message_data)%data_pack_handle->header.channel_data_size);
+                    err = -13005;
+                } else {
+                    //get data buffer
+                    data_pack_handle->channel_data = zmqMsgToBufferShrdPtr(message_data);
+                }
+            }
+            break;
+        }
+        case DIRECT_IO_CHANNEL_PART_HEADER_DATA:{
+            zmq_msg_t message_header_data;
+            zmq_msg_t message_data;
+            //check if we have header message
+            EXIT_IF_NO_MORE_MESSAGE_MSG_T(header_message, -13006, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
+            
+            //read header part
+            if((err = readMessage(socket,
+                                  message_header_data))) {
+                ZMQDIO_BASE_LERR_<< CHAOS_FORMAT("Error reading the channel header with code: %1%",%err);
+            } else {
+                if(zmq_msg_size(&message_header_data) !=
+                   data_pack_handle->header.channel_header_size) {
+                    ZMQDIO_BASE_LERR_<< CHAOS_FORMAT("Header part size received %1% expeted %2%:", %zmq_msg_size(&message_header_data)%data_pack_handle->header.channel_header_size);
+                    err = -13007;
+                } else {
+                    //get header buffer
+                    data_pack_handle->channel_header_data = zmqMsgToBufferShrdPtr(message_header_data);
+                    
+                    //check if we have data message
+                    EXIT_IF_NO_MORE_MESSAGE_MSG_T(message_header_data, -13008, "No other message after header for DIRECT_IO_CHANNEL_PART_HEADER_DATA");
+                    
+                    //read data part
+                    if((err = readMessage(socket,
+                                          message_data))) {
+                        ZMQDIO_BASE_LERR_<< "Error reading the channel data with code:"<<err;
+                    } else {
+                        //check size of data
+                        if(zmq_msg_size(&message_data) !=
+                           data_pack_handle->header.channel_data_size) {
+                            ZMQDIO_BASE_LERR_<< CHAOS_FORMAT("Data part size received %1% expeted %2%:", %zmq_msg_size(&message_data)%data_pack_handle->header.channel_data_size);
+                            err = -13009;
+                        } else {
+                            // get data buffer
+                            data_pack_handle->channel_data = zmqMsgToBufferShrdPtr(message_data);
+                        }
+                    }
+                }
+            }
+            break;
+        }
     }
     return err;
 }
