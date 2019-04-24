@@ -72,6 +72,9 @@ namespace chaos {
                     inline int readMessage(void *socket,
                                            chaos::common::data::BufferSPtr& msg_buffer);
                     
+                    inline int readMessage(void *socket,
+                                           zmq_msg_t& message);
+                    
                     //! read a new message from zmq socket
                     /*!
                      
@@ -80,6 +83,10 @@ namespace chaos {
                                            void *message_data,
                                            size_t message_max_size,
                                            size_t& message_size_read);
+                    
+                    inline int sendMessage(void *socket,
+                                           zmq_msg_t& message,
+                                           int flag);
                     
                     //! send a new message from zmq socket
                     /*!
@@ -103,6 +110,12 @@ namespace chaos {
                      */
                     inline int moreMessageToRead(void * socket,
                                                  bool& more_to_read);
+                    
+                    //! read a new message from zmq socket
+                    /*!
+                     
+                     */
+                    inline bool moreMessageToRead(zmq_msg_t& cur_msg);
                     
                     //! receive a string
                     inline int stringReceive(void *socket,
