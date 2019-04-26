@@ -72,6 +72,14 @@ namespace chaos {
                     inline int readMessage(void *socket,
                                            zmq_msg_t& message);
 
+                    inline int readMessage(void *socket,
+                                           chaos::common::data::BufferSPtr& buffer,
+                                           bool& has_next);
+ 
+                    inline int readMessage(void *socket,
+                                           std::string& buffer,
+                                           bool& has_next,
+                                           std::string *peer_ip = NULL);
                     
                     inline int sendMessage(void *socket,
                                            zmq_msg_t& message,
