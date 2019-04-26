@@ -236,7 +236,7 @@ int ZMQBaseClass::readMessage(void *socket,
         buffer = zmqMsgToBufferShrdPtr(message);
         //check if we have other message
         has_next = moreMessageToRead(message);
-        if((err = zmq_close(&message)) <= 0) {
+        if((err = zmq_msg_close(&message)) != 0) {
             err = zmq_errno();
             ZMQDIO_BASE_LERR_ << "Error closing message" << PRINT_ZMQ_ERR(err);
         }
@@ -279,7 +279,7 @@ int ZMQBaseClass::readMessage(void *socket,
         
         //check if we have other message
         has_next = moreMessageToRead(message);
-        if((err = zmq_close(&message)) <= 0) {
+        if((err = zmq_msg_close(&message)) != 0) {
             err = zmq_errno();
             ZMQDIO_BASE_LERR_ << "Error closing message" << PRINT_ZMQ_ERR(err);
         }
