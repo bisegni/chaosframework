@@ -9,7 +9,7 @@ ENDIF()
 
 IF (CHAOS_TARGET)
 MESG("Configure libzmq with autotools")  
-CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq/libzmq)
+CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq/libzmq.git)
 ELSE()
 MESG("Configure libzmq as CMake")
 ExternalProject_Add(
