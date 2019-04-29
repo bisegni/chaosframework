@@ -6,9 +6,12 @@ IF(NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
-#CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
-MESG("Configure libzmq")
+IF (CHAOS_TARGET)
+MESG("Configure libzmq with autotools")  
+CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq/libzmq)
+ELSE()
+MESG("Configure libzmq as CMake")
 ExternalProject_Add(
  libzmq
  GIT_REPOSITORY https://github.com/zeromq/libzmq.git
@@ -21,6 +24,7 @@ ExternalProject_Add(
  LOG_DOWNLOAD ON
  LOG_CONFIGURE ON
  LOG_BUILD ON)
+ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
