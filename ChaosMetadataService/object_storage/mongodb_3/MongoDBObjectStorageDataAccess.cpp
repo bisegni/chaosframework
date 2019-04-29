@@ -311,7 +311,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         }
         builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), time_builder.view()));
         builder.append(kvp(run_key,     make_document(kvp("$gte", last_record_found_seq.run_id))));
-        builder.append(kvp(counter_key, make_document(kvp("$grte",  last_record_found_seq.datapack_counter ))));
+        builder.append(kvp(counter_key, make_document(kvp("$gte",  last_record_found_seq.datapack_counter ))));
         if(meta_tags.size()) {
             auto array_builder = bsoncxx::builder::basic::array{};
             for(auto& it: meta_tags) {
