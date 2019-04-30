@@ -263,8 +263,7 @@ int main(int argc, const char* argv[]) {
         std::cout << "Acquiring controller" << std::endl;
         CUController *controller = NULL;
         ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id, &controller);
-        
-        sleep(10000000);
+
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
 //        controller->setQueryOnIndex(true);
         ChaosStringSet search_tags;
