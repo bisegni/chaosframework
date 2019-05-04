@@ -77,13 +77,11 @@ CommandInfoAndImplementation::~CommandInfoAndImplementation() {
 }
 
 void CommandInfoAndImplementation::deleteInfo() {
-    if (!cmdInfo) return;
     delete(cmdInfo);
     cmdInfo = NULL;
 }
 
 void CommandInfoAndImplementation::deleteImpl() {
-    if (!cmdImpl) return;
     delete(cmdImpl);
     cmdImpl = NULL;
 }
