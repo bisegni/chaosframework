@@ -606,9 +606,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
                                                      scheduler_step_delay);
     if(cmd_instance) {
         //report unique id
-        command_id = cmd_instance->unique_id;
-        //enqueue command insandbox
-        sandbox_ptr->enqueueCommand(command_data, cmd_instance, priority);
+        command_id = sandbox_ptr->enqueueCommand(command_data, cmd_instance, priority);
     } else {
         throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
         
