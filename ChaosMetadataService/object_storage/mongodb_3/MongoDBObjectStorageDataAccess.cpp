@@ -329,12 +329,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         opts.limit(page_len);
         //set read form secondary
         read_preference secondary;
-        secondary.mode(read_preference::read_mode::k_secondary);
+        secondary.mode(read_preference::read_mode::k_secondary_preferred);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+        opts.read_preference(secondary).batch_size(30);
         if(reverse_order) {
-            opts.sort(make_document(kvp("counter_key", -1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));
+            opts.sort(make_document(kvp(run_key, -1), kvp(counter_key, -1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));
         } else {
-            opts.sort(make_document(kvp("counter_key",  1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+            opts.sort(make_document(kvp(run_key, 1), kvp(counter_key, 1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
@@ -413,12 +414,12 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         
         //set read form secondary
         read_preference secondary;
-        secondary.mode(read_preference::read_mode::k_secondary);
+        secondary.mode(read_preference::read_mode::k_secondary_preferred);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
         if(reverse_order) {
-            opts.sort(make_document(kvp("counter_key", -1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));
+            opts.sort(make_document(kvp(run_key, -1), kvp(counter_key, -1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));
         } else {
-            opts.sort(make_document(kvp("counter_key",  1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+            opts.sort(make_document(kvp(run_key, 1), kvp(counter_key, 1),kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
         }
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_2_ENTRY("Query",
