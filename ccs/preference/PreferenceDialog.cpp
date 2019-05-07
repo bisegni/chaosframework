@@ -135,10 +135,12 @@ void PreferenceDialog::on_pushButtonAddNewConfiguration_clicked() {
 }
 
 void PreferenceDialog::on_pushButtonRemoveConfiguration_clicked() {
-    if(ui->comboBoxConfigurations->currentIndex() < 0) return;
+    int current_index = ui->comboBoxConfigurations->currentIndex();
+    if(current_index < 0) return;
     settings.beginGroup(QString("%1/%2").arg(QString(PREFERENCE_NETWORK_GROUP_NAME), ui->comboBoxConfigurations->currentText()));
     settings.remove(""); //removes the group, and all it keys
     settings.endGroup();
+    ui->comboBoxConfigurations->removeItem(current_index);
 }
 
 void PreferenceDialog::on_comboBoxConfigurations_currentTextChanged(const QString &selected_configuration) {
