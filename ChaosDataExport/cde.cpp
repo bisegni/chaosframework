@@ -364,7 +364,7 @@ int main(int argc, const char* argv[]) {
         std::cout << "\x1B[?25h";
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
         return -3;
-    }
+        }
     std::cout << "\x1B[?25h";
     std::cout << std::endl << "Export done"<< std::endl;
     return rett;
