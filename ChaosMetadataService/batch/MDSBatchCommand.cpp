@@ -197,6 +197,11 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info)  {
             MDSBC_DBG << "Waith for "<< request_info.remote_action <<
             " action ack from the control unit:" << request_info.remote_address <<
             " on rpc[" << request_info.remote_domain <<":"<<request_info.remote_action<<"]";
+            MDSBC_DBG << CHAOS_FORMAT("Wait for %1% action ack from control unit %2% on rpc [%3%:%4%]",
+                                      %request_info.remote_action
+                                      %request_info.remote_address
+                                      %request_info.remote_domain
+                                      %request_info.remote_action);
             if(!request_info.request_future.get()) {
                 MDSBC_ERR << "request with no future";
                 throw chaos::CException(-2, "request with no future", __PRETTY_FUNCTION__);
@@ -204,10 +209,10 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info)  {
             if(request_info.request_future->wait(1000)) {
                 //we have hd answer
                 if(request_info.request_future->getError()) {
-                    MDSBC_ERR << "We have had answer with error"
-                    << request_info.request_future->getError() << " \n and message "
-                    << request_info.request_future->getErrorMessage() << "\n on domain "
-                    << request_info.request_future->getErrorDomain();
+                    MDSBC_ERR << CHAOS_FORMAT("We have had answer with error %1% with message %2% on domain %3%",
+                                              %request_info.request_future->getError()
+                                              %request_info.request_future->getErrorMessage()
+                                              %request_info.request_future->getErrorDomain());
                 } else {
                     MDSBC_DBG << "Request send with success";
                 }
@@ -219,9 +224,16 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info)  {
             }
             break;
         }
-        case MESSAGE_PHASE_COMPLETED:
-        case MESSAGE_PHASE_TIMEOUT:
+        case MESSAGE_PHASE_COMPLETED: {
+            MDSBC_ERR << CHAOS_FORMAT("Timeout reached for message to %1% on rpc [%2%:%3%]",
+                                      %request_info.remote_address
+                                      %request_info.remote_domain
+                                      %request_info.remote_action);
             break;
+        }
+        case MESSAGE_PHASE_TIMEOUT: {
+            break;
+        }
     }
 }
 uint32_t MDSBatchCommand::getNextSandboxToUse() {
