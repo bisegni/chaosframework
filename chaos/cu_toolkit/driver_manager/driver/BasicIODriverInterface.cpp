@@ -37,7 +37,8 @@ int BasicIODriverInterface::read(void *buffer,int addr,int bcount){
     message.opcode =BasicIODriverOpcode_READ;
     message.resultDataLength=bcount;
     message.resultData = (void*)buffer;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
+;
     ret2=accessor->send(&message);
     ret=message.ret;
     BasicIODriverLDBG_<<"readChannel addr:"<<addr<<", count:"<<bcount<<",func ret:"<<ret<<",accessor ret "<<ret2;
@@ -52,7 +53,7 @@ int BasicIODriverInterface::iop(int operation,void*data,int sizeb){
     message.opcode =BasicIODriverOpcode_IOP;
     message.inputDataLength=sizeb;
     message.inputData = (void*)data;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     ret=message.ret;
@@ -69,7 +70,7 @@ int BasicIODriverInterface::write(void *buffer,int addr,int bcount){
     message.opcode =BasicIODriverOpcode_WRITE;
     message.inputDataLength=bcount;
     message.inputData = (void*)buffer;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     ret=message.ret;
@@ -83,7 +84,7 @@ int BasicIODriverInterface::initIO(void *buffer,int sizeb){
     message.parm[0] = sizeb;
     message.opcode =BasicIODriverOpcode_INIT;
     message.inputDataLength=sizeb;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     ret=message.ret;
@@ -98,7 +99,7 @@ int BasicIODriverInterface::deinitIO(){
     
     message.opcode =BasicIODriverOpcode_DEINIT;
     message.inputDataLength=0;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     ret=message.ret;
@@ -113,7 +114,7 @@ int BasicIODriverInterface::getDataset(ddDataSet_t*data,int sizen){
     message.resultDataLength = sizeof(ddDataSet_t)*sizen;
     message.opcode =BasicIODriverOpcode_GET_DATASET;
     message.inputDataLength=0;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     size=message.ret;
@@ -130,7 +131,7 @@ int BasicIODriverInterface::getDatasetSize(){
     message.resultDataLength = 0;
     message.opcode =BasicIODriverOpcode_GET_DATASETSIZE;
     message.inputDataLength=0;
-    message.ret=-700;
+    message.ret=DRV_BYPASS_DEFAULT_CODE;
 
     ret2=accessor->send(&message);
     size=message.ret;
