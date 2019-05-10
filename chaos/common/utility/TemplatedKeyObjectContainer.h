@@ -65,12 +65,14 @@ namespace chaos {
                 };
                 
                 void clearElement() {
-                    for(ContainerOrganizerIterator iter = organizer_map.begin();
-                        iter != organizer_map.end();
-                        iter++) {
-                        CHAOS_ASSERT(free_handler)
-                        TKOCElement e = {iter->first, iter->second};
-                        free_handler->freeObject(e);
+                    ContainerOrganizerIterator it = organizer_map.begin();
+                    ContainerOrganizerIterator end = organizer_map.end();
+                    while(it != end) {
+                        ContainerOrganizerIterator tmp = it++;
+                        if(free_handler) {
+                            TKOCElement e = {tmp->first, tmp->second};
+                            free_handler->freeObject(e);
+                        }
                     }
                     organizer_map.clear();
                 }

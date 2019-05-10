@@ -98,6 +98,7 @@ namespace chaos{
 
 #define DRVMSG_ERR_MSG_SIZE 255
 #define DRVMSG_ERR_DOM_SIZE 255
+#define DRV_BYPASS_DEFAULT_CODE -700
 
                     //! Driver message information
                 /*!

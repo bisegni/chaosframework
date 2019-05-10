@@ -39,11 +39,11 @@ namespace chaos {
                 
                 //!informtion needed for the data search
                 typedef struct DataSearch {
-                    const std::string key;
-                    const ChaosStringSet meta_tags;
-                    const CUInt64 timestamp_from;
-                    const CUInt64 timestamp_to;
-                    const CUInt32 page_len;
+                    std::string key;
+                    ChaosStringSet meta_tags;
+                    uint64_t timestamp_from;
+                    uint64_t timestamp_to;
+                    uint32_t page_len;
                 } DataSearch;
                 
                 //!CHaos abstraction for store time series data wintin a persistence sublayer
@@ -99,8 +99,8 @@ namespace chaos {
                      For every index object witl be returned the associated data object, if no data is received will be
                      insert an empty object
                      */
-                    virtual int getObjectByIndex(const VectorObject& search,
-                                                VectorObject& found_object_page) = 0;
+                    virtual int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
+                                                 chaos::common::data::CDWShrdPtr& found_object) = 0;
                     
                     //!return the number of object for a determinated key that are store for a time range
                     virtual int countObject(const std::string& key,

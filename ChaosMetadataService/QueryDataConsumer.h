@@ -95,6 +95,18 @@ namespace chaos{
                                       opcode_headers::SearchSequence& last_element_found_seq,
                                       opcode_headers::QueryResultPage& page_element_found);
             
+            int consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                           const std::string& search_key,
+                                           const ChaosStringSet& meta_tags,
+                                           const uint64_t search_start_ts,
+                                           const uint64_t search_end_ts,
+                                           opcode_headers::SearchSequence& last_element_found_seq,
+                                           opcode_headers::QueryResultPage& page_element_found);
+            
+            
+            int getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexes,
+                               chaos::common::data::VectorCDWShrdPtr& found_data);
+            
             int consumeDataCloudDelete(const std::string& search_key,
                                        uint64_t start_ts,
                                        uint64_t end_ts);

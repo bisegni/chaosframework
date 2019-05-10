@@ -54,7 +54,7 @@
 #define MONGODB_DAQ_DATA_FIELD      "data"
 #define DEFAULT_QUANTIZATION        100
 
-#define DEFAULT_BATCH_SIZE          10
+#define DEFAULT_BATCH_SIZE          40
 #define DEFAULT_BATCH_TIMEOUT_MS    1000
 
 using bsoncxx::builder::basic::kvp;
@@ -78,7 +78,7 @@ batch_timeout(DEFAULT_BATCH_TIMEOUT_MS),
 blob_set_uptr(new std::set<DaqBlobSPtr>()){
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     try{
-        batch_size = boost::lexical_cast<CUInt32>(obj_stoarge_kvp["batch_size"]);
+        batch_size = boost::lexical_cast<uint32_t>(obj_stoarge_kvp["batch_size"]);
     } catch(...) {
         batch_size = DEFAULT_BATCH_SIZE;
     }
@@ -109,6 +109,7 @@ void HybBaseDataAccess::executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_
                 bulk_write.append(model::insert_one(blob->mongo_document.view()));
             }
         });
+        
         auto bulk_result = coll.bulk_write(bulk_write);
         
         if(bulk_result->inserted_count() != _blob_set_uptr->size()) {
@@ -411,8 +412,8 @@ int HybBaseDataAccess::findObjectIndex(const DataSearch& search,
 }
 
 //inhertied method
-int HybBaseDataAccess::getObjectByIndex(const VectorObject& search,
-                                        VectorObject& found_object_page) {
+int HybBaseDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+                                        CDWShrdPtr& found_object) {
     return -1;
 }
 

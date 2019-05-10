@@ -208,7 +208,7 @@ void ChaosMetadataService::timeout() {
         LCND_LERR << CHAOS_FORMAT("Error check if this mds [%1%] description is registered", %NetworkBroker::getInstance()->getRPCUrl());
         return;
     }
-    
+
     if(presence == false) {
         //reinsert mds
         ds_da->registerNode(setting.ha_zone_name,
@@ -216,7 +216,7 @@ void ChaosMetadataService::timeout() {
                             NetworkBroker::getInstance()->getDirectIOUrl(),
                             0);
     }
-    
+
     //update proc stat
     ProcStatCalculator::update(service_proc_stat);
     if((err = n_da->setNodeHealthStatus(NetworkBroker::getInstance()->getRPCUrl(),

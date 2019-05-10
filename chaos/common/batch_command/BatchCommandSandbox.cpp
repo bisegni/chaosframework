@@ -810,11 +810,11 @@ void BatchCommandSandbox::clearCommandQueue() {
     whait_for_next_check.unlock();
 }
 
-bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,
-                                         BatchCommand *command_impl,
-                                         uint32_t priority) {
+uint64_t BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info,
+                                             BatchCommand *command_impl,
+                                             uint32_t priority) {
     CHAOS_ASSERT(command_impl)
-    
+    uint64_t result_id = 0;
     if (StartableService::serviceState == CUStateKey::DEINIT) return false;
     
     //
@@ -823,11 +823,11 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
         boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
         
         //get the assigned id
-        addCommandID(command_impl);
+        result_id = addCommandID(command_impl);
         ChaosSharedPtr< PriorityQueuedElement<CommandInfoAndImplementation> > new_element_to_push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl),
-                                                                                                                                      command_impl->unique_id,
-                                                                                                                                      priority,
-                                                                                                                                                         true));
+                                                                                                                                                          command_impl->unique_id,
+                                                                                                                                                          priority,
+                                                                                                                                                          true));
         //fire the waiting command
         if (event_handler) event_handler->handleCommandEvent(command_impl->command_alias,
                                                              command_impl->unique_id,
@@ -842,7 +842,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     //increment command stat
     cmd_stat.queued_commands = (uint32_t)command_submitted_queue.size();
     whait_for_next_check.unlock();
-    return true;
+    return result_id;
 }
 
 //! Command features modification rpc action

@@ -26,6 +26,7 @@
 
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/io/IODirectIODriver.h>
+#include <chaos/common/io/QueryIndexCursor.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -57,6 +58,7 @@ DEFINE_CLASS_FACTORY(IODirectIODriver, IODataDriver);
 //using namespace memcache;
 IODirectIODriver::IODirectIODriver(const std::string& alias):
 NamedService(alias),
+use_index(false),
 current_endpoint_p_port(0),
 current_endpoint_s_port(0),
 current_endpoint_index(0),
@@ -304,7 +306,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
                 continue;
             }
             if(connectionFeeder.hasURL(serverDesc)) {
-               // IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is already installed in driver";
+                // IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is already installed in driver";
                 continue;
             }
             IODirectIODriver_LINFO_ << CHAOS_FORMAT("Add server %1% to IODirectIODriver", %serverDesc);
@@ -406,6 +408,10 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
     }
 }
 
+void IODirectIODriver::setQueryOnIndex(bool _use_index) {
+    use_index = _use_index;
+}
+
 QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t start_ts,
                                             const uint64_t end_ts,
@@ -422,13 +428,20 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t end_ts,
                                             const ChaosStringSet& meta_tags,
                                             const uint32_t page_len) {
-    QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
-                                     connectionFeeder,
-                                     key,
-                                     start_ts,
-                                     end_ts,
-                                     meta_tags,
-                                     page_len);
+    QueryCursor *q = (use_index ? new QueryIndexCursor(UUIDUtil::generateUUID(),
+                                               connectionFeeder,
+                                               key,
+                                               start_ts,
+                                               end_ts,
+                                               meta_tags,
+                                               page_len):
+                                new QueryCursor(UUIDUtil::generateUUID(),
+                                                connectionFeeder,
+                                                key,
+                                                start_ts,
+                                                end_ts,
+                                                meta_tags,
+                                                page_len));
     if(q) {
         //add query to map
         ChaosWriteLock wmap_loc(map_query_future_mutex);

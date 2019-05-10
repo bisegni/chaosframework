@@ -48,7 +48,7 @@ const bool QueryCursor::ResultPage::hasNext() const {
     return current_fetched < found_element_page.size();
 }
 uint32_t QueryCursor::ResultPage::size() const {
-    return found_element_page.size();
+    return (uint32_t)found_element_page.size();
 }
 ChaosSharedPtr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() {
     if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
@@ -179,11 +179,8 @@ ChaosSharedPtr<chaos::common::data::CDataWrapper>  QueryCursor::next()  {
 }
 
 #pragma mark private methods
-int64_t QueryCursor::fetchNewPage() {
+int QueryCursor::fetchNewPage() {
     result_page.found_element_page.clear();
-    IODirectIODriverClientChannels	*next_client = NULL;
-    if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
-    
     //fetch the new page
     switch(phase) {
         case QueryPhaseNotStarted:
@@ -207,6 +204,12 @@ int64_t QueryCursor::fetchNewPage() {
 
             return 0;
     }
+    return fetchData();
+}
+
+int QueryCursor::fetchData() {
+    IODirectIODriverClientChannels *next_client = NULL;
+    if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        meta_tags,
                                                                        start_ts,
@@ -225,6 +228,7 @@ int64_t QueryCursor::fetchNewPage() {
     }
     return api_error;
 }
+
 void QueryCursor::getIndexes(uint64_t& runid,uint64_t& seqid){
     runid = result_page.last_record_found_seq.run_id;
     seqid =result_page.last_record_found_seq.datapack_counter;

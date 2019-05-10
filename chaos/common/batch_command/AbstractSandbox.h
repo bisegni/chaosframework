@@ -61,12 +61,12 @@ n->fault_description.domain = d;
                 void operator()();
             };
             
-
+            
             struct EndFunctor:
-                        public BaseFunctor {
-                            void operator()();
-                  };
-
+            public BaseFunctor {
+                void operator()();
+            };
+            
             /*!
              Type used for the next available command impl and description
              into the sandbox
@@ -100,7 +100,7 @@ n->fault_description.domain = d;
                 //handler for sandbox event
                 BatchCommandSandboxEventHandler *event_handler;
                 
-                void addCommandID(BatchCommand *command_impl);
+                uint64_t addCommandID(BatchCommand *command_impl);
             public:
                 AbstractSandbox();
                 
@@ -118,9 +118,9 @@ n->fault_description.domain = d;
                 
                 virtual void setDefaultStickyCommand(BatchCommand *sticky_command) = 0;
                 
-                virtual bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info,
-                                            BatchCommand *command_impl,
-                                            uint32_t priority) = 0;
+                virtual uint64_t enqueueCommand(chaos::common::data::CDataWrapper *command_to_info,
+                                                BatchCommand *command_impl,
+                                                uint32_t priority) = 0;
             };
         }
     }

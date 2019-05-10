@@ -211,6 +211,31 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     return err;
 }
 
+
+int QueryDataConsumer::consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                                  const std::string& search_key,
+                                                  const ChaosStringSet& meta_tags,
+                                                  const uint64_t search_start_ts,
+                                                  const uint64_t search_end_ts,
+                                                  opcode_headers::SearchSequence& last_element_found_seq,
+                                                  opcode_headers::QueryResultPage& page_element_found) {
+    int err = 0;
+    //execute the query
+    DataSearch search;
+    search.key = search_key;
+    search.meta_tags = meta_tags;
+    search.timestamp_from = search_start_ts;
+    search.timestamp_to = search_end_ts;
+    search.page_len = query_header.field.record_for_page;
+    ObjectStorageDataAccess *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
+    if((err = obj_storage_da->findObjectIndex(search,
+                                              page_element_found,
+                                              last_element_found_seq))) {
+        ERR << CHAOS_FORMAT("Error performing cloud query with code %1%", %err);
+    }
+    return err;
+}
+
 int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                        uint32_t key_len,
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
@@ -230,8 +255,6 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
        result_value->size()) {
         result_header.value_len = (uint32_t)result_value->size();
     }
-    
-    
     return err;
 }
 
@@ -248,40 +271,55 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
         //get data
         DataBuffer data_buffer;
         MultiCacheData multi_cached_data;
-            err = cache_slot.getData(keys,
-                                                       multi_cached_data);
-            for(ChaosStringVectorConstIterator it = keys.begin(),
-                end = keys.end();
-                it != end;
-                it++) {
-                const CacheData& cached_element = multi_cached_data[*it];
-                if(!cached_element ||
-                   cached_element->size() == 0) {
-                    //element has not been found so we need to create and empty cdata wrapper
-                    CDataWrapper tmp;
-                    int size = 0;
-                    const char * d_ptr = tmp.getBSONRawData(size);
-                    data_buffer.writeByte(d_ptr,
-                                          size);
-                } else {
-                    data_buffer.writeByte(cached_element->data(),
-                                          (int32_t)cached_element->size());
-                }
+        err = cache_slot.getData(keys,
+                                 multi_cached_data);
+        for(ChaosStringVectorConstIterator it = keys.begin(),
+            end = keys.end();
+            it != end;
+            it++) {
+            const CacheData& cached_element = multi_cached_data[*it];
+            if(!cached_element ||
+               cached_element->size() == 0) {
+                //element has not been found so we need to create and empty cdata wrapper
+                CDataWrapper tmp;
+                int size = 0;
+                const char * d_ptr = tmp.getBSONRawData(size);
+                data_buffer.writeByte(d_ptr,
+                                      size);
+            } else {
+                data_buffer.writeByte(cached_element->data(),
+                                      (int32_t)cached_element->size());
             }
-            
-            result_header.number_of_result = (uint32_t)multi_cached_data.size();
-            result_value_len = data_buffer.getCursorLocation();
-            result_value = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), result_value_len, result_value_len, true);
-
+        }
+        
+        result_header.number_of_result = (uint32_t)multi_cached_data.size();
+        result_value_len = data_buffer.getCursorLocation();
+        result_value = ChaosMakeSharedPtr<Buffer>(data_buffer.release(), result_value_len, result_value_len, true);
+        
     } catch(...) {}
     return err;
+}
+
+int QueryDataConsumer::getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexes,
+                                      chaos::common::data::VectorCDWShrdPtr& found_data) {
+    
+    ObjectStorageDataAccess *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
+    std::for_each(indexes.begin(), indexes.end(), [&obj_storage_da, &found_data](const CDWShrdPtr& index){
+        int err = 0;
+        CDWShrdPtr data;
+        if((err = obj_storage_da->getObjectByIndex(index, data)) == 0) {
+            found_data.push_back(data);
+        } else {
+            ERR << CHAOS_FORMAT("Error fetching data using index(%1%) with code %2%", %data->getJSONString()%err);
+        }
+    });
+    return 0;
 }
 
 int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
                                               uint64_t start_ts,
                                               uint64_t end_ts){
     int err = 0;
-    //execute the query
     VectorObject reuslt_object_found;
     ObjectStorageDataAccess *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
     if((err = obj_storage_da->deleteObject(search_key,

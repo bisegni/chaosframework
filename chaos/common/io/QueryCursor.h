@@ -45,7 +45,7 @@ namespace chaos {
 #define DEFAULT_PAGE_LEN 100
             class QueryCursor {
                 friend class IODirectIODriver;
-                
+            protected:
                 struct ResultPage {
                     unsigned int current_fetched;
                     direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
@@ -69,7 +69,7 @@ namespace chaos {
                 uint32_t page_len;
                 QueryPhase phase;
                 ResultPage result_page;
-                int64_t api_error;
+                int api_error;
                 chaos::common::network::URLServiceFeeder& connection_feeder;
                 
                 QueryCursor(const std::string& _query_id,
@@ -107,8 +107,8 @@ namespace chaos {
                             uint32_t page_len=DEFAULT_PAGE_LEN);
                 ~QueryCursor();
                 
-                int64_t fetchNewPage();
-                
+                int fetchNewPage();
+                virtual int fetchData();
             public:
                 const std::string& queryID() const;
                 

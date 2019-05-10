@@ -11,9 +11,9 @@ class DriverDescriptionInputDialog :
         public QDialog {
     Q_OBJECT
     int current_row;
-    const QString& driver_name;
-    const QString& driver_version;
-    const QString& driver_init_parameter;
+    const QString driver_name;
+    const QString driver_version;
+    const QString driver_init_parameter;
 public:
     DriverDescriptionInputDialog(QWidget *parent = 0);
     DriverDescriptionInputDialog(int current_row,
