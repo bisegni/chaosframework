@@ -992,7 +992,8 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
 int CDataWrapper::setBson(const bson_iter_t *v ,const CDataWrapper* val){
     if(ITER_TYPE(v)== BSON_TYPE_DOCUMENT){
         const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
-        memcpy((void*)(v->raw + v->d1), (void*)val,vv->value.v_doc.data_len);
+        
+        memcpy((void*)(v->raw + v->d1), (void*)val->getBSONRawData(),vv->value.v_doc.data_len);
         return vv->value.v_doc.data_len;
     }
     return -1;

@@ -206,7 +206,7 @@ void ZMQServer::worker() {
             
             err = zmq_msg_init(&request);
             
-            ZMQS_LDBG << "Wait for message";
+            DEBUG_CODE(ZMQS_LDBG << "Wait for message";);
             err = zmq_recvmsg(receiver, &request, 0);
             if(run_server==0){
             	// no error should be issued on normal exit
@@ -228,7 +228,7 @@ void ZMQServer::worker() {
                     if(message_data->hasKey("seq_id")){
                         seq_id=message_data->getInt64Value("seq_id");
                     } 
-                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
+                    DEBUG_CODE(ZMQS_LDBG << "Message Received seq_id:"<<seq_id;);
                     const std::string msg_desc = message_data->getCompliantJSONString();
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
@@ -261,7 +261,7 @@ void ZMQServer::worker() {
                             std::string error_message = zmq_strerror(sent_error);
                             ZMQS_LERR << "Error sending ack with code:" << sent_error << " message:" <<error_message;
                         }else {
-                            ZMQS_LDBG << "ACK "<<seq_id<<" Sent";
+                            DEBUG_CODE(ZMQS_LDBG << "ACK "<<seq_id<<" Sent";);
                         }
                     }
                 } else {

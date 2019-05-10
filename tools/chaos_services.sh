@@ -97,6 +97,13 @@ start_mds(){
 #     run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
 # }
 start_ui(){
+    if [ -n "$CHAOS_WEBUI" ];then
+        if ! [[ "$CHAOS_WBUI" =~ localhost ]];then
+            echo "* Using $CHAOS_WEBUI"
+            return 1
+        fi
+    fi
+
     if check_proc "$CHAOS_PREFIX/bin/$UI_EXEC";then
         info_mesg "already running " "webui.."
         
@@ -110,6 +117,13 @@ start_ui(){
 }
 
 start_agent(){
+    if [ -n "$CHAOS_AGENT" ];then
+        if ! [[ "$CHAOS_AGENT" =~ localhost ]];then
+            echo "* Using $CHAOS_AGENT"
+            return 1
+        fi
+    fi
+
     if check_proc "$CHAOS_PREFIX/bin/$AGENT_EXEC";then
         info_mesg "already running " "agent.."
         

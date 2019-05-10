@@ -80,8 +80,8 @@ namespace chaos {
                                         chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
                     
                     //inhertied method
-                    int getObjectByIndex(const abstraction::VectorObject& search,
-                                         abstraction::VectorObject& found_object_page);
+                    int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
+                                         chaos::common::data::CDWShrdPtr& found_object);
                     
                     //inhertied method
                     int countObject(const std::string& key,

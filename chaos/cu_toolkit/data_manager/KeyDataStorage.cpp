@@ -140,7 +140,7 @@ std::string KeyDataStorage::getDomainString(const std::string& node_uid,
  with default madatory data
  */
 CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain domain) {
-    CDWShrdPtr result = ChaosMakeSharedPtr<CDataWrapper>();
+    CDWShrdPtr result(new CDataWrapper() );
     int32_t node_type;
     switch(domain) {
         case KeyDataStorageDomainOutput:
@@ -164,6 +164,10 @@ CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain do
         case KeyDataStorageDomainHealth:
             node_type = DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
             break;
+    }
+    if(result.get()==NULL){
+        throw chaos::CException(-1, "CANNOT allocate memorry for data pack ", __PRETTY_FUNCTION__);
+
     }
     //add the unique key
     result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);

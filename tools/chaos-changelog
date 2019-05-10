@@ -50,7 +50,7 @@ while getopts sha: opt; do
       ;;
 
 	h)
-	    echo -e "Usage is $0 -s \n-s setup environment for changelog management"
+	    echo -e "Usage is $0 -s \n-s setup environment for changelog management\n-a add a new entry in changelog"
 	    exit 0;
 	    ;;
     esac

@@ -28,6 +28,8 @@ ccs/*.autosave
 ccs/*moc_*
 ccs/*ui_*
 ccs/.qmake.stash
+ccs/qrc_resources.cpp
+ccs/qrc_theme.cpp
 example/build-UIToolkitTest-*
 ccs/ccs.pro.user*
 build-ccs-*

@@ -456,6 +456,8 @@
 		32661C751AA867E100F1A721 /* MessageRequestFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32661C731AA867E100F1A721 /* MessageRequestFuture.cpp */; };
 		32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 32661C741AA867E100F1A721 /* MessageRequestFuture.h */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
+		3266ED78224D4312009D1CFB /* QueryIndexCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266ED76224D4312009D1CFB /* QueryIndexCursor.cpp */; };
+		3266ED79224D4312009D1CFB /* QueryIndexCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3266ED77224D4312009D1CFB /* QueryIndexCursor.h */; };
 		3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE31161608D100FCDB10 /* ZMQClient.cpp */; };
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
@@ -1841,6 +1843,8 @@
 		32661C741AA867E100F1A721 /* MessageRequestFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestFuture.h; sourceTree = "<group>"; };
 		3266A5DD18A6315600637592 /* ZMQBaseClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMQBaseClass.h; sourceTree = "<group>"; };
 		3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQBaseClass.cpp; sourceTree = "<group>"; };
+		3266ED76224D4312009D1CFB /* QueryIndexCursor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QueryIndexCursor.cpp; sourceTree = "<group>"; };
+		3266ED77224D4312009D1CFB /* QueryIndexCursor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryIndexCursor.h; sourceTree = "<group>"; };
 		3268CE31161608D100FCDB10 /* ZMQClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQClient.cpp; sourceTree = "<group>"; };
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
@@ -4390,6 +4394,8 @@
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 				320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */,
 				320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */,
+				3266ED76224D4312009D1CFB /* QueryIndexCursor.cpp */,
+				3266ED77224D4312009D1CFB /* QueryIndexCursor.h */,
 				3243606F2021C21200B03037 /* SharedManagedDirecIoDataDriver.cpp */,
 				3243606E2021C21200B03037 /* SharedManagedDirecIoDataDriver.h */,
 			);
@@ -5936,6 +5942,7 @@
 			files = (
 				326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */,
 				326DB43214B38BC00018A8D0 /* ChaosAction.h in Headers */,
+				3266ED79224D4312009D1CFB /* QueryIndexCursor.h in Headers */,
 				326DB43414B38BC00018A8D0 /* DeclareAction.h in Headers */,
 				326DB43614B38BC00018A8D0 /* DomainActions.h in Headers */,
 				32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */,
@@ -6691,6 +6698,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 3260260B14B300FE00C906CE;
@@ -7235,6 +7243,7 @@
 				32BD631D1E1E4D7F006FE42C /* AbstractActionScheduler.cpp in Sources */,
 				32A88BD61CF8228A001DBAF5 /* loadlib.c in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,
+				3266ED78224D4312009D1CFB /* QueryIndexCursor.cpp in Sources */,
 				32612ABD1CE209BB00F3B8F3 /* ScriptManager.cpp in Sources */,
 				32A88BC71CF8228A001DBAF5 /* ldo.c in Sources */,
 				329DEB731D2E457F0050E914 /* chaos_errors.cpp in Sources */,
@@ -7637,6 +7646,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "USE_CASSANDRA_DRIVER=1";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -7709,7 +7719,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7720,7 +7730,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					usr/local/include/bsoncxx/v_noabi,
+					usr/local/include/mongocxx/v_noabi,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -7778,7 +7794,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					usr/local/include/bsoncxx/v_noabi,
+					usr/local/include/mongocxx/v_noabi,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -8093,7 +8115,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -8144,6 +8166,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

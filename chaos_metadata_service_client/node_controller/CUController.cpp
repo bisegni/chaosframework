@@ -92,6 +92,7 @@ deviceChannel(NULL),devId(_deviceID) {
                                                  __PRETTY_FUNCTION__);
     CDWUniquePtr tmp_data_handler;
     if(!mdsChannel->getDataDriverBestConfiguration(tmp_data_handler, millisecToWait)){
+        LDBG_ << tmp_data_handler->getJSONString();
         ioLiveDataDriver->updateConfiguration(tmp_data_handler.get());
     }
     
@@ -1073,6 +1074,12 @@ cu_prof_t CUController::getProfileInfo(){
         p.metric_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC);
     }
     return p;
+}
+
+void CUController::setQueryOnIndex(bool use_index) {
+    if(ioLiveDataDriver.get()) {
+        ioLiveDataDriver->setQueryOnIndex(use_index);
+    }
 }
 
 //! get datapack between time itervall

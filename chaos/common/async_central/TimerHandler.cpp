@@ -19,12 +19,17 @@
  * permissions and limitations under the Licence.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/async_central/TimerHandler.h>
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+
+#define INFO    INFO_LOG(TimerHandler)
+#define DBG     DBG_LOG(TimerHandler)
+#define ERR     ERR_LOG(TimerHandler)
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
@@ -33,12 +38,12 @@ TimerHandler::TimerHandler():
 timer(NULL),
 delay(0){}
 
-TimerHandler::~TimerHandler() {}
+TimerHandler::~TimerHandler() {
+    delete(timer);
+}
 
 void TimerHandler::timerTimeout(const boost::system::error_code& error) {
-    if (error ==  boost::asio::error::operation_aborted) {
-        return;
-    } else {
+   if(!error){
         uint64_t start_ts = TimingUtil::getTimeStamp();
         //call timer handler
         timeout();
@@ -47,7 +52,9 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
         
         //wait for next call with the delat correct
         wait(delay-spent_time);
-    }
+   } else  if (error ==  boost::asio::error::operation_aborted) {
+       ERR << "Timer thread: " << boost::this_thread::get_id() << ", handle_timeout error " << error.message();
+   }
 //    if(wait_sem.isInWait()){wait_sem.unlock();}
 }
 

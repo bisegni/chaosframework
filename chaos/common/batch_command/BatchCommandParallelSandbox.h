@@ -107,9 +107,9 @@ namespace chaos{
                 
                 void setDefaultStickyCommand(BatchCommand *sticky_command);
                 
-                bool enqueueCommand(chaos::common::data::CDataWrapper *command_data,
-                                    BatchCommand *command_impl,
-                                    uint32_t priority);
+                uint64_t enqueueCommand(chaos::common::data::CDataWrapper *command_data,
+                                        BatchCommand *command_impl,
+                                        uint32_t priority);
             };
             
         }

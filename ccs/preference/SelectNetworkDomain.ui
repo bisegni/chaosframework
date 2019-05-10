@@ -71,7 +71,7 @@
      <item>
       <widget class="QPushButton" name="pushButtonSelection">
        <property name="text">
-        <string>Cancell</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>

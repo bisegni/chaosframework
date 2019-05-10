@@ -77,13 +77,11 @@ CommandInfoAndImplementation::~CommandInfoAndImplementation() {
 }
 
 void CommandInfoAndImplementation::deleteInfo() {
-    if (!cmdInfo) return;
     delete(cmdInfo);
     cmdInfo = NULL;
 }
 
 void CommandInfoAndImplementation::deleteImpl() {
-    if (!cmdImpl) return;
     delete(cmdImpl);
     cmdImpl = NULL;
 }
@@ -94,7 +92,7 @@ event_handler(NULL){}
 
 AbstractSandbox::~AbstractSandbox(){}
 
-void AbstractSandbox::addCommandID(BatchCommand *command_impl) {
-    if(command_impl == NULL) return;
-    command_impl->unique_id = ++command_sequence_id;
+uint64_t AbstractSandbox::addCommandID(BatchCommand *command_impl) {
+    if(command_impl == NULL) return 0;
+    return (command_impl->unique_id = ++command_sequence_id);
 }

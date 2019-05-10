@@ -1,0 +1,5 @@
+---
+Added:
+- New kind of storage driver has been added. Hybrid Driver uses mongodb as index database
+  for complex query and additional technology for store the daq data. Actually has
+  been implemented the cassandra storage layer for Hybrid driver

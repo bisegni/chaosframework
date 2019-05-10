@@ -182,12 +182,19 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
             break;
         }
+        
+        case BatchCommandEventType::EVT_PAUSED:{break;}
+        
         case BatchCommandEventType::EVT_COMPLETED:
         case BatchCommandEventType::EVT_KILLED:
         case BatchCommandEventType::EVT_DEQUEUE:
-        case BatchCommandEventType::EVT_PAUSED:
         case BatchCommandEventType::EVT_QUEUED: {
-            sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
+//            if(command_info &&
+//               command_info->cmdImpl) {
+//                sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue(command_info->cmdImpl->getAlias(), true, true);
+//            } else {
+//                sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");
+//            }
             break;
         }
         case BatchCommandEventType::EVT_RUNNING:{
@@ -242,7 +249,9 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
         case BatchSandboxEventType::EVT_RUN_START: {
             uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
             control_unit_instance->_updateAcquistionTimestamp((uint64_t)*hb);
-            
+            control_unit_instance->pushInputDataset();
+            control_unit_instance->pushOutputDataset();
+            break;
         }
             
         case BatchSandboxEventType::EVT_RUN_END: {

@@ -210,7 +210,9 @@ namespace chaos{
                 void deinit();
                 
                 //! enqueue a new command
-                bool enqueueCommand(chaos::common::data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+                uint64_t enqueueCommand(chaos::common::data::CDataWrapper *command_to_info,
+                                        BatchCommand *command_impl,
+                                        uint32_t priority);
                 
                 //! set the deafutl sticky command
                 /*!

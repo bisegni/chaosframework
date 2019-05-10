@@ -198,7 +198,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
             }
             result = false;
             command_stat.command_info.cmdImpl->endHandler();
-
+            
             break;
         case RunningPropertyType::RP_FATAL_FAULT:
             if (event_handler){
@@ -210,7 +210,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
             }
             result = false;
             command_stat.command_info.cmdImpl->endHandler();
-
+            
             break;
         case RunningPropertyType::RP_END:
             if (event_handler){
@@ -222,7 +222,7 @@ bool BatchCommandParallelSandbox::processCommand(bool set_handler_call,
             }
             result = false;
             command_stat.command_info.cmdImpl->endHandler();
-
+            
             break;
         default:
             break;
@@ -238,10 +238,11 @@ void BatchCommandParallelSandbox::lockCurrentCommandFeature(bool lock) {}
 void BatchCommandParallelSandbox::setCurrentCommandFeatures(features::Features& features)  {}
 void BatchCommandParallelSandbox::setDefaultStickyCommand(BatchCommand *sticky_command) {}
 
-bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
-                                                 BatchCommand *command_impl,
-                                                 uint32_t priority) {
+uint64_t BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
+                                                     BatchCommand *command_impl,
+                                                     uint32_t priority) {
     //get lock on submission queue
+    uint64_t result_id = 0;
     LockableSubmissionQueueWriteLock wl = submition_command_queue.getWriteLockObject();
     cmd_stat.queued_commands++;
     addCommandID(command_impl);
@@ -255,5 +256,5 @@ bool BatchCommandParallelSandbox::enqueueCommand(CDataWrapper *command_data,
     }
     submition_command_queue().push(element_to_push);
     sem_waith_for_job.unlock();
-    return true;
+    return result_id;
 }
