@@ -3208,7 +3208,7 @@
 			{
 			    "DriverDescriptionName": "ChaosPowerSupplyRemoteClientDriver",
 			    "DriverDescriptionVersion": "1.0.0",
-			    "DriverDescriptionInitParam":"{  \"url\": \"ws://localhost:8123/powersupply/SimpleSim\",  \"uri\": \"/powersupply/SimpleSim\",  \"driver_param\": {    \"tty\": \"/dev/ttyS0\",\"baudrate\":9600  },  \"device_param\": {    \"slaveid\": 12  }}"
+			    "DriverDescriptionInitParam":"{  \"url\": \"ws://127.0.0.1:8123/powersupply/SimpleSim\",  \"uri\": \"/powersupply/SimpleSim\",  \"driver_param\": {    \"tty\": \"/dev/ttyS0\",\"baudrate\":9600  },  \"device_param\": {    \"slaveid\": 12  }}"
 			    
 			}
 		    ],
