@@ -1,6 +1,0 @@
----
-Changed:
-- MDS source code has been redesigned to simplify code
-Fixed:
-- The three driver (persistence, storage and cache) are now accessed by a single reference.
-  Internally every driver need to achive the pooling to creare connection on request

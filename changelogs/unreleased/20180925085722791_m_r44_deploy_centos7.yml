@@ -1,5 +1,0 @@
----
-Added:
-- New tre job has been added to gitlab pipeline for manage the deploy on centos7.
-  In this case the compilation is in "release" mode.
-- Pipeline now are triggere only via "web" or "schedule" in association with the variable BUILD_TYPE with the values "test", "deploy", "coverity".

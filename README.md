@@ -1,5 +1,5 @@
 # !CHAOS Framework
-*release 1.0.0 (beta 2)*
+[0.9.1 Changelog](CHANGELOG.md)
 
 The !CHAOS project is aiming at the development of a new concept of control system and data acquisition framework
 providing, with a high level of abstraction, all the services needed for controlling and managing a large scientific,
