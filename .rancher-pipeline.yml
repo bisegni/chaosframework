@@ -9,6 +9,9 @@ stages:
         make clean
         make  -j $NPROC
         make install
+  - runScriptConfig:
+      image: gcc:latest
+      shellScript: echo "test"
 timeout: 60
 notification:
   recipients:
