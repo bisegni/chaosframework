@@ -5,7 +5,10 @@ stages:
       image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
       shellScript: |-
         export NPROC=$(nproc --ignore 1)
-        cmake -DCHAOS_AGENT=OFF -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+        export BRANCH=${CICD_GIT_BRANCH}
+        export COMMIT=${CICD_GIT_COMMIT}
+        export PID=${CICD_PIPELINE_ID}
+        cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$BRANCH" -DCHAOS_VERSION_MINOR="$COMMIT" -DCHAOS_BUILD_ID="$PID" -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
         make clean
         make  -j $NPROC
         make install
