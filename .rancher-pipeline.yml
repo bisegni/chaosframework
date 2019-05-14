@@ -8,45 +8,10 @@ stages:
         export BRANCH=${CICD_GIT_BRANCH}
         export COMMIT=${CICD_GIT_COMMIT}
         export PID=${CICD_PIPELINE_ID}
-        cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR=\"$BRANCH\" -DCHAOS_VERSION_MINOR=\"$COMMIT\" -DCHAOS_BUILD_ID=\"$PID\" -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+        cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="""$BRANCH""" -DCHAOS_VERSION_MINOR="""$COMMIT""" -DCHAOS_BUILD_ID="""$PID""" -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
         make clean
         make  -j $NPROC
         make install
-
-  # - runScriptConfig:
-  #     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
-  #     shellScript: |-
-  #       export NPROC=$(nproc --ignore 1)
-  #       export BRANCH=${CICD_GIT_BRANCH}
-  #       export COMMIT=${CICD_GIT_COMMIT}
-  #       export PID=${CICD_PIPELINE_ID}
-  #       cmake  -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$BRANCH" -DCHAOS_VERSION_MINOR="$COMMIT" -DCHAOS_BUILD_ID="$PID" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCHAOS_SANITIZER=TestFramework -DCMAKE_BUILD_TYPE=PROFILE .
-  #       /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
-  #
-  # - runScriptConfig:
-  #     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
-  #     shellScript: |-
-  #       export NPROC=$(nproc --ignore 1)
-  #       export BRANCH=${CICD_GIT_BRANCH}
-  #       export COMMIT=${CICD_GIT_COMMIT}
-  #       export PID=${CICD_PIPELINE_ID}
-  #       cmake -DCHAOS_VERSION_MAJOR="$BRANCH" -DCHAOS_VERSION_MINOR="$COMMIT" -DCHAOS_BUILD_ID="$PID" -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
-  #       make clean
-  #       make  -j $NPROC
-  #       make install
-  #
-  # - runScriptConfig:
-  #     image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
-  #     shellScript: |-
-  #       export NPROC=$(nproc --ignore 1)
-  #       export BRANCH=${CICD_GIT_BRANCH}
-  #       export COMMIT=${CICD_GIT_COMMIT}
-  #       export PID=${CICD_PIPELINE_ID}
-  #       cmake  -DCHAOS_VERSION_MAJOR="$BRANCH" -DCHAOS_VERSION_MINOR="$COMMIT" -DCHAOS_BUILD_ID="$PID" -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
-  #       make clean
-  #       make  -j $NPROC
-  #       make install
-
 timeout: 60
 notification:
   recipients:
