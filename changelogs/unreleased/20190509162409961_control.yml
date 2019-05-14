@@ -1,6 +1,0 @@
----
-Changed:
-- Control Unit driver singleton now are created using two different mode. According
-  to driver initi parameter norma stirng or json object. In this case if is resent
-  a key "driver_param" the json content of this key will be used as key for search
-  the singleton instance of the driver

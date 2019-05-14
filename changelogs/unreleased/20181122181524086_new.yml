@@ -1,4 +1,0 @@
----
-Deploy notes:
-- A new implementation of storage driver has been added. The new mongodb db driver
-  has been used
