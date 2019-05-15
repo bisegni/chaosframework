@@ -70,16 +70,20 @@ namespace chaos {
                     int closeSocketNoWhait (void *socket);
                     
                     inline int readMessage(void *socket,
-                                           chaos::common::data::BufferSPtr& msg_buffer);
-                    
-                    //! read a new message from zmq socket
-                    /*!
-                     
-                     */
+                                           zmq_msg_t& message);
+
                     inline int readMessage(void *socket,
-                                           void *message_data,
-                                           size_t message_max_size,
-                                           size_t& message_size_read);
+                                           chaos::common::data::BufferSPtr& buffer,
+                                           bool& has_next);
+ 
+                    inline int readMessage(void *socket,
+                                           std::string& buffer,
+                                           bool& has_next,
+                                           std::string *peer_ip = NULL);
+                    
+                    inline int sendMessage(void *socket,
+                                           zmq_msg_t& message,
+                                           int flag);
                     
                     //! send a new message from zmq socket
                     /*!
@@ -101,23 +105,9 @@ namespace chaos {
                     /*!
                      
                      */
-                    inline int moreMessageToRead(void * socket,
-                                                 bool& more_to_read);
+                    inline bool moreMessageToRead(zmq_msg_t& cur_msg);
                     
-                    //! receive a string
-                    inline int stringReceive(void *socket,
-                                             std::string& received_string);
-                    
-                    //! send string closing message
-                    int stringSend(void *socket,
-                                   const char *string);
-                    
-                    //! send a string with more message option
-                    int stringSendMore(void *socket,
-                                       const char *string);
-                    
-                    //! Set a random id on socket
-                    int setID(void *socket);
+                    inline chaos::common::data::BufferSPtr zmqMsgToBufferShrdPtr(zmq_msg_t& msg);
                     
                     //! Set a socket id and return it
                     /*!
@@ -126,23 +116,6 @@ namespace chaos {
                      */
                     int setAndReturnID(void *socket,
                                        std::string& new_id);
-                    
-                    int resetOutputQueue(void *socket,
-                                         MapZMQConfiguration &default_conf,
-                                         const MapZMQConfiguration &startup_conf);
-                    
-                    //! send the start of the zmq envelop start
-                    /*!
-                     This method need to be called befor message forwarding,
-                     it start the zmq forwarding envelop
-                     */
-                    inline int sendStartEnvelop(void *socket);
-                    
-                    //! receive the start of a message envelop
-                    /*!
-                     Before message can be read, the start of the envelop need to be received
-                     */
-                    inline int receiveStartEnvelop(void *socket);
                     
                     //! receive Direct io datapack by socket
                     int reveiceDatapack(void *socket,
@@ -161,12 +134,8 @@ namespace chaos {
                     int sendDatapack(void *socket,
                                      chaos::common::direct_io::DirectIODataPackSPtr data_pack);
                 };
-                
             }
         }
     }
 }
-
-
-
 #endif

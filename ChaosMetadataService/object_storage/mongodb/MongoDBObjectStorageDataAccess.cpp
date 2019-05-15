@@ -253,13 +253,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
             chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$gte" << mongo::Date_t(timestamp_from) <<
                                                              "$lte" << mongo::Date_t(timestamp_to)) <<
             run_key << BSON("$gte" << (long long)last_record_found_seq.run_id) <<
-            counter_key << BSON("$gte" << (long long)last_record_found_seq.datapack_counter);
+            counter_key << BSON("$gt" << (long long)last_record_found_seq.datapack_counter);
         } else {
             q_builder << chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
             chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON("$lte" << mongo::Date_t(timestamp_from) <<
                                                              "$gte" << mongo::Date_t(timestamp_to)) <<
             run_key << BSON("$lte" << (long long)last_record_found_seq.run_id) <<
-            counter_key << BSON("$lte" << (long long)last_record_found_seq.datapack_counter);
+            counter_key << BSON("$lt" << (long long)last_record_found_seq.datapack_counter);
         }
         
         //add tags

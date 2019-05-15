@@ -158,6 +158,7 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
     if(it != map_socket.end()){
         return it->second->getNewResource();
     } else {
+        
         ChaosSharedPtr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getNewResource();
@@ -180,49 +181,55 @@ void ZMQClient::deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release
 }
 
 //----resource pool handler-----
-void* ZMQClient::allocateResource(const std::string& pool_identification,
-                                  uint32_t& alive_for_ms) {
+ZMQSocketPoolDef* ZMQClient::allocateResource(const std::string& pool_identification,
+                                              uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
     int water_mark = 2;
-    
+    std::string new_id;
+    ChaosUniquePtr<ZMQSocketPoolDef> socket_def(new ZMQSocketPoolDef());
     //set the alive time to one minute
     alive_for_ms = ZMQ_SOCKET_LIFETIME_TIMEOUT;
-    
     //create zmq socket
-    void *new_socket = zmq_socket (zmq_context, ZMQ_REQ);
-    if(!new_socket) {
+    socket_def->socket = zmq_socket (zmq_context, ZMQ_DEALER);
+    if(!socket_def->socket) {
         return NULL;
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_LINGER, &linger, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_SNDTIMEO, &zmq_timeout, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_RCVTIMEO, &zmq_timeout, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(socket_def->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(socket_def->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(socket_def->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(socket_def->socket, ZMQ_SNDTIMEO, &zmq_timeout, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(socket_def->socket, ZMQ_RCVTIMEO, &zmq_timeout, sizeof(int)))) {
     } else {
         string url = "tcp://";
         url.append(pool_identification);
-        if((err = zmq_connect(new_socket, url.c_str()))) {
+        if((err = zmq_connect(socket_def->socket, url.c_str()))) {
             ZMQC_LERR << "Error "<< err <<" connecting socket to " <<pool_identification;
         } else {
             DEBUG_CODE(ZMQC_LAPP << "New socket for "<<pool_identification;)
+            socket_def->identity = common::utility::UUIDUtil::generateUUIDLite();
+            if((err = zmq_setsockopt(socket_def->socket, ZMQ_IDENTITY, socket_def->identity.c_str(), socket_def->identity.size())) != 0){
+                DEBUG_CODE(ZMQC_LAPP << "Error setting socket identity for "<<pool_identification;)
+            }
         }
     }
     
     if(err) {
-        if(new_socket) {
+        if(socket_def->socket) {
             ZMQC_LERR << "Error during configuration of the socket for "<<pool_identification;
-            zmq_close(new_socket);
+            zmq_close(socket_def->socket);
             //reset socket
-            new_socket = NULL;
+            socket_def->socket = NULL;
         }
+        socket_def.reset();
     }
-    return new_socket;
+    return socket_def.release();
 }
 
-void ZMQClient::deallocateResource(const std::string& pool_identification, void* resource_to_deallocate) {
+void ZMQClient::deallocateResource(const std::string& pool_identification, ZMQSocketPoolDef* resource_to_deallocate) {
     CHAOS_ASSERT(resource_to_deallocate)
     DEBUG_CODE(ZMQC_LAPP << "delete socket for "<<pool_identification;)
-    zmq_close(resource_to_deallocate);
+    zmq_close(resource_to_deallocate->socket);
+    delete(resource_to_deallocate);
 }
 
 //-----timer handler------
@@ -237,6 +244,37 @@ void ZMQClient::timeout() {
             map_socket.erase( tmp_it );
         }
     }
+}
+
+int ZMQClient::sendMessage(void *socket,
+                           void *message_data,
+                           size_t message_size,
+                           bool more_to_send) {
+    int err = 0;
+    zmq_msg_t message;
+    
+    if((err = zmq_msg_init_size(&message,
+                                message_size)) == -1){
+        //error creating the message
+        err = zmq_errno();
+        ZMQC_LERR << "Error initializing message with error:" << zmq_strerror(err);
+    } else {
+        //copy content into message
+        memcpy(zmq_msg_data(&message),
+               message_data,
+               message_size);
+        //send data
+        if((err = zmq_msg_send(&message, socket, more_to_send?ZMQ_SNDMORE:ZMQ_DONTWAIT)) == -1){
+            err = zmq_errno();
+            ZMQC_LERR << "Error sending message with error:" << zmq_strerror(err);
+        } else {
+            //reset the error
+            err = 0;
+        }
+        //close the message
+        zmq_msg_close(&message);
+    }
+    return err;
 }
 
 /*
@@ -277,7 +315,12 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
             return;
         }
         
-        if((err = zmq_msg_init_data(&message, (void*)message_data->getBSONRawData(), message_data->getBSONRawSize(), my_free,  new MemoryManagement(message_data))) == -1) {
+        //send data
+        if((err = zmq_msg_init_data(&message,
+                                    (void*)message_data->getBSONRawData(),
+                                    message_data->getBSONRawSize(),
+                                    my_free,
+                                    new MemoryManagement(message_data))) == -1) {
             int32_t sent_error = zmq_errno();
             std::string error_message =zmq_strerror(sent_error);
             ZMQC_LERR << "Error allocating zmq messagecode:" << sent_error << " message:" <<error_message;
@@ -287,10 +330,11 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                             "Error initializiend rcp message",
                                             __PRETTY_FUNCTION__);
             }
-            //err = 0;
         } else {
             ZMQC_LDBG << "Try to send message seq_id:"<<loc_seq_id;
-            err = zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);
+            err = zmq_msg_send(&message,
+                               socket_info->resource_pooled->socket,
+                               ZMQ_DONTWAIT);
             if(err == -1) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message = zmq_strerror(sent_error);
@@ -308,7 +352,9 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
             }else{
                 ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent now wait for ack";
                 //ok get the answer
-                err = zmq_recvmsg(socket_info->resource_pooled, &reply, 0);
+                err = zmq_msg_recv(&reply,
+                                   socket_info->resource_pooled->socket,
+                                   0);
                 if(err == -1) {
                     int32_t sent_error = zmq_errno();
                     std::string error_message = zmq_strerror(sent_error);

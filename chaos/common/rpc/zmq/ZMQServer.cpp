@@ -118,10 +118,10 @@ void ZMQServer::deinit() {
     ZMQS_LAPP << "Stopping thread";
     //wiath all thread
     zmq_ctx_shutdown(zmq_context);
-
+    
     thread_group.join_all();
     zmq_ctx_destroy(zmq_context);
-
+    
     ZMQS_LAPP << "Thread stopped";
 }
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
@@ -168,7 +168,7 @@ void ZMQServer::worker() {
     int	linger = 500;
     int	water_mark = 10;
     
-    void *receiver = zmq_socket (zmq_context, ZMQ_REP);
+    void *receiver = zmq_socket (zmq_context, ZMQ_DEALER);
     if(!receiver) return;
     
     //err = zmq_bind(receiver, bind_str.str().c_str());
@@ -201,20 +201,30 @@ void ZMQServer::worker() {
     }
     while (run_server) {
         try {
+            bool has_more;
+            std::string identity;
             zmq_msg_t request;
             zmq_msg_t response;
             
-            err = zmq_msg_init(&request);
-            
-            DEBUG_CODE(ZMQS_LDBG << "Wait for message";);
-            err = zmq_recvmsg(receiver, &request, 0);
-            if(run_server==0){
-            	// no error should be issued on normal exit
-                ZMQS_LDBG << "exiting from worker..";
-
-            	continue;
+            if((err = readMessage(receiver,
+                                  identity,
+                                  has_more) != 0)) {
+                    continue;
+            } else if(has_more == false) {
+                ZMQS_LERR << "Identity without message";
+                continue;
             }
-
+            
+            //read message
+            err = zmq_msg_init(&request);
+            ZMQS_LDBG << "Wait for message";
+            err = zmq_msg_recv(&request, receiver, 0);
+            if(run_server==0){
+                // no error should be issued on normal exit
+                ZMQS_LDBG << "exiting from worker..";
+                continue;
+            }
+            
             if(err == -1 ) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message = zmq_strerror(sent_error);
@@ -227,8 +237,8 @@ void ZMQServer::worker() {
                     //dispatch the command
                     if(message_data->hasKey("seq_id")){
                         seq_id=message_data->getInt64Value("seq_id");
-                    } 
-                    DEBUG_CODE(ZMQS_LDBG << "Message Received seq_id:"<<seq_id;);
+                    }
+                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
                     const std::string msg_desc = message_data->getCompliantJSONString();
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
@@ -236,10 +246,13 @@ void ZMQServer::worker() {
                     } else {
                         result_data_pack = command_handler->dispatchCommand(MOVE(message_data));
                     }
+                    
+                    //send identity
+                    err = sendMessage(receiver, (void*)identity.c_str(), identity.size(), true);
                     //create zmq message
                     if(result_data_pack.get()==NULL){
                         ZMQS_LERR << "ERROR:"<<msg_desc;
-
+                        
                     }
                     result_data_pack->addInt64Value("seq_id",seq_id);
                     err = zmq_msg_init_data(&response,
@@ -254,8 +267,8 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
                     } else {
                         //no error on create message
-                     //   ZMQS_LDBG << "Send ack";
-                        err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
+                        //   ZMQS_LDBG << "Send ack";
+                        err = zmq_msg_send(&response, receiver, ZMQ_NOBLOCK);
                         if(err == -1) {
                             int32_t sent_error = zmq_errno();
                             std::string error_message = zmq_strerror(sent_error);
@@ -277,4 +290,79 @@ void ZMQServer::worker() {
     }
     zmq_close(receiver);
     ZMQS_LAPP << CHAOS_FORMAT("Leaving worker for %1%", %bind_str.str());
+}
+
+int ZMQServer::sendMessage(void *socket,
+                           void *message_data,
+                           size_t message_size,
+                           bool more_to_send) {
+    int err = 0;
+    zmq_msg_t message;
+    
+    if((err = zmq_msg_init_size(&message,
+                                message_size)) == -1){
+        //error creating the message
+        err = zmq_errno();
+        ZMQS_LERR << "Error initializing message with error:" << zmq_strerror(err);
+    } else {
+        //copy content into message
+        memcpy(zmq_msg_data(&message),
+               message_data,
+               message_size);
+        //send data
+        if((err = zmq_msg_send(&message, socket, more_to_send?ZMQ_SNDMORE:ZMQ_DONTWAIT)) == -1){
+            err = zmq_errno();
+            ZMQS_LERR << "Error sending message with error:" << zmq_strerror(err);
+        } else {
+            //reset the error
+            err = 0;
+        }
+        //close the message
+        zmq_msg_close(&message);
+    }
+    return err;
+}
+
+int ZMQServer::readMessage(void *socket,
+                              std::string& buffer,
+                              bool& has_next,
+                              std::string *peer_ip) {
+    int err = 0;
+    has_next = false;
+    zmq_msg_t message;
+    if((err = zmq_msg_init(&message))) {
+        err = zmq_errno();
+        ZMQS_LERR << "Error initilizing message" << zmq_strerror(err);
+        return err;
+    }
+    
+    /* Block until a message is available to be received from socket */
+    if((err = zmq_msg_recv(&message, socket, 0)) <= 0) {
+        err = zmq_errno();
+        ZMQS_LERR << "Error receiving message" << zmq_strerror(err);
+    } else {
+        err = 0;
+        size_t msg_size = zmq_msg_size(&message);
+        buffer.assign((const char *)zmq_msg_data(&message), msg_size);
+        
+        if(peer_ip) {
+            if(zmq_has("draft")) {
+                const char * ip = zmq_msg_gets(&message, "Peer-Address");
+                if(ip) {
+                    (*peer_ip) = ip;
+                }
+            } else {
+                peer_ip->assign("no draft zmq support");
+            }
+        }
+        
+        //check if we have other message
+        has_next = zmq_msg_more(&message);
+        if((err = zmq_msg_close(&message)) != 0) {
+            err = zmq_errno();
+            ZMQS_LERR << "Error closing message" << zmq_strerror(err);
+        }
+        err = 0;
+    }
+    return err;
 }
