@@ -48,8 +48,18 @@ namespace chaos {
         virtual ~ZMQServer();
         //worker that process request in a separate thread
         void worker();
+        
+        int sendMessage(void *socket,
+                        void *message_data,
+                        size_t message_size,
+                        bool more_to_send);
+        
+        int readMessage(void *socket,
+                        std::string& buffer,
+                        bool& has_next,
+                        std::string *peer_ip = NULL);
     public:
-
+        
         /*
          init the rpc adapter
          */
@@ -67,7 +77,7 @@ namespace chaos {
          */
         void deinit();
         
-            //server worker thread
+        //server worker thread
         /*!
          Thread where data is received and managed
          */
