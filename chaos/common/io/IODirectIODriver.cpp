@@ -155,6 +155,10 @@ int IODirectIODriver::storeData(const std::string& key,
     CHAOS_ASSERT(data_to_store)
     ChaosReadLock rl(mutext_feeder);
     IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    if(data_to_store.get()==NULL){
+        IODirectIODriver_LERR_ << "Packet not allocated";
+        return -100;
+    }
     SerializationBufferUPtr serialization = data_to_store->getBSONData();
     if(next_client) {
         serialization->disposeOnDelete = false;

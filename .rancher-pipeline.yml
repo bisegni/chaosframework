@@ -1,0 +1,15 @@
+stages:
+- name: build
+  steps:
+  - runScriptConfig:
+      image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
+      shellScript: |-
+        echo "working pipeline"
+timeout: 60
+notification:
+  recipients:
+  - recipient: '#chaosframework'
+    notifier: c-8rpc8:n-l9l78
+  condition:
+  - Success
+  - Failed
