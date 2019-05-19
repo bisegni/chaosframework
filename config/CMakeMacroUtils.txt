@@ -160,8 +160,6 @@ IF (NOT CACHE_DIR)
     FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/vfs)
     FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/doc)
 
-    FILE(COPY ${CHAOS_FRAMEWORK}/config/localhost DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/)
-    FILE(COPY ${CHAOS_FRAMEWORK}/config/localhost DESTINATION ${CMAKE_INSTALL_PREFIX}/tools/config/lnf/)
     FILE(COPY ${CHAOS_FRAMEWORK}/tools DESTINATION ${CMAKE_INSTALL_PREFIX})
     IF(EXISTS "${CHAOS_BUNDLE}/service/webgui/w3chaos/public_html/chaos_dashboard")
       FILE(COPY ${CHAOS_FRAMEWORK}/../service/webgui/w3chaos/public_html/chaos_dashboard DESTINATION ${CMAKE_INSTALL_PREFIX}/html)
@@ -171,6 +169,7 @@ IF (NOT CACHE_DIR)
     ENDIF()
     IF(EXISTS "${CHAOS_BUNDLE}/tools")
        FILE(COPY ${CHAOS_BUNDLE}/tools DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+       FILE(COPY ${CHAOS_BUNDLE}/tools/config/localhost DESTINATION ${CMAKE_INSTALL_PREFIX}/etc)
 
     ENDIF()
 
