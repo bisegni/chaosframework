@@ -1866,10 +1866,7 @@ int AbstractControlUnit::pushOutputDataset() {
   r_lock->lock();
 
   //check if something as changed
-  if (!output_attribute_cache.hasChanged()) {
-   // ACULDBG_<<"Nothing to Push";
-    return err;
-  }
+  if (!output_attribute_cache.hasChanged()) {return err;}
 
   CDWShrdPtr output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
   if (!output_attribute_dataset.get()) {
@@ -1936,7 +1933,7 @@ int AbstractControlUnit::pushOutputDataset() {
   push_dataset_counter++;
 
   //reset chagned attribute into output dataset
-  output_attribute_cache.resetChangedIndex();
+  if(!err){output_attribute_cache.resetChangedIndex();}
   return err;
 }
 
@@ -1958,12 +1955,10 @@ int AbstractControlUnit::pushInputDataset() {
 
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, MOVE(input_attribute_dataset));
+    if(!err){input_attribute_cache.resetChangedIndex();}
   } else {
-   
     ACULERR_ << " Cannot allocate packet.. err:"<<err;
-  
   }
-  input_attribute_cache.resetChangedIndex();
   return err;
 }
 
@@ -1986,15 +1981,15 @@ int AbstractControlUnit::pushCustomDataset() {
 
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, MOVE(custom_attribute_dataset));
+    if(!err){custom_attribute_cache.resetChangedIndex();}
   } else {
         ACULERR_ << " Cannot allocate packet.. err:"<<err;
-
   }
   return err;
 }
 
 int AbstractControlUnit::pushSystemDataset() {
-  int             err                    = 0;
+  int err = 0;
   AttributeCache& system_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
   if (!system_attribute_cache.hasChanged()) return err;
   //get the cdatawrapper for the pack
@@ -2010,9 +2005,8 @@ int AbstractControlUnit::pushSystemDataset() {
     ACULAPP_ << system_attribute_dataset->getJSONString();
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, MOVE(system_attribute_dataset));
+    if(!err){system_attribute_cache.resetChangedIndex();}
   }
-  //reset changed index
-  system_attribute_cache.resetChangedIndex();
   return err;
 }
 
