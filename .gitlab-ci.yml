@@ -207,9 +207,7 @@ test_u_18_04_gcc73:
 
 build_dbg_c7:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
