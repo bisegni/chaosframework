@@ -74,7 +74,6 @@ namespace chaos {
                     //batch timeout in milliseconds
                     uint32_t batch_timeout;
                     int64_t  next_timeout;
-                    mongocxx::bulk_write _bulk_write;
                     ChaosSharedPtr<mongocxx::pool> pool_ref;
                     ShardKeyManagement shrd_key_manager;
                     
