@@ -18,9 +18,7 @@ before_script:
 
 build_u_14_04_gcc49:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
@@ -57,9 +55,7 @@ test_u_14_04_gcc49:
   dependencies:
     - build_u_14_04_gcc49
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc_49
   script:
@@ -101,9 +97,7 @@ test_u_14_04_gcc49:
 
 build_u_16_04_gcc5:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
@@ -135,9 +129,7 @@ test_u_16_04_gcc5_test:
   dependencies:
     - build_u_16_04_gcc5
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/16:llvm6
   script:
@@ -160,7 +152,6 @@ test_u_16_04_gcc5_test:
 
 build_u_18_04_gcc73:
   tags:
-    - shared
     - docker
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
@@ -193,9 +184,7 @@ test_u_18_04_gcc73:
   dependencies:
     - build_u_18_04_gcc73
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/18:gcc7.3
   script:
@@ -252,9 +241,7 @@ test_dbg_c7:
   dependencies:
     - build_dbg_c7
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
@@ -307,9 +294,7 @@ test_dbg_c7:
 
 build_rel_c7:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
@@ -341,9 +326,7 @@ test_rel_c7:
   dependencies:
     - build_rel_c7
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/centos7:devtools7
   script:
@@ -369,9 +352,7 @@ deploy_rel_c7:
     - build_rel_c7
   allow_failure: false
   tags:
-    - chaos
     - docker
-    - infncc
   stage: deploy
   image: baltig.infn.it:4567/chaos-lnf-control/chaos_bundle_compilation:lite
   script:
@@ -395,9 +376,7 @@ deploy_rel_c7:
 
 build_u_14_04_gcc48_c98:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
@@ -427,9 +406,7 @@ test_u_14_04_gcc48_c98:
   dependencies:
     - build_u_14_04_gcc48_c98
   tags:
-    - chaos
     - docker
-    - infncc
   stage: test
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/ubuntu/14:gcc
   script:
@@ -448,9 +425,7 @@ test_u_14_04_gcc48_c98:
 
 build_arm:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation:latest
   script:
@@ -535,9 +510,7 @@ build_arm:
 
 exp_llvm_scan_coverity:
   tags:
-    - chaos
     - docker
-    - infncc
   stage: build
   image: baltig.infn.it:4567/bisegni/chaos-docker-compilation/llvm_coverity_u1710
   script:
