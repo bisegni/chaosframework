@@ -268,18 +268,13 @@ int ZMQDirectIOClientConnection::sendPriorityData(chaos::common::direct_io::Dire
                         priority_identity,
                         MOVE(data_pack),
                         synchronous_answer);
-    if(err > 0 /*resource not available*/) {
-        //change id ofr socket
-        if((ZMQBaseClass::setAndReturnID(socket_priority,
-                                         service_identity))) {
-            ERR << "Error configuring new id for socker :" << service_endpoint;
-        } else {
-            ZMQBaseClass::resetOutputQueue(socket_service,
-                                           default_configuration,
-                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
-
-        }
-    }
+//    if(err > 0 /*resource not available*/) {
+//        //change id ofr socket
+//        if((ZMQBaseClass::setAndReturnID(socket_priority,
+//                                         service_identity))) {
+//            ERR << "Error configuring new id for socker :" << service_endpoint;
+//        }
+//    }
     return err;
 }
 
@@ -303,18 +298,18 @@ int ZMQDirectIOClientConnection::sendServiceData(chaos::common::direct_io::Direc
                         service_identity,
                         MOVE(data_pack),
                         synchronous_answer);
-    if(err > 0 /*resource not available*/) {
-        //change id ofr socket
-        if((ZMQBaseClass::setAndReturnID(socket_service,
-                                         service_identity))) {
-            ERR << "Error configuring new id for socker :" << service_endpoint;
-        } else {
-            ZMQBaseClass::resetOutputQueue(socket_service,
-                                           default_configuration,
-                                           chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
-
-        }
-    }
+//    if(err > 0 /*resource not available*/) {
+//        //change id ofr socket
+//                if((ZMQBaseClass::setAndReturnID(socket_service,
+//                                                 service_identity))) {
+//                    ERR << "Error configuring new id for socker :" << service_endpoint;
+//                } else {
+//                    ZMQBaseClass::resetOutputQueue(socket_service,
+//                                                   default_configuration,
+//                                                   chaos::GlobalConfiguration::getInstance()->getDirectIOClientImplKVParam());
+//
+//                }
+//    }
     return err;
 }
 
@@ -329,7 +324,7 @@ bool ZMQDirectIOClientConnection::ensureSocket() {
 //send data with zmq tech
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
-											   chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
+                                               chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer == false);
     int err = 0;
@@ -343,7 +338,7 @@ int ZMQDirectIOClientConnection::writeToSocket(void *socket,
 int ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                std::string& identity,
                                                chaos::common::direct_io::DirectIODataPackSPtr data_pack,
-											   chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
+                                               chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     CHAOS_ASSERT(socket && data_pack);
     CHAOS_ASSERT(data_pack->header.dispatcher_header.fields.synchronous_answer);
     uint16_t current_counter = data_pack->header.dispatcher_header.fields.counter = message_counter++;

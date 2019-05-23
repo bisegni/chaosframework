@@ -516,50 +516,68 @@ void         AbstractControlUnit::doInitRpCheckList() {
       int err;
       *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
       attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
-      if ((err = pushSystemDataset()) != 0) {
+      /*
+      *if ((err = pushSystemDataset()) != 0) {
         ACULWRN_ << "cannot initialize system dataset, retrying";
         sleep(1);
         if ((err = pushSystemDataset()) != 0) {
           throw CException(err, "cannot initialize system dataset", __PRETTY_FUNCTION__);
         }
       }
-      if ((err = pushCUAlarmDataset()) != 0) {
+      */
+      if ((err = pushSystemDataset()) != 0) {
+          throw CException(err, "cannot initialize system dataset (check live services)", __PRETTY_FUNCTION__);
+      }
+      /*if ((err = pushCUAlarmDataset()) != 0) {
         ACULWRN_ << "cannot initialize CUAlarm dataset, retrying";
         sleep(1);
         if ((err = pushCUAlarmDataset()) != 0) {
           throw CException(err, "cannot initialize CU alarm dataset", __PRETTY_FUNCTION__);
         }
+      }*/
+      if ((err = pushCUAlarmDataset()) != 0) {
+          throw CException(err, "cannot initialize CU alarm dataset (check live services)", __PRETTY_FUNCTION__);
       }
-      if ((err = pushDevAlarmDataset()) != 0) {
+      /*if ((err = pushDevAlarmDataset()) != 0) {
         ACULWRN_ << "cannot initialize DEVAlarm dataset, retrying";
         if ((err = pushDevAlarmDataset()) != 0) {
           throw CException(err, "cannot initialize DEV alarm dataset", __PRETTY_FUNCTION__);
         }
+      }*/
+      if ((err = pushDevAlarmDataset()) != 0) {
+          throw CException(err, "cannot initialize DEV alarm dataset (check live services)", __PRETTY_FUNCTION__);
       }
       attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
       // if the CU can't push initial dataset is a real problem, we must detect immediately
-      if ((err = pushOutputDataset()) != 0) {
-        ACULWRN_ << "cannot initialize output dataset, retrying";
+     /* if ((err = pushOutputDataset()) != 0) {
+        ACULWRN_ << "cannot initialize output dataset, err:"<<err<<" retrying..";
         sleep(1);
         if ((err = pushOutputDataset()) != 0) {
           throw CException(err, "cannot initialize output dataset", __PRETTY_FUNCTION__);
         }
-      }
+      }*/
+        if ((err = pushOutputDataset()) != 0) {
+          throw CException(err, "cannot initialize output dataset (check live services)", __PRETTY_FUNCTION__);
+        }
       attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
 
+      /*
       if ((err = pushInputDataset()) != 0) {
         ACULWRN_ << "cannot initialize input dataset, retrying";
         sleep(1);
         if ((err = pushInputDataset()) != 0) {
           throw CException(err, "cannot initialize input dataset", __PRETTY_FUNCTION__);
         }
-      }
+      }*/
+      if ((err = pushInputDataset()) != 0) {
+          throw CException(err, "cannot initialize input dataset (check live services)", __PRETTY_FUNCTION__);
+        }
+      
       attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
 
       if ((err = pushCustomDataset()) != 0) {
-        throw CException(err, "cannot initialize custom dataset", __PRETTY_FUNCTION__);
+        throw CException(err, "cannot initialize custom dataset (check live services)", __PRETTY_FUNCTION__);
       }
-
       break;
     }
   }
@@ -1848,13 +1866,13 @@ int AbstractControlUnit::pushOutputDataset() {
   r_lock->lock();
 
   //check if something as changed
-  if (!output_attribute_cache.hasChanged()) {
-   // ACULDBG_<<"Nothing to Push";
-    return err;
-  }
+  if (!output_attribute_cache.hasChanged()) {return err;}
 
   CDWShrdPtr output_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainOutput);
-  if (!output_attribute_dataset) return err;
+  if (!output_attribute_dataset.get()) {
+    ACULERR_ << " Cannot allocate packet.. err:"<<err;
+    return err;
+  }
   output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
   output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *timestamp_acq_cached_value->getValuePtr<uint64_t>());
   output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>());
@@ -1915,7 +1933,7 @@ int AbstractControlUnit::pushOutputDataset() {
   push_dataset_counter++;
 
   //reset chagned attribute into output dataset
-  output_attribute_cache.resetChangedIndex();
+  if(!err){output_attribute_cache.resetChangedIndex();}
   return err;
 }
 
@@ -1927,7 +1945,7 @@ int AbstractControlUnit::pushInputDataset() {
   //get the cdatawrapper for the pack
   int64_t    cur_us                  = TimingUtil::getTimeStampInMicroseconds();
   CDWShrdPtr input_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainInput);
-  if (input_attribute_dataset) {
+  if (input_attribute_dataset.get()) {
     input_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     //input dataset timestamp is added only when pushed on cache
     input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
@@ -1937,8 +1955,10 @@ int AbstractControlUnit::pushInputDataset() {
 
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, MOVE(input_attribute_dataset));
+    if(!err){input_attribute_cache.resetChangedIndex();}
+  } else {
+    ACULERR_ << " Cannot allocate packet.. err:"<<err;
   }
-  input_attribute_cache.resetChangedIndex();
   return err;
 }
 
@@ -1950,7 +1970,7 @@ int AbstractControlUnit::pushCustomDataset() {
   //get the cdatawrapper for the pack
   int64_t    cur_us                   = TimingUtil::getTimeStampInMicroseconds();
   CDWShrdPtr custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
-  if (custom_attribute_dataset) {
+  if (custom_attribute_dataset.get()) {
     custom_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     //input dataset timestamp is added only when pushed on cache
     custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
@@ -1961,12 +1981,15 @@ int AbstractControlUnit::pushCustomDataset() {
 
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, MOVE(custom_attribute_dataset));
+    if(!err){custom_attribute_cache.resetChangedIndex();}
+  } else {
+        ACULERR_ << " Cannot allocate packet.. err:"<<err;
   }
   return err;
 }
 
 int AbstractControlUnit::pushSystemDataset() {
-  int             err                    = 0;
+  int err = 0;
   AttributeCache& system_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
   if (!system_attribute_cache.hasChanged()) return err;
   //get the cdatawrapper for the pack
@@ -1982,9 +2005,8 @@ int AbstractControlUnit::pushSystemDataset() {
     ACULAPP_ << system_attribute_dataset->getJSONString();
     //push out the system dataset
     err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, MOVE(system_attribute_dataset));
+    if(!err){system_attribute_cache.resetChangedIndex();}
   }
-  //reset changed index
-  system_attribute_cache.resetChangedIndex();
   return err;
 }
 

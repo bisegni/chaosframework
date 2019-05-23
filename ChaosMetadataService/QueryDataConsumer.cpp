@@ -144,7 +144,8 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         
     }
     
-    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
+    if(!err &&
+       (storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory)) {
         //compute the index to use for the data worker
         uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use].get())

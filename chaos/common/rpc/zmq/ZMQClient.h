@@ -33,8 +33,13 @@ namespace chaos {
     
     class ZMQClient;
     class SocketEndpointPool;
-
-    typedef chaos::common::pool::ResourcePool<void> ZMQSocketPool;
+    
+    struct ZMQSocketPoolDef{
+        void * socket;
+        std::string identity;
+    };
+    
+    typedef chaos::common::pool::ResourcePool<ZMQSocketPoolDef> ZMQSocketPool;
     
     //define the pool my for every endpoint
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr< ZMQSocketPool >, SocketMap)
@@ -43,7 +48,7 @@ namespace chaos {
      Class that implemnt !CHAOS RPC messaggin gusing ZMQ
      
      driver parameter:
-        key:zmq_timeout value is a stirng that represent the integer used as timeout
+     key:zmq_timeout value is a stirng that represent the integer used as timeout
      */
     DECLARE_CLASS_FACTORY(ZMQClient, RpcClient),
     public ZMQSocketPool::ResourcePoolHelper,
@@ -64,14 +69,19 @@ namespace chaos {
         inline void deleteSocket(ZMQSocketPool::ResourceSlot *socket_slot_to_release);
         
         //resource pool handler
-        void* allocateResource(const std::string& pool_identification,
-                               uint32_t& alive_for_ms);
+        ZMQSocketPoolDef* allocateResource(const std::string& pool_identification,
+                                           uint32_t& alive_for_ms);
         void deallocateResource(const std::string& pool_identification,
-                                void* resource_to_deallocate);
+                                ZMQSocketPoolDef* resource_to_deallocate);
         
         //timer handler
         void timeout();
-
+        
+        int sendMessage(void *socket,
+                        void *message_data,
+                        size_t message_size,
+                        bool more_to_send);
+        
     public:
         
         /*

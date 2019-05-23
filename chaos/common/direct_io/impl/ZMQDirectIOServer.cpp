@@ -85,7 +85,7 @@ void ZMQDirectIOServer::start()  {
     MapZMQConfiguration         default_context_configuration;
     default_context_configuration["ZMQ_IO_THREADS"] = "1";
     
-    direct_io_thread_number = 2;
+    direct_io_thread_number = 1;
     DirectIOServer::start();
     run_server = true;
     
@@ -185,7 +185,7 @@ void ZMQDirectIOServer::poller(const std::string& public_url,
     default_socket_configuration["ZMQ_RCVTIMEO"] = "-1";
     default_socket_configuration["ZMQ_SNDTIMEO"] = "1000";
     
-    proxy_socket_configuration["ZMQ_LINGER"] = "0";
+    proxy_socket_configuration["ZMQ_LINGER"] = "500";
     //keep space for 2 compelte direct io message(3 message part) for every working thread
     proxy_socket_configuration["ZMQ_RCVHWM"] = "1000";//boost::lexical_cast<std::string>((direct_io_thread_number*3)*2);
     proxy_socket_configuration["ZMQ_SNDHWM"] = "1000";
@@ -260,7 +260,7 @@ void ZMQDirectIOServer::worker(unsigned int w_type,
     
     MapZMQConfiguration         worker_empty_default_configuration;
     MapZMQConfiguration         worker_socket_configuration;
-    worker_socket_configuration["ZMQ_LINGER"] = "0";
+    worker_socket_configuration["ZMQ_LINGER"] = "500";
     worker_socket_configuration["ZMQ_RCVHWM"] = "1000";
     worker_socket_configuration["ZMQ_SNDHWM"] = "1000";
     worker_socket_configuration["ZMQ_RCVTIMEO"] = "-1";

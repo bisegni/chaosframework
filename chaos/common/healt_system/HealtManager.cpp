@@ -471,6 +471,7 @@ void HealtManager::timeout() {
 
 void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
                             uint64_t publish_ts) {
+    int err = 0;
     //lock the driver for bublishing
     boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
     //update infromation abour process
@@ -481,9 +482,12 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
                                                publish_ts);
     if(data_pack.get()) {
         //store data on cache
-        SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,
+        err = SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,
                                                                                           MOVE(data_pack),
                                                                                           DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+        if(err) {
+            HM_ERR << "Error pushinghealth datapack for node:" << heath_set->node_uid << " with code:" << err;
+        }
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;
     }

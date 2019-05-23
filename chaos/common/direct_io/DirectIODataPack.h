@@ -45,8 +45,8 @@ namespace chaos {
 #define DIRECT_IO_DISPATCHER_HEADER_SIZE		10
 
 #define DIRECT_IO_GET_DISPATCHER_DATA(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint64_t>(*((uint64_t*)d));
-#define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+12)));
-#define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(*((uint32_t*)((char*)d+16)));
+#define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(d);
+#define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, uint32_t>(d);
 			
 #define DIRECT_IO_SET_DISPATCHER_DATA(d)		chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, uint64_t>(d);
 #define DIRECT_IO_SET_CHANNEL_HEADER_SIZE(d)    chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, uint32_t>(d);

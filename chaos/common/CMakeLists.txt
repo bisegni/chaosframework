@@ -6,8 +6,25 @@ IF(NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
-CheckConfigureBuild(zmq zeromq4-1 "${ZMQ_FLAGS}" https://github.com/zeromq)
 
+IF (CHAOS_TARGET)
+MESG("Configure libzmq with autotools")  
+CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
+ELSE()
+MESG("Configure libzmq as CMake")
+ExternalProject_Add(
+ libzmq
+ GIT_REPOSITORY https://github.com/zeromq/libzmq.git
+ GIT_TAG v4.3.1
+ PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libzmq-prefix"
+ SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
+ BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
+ CMAKE_ARGS
+  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
+ LOG_DOWNLOAD ON
+ LOG_CONFIGURE ON
+ LOG_BUILD ON)
+ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
@@ -47,6 +64,7 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
        MESG("Searching cling cmake module in ${CMAKE_MODULE_PATH}")
        # This project needs cling.
        find_library(Cling REQUIRED)
+    add_dependencies(${PROJECT_NAME} cling)
   ENDIF()
 ENDIF()
 
@@ -352,6 +370,10 @@ ELSE ()
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
+
+#add dependency to libzmq
+add_dependencies(${PROJECT_NAME} libzmq)
+
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)
 ENDIF()

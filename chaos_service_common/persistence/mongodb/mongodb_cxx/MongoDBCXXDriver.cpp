@@ -30,7 +30,7 @@ BaseMongoDBDiver::BaseMongoDBDiver() {}
 
 BaseMongoDBDiver::~BaseMongoDBDiver() {}
 
-void BaseMongoDBDiver::initPool(const ChaosStringVector& url_list,
+void BaseMongoDBDiver:: initPool(const ChaosStringVector& url_list,
                                 const std::string& user,
                                 const std::string& password,
                                 const std::string& database) {
