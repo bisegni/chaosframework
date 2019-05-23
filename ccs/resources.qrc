@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>DefaultStyle.json</file>
-        <file>preference/test.qml</file>
     </qresource>
 </RCC>
