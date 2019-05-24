@@ -708,7 +708,7 @@ void CDataWrapper::appendAllElement(CDataWrapper& src_cdw) {
 }
 
 bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
-                             CDataWrapper& destination) {
+                             CDataWrapper& destination) const {
     return copyKeyToNewKey(key_to_copy,
                            key_to_copy,
                            destination);
@@ -717,7 +717,7 @@ bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
 //!copy a key(with value) from this instance to another CDataWrapper witha new key
 bool CDataWrapper::copyKeyToNewKey(const std::string& key_to_copy,
                                    const std::string& new_key,
-                                   CDataWrapper& destination) {
+                                   CDataWrapper& destination) const {
     bson_iter_t it;
     bson_iter_init(&it, ACCESS_BSON(bson));
     if(bson_iter_find_case(&it, key_to_copy.c_str()) == false) return false;
@@ -728,7 +728,7 @@ bool CDataWrapper::copyKeyToNewKey(const std::string& key_to_copy,
     return true;
 }
 
-void CDataWrapper::copyAllTo(CDataWrapper& destination) {
+void CDataWrapper::copyAllTo(CDataWrapper& destination) const {
     bson_iter_t it;
     bson_iter_init(&it, ACCESS_BSON(bson));
     while (bson_iter_next(&it)) {

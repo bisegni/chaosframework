@@ -304,13 +304,13 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 void appendAllElement(CDataWrapper&);
                 //!copy a key(with value) from this instance to another CDataWrapper one
                 bool copyKeyTo(const std::string& key_to_copy,
-                               CDataWrapper& destination);
+                               CDataWrapper& destination) const;
                 //!copy a key(with value) from this instance to another CDataWrapper witha new key
                 bool copyKeyToNewKey(const std::string& key_to_copy,
                                      const std::string& new_key,
-                                     CDataWrapper& destination);
+                                     CDataWrapper& destination) const;
                 //!copy all key(with value) from this instance to another CDataWrapper one
-                void copyAllTo(CDataWrapper& destination);
+                void copyAllTo(CDataWrapper& destination) const;
                 //! Return the Hashing represetnation of the CDataWrapper
                 string toHash() const;
                 CDataVariant getVariantValue(const std::string& key) const;

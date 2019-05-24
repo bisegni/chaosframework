@@ -27,6 +27,7 @@
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 #ifdef __GNUC__
@@ -119,6 +120,10 @@ namespace chaos{
                     int32_t ret;                                /**< eventual return code of the code */
                     char    err_msg[DRVMSG_ERR_MSG_SIZE];       /**< error message */
                     char    err_dom[DRVMSG_ERR_DOM_SIZE];       /**< error domain */
+                    
+                    chaos::common::data::CDWShrdPtr device_param; /**< device param given in the initilization json format string */
+                    DrvMsg(){}
+                    ~DrvMsg(){}
                 } *DrvMsgPtr;
                 
                 //!define a class that can execute driver opcode

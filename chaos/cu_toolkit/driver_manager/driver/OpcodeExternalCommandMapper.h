@@ -57,20 +57,21 @@ namespace chaos {
                     int sendInitRequest();
                     //!Wrap to @RemoteIODriverProtocol::sendDeinitRequest method
                     int sendDeinitRequest();
+                    
+                    void fillMessageWithDeviceParam(chaos::cu::driver_manager::driver::DrvMsgPtr cmd,
+                                                    chaos::common::data::CDataWrapper& message) const;
                 public:
                     OpcodeExternalCommandMapper(RemoteIODriverProtocol *driver_protocol);
                     
                     virtual ~OpcodeExternalCommandMapper();
                     
                     virtual void driverInit(const chaos::common::data::CDataWrapper& init_parameter);
-                    
                     virtual void driverDeinit();
+                    
                     virtual int sendInit(cu::driver_manager::driver::DrvMsgPtr cmd);
-                
                     virtual int sendDeinit(cu::driver_manager::driver::DrvMsgPtr cmd);
                     virtual int asyncMessageReceived(chaos::common::data::CDWUniquePtr message) = 0;
                 };
-                
             }
         }
     }
