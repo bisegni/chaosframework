@@ -102,7 +102,6 @@ namespace chaos {
                     //! data sent to remote endpoint for initilization  message
                     chaos::common::data::CDWUniquePtr   init_pack;
                     //! opcode param that are added to all opcode sent to the remote layer
-                    //chaos::common::data::CDWUniquePtr   opcode_param_pack;
                     //! initialization and deinitialization driver methods
                     void driverInit(const char *initParameter)  {/*not mor eused to be removed*/}
                     void driverInit(const chaos::common::data::CDataWrapper& init_parameter) {
@@ -121,10 +120,6 @@ namespace chaos {
                            init_parameter.isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
                             init_pack=init_parameter.getCSDataValue(INIT_HARDWARE_PARAM);
                         }
-//                        if(init_parameter.hasKey(OPCODE_HARDWARE_PARAM) &&
-//                           init_parameter.isCDataWrapperValue(OPCODE_HARDWARE_PARAM)) {
-//                            opcode_param_pack=init_parameter.getCSDataValue(OPCODE_HARDWARE_PARAM);
-//                        }
                         
                         future_hepler.init(NULL);
                     }
@@ -219,7 +214,6 @@ namespace chaos {
                         }
                         CreateNewDataWrapper(data_pack,);
                         //append opcode param setting from driver configuration
-//                        if(!opcode_param_pack->isEmpty()) {opcode_param_pack->copyAllTo(*data_pack);}
                         if(message_data.get() && !message_data->isEmpty()) {message_data->copyAllTo(*data_pack);}
                         return _sendRawOpcodeRequest(remote_uri_instance,
                                                      opcode,
@@ -242,7 +236,6 @@ namespace chaos {
                         }
                         CreateNewDataWrapper(data_pack,);
                         //append opcode param setting from driver configuration
-//                        if(opcode_param_pack->isEmpty()) {opcode_param_pack->copyAllTo(*data_pack);}
                         return _sendRawOpcodeMessage(remote_uri_instance,
                                                      opcode,
                                                      MOVE(data_pack));

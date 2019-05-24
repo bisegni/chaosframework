@@ -35,8 +35,8 @@ accessor_index(_accessor_index),
 messages_count(0),
 accessor_async_mq(),
 accessor_sync_mq(),
-base_opcode_priority(0),
-command_queue(NULL) {}
+command_queue(NULL),
+base_opcode_priority(0) {}
 
 /*------------------------------------------------------
  

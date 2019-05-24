@@ -1644,7 +1644,6 @@ void AbstractControlUnit::_completeDatasetAttribute() {
 void AbstractControlUnit::_setBypassState(bool bypass_stage,
                                           bool high_priority) {
   DrvMsg cmd;
-  memset(&cmd, 0, sizeof(DrvMsg));
   cmd.opcode = bypass_stage ? OpcodeType::OP_SET_BYPASS : OpcodeType::OP_CLEAR_BYPASS;
   //broadcast bypass to all driver instances allocated by control unit
   for (VInstantitedDriverIterator it  = accessor_instances.begin(),

@@ -36,8 +36,8 @@ using namespace chaos::cu::driver_manager::driver;
 #define DMLDBG_   DBG_LOG(DriverManager)
 #define DMLERR_   ERR_LOG(DriverManager)
 
-#define INIT_HARDWARE_PARAM     "driver_param"
-#define INIT_DEVICE_PARAM       "device_param"
+static const char * const  INIT_HARDWARE_PARAM = "driver_param";
+static const char * const  INIT_DEVICE_PARAM = "device_param";
 
 DriverManager::DriverManager() {}
 DriverManager::~DriverManager() {}

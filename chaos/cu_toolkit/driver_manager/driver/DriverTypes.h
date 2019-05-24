@@ -122,7 +122,15 @@ namespace chaos{
                     char    err_dom[DRVMSG_ERR_DOM_SIZE];       /**< error domain */
                     
                     chaos::common::data::CDWShrdPtr device_param; /**< device param given in the initilization json format string */
-                    DrvMsg(){}
+                    
+                    DrvMsg():
+                    opcode(0),property(0),drvResponseMQ(NULL),
+                    inputDataLength(0),inputData(NULL),
+                    resultDataLength(0),resultData(NULL),ret(0){
+                        std::memset(parm, 0, 2);
+                        std::memset(err_msg, 0, DRVMSG_ERR_MSG_SIZE);
+                        std::memset(err_dom, 0, DRVMSG_ERR_DOM_SIZE);
+                    }
                     ~DrvMsg(){}
                 } *DrvMsgPtr;
                 
