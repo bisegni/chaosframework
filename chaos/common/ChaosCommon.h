@@ -58,6 +58,8 @@ namespace chaos {
         bool initialized,deinitialized;
         //!ingore unregistered program option
         bool ingore_unreg_po;
+        chaos::common::data::CDataWrapper buildInfo;
+
     public:
         //! Constructor Method
         /*!
@@ -104,7 +106,10 @@ namespace chaos {
                 
         void start();
         void stop();
-        
+         /**
+         * Return a JSON document with the version of the libraries
+        */
+        const std::string getBuildInfo();
         GlobalConfiguration* getGlobalConfigurationInstance();
     };
     
@@ -133,6 +138,7 @@ namespace chaos {
         using ChaosAbstractCommon::start;
         using ChaosAbstractCommon::stop;
         using ChaosAbstractCommon::getGlobalConfigurationInstance;
+       
     };
 }
 #endif

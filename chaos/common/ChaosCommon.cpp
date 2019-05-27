@@ -141,6 +141,19 @@ ChaosAbstractCommon::ChaosAbstractCommon()
     : ingore_unreg_po(false), initialized(false), deinitialized(false) {
   GlobalConfiguration::getInstance()->preParseStartupParameters();
   initialized = deinitialized = false;
+  stringstream ss,vv,dd;
+  ss<< (BOOST_VERSION / 100000) << "." << ((BOOST_VERSION / 100) % 1000) << "." << (BOOST_VERSION / 100000);
+  vv<<CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER;
+  dd<<__DATE__ <<" " <<__TIME__;
+  buildInfo.addStringValue("BoostVer",ss.str());
+  buildInfo.addStringValue("CompilerVer",BOOST_COMPILER);
+  buildInfo.addStringValue("ChaosVersion",vv.str());
+  buildInfo.addStringValue("BuildDate",dd.str());
+  
+  buildInfo.addInt32Value("BuildID",CSLIB_BUILD_ID);
+}
+const std::string ChaosAbstractCommon::getBuildInfo(){
+  return buildInfo.getCompliantJSONString();
 }
 
 ChaosAbstractCommon::~ChaosAbstractCommon() {}
