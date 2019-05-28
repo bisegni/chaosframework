@@ -36,16 +36,15 @@ using namespace chaos::cu::driver_manager::driver;
 #define DMLDBG_   DBG_LOG(DriverManager)
 #define DMLERR_   ERR_LOG(DriverManager)
 
-DriverManager::DriverManager() {}
+static const char * const  INIT_HARDWARE_PARAM = "driver_param";
+static const char * const  INIT_DEVICE_PARAM = "device_param";
 
+DriverManager::DriverManager() {}
 DriverManager::~DriverManager() {}
 
 void DriverManager::init(void *initParameter)  {}
-
 void DriverManager::start()  {}
-
 void DriverManager::stop()  {}
-
 void DriverManager::deinit()  {
     boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
     
@@ -122,23 +121,29 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
     //try to indeitfy the json init parameter format
     CDWUniquePtr json_param = CDataWrapper::instanceFromJson(request_info.init_parameter);
     if(!json_param->isEmpty() &&
-       json_param->hasKey("driver_param") &&
-       json_param->isCDataWrapperValue("driver_param")) {
-        stringForMap.append(json_param->getCSDataValue("driver_param")->getJSONString());
+       json_param->hasKey(INIT_HARDWARE_PARAM) &&
+       json_param->isCDataWrapperValue(INIT_HARDWARE_PARAM)) {
+        stringForMap.append(json_param->getCSDataValue(INIT_HARDWARE_PARAM)->getJSONString());
     } else {
         stringForMap.append(request_info.init_parameter);
     }
     driverInfo = boost::str(boost::format("\"%1%\" ver=%2%")%request_info.alias%request_info.version);
     
     DMLDBG_ << "The identification string for the driver is \"" << stringForMap << "\"";
-    
     if (mapParameterLiveInstance.count(stringForMap)) {
         DMLDBG_ << "Driver \"" << stringForMap << "\" is already been instantiated";
         
         if (mapParameterLiveInstance[stringForMap]->getNewAccessor(&accessor)) {
             //new accessor has been allocated
             DMLAPP_ << "Retrieve driver accessor with index =" << accessor->accessor_index << " for driver " << driverInfo << " with uuid =" << mapParameterLiveInstance[stringForMap];
-            
+            //check if the driver confguration has the opcode parameter
+            if(accessor &&
+               !json_param->isEmpty() &&
+               json_param->hasKey(INIT_DEVICE_PARAM) &&
+               json_param->isCDataWrapperValue(INIT_DEVICE_PARAM)) {
+                //driver_init_paramter is private and we are friend of accessor class
+                accessor->device_param = json_param->getCSDataValue(INIT_DEVICE_PARAM);
+            }
             return accessor;
         } else {
             throw chaos::CException(1, "Device driver retrieving accessor", "DriverManager::getNewAccessorForDriverInstance");
@@ -176,6 +181,15 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
     //now can get new accessor
     if (driverInstance->getNewAccessor(&accessor)) {
         DMLAPP_ << "Got new driver accessor with index =\"" << accessor->accessor_index << "\" for driver:" << driverInfo << " driver with uuid =" << driverInstance->driver_uuid;
+    }
+    
+    //check if the driver confguration has the opcode parameter
+    if(accessor &&
+       !json_param->isEmpty() &&
+       json_param->hasKey(INIT_DEVICE_PARAM) &&
+       json_param->isCDataWrapperValue(INIT_DEVICE_PARAM)) {
+        //driver_init_paramter is private and we are friend of accessor class
+        accessor->device_param = json_param->getCSDataValue(INIT_DEVICE_PARAM);
     }
     return accessor;
 }

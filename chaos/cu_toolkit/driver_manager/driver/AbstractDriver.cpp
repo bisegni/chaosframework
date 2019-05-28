@@ -105,7 +105,7 @@ void AbstractDriver::deinit() {
   ResponseMessageType id_to_read;
   AccessorQueueType   result_queue;
 
-  std::memset(&deinit_msg, 0, sizeof(DrvMsg));
+//  std::memset(&deinit_msg, 0, sizeof(DrvMsg));
   deinit_msg.opcode        = OpcodeType::OP_DEINIT_DRIVER;
   deinit_msg.drvResponseMQ = &result_queue;
   //send opcode to driver implemetation

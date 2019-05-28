@@ -37,19 +37,18 @@ namespace chaos{
     
     namespace cu {
         namespace driver_manager {
-			
 			//forward declaration
 			class DriverManager;
-			
             namespace driver {
-                
-                
-                
                 //! Driver accessor comminication class
                 /*!
                     The accessor class represent the way used by another class for communiate with the driver.
                     Three queue are used; two for receive sync and async result, and another to send command 
                     to the driver.
+                 
+                    New driver configration in json format permit to hane HW init and Driver Init.
+                    In this case the unique driver isntance is create with HW init param and the specified accessor
+                    has the specific instance driver init param filled into driver_init_paramter CDataWrapper
                  */
                 class DriverAccessor {
                     
@@ -60,6 +59,12 @@ namespace chaos{
                     //! idnetificaiton of the driver that has created the accessor
 					std::string driver_uuid;
 					
+                    //specified isntance driver parameter
+                    /*!
+                     Specific driver instance initilization param
+                     */
+                    chaos::common::data::CDWShrdPtr device_param;
+                    
                     //! index of the accessor for the driver
                     unsigned int accessor_index;
 

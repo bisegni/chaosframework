@@ -30,8 +30,13 @@ using namespace chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-DriverAccessor::DriverAccessor(unsigned int _accessor_index)
-    : accessor_index(_accessor_index), messages_count(0), accessor_async_mq(), accessor_sync_mq(), base_opcode_priority(0), command_queue(NULL) {}
+DriverAccessor::DriverAccessor(unsigned int _accessor_index):
+accessor_index(_accessor_index),
+messages_count(0),
+accessor_async_mq(),
+accessor_sync_mq(),
+command_queue(NULL),
+base_opcode_priority(0) {}
 
 /*------------------------------------------------------
  
@@ -43,48 +48,45 @@ DriverAccessor::~DriverAccessor() {}
  ------------------------------------------------------*/
 bool DriverAccessor::send(DrvMsgPtr cmd,
                           uint32_t  inc_priority) {
-  CHAOS_ASSERT(cmd)
-
-  ResponseMessageType answer_message = 0;
-
-  //fill the cmd with the information for retrieve it
-  cmd->id            = messages_count++;
-  cmd->drvResponseMQ = &accessor_sync_mq;
-
-  //send command
-  command_queue->push(cmd, base_opcode_priority + inc_priority);
-  //whait the answer
-  accessor_sync_mq.wait_and_pop(answer_message);
-
-  //check result
-  return (answer_message == MsgManagmentResultType::MMR_EXECUTED);
+    CHAOS_ASSERT(cmd)
+    ResponseMessageType answer_message = 0;
+    //fill the cmd with the information for retrieve it
+    cmd->id            = messages_count++;
+    cmd->drvResponseMQ = &accessor_sync_mq;
+    cmd->device_param = device_param;
+    //send command
+    command_queue->push(cmd, base_opcode_priority + inc_priority);
+    //whait the answer
+    accessor_sync_mq.wait_and_pop(answer_message);
+    //check result
+    return (answer_message == MsgManagmentResultType::MMR_EXECUTED);
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
 bool DriverAccessor::sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint32_t inc_priority) {
-  CHAOS_ASSERT(cmd)
-
-  //fill the cmd with the information for retrive it
-  cmd->id = message_id = messages_count++;
-  cmd->drvResponseMQ   = &accessor_async_mq;
-
-  //send message
-  command_queue->push(cmd, base_opcode_priority + inc_priority);
-  return true;
+    CHAOS_ASSERT(cmd)
+    
+    //fill the cmd with the information for retrive it
+    cmd->id = message_id = messages_count++;
+    cmd->drvResponseMQ   = &accessor_async_mq;
+    cmd->device_param = device_param;
+    //send message
+    command_queue->push(cmd, base_opcode_priority + inc_priority);
+    return true;
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
 bool DriverAccessor::getLastAsyncMsg(ResponseMessageType& message_id) {
-  return accessor_sync_mq.try_pop(message_id);
+    return accessor_sync_mq.try_pop(message_id);
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
 bool DriverAccessor::operator==(const DriverAccessor& a) {
-  return this->accessor_index = a.accessor_index;
+    return this->accessor_index = a.accessor_index;
 }
