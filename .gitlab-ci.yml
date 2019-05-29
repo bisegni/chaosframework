@@ -260,7 +260,6 @@ test_dbg_c7:
       - $BUILD_TYPE == "test"
   retry: 2
 
-
 # regression_c7:
 #   dependencies:
 #     - test_dbg_c7
