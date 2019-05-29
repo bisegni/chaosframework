@@ -47,6 +47,9 @@ namespace chaos {
                 protected:
                     MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccess();
+                    
+                    inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::pool::entry& client,
+                                                                       const std::string& _id);
                 public:
                     //inhertied method
                     int pushObject(const std::string&                       key,
