@@ -216,11 +216,11 @@ CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::pool::entry& cl
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
     
     try {
-        auto result_find = coll_data.find_one(make_document(kvp("_id", bsoncxx::oid(_id))), opts);
+        bsoncxx::stdx::optional<bsoncxx::document::value> result_find = coll_data.find_one(make_document(kvp("_id", bsoncxx::oid(_id))), opts);
         if(result_find) {
             //we have found data
-            auto result_view = result_find.value().view()[MONGODB_DAQ_DATA_FIELD];
-            result = ChaosMakeSharedPtr<CDataWrapper>((const char *)result_view.raw());
+            auto daq_data_view = result_find->view()[MONGODB_DAQ_DATA_FIELD];
+            result = ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data());
         } else {
             //create empty object for not found data
             result = ChaosMakeSharedPtr<CDataWrapper>();
@@ -298,12 +298,10 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
             //create empty object for not found data
             object_ptr_ref = ChaosMakeSharedPtr<CDataWrapper>();
         }
-        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
-    
     return err;
     
 }
