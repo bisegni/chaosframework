@@ -393,7 +393,7 @@ if(LIB_NEED)
 else()
   MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
 #  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
-  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION}/boost_1_${BOOST_VERSION}_${BOOST_MINOR_VERSION}.tar.gz "${CHAOS_BOOST_FLAGS}")
+  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
 endif()
 
 

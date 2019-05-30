@@ -388,7 +388,7 @@ execute_process(
 
 
   macro (BoostInstall ver min_ver url arg)
-    wget(boost_1_${ver}_${min_ver}.tar.gz url)
+    wget(boost_1_${ver}_${min_ver}.tar.gz ${url})
 
     STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
 
