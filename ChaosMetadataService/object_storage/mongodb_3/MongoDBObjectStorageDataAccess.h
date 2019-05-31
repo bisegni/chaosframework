@@ -24,11 +24,15 @@
 
 #include "../abstraction/ObjectStorageDataAccess.h"
 #include "../object_storage_types.h"
+
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/ObjectInstancer.h>
+#include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/async_central/async_central.h>
+
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
 #include <mongocxx/pool.hpp>
-
 #include "ShardKeyManagement.h"
 
 namespace chaos {
@@ -37,16 +41,40 @@ namespace chaos {
             namespace mongodb_3 {
                 class NewMongoDBObjectStorageDriver;
                 
+                typedef struct {
+                    bsoncxx::builder::basic::document index_document;
+                    bsoncxx::builder::basic::document data_document;
+                } DaqBlob;
+                
+                typedef ChaosSharedPtr<DaqBlob> DaqBlobShrdPtr;
+                
+                //! define a lockable seet for betch entries
+                CHAOS_DEFINE_LOCKABLE_OBJECT(std::set<DaqBlobShrdPtr>, DaqBlobSetL);
+                
                 //! Data Access for producer manipulation data
                 class MongoDBObjectStorageDataAccess:
-                public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
+                public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
+                protected chaos::common::async_central::TimerHandler {
                     friend class NewMongoDBObjectStorageDriver;
                     mongocxx::pool& pool_ref;
                     ShardKeyManagement shrd_key_manager;
                     
+
                 protected:
                     MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccess();
+                    
+                    //!push data using batch operation
+                    uint64_t    curret_batch_size;
+                    uint64_t    batch_size_limit;
+                    int32_t     push_timeout_multiplier;
+                    int32_t     push_current_step_left;
+                    DaqBlobSetL batch_set;
+                    
+                    std::future<void> current_push_future;
+                    void executePush(std::set<DaqBlobShrdPtr>&& _batch_element_to_store);
+                    //!TimeOutHnadler inherited
+                    void timeout();
                     
                     inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::pool::entry& client,
                                                                        const std::string& _id);

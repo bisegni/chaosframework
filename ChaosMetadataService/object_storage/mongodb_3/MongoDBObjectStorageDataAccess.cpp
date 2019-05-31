@@ -55,6 +55,8 @@
 #define MONGODB_DAQ_INDEX_COLL_NAME     "daq_index"
 #define MONGODB_DAQ_DATA_FIELD          "data"
 #define DEFAULT_QUANTIZATION            100
+#define DEFAULT_BATCH_SIZE_IN_BYTE          1*1024*1024       // 1 mbyte
+#define DEFAULT_BATCH_TIMEOUT_MULTIPLIER    0                 // 1 seconds
 
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::make_array;
@@ -72,6 +74,7 @@ using namespace bsoncxx;
 using namespace boost;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::async_central;
 using namespace chaos::common::batch_command;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
@@ -80,8 +83,14 @@ using namespace chaos::metadata_service::object_storage::mongodb_3;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
 
+
+
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
-pool_ref(_pool_ref){
+pool_ref(_pool_ref),
+curret_batch_size(0),
+batch_size_limit(DEFAULT_BATCH_SIZE_IN_BYTE),
+push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
+push_current_step_left(push_timeout_multiplier){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -132,23 +141,56 @@ pool_ref(_pool_ref){
         index_options.name("paged_daq_seq_search_index");
         db[MONGODB_DAQ_COLL_NAME].create_index(index_builder.view(), index_options);
     }
+    
+    AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
-MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
+MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {
+    AsyncCentralManager::getInstance()->removeTimer(this);
+}
+
+void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _batch_element_to_store) {
+    int err = 0;
+    try{
+        //get client the connection
+        auto client = pool_ref.acquire();
+        //access to database
+        auto db = (*client)[MONGODB_DB_NAME];
+        //access a collection
+        collection coll_data = db[MONGODB_DAQ_COLL_NAME];
+        collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+        
+        auto bulk_index_write = coll_index.create_bulk_write();
+        auto bulk_data_write = coll_data.create_bulk_write();
+        
+        //create batch insert data
+        std::for_each(_batch_element_to_store.begin(),
+                      _batch_element_to_store.end(),
+                      [&bulk_index_write, &bulk_data_write, this](const DaqBlobShrdPtr& current_element){
+            //append data to bulk
+            bulk_index_write.append(model::insert_one(current_element->index_document.view()));
+            bulk_data_write.append(model::insert_one(current_element->data_document.view()));
+        });
+
+        auto bulk_index_result = bulk_index_write.execute();
+        auto bulk_data_result = bulk_data_write.execute();
+        
+        if(bulk_index_result->inserted_count() != _batch_element_to_store.size() ||
+           bulk_data_result->inserted_count() != _batch_element_to_store.size()) {
+            ERR << "Data not all data has been isert into database";
+        }
+    } catch (const bulk_write_exception& e) {
+        err =  e.code().value();
+        ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
+    }
+}
 
 int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key,
                                                const ChaosStringSetConstSPtr meta_tags,
                                                const CDataWrapper&           stored_object) {
     int err = 0;
     bsoncxx::oid new_data_oid;
-    //get client the connection
-    auto client = pool_ref.acquire();
-    
-    //access to database
-    auto db = (*client)[MONGODB_DB_NAME];
-    //access a collection
-    collection coll_data = db[MONGODB_DAQ_COLL_NAME];
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+    DaqBlobShrdPtr current_data = ChaosMakeSharedPtr<DaqBlob>();
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
     
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
@@ -158,11 +200,11 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
     
     //create index
     auto builder_index = builder::basic::document{};
-    builder_index.append(kvp("_id", new_data_oid));
-    builder_index.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-    builder_index.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    builder_index.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID)));
-    builder_index.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)));
+    current_data->index_document.append(kvp("_id", new_data_oid));
+    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
+    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+    current_data->index_document.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID)));
+    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)));
     //appends tag
     if(meta_tags &&
        meta_tags->size()) {
@@ -170,35 +212,45 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
         for(auto& it: *meta_tags) {
             array_builder.append(it);
         }
-        builder_index.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
+        current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
     }
-    builder_index.append(bsoncxx::builder::concatenate(zone_pack.view()));
+    current_data->index_document.append(bsoncxx::builder::concatenate(zone_pack.view()));
     
     //create data pack
     auto builder_data = builder::basic::document{};
-    builder_data.append(kvp("_id", new_data_oid));
-    builder_data.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-    builder_data.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    builder_data.append(bsoncxx::builder::concatenate(zone_pack.view()));
+    current_data->data_document.append(kvp("_id", new_data_oid));
+    current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
+    current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+    current_data->data_document.append(bsoncxx::builder::concatenate(zone_pack.view()));
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
-    builder_data.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
-    try {
-        auto res_idx = coll_index.insert_one(builder_index.view());
-        if(res_idx &&
-           res_idx.value().result().inserted_count() == 1) {
-            auto res_data = coll_data.insert_one(builder_data.view());
-            if(!res_data ||
-               res_data.value().result().inserted_count() != 1) {
-                ERR << "Error storing data";
-            }
-        } else {
-            ERR << "Error storing index data";
-        }
-    } catch (const bulk_write_exception& e) {
-        err =  e.code().value();
-        ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
-    }
+    current_data->data_document.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
+    
+    //check if we need to push or wait timeout or other incoming data
+    curret_batch_size += stored_object.getBSONRawSize();
+    DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
+    batch_set().insert(current_data);
     return err;
+}
+
+void MongoDBObjectStorageDataAccess::timeout() {
+    if(push_current_step_left) {
+        push_current_step_left--;
+        return;
+    }
+     DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
+    //we can process data
+    if(batch_set().size()) {
+        //we have data so we can push
+        if(current_push_future.valid()) {
+            current_push_future.wait();
+        }
+        current_push_future = std::async(std::launch::async,
+                                         &MongoDBObjectStorageDataAccess::executePush,
+                                         this,
+                                         std::move(batch_set()));
+    }
+    //reassign multiplier
+    push_current_step_left = push_timeout_multiplier;
 }
 
 CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::pool::entry& client,

@@ -315,22 +315,22 @@ int main(int argc, const char* argv[]) {
                 if(q_result.get()) {
                     retry = 0;
                     SerializationBufferUPtr ser;
-                    if(q_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID) &&
-                       q_result->hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
-                        int64_t rid = q_result->getInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
-                        int64_t sid = q_result->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-                        std::cout << CHAOS_FORMAT(" rid %1% sid %2%", %rid%sid);
-                        if(last_rid < rid &&
-                           last_sid >= sid) {
-                            std::cout << " [SEQERR] ";
-                        }
-                        if(last_sid!=0 &&
-                           last_sid+1 != sid) {
-                            std::cout << " [SEQERR + 1] ";
-                        }
-                        last_rid = rid;
-                        last_sid = sid;
-                    }
+//                    if(q_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID) &&
+//                       q_result->hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
+//                        int64_t rid = q_result->getInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
+//                        int64_t sid = q_result->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+//                        std::cout << CHAOS_FORMAT(" rid %1% sid %2%", %rid%sid);
+//                        if(last_rid < rid &&
+//                           last_sid >= sid) {
+//                            std::cout << " [SEQERR] ";
+//                        }
+//                        if(last_sid!=0 &&
+//                           last_sid+1 != sid) {
+//                            std::cout << " [SEQERR + 1] ";
+//                        }
+//                        last_rid = rid;
+//                        last_sid = sid;
+//                    }
                     //get serialization buffer by type
                     switch (dest_type) {
                             //BSON
