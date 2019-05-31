@@ -104,8 +104,8 @@ while getopts t:c:p:hsd:mr:byz:r:o:x: opt; do
 	    ;;
 
 	t)
-	    echo -n "provide a tag message:"
-	    read mesg
+#	    echo -n "provide a tag message:"
+#	    read mesg
 	    git_cmd=t
 	    git_arg=$OPTARG
 	    ;;
@@ -206,7 +206,7 @@ for dir in ${on_dir[@]}; do
 	    SOURCE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 	    DESTINATION_BRANCH=$create_merge_request
 	    info_mesg "[$dir] creating merge request \"$SOURCE_BRANCH->$DESTINATION_BRANCH\" for PROJECT " "$GITHOST/$GROUP/$PROJECT_NAME"
-	    if [ -z $overall_mesg ];then
+	    if [ -z "$overall_mesg" ];then
 		info_mesg_n "[$dir] empty comment to skip:"
 		read mesg
 	    else
@@ -241,9 +241,9 @@ for dir in ${on_dir[@]}; do
 		usage
 		exit 1
 	    fi
-	    info_mesg "[$dir] merging " "\"$1\"=>\"$2\""
+	    info_mesg "[$dir] merging " "\"$1\"=>\"$2\" ($overall_mesg) "
 	    
-	    if [ -z $overall_mesg ];then
+	    if [ -z "$overall_mesg" ];then
 		info_mesg_n "[$dir] empty comment to skip:"
 		read mesg
 	    else
@@ -270,7 +270,7 @@ for dir in ${on_dir[@]}; do
     	    fi
 	    info_mesg "[$dir] rebasing " "\"$2\"=>\"$1\""
 
-	    if [ -z $overall_mesg ];then
+	    if [ -z "$overall_mesg" ];then
 		info_mesg_n "[$dir] empty comment to skip:"
 		read mesg
 	    else
@@ -292,14 +292,14 @@ for dir in ${on_dir[@]}; do
 	    git pull
 	    tagname=$(echo "$git_arg" | tr ' ' '-')
 	    info_mesg "[$dir] creating tag " "$tagname"
-	    git tag -m "$mesg" $tagname
+	    git tag -m "$tagname" $tagname
 	    git push --tags
 	    ;;
 	p)
 	    if git status | grep modified > /dev/null; then
 		
 		info_mesg "[$dir] modification found on " "[branch:$git_arg]"
-		if [ -z $overall_mesg ];then
+		if [ -z "$overall_mesg" ];then
 		    info_mesg_n "[$dir] empty comment to skip:"
 		    read mesg
 		else
