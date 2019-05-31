@@ -64,7 +64,7 @@ CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.wo
                 std::map<std::string,std::string> m_uid2upid;
                 typedef std::map<std::string,std::string>::iterator i_uid2upid_t;
             public:
-               ProcRestUtil(int port):RestProcessManager(port){}
+               ProcRestUtil(int port,const std::string basedir="user-scripts"):RestProcessManager(port,basedir){}
                  void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 
                  bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);

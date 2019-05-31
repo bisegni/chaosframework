@@ -85,7 +85,7 @@ void ChaosAgent::init(void *init_data)  {
     if(GlobalConfiguration::getInstance()->hasOption(OPT_REST_PORT)) {
            restport=getGlobalConfigurationInstance()->getOption< int >(OPT_REST_PORT);
     }
-    procRestUtil=ChaosMakeSharedPtr<utility::ProcRestUtil>(restport);
+    procRestUtil=ChaosMakeSharedPtr<utility::ProcRestUtil>(restport,getGlobalConfigurationInstance()->getOption< std::string >(OPT_SCRIPT_DIR));
 #endif
 }
 

@@ -30,6 +30,10 @@ int main(int argc, const char * argv[]) {
                                                                                               "Port to query process management",
                                                                                               8071,
                                                                                               &ChaosAgent::getInstance()->settings.restport);
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_SCRIPT_DIR,
+                                                                                              "Script directory",
+                                                                                              "script_dir",
+                                                                                              &ChaosAgent::getInstance()->settings.script_dir);
         //data worker
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,
                                                                                               "Working directory for agent",

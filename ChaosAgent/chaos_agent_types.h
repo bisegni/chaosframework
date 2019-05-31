@@ -43,6 +43,9 @@ namespace chaos {
             std::string ext_cmd_pipe_path;
             //!the name of the ext command pipe
             std::string ext_cmd_pipe_name;
+            
+            // default script directory
+            std::string script_dir;
             //!port where the rest service answer
 
             int restport;
