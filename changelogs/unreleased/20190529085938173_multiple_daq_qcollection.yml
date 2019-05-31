@@ -1,0 +1,6 @@
+---
+Changed:
+- MongoDB3 object storage driver for MDS has been updated to use two differente collection,
+  one fo dqa data and one for only daq indexes data. The only index coleltion will
+  be used to perfrom complex query
+Deploy notes: []

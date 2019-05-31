@@ -2012,11 +2012,11 @@ int AbstractControlUnit::pushSystemDataset() {
 CDWShrdPtr AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
                                                            int32_t       dataset_type) {
   CDWShrdPtr attribute_dataset = key_data_storage->getNewDataPackForDomain((KeyDataStorageDomain)dataset_type);
-
   if (attribute_dataset) {
     //fill datapack with
     //! the dataaset can be pushed also in other moment
     attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+    attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     //scan all alarm ad create the datapack
     size_t alarm_size = catalog.size();
     for (unsigned int idx = 0;
