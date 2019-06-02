@@ -50,13 +50,12 @@
 #define DBG  DBG_LOG(MongoDBObjectStorageDataAccess)
 #define ERR  ERR_LOG(MongoDBObjectStorageDataAccess)
 
-#define MONGODB_DB_NAME                 "chaos"
-#define MONGODB_DAQ_COLL_NAME           "daq"
-#define MONGODB_DAQ_INDEX_COLL_NAME     "daq_index"
-#define MONGODB_DAQ_DATA_FIELD          "data"
-#define DEFAULT_QUANTIZATION            100
-#define DEFAULT_BATCH_SIZE_IN_BYTE          1*1024*1024       // 1 mbyte
-#define DEFAULT_BATCH_TIMEOUT_MULTIPLIER    0                 // 1 seconds
+static constexpr char MONGODB_DB_NAME[]                 = "chaos";
+static constexpr char MONGODB_DAQ_COLL_NAME[]           = "daq";
+static constexpr char MONGODB_DAQ_INDEX_COLL_NAME[]     = "daq_index";
+static constexpr char MONGODB_DAQ_DATA_FIELD[]          = "data";
+static constexpr int  DEFAULT_BATCH_SIZE_IN_BYTE        = 1*1024*1024; // 1 mbyte
+static constexpr int  DEFAULT_BATCH_TIMEOUT_MULTIPLIER  = 0;           // 1 seconds
 
 using bsoncxx::builder::basic::kvp;
 using bsoncxx::builder::basic::make_array;
@@ -83,7 +82,27 @@ using namespace chaos::metadata_service::object_storage::mongodb_3;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
 
-
+static void initShardIndex(mongocxx::database& db,
+                           std::string col_name) {
+    auto index_builder = builder::basic::document{};
+    mongocxx::options::index index_options{};
+    index_builder.append(kvp("zone_key", 1));
+    index_builder.append(kvp("shard_key", 1));
+    index_options.name("shard_index");
+    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+}
+static void initSearchIndex(mongocxx::database& db,
+                            std::string col_name) {
+    auto index_builder = builder::basic::document{};
+    mongocxx::options::index index_options{};
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
+    index_builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
+    index_options.name("paged_daq_seq_search_index");
+    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+}
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
 pool_ref(_pool_ref),
@@ -97,51 +116,14 @@ push_current_step_left(push_timeout_multiplier){
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     
+    //index collection
+    initShardIndex(db,MONGODB_DAQ_INDEX_COLL_NAME );
+    initSearchIndex(db, MONGODB_DAQ_INDEX_COLL_NAME);
     
-    {//index for sharding on index collection
-        auto index_builder = builder::basic::document{};
-        mongocxx::options::index index_options{};
-        index_builder.append(kvp("zone_key", 1));
-        index_builder.append(kvp("shard_key", 1));
-        index_options.name("shard_index");
-        db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
-    }
+    //data collection
+    initShardIndex(db, MONGODB_DAQ_COLL_NAME);
+    initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
 
-    {//index for search on index collection
-        auto index_builder = builder::basic::document{};
-        mongocxx::options::index index_options{};
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
-        index_builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
-        index_options.name("paged_daq_seq_search_index");
-        db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
-    }
-
-    {//index for sharding on data collection
-        auto index_builder = builder::basic::document{};
-        mongocxx::options::index index_options{};
-        index_builder.append(kvp("zone_key", 1));
-        index_builder.append(kvp("shard_key", 1));
-        index_options.name("shard_index");
-        db[MONGODB_DAQ_COLL_NAME].create_index(index_builder.view(), index_options);
-    }
-
-    {//index for search on data collection
-        const std::string run_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::ControlUnitDatapackCommonKey::RUN_ID);
-        const std::string seq_key = CHAOS_FORMAT("%1%.%2%",%MONGODB_DAQ_DATA_FIELD%chaos::DataPackCommonKey::DPCK_SEQ_ID);
-        auto index_builder = builder::basic::document{};
-        mongocxx::options::index index_options{};
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
-        index_builder.append(kvp(run_key, 1));
-        index_builder.append(kvp(seq_key, 1));
-        index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
-        index_options.name("paged_daq_seq_search_index");
-        db[MONGODB_DAQ_COLL_NAME].create_index(index_builder.view(), index_options);
-    }
-    
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
@@ -166,7 +148,7 @@ void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _bat
         //create batch insert data
         std::for_each(_batch_element_to_store.begin(),
                       _batch_element_to_store.end(),
-                      [&bulk_index_write, &bulk_data_write, this](const DaqBlobShrdPtr& current_element){
+                      [&bulk_index_write, &bulk_data_write](const DaqBlobShrdPtr& current_element){
             //append data to bulk
             bulk_index_write.append(model::insert_one(current_element->index_document.view()));
             bulk_data_write.append(model::insert_one(current_element->data_document.view()));
