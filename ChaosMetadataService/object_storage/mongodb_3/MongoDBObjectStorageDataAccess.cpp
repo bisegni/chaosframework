@@ -89,7 +89,7 @@ static void initShardIndex(mongocxx::database& db,
     index_builder.append(kvp("zone_key", 1));
     index_builder.append(kvp("shard_key", 1));
     index_options.name("shard_index");
-    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+    db[col_name].create_index(index_builder.view(), index_options);
 }
 static void initSearchIndex(mongocxx::database& db,
                             std::string col_name) {
@@ -101,7 +101,7 @@ static void initSearchIndex(mongocxx::database& db,
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
     index_options.name("paged_daq_seq_search_index");
-    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+    db[col_name].create_index(index_builder.view(), index_options);
 }
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
