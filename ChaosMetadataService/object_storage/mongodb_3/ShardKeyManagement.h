@@ -47,11 +47,14 @@ namespace chaos {
         namespace object_storage {
             namespace mongodb_3 {
                 
-                struct DaqZonedInfo {
+                class DaqZonedInfo {
                     bsoncxx::builder::basic::document index_zone_doc;
                     bsoncxx::builder::basic::document data_zone_doc;
+                public:
                     DaqZonedInfo();
-                    DaqZonedInfo(DaqZonedInfo&& o) noexcept;
+                    DaqZonedInfo(DaqZonedInfo&& i) noexcept = default;
+                    bsoncxx::builder::basic::document& getIndexDocument();
+                    bsoncxx::builder::basic::document& getDataDocument();
                 };
                 
                 

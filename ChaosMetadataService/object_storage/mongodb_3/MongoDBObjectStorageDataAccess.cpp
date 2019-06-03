@@ -196,14 +196,14 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
         }
         current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
     }
-    current_data->index_document.append(bsoncxx::builder::concatenate(zone_daq_info.index_zone_doc.view()));
+    current_data->index_document.append(bsoncxx::builder::concatenate(zone_daq_info.getIndexDocument().view()));
     
     //create data pack
     auto builder_data = builder::basic::document{};
     current_data->data_document.append(kvp("_id", new_data_oid));
     current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
     current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    current_data->data_document.append(bsoncxx::builder::concatenate(zone_daq_info.data_zone_doc.view()));
+    current_data->data_document.append(bsoncxx::builder::concatenate(zone_daq_info.getDataDocument().view()));
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
     current_data->data_document.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     

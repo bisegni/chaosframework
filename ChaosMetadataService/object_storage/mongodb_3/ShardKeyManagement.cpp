@@ -25,17 +25,26 @@
 #include <limits>
 
 using namespace chaos::metadata_service::object_storage::mongodb_3;
+
 using namespace bsoncxx;
+using namespace bsoncxx::builder::basic;
 
 #define INFO INFO_LOG(ShardKeyManagement)
 #define DBG  DBG_LOG(ShardKeyManagement)
 #define ERR  ERR_LOG(ShardKeyManagement)
 
 #pragma mark DaqZoneInfo
-DaqZonedInfo::DaqZonedInfo(){}
-DaqZonedInfo::DaqZonedInfo(DaqZonedInfo&& i) noexcept:
-index_zone_doc(std::move(i.index_zone_doc)),
-data_zone_doc(std::move(i.data_zone_doc)){}
+DaqZonedInfo::DaqZonedInfo():
+index_zone_doc(builder::basic::document{}),
+data_zone_doc(builder::basic::document{}){}
+
+builder::basic::document& DaqZonedInfo::getIndexDocument() {
+    return index_zone_doc;
+}
+
+builder::basic::document& DaqZonedInfo::getDataDocument() {
+    return data_zone_doc;
+}
 
 #pragma mark KeyRNDShardInfo
 
@@ -103,14 +112,10 @@ DaqZonedInfo ShardKeyManagement::getNewDataPack(const std::string& key,
     wr->unlock();
 
     int64_t shard_info = shard_info_it->second->getShardValue(now_in_ms, new_size_byte);
-    zone_info.index_zone_doc = builder::basic::document{};
-    zone_info.index_zone_doc.append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_index"));
-    zone_info.index_zone_doc.append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
-    
-    zone_info.data_zone_doc = builder::basic::document{};
-    zone_info.data_zone_doc.append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_data"));
-    zone_info.data_zone_doc.append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
+    zone_info.getIndexDocument().append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_index"));
+    zone_info.getIndexDocument().append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
 
+    zone_info.getDataDocument().append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_data"));
+    zone_info.getDataDocument().append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
     return zone_info;
-
 }
