@@ -89,7 +89,7 @@ static void initShardIndex(mongocxx::database& db,
     index_builder.append(kvp("zone_key", 1));
     index_builder.append(kvp("shard_key", 1));
     index_options.name("shard_index");
-    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+    db[col_name].create_index(index_builder.view(), index_options);
 }
 static void initSearchIndex(mongocxx::database& db,
                             std::string col_name) {
@@ -101,7 +101,7 @@ static void initSearchIndex(mongocxx::database& db,
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
     index_options.name("paged_daq_seq_search_index");
-    db[MONGODB_DAQ_INDEX_COLL_NAME].create_index(index_builder.view(), index_options);
+    db[col_name].create_index(index_builder.view(), index_options);
 }
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
@@ -177,8 +177,8 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
     
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
-    //generate shard index
-    bsoncxx::builder::basic::document zone_pack = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize());
+    //generate shard index information for data and daq
+    DaqZonedInfo zone_daq_info = shrd_key_manager.getNewDataPack(key, now_in_ms, stored_object.getBSONRawSize());
     
     //create index
     auto builder_index = builder::basic::document{};
@@ -196,14 +196,14 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
         }
         current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
     }
-    current_data->index_document.append(bsoncxx::builder::concatenate(zone_pack.view()));
+    current_data->index_document.append(bsoncxx::builder::concatenate(zone_daq_info.index_zone_doc.view()));
     
     //create data pack
     auto builder_data = builder::basic::document{};
     current_data->data_document.append(kvp("_id", new_data_oid));
     current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
     current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    current_data->data_document.append(bsoncxx::builder::concatenate(zone_pack.view()));
+    current_data->data_document.append(bsoncxx::builder::concatenate(zone_daq_info.data_zone_doc.view()));
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
     current_data->data_document.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     

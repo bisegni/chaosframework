@@ -31,6 +31,12 @@ using namespace bsoncxx;
 #define DBG  DBG_LOG(ShardKeyManagement)
 #define ERR  ERR_LOG(ShardKeyManagement)
 
+#pragma mark DaqZoneInfo
+DaqZonedInfo::DaqZonedInfo(){}
+DaqZonedInfo::DaqZonedInfo(DaqZonedInfo&& i) noexcept:
+index_zone_doc(std::move(i.index_zone_doc)),
+data_zone_doc(std::move(i.data_zone_doc)){}
+
 #pragma mark KeyRNDShardInfo
 
 #define CHECK_TIMEOUT_IN_MS         30000         //(30 seconds)
@@ -71,6 +77,7 @@ const int64_t KeyRNDShardInfo::getShardValue(const int64_t now_in_mds,
 }
 
 #pragma mark ShardKeyManagement
+
 ShardKeyManagement::ShardKeyManagement():
 zone_alias("default"){}
 
@@ -80,9 +87,10 @@ void ShardKeyManagement::setZoneAlias(const std::string& new_zone_alias) {
     zone_alias = new_zone_alias;
 }
 
-bsoncxx::builder::basic::document ShardKeyManagement::getNewDataPack(const std::string& key,
+DaqZonedInfo ShardKeyManagement::getNewDataPack(const std::string& key,
                                                                 const int64_t now_in_ms,
                                                                 const uint32_t new_size_byte) {
+    DaqZonedInfo zone_info;
     ChaosSharedPtr<KeyRNDShardInfo> shard_info_ptr;
     MapKeyShardInfo_LWriteLock wr = map_key_shard_info.getWriteLockObject();
     MapKeyShardInfoIterator shard_info_it = map_key_shard_info().find(key);
@@ -94,11 +102,15 @@ bsoncxx::builder::basic::document ShardKeyManagement::getNewDataPack(const std::
     }
     wr->unlock();
 
+    int64_t shard_info = shard_info_it->second->getShardValue(now_in_ms, new_size_byte);
+    zone_info.index_zone_doc = builder::basic::document{};
+    zone_info.index_zone_doc.append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_index"));
+    zone_info.index_zone_doc.append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
+    
+    zone_info.data_zone_doc = builder::basic::document{};
+    zone_info.data_zone_doc.append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_data"));
+    zone_info.data_zone_doc.append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
 
-    bsoncxx::builder::basic::document builder = builder::basic::document{};
-    builder.append(bsoncxx::builder::basic::kvp("zone_key", zone_alias));
-    builder.append(bsoncxx::builder::basic::kvp("shard_key", shard_info_it->second->getShardValue(now_in_ms, new_size_byte)));
-
-    return builder;
+    return zone_info;
 
 }

@@ -1,0 +1,5 @@
+---
+Changed:
+- 'Now the new storage driver crete index and data document associated to different
+  zone:  prefix_index and prefix_data. Prefix is the value given to the zone to use
+  to the cds at startup time'
