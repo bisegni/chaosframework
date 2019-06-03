@@ -562,6 +562,14 @@ services(){
 	nok_mesg "chaos $command_line WEBUI"
 	return 1
     fi
+    if $tools/chaos_services.sh $command_line agent; then
+	ok_mesg "chaos $command_line AGENT, sleeping 10s"
+	sleep 10
+    else
+	nok_mesg "chaos $command_line AGENT"
+	return 1
+    fi
+
     return 0
 }
 stop_services(){
