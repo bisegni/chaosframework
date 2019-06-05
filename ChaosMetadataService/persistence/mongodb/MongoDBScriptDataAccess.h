@@ -57,6 +57,17 @@ namespace chaos {
                     MongoDBScriptDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBScriptDataAccess();
                 public:
+                    int insertNewScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& new_Script);
+                    int updateScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& script);
+                    int searchScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& script_list,
+                                             const std::string& search_string,
+                                             uint64_t start_sequence_id,
+                                             uint32_t page_length);
+                    int loadScript(const uint64_t unique_id,
+                                           const std::string& name,
+                                           ChaosUniquePtr<chaos::common::data::CDataWrapper>& script,
+                                           bool load_source_code = false);
+                 
                     //! Inherited method
                     int insertNewScript(chaos::service_common::data::script::Script& new_Script);
                     

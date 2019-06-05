@@ -33,7 +33,7 @@ using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
 CHAOS_MDS_DEFINE_API_CLASS_CD(SearchScript, "searchScript")
-
+/*
 CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
     int err = 0;
     ScriptBaseDescriptionListWrapper found_page_element;
@@ -57,4 +57,29 @@ CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
     
     //we don't have had error so we will have fill the list wrapper of the result page
     return found_page_element.serialize();
+}
+*/
+CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
+    int err = 0;
+    CDWUniquePtr found_page_element(new CDataWrapper());
+
+    //check for mandatory attributes
+    CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
+    const std::string search_string = CDW_GET_VALUE_WITH_DEFAULT(api_data, "search_string", getStringValue, "");
+    const uint64_t last_sequence_id = CDW_GET_VALUE_WITH_DEFAULT(api_data, "last_sequence_id", getUInt64Value, 0);
+    const uint32_t page_lenght = CDW_GET_VALUE_WITH_DEFAULT(api_data, "page_lenght", getUInt32Value, 30);
+    
+    //fetch dataaccess for the script managment
+    GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
+    
+    //call dataaccesso for insert new script and get the sequence value
+    if((err = s_da->searchScript(found_page_element,
+                                 search_string,
+                                 last_sequence_id,
+                                 page_lenght))) {
+        LOG_AND_TROW(ERR, err, "Error searching script");
+    }
+    
+    //we don't have had error so we will have fill the list wrapper of the result page
+    return found_page_element;
 }

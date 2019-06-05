@@ -51,16 +51,25 @@ CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
 
     //call dataaccesso for insert new script and get the sequence value
     if(import) {
-        if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+      /*  if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+        }*/
+      if((err = s_da->insertNewScript(api_data))) {
             LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
         }
     } else {
         if(script_dw.dataWrapped().script_description.unique_id == 0) {
-            if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+       /*     if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+            }*/
+	  if((err = s_da->insertNewScript(api_data))) {
                 LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
             }
         } else {
-            if((err = s_da->updateScript(script_dw.dataWrapped()))) {
+           /* if((err = s_da->updateScript(script_dw.dataWrapped()))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
+            }*/
+	  if((err = s_da->updateScript(api_data))) {
                 LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
             }
         }

@@ -46,6 +46,17 @@ namespace chaos {
                     //!default destructor
                     ~ScriptDataAccess();
                     
+                    virtual int insertNewScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& new_Script) = 0;
+                    virtual int updateScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& script) = 0;
+                    virtual int searchScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& script_list,
+                                             const std::string& search_string,
+                                             uint64_t start_sequence_id,
+                                             uint32_t page_length) = 0;
+                       virtual int loadScript(const uint64_t unique_id,
+                                           const std::string& name,
+                                           ChaosUniquePtr<chaos::common::data::CDataWrapper>& script,
+                                           bool load_source_code = false) = 0;
+                 
                     //! Insert a new script in the database
                     /*!
                      \param Script that describe the script entry
@@ -70,6 +81,7 @@ namespace chaos {
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
                                              uint32_t page_length) = 0;
+                    
                     
                     //! add a new instance to the script
                     virtual int addScriptInstance(const uint64_t seq,
