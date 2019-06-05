@@ -36,7 +36,8 @@ CHAOS_MDS_DEFINE_API_CLASS_CD(LoadFullScript, "loadFullScript")
 
 CDWUniquePtr LoadFullScript::execute(CDWUniquePtr api_data) {
     int err = 0;
-    
+        CDWUniquePtr found_page_element(new CDataWrapper());
+
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
@@ -47,7 +48,7 @@ CDWUniquePtr LoadFullScript::execute(CDWUniquePtr api_data) {
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
     
     //call data access for insert new script and get the sequence value
-    if((err = s_da->loadScript(script_description_sdw.dataWrapped().unique_id,
+  /*  if((err = s_da->loadScript(script_description_sdw.dataWrapped().unique_id,
                                script_description_sdw.dataWrapped().name,
                                script_sdw.dataWrapped(),
                                true))) {
@@ -55,4 +56,14 @@ CDWUniquePtr LoadFullScript::execute(CDWUniquePtr api_data) {
     }
     //return the script base description
     return script_sdw.serialize();
+    */
+
+   if((err = s_da->loadScript(script_description_sdw.dataWrapped().unique_id,
+                               script_description_sdw.dataWrapped().name,
+                               found_page_element,
+                               true))) {
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error loading script %1%",%script_description_sdw.dataWrapped().name));
+    }
+    //return the script base description
+    return found_page_element;
 }
