@@ -331,8 +331,7 @@ GlobalConfiguration *ChaosAbstractCommon::getGlobalConfigurationInstance() {
     return GlobalConfiguration::getInstance();
 }
 
-CDWUniquePtr ChaosAbstractCommon::_getBuildInfo(CDWUniquePtr data) {
-    CHAOS_UNUSED(data)
+CDWUniquePtr ChaosAbstractCommon::_getBuildInfo(CHAOS_UNUSED CDWUniquePtr data) {
     CDWUniquePtr buildInfo(new CDataWrapper());
     GlobalConfiguration::getInstance()->getBuildInfoRef().copyAllTo(*buildInfo);
     return buildInfo;
