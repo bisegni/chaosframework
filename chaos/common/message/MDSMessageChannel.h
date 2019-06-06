@@ -71,6 +71,9 @@ namespace chaos {
                 int sendEchoMessage(chaos::common::data::CDWUniquePtr data,
                                     chaos::common::data::CDWUniquePtr& result);
                 
+                //!Return the mds build info
+                int getBuildInfo(chaos::common::data::CDWUniquePtr& result);
+                
                 //! Send Unit server registration to MDS
                 /*!
                  Perform the registration of the unit server

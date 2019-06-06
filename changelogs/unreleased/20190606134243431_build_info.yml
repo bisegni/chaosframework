@@ -1,0 +1,7 @@
+---
+Added:
+- A new rpc action has been added that permit to get thebuild info form the runneing
+  chaos node
+Changed:
+- The storage driver that use new mongodb version, befor create the index try to serch
+  it, to avoid error

@@ -54,6 +54,34 @@ ScriptDataAccess(),
 utility_data_access(NULL){}
 
 MongoDBScriptDataAccess::~MongoDBScriptDataAccess() {}
+int MongoDBScriptDataAccess::insertNewScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& serialization){
+    int size;
+    int err = 0;
+try{
+    mongo::BSONObjBuilder builder;
+        builder << "seq" <<(long long)TimingUtil::getTimeStamp();
+
+        mongo::BSONObj u(serialization->getBSONRawData(size));
+        builder.appendElements(u);
+        mongo::BSONObj i = builder.obj();
+        DEBUG_CODE(SDA_DBG<<log_message("insertNewScript",
+                                        "insert",
+                                        DATA_ACCESS_LOG_1_ENTRY("Insert",
+                                                                i));)
+        //inset on database new script description
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                     i))) {
+            SDA_ERR << "Error creating new script";
+        } else {
+            //add sccript content
+            err = updateScript(serialization);
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+};
 
 int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
     int err = 0;
@@ -115,21 +143,22 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
     }
     return err;
 }
-
-int MongoDBScriptDataAccess::updateScript(Script& script) {
+int MongoDBScriptDataAccess::updateScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& serialization) {
     int err = 0;
     int size = 0;
     mongo::BSONObjBuilder query_builder;
-    CHAOS_ASSERT(utility_data_access)
+    CHAOS_ASSERT(utility_data_access);
+    std::string description_name=serialization->getStringValue(CHAOS_SBD_NAME);
+    uint64_t uid=0;
+    if(serialization->hasKey("seq")){
+        uid =serialization->getInt64Value("seq");
+    }
+
     try {
-        mongo::BSONObj q = BSON("seq"<< (long long)script.script_description.unique_id <<
-                                CHAOS_SBD_NAME << script.script_description.name);
+        mongo::BSONObj q = BSON("seq"<< (long long)uid<<
+                                CHAOS_SBD_NAME << name);
         
-        //compose bson update
-        ScriptSDWrapper s_dw;
-        s_dw.dataWrapped() = script;
         
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
         mongo::BSONObj u(serialization->getBSONRawData(size));
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",
@@ -149,7 +178,60 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
     }
     return err;
 }
+int MongoDBScriptDataAccess::updateScript(Script& script) {
+    ScriptSDWrapper s_dw;
+    s_dw.dataWrapped() = script;
+        
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
+    return updateScript(serialization);  
 
+}
+int MongoDBScriptDataAccess::searchScript(ChaosUniquePtr<chaos::common::data::CDataWrapper>& script_list,
+                                             const std::string& search_string,
+                                             uint64_t last_sequence_id,
+                                             uint32_t page_length){
+int err = 0;
+    SearchResult paged_result;
+    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        mongo::Query q = getNextPagedQuery(last_sequence_id,
+                                           search_string);
+        
+        DEBUG_CODE(SDA_DBG<<log_message("searchScript",
+                                        "performPagedQuery",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = performPagedQuery(paged_result,
+                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                    q,
+                                    &p,
+                                    NULL,
+                                    page_length))) {
+            SDA_ERR << "Error calling performPagedQuery with error" << err;
+        } else {
+            DEBUG_CODE(SDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
+            if(paged_result.size()) {
+                for (SearchResultIterator it = paged_result.begin();
+                     it != paged_result.end();
+                     it++) {
+                    CDataWrapper element_found(it->objdata());
+                    script_list->appendCDataWrapperToArray(element_found);
+                                DEBUG_CODE(SDA_DBG << "Result '"<< element_found.getCompliantJSONString();)
+
+                }
+                script_list->finalizeArrayForKey(chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST);
+            }
+        }
+        
+        //now all other part of the script are managed with update
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
 int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& script_list,
                                           const std::string& search_string,
                                           uint64_t last_sequence_id,
@@ -388,7 +470,43 @@ int MongoDBScriptDataAccess::getScriptInstance(const std::string& script_instanc
     }
     return err;
 }
-
+int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
+                                           const std::string& name,
+                                           ChaosUniquePtr<chaos::common::data::CDataWrapper>& script,
+                                           bool load_source_code){
+int err = 0;
+    mongo::BSONObj element_found;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        mongo::BSONObj q = BSON("seq" << (long long)unique_id
+                                << CHAOS_SBD_NAME << name);
+        
+        DEBUG_CODE(SDA_DBG<<log_message("loadScript",
+                                        "findOne",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = connection->findOne(element_found,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                      q))) {
+            SDA_ERR << CHAOS_FORMAT("Error executin query for load script %1%[%2%] with error [%3%]", %unique_id%name%err);
+        } else {
+            if(element_found.isEmpty()) {
+                SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %unique_id%name);
+            } else {
+                // fill script with base description
+                CDataWrapper element_found_cdw(element_found.objdata());
+                element_found_cdw.copyAllTo(*script.get());
+            }
+        }
+        
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+                 
 int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
                                         const std::string& name,
                                         chaos::service_common::data::script::Script& script,

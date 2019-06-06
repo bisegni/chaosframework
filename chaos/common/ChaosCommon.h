@@ -29,6 +29,7 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/action/DeclareAction.h>
 
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
@@ -53,13 +54,15 @@ namespace chaos {
      resource used for the base chaos function
      */
     class ChaosAbstractCommon:
-    public common::utility::StartableService {
+    public common::utility::StartableService,
+    public DeclareAction {
     protected:
         bool initialized,deinitialized;
         //!ingore unregistered program option
         bool ingore_unreg_po;
-        chaos::common::data::CDataWrapper buildInfo;
-
+        
+        //!return build infromation via rpc
+        chaos::common::data::CDWUniquePtr _getBuildInfo(chaos::common::data::CDWUniquePtr data);
     public:
         //! Constructor Method
         /*!

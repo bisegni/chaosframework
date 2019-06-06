@@ -33,11 +33,10 @@ using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
 CHAOS_MDS_DEFINE_API_CLASS_CD(SearchScript, "searchScript")
-
 CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
     int err = 0;
-    ScriptBaseDescriptionListWrapper found_page_element;
-    found_page_element.instance_serialization_key = chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST;
+    CDWUniquePtr found_page_element(new CDataWrapper());
+
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     const std::string search_string = CDW_GET_VALUE_WITH_DEFAULT(api_data, "search_string", getStringValue, "");
@@ -54,7 +53,6 @@ CDWUniquePtr SearchScript::execute(CDWUniquePtr api_data) {
                                  page_lenght))) {
         LOG_AND_TROW(ERR, err, "Error searching script");
     }
-    
     //we don't have had error so we will have fill the list wrapper of the result page
-    return found_page_element.serialize();
+    return found_page_element;
 }

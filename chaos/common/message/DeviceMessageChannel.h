@@ -110,6 +110,7 @@ namespace chaos {
                                     chaos::common::utility::AbstractListener *listener_to_fire);
             public:
                 using NodeMessageChannel::echoTest;
+                using NodeMessageChannel::buildInfo;
                 
                 const std::string& getDeviceID() const;
                 //!Update the network address of the node
