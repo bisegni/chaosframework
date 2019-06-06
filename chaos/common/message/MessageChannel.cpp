@@ -189,7 +189,7 @@ ChaosUniquePtr<MessageRequestFuture> MessageChannel::echoTest(const std::string&
                                  MOVE(echo_data));
 }
 
-ChaosUniquePtr<MessageRequestFuture> MessageChannel::buildInfo(const std::string &remote_host) {
+ChaosUniquePtr<MessageRequestFuture> MessageChannel::requestBuildInfo(const std::string &remote_host) {
     CDWUniquePtr data_pack;
     return sendRequestWithFuture(remote_host,
                                  NodeDomainAndActionRPC::RPC_DOMAIN,

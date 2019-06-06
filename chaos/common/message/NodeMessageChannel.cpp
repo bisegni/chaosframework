@@ -85,7 +85,7 @@ ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common:
 
 //!Send a request for build info
 ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::buildInfo() {
-    return MessageChannel::buildInfo(nodeAddress->ip_port);
+    return MessageChannel::requestBuildInfo(nodeAddress->ip_port);
 }
 
 //! return last sendxxx error code

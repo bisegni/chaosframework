@@ -48,16 +48,6 @@ CDWUniquePtr LoadFullScript::execute(CDWUniquePtr api_data) {
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
     
     //call data access for insert new script and get the sequence value
-  /*  if((err = s_da->loadScript(script_description_sdw.dataWrapped().unique_id,
-                               script_description_sdw.dataWrapped().name,
-                               script_sdw.dataWrapped(),
-                               true))) {
-        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error loading script %1%",%script_description_sdw.dataWrapped().name));
-    }
-    //return the script base description
-    return script_sdw.serialize();
-    */
-
    if((err = s_da->loadScript(script_description_sdw.dataWrapped().unique_id,
                                script_description_sdw.dataWrapped().name,
                                found_page_element,
