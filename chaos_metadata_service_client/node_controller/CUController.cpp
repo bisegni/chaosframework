@@ -661,6 +661,23 @@ int CUController::echoTest(CDWUniquePtr echo_data,
     return err;
 }
 
+int CUController::getBuildInfo(chaos::common::data::CDWUniquePtr& build_info,
+                               uint32_t timeout) {
+    int err = -1;
+    CDWUniquePtr data;
+    ChaosUniquePtr<MessageRequestFuture> result = deviceChannel->buildInfo();
+    if(result.get() == NULL) return err;
+    if(result->wait(timeout)) {
+        err = result->getError();
+        if(err == 0) {
+            build_info = result->detachResult();
+        }
+    }else{
+        err = -2;
+    }
+    return err;
+}
+
 ChaosUniquePtr<MessageRequestFuture> CUController::sendCustomRequestWithFuture(const std::string& action_name,
                                                                                common::data::CDWUniquePtr request_date) {
     return deviceChannel->sendCustomRequestWithFuture(action_name,

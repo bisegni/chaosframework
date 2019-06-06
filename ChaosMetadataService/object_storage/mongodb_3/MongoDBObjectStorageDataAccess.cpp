@@ -82,17 +82,49 @@ using namespace chaos::metadata_service::object_storage::mongodb_3;
 using namespace chaos::metadata_service::object_storage::abstraction;
 
 
+static bool findIndex(mongocxx::database& db,
+                      const std::string& col_name,
+                      const std::string& name) {
+    bool found = false;
+    auto index_cur = db[col_name].list_indexes();
+    for(auto && document : index_cur){
+        auto index_name = document["name"];
+        if(index_name.type() != bsoncxx::type::k_utf8){
+            continue;
+        }
+        if((found = index_name.get_utf8().value.to_string().compare(name) == 0)){
+            break;
+        }
+    }
+    return found;
+}
+
 static void initShardIndex(mongocxx::database& db,
-                           std::string col_name) {
+                           const std::string& col_name) {
+    if(findIndex(db,
+                 col_name,
+                 "shard_index")) {
+        return;
+    }
     auto index_builder = builder::basic::document{};
     mongocxx::options::index index_options{};
     index_builder.append(kvp("zone_key", 1));
     index_builder.append(kvp("shard_key", 1));
     index_options.name("shard_index");
-    db[col_name].create_index(index_builder.view(), index_options);
+    try{
+        db[col_name].create_index(index_builder.view(), index_options);
+    } catch( mongocxx::operation_exception& e) {
+        //fail to create index
+        ERR << e.what();
+    }
 }
 static void initSearchIndex(mongocxx::database& db,
                             std::string col_name) {
+    if(findIndex(db,
+                 col_name,
+                 "paged_daq_seq_search_index")) {
+        return;
+    }
     auto index_builder = builder::basic::document{};
     mongocxx::options::index index_options{};
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
@@ -101,7 +133,12 @@ static void initSearchIndex(mongocxx::database& db,
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
     index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
     index_options.name("paged_daq_seq_search_index");
-    db[col_name].create_index(index_builder.view(), index_options);
+    try{
+        db[col_name].create_index(index_builder.view(), index_options);
+    } catch( mongocxx::operation_exception& e) {
+        //fail to create index
+        ERR << e.what();
+    }
 }
 
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
@@ -117,13 +154,13 @@ push_current_step_left(push_timeout_multiplier){
     auto db = (*client)[MONGODB_DB_NAME];
     
     //index collection
-    initShardIndex(db,MONGODB_DAQ_INDEX_COLL_NAME );
+    initShardIndex(db, MONGODB_DAQ_INDEX_COLL_NAME);
     initSearchIndex(db, MONGODB_DAQ_INDEX_COLL_NAME);
     
     //data collection
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
     initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
-
+    
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
@@ -149,11 +186,11 @@ void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _bat
         std::for_each(_batch_element_to_store.begin(),
                       _batch_element_to_store.end(),
                       [&bulk_index_write, &bulk_data_write](const DaqBlobShrdPtr& current_element){
-            //append data to bulk
-            bulk_index_write.append(model::insert_one(current_element->index_document.view()));
-            bulk_data_write.append(model::insert_one(current_element->data_document.view()));
-        });
-
+                          //append data to bulk
+                          bulk_index_write.append(model::insert_one(current_element->index_document.view()));
+                          bulk_data_write.append(model::insert_one(current_element->data_document.view()));
+                      });
+        
         auto bulk_index_result = bulk_index_write.execute();
         auto bulk_data_result = bulk_data_write.execute();
         
@@ -219,7 +256,7 @@ void MongoDBObjectStorageDataAccess::timeout() {
         push_current_step_left--;
         return;
     }
-     DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
+    DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
     //we can process data
     if(batch_set().size()) {
         //we have data so we can push
@@ -283,7 +320,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     try {
         
         auto element = coll_index.find_one(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key),
-                                                    kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson)));
+                                                         kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson)));
         if(element) {
             //we have found data
             auto id_value = element.value().view()["_id"];
@@ -293,7 +330,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
             //create empty object for not found data
             object_ptr_ref = ChaosMakeSharedPtr<CDataWrapper>();
         }
-
+        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
@@ -322,7 +359,7 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
         DEBUG_CODE(DBG<<log_message("getLastObject", "findOne", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(query.view()))));
         
         auto element = coll_index.find_one(query.view(),opts);
-
+        
         if(element) {
             //we have found data
             auto id_value = element.value().view()["_id"];
@@ -427,7 +464,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), make_document(kvp("$lte", last_record_found_seq.run_id))));
             builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), make_document(kvp("$lte",  last_record_found_seq.datapack_counter ))));
         }
-
+        
         if(meta_tags.size()) {
             auto array_builder = bsoncxx::builder::basic::array{};
             for(auto& it: meta_tags) {
@@ -444,7 +481,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         secondary.mode(read_preference::read_mode::k_secondary_preferred);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
         opts.read_preference(secondary).batch_size(30);
-         if(reverse_order) {
+        if(reverse_order) {
             opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), -1),
                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), -1),
                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), -1)));

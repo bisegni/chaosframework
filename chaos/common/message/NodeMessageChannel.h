@@ -108,6 +108,9 @@ namespace chaos {
                 //!Send a request for an echo test
                 ChaosUniquePtr<MessageRequestFuture> echoTest(chaos::common::data::CDWUniquePtr echo_data);
                 
+                //!Send a request for build info
+                ChaosUniquePtr<MessageRequestFuture> buildInfo();
+                
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
                 

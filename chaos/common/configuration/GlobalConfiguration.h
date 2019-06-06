@@ -89,6 +89,7 @@ x = hasOption(y);
         po::options_description desc;
         //for contain program option value and other usefull think
         ChaosUniquePtr<chaos_data::CDataWrapper> configuration;
+        chaos_data::CDataWrapper build_info;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
 
         
@@ -147,6 +148,8 @@ x = hasOption(y);
          specialized option for string stream buffer with boost semantics
          */
         void parseStringStream(std::istream &);
+        
+        chaos::common::data::CDataWrapper& getBuildInfoRef();
         
         /*
          Add a custom option

@@ -83,6 +83,11 @@ ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common:
                                     MOVE(echo_data));
 }
 
+//!Send a request for build info
+ChaosUniquePtr<MessageRequestFuture> NodeMessageChannel::buildInfo() {
+    return MessageChannel::buildInfo(nodeAddress->ip_port);
+}
+
 //! return last sendxxx error code
 int32_t NodeMessageChannel::getLastErrorCode() {
     return MessageChannel::getLastErrorCode();

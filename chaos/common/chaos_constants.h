@@ -440,6 +440,9 @@ namespace chaos {
         
         //! perform an echo test. Return as is the input datapach as output
         static const char * const ACTION_CHECK_DOMAIN                               = "checkDomain";
+        
+        //! get the build information form node instance
+        static const char * const ACTION_GET_BUILD_INFO                             = "getBuildInfo";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
