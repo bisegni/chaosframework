@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT += core gui sql
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport uitools
 
 PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
@@ -188,7 +188,9 @@ SOURCES += main.cpp\
     language_editor/LuaLanguageSupport.cpp \
     language_editor/CLINGLanguageSupport.cpp \
     widget/StorageBurst.cpp \
-    widget/CLedIndicatorCUBusy.cpp
+    widget/CLedIndicatorCUBusy.cpp \
+    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.cpp \
+    widget/designer/ChaosUISynopticLoaderWindow.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -367,7 +369,9 @@ HEADERS  += \
     language_editor/LuaLanguageSupport.h \
     language_editor/CLINGLanguageSupport.h \
     widget/StorageBurst.h \
-    widget/CLedIndicatorCUBusy.h
+    widget/CLedIndicatorCUBusy.h \
+    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h \
+    widget/designer/ChaosUISynopticLoaderWindow.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -411,8 +415,10 @@ FORMS    += \
     widget/ChaosStorageTypeWidget.ui \
     preference/SelectNetworkDomain.ui \
     node/connection_manager/ConnectionEditor.ui \
-    widget/StorageBurst.ui
+    widget/StorageBurst.ui \
+    widget/designer/ChaosUISynopticLoaderWindow.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
-    CMakeLists.txt
+    CMakeLists.txt \
+    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.pri

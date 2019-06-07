@@ -34,6 +34,7 @@ private slots:
     void actionApplicationLogBrowser();
     void lastWindowClosed();
     void actionConnectionManager();
+    void actionNewSynopticViewer();
     void actionCloseWidget(QObject *widget);
 private:
     ApplicationErrorLogging *application_error_widget;
