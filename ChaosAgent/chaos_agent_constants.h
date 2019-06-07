@@ -31,7 +31,7 @@ namespace chaos {
 #define OPT_EXT_CMD_PIPE_PATH       "ext-cmd-pipe-path"
 #define OPT_EXT_CMD_PIPE_NAME       "ext-cmd-pipe-name"
 #define OPT_REST_PORT               "restport"
-#define OPT_SCRIPT_DIR              "user_script"
+#define OPT_SCRIPT_DIR              "user-script"
 
     }
 }

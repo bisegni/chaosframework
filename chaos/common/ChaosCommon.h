@@ -27,6 +27,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/utility/InetUtility.h>
+
 #include <chaos/common/plugin/PluginManager.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -62,7 +63,9 @@ namespace chaos {
         bool ingore_unreg_po;
         
         //!return build infromation via rpc
-        chaos::common::data::CDWUniquePtr _getBuildInfo(chaos::common::data::CDWUniquePtr data);
+       
+
+        
     public:
         //! Constructor Method
         /*!
@@ -112,7 +115,8 @@ namespace chaos {
          /**
          * Return a JSON document with the version of the libraries
         */
-        const std::string getBuildInfo();
+        chaos::common::data::CDWUniquePtr getBuildInfo(chaos::common::data::CDWUniquePtr data);
+        chaos::common::data::CDWUniquePtr getProcessInfo(chaos::common::data::CDWUniquePtr data);
         GlobalConfiguration* getGlobalConfigurationInstance();
     };
     

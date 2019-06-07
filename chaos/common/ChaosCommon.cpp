@@ -154,9 +154,9 @@ ChaosAbstractCommon::ChaosAbstractCommon()
     GlobalConfiguration::getInstance()->getBuildInfoRef().addStringValue("BuildDate",dd.str());
     GlobalConfiguration::getInstance()->getBuildInfoRef().addInt32Value("BuildID",CSLIB_BUILD_ID);
 }
-const std::string ChaosAbstractCommon::getBuildInfo(){
+/*const std::string ChaosAbstractCommon::getBuildInfo(){
     return GlobalConfiguration::getInstance()->getBuildInfoRef().getCompliantJSONString();
-}
+}*/
 
 ChaosAbstractCommon::~ChaosAbstractCommon() {}
 
@@ -290,10 +290,16 @@ void ChaosAbstractCommon::init(void *init_data) {
         //finally we can register the system rpc api for common uses
         AbstActionDescShrPtr
         action_description = addActionDescritionInstance<ChaosAbstractCommon>(this,
-                                                                              &ChaosAbstractCommon::_getBuildInfo,
+                                                                              &ChaosAbstractCommon::getBuildInfo,
                                                                               NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                               NodeDomainAndActionRPC::ACTION_GET_BUILD_INFO,
                                                                               "Return the build info of current chaos node instance");
+                                                                              
+        AbstActionDescShrPtr action_description2 = addActionDescritionInstance<ChaosAbstractCommon>(this,
+                                                                              &ChaosAbstractCommon::getProcessInfo,
+                                                                              NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                              NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
+                                                                              "Return the process info of current chaos node instance");
         NetworkBroker::getInstance()->registerAction(this);
     } catch (...) {
         throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
@@ -331,8 +337,12 @@ GlobalConfiguration *ChaosAbstractCommon::getGlobalConfigurationInstance() {
     return GlobalConfiguration::getInstance();
 }
 
-CDWUniquePtr ChaosAbstractCommon::_getBuildInfo(CHAOS_UNUSED CDWUniquePtr data) {
+CDWUniquePtr ChaosAbstractCommon::getBuildInfo(CHAOS_UNUSED CDWUniquePtr data) {
     CDWUniquePtr buildInfo(new CDataWrapper());
     GlobalConfiguration::getInstance()->getBuildInfoRef().copyAllTo(*buildInfo);
     return buildInfo;
+}
+CDWUniquePtr ChaosAbstractCommon::getProcessInfo(CHAOS_UNUSED CDWUniquePtr data) {
+    return GlobalConfiguration::getInstance()->getProcessInfoRef().fullStat();
+    
 }

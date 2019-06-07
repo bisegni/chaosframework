@@ -105,6 +105,20 @@ int MDSMessageChannel::getBuildInfo(CDWUniquePtr& result) {
     }
     return err;
 }
+int MDSMessageChannel::getProcessInfo(CDWUniquePtr& result) {
+    int err = 0;
+    CDWUniquePtr data;
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                            NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
+                                                                                            MOVE(data));
+    if(request_future->wait()) {
+        result = MOVE(request_future->detachResult());
+    } else {
+        result.reset();
+        err = request_future->getError();
+    }
+    return err;
+}
 
 //! Send unit server CU states to MDS
 int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,

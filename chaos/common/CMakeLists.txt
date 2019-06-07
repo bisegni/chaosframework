@@ -300,6 +300,7 @@ SET(common_lib_src ${common_lib_src}
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
                     utility/Base64Util.cpp
+                    utility/ProcessInfo.cpp
                     utility/Random.cpp)
 
 SET(common_lib_src ${common_lib_src}

@@ -19,7 +19,6 @@
  * permissions and limitations under the Licence.
  */
 
-
 #include "ProcRestUtil.h"
 #include "../ChaosAgent.h"
 #include <chaos/common/global.h>
@@ -37,7 +36,6 @@ using namespace std;
 using namespace chaos::common;
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
-
 
 std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;

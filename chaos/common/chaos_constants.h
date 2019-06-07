@@ -443,6 +443,8 @@ namespace chaos {
         
         //! get the build information form node instance
         static const char * const ACTION_GET_BUILD_INFO                             = "getBuildInfo";
+            //! get the process information form node instance
+        static const char * const ACTION_GET_PROCESS_INFO                             = "getProcessInfo";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     

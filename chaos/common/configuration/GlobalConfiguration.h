@@ -29,6 +29,7 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/exception/exception.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
+#include <chaos/common/utility/ProcessInfo.h>
 
 #include <map>
 #include <set>
@@ -90,6 +91,7 @@ x = hasOption(y);
         //for contain program option value and other usefull think
         ChaosUniquePtr<chaos_data::CDataWrapper> configuration;
         chaos_data::CDataWrapper build_info;
+        chaos::common::utility::process::ProcessInfo pinfo;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
 
         
@@ -150,7 +152,8 @@ x = hasOption(y);
         void parseStringStream(std::istream &);
         
         chaos::common::data::CDataWrapper& getBuildInfoRef();
-        
+        chaos::common::utility::process::ProcessInfo& getProcessInfoRef();
+
         /*
          Add a custom option
          */
