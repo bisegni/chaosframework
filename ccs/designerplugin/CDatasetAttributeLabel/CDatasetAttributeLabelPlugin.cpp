@@ -132,7 +132,6 @@ QString CDatasetAttributeLabelPlugin::domXml() const
             <class>CDatasetAttributeLabel</class>\
             <propertyspecifications>\
             <tooltip name=\"deviceID\">Device id</tooltip>\
-            <stringpropertyspecification name=\"state\" notr=\"true\" type=\"singleline\"/>\
             </propertyspecifications>\
         </customwidget>\
     </customwidgets>\

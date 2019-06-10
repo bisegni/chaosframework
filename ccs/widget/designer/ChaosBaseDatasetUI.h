@@ -25,16 +25,21 @@ public:
     QString attributeName() const;
     void setAttributeName(const QString& new_attribute_name);
 
-private slots:
-    virtual void updateValue(QVariant variant_value) = 0;
+signals:
+     void valueChanged(QVariant nval);
 
 public slots:
     virtual void updateData(QString attribute_name,
                             QVariant attribute_value);
+
+private slots:
+    virtual void updateValue(QVariant variant_value) = 0;
+
 private:
-    QString my_device_id;
-    DatasetType my_dataset_type;
-    QString my_attribute_name;
+    QVariant p_value;
+    QString p_device_id;
+    QString p_attribute_name;
+    DatasetType p_dataset_type;
 };
 
 #endif // CHAOSUIBASE_H

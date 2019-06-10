@@ -1,17 +1,21 @@
 #include "CDatasetAttributeLabel.h"
 #include <QHBoxLayout>
+#include <QDebug>
 
 CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent) :
     ChaosBaseDatasetUI(parent) {
-    internalLabel = new QLabel(this);
+    labelValue = new QLabel(this);
     QHBoxLayout *layout = new QHBoxLayout();
-    internalLabel->setText("Dataset Value");
-    layout->addWidget(internalLabel);
+    labelValue->setText("Dataset Value");
+    layout->addWidget(labelValue);
     setLayout(layout);
+
+//    connect(this, SIGNAL(valueChanged(QVariant)), this, SLOT(updateValue(QVariant)));
 }
 
 CDatasetAttributeLabel::~CDatasetAttributeLabel() {}
 
 void CDatasetAttributeLabel::updateValue(QVariant variant_value) {
-    internalLabel->setText(variant_value.toString());
+    labelValue->setText(variant_value.toString());
+    qDebug() << "CDatasetAttributeLabel updated with value "<< variant_value.toString();
 }

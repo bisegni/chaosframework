@@ -17,9 +17,7 @@ private slots:
    void updateValue(QVariant variant_value);
 
 private:
-    QLabel *internalLabel;
-
-
+    QLabel *labelValue;
 };
 
 #endif // CDATASETATTRIBUTELABEL_H
