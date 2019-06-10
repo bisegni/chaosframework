@@ -6,6 +6,7 @@
 class ChaosMonitorWidgetCompanion:
         public ChaosWidgetCompanion {
 public:
+    ChaosMonitorWidgetCompanion();
 
     ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::ControllerType _monitor_controller_type,
                                 chaos::metadata_service_client::node_monitor::NodeMonitorHandler *_monitor_handler);

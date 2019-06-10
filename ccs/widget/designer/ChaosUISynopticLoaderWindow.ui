@@ -58,14 +58,21 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoad_UI_File"/>
+    <addaction name="loadUIFileAction"/>
+    <addaction name="separator"/>
+    <addaction name="enableUIAction"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionLoad_UI_File">
+  <action name="loadUIFileAction">
    <property name="text">
     <string>Load UI File</string>
+   </property>
+  </action>
+  <action name="enableUIAction">
+   <property name="text">
+    <string>Enable</string>
    </property>
   </action>
  </widget>

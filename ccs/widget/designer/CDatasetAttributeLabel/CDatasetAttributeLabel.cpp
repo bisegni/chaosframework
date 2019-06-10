@@ -1,38 +1,17 @@
 #include "CDatasetAttributeLabel.h"
+#include <QHBoxLayout>
 
 CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent) :
-    QLabel(parent) {
-
+    ChaosBaseDatasetUI(parent) {
+    internalLabel = new QLabel(this);
+    QHBoxLayout *layout = new QHBoxLayout();
+    internalLabel->setText("Dataset Value");
+    layout->addWidget(internalLabel);
+    setLayout(layout);
 }
 
-CDatasetAttributeLabel::~CDatasetAttributeLabel() {
+CDatasetAttributeLabel::~CDatasetAttributeLabel() {}
 
+void CDatasetAttributeLabel::updateValue(QVariant variant_value) {
+    internalLabel->setText(variant_value.toString());
 }
-
-void CDatasetAttributeLabel::updateData(QSharedPointer<chaos::common::data::CDataVariant> /*variantValue*/) {
-
-}
-
-void CDatasetAttributeLabel::setDeviceID(const QString &newDeviceID) {
-    myDeviceID = newDeviceID;
-}
-
-QString CDatasetAttributeLabel::deviceID() const {
-    return myDeviceID;
-}
-
-void CDatasetAttributeLabel::setDatasetType(const CDatasetAttributeLabel::DatasetType &newDatasetType) {
-    myDatasetType = newDatasetType;
-}
-
-CDatasetAttributeLabel::DatasetType CDatasetAttributeLabel::datasetType() const {
-    return myDatasetType;
-}
-
-//slots hiding
-void	CDatasetAttributeLabel::clear(){QLabel::clear();}
-void	CDatasetAttributeLabel::setMovie(QMovie * movie){QLabel::setMovie(movie);}
-void	CDatasetAttributeLabel::setNum(int num){QLabel::setNum(num);}
-void	CDatasetAttributeLabel::setNum(double num){QLabel::setNum(num);}
-void	CDatasetAttributeLabel::setPicture(const QPicture & picture){QLabel::setPicture(picture);}
-void	CDatasetAttributeLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}
