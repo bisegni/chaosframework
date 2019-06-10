@@ -190,6 +190,7 @@ SOURCES += main.cpp\
     widget/StorageBurst.cpp \
     widget/CLedIndicatorCUBusy.cpp \
     widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.cpp \
+    widget/designer/CUNodeRoot.cpp \
     widget/designer/ChaosBaseDatasetUI.cpp \
     widget/designer/ChaosUISynopticLoaderWindow.cpp
 
@@ -372,6 +373,7 @@ HEADERS  += \
     widget/StorageBurst.h \
     widget/CLedIndicatorCUBusy.h \
     widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h \
+    widget/designer/CUNodeRoot.h \
     widget/designer/ChaosBaseDatasetUI.h \
     widget/designer/ChaosUISynopticLoaderWindow.h
 
