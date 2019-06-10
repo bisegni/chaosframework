@@ -666,7 +666,7 @@ int MDSMessageChannel::removeVariable(const std::string& variable_name,
 }
 
 int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
-                                  unsigned int node_type_filter,
+                                  chaos::NodeType::NodeSearchType node_type_filter,
                                   bool alive_only,
                                   unsigned int last_node_sequence_id,
                                   unsigned int page_length,
@@ -675,7 +675,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
     int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue("unique_id_filter", unique_id_filter);
-    message->addInt32Value("node_type_filter", node_type_filter);
+    message->addInt32Value("node_type_filter", (int32_t)node_type_filter);
     message->addInt32Value("last_node_sequence_id", last_node_sequence_id);
     message->addBoolValue("alive_only", alive_only);
     message->addInt32Value("result_page_length", page_length);

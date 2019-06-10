@@ -59,7 +59,7 @@ namespace chaos {
                 public:
                     //! inherited by data_access::AgentDataAccess
                     int insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description);
-                    
+
                     //!load full agent description
                     int loadAgentDescription(const std::string& agent_uid,
                                              const bool load_related_data,

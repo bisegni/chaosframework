@@ -47,7 +47,7 @@ namespace chaos {
                     
                     //! Insert or update an agent descirption
                     virtual int insertUpdateAgentDescription(chaos::common::data::CDataWrapper& agent_description) = 0;
-                    
+
                     virtual int loadAgentDescription(const std::string& agent_uid,
                                                      const bool load_related_data,
                                                      chaos::service_common::data::agent::AgentInstance& agent_description) = 0;

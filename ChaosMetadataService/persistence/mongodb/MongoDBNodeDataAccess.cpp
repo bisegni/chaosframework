@@ -384,7 +384,7 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
 
 int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result,
                                       const std::string& criteria,
-                                      uint32_t search_type,
+                                      chaos::NodeType::NodeSearchType search_type,
                                       bool alive_only,
                                       uint32_t last_unique_id,
                                       uint32_t page_length) {
@@ -408,15 +408,21 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     //filter on type
     if(search_type>0) {
         switch(search_type) {
-            case 1:
+            case chaos::NodeType::NodeSearchType::node_type_us:
                 type_of_node = chaos::NodeType::NODE_TYPE_UNIT_SERVER;
                 break;
-            case 2:
+            case chaos::NodeType::NodeSearchType::node_type_cu:
                 type_of_node = chaos::NodeType::NODE_TYPE_CONTROL_UNIT;
                 break;
-            case 3:
+            case chaos::NodeType::NodeSearchType::node_type_agent:
                 type_of_node = chaos::NodeType::NODE_TYPE_AGENT;
                 break;
+            case chaos::NodeType::NodeSearchType::node_type_cds:
+                type_of_node = chaos::NodeType::NODE_TYPE_DATA_SERVICE;
+                break;
+            case chaos::NodeType::NodeSearchType::node_type_wan:
+                type_of_node = chaos::NodeType::NODE_TYPE_WAN_PROXY;
+                break;    
             default:
                 break;
         }

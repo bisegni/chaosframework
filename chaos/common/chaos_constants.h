@@ -334,6 +334,19 @@ namespace chaos {
          A DAQ unit node is a tipical !CHAOS node that acquires data without any command
          */
         static const char * const NODE_SUBTYPE_DAQ_CONTROL_UNIT    = "nt_daq_unit";
+        typedef enum  {
+            //!Search us
+            node_type_us = 1,
+            //!Search cu
+            node_type_cu = 2,
+            //!search agent
+            node_type_agent = 3,
+            //!search cds
+            node_type_cds = 4,
+            //!search wan
+            node_type_wan = 5
+
+        } NodeSearchType;
     }
     /** @} */ // end of NodeType
     
