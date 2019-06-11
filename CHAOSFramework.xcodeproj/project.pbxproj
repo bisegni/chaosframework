@@ -1089,6 +1089,8 @@
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */; };
 		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
+		32E45C0F22B02F03000B5DB1 /* ProcessInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E45C0E22B02F03000B5DB1 /* ProcessInfo.cpp */; };
+		32E45C1122B02F0B000B5DB1 /* ProcessInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E45C1022B02F0B000B5DB1 /* ProcessInfo.h */; };
 		32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4371E48689E0068320E /* ProcessWorker.cpp */; };
 		32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractWorker.cpp */; };
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
@@ -2665,6 +2667,8 @@
 		32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClientConnection.h; sourceTree = "<group>"; };
 		32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
 		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
+		32E45C0E22B02F03000B5DB1 /* ProcessInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessInfo.cpp; sourceTree = "<group>"; };
+		32E45C1022B02F0B000B5DB1 /* ProcessInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessInfo.h; sourceTree = "<group>"; };
 		32E6F4281E44D7D30068320E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32E6F4371E48689E0068320E /* ProcessWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessWorker.cpp; sourceTree = "<group>"; };
 		32E6F4381E48689E0068320E /* ProcessWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessWorker.h; sourceTree = "<group>"; };
@@ -4476,6 +4480,8 @@
 		326DB42414B38BC00018A8D0 /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				32E45C0E22B02F03000B5DB1 /* ProcessInfo.cpp */,
+				32E45C1022B02F0B000B5DB1 /* ProcessInfo.h */,
 				53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */,
 				32BFF90C176C842E00D27A04 /* InizializableService.cpp */,
 				32BFF90D176C842E00D27A04 /* InizializableService.h */,
@@ -5981,6 +5987,7 @@
 				32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
 				3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */,
+				32E45C1122B02F0B000B5DB1 /* ProcessInfo.h in Headers */,
 				329603251876B45000CDCADA /* BatchCommandException.h in Headers */,
 				32D6F6FA21341EBC0028F390 /* Random.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,
@@ -7087,6 +7094,7 @@
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
 				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
 				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
+				32E45C0F22B02F03000B5DB1 /* ProcessInfo.cpp in Sources */,
 				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
 				3206CE741FA767AC0059A4A4 /* bson-writer.c in Sources */,
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,

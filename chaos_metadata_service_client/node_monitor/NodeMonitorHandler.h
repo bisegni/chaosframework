@@ -69,7 +69,7 @@ namespace chaos {
             };
             
             struct NodeMonitorHandlerComparator {
-                bool operator() (NodeMonitorHandler* h1, NodeMonitorHandler* h2) {
+                bool operator() (const NodeMonitorHandler* h1, const NodeMonitorHandler* h2) {
                     return h1->handler_uuid.compare(h2->handler_uuid) < 0;
                 }
             };
