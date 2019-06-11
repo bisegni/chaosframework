@@ -267,9 +267,10 @@ case "$cmd" in
                 ;;
                 
                 devel)
-                    start_all
+                    start_mds
                     start_us
                     start_agent
+		    start_ui
                     exit 0
                 ;;
                 *)

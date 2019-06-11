@@ -137,9 +137,9 @@ CDWUniquePtr NodeRegister::simpleRegistration(CDWUniquePtr api_data) {
         }
         if(is_present) {
             //present
-            USRA_DBG<<"UPDATE EXISTING NODE:"<<node_uid;
+            USRA_DBG<<"UPDATE EXISTING NODE:"<<node_uid << " type:"<<ttype;
 
-            if((err = n_da->updateNode(*api_data))) {
+            if((err = n_da->updateNode(*api_data.get()))) {
                 api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                         ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
                 LOG_AND_TROW(USRA_ERR, -4, "error updating the NIDE information")
@@ -155,12 +155,12 @@ CDWUniquePtr NodeRegister::simpleRegistration(CDWUniquePtr api_data) {
                 api_data->addInt64Value("seq", nodes_seq);
                 
                 //insert th enew node
-                if((err = n_da->insertNewNode(*api_data))) {
+                if((err = n_da->insertNewNode(*api_data.get()))) {
                     api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                             ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
                     LOG_AND_TROW(USRA_ERR, -6, "error saving the NODE information")
                 }
-                if((err = n_da->updateNode(*api_data))) {
+                if((err = n_da->updateNode(*api_data.get()))) {
                 api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                         ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
                 LOG_AND_TROW(USRA_ERR, -4, "error updating the NIDE information")
