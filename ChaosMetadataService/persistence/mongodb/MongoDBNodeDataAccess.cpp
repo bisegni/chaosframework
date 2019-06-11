@@ -244,7 +244,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         
         
         
-        DEBUG_CODE(MDBNDA_DBG<<log_message("updateUS",
+        DEBUG_CODE(MDBNDA_DBG<<log_message("updateNode",
                                            "update",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                    "Update",
