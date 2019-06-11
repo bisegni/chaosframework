@@ -3,14 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 namespace chaos {
 namespace common {
 namespace utility {
 namespace process {
 ProcessInfo::ProcessInfo(){
     epoch_start=time(NULL);
+#ifndef _WIN32
     mypid=getpid();
+#else
+	mypid = GetCurrentProcessId();
+#endif
      cpu_total_time=prev_user_tick=prev_system_tick=prev_total=0;
     for(int cnt=0;cnt<sizeof(prev_cpu_time)/sizeof(unsigned long);cnt++) prev_cpu_time[cnt]=0;
 }
