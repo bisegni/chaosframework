@@ -83,15 +83,11 @@ IF (BUILD_FORCE_STATIC)
 #ADD_LIBRARY(${PROJECT_NAME} ${cu_lib_src})
 #SET_TARGET_PROPERTIES(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
-if (WIN32)
+
 SET(chaos_cutoolkit_lib ${CMAKE_INSTALL_PREFIX}/lib)
+MESSAGE("ALEDEBUG chaos_cutoolkit_lib :" ${chaos_cutoolkit_lib})
 separate_arguments(chaos_cutoolkit_lib)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  "-LIBPATH:${chaos_cutoolkit_lib}" chaos_common)
-else(WIN32)
-SET(chaos_cutoolkit_lib $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(chaos_cutoolkit_lib)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${chaos_cutoolkit_lib})
-endif(WIN32)
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
