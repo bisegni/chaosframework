@@ -61,7 +61,7 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
     GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
     if (n_da->searchNode(&result,
                          api_data->getStringValue("unique_id_filter"),
-                         api_data->getInt32Value("node_type_filter"),
+                         (chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter"),
                          alive_only,
                          last_sequence_id,
                          page_length)){

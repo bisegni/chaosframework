@@ -142,7 +142,7 @@ namespace chaos {
                      */
                     virtual int searchNode(chaos::common::data::CDataWrapper **result,
                                            const std::string& criteria,
-                                           uint32_t search_type,
+                                           chaos::NodeType::NodeSearchType search_type,
                                            bool alive_only,
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;

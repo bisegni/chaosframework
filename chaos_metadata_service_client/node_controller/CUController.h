@@ -514,7 +514,7 @@ namespace chaos {
                 int getSnapshotList(ChaosStringVector& snapshot_list);
                 
                 int searchNode(const std::string& unique_id_filter,
-                               unsigned int node_type_filter,
+                               chaos::NodeType::NodeSearchType node_type_filter,
                                bool alive_only,
                                unsigned int last_node_sequence_id,
                                unsigned int page_length,

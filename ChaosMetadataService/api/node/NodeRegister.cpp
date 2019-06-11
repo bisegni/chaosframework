@@ -62,11 +62,41 @@ CDWUniquePtr NodeRegister::execute(CDWUniquePtr api_data){
     } else if(boost::starts_with(node_type, NodeType::NODE_TYPE_AGENT)) {
         result = agentRegistration(MOVE(api_data));
     } else {
+        result = simpleRegistration(MOVE(api_data));
+    } 
+    /* else {
         throw CException(-3, "Type of node not managed for registration", __PRETTY_FUNCTION__);
-    }
+    }*/
     return result;
 }
 
+chaos::common::data::CDWUniquePtr  NodeRegister::simpleRegistration(chaos::common::data::CDWUniquePtr api_data){
+    int err = 0;
+    uint64_t    command_id;
+    const std::string uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    //fetch the unit server data access
+    GET_DATA_ACCESS(NodeDataAccess, a_da, -1)
+    try {
+        if((err = a_da->insertNewNode(*api_data))) {
+            LOG_AND_TROW(USRA_ERR, -1, CHAOS_FORMAT("Error %1% registering node %2% %3%", %err%uid%api_data->getCompliantJSONString()));
+        }
+        api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
+    } catch (...) {
+        api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
+                                          api_data->clone().release());
+        LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
+    }
+    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentAckCommand),
+                                                   api_data.release(),
+                                                   0,
+                                                   1000);
+    
+    USRA_INFO << CHAOS_FORMAT("Sent ack for simple %1% registration", %uid);
+    return CDWUniquePtr();
+}
 
 CDWUniquePtr NodeRegister::agentRegistration(CDWUniquePtr api_data) {
     int err = 0;

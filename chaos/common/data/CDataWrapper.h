@@ -391,6 +391,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
             typedef ChaosUniquePtr<chaos::common::data::CDataWrapper> CDWUniquePtr;
             typedef ChaosSharedPtr<chaos::common::data::CDataWrapper> CDWShrdPtr;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWShrdPtr, VectorCDWShrdPtr);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(CDWUniquePtr, VectorCDWUniquePtr);
 #define CreateNewDataWrapper(n,p) CreateNewUniquePtr(chaos::common::data::CDataWrapper, n, p)
             
             
