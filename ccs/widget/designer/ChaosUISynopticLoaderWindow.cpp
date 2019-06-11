@@ -42,7 +42,7 @@ void ChaosUISynopticLoaderWindow::windowIsShown() {
 void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
     if(ui_enabled) {
         //disable ui
-        foreach(const QString& key, cu_object_hash.keys()){
+        foreach(const QString& key, hash_device_root.keys()){
             monitor(key, false);
         }
         //all is gone whell change menu text
@@ -50,7 +50,7 @@ void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
         ui_enabled = false;
     } else {
         //enable ui
-        foreach(const QString& key, cu_object_hash.keys()){
+        foreach(const QString& key, hash_device_root.keys()){
             monitor(key, true);
         }
         //all is gone whell change menu text
@@ -84,8 +84,18 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
         if(cw->deviceID() == nullptr ||
                 cw->deviceID().compare("") == 0) {continue;}
 
+        QSharedPointer<CUNodeRoot> device_root;
+        if(hash_device_root.contains(cw->deviceID())) {
+            device_root = hash_device_root.find(cw->deviceID()).value();
+        } else {
+            hash_device_root.insert(cw->deviceID(), device_root = QSharedPointer<CUNodeRoot>(new CUNodeRoot(cw->deviceID())));
+        }
         qDebug() << "Found chaos widget " << cw->objectName() << " for device id " << cw->deviceID();
-        cu_object_hash.insert(cw->deviceID(), cw);
+        QObject::connect(device_root.data(),
+                         SIGNAL(updateDatasetAttribute(QString, QVariant)),
+                         cw,
+                         SLOT(updateData(QString, QVariant)));
+//        cu_object_hash.insert(cw->deviceID(), cw);
     }
     ui->enableUIAction->setEnabled(true);
 
@@ -107,13 +117,12 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
     qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
-    foreach(QObject *wg, cu_object_hash.values(QString::fromStdString(control_unit_uid))){
-        for (MapDatasetKeyValuesPair element : dataset_key_values) {
-            QMetaObject::invokeMethod( wg, "updateData", Qt::QueuedConnection,
-                                       Q_ARG(QString, QString::fromStdString(element.first)),
-                                       Q_ARG(QVariant, toQVariant(element.second)));
-        }
+    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == hash_device_root.end()) return;
 
+    for (MapDatasetKeyValuesPair element : dataset_key_values) {
+        cu_root_iterator.value()->setCurrentAttributeValue(QString::fromStdString(element.first),
+                                                           toQVariant(element.second));
     }
 }
 
@@ -187,4 +196,12 @@ QVariant ChaosUISynopticLoaderWindow::toQVariant(chaos::common::data::CDataVaria
         break;
     }
     return result;
+}
+
+void ChaosUISynopticLoaderWindow::closeEvent(QCloseEvent *event) {
+    //disable ui
+    foreach(const QString& key, hash_device_root.keys()){
+        monitor(key, false);
+    }
+    QMainWindow::closeEvent(event);
 }

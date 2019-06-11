@@ -2,6 +2,7 @@
 #define CUNODEROOT_H
 
 #include <QObject>
+#include <QVariant>
 
 /**
  * @brief The CUNodeRoot class
@@ -12,15 +13,26 @@
  * setting can be sent to the cu. All chaos widget ui will be connected for read an write data from
  * CU to their respective node root.
  */
-class CUNodeRoot : public QObject
-{
+class CUNodeRoot : public QObject {
     Q_OBJECT
 public:
-    explicit CUNodeRoot(QObject *parent = nullptr);
+    explicit CUNodeRoot(QString device_id,
+                        QObject *parent = nullptr);
 
+    void setCurrentAttributeValue(QString attribute_name,
+                                  QVariant attribute_value);
 signals:
-
+    /**
+     * @brief updateDatasetAttribute send signel when a new update on a dataset attribute is triggered
+     * @param attribute_name
+     * @param attribute_value
+     */
+    void updateDatasetAttribute(QString attribute_name,
+                                QVariant attribute_value);
 public slots:
+
+private:
+    const QString m_device_id;
 };
 
 #endif // CUNODEROOT_H

@@ -1,11 +1,14 @@
 #ifndef CHAOSUISYNOPTICLOADERWINDOW_H
 #define CHAOSUISYNOPTICLOADERWINDOW_H
 
+#include "CUNodeRoot.h"
 #include "../ChaosMonitorWidgetCompanion.h"
 #include "../../api_async_processor/ApiSubmitter.h"
 
-#include <QMainWindow>
 #include <QMultiHash>
+#include <QMainWindow>
+#include <QSharedPointer>
+#include <QCloseEvent>
 
 namespace Ui {
 class ChaosUISynopticLoaderWindow;
@@ -31,6 +34,7 @@ private:
     bool ui_enabled;
     //contains correlation for cu and his associated ui;
     QMultiHash<QString, QObject*> cu_object_hash;
+    QMultiHash<QString, QSharedPointer<CUNodeRoot> > hash_device_root;
     ApiSubmitter api_submitter;
     Ui::ChaosUISynopticLoaderWindow *ui;
 
@@ -59,6 +63,7 @@ private:
     void apiHasEndedWithError(const QString& tag,
                               const QSharedPointer<chaos::CException> api_exception);
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // CHAOSUISYNOPTICLOADERWINDOW_H
