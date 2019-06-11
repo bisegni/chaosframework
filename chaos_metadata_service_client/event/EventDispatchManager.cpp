@@ -30,7 +30,7 @@
 using namespace chaos::metadata_service_client::event;
 
 //! default private constructor called only by chaos_metadata_service_client class
-EventDispatchManager::EventDispatchManager(ClientSetting *_setting):
+EventDispatchManager::EventDispatchManager(chaos::metadata_service_client::ClientSetting *_setting):
 setting(_setting),
 alert_event_channel(NULL) {
     
@@ -89,7 +89,7 @@ void EventDispatchManager::deregisterEventHandler(AbstractEventHandler *handler)
     }
 }
 
-void EventDispatchManager::handleEvent(const common::event::EventDescriptor * const event) {
+void EventDispatchManager::handleEvent(const chaos::common::event::EventDescriptor * const event) {
     //read lock the map
     boost::shared_lock<boost::shared_mutex>(map_mutex);
     DEBUG_CODE(EDM_LDBG << "Event received type:"<< event->getEventType() << " with code:" << event->getSubCode(););

@@ -407,7 +407,12 @@ namespace chaos {
                  the returned object is not own by requester but only by DeviceController isntance
                  \deprecated use new api getCurrentDatasetForDomain
                  */
+
+#ifndef _WIN32
                 __attribute__((__deprecated__))
+#else
+				[[deprecated]]
+#endif
                 chaos::common::data::CDataWrapper * getLiveCDataWrapperPtr();
                 
                 //!return the last fetched dataset for the domain
