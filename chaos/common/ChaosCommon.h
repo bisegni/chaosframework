@@ -65,7 +65,8 @@ namespace chaos {
         //!return build infromation via rpc
        
 
-        
+        chaos::common::data::CDWUniquePtr _registrationAck(chaos::common::data::CDWUniquePtr data);
+
     public:
         //! Constructor Method
         /*!
@@ -115,6 +116,7 @@ namespace chaos {
          /**
          * Return a JSON document with the version of the libraries
         */
+
         chaos::common::data::CDWUniquePtr getBuildInfo(chaos::common::data::CDWUniquePtr data);
         chaos::common::data::CDWUniquePtr getProcessInfo(chaos::common::data::CDWUniquePtr data);
         GlobalConfiguration* getGlobalConfigurationInstance();

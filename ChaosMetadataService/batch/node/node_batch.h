@@ -24,4 +24,5 @@
 #include "SendRpcCommand.h"
 #include "SubmitBatchCommand.h"
 #include "UpdatePropertyCommand.h"
+#include "NodeAckCommand.h"
 #endif

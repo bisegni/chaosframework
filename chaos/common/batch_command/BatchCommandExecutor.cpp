@@ -310,7 +310,7 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                 DEBUG_CODE(BCELAPP_ << "Set running type event on command id:"<<command_id);
                 cmd_state->last_event = type;
             } else {
-                DEBUG_CODE(BCELERR_ << "No command found for id:"<<command_id);
+                BCELERR_ << "No command found for id:"<<command_id;
             }
             break;
         }

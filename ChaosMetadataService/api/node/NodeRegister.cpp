@@ -25,6 +25,7 @@
 #include "../../batch/unit_server/UnitServerAckBatchCommand.h"
 #include "../../batch/control_unit/RegistrationAckBatchCommand.h"
 #include "../../batch/agent/AgentAckCommand.h"
+#include "../../batch/node/NodeAckCommand.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -70,34 +71,6 @@ CDWUniquePtr NodeRegister::execute(CDWUniquePtr api_data){
     return result;
 }
 
-chaos::common::data::CDWUniquePtr  NodeRegister::simpleRegistration(chaos::common::data::CDWUniquePtr api_data){
-    int err = 0;
-    uint64_t    command_id;
-    const std::string uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    //fetch the unit server data access
-    GET_DATA_ACCESS(NodeDataAccess, a_da, -1)
-    try {
-        if((err = a_da->insertNewNode(*api_data))) {
-            LOG_AND_TROW(USRA_ERR, -1, CHAOS_FORMAT("Error %1% registering node %2% %3%", %err%uid%api_data->getCompliantJSONString()));
-        }
-        api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
-                                ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
-    } catch (...) {
-        api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
-                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
-        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
-                                          api_data->clone().release());
-        LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
-    }
-    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentAckCommand),
-                                                   api_data.release(),
-                                                   0,
-                                                   1000);
-    
-    USRA_INFO << CHAOS_FORMAT("Sent ack for simple %1% registration", %uid);
-    return CDWUniquePtr();
-}
-
 CDWUniquePtr NodeRegister::agentRegistration(CDWUniquePtr api_data) {
     int err = 0;
     uint64_t    command_id;
@@ -114,7 +87,7 @@ CDWUniquePtr NodeRegister::agentRegistration(CDWUniquePtr api_data) {
     } catch (...) {
         api_data->addInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
-        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentAckCommand),
                                           api_data->clone().release());
         LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
     }
@@ -127,6 +100,100 @@ CDWUniquePtr NodeRegister::agentRegistration(CDWUniquePtr api_data) {
     
     USRA_INFO << CHAOS_FORMAT("Sent ack for agent %1% registration", %agent_uid);
     return CDWUniquePtr();
+}
+CDWUniquePtr NodeRegister::simpleRegistration(CDWUniquePtr api_data) {
+    
+    int err = 0;
+    uint64_t    command_id;
+    bool        alive = false;
+    bool        is_present = false;
+    uint64_t    nodes_seq = 0;
+    
+    //fetch the unit server data access
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -1);
+    const std::string node_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    //check if node is already up and running
+    if((err = n_da->isNodeAlive(node_uid, alive))){
+        LOG_AND_TROW(USRA_ERR, -4, CHAOS_FORMAT("Error checking if node %1% already running", %node_uid));
+    } else if(alive) {
+        USRA_ERR<<"NODE:"<<node_uid<<" already alive wait 10s";
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING);
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::NodeAckCommand),
+                                          api_data->clone().release());
+        return CDWUniquePtr();
+    }
+    //we can porceed with uniserver registration
+    USRA_INFO << "Registering NODE: " << node_uid;
+    std::string ttype;
+    GET_DATA_ACCESS(UtilityDataAccess, u_da, -3)
+
+    try {
+        if((err = n_da->checkNodePresence(is_present,node_uid, ttype))) {
+            //err
+            api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                    ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+            LOG_AND_TROW(USRA_ERR, -3, "error checking the NODE presence")
+        }
+        if(is_present) {
+            //present
+            USRA_DBG<<"UPDATE EXISTING NODE:"<<node_uid;
+
+            if((err = n_da->updateNode(*api_data))) {
+                api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                        ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+                LOG_AND_TROW(USRA_ERR, -4, "error updating the NIDE information")
+            }
+        }else {
+            USRA_DBG<<"ADDING NEW NODE:"<<node_uid;
+
+            //unit server not found, so we need to register new one
+            if((err = u_da->getNextSequenceValue("nodes", nodes_seq))) {
+                LOG_AND_TROW(USRA_ERR, err, "error fetching the new sequence value")
+            }else{
+                //add new fetched sequecne
+                api_data->addInt64Value("seq", nodes_seq);
+                
+                //insert th enew node
+                if((err = n_da->insertNewNode(*api_data))) {
+                    api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                            ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+                    LOG_AND_TROW(USRA_ERR, -6, "error saving the NODE information")
+                }
+                if((err = n_da->updateNode(*api_data))) {
+                api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                        ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+                LOG_AND_TROW(USRA_ERR, -4, "error updating the NIDE information")
+            }
+            }
+        }
+        //now we can send back the received message with the ack result
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
+    } catch (chaos::CException& ex) {
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+        command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::NodeAckCommand),
+                                                       api_data->clone().release());
+        USRA_ERR << "Sent ack for registration denied to NODE " << node_uid;
+        throw;
+    } catch (...) {
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::NodeAckCommand),
+                                          api_data->clone().release());
+        USRA_ERR << "Sent ack for registration denied to NODE: " << node_uid;
+        LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
+    }
+    
+    //all is gone weel
+    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::NodeAckCommand),
+                                                   api_data.release(),
+                                                   0,
+                                                   1000);
+    
+    USRA_INFO << "Sent ack for registration ok to the NODE " << node_uid;
+    return NULL;
 }
 
 CDWUniquePtr NodeRegister::unitServerRegistration(CDWUniquePtr api_data) {
@@ -177,6 +244,11 @@ CDWUniquePtr NodeRegister::unitServerRegistration(CDWUniquePtr api_data) {
                 api_data->addInt64Value("seq", nodes_seq);
                 
                 //insert th enew node
+                if((err = us_da->insertNewUS(*api_data))) {
+                    api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                            ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+                    LOG_AND_TROW(USRA_ERR, -6, "error saving the new unit server information")
+                }
                 if((err = us_da->insertNewUS(*api_data))) {
                     api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                             ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);

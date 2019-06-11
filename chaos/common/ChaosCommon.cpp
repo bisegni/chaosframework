@@ -300,10 +300,38 @@ void ChaosAbstractCommon::init(void *init_data) {
                                                                               NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                               NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
                                                                               "Return the process info of current chaos node instance");
+        
+        AbstActionDescShrPtr actionDescription3 = addActionDescritionInstance<ChaosAbstractCommon>(this,
+                                                                                        &ChaosAbstractCommon::_registrationAck,
+                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                    NodeDomainAndActionRPC::ACTION_REGISTRATION_ACK,
+                                                                                    "Generic ack to a registration request");
+             
+                                                                                       
+        
         NetworkBroker::getInstance()->registerAction(this);
     } catch (...) {
         throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
     }
+}
+chaos::common::data::CDWUniquePtr ChaosAbstractCommon::_registrationAck(chaos::common::data::CDWUniquePtr ack_pack){
+    CHECK_CDW_THROW_AND_LOG(ack_pack, LERR_, -1, "ACK message with no content for NODE");
+    CHECK_KEY_THROW_AND_LOG(ack_pack, NodeDefinitionKey::NODE_UNIQUE_ID, LERR_, -2, "No identification of the device contained into the ack message for NODE");
+    std::string agent_uid=ack_pack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    if(ack_pack->hasKey(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT)) {
+        int ack_val=ack_pack->getInt32Value(AgentNodeDomainAndActionRPC::REGISTRATION_RESULT);
+        switch(ack_val){
+            case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
+                LAPP_ << CHAOS_FORMAT("NODE %1% has been registered", %agent_uid);
+                
+                break;
+                
+            default:
+                LERR_ << CHAOS_FORMAT("NODE %1% registration denied", %agent_uid);
+                break;
+        }
+    }
+    return CDWUniquePtr();
 }
 
 void ChaosAbstractCommon::deinit() {
