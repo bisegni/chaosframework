@@ -15,7 +15,7 @@ CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent) :
 
 CDatasetAttributeLabel::~CDatasetAttributeLabel() {}
 
-void CDatasetAttributeLabel::updateValue(QVariant variant_value) {
-    labelValue->setText(variant_value.toString());
-    qDebug() << "CDatasetAttributeLabel updated with value "<< variant_value.toString();
+void CDatasetAttributeLabel::updateValue(QVariant new_value) {
+    labelValue->setText(new_value.toString());
+    qDebug() << "CDatasetAttributeLabel updated with value "<< new_value.toString();
 }

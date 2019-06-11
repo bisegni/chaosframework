@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include "../../api_async_processor/ApiSubmitter.h"
 
 /**
  * @brief The CUNodeRoot class
@@ -13,7 +14,9 @@
  * setting can be sent to the cu. All chaos widget ui will be connected for read an write data from
  * CU to their respective node root.
  */
-class CUNodeRoot : public QObject {
+class CUNodeRoot :
+        public QObject,
+        protected ApiHandler {
     Q_OBJECT
 public:
     explicit CUNodeRoot(QString device_id,
@@ -30,9 +33,25 @@ signals:
     void updateDatasetAttribute(QString attribute_name,
                                 QVariant attribute_value);
 public slots:
+    void init();
+    void start();
+    void stop();
+    void deinit();
 
 private:
+    ApiSubmitter api_submitter;
     const QString m_device_id;
+
+    // api submittion handler
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void onApiError(const QString& tag,
+                    QSharedPointer<chaos::CException> api_exception);
+    void onApiTimeout(const QString& tag) ;
+    void apiHasStarted(const QString& api_tag);
+    void apiHasEnded(const QString& api_tag);
+    void apiHasEndedWithError(const QString& tag,
+                              const QSharedPointer<chaos::CException> api_exception);
 };
 
 #endif // CUNODEROOT_H

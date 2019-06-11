@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT += core gui sql
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport uitools
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport uitools qml
 
 PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
@@ -192,7 +192,8 @@ SOURCES += main.cpp\
     widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.cpp \
     widget/designer/CUNodeRoot.cpp \
     widget/designer/ChaosBaseDatasetUI.cpp \
-    widget/designer/ChaosUISynopticLoaderWindow.cpp
+    widget/designer/ChaosUISynopticLoaderWindow.cpp \
+    widget/designer/ScriptSignalDialog.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -375,7 +376,8 @@ HEADERS  += \
     widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h \
     widget/designer/CUNodeRoot.h \
     widget/designer/ChaosBaseDatasetUI.h \
-    widget/designer/ChaosUISynopticLoaderWindow.h
+    widget/designer/ChaosUISynopticLoaderWindow.h \
+    widget/designer/ScriptSignalDialog.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -420,7 +422,8 @@ FORMS    += \
     preference/SelectNetworkDomain.ui \
     node/connection_manager/ConnectionEditor.ui \
     widget/StorageBurst.ui \
-    widget/designer/ChaosUISynopticLoaderWindow.ui
+    widget/designer/ChaosUISynopticLoaderWindow.ui \
+    widget/designer/ScriptSignalDialog.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

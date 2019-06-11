@@ -2,6 +2,7 @@
 #include "ui_ChaosUISynopticLoaderWindow.h"
 #include "../../error/ErrorManager.h"
 #include "ChaosBaseDatasetUI.h"
+#include "ScriptSignalDialog.h"
 
 #include <QFile>
 #include <QtUiTools>
@@ -16,10 +17,15 @@ using namespace chaos::metadata_service_client::node_monitor;
 ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
     QMainWindow(parent),
     ui_enabled(false),
-    api_submitter(this),
     ui(new Ui::ChaosUISynopticLoaderWindow) {
     ui->setupUi(this);
     ui->enableUIAction->setEnabled(false);
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this,
+            SIGNAL(customContextMenuRequested(QPoint)),
+            this,
+            SLOT(customMenuRequested(QPoint)));
 }
 
 ChaosUISynopticLoaderWindow::~ChaosUISynopticLoaderWindow()
@@ -95,13 +101,60 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
                          SIGNAL(updateDatasetAttribute(QString, QVariant)),
                          cw,
                          SLOT(updateData(QString, QVariant)));
-//        cu_object_hash.insert(cw->deviceID(), cw);
+        //        cu_object_hash.insert(cw->deviceID(), cw);
     }
     ui->enableUIAction->setEnabled(true);
 
     //    QMetaObject::invokeMethod(this, "windowIsShown", Qt::QueuedConnection);
 }
 
+void ChaosUISynopticLoaderWindow::customMenuRequested(QPoint point) {
+    QWidget *child_at_position = centralWidget()->childAt(point);
+    if(child_at_position == nullptr ||
+       child_at_position->inherits("ChaosBaseDatasetUI") == false) return;
+    ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(child_at_position);
+    QMenu *menu=new QMenu(this);
+    QAction *ac1 = new QAction(QString("Edit script for %1").arg(cw->objectName()), this);
+    ac1->setData(QVariant(cw->objectName()));
+    connect(ac1,
+            SIGNAL(triggered()),
+            this,
+            SLOT(editScript()));
+    menu->addAction(ac1);
+    menu->popup(centralWidget()->mapToGlobal(point));
+}
+
+void ChaosUISynopticLoaderWindow::editScript() {
+    QAction* pAction = qobject_cast<QAction*>(sender());
+    Q_ASSERT(pAction);
+    QWidget *chaos_ui = centralWidget()->findChild<QWidget*>(pAction->data().toString());
+    if(chaos_ui == nullptr) return;
+
+    ScriptSignalDialog scriptDialog(getSignal(chaos_ui));
+    scriptDialog.setWindowTitle(tr("Script Editor"));
+    scriptDialog.exec();
+}
+
+QStringList ChaosUISynopticLoaderWindow::getSignal(QWidget *wgt) {
+    QStringList signalSignatures;
+    if(wgt == nullptr) return signalSignatures;
+
+    const QMetaObject *thisMeta = wgt->metaObject();
+    for(int methodIdx = 0;
+        methodIdx < thisMeta->methodCount();
+        ++methodIdx) {
+        QMetaMethod method = thisMeta->method(methodIdx);
+        qDebug() << QString(method.methodSignature());
+        switch(method.methodType()) {
+        case QMetaMethod::Signal:
+            signalSignatures.append(QString(method.methodSignature()));
+            break;
+        default:
+            break;
+        }
+    }
+    return signalSignatures;
+}
 
 
 void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& /*node_uid*/,
@@ -149,20 +202,6 @@ bool ChaosUISynopticLoaderWindow::monitor(const QString& cu_uid,
     }
     return result;
 }
-
-void ChaosUISynopticLoaderWindow::onApiDone(const QString& /*tag*/,
-                                            QSharedPointer<chaos::common::data::CDataWrapper> /*api_result*/) {
-
-}
-void ChaosUISynopticLoaderWindow::onApiError(const QString& /*tag*/,
-                                             QSharedPointer<chaos::CException> api_exception) {
-    ErrorManager::getInstance()->submiteError(api_exception);
-}
-void ChaosUISynopticLoaderWindow::onApiTimeout(const QString& /*tag*/) {}
-void ChaosUISynopticLoaderWindow::apiHasStarted(const QString& /*api_tag*/) {}
-void ChaosUISynopticLoaderWindow::apiHasEnded(const QString& /*api_tag*/) {}
-void ChaosUISynopticLoaderWindow::apiHasEndedWithError(const QString& /*tag*/,
-                                                       const QSharedPointer<chaos::CException> /*api_exception*/){}
 
 QVariant ChaosUISynopticLoaderWindow::toQVariant(chaos::common::data::CDataVariant chaos_value) {
     QVariant result;

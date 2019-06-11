@@ -3,12 +3,12 @@
 
 #include "CUNodeRoot.h"
 #include "../ChaosMonitorWidgetCompanion.h"
-#include "../../api_async_processor/ApiSubmitter.h"
 
+#include <QJSEngine>
 #include <QMultiHash>
 #include <QMainWindow>
-#include <QSharedPointer>
 #include <QCloseEvent>
+#include <QSharedPointer>
 
 namespace Ui {
 class ChaosUISynopticLoaderWindow;
@@ -16,7 +16,6 @@ class ChaosUISynopticLoaderWindow;
 
 class ChaosUISynopticLoaderWindow :
         public QMainWindow,
-        protected ApiHandler,
         public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     Q_OBJECT
 public:
@@ -30,12 +29,14 @@ private slots:
 
     void on_loadUIFileAction_triggered();
 
+    void customMenuRequested(QPoint point);
+
+    void editScript();
 private:
     bool ui_enabled;
+    QJSEngine js_engine;
     //contains correlation for cu and his associated ui;
-    QMultiHash<QString, QObject*> cu_object_hash;
     QMultiHash<QString, QSharedPointer<CUNodeRoot> > hash_device_root;
-    ApiSubmitter api_submitter;
     Ui::ChaosUISynopticLoaderWindow *ui;
 
     QWidget *loadUiFile(QWidget *parent, QString filePath);
@@ -52,18 +53,9 @@ private:
 
     bool monitor(const QString& cu_uid, bool enable);
 
-    // api submittion handler
-    void onApiDone(const QString& tag,
-                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-    void onApiError(const QString& tag,
-                    QSharedPointer<chaos::CException> api_exception);
-    void onApiTimeout(const QString& tag) ;
-    void apiHasStarted(const QString& api_tag);
-    void apiHasEnded(const QString& api_tag);
-    void apiHasEndedWithError(const QString& tag,
-                              const QSharedPointer<chaos::CException> api_exception);
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
     void closeEvent(QCloseEvent *event);
+    QStringList getSignal(QWidget *wgt);
 };
 
 #endif // CHAOSUISYNOPTICLOADERWINDOW_H

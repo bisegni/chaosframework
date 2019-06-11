@@ -11,10 +11,8 @@ class CDatasetAttributeLabel :
 public:
     explicit CDatasetAttributeLabel(QWidget *parent = nullptr);
     ~CDatasetAttributeLabel();
-signals:
-
 private slots:
-   void updateValue(QVariant variant_value);
+    void updateValue(QVariant new_value);
 
 private:
     QLabel *labelValue;
