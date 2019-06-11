@@ -254,7 +254,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
-            MDBNDA_ERR << "Error updating unit server";
+            MDBNDA_ERR << "Error updating NODE:"<<node_description.getCompliantJSONString();
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
@@ -285,7 +285,7 @@ int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       q))){
-            MDBNDA_ERR << "Error sercing unit server unit server" << node_unique_id;
+            MDBNDA_ERR << "Error searching NODE:" << node_unique_id<<" type:"<<node_unique_type;
         }
         presence = !result.isEmpty();
     } catch (const mongo::DBException &e) {
@@ -373,7 +373,7 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
         
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q))){
-            MDBNDA_ERR << "Error deleting unit server" << node_unique_id;
+            MDBNDA_ERR << "Error deleting NODE:" << node_unique_id;
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
@@ -746,7 +746,7 @@ int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command
                                      query,
                                      update,
                                      true))) {
-            MDBNDA_ERR << "Error updating unit server:" << err;
+            MDBNDA_ERR << "Error updating NODE command:" << command.getCompliantJSONString()<<" err:"<<err;
         }
         
     } catch (const mongo::DBException &e) {
@@ -1035,7 +1035,7 @@ int MongoDBNodeDataAccess::addAgeingManagementDataToNode(const std::string& cont
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
-            MDBNDA_DBG << CHAOS_FORMAT("Error %1% completing control unit %2% with ageing management information", %err%control_unit_id);
+            MDBNDA_DBG << CHAOS_FORMAT("Error %1% completing NODE %2% with ageing management information", %err%control_unit_id);
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();

@@ -49,7 +49,8 @@ last_used_sb_idx(3){
     installCommand(node::SendRpcCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SendRpcCommand));
     installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
     installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
-    
+    installCommand(node::NodeAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::NodeAckCommand));
+
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
     
@@ -68,6 +69,7 @@ last_used_sb_idx(3){
     installCommand(script::LoadInstanceOnUnitServer::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::LoadInstanceOnUnitServer));
     
     installCommand(agent::AgentAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentAckCommand));
+
     installCommand(agent::AgentProcessController::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentProcessController));
     installCommand(agent::AgentCheckAgentProcess::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentCheckAgentProcess));
     installCommand(agent::AgentRemoveNodeSafety::command_alias, MDS_BATCH_COMMAND_INSTANCER(agent::AgentRemoveNodeSafety));
