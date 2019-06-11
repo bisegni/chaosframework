@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(chaos_metadata_service_client)
 
+
+
+IF (WIN32)
+include_directories(../../ ${ALL_WINDOWS_INCLUDE_DIR})
+ELSE()
 INCLUDE_DIRECTORIES(../)
+ENDIF()
+
+
 
 SET(mcl_src ChaosMetadataServiceClient.cpp)
 
@@ -131,10 +139,11 @@ ELSE ()
 ENDIF ()
 
 
-
-
+IF (WIN32)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}      ${ALL_WINDOWS_LIBPATH}   "-LIBPATH:C:/Users/aduffizi/source/repos/chaos_bundle/INSTALLPATH/lib/" chaos_common.lib )
+ELSE()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common ${FrameworkLib})
-
+ENDIF()
 #install common header
 
 FILE(GLOB files "../chaos_service_common/data/*.h")
