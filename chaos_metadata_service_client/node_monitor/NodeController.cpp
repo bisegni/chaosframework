@@ -171,7 +171,7 @@ void NodeController::updateData() {
 }
 
 void NodeController::quantumSlotHasData(const std::string& key,
-                                        const monitor_system::KeyValue& value) {
+                                        const chaos::metadata_service_client::monitor_system::KeyValue& value) {
     //check for monitored key
     if(key.compare(node_health_uid) != 0) return;
     //update internal structure
