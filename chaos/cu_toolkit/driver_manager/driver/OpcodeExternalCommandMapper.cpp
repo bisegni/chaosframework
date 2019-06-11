@@ -65,7 +65,7 @@ OpcodeExternalCommandMapper::~OpcodeExternalCommandMapper() {}
 void OpcodeExternalCommandMapper::driverInit(const chaos::common::data::CDataWrapper& init_parameter)  {}
 void OpcodeExternalCommandMapper::driverDeinit()  {}
 
-int OpcodeExternalCommandMapper::sendInit(cu::driver_manager::driver::DrvMsgPtr cmd){
+int OpcodeExternalCommandMapper::sendInit(chaos::cu::driver_manager::driver::DrvMsgPtr cmd){
     common::data::CDWShrdPtr response;
     common::data::CDWUniquePtr init_pack(new CDataWrapper());
     cmd->ret =  0;
@@ -73,7 +73,7 @@ int OpcodeExternalCommandMapper::sendInit(cu::driver_manager::driver::DrvMsgPtr 
     return cmd->ret;
 }
 
-int OpcodeExternalCommandMapper::sendDeinit(cu::driver_manager::driver::DrvMsgPtr cmd){
+int OpcodeExternalCommandMapper::sendDeinit(chaos::cu::driver_manager::driver::DrvMsgPtr cmd){
     common::data::CDWShrdPtr response;
     common::data::CDWUniquePtr init_pack(new CDataWrapper());
     cmd->ret =  0;
