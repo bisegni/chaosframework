@@ -168,9 +168,11 @@ throw chaos::CException(e,msg,ss.str());}
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
 
     //chaos assert to debug real badthing
-
+#ifdef _WIN32
+#define CHAOS_UNUSED 
+#else
 #define CHAOS_UNUSED __attribute__((unused))
-
+#endif
 #include <chaos/common/version.h>
 
     //macro for decode the chaos exception
