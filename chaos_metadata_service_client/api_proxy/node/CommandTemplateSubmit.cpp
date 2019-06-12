@@ -59,7 +59,7 @@ ApiProxyResult CommandTemplateSubmit::execute(const std::string& node_uid,
                                               const uint32_t priority,
                                               const uint64_t scheduler_steps_delay,
                                               const uint32_t submission_checker_steps_delay,
-                                              common::data::CDWUniquePtr& slow_command_data){
+                                              chaos::common::data::CDWUniquePtr& slow_command_data){
      CDWUniquePtr message(new CDataWrapper());
     //this key need only to inform mds to redirect to node the slowcomand without porcess it
     message->addNullValue("direct_mode");

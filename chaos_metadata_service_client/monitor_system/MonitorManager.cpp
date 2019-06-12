@@ -29,7 +29,7 @@ using namespace chaos::metadata_service_client::monitor_system;
 #define MM_ERR    INFO_LOG(MonitorManager)
 
 MonitorManager::MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
-                               ClientSetting *_setting):
+                               chaos::metadata_service_client::ClientSetting *_setting):
 setting(_setting),
 slot_scheduler(NULL),
 network_broker(_network_broker){}
