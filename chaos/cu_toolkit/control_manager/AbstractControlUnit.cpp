@@ -1769,7 +1769,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                             case DataType::TYPE_BYTEARRAY: {
                                 uint32_t    bin_size = 0;
 //                                const char* binv     = dataset_attribute_values->getBinaryValue(attr_name, bin_size);
-                                CDBufferShrdPtr buffer = dataset_attribute_values->getBinaryValueAsCDataBuffer(attr_name);
+                                CDBufferUniquePtr buffer = dataset_attribute_values->getBinaryValueAsCDataBuffer(attr_name);
                                 attribute_cache_value->setValue(buffer->getBuffer(), buffer->getBufferSize());
                                 break;
                             }
