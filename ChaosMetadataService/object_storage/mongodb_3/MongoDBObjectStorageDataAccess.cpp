@@ -272,13 +272,10 @@ void MongoDBObjectStorageDataAccess::timeout() {
     push_current_step_left = push_timeout_multiplier;
 }
 
-CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::pool::entry& client,
+CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
                                                        const std::string& _id) {
     CDWShrdPtr result;
     int err = 0;
-    //access to database
-    auto db = (*client)[MONGODB_DB_NAME];
-    //access a collection
     collection coll_data = db[MONGODB_DAQ_COLL_NAME];
     
     auto opts  = options::find{};
@@ -295,6 +292,41 @@ CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::pool::entry& cl
         } else {
             //create empty object for not found data
             result = ChaosMakeSharedPtr<CDataWrapper>();
+        }
+    } catch (const mongocxx::exception &e) {
+        ERR << e.what();
+        err = e.code().value();
+    }
+    return result;
+}
+
+VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
+                                                         const ChaosStringSet& _ids) {
+    VectorObject result;
+    int err = 0;
+    //access a collection
+    collection coll_data = db[MONGODB_DAQ_COLL_NAME];
+    
+    auto opts  = options::find{};
+    read_preference read_pref;
+    read_pref.mode(read_preference::read_mode::k_secondary_preferred);
+    opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+    
+    try {
+        //compose array of id
+        auto builder = builder::basic::document{};
+        auto array_builder = bsoncxx::builder::basic::array{};
+        for(auto& it: _ids) {
+            array_builder.append(bsoncxx::oid(it));
+        }
+        
+        //find all requested id
+        //kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$all", array_builder)))
+        builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
+        auto cursor = coll_data.find(builder.view(), opts);
+        for(auto && document : cursor){
+            auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+            result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
@@ -324,7 +356,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
         if(element) {
             //we have found data
             auto id_value = element.value().view()["_id"];
-            object_ptr_ref = getDataByID(client,
+            object_ptr_ref = getDataByID(db,
                                          id_value.get_oid().value.to_string());
         } else {
             //create empty object for not found data
@@ -363,7 +395,7 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
         if(element) {
             //we have found data
             auto id_value = element.value().view()["_id"];
-            object_ptr_ref = getDataByID(client,
+            object_ptr_ref = getDataByID(db,
                                          id_value.get_oid().value.to_string());
         } else {
             //create empty object for not found data
@@ -492,17 +524,21 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         }
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
+        
+        ChaosStringSet foud_ids;
         auto cursor = coll_index.find(builder.view(),opts);
         for(auto && document : cursor){
             auto id_value = document["_id"];
             if(id_value.type() != bsoncxx::type::k_oid){
                 continue;
             }
-            found_object_page.push_back(getDataByID(client,
-                                                    id_value.get_oid().value.to_string()));
+            foud_ids.insert(id_value.get_oid().value.to_string());
+//            found_object_page.push_back(getDataByID(db,
+//                                                    id_value.get_oid().value.to_string()));
             last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
             last_record_found_seq.datapack_counter = document[chaos::DataPackCommonKey::DPCK_SEQ_ID].get_int64();
         }
+        found_object_page = getDataByID(db, foud_ids);
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();

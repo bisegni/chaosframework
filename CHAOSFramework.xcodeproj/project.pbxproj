@@ -1091,6 +1091,7 @@
 		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
 		32E45C0F22B02F03000B5DB1 /* ProcessInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E45C0E22B02F03000B5DB1 /* ProcessInfo.cpp */; };
 		32E45C1122B02F0B000B5DB1 /* ProcessInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E45C1022B02F0B000B5DB1 /* ProcessInfo.h */; };
+		32E45FBE22B2AC1C00AC4ADE /* NodeAckCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E45FBD22B2AC1C00AC4ADE /* NodeAckCommand.cpp */; };
 		32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F4371E48689E0068320E /* ProcessWorker.cpp */; };
 		32E6F43C1E4869120068320E /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43A1E4869120068320E /* AbstractWorker.cpp */; };
 		32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E6F43D1E48B4260068320E /* AgentDataAccess.cpp */; };
@@ -2669,6 +2670,8 @@
 		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32E45C0E22B02F03000B5DB1 /* ProcessInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessInfo.cpp; sourceTree = "<group>"; };
 		32E45C1022B02F0B000B5DB1 /* ProcessInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessInfo.h; sourceTree = "<group>"; };
+		32E45FBC22B2AC1B00AC4ADE /* NodeAckCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeAckCommand.h; sourceTree = "<group>"; };
+		32E45FBD22B2AC1C00AC4ADE /* NodeAckCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeAckCommand.cpp; sourceTree = "<group>"; };
 		32E6F4281E44D7D30068320E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32E6F4371E48689E0068320E /* ProcessWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessWorker.cpp; sourceTree = "<group>"; };
 		32E6F4381E48689E0068320E /* ProcessWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessWorker.h; sourceTree = "<group>"; };
@@ -4671,6 +4674,8 @@
 		32761A3D1B37F1DD006C8719 /* node */ = {
 			isa = PBXGroup;
 			children = (
+				32E45FBD22B2AC1C00AC4ADE /* NodeAckCommand.cpp */,
+				32E45FBC22B2AC1B00AC4ADE /* NodeAckCommand.h */,
 				32568C891B3D54650006988C /* UpdatePropertyCommand.cpp */,
 				32568C8A1B3D54650006988C /* UpdatePropertyCommand.h */,
 				32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */,
@@ -6902,6 +6907,7 @@
 				32B6B79E213EA6DD00D7ECF8 /* SearchInstancesForScript.cpp in Sources */,
 				32B6B778213E8C7600D7ECF8 /* NodeLoadCompletion.cpp in Sources */,
 				325F022A213ED99C00270077 /* RemoveVariable.cpp in Sources */,
+				32E45FBE22B2AC1C00AC4ADE /* NodeAckCommand.cpp in Sources */,
 				325F0229213ED99C00270077 /* GetVariable.cpp in Sources */,
 				32E6F43F1E48B4260068320E /* AgentDataAccess.cpp in Sources */,
 				325F0227213ED99C00270077 /* GetSnapshotForNode.cpp in Sources */,
