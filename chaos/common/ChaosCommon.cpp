@@ -154,9 +154,6 @@ ChaosAbstractCommon::ChaosAbstractCommon()
     GlobalConfiguration::getInstance()->getBuildInfoRef().addStringValue("BuildDate",dd.str());
     GlobalConfiguration::getInstance()->getBuildInfoRef().addInt32Value("BuildID",CSLIB_BUILD_ID);
 }
-/*const std::string ChaosAbstractCommon::getBuildInfo(){
-    return GlobalConfiguration::getInstance()->getBuildInfoRef().getCompliantJSONString();
-}*/
 
 ChaosAbstractCommon::~ChaosAbstractCommon() {}
 

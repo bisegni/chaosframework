@@ -265,9 +265,9 @@ int main(int argc, const char* argv[]) {
         ChaosMetadataServiceClient::getInstance()->getNewCUController(device_id, &controller);
 
         if(!controller) throw CException(4, "Error allocating decive controller", "device controller creation");
-        CDWUniquePtr build_info;
-        controller->getBuildInfo(build_info);
-        std::cout << build_info->getJSONString() << std::endl;
+//        CDWUniquePtr build_info;
+//        controller->getBuildInfo(build_info);
+//        std::cout << build_info->getJSONString() << std::endl;
 //        controller->setQueryOnIndex(true);
         ChaosStringSet search_tags;
         chaos::common::io::QueryCursor *query_cursor = NULL;
