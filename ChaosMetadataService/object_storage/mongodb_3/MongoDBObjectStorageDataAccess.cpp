@@ -311,24 +311,30 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     read_preference read_pref;
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
-    opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-                            kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
-                            kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+//    opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
+//                            kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
+//                            kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+    opts.sort(make_document(kvp("_id", 1)));
     try {
-        //compose array of id
-        auto builder = builder::basic::document{};
-        auto array_builder = bsoncxx::builder::basic::array{};
-        for(auto& it: _ids) {
-            array_builder.append(bsoncxx::oid(it));
-        }
-        
-        //find all requested id
-        //kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), make_document(kvp("$all", array_builder)))
-        builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
-        auto cursor = coll_data.find(builder.view(), opts);
-        for(auto && document : cursor){
-            auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
-            result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
+        //scan and get data 30 epement at time
+        int idx = 0;
+        ChaosStringSetConstIterator it = _ids.begin();
+        while(it != _ids.end()) {
+            idx = 0;
+            auto builder = builder::basic::document{};
+            auto array_builder = bsoncxx::builder::basic::array{};
+            while((it != _ids.end()) &&
+                (idx <= 30)) {
+                array_builder.append(bsoncxx::oid(*it));
+                it++;idx++;
+            }
+            builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
+            auto cursor = coll_data.find(builder.view(), opts);
+//            INFO << to_json(builder.view());
+            for(auto && document : cursor){
+                auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+                result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
+            }
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
@@ -534,13 +540,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             if(id_value.type() != bsoncxx::type::k_oid){
                 continue;
             }
-//            foud_ids.insert(id_value.get_oid().value.to_string());
-            found_object_page.push_back(getDataByID(db,
-                                                    id_value.get_oid().value.to_string()));
+            foud_ids.insert(id_value.get_oid().value.to_string());
+//            found_object_page.push_back(getDataByID(db,
+//                                                    id_value.get_oid().value.to_string()));
             last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
             last_record_found_seq.datapack_counter = document[chaos::DataPackCommonKey::DPCK_SEQ_ID].get_int64();
         }
-//        found_object_page = getDataByID(db, foud_ids);
+        found_object_page = getDataByID(db, foud_ids);
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
