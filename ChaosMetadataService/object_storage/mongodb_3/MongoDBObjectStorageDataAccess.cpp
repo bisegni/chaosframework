@@ -534,13 +534,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             if(id_value.type() != bsoncxx::type::k_oid){
                 continue;
             }
-            foud_ids.insert(id_value.get_oid().value.to_string());
-//            found_object_page.push_back(getDataByID(db,
-//                                                    id_value.get_oid().value.to_string()));
+//            foud_ids.insert(id_value.get_oid().value.to_string());
+            found_object_page.push_back(getDataByID(db,
+                                                    id_value.get_oid().value.to_string()));
             last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
             last_record_found_seq.datapack_counter = document[chaos::DataPackCommonKey::DPCK_SEQ_ID].get_int64();
         }
-        found_object_page = getDataByID(db, foud_ids);
+//        found_object_page = getDataByID(db, foud_ids);
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
