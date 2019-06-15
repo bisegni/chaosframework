@@ -311,10 +311,10 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     read_preference read_pref;
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
-//    opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-//                            kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
-//                            kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
-    opts.sort(make_document(kvp("_id", 1)));
+    opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
+                            kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
+                            kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+//    opts.sort(make_document(kvp("_id", 1)));
     try {
         //scan and get data 30 epement at time
         int idx = 0;
