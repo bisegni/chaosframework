@@ -141,6 +141,28 @@ static void initSearchIndex(mongocxx::database& db,
     }
 }
 
+static void initSearchData(mongocxx::database& db,
+                            std::string col_name) {
+    if(findIndex(db,
+                 col_name,
+                 "order_index")) {
+        return;
+    }
+    auto index_builder = builder::basic::document{};
+    mongocxx::options::index index_options{};
+    index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
+    index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
+    index_options.name("order_index");
+    try{
+        db[col_name].create_index(index_builder.view(), index_options);
+    } catch( mongocxx::operation_exception& e) {
+        //fail to create index
+        ERR << e.what();
+    }
+}
+
+
 MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
 pool_ref(_pool_ref),
 curret_batch_size(0),
@@ -159,7 +181,7 @@ push_current_step_left(push_timeout_multiplier){
     
     //data collection
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
-    initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
+    initSearchData(db, MONGODB_DAQ_COLL_NAME);
     
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
@@ -311,8 +333,8 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     read_preference read_pref;
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
-    opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-                            kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
+    opts.sort(make_document(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
+                            kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
                             kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
 //    opts.sort(make_document(kvp("_id", 1)));
     try {

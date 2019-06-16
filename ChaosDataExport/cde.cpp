@@ -327,6 +327,10 @@ int main(int argc, const char* argv[]) {
                            last_sid >= sid) {
                             std::cout << " [SEQERR] ";
                         }
+                        if(last_rid < rid &&
+                           last_sid+1 != sid) {
+                            std::cout << " [SEQERR] ";
+                        }
                         last_rid = rid;
                         last_sid = sid;
                     }
