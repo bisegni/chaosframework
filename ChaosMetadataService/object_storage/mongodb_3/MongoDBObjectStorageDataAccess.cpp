@@ -152,7 +152,6 @@ static void initSearchData(mongocxx::database& db,
     mongocxx::options::index index_options{};
     index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
     index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
-    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
     index_options.name("order_index");
     try{
         db[col_name].create_index(index_builder.view(), index_options);
@@ -334,29 +333,40 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
     opts.sort(make_document(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-                            kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1),
-                            kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),  1)));
+                            kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
 //    opts.sort(make_document(kvp("_id", 1)));
     try {
         //scan and get data 30 epement at time
-        int idx = 0;
+//        int idx = 0;
         ChaosStringSetConstIterator it = _ids.begin();
+//        while(it != _ids.end()) {
+//            idx = 0;
+//            auto builder = builder::basic::document{};
+//            auto array_builder = bsoncxx::builder::basic::array{};
+//            while((it != _ids.end()) &&
+//                (idx <= 30)) {
+//                array_builder.append(bsoncxx::oid(*it));
+//                it++;idx++;
+//            }
+//            builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
+//            auto cursor = coll_data.find(builder.view(), opts);
+////            INFO << to_json(builder.view());
+//            for(auto && document : cursor){
+//                auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+//                result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
+//            }
+//        }
+        auto builder = builder::basic::document{};
+        auto array_builder = bsoncxx::builder::basic::array{};
         while(it != _ids.end()) {
-            idx = 0;
-            auto builder = builder::basic::document{};
-            auto array_builder = bsoncxx::builder::basic::array{};
-            while((it != _ids.end()) &&
-                (idx <= 30)) {
-                array_builder.append(bsoncxx::oid(*it));
-                it++;idx++;
-            }
-            builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
-            auto cursor = coll_data.find(builder.view(), opts);
-//            INFO << to_json(builder.view());
-            for(auto && document : cursor){
-                auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
-                result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
-            }
+            array_builder.append(bsoncxx::oid(*it));
+            it++;
+        }
+        builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
+        auto cursor = coll_data.find(builder.view(), opts);
+        for(auto && document : cursor){
+            auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+            result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
