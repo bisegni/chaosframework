@@ -26,6 +26,8 @@ option(CHAOS_MDS "Chaos Data Service" OFF)
 option(CHAOS_AGENT "Chaos Agent Service" OFF)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" OFF)
 option(CHAOS_EXAMPLES "Chaos Examples" OFF)
+#warning possibile perdita di dati spento.
+add_definitions(-wd"4267")
 else (WIN32)
 option(CHAOS_MDS "Chaos Data Service" ON)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
@@ -145,13 +147,13 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
-  if (NOT WIN32)
+  
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
-  endif()
+  
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
