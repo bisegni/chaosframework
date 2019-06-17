@@ -22,6 +22,7 @@
 #include "../ChaosMetadataService.h"
 #include "DeviceSharedDataWorker.h"
 #include "../cache_system/CacheDriverMetricCollector.h"
+#include "../DriverPoolManager.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
@@ -48,14 +49,7 @@ DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 
 void DeviceSharedDataWorker::init(void *init_data)  {
     DataWorker::init(init_data);
-    
-    const std::string object_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl;
-    INFO << CHAOS_FORMAT("Allocating object storage driver '%1%' for every worker thread", %object_impl_name);
-    
-    global_object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
-    global_object_storage_driver->init(init_data);
-    ObjectStorageDataAccess *obj_storage_da  = global_object_storage_driver->getDataAccess<ObjectStorageDataAccess>();
-    
+    ObjectStorageDataAccess *obj_storage_da  = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<ObjectStorageDataAccess>();
     for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.thread_number; idx++) {
         //associate the thread cooky for the idx value
         thread_cookie[idx] = (void*)obj_storage_da;

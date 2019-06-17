@@ -76,8 +76,11 @@ namespace chaos {
                     //!TimeOutHnadler inherited
                     void timeout();
                     
-                    inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::pool::entry& client,
+                    inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::database& db,
                                                                        const std::string& _id);
+                    
+                    inline abstraction::VectorObject getDataByID(mongocxx::database& db,
+                                                                 const ChaosStringSet& _ids);
                 public:
                     //inhertied method
                     int pushObject(const std::string&                       key,
