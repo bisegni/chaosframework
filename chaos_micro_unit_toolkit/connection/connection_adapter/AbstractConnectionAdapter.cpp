@@ -33,7 +33,7 @@ adapter_request_id(0){}
 
 AbstractConnectionAdapter::~AbstractConnectionAdapter() {}
 
-void AbstractConnectionAdapter::handleReceivedMessage(data::CDWShrdPtr& received_message) {
+void AbstractConnectionAdapter::handleReceivedMessage(CDWShrdPtr& received_message) {
     //checn whenever the message is a response or spontaneus message
     if(received_message->hasKey("etx_request_id") &&
        received_message->isInt32Value("etx_request_id")) {
@@ -44,14 +44,14 @@ void AbstractConnectionAdapter::handleReceivedMessage(data::CDWShrdPtr& received
     }
 }
 
-int AbstractConnectionAdapter::sendMessage(data::CDWUniquePtr& message) {
+int AbstractConnectionAdapter::sendMessage(CDWUniquePtr& message) {
     if(connection_status != ConnectionStateAccepted){
         return -1;
     }
     return sendRawMessage(message);
 }
 
-int AbstractConnectionAdapter::sendRequest(data::CDWUniquePtr& message,
+int AbstractConnectionAdapter::sendRequest(CDWUniquePtr& message,
                                            uint32_t& request_id) {
     request_id = adapter_request_id++;
     message->addInt32Value("ext_request_id", request_id);

@@ -35,7 +35,7 @@ using namespace chaos::micro_unit_toolkit::connection::unit_proxy::raw_driver;
 #define DEINIT_OPCODE           "deinit"
 #define CONFIGURATION_STATE     "configuration_state"
 
-ExternalDriverHandlerWrapper::ExternalDriverHandlerWrapper(UnitProxyHandler handler,
+ExternalDriverHandlerWrapper::ExternalDriverHandlerWrapper(chaos::micro_unit_toolkit::connection::unit_proxy::UnitProxyHandler handler,
                                                            void *user_data,
                                                            ChaosUniquePtr<ExternalDriverUnitProxy>& _u_proxy):
 UnitProxyHandlerWrapper(handler,
@@ -51,7 +51,7 @@ authorized(false){}
 
 ExternalDriverHandlerWrapper::~ExternalDriverHandlerWrapper(){}
 
-int ExternalDriverHandlerWrapper::sendMessage(data::CDWUniquePtr& message_data) {
+int ExternalDriverHandlerWrapper::sendMessage(CDWUniquePtr& message_data) {
     ExternalDriverUnitProxy * const rd = static_cast<ExternalDriverUnitProxy*>(base_unit.get());
     return rd->sendMessage(message_data);
 }

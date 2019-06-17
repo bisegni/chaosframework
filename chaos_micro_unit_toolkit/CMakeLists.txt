@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(chaos_micro_unit_toolkit)
 
-INCLUDE_DIRECTORIES( ../)
+if(WIN32)
+include_directories(${ALL_WINDOWS_INCLUDE_DIR})
+else()
+include_directories(../)
+endif(WIN32)
 
 SET(source ChaosMicroUnitToolkit.cpp)
 SET(source ${source} data/DataPack.cpp)
@@ -46,7 +50,13 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED ${source})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
+
+
+if(WIN32)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ALL_WINDOWS_LIBPATH} )
+else()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread)
+endif()
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_micro_unit_toolkit)

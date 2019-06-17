@@ -21,7 +21,10 @@
 
 #include <chaos_micro_unit_toolkit/connection/unit_proxy/UnitProxyHandlerWrapper.h>
 #include <iostream>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
+#include <chaos/cu_toolkit/windowsCompliant.h>
 #include <cassert>
 
 using namespace chaos::micro_unit_toolkit::data;
