@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(chaos_common)
 #### required libraries
-MESSAGE("ALEDEBUG CMAKELIST framework/chaos/common")
+MESSAGE(" CMAKELIST framework/chaos/common")
+MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
 if(WIN32)
 set(CMAKE_SUPPRESS_REGENERATION true)
 ELSE(WIN32)
@@ -10,6 +11,7 @@ IF(NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
+ENDIF(WIN32)
 	IF (CHAOS_TARGET)
 	MESG("Configure libzmq with autotools")  
 	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
@@ -28,7 +30,7 @@ ENDIF()
 	 LOG_CONFIGURE ON
 	 LOG_BUILD ON)
 	ENDIF()
-ENDIF(WIN32)
+
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
@@ -379,10 +381,10 @@ ELSE ()
 ENDIF ()
 
 
-IF (NOT WIN32)
+#IF (NOT WIN32)
 #add dependency to libzmq
 add_dependencies(${PROJECT_NAME} libzmq)
-ENDIF(NOT WIN32)
+#ENDIF(NOT WIN32)
 
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)
