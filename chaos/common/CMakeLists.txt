@@ -1,30 +1,34 @@
+cmake_minimum_required(VERSION 2.8)
 project(chaos_common)
 #### required libraries
-
+MESSAGE("ALEDEBUG CMAKELIST framework/chaos/common")
+if(WIN32)
+set(CMAKE_SUPPRESS_REGENERATION true)
+ELSE(WIN32)
 IF(NOT CHAOS_DISABLE_EVENTFD)
   CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
-
-IF (CHAOS_TARGET)
-MESG("Configure libzmq with autotools")  
-CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
-ELSE()
-MESG("Configure libzmq as CMake")
-ExternalProject_Add(
- libzmq
- GIT_REPOSITORY https://github.com/zeromq/libzmq.git
- GIT_TAG v4.3.1
- PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libzmq-prefix"
- SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
- BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
- CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
- LOG_DOWNLOAD ON
- LOG_CONFIGURE ON
- LOG_BUILD ON)
-ENDIF()
+	IF (CHAOS_TARGET)
+	MESG("Configure libzmq with autotools")  
+	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
+	ELSE()
+	MESG("Configure libzmq as CMake")
+	ExternalProject_Add(
+	 libzmq
+	 GIT_REPOSITORY https://github.com/zeromq/libzmq.git
+	 GIT_TAG v4.3.1
+	 PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libzmq-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
+	 CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
+	 LOG_DOWNLOAD ON
+	 LOG_CONFIGURE ON
+	 LOG_BUILD ON)
+	ENDIF()
+ENDIF(WIN32)
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
@@ -64,7 +68,7 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
        MESG("Searching cling cmake module in ${CMAKE_MODULE_PATH}")
        # This project needs cling.
        find_library(Cling REQUIRED)
-    add_dependencies(${PROJECT_NAME} cling)
+	   add_dependencies(${PROJECT_NAME} cling)
   ENDIF()
 ENDIF()
 
@@ -257,7 +261,7 @@ SET(common_lib_src ${common_lib_src}
                     io/IODirectIODriver.cpp
                     io/ManagedDirectIODataDriver.cpp
                     io/QueryCursor.cpp
-                    io/QueryIndexCursor.cpp
+					io/QueryIndexCursor.cpp
                     io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -297,10 +301,10 @@ SET(common_lib_src ${common_lib_src}
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
+					utility/ProcessInfo.cpp
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
                     utility/Base64Util.cpp
-                    utility/ProcessInfo.cpp
                     utility/Random.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -339,12 +343,14 @@ SET(common_lib_src ${common_lib_src}
                     trigger/TriggerExecutionEnviroment.cpp
                     trigger/trigger_types.cpp)
 
-
 SET(common_lib_src ${common_lib_src}
-		ChaosCommonWin.cpp)
+                    ChaosCommonWin.cpp)
 #compile lua chaos vm and core files
+if (WIN32)
+INCLUDE_DIRECTORIES( ../../ script/lua/core ${ALL_WINDOWS_INCLUDE_DIR})
+else(WIN32)
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
-
+endif(WIN32)
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
@@ -365,15 +371,18 @@ ENDIF ()
 #SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
 # separate_arguments(common_lib_library)
 
-IF (BUILD_FORCE_STATIC)
+IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
 ELSE ()
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
+
+IF (NOT WIN32)
 #add dependency to libzmq
 add_dependencies(${PROJECT_NAME} libzmq)
+ENDIF(NOT WIN32)
 
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)
@@ -384,7 +393,11 @@ IF(CLING_VIRTUAL_MACHINE)
   MESSAGE(STATUS "LINKING clingIntepreter")
   TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib} clingInterpreter )
 ELSE()
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
+IF (WIN32)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ALL_WINDOWS_LIBPATH})
+ELSE(WIN32)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
+ENDIF(WIN32)
 ENDIF()
 
 
@@ -526,10 +539,6 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua)
 FILE(GLOB files "script/lua/core/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua/core)
 
-
 INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-# INSTALL(TARGETS chaos_common_static
-#         DESTINATION "lib"
-#         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
