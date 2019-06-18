@@ -25,8 +25,9 @@
 
 using namespace chaos::micro_unit_toolkit::data;
 using namespace chaos::micro_unit_toolkit::connection::connection_adapter::http;
+using namespace chaos::micro_unit_toolkit::connection;
 
-const chaos::micro_unit_toolkit::connection::ConnectionType HTTPConnectionAdapter::connection_type = chaos::micro_unit_toolkit::connection::ConnectionType::ConnectionTypeHTTP;
+const chaos::micro_unit_toolkit::connection::ConnectionType HTTPConnectionAdapter::connection_type = ConnectionTypeHTTP;
 
 HTTPConnectionAdapter::HTTPConnectionAdapter(const std::string& endpoint,
                                          const std::string& connection_header):
