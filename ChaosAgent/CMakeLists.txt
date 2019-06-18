@@ -4,8 +4,11 @@ IF (DEFINED ENV{CHAOS_BUNDLE} )
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ENDIF()
 
+if(WIN32)
+include_directories(${ALL_WINDOWS_INCLUDE_DIR})
+else()
 INCLUDE_DIRECTORIES(chaos/common ../)
-
+endif()
 SET(agent_src   main.cpp
                 ChaosAgent.cpp
                 AgentRegister.cpp
@@ -43,5 +46,12 @@ IF(BUILD_FORCE_STATIC)
 SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
+if(WIN32)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  RestProcessManager ${ALL_WINDOWS_LIBPATH} "-LIBPATH:C:/Users/aduffizi/source/repos/chaos_bundle/INSTALLPATH/lib/" chaos_common)
+else()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} RestProcessManager chaos_common  ${FrameworkLib})
+endif()
+
+
+
 INSTALL_TARGETS(/bin ${PROJECT_NAME})
