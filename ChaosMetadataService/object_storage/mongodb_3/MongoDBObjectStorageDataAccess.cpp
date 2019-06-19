@@ -167,7 +167,7 @@ pool_ref(_pool_ref),
 curret_batch_size(0),
 batch_size_limit(DEFAULT_BATCH_SIZE_IN_BYTE),
 push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
-push_current_step_left(push_timeout_multiplier){
+push_current_step_left(push_timeout_multiplier),write_timeout(common::constants::ObjectStorageTimeoutinMSec),read_timeout(common::constants::ObjectStorageTimeoutinMSec){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -181,7 +181,33 @@ push_current_step_left(push_timeout_multiplier){
     //data collection
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
     initSearchData(db, MONGODB_DAQ_COLL_NAME);
-    
+    MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+     if(obj_stoarge_kvp.count("wtimeout")) {
+        write_timeout=strtoul(obj_stoarge_kvp["wtimeout"].c_str(),0,0);
+        DBG<<" setting write timeout:"<<write_timeout<<" ms";
+    }
+    if(obj_stoarge_kvp.count("rtimeout")) {
+        read_timeout=strtoul(obj_stoarge_kvp["wtimeout"].c_str(),0,0);
+        DBG<<" setting read timeout:"<<read_timeout<<" ms";
+    }
+    if(obj_stoarge_kvp.count("mongodb_oswc")) {
+        //set the custom write concern
+        INFO << CHAOS_FORMAT("Set MongoDB object storage write concern to %1%", %obj_stoarge_kvp["mongodb_oswc"]);
+        if(obj_stoarge_kvp["mongodb_oswc"].compare("unacknowledged") == 0) {
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("acknowledged") == 0) {
+        } else if(obj_stoarge_kvp["mongodb_oswc"].compare("journaled") == 0) {
+             DBG<<" Write Journaled";
+            write_options.journal(true);
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
+        }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
+            DBG<<" Write Majority";
+            write_options.acknowledge_level(write_concern::level::k_majority);
+            write_options.majority(std::chrono::milliseconds(write_timeout));
+        } else {
+            //LOG_AND_THROW(ERR, -1, CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]));
+        }
+    }
+   
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
@@ -199,9 +225,11 @@ void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _bat
         //access a collection
         collection coll_data = db[MONGODB_DAQ_COLL_NAME];
         collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
-        
-        auto bulk_index_write = coll_index.create_bulk_write();
-        auto bulk_data_write = coll_data.create_bulk_write();
+        mongocxx::options::bulk_write bw;
+        bw.write_concern(write_options);
+        bw.ordered(true);
+        auto bulk_index_write = coll_index.create_bulk_write(bw);
+        auto bulk_data_write = coll_data.create_bulk_write(bw);
         
         //create batch insert data
         std::for_each(_batch_element_to_store.begin(),

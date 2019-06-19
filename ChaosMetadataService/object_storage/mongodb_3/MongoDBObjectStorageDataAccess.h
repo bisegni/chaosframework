@@ -65,7 +65,8 @@ namespace chaos {
                     int32_t             push_timeout_multiplier;
                     int32_t             push_current_step_left;
                     DaqBlobSetL         batch_set;
-                    
+                    uint32_t            write_timeout,read_timeout;
+                    mongocxx::write_concern       write_options;
                     std::future<void> current_push_future;
                 protected:
                     MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
