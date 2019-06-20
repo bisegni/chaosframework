@@ -333,7 +333,7 @@ CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     auto opts  = options::find{};
     read_preference read_pref;
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
-    opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+    opts.read_preference(read_pref).max_time(std::chrono::milliseconds(read_timeout));
     
     try {
         bsoncxx::stdx::optional<bsoncxx::document::value> result_find = coll_data.find_one(make_document(kvp("_id", bsoncxx::oid(_id))), opts);
@@ -362,7 +362,7 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     auto opts  = options::find{};
     read_preference read_pref;
     read_pref.mode(read_preference::read_mode::k_secondary_preferred);
-    opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+    opts.read_preference(read_pref).max_time(std::chrono::milliseconds(read_timeout));
     opts.sort(make_document(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                             kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
     //    opts.sort(make_document(kvp("_id", 1)));
@@ -582,7 +582,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         //set read form secondary
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_secondary_preferred);
-        opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+        opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
         opts.read_preference(secondary).batch_size(30);
         if(reverse_order) {
             opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), -1),
@@ -671,7 +671,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         //set read form secondary
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_secondary_preferred);
-        opts.read_preference(secondary).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
+        opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
         if(reverse_order) {
             opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), -1),
                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), -1),
