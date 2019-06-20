@@ -142,7 +142,7 @@ static void initSearchIndex(mongocxx::database& db,
 }
 
 static void initSearchData(mongocxx::database& db,
-                            std::string col_name) {
+                           std::string col_name) {
     if(findIndex(db,
                  col_name,
                  "order_index")) {
@@ -182,8 +182,10 @@ push_current_step_left(push_timeout_multiplier),write_timeout(common::constants:
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
     initSearchData(db, MONGODB_DAQ_COLL_NAME);
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
-     if(obj_stoarge_kvp.count("wtimeout")) {
+    if(obj_stoarge_kvp.count("wtimeout")) {
         write_timeout=strtoul(obj_stoarge_kvp["wtimeout"].c_str(),0,0);
+        
+        write_options.majority(std::chrono::milliseconds(write_timeout));
         DBG<<" setting write timeout:"<<write_timeout<<" ms";
     }
     if(obj_stoarge_kvp.count("rtimeout")) {
@@ -194,20 +196,21 @@ push_current_step_left(push_timeout_multiplier),write_timeout(common::constants:
         //set the custom write concern
         INFO << CHAOS_FORMAT("Set MongoDB object storage write concern to %1%", %obj_stoarge_kvp["mongodb_oswc"]);
         if(obj_stoarge_kvp["mongodb_oswc"].compare("unacknowledged") == 0) {
+            write_options.acknowledge_level(write_concern::level::k_unacknowledged);
+            DBG<<" Write Unknowledged";
         } else if(obj_stoarge_kvp["mongodb_oswc"].compare("acknowledged") == 0) {
+            DBG<<" Write Aknowledged";
+            write_options.acknowledge_level(write_concern::level::k_acknowledged);
         } else if(obj_stoarge_kvp["mongodb_oswc"].compare("journaled") == 0) {
-             DBG<<" Write Journaled";
+            DBG<<" Write Journaled";
             write_options.journal(true);
         }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("replicated") == 0) {
+            write_options.acknowledge_level(write_concern::level::k_acknowledged);
         }  else if(obj_stoarge_kvp["mongodb_oswc"].compare("majority") == 0) {
             DBG<<" Write Majority";
             write_options.acknowledge_level(write_concern::level::k_majority);
-            write_options.majority(std::chrono::milliseconds(write_timeout));
-        } else {
-            //LOG_AND_THROW(ERR, -1, CHAOS_FORMAT("Unrecognized value for parameter mongodb_oswc[%1%]", %obj_stoarge_kvp["mongodb_oswc"]));
         }
     }
-   
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
@@ -362,28 +365,28 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(common::constants::ObjectStorageTimeoutinMSec));
     opts.sort(make_document(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                             kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
-//    opts.sort(make_document(kvp("_id", 1)));
+    //    opts.sort(make_document(kvp("_id", 1)));
     try {
         //scan and get data 30 epement at time
-//        int idx = 0;
+        //        int idx = 0;
         ChaosStringSetConstIterator it = _ids.begin();
-//        while(it != _ids.end()) {
-//            idx = 0;
-//            auto builder = builder::basic::document{};
-//            auto array_builder = bsoncxx::builder::basic::array{};
-//            while((it != _ids.end()) &&
-//                (idx <= 30)) {
-//                array_builder.append(bsoncxx::oid(*it));
-//                it++;idx++;
-//            }
-//            builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
-//            auto cursor = coll_data.find(builder.view(), opts);
-////            INFO << to_json(builder.view());
-//            for(auto && document : cursor){
-//                auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
-//                result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
-//            }
-//        }
+        //        while(it != _ids.end()) {
+        //            idx = 0;
+        //            auto builder = builder::basic::document{};
+        //            auto array_builder = bsoncxx::builder::basic::array{};
+        //            while((it != _ids.end()) &&
+        //                (idx <= 30)) {
+        //                array_builder.append(bsoncxx::oid(*it));
+        //                it++;idx++;
+        //            }
+        //            builder.append(kvp("_id",  make_document(kvp("$in", array_builder))));
+        //            auto cursor = coll_data.find(builder.view(), opts);
+        ////            INFO << to_json(builder.view());
+        //            for(auto && document : cursor){
+        //                auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+        //                result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
+        //            }
+        //        }
         auto builder = builder::basic::document{};
         auto array_builder = bsoncxx::builder::basic::array{};
         while(it != _ids.end()) {
@@ -600,13 +603,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             if(id_value.type() != bsoncxx::type::k_oid){
                 continue;
             }
-            foud_ids.insert(id_value.get_oid().value.to_string());
-//            found_object_page.push_back(getDataByID(db,
-//                                                    id_value.get_oid().value.to_string()));
+            //            foud_ids.insert(id_value.get_oid().value.to_string());
+            found_object_page.push_back(getDataByID(db,
+                                                    id_value.get_oid().value.to_string()));
             last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
             last_record_found_seq.datapack_counter = document[chaos::DataPackCommonKey::DPCK_SEQ_ID].get_int64();
         }
-        found_object_page = getDataByID(db, foud_ids);
+        //        found_object_page = getDataByID(db, foud_ids);
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
