@@ -417,7 +417,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     //access a collection
     collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
     
-    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFFF0UL;
+    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFFF0ULL;
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
     try {
