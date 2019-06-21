@@ -417,7 +417,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     //access a collection
     collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
     
-    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00;
+    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFFF0UL;
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
     try {
@@ -552,6 +552,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
     try{
         //normalize time offset
         uint64_t t_start = timestamp_from;
+;
         uint64_t t_stop = timestamp_to;
         if(t_start>t_stop){std::swap(t_start, t_stop);}
         builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
