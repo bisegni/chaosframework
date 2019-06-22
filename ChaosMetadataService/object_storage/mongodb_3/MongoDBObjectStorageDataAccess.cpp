@@ -332,7 +332,7 @@ CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     
     auto opts  = options::find{};
     read_preference read_pref;
-    read_pref.mode(read_preference::read_mode::k_secondary_preferred);
+    read_pref.mode(read_preference::read_mode::k_nearest);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(read_timeout));
     
     try {
@@ -361,7 +361,7 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     
     auto opts  = options::find{};
     read_preference read_pref;
-    read_pref.mode(read_preference::read_mode::k_secondary_preferred);
+    read_pref.mode(read_preference::read_mode::k_nearest);
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(read_timeout));
     opts.sort(make_document(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                             kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
@@ -576,7 +576,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         opts.limit(page_len);
         //set read form secondary
         read_preference secondary;
-        secondary.mode(read_preference::read_mode::k_secondary_preferred);
+        secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
         opts.read_preference(secondary).batch_size(30);
         
@@ -643,7 +643,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         auto opts  = options::find{};
         opts.limit(search.page_len);
         read_preference secondary;
-        secondary.mode(read_preference::read_mode::k_secondary_preferred);
+        secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
         opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                                 kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
