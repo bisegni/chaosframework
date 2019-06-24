@@ -77,7 +77,9 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
         }
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
-            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_FILE) << std::endl;
+            init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_FILE) << std::endl;
+            init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%.log",%InitOption::OPT_LOG_FILE%INIT_FILE_PATH()%ProcRestUtil::normalizeName(node_association_info.associated_node_uid))<< std::endl;
+
         }
         
         if(node_association_info.log_on_mds){
