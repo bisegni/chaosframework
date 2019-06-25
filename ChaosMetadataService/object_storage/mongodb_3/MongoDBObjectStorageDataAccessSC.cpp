@@ -20,7 +20,7 @@
  */
 #include <chaos/common/global.h>
 
-#include "MongoDBObjectStorageDataAccess.h"
+#include "MongoDBObjectStorageDataAccessSC.h"
 #include "../../ChaosMetadataService.h"
 
 #include <chaos/common/chaos_constants.h>
@@ -46,9 +46,9 @@
 
 //using namespace chaos::data_service::object_storage::mongodb;
 
-#define INFO INFO_LOG(MongoDBObjectStorageDataAccess)
-#define DBG  DBG_LOG(MongoDBObjectStorageDataAccess)
-#define ERR  ERR_LOG(MongoDBObjectStorageDataAccess)
+#define INFO INFO_LOG(MongoDBObjectStorageDataAccessSC)
+#define DBG  DBG_LOG(MongoDBObjectStorageDataAccessSC)
+#define ERR  ERR_LOG(MongoDBObjectStorageDataAccessSC)
 
 static constexpr char MONGODB_DB_NAME[]                 = "chaos";
 static constexpr char MONGODB_DAQ_COLL_NAME[]           = "daq";
@@ -162,7 +162,7 @@ static void initSearchData(mongocxx::database& db,
 }
 
 
-MongoDBObjectStorageDataAccess::MongoDBObjectStorageDataAccess(pool& _pool_ref):
+MongoDBObjectStorageDataAccessSC::MongoDBObjectStorageDataAccessSC(pool& _pool_ref):
 pool_ref(_pool_ref),
 curret_batch_size(0),
 batch_size_limit(DEFAULT_BATCH_SIZE_IN_BYTE),
@@ -174,10 +174,7 @@ push_current_step_left(push_timeout_multiplier),write_timeout(common::constants:
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     
-    //index collection
-    initShardIndex(db, MONGODB_DAQ_INDEX_COLL_NAME);
-    initSearchIndex(db, MONGODB_DAQ_INDEX_COLL_NAME);
-    
+   
     //data collection
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
     initSearchData(db, MONGODB_DAQ_COLL_NAME);
@@ -214,11 +211,11 @@ push_current_step_left(push_timeout_multiplier),write_timeout(common::constants:
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
-MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {
+MongoDBObjectStorageDataAccessSC::~MongoDBObjectStorageDataAccessSC() {
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
-void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _batch_element_to_store) {
+void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batch_element_to_store) {
     int err = 0;
     try{
         //get client the connection
@@ -227,27 +224,22 @@ void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _bat
         auto db = (*client)[MONGODB_DB_NAME];
         //access a collection
         collection coll_data = db[MONGODB_DAQ_COLL_NAME];
-        collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
         mongocxx::options::bulk_write bw;
         bw.write_concern(write_options);
         bw.ordered(true);
-        auto bulk_index_write = coll_index.create_bulk_write(bw);
         auto bulk_data_write = coll_data.create_bulk_write(bw);
         
         //create batch insert data
         std::for_each(_batch_element_to_store.begin(),
                       _batch_element_to_store.end(),
-                      [&bulk_index_write, &bulk_data_write](const DaqBlobShrdPtr& current_element){
+                      [&bulk_data_write](const BlobShrdPtr& current_element){
                           //append data to bulk
-                          bulk_index_write.append(model::insert_one(current_element->index_document.view()));
-                          bulk_data_write.append(model::insert_one(current_element->data_document.view()));
+                          bulk_data_write.append(model::insert_one(current_element->view()));
                       });
         
-        auto bulk_index_result = bulk_index_write.execute();
         auto bulk_data_result = bulk_data_write.execute();
         
-        if(bulk_index_result->inserted_count() != _batch_element_to_store.size() ||
-           bulk_data_result->inserted_count() != _batch_element_to_store.size()) {
+        if(bulk_data_result->inserted_count() != _batch_element_to_store.size()) {
             ERR << "Data not all data has been isert into database";
         }
     } catch (const bulk_write_exception& e) {
@@ -256,12 +248,12 @@ void MongoDBObjectStorageDataAccess::executePush(std::set<DaqBlobShrdPtr>&& _bat
     }
 }
 
-int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key,
+int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&            key,
                                                const ChaosStringSetConstSPtr meta_tags,
                                                const CDataWrapper&           stored_object) {
     int err = 0;
     bsoncxx::oid new_data_oid;
-    DaqBlobShrdPtr current_data = ChaosMakeSharedPtr<DaqBlob>();
+    BlobShrdPtr current_data = ChaosMakeSharedPtr<bsoncxx::builder::basic::document>();
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
     
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
@@ -271,11 +263,11 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
     
     //create index
     auto builder_index = builder::basic::document{};
-    current_data->index_document.append(kvp("_id", new_data_oid));
-    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    current_data->index_document.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID)));
-    current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)));
+    current_data->append(kvp("_id", new_data_oid));
+    current_data->append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
+    current_data->append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
+    current_data->append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID)));
+    current_data->append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID)));
     //appends tag
     if(meta_tags &&
        meta_tags->size()) {
@@ -283,32 +275,26 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&            key
         for(auto& it: *meta_tags) {
             array_builder.append(it);
         }
-        current_data->index_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
+        current_data->append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), array_builder));
     }
-    current_data->index_document.append(bsoncxx::builder::concatenate(zone_daq_info.getIndexDocument().view()));
-    
-    //create data pack
-    auto builder_data = builder::basic::document{};
-    current_data->data_document.append(kvp("_id", new_data_oid));
-    current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
-    current_data->data_document.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), now_in_ms_bson));
-    current_data->data_document.append(bsoncxx::builder::concatenate(zone_daq_info.getDataDocument().view()));
+    current_data->append(bsoncxx::builder::concatenate(zone_daq_info.getIndexDocument().view()));
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
-    current_data->data_document.append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
+    current_data->append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     
+     
     //check if we need to push or wait timeout or other incoming data
     curret_batch_size += stored_object.getBSONRawSize();
-    DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
+     BlobSetLWriteLock wl = batch_set.getWriteLockObject();
     batch_set().insert(current_data);
     return err;
 }
 
-void MongoDBObjectStorageDataAccess::timeout() {
+void MongoDBObjectStorageDataAccessSC::timeout() {
     if(push_current_step_left) {
         push_current_step_left--;
         return;
     }
-    DaqBlobSetLWriteLock wl = batch_set.getWriteLockObject();
+    BlobSetLWriteLock wl = batch_set.getWriteLockObject();
     //we can process data
     if(batch_set().size()) {
         //we have data so we can push
@@ -316,7 +302,7 @@ void MongoDBObjectStorageDataAccess::timeout() {
             current_push_future.wait();
         }
         current_push_future = std::async(std::launch::async,
-                                         &MongoDBObjectStorageDataAccess::executePush,
+                                         &MongoDBObjectStorageDataAccessSC::executePush,
                                          this,
                                          std::move(batch_set()));
     }
@@ -324,7 +310,7 @@ void MongoDBObjectStorageDataAccess::timeout() {
     push_current_step_left = push_timeout_multiplier;
 }
 
-CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
+CDWShrdPtr MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
                                                        const std::string& _id) {
     CDWShrdPtr result;
     int err = 0;
@@ -352,7 +338,7 @@ CDWShrdPtr MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     return result;
 }
 
-VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
+VectorObject MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
                                                          const ChaosStringSet& _ids) {
     VectorObject result;
     int err = 0;
@@ -406,7 +392,7 @@ VectorObject MongoDBObjectStorageDataAccess::getDataByID(mongocxx::database& db,
     return result;
 }
 
-int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
+int MongoDBObjectStorageDataAccessSC::getObject(const std::string& key,
                                               const uint64_t& timestamp,
                                               CDWShrdPtr& object_ptr_ref) {
     int err = 0;
@@ -415,7 +401,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+    collection coll_index = db[MONGODB_DAQ_COLL_NAME];
     
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFFF0ULL;
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
@@ -441,7 +427,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     return err;
 }
 
-int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
+int MongoDBObjectStorageDataAccessSC::getLastObject(const std::string& key,
                                                   CDWShrdPtr& object_ptr_ref) {
     
     int err = 0;
@@ -451,7 +437,7 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+    collection coll_index = db[MONGODB_DAQ_COLL_NAME];
     
     try {
         
@@ -481,16 +467,16 @@ int MongoDBObjectStorageDataAccess::getLastObject(const std::string& key,
 }
 
 
-int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
+int MongoDBObjectStorageDataAccessSC::deleteObject(const std::string& key,
                                                  uint64_t start_timestamp,
                                                  uint64_t end_timestamp) {
-    int err = 0;
+   int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
-    collection coll_data = db[MONGODB_DAQ_COLL_NAME];
+    collection coll = db[MONGODB_DAQ_COLL_NAME];
+    
     auto builder = builder::basic::document{};
     
     try{
@@ -523,18 +509,22 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
         wc.acknowledge_level(write_concern::level::k_unacknowledged);
         auto dop = options::delete_options();
         dop.write_concern(wc);
-        coll_data.delete_many(builder.view(), dop);
-        coll_index.delete_many(builder.view(), dop);
+        auto result= coll.delete_many(builder.view(), dop);
+        
+        if(result){
+            ERR << CHAOS_FORMAT("Error erasing stored object data for key %1% from %2% to %3%", %key%start_timestamp%end_timestamp);
+        }
+        
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
     }
     
     return err;
-    
+     
 }
 
-int MongoDBObjectStorageDataAccess::findObject(const std::string&                                          key,
+int MongoDBObjectStorageDataAccessSC::findObject(const std::string&                                          key,
                                                const ChaosStringSet&                                       meta_tags,
                                                const uint64_t                                              timestamp_from,
                                                const uint64_t                                              timestamp_to,
@@ -546,7 +536,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+    collection coll_index = db[MONGODB_DAQ_COLL_NAME];
     auto builder = builder::basic::document{};
     auto time_builder = builder::basic::document{};
     try{
@@ -588,18 +578,16 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         
         ChaosStringSet foud_ids;
         auto cursor = coll_index.find(builder.view(),opts);
-        for(auto && document : cursor){
-            auto id_value = document["_id"];
-            if(id_value.type() != bsoncxx::type::k_oid){
-                continue;
+         for(auto && document : cursor){
+            auto element = document[MONGODB_DAQ_DATA_FIELD];
+            if(element.type() == bsoncxx::type::k_document &&
+               !element.get_document().view().empty()){
+                CDWShrdPtr new_obj(new CDataWrapper((const char *)element.get_document().view().data()));
+                found_object_page.push_back(new_obj);
             }
-            foud_ids.insert(id_value.get_oid().value.to_string());
-            //            found_object_page.push_back(getDataByID(db,
-            //                                                    id_value.get_oid().value.to_string()));
-            last_record_found_seq.run_id = document[chaos::ControlUnitDatapackCommonKey::RUN_ID].get_int64();
-            last_record_found_seq.datapack_counter = document[chaos::DataPackCommonKey::DPCK_SEQ_ID].get_int64();
+            last_record_found_seq.run_id = document["data"]["cudk_run_id"].get_int64();
+            last_record_found_seq.datapack_counter = document["data"]["dpck_seq_id"].get_int64();
         }
-        found_object_page = getDataByID(db, foud_ids);
     } catch (const mongocxx::exception &e) {
         ERR << e.what();
         err = e.code().value();
@@ -608,7 +596,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
 }
 
 //inhertied method
-int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
+int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
                                                     VectorObject& found_object_page,
                                                     chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
     int err = 0;
@@ -616,7 +604,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
     //access a collection
-    collection coll_index = db[MONGODB_DAQ_INDEX_COLL_NAME];
+    collection coll_index = db[MONGODB_DAQ_COLL_NAME];
     auto builder = builder::basic::document{};
     auto time_builder = builder::basic::document{};
     try{
@@ -675,7 +663,7 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
 }
 
 //inhertied method
-int MongoDBObjectStorageDataAccess::getObjectByIndex(const CDWShrdPtr& index,
+int MongoDBObjectStorageDataAccessSC::getObjectByIndex(const CDWShrdPtr& index,
                                                      CDWShrdPtr& found_object) {
     int err = 0;
     auto client  = pool_ref.acquire();
@@ -715,7 +703,7 @@ int MongoDBObjectStorageDataAccess::getObjectByIndex(const CDWShrdPtr& index,
     return err;
 }
 
-int MongoDBObjectStorageDataAccess::countObject(const std::string& key,
+int MongoDBObjectStorageDataAccessSC::countObject(const std::string& key,
                                                 const uint64_t timestamp_from,
                                                 const uint64_t timestamp_to,
                                                 const uint64_t& object_count) {

@@ -302,6 +302,7 @@ SET(cnd_src  ${cnd_src}	object_storage/mongodb/MongoDBObjectStorageDataAccess.cp
 
 #mongodb new driver version
 SET(cnd_src  ${cnd_src} object_storage/mongodb_3/MongoDBObjectStorageDataAccess.cpp
+                        object_storage/mongodb_3/MongoDBObjectStorageDataAccessSC.cpp
                         object_storage/mongodb_3/NewMongoDBObjectStorageDriver.cpp
                         object_storage/mongodb_3/ShardKeyManagement.cpp)
 

@@ -26,6 +26,7 @@
 #include "NewMongoDBObjectStorageDriver.h"
 
 #include "MongoDBObjectStorageDataAccess.h"
+#include "MongoDBObjectStorageDataAccessSC.h"
 
 using namespace chaos;
 
@@ -76,9 +77,14 @@ void NewMongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CExcepti
     }
     //initilize pool
     BaseMongoDBDiver::initPool(url_list, user, password, database);
-    
+    if(obj_stoarge_kvp.count("singleCollection")) {
+        registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccessSC(BaseMongoDBDiver::getPool()));
+
+    } else {
+        registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess(BaseMongoDBDiver::getPool()));
+
+    }
     //register the data access implementations
-    registerDataAccess<ObjectStorageDataAccess>(new MongoDBObjectStorageDataAccess(BaseMongoDBDiver::getPool()));
 }
 
 void NewMongoDBObjectStorageDriver::deinit() throw (chaos::CException) {

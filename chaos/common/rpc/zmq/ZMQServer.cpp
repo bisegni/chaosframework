@@ -238,8 +238,9 @@ void ZMQServer::worker() {
                     if(message_data->hasKey("seq_id")){
                         seq_id=message_data->getInt64Value("seq_id");
                     }
-                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id;
                     const std::string msg_desc = message_data->getCompliantJSONString();
+                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id << "desc:"<<msg_desc;
+
                     if(message_data->hasKey("syncrhonous_call") &&
                        message_data->getBoolValue("syncrhonous_call")) {
                         result_data_pack = command_handler->executeCommandSync(MOVE(message_data));
