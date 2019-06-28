@@ -268,6 +268,17 @@ for dir in ${on_dir[@]}; do
 		    else
 			error_mesg "[$dir] error merging $1 -> $2, skipping merge"
 		    fi
+		    if git push origin $2;then
+			info_mesg "[$dir] push origin $2 " "done"
+		    else
+			error_mesg "[$dir] error pushing $2 -> origin, skipping merge"
+		    fi
+		    if git checkout $1;then
+			info_mesg "[$dir] back into branch $1 " "done"
+		    else
+			error_mesg "[$dir] error back into branch $1 , skipping merge"
+		    fi
+
 		fi
 	    fi
 	    ;;
