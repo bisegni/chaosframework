@@ -752,7 +752,7 @@ CDWUniquePtr ControlManager::unitServerRegistrationACK(CDWUniquePtr message_data
                 break;
                 
             case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INSTANCE_ALREADY_RUNNING:
-                LCMERR_ << "Another " << unit_server_alias << " instance is alredy runnig";
+                LCMERR_ << "Another " << unit_server_alias << " instance is already running: "<<message_data->getCompliantJSONString();
                 //turn of unit server
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
                     //we have problem
