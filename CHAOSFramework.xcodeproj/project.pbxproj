@@ -110,6 +110,7 @@
 		3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */; };
 		3219E69F18CC7AE600C2F795 /* DirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */; };
 		3219E6A018CC7AE600C2F795 /* DirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */; };
+		321C52F222D738240089953A /* MongoDBObjectStorageDataAccessSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321C52F022D738240089953A /* MongoDBObjectStorageDataAccessSC.cpp */; };
 		322085DD1AC5A0E200F1B71A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322085DC1AC5A0E200F1B71A /* main.cpp */; };
 		3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */; };
 		3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */; };
@@ -1384,6 +1385,8 @@
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnection.cpp; sourceTree = "<group>"; };
 		3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnection.h; sourceTree = "<group>"; };
+		321C52F022D738240089953A /* MongoDBObjectStorageDataAccessSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBObjectStorageDataAccessSC.cpp; sourceTree = "<group>"; };
+		321C52F122D738240089953A /* MongoDBObjectStorageDataAccessSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBObjectStorageDataAccessSC.h; sourceTree = "<group>"; };
 		322085DA1AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosMetadataServiceClientTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		322085DC1AC5A0E200F1B71A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualChannel.cpp; sourceTree = "<group>"; };
@@ -3250,6 +3253,8 @@
 				3232860B21A6C5C000EEF662 /* ShardKeyManagement.h */,
 				3232860E21A6C5C000EEF662 /* NewMongoDBObjectStorageDriver.cpp */,
 				3232860D21A6C5C000EEF662 /* NewMongoDBObjectStorageDriver.h */,
+				321C52F022D738240089953A /* MongoDBObjectStorageDataAccessSC.cpp */,
+				321C52F122D738240089953A /* MongoDBObjectStorageDataAccessSC.h */,
 				3232860C21A6C5C000EEF662 /* MongoDBObjectStorageDataAccess.cpp */,
 				3232860F21A6C5C000EEF662 /* MongoDBObjectStorageDataAccess.h */,
 			);
@@ -6772,6 +6777,7 @@
 				32A626BC213FB4CF00D63009 /* SendStorageBurst.cpp in Sources */,
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
 				3232861221A6C5C000EEF662 /* NewMongoDBObjectStorageDriver.cpp in Sources */,
+				321C52F222D738240089953A /* MongoDBObjectStorageDataAccessSC.cpp in Sources */,
 				32B6B772213E8C7600D7ECF8 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				327B55DB22324BE2008E4896 /* HybBaseDriver.cpp in Sources */,

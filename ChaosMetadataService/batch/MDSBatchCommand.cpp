@@ -225,13 +225,17 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info)  {
             break;
         }
         case MESSAGE_PHASE_COMPLETED: {
+            MDSBC_INFO << CHAOS_FORMAT("Message successful sent to %1% on rpc [%2%:%3%]",
+                                       %request_info.remote_address
+                                       %request_info.remote_domain
+                                       %request_info.remote_action);
+            break;
+        }
+        case MESSAGE_PHASE_TIMEOUT: {
             MDSBC_ERR << CHAOS_FORMAT("Timeout reached for message to %1% on rpc [%2%:%3%]",
                                       %request_info.remote_address
                                       %request_info.remote_domain
                                       %request_info.remote_action);
-            break;
-        }
-        case MESSAGE_PHASE_TIMEOUT: {
             break;
         }
     }
