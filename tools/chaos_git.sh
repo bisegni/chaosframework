@@ -18,7 +18,7 @@ log="$0.log"
 on_dir=()
 
 
-
+export GIT_OPTIONAL_LOCKS=0
 mesg=""
 die(){
     error_mesg "$1" " exiting... "
@@ -60,26 +60,25 @@ git_checkout(){
 
     if git checkout $check_out_opt ; then
 	ok_mesg "[$dir] checkout $2"
-	if git pull ;then
-	    ok_mesg "[$dir] synchronize"
+	# if git pull ;then
+	#     ok_mesg "[$dir] synchronize"
 	   
-	else
-	    nok_mesg "[$dir] synchronize"
-	    return 1
-	fi
-	if git pull origin $2;then
-	    ok_mesg "[$dir] synchronize with origin"
+	# else
+	#     nok_mesg "[$dir] synchronize"
+	#     return 1
+	# fi
+	 if git pull origin $2;then
+	     ok_mesg "[$dir] synchronize with origin"
 	   
-	else
-	    nok_mesg "[$dir] synchronize with origin"
-
-	fi
+	 else
+	     nok_mesg "[$dir] synchronize with origin"
+	 fi
 	
     else
 	error_mesg "[$dir] checking out $2"
 	return 1
     fi
-
+    echo "* end git checkout $check_out_opt"
     return 0
 
 }
@@ -189,6 +188,7 @@ for dir in ${on_dir[@]}; do
 	echo Unknown protocol from $REMOTE_LINE
 	exit 1
     fi
+    
     case $git_cmd in
 	x)
 	    target_env=$src_pipeline

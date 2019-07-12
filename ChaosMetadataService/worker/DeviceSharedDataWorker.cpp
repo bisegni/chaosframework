@@ -58,7 +58,8 @@ void DeviceSharedDataWorker::init(void *init_data)  {
 
 void DeviceSharedDataWorker::deinit()  {
     DataWorker::deinit();
-    global_object_storage_driver->deinit();
+    if(global_object_storage_driver.get())
+        global_object_storage_driver->deinit();
 }
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {

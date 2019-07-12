@@ -74,7 +74,7 @@ listcmake=$(eval $cmd);
 for m in $listcmake;do
     dir=`dirname $m`
     if [ ! -d $dir/CMakeFiles ] && [ "$dir" != "." ];then
-	p=`echo "$dir"|sed 's/\./\*/g'`
+    	p=`echo "$dir"|sed 's/\./\*/g'`
 	findopt="$findopt -not -path \"$p*\""
 	echo "* skipping directory not configured $dir" 
     fi
