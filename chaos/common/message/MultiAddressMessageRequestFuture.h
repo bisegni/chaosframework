@@ -41,6 +41,7 @@ namespace chaos{
                 friend class chaos::common::message::MultiAddressMessageChannel;
                 
                 //global timeout
+                bool auto_retry;
                 int32_t timeout_in_milliseconds;
                 
                 //! point to the parent channel
@@ -63,9 +64,9 @@ namespace chaos{
                                                  const std::string &_action_domain,
                                                  const std::string &_action_name,
                                                  chaos::common::data::CDWUniquePtr _message_pack,
-                                                 int32_t _timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
+                                                 int32_t _timeout_in_milliseconds = 500 /*RpcConfigurationKey::GlobalRPCTimeoutinMSec*/);
                 inline void retryOfflineServer();
-                inline void switchOnOtherServer();
+                inline bool switchOnOtherServer();
             public:
                 //!private destructor
                 ~MultiAddressMessageRequestFuture();
@@ -82,6 +83,8 @@ namespace chaos{
                  * \return true if something has been received
                  */
                 bool wait();
+                
+                void setAutorRetry(bool _auto_retry);
                 
                 //! try to get the result waiting for a determinate period of time
                 chaos::common::data::CDataWrapper *getResult();

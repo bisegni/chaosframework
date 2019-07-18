@@ -41,6 +41,7 @@ MultiAddressMessageRequestFuture::MultiAddressMessageRequestFuture(chaos::common
                                                                    const std::string& _action_name,
                                                                    CDWUniquePtr _message_pack,
                                                                    int32_t _timeout_in_milliseconds):
+auto_retry(false),
 timeout_in_milliseconds(_timeout_in_milliseconds),
 parent_mn_message_channel(_parent_mn_message_channel),
 action_domain(_action_domain),
@@ -61,17 +62,18 @@ void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_millisecon
     timeout_in_milliseconds = _timeout_in_milliseconds;
 }
 
-void MultiAddressMessageRequestFuture::switchOnOtherServer() {
+bool MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //set index offline
-    parent_mn_message_channel->setURLAsOffline(last_used_address);
-    MAMRF_INFO << "Server " << last_used_address << " put offline";
+    //    parent_mn_message_channel->setURLAsOffline(last_used_address);
+    
     
     //retrasmission of the datapack
+    bool switched = false;
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
                                                                        CHECK_NULL_MESSAGE(message_pack),
                                                                        last_used_address);
-    if(current_future.get()) {
+    if((switched = current_future.get())) {
         MAMRF_INFO << "Retransmission on " << last_used_address;
     } else {
         MAMRF_ERR << "No more server for retrasmission, Retry using all offline server for one time";
@@ -80,28 +82,31 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
         //retrasmission of the datapack
         /**
          * TODO re-enable endpoint
-        */
+         */
         /*current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
-                                                                           action_name,
-                                                                           MOVE(message_pack->clone()),
-                                                                           last_used_address);
-                                                                           */
+         action_name,
+         MOVE(message_pack->clone()),
+         last_used_address);
+         */
     }
+    return switched;
 }
 
 //! wait until data is received
 bool MultiAddressMessageRequestFuture::wait() {
     CHAOS_ASSERT(parent_mn_message_channel)
+    int server_switch = 0;
     int retry_on_same_server = 0;
+    //take count of different server where messages has ben sent
     bool working = true;
     //unitle we have valid future and don't have have answer
     while(current_future.get() &&
           working) {
         MAMRF_DBG << "Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms";
         //! waith for future
-
+        
         if(current_future->wait(timeout_in_milliseconds)) {
-        	MAMRF_DBG << "Exit Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms got:"<<current_future->isRemoteMeaning();
+            MAMRF_DBG << "Exit Waiting on server " << last_used_address<< " for "<<timeout_in_milliseconds<<" ms got:"<<current_future->isRemoteMeaning();
             if(current_future->isRemoteMeaning()) {
                 //we have received from remote server somenthing
                 working = false;
@@ -126,12 +131,32 @@ bool MultiAddressMessageRequestFuture::wait() {
                 MAMRF_INFO << "We have retried " << retry_on_same_server << " times on "<<last_used_address;
                 //switchOnOtherServer();
                 parent_mn_message_channel->setURLAsOffline(last_used_address);
-                working = false;
+                MAMRF_INFO << "Server " << last_used_address << " put offline";
+                if(auto_retry) {
+                    if(server_switch >= 3) {
+                        //we need to abort because we have tryesd tree different server
+                        working = false;
+                    } else {
+                        if(switchOnOtherServer() == false) {
+                            working = false;
+                        } else {
+                            //reset
+                            retry_on_same_server = 0;
+                        }
+                    }
+                } else {
+                    working = false;
+                }
             }
         }
     }
     return working == false;
 }
+
+void MultiAddressMessageRequestFuture::setAutorRetry(bool _auto_retry) {
+    auto_retry = _auto_retry;
+}
+
 
 //! try to get the result waiting for a determinate period of time
 CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
