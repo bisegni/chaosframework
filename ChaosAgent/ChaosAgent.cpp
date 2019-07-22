@@ -103,7 +103,7 @@ void ChaosAgent::start() {
     procRestUtil.reset();
     #endif
 }
-ChaosSharedPtr <utility::ProcRestUtil> ChaosAgent::getProcessManager(){
+ChaosSharedPtr <chaos::agent::utility::ProcRestUtil> ChaosAgent::getProcessManager(){
     return procRestUtil;
 }
 

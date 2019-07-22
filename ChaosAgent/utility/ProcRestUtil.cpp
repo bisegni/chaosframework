@@ -33,7 +33,6 @@
 #include <sys/errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
 using namespace std;
 using namespace chaos::common;
 using namespace chaos::agent::utility;
