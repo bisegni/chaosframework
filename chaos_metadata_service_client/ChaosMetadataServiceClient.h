@@ -79,6 +79,7 @@ namespace chaos {
              Specialized option for startup c and cpp program main options parameter
              */
             void init(int argc, const char* argv[]);
+            void init(std::istream &initStream);
 
             //! For common methods already initialized
             void init();

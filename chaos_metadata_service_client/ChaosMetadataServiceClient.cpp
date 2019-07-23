@@ -66,6 +66,10 @@ void ChaosMetadataServiceClient::init(int argc, const char* argv[])  {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
 }
 
+void ChaosMetadataServiceClient::init(std::istream &initStream)  {
+    ChaosCommon<ChaosMetadataServiceClient>::init(initStream);
+}
+
 void ChaosMetadataServiceClient::init()  {
 
 	if(mds_client_initialized){
