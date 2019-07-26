@@ -165,7 +165,6 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
-  
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
