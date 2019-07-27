@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 2019 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,35 +19,41 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef __CHAOSFramework__MetricCollector__
-#define __CHAOSFramework__MetricCollector__
+
+#ifndef MetricManager_h
+#define MetricManager_h
 
 #include <chaos/common/chaos_types.h>
-#include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/InizializableService.h>
 
-#include <string>
-#include <stdint.h>
+#include <prometheus/exposer.h>
+#include <prometheus/registry.h>
+
 
 
 namespace chaos {
     namespace common {
         namespace metric {
             
-            //! Class that permit to collect a set of metric
-            class MetricCollector {
+            /*!
+             Central managment for metric exposition to Prometheus
+             */
+            class MetricManager:
+            public common::utility::InizializableService,
+            public chaos::common::utility::Singleton<MetricManager> {
+                friend class chaos::common::utility::Singleton<MetricManager>;
+                
+                ChaosUniquePtr<prometheus::Exposer> http_exposer;
+                
+                MetricManager();
+                ~MetricManager();
             protected:
-                
-            public:
-                MetricCollector();
-                ~MetricCollector();
-                
-                virtual void startLogging();
-                
-                virtual void stopLogging();
+                void init(void *data);
+                void deinit();
             };
-            
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__MetricCollector__) */
+#endif /* MetricManager_hpp */

@@ -24,6 +24,8 @@
 
 #include <chaos/common/metric/MetricCollector.h>
 
+#include <chaos/common/async_central/async_central.h>
+
 #include <boost/atomic.hpp>
 namespace chaos {
     namespace common {
@@ -31,7 +33,8 @@ namespace chaos {
             
             //! class for data io metric collector
             class MetricCollectorIO:
-            public MetricCollector {
+            public MetricCollector,
+            public chaos::common::async_central::TimerHandler {
             protected:
                 //! messagge that hase beens sent since last metric acquisition
                 boost::atomic<uint64_t> pack_count;
@@ -40,12 +43,11 @@ namespace chaos {
                 //variable for calculation
                 double pack_count_for_ut;
                 double bw_for_ut;
-                
-                void fetchMetricForTimeDiff(uint64_t time_diff);
-                
+                int64_t last_sample_ts;
+                void timout();
+                virtual void fetchMetricForTimeDiff(int64_t time_diff) = 0;
             public:
-                MetricCollectorIO(const std::string& _collector_name,
-                                  uint64_t update_time_in_sec = 0);
+                MetricCollectorIO();
                 ~MetricCollectorIO();
             };
         }

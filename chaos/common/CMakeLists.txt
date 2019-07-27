@@ -145,11 +145,7 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
                     metric/MetricCollector.cpp
-                    metric/MetricCollectorIO.cpp
-                    metric/AbstractMetricBackend.cpp
-                    metric/ConsoleMetricBackend.cpp
-                    metric/FileMetricBackend.cpp
-                    metric/CSVFileMetricBackend.cpp)
+                    metric/MetricCollectorIO.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     data/CDataWrapper.cpp

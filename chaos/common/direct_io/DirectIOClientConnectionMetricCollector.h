@@ -46,7 +46,6 @@ namespace chaos {
             public:
                 DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                         uint16_t _endpoint,
-                                                        ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                         DirectIOClientConnection *_wrapped_connection);
                 
                 ~DirectIOClientConnectionMetricCollector();

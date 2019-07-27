@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, 2017 INFN
+ * Copyright 2012, 2019 INFN
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they
  * will be approved by the European Commission - subsequent
@@ -19,23 +19,20 @@
  * permissions and limitations under the Licence.
  */
 
-#include <chaos/common/metric/MetricCollector.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
-#include <sstream>
 
-#define MC_INFO INFO_LOG(MetricCollector)
-#define MC_LDBG DBG_LOG(MetricCollector)
-#define MC_LERR ERR_LOG(MetricCollector)
+#include <chaos/common/metric/MetricManager.h>
 
 using namespace chaos::common::metric;
 
-MetricCollector::MetricCollector() {}
-MetricCollector::~MetricCollector() {}
+MetricManager::MetricManager():
+http_exposer(){}
 
+MetricManager::~MetricManager() {}
 
-void MetricCollector::startLogging() {
-
+void MetricManager::init(void *data) {
+    http_exposer.reset(new prometheus::Exposer("127.0.0.1:8080"));
 }
 
-void MetricCollector::stopLogging() {
+void MetricManager::deinit() {
+    http_exposer.reset();
 }

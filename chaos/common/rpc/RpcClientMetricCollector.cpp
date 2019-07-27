@@ -33,8 +33,7 @@ using namespace chaos::common::metric;
 RpcClientMetricCollector::RpcClientMetricCollector(const std::string& forwarder_implementation,
                                                    RpcClient *_wrapped_client,
                                                    bool _dispose_forwarder_on_exit):
-MetricCollectorIO(forwarder_implementation,
-                GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL)),
+MetricCollectorIO(),
 RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit) {

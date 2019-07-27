@@ -31,11 +31,9 @@ using namespace chaos::common::direct_io;
 
 DirectIOClientConnectionMetricCollector::DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                                                  uint16_t _endpoint,
-                                                                                 ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                                                  DirectIOClientConnection *_wrapped_connection):
 DirectIOClientConnection(_server_description,
                          _endpoint),
-shared_collector(_shared_collector),
 wrapped_connection(_wrapped_connection) {
     DIOCCMC_DBG_ << "Allocate collector";
 }

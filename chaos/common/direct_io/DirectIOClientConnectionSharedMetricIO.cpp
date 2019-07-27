@@ -33,17 +33,12 @@ using namespace chaos::common::direct_io;
 
 DirectIOClientConnectionSharedMetricIO::DirectIOClientConnectionSharedMetricIO(const std::string& client_impl,
                                                                                const std::string& server_endpoint):
-MetricCollectorIO(client_impl,
-                  GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL)) {
-    
+MetricCollectorIO() {
     DIOCCSMC_DBG_ << "Allocate collector";
-    
-    startLogging();
 }
 
 DirectIOClientConnectionSharedMetricIO::~DirectIOClientConnectionSharedMetricIO() {
-    //DIOCCSMC_DBG_ << "Deallocate collector";
-    stopLogging();
+
 }
 
 void DirectIOClientConnectionSharedMetricIO::incrementPackCount() {
@@ -56,5 +51,5 @@ void DirectIOClientConnectionSharedMetricIO::incrementBandWidth(uint64_t increme
 }
 
 void DirectIOClientConnectionSharedMetricIO::fetchMetricForTimeDiff(uint64_t time_diff) {
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
+   
 }

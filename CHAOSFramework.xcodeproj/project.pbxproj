@@ -170,6 +170,8 @@
 		3234BE7B1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */; };
 		3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
+		323595E822ECBC3200CFB66C /* MetricManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323595E622ECBC3200CFB66C /* MetricManager.cpp */; };
+		323595E922ECBC3200CFB66C /* MetricManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 323595E722ECBC3200CFB66C /* MetricManager.h */; };
 		3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD41A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp */; };
 		3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD71A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp */; };
 		32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32362C1F1ADD0C45000CA079 /* SetInstanceDescription.cpp */; };
@@ -1116,10 +1118,6 @@
 		32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEF91B4E58F300278C42 /* MetricCollector.h */; };
 		32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */; };
 		32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */; };
-		32EBDF021B4FBD8800278C42 /* AbstractMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */; };
-		32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */; };
-		32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */; };
-		32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */; };
 		32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */; };
 		32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF0D1B53A32600278C42 /* ManageCUType.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
@@ -1133,10 +1131,6 @@
 		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
 		32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
-		32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */; };
-		32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */; };
-		32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */; };
-		32F5B00B1B5F998F00457A63 /* CSVFileMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */; };
 		32F7AB141C9960A700E18D3E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7AB121C9960A700E18D3E /* NodeMonitor.cpp */; };
 		32F7AB151C9960A700E18D3E /* NodeMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7AB131C9960A700E18D3E /* NodeMonitor.h */; };
 		32F7AB191C9964AE00E18D3E /* node_monitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7AB171C9964AE00E18D3E /* node_monitor.h */; };
@@ -1461,6 +1455,8 @@
 		3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtStatusAttributeHandler.h; sourceTree = "<group>"; };
 		3234BE811B04F49F00AE6B08 /* HealtHeartbeatAttributeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HealtHeartbeatAttributeHandler.h; sourceTree = "<group>"; };
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
+		323595E622ECBC3200CFB66C /* MetricManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MetricManager.cpp; sourceTree = "<group>"; };
+		323595E722ECBC3200CFB66C /* MetricManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetricManager.h; sourceTree = "<group>"; };
 		3235FDCB1A6FF51D00EC83A9 /* persistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = persistence.h; sourceTree = "<group>"; };
 		3235FDD41A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBUnitServerDataAccess.cpp; sourceTree = "<group>"; };
 		3235FDD51A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBUnitServerDataAccess.h; sourceTree = "<group>"; };
@@ -2711,10 +2707,6 @@
 		32EBDEF91B4E58F300278C42 /* MetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollector.h; sourceTree = "<group>"; };
 		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClientMetricCollector.h; sourceTree = "<group>"; };
-		32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMetricBackend.cpp; sourceTree = "<group>"; };
-		32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetricBackend.h; sourceTree = "<group>"; };
-		32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleMetricBackend.cpp; sourceTree = "<group>"; };
-		32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMetricBackend.h; sourceTree = "<group>"; };
 		32EBDF081B4FEFDC00278C42 /* metric.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metric.h; sourceTree = "<group>"; };
 		32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageCUType.cpp; sourceTree = "<group>"; };
 		32EBDF0D1B53A32600278C42 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
@@ -2730,10 +2722,6 @@
 		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
 		32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
-		32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileMetricBackend.cpp; sourceTree = "<group>"; };
-		32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetricBackend.h; sourceTree = "<group>"; };
-		32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSVFileMetricBackend.cpp; sourceTree = "<group>"; };
-		32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVFileMetricBackend.h; sourceTree = "<group>"; };
 		32F7AB121C9960A700E18D3E /* NodeMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitor.cpp; sourceTree = "<group>"; };
 		32F7AB131C9960A700E18D3E /* NodeMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitor.h; sourceTree = "<group>"; };
 		32F7AB171C9964AE00E18D3E /* node_monitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node_monitor.h; sourceTree = "<group>"; };
@@ -5795,18 +5783,12 @@
 		32EBDEF31B4E586000278C42 /* metric */ = {
 			isa = PBXGroup;
 			children = (
+				323595E622ECBC3200CFB66C /* MetricManager.cpp */,
+				323595E722ECBC3200CFB66C /* MetricManager.h */,
 				32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */,
 				32EBDEF91B4E58F300278C42 /* MetricCollector.h */,
 				329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */,
 				329C1F001B5540F900A84D55 /* MetricCollectorIO.h */,
-				32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */,
-				32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */,
-				32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */,
-				32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */,
-				32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */,
-				32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */,
-				32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */,
-				32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */,
 				32EBDF081B4FEFDC00278C42 /* metric.h */,
 			);
 			path = metric;
@@ -6122,7 +6104,6 @@
 				32A88BE01CF8228A001DBAF5 /* lstate.h in Headers */,
 				32A88BCD1CF8228A001DBAF5 /* lgc.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
-				32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */,
 				32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */,
 				32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */,
 				3206CE751FA767AC0059A4A4 /* bson-iso8601-private.h in Headers */,
@@ -6171,11 +6152,11 @@
 				3206CE831FA767AC0059A4A4 /* bson-private.h in Headers */,
 				3244C0C6168CB96B007C802C /* Record.h in Headers */,
 				32B73E9B18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.h in Headers */,
+				323595E922ECBC3200CFB66C /* MetricManager.h in Headers */,
 				3206CE7F1FA767AC0059A4A4 /* bson-error.h in Headers */,
 				32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */,
 				32B73E9718D9A74600F0B187 /* DirectIOPerformanceClientChannel.h in Headers */,
 				3219E6A018CC7AE600C2F795 /* DirectIOClientConnection.h in Headers */,
-				32F5B00B1B5F998F00457A63 /* CSVFileMetricBackend.h in Headers */,
 				3206CE901FA767AC0059A4A4 /* bson-md5.h in Headers */,
 				32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */,
 				32B5C9591C6B97590021159C /* ErrorLoggingChannel.h in Headers */,
@@ -6199,7 +6180,6 @@
 				32C25E131DBFB8DC00A46C2B /* alarm.h in Headers */,
 				32A862231D58CB2300A7D707 /* trigger.h in Headers */,
 				32C25DEC1DB7A4B900A46C2B /* HealthStat.h in Headers */,
-				32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */,
 				322EC1B81D3406650012467C /* StateFlag.h in Headers */,
 				329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
@@ -6241,7 +6221,6 @@
 				32640A36169DCC5800450962 /* DataElement.h in Headers */,
 				32640A37169DCC5800450962 /* SmartData.h in Headers */,
 				32640A38169DCC5800450962 /* Element.h in Headers */,
-				32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */,
 				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
 				325545E61F8E56E700781908 /* ExternalUnitServerEndpoint.h in Headers */,
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
@@ -7050,11 +7029,11 @@
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
 				325A84CF2108970D0036C1CA /* FSUtility.cpp in Sources */,
+				323595E822ECBC3200CFB66C /* MetricManager.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				32A88BE11CF8228A001DBAF5 /* lstring.c in Sources */,
 				32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */,
 				32F9F8121D8FD45A0023948D /* CronusManager.cpp in Sources */,
-				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */,
 				3275B1731FC4316A00BB7C77 /* ExternalBSONJsonSerialization.cpp in Sources */,
@@ -7092,7 +7071,6 @@
 				32FC49B31E0AAFBE0087D82C /* AbstractSandbox.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
 				32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */,
-				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C25DF81DB9F29200A46C2B /* AlarmLoggingChannel.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
@@ -7209,7 +7187,6 @@
 				326420671F8A1CDB00B58E3E /* HTTPServerAdapter.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
 				325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */,
-				32EBDF021B4FBD8800278C42 /* AbstractMetricBackend.cpp in Sources */,
 				32B6BD3C1E23CD8900A9F86C /* DeviceMessageChannel.cpp in Sources */,
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
 				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
@@ -7240,7 +7217,6 @@
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
 				324928531F597E4500409E83 /* PropertyCollector.cpp in Sources */,
-				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
 				32067EA11CABEE8800DE568A /* CDataVariant.cpp in Sources */,
 				3206CE631FA767AC0059A4A4 /* bson-context.c in Sources */,
 				324544F81D4A55ED0081F90B /* AbstractListener.cpp in Sources */,
@@ -8104,7 +8080,7 @@
 					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Debug;
 		};
@@ -8121,6 +8097,7 @@
 					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				ONLY_ACTIVE_ARCH = NO;
 			};
 			name = Release;
 		};
@@ -8623,6 +8600,595 @@
 			};
 			name = Release;
 		};
+		32CDED1A22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				COMPILER_INDEX_STORE_ENABLE = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = "CHAOS_PROMETHEUS=1";
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Prometheus;
+		};
+		32CDED1B22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lboost_log",
+					"-lboost_random",
+					"-lboost_log_setup",
+					"-lzmq",
+					"-ljsoncpp",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED1C22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_CODE_COVERAGE = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "-lchaos_common";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED1D22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lchaos_common";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED1E22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-lboost_system";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED1F22EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_CASSANDRA_DRIVER=1";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					usr/local/include/bsoncxx/v_noabi,
+					usr/local/include/mongocxx/v_noabi,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lcassandra",
+					"-lmongoclient",
+					"-lboost_random",
+					"-lmongocxx",
+					"-lbsoncxx",
+					"-lboost_timer",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED2022EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZZ5BMKV37Y;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
+					"-lmongoclient",
+					"-lcouchbase",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED2122EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_metadata_service_client",
+					"-lchaos_common",
+					"-lboost_timer",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED2222EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = chaos_extension;
+				EXECUTABLE_PREFIX = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/usr/local/include";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lchaos_cutoolkit",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Prometheus;
+		};
+		32CDED2322EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					usr/local/include/bsoncxx/v_noabi,
+					usr/local/include/mongocxx/v_noabi,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
+		32CDED2422EC8DC2002B5C20 /* Prometheus */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = usr/local/include;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Prometheus;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -8630,6 +9196,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				322085DE1AC5A0E200F1B71A /* Debug */,
+				32CDED2122EC8DC2002B5C20 /* Prometheus */,
 				322085DF1AC5A0E200F1B71A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8639,6 +9206,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				323236CE164573C60052CE06 /* Debug */,
+				32CDED1F22EC8DC2002B5C20 /* Prometheus */,
 				323236CF164573C60052CE06 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8648,6 +9216,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3238883121627B9600CC8A2B /* Debug */,
+				32CDED2322EC8DC2002B5C20 /* Prometheus */,
 				3238883321627B9600CC8A2B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8657,6 +9226,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3238889E21627DB600CC8A2B /* Debug */,
+				32CDED2222EC8DC2002B5C20 /* Prometheus */,
 				323888A021627DB600CC8A2B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8666,6 +9236,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				324D089C1F30CD7A00836E29 /* Debug */,
+				32CDED1E22EC8DC2002B5C20 /* Prometheus */,
 				324D089D1F30CD7A00836E29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8675,6 +9246,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3260261214B300FE00C906CE /* Debug */,
+				32CDED1A22EC8DC2002B5C20 /* Prometheus */,
 				3260261314B300FE00C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8684,6 +9256,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				326026EC14B301F600C906CE /* Debug */,
+				32CDED1B22EC8DC2002B5C20 /* Prometheus */,
 				326026ED14B301F600C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8693,6 +9266,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3260276814B3068100C906CE /* Debug */,
+				32CDED1C22EC8DC2002B5C20 /* Prometheus */,
 				3260276914B3068100C906CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8702,6 +9276,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3264139E1E44ACE60035E175 /* Debug */,
+				32CDED2022EC8DC2002B5C20 /* Prometheus */,
 				3264139F1E44ACE60035E175 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8711,6 +9286,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32661C671AA73D5C00F1A721 /* Debug */,
+				32CDED1D22EC8DC2002B5C20 /* Prometheus */,
 				32661C681AA73D5C00F1A721 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -8720,6 +9296,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				326FBA152164C278004B0060 /* Debug */,
+				32CDED2422EC8DC2002B5C20 /* Prometheus */,
 				326FBA172164C278004B0060 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
