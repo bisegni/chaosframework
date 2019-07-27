@@ -143,6 +143,8 @@ IF (CHAOS_PROMETHEUS)
   LOG_DOWNLOAD ON
   LOG_CONFIGURE ON
   LOG_BUILD ON)
+  # add definition for compilation
+  add_definitions(-DCHAOS_PROMETHEUS=1)
 ENDIF()
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
