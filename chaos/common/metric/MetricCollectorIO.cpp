@@ -33,7 +33,8 @@ MetricCollector(),
 pack_count(0),
 bandwith(0),
 pack_count_for_ut(0.0),
-bw_for_ut(0.0){
+bw_for_ut(0.0),
+last_sample_ts(0){
     //received pack and bw in the
 //    addMetric(METRIC_KEY_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
 //    addMetric(METRIC_KEY_BANDWITH, chaos::DataType::TYPE_DOUBLE);
@@ -59,6 +60,12 @@ MetricCollectorIO::~MetricCollectorIO() {
 //    }
 //}
 
-void MetricCollectorIO::timout() {
-    
+void MetricCollectorIO::timeout() {
+    uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+    if(last_sample_ts) {
+        fetchMetricForTimeDiff(now - last_sample_ts);
+    } else {
+        fetchMetricForTimeDiff(0);
+    }
+    last_sample_ts = now;
 }

@@ -40,7 +40,7 @@ namespace chaos {
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:
-                DirectIODispatcherMetricCollector(const std::string& direct_io_server_impl);
+                DirectIODispatcherMetricCollector();
                 ~DirectIODispatcherMetricCollector();
                 
                 // Start the implementation

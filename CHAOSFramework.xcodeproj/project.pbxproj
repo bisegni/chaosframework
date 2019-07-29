@@ -8614,6 +8614,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 			};
 			name = Prometheus;
 		};
@@ -8634,6 +8635,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"BOOST_ALL_DYN_LINK=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -8662,6 +8664,8 @@
 					"-lboost_log_setup",
 					"-lzmq",
 					"-ljsoncpp",
+					"-lprometheus-cpp-core",
+					"-lprometheus-cpp-pull",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

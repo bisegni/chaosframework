@@ -31,13 +31,12 @@ static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 #define DIODMC_DBG_ DBG_LOG(DirectIODispatcherMetricCollector)
 #define DIODMC_ERR_ ERR_LOG(DirectIODispatcherMetricCollector)
 
-DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector(const std::string& direct_io_server_impl):
-MetricCollectorIO(direct_io_server_impl,
-                  GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL)),
+DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector():
+MetricCollectorIO(),
 endpoint_alive_count(0) {
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
-    addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
+//    addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
@@ -101,8 +100,4 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
 }
 
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    updateMetricValue(METRIC_KEY_ENDPOINT_ALIVE,
-                      &endpoint_alive_count,
-                      sizeof(int32_t));
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
 }

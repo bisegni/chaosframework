@@ -103,5 +103,4 @@ bool RpcClientMetricCollector::submitMessage(chaos::common::network::NFISharedPt
 }
 
 void RpcClientMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
 }

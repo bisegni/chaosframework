@@ -125,5 +125,4 @@ CDWUniquePtr RpcServerMetricCollector::executeCommandSync(CDWUniquePtr action_pa
 }
 
 void RpcServerMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
 }

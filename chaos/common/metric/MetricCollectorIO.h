@@ -43,9 +43,9 @@ namespace chaos {
                 //variable for calculation
                 double pack_count_for_ut;
                 double bw_for_ut;
-                int64_t last_sample_ts;
-                void timout();
-                virtual void fetchMetricForTimeDiff(int64_t time_diff) = 0;
+                uint64_t last_sample_ts;
+                void timeout();
+                virtual void fetchMetricForTimeDiff(uint64_t time_diff) = 0;
             public:
                 MetricCollectorIO();
                 ~MetricCollectorIO();
