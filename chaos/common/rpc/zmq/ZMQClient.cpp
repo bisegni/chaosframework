@@ -30,7 +30,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::pool;
-
+using namespace chaos::common::metric;
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
@@ -60,8 +60,8 @@ zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){
     seq_id=0;
 #if CHAOS_PROMETHEUS
     //add custom driver metric
-    chaos::common::metric::MetricManager::getInstance()->createCounterFamily("rpc_zmq_client_queue", "Element in queue that need to forwarded by the zmq client");
-    counter_queuend_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_zmq_client_queue");
+    chaos::common::metric::MetricManager::getInstance()->createGaugeFamily("rpc_zmq_client_queue", "Element in queue that need to forwarded by the zmq client");
+    counter_queuend_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_queue");
 #endif
 }
 
