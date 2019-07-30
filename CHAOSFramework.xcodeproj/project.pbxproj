@@ -481,7 +481,6 @@
 		326ACF9C1E01594C00AD011E /* QueryDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF991E01594C00AD011E /* QueryDataConsumer.cpp */; };
 		326ACFA81E0159C600AD011E /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF9E1E0159C600AD011E /* DataWorker.cpp */; };
 		326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA01E0159C600AD011E /* DeviceSharedDataWorker.cpp */; };
-		326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */; };
 		326ACFAB1E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */; };
 		326BB29E1E3753DB00BFA602 /* ProxyControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326BB29C1E3753DB00BFA602 /* ProxyControlUnit.h */; };
 		326BB29F1E3753E200BFA602 /* ProxyControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */; };
@@ -1882,8 +1881,6 @@
 		326ACF9F1E0159C600AD011E /* DataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataWorker.h; sourceTree = "<group>"; };
 		326ACFA01E0159C600AD011E /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		326ACFA11E0159C600AD011E /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
-		326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorkerMetric.cpp; sourceTree = "<group>"; };
-		326ACFA31E0159C600AD011E /* DeviceSharedDataWorkerMetric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetric.h; sourceTree = "<group>"; };
 		326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorkerMetricCollector.cpp; sourceTree = "<group>"; };
 		326ACFA51E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetricCollector.h; sourceTree = "<group>"; };
 		326BB29B1E3753DB00BFA602 /* ProxyControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyControlUnit.cpp; sourceTree = "<group>"; };
@@ -4206,8 +4203,6 @@
 				326ACF9F1E0159C600AD011E /* DataWorker.h */,
 				326ACFA01E0159C600AD011E /* DeviceSharedDataWorker.cpp */,
 				326ACFA11E0159C600AD011E /* DeviceSharedDataWorker.h */,
-				326ACFA21E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp */,
-				326ACFA31E0159C600AD011E /* DeviceSharedDataWorkerMetric.h */,
 				326ACFA41E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.cpp */,
 				326ACFA51E0159C600AD011E /* DeviceSharedDataWorkerMetricCollector.h */,
 			);
@@ -6881,7 +6876,6 @@
 				32A626C6213FBC0600D63009 /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32E9781A2018E41000882958 /* GetAgentForNode.cpp in Sources */,
 				32514EF21EA8BA13001FF6B8 /* UpdateScriptOnNode.cpp in Sources */,
-				326ACFAA1E0159C600AD011E /* DeviceSharedDataWorkerMetric.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				32B6B79D213EA6DD00D7ECF8 /* SearchScript.cpp in Sources */,
 				32B6B737213E736D00D7ECF8 /* SubmitEntry.cpp in Sources */,
@@ -7593,10 +7587,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_CASSANDRA_DRIVER=1";
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"USE_CASSANDRA_DRIVER=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -7615,12 +7609,12 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
 					"-lcassandra",
 					"-lmongoclient",
-					"-lboost_random",
 					"-lmongocxx",
 					"-lbsoncxx",
 					"-lboost_timer",
@@ -7661,12 +7655,12 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
 					"-lcassandra",
 					"-lmongoclient",
-					"-lboost_random",
 					"-lmongocxx",
 					"-lbsoncxx",
 					"-lboost_timer",
@@ -8081,6 +8075,17 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lboost_log",
+					"-lboost_random",
+					"-lboost_log_setup",
+				);
 			};
 			name = Debug;
 		};
@@ -8098,6 +8103,17 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lboost_log",
+					"-lboost_random",
+					"-lboost_log_setup",
+				);
 			};
 			name = Release;
 		};
@@ -8135,15 +8151,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
-					"-lboost_log_setup",
+					"$(inherited)",
 					"-lzmq",
 					"-ljsoncpp",
 				);
@@ -8181,15 +8189,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
-					"-lboost_log_setup",
+					"$(inherited)",
 					"-lzmq",
 					"-ljsoncpp",
 				);
@@ -8230,7 +8230,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lchaos_common";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lchaos_common",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -8261,7 +8264,10 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lchaos_common";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lchaos_common",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -8607,14 +8613,27 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMPILER_INDEX_STORE_ENABLE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = "CHAOS_PROMETHEUS=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"CHAOS_PROMETHEUS=1",
+					"BOOST_ALL_DYN_LINK=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lboost_log",
+					"-lboost_random",
+					"-lboost_log_setup",
+				);
 			};
 			name = Prometheus;
 		};
@@ -8653,15 +8672,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
-					"-lboost_log_setup",
+					"$(inherited)",
 					"-lzmq",
 					"-ljsoncpp",
 					"-lprometheus-cpp-core",
@@ -8704,7 +8715,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lchaos_common";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lchaos_common",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -8836,10 +8850,11 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "USE_CASSANDRA_DRIVER=1";
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"USE_CASSANDRA_DRIVER=1",
+					"BOOST_ALL_DYN_LINK=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -8858,12 +8873,12 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-lchaos_common",
 					"-ljsoncpp",
 					"-levent",
 					"-lcassandra",
 					"-lmongoclient",
-					"-lboost_random",
 					"-lmongocxx",
 					"-lbsoncxx",
 					"-lboost_timer",

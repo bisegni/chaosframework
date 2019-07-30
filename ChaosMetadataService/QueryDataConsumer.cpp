@@ -22,7 +22,6 @@
 #include "QueryDataConsumer.h"
 #include "DriverPoolManager.h"
 #include "worker/DeviceSharedDataWorker.h"
-#include "worker/DeviceSharedDataWorkerMetric.h"
 #include "worker/DeviceSharedDataWorkerMetricCollector.h"
 #include "persistence/persistence.h"
 
@@ -55,8 +54,6 @@ using namespace chaos::common::direct_io::channel;
 #define DBG     DBG_LOG(QueryDataConsumer)
 #define ERR     ERR_LOG(QueryDataConsumer)
 
-ChaosSharedPtr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
-
 //constructor
 QueryDataConsumer::QueryDataConsumer():
 server_endpoint(NULL),
@@ -87,16 +84,15 @@ void QueryDataConsumer::init(void *init_data)  {
         idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         idx++) {
         DataWorkerSharedPtr tmp;
-        if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
-            INFO << "Enable caching worker log metric";
-            INFO << "Init Device shared data worker metric";
-            dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
-                                                                        ChaosMetadataService::getInstance()->setting.worker_setting.log_metric_update_interval));
-            
-            tmp = ChaosMakeSharedPtr<worker::DeviceSharedDataWorkerMetricCollector>(dsdwm_metric);
-        } else {
+#if CHAOS_PROMETHEUS
+//        if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
+            INFO << "Enable dataset processing worker metric";
+            tmp = ChaosMakeSharedPtr<worker::DeviceSharedDataWorkerMetricCollector>();
+#else
+//        } else {
             tmp = ChaosMakeSharedPtr<chaos::metadata_service::worker::DeviceSharedDataWorker>();
-        }
+//        }
+#endif
         device_data_worker.push_back(tmp);
         StartableService::initImplementation(*tmp, NULL, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
         StartableService::startImplementation(*tmp, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
@@ -119,9 +115,6 @@ void QueryDataConsumer::deinit()  {
         INFO << "Release device worker "<< idx;
         device_data_worker[idx]->stop();
         device_data_worker[idx]->deinit();
-    }
-    if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
-        dsdwm_metric.reset();
     }
 }
 

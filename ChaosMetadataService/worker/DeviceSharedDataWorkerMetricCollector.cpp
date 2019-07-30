@@ -25,11 +25,18 @@
 
 #include <chaos/common/global.h>
 
+using namespace chaos::common::metric;
 using namespace chaos::metadata_service::worker;
 
-DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric):
-DeviceSharedDataWorker(),
-data_worker_metric(_data_worker_metric){}
+DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector():
+DeviceSharedDataWorker(){
+    MetricManager::getInstance()->createCounterFamily("mds_dataset_received", "Is the number of dataset received from mds processing layer");
+    counter_dataset_in_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_dataset_received");
+    
+    MetricManager::getInstance()->createGaugeFamily("mds_dataset_storage_queue", "Is the metric for storage queue");
+    gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_dataset_storage_queue",{{"type","queued_dataset_number"}});
+    gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_dataset_storage_queue",{{"type","queued_dataset_memeory"}});
+}
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
 
@@ -43,7 +50,8 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
         case 0:// storicize only
         case 2:// storicize and live
             //increment metric for data stored on vfs
-            data_worker_metric->incrementOutputBandwith(total_data);
+            (*gauge_queued_dataset_uptr)--;
+            (*gauge_queued_memory_uptr)-=total_data;
             break;
             
         case 1:{// live only
@@ -51,7 +59,7 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
         }
     }
     //decrement metric that this packet has been removed from queue
-    data_worker_metric->decrementQueueSize(total_data);
+    (*gauge_queued_dataset_uptr)--;
 }
 
 int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) {
@@ -59,13 +67,14 @@ int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) 
     DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
     int tag = job.key_tag;
     uint32_t total_data = (uint32_t)job.data_pack->size()  + (uint32_t)job.key.size();
-    data_worker_metric->incrementInputBandwith(total_data);
+    (*counter_dataset_in_uptr)++;
     
     switch(tag) {
         case 0:// storicize only
         case 2:// storicize and live
             //write data on stage file
-            data_worker_metric->incrementQueueSize(total_data);
+            (*gauge_queued_dataset_uptr)++;
+            (*gauge_queued_memory_uptr)+=total_data;
             break;
             
         case 1:{// live only

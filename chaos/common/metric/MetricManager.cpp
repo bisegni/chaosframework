@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/metric/MetricManager.h>
 
 using namespace chaos::common::metric;
@@ -84,13 +84,23 @@ double chaos::common::metric::Gauge::operator-(const double d) const {
     return impl.Value();
 }
 
+chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator+=(const double d) {
+    impl.Increment(d);
+    return *this;
+}
+
+chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator-=(const double d) {
+    impl.Decrement(d);
+    return *this;
+}
+
 #pragma mark Manager
 MetricManager::MetricManager():
-http_exposer(new prometheus::Exposer("127.0.0.1:8080")),
+http_exposer(new prometheus::Exposer(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_METRIC_WEB_SERVER_PORT))),
 metrics_registry(std::make_shared<Registry>()),
 io_send_byte_sec(BuildGauge()
                  .Name("io_send_byte_sec")
-                 .Help("The data rate of transmitted byte/sec out of data service")
+                 .Help("The data rate of transmitted kbyte/sec out of data service")
                  .Labels({})
                  .Register(*metrics_registry)),
 io_send_packet_sec(BuildGauge()
@@ -100,7 +110,7 @@ io_send_packet_sec(BuildGauge()
                    .Register(*metrics_registry)),
 io_receive_byte_sec(BuildGauge()
                     .Name("io_receive_receive_sec")
-                    .Help("The data rate of received byte/sec out of data service")
+                    .Help("The data rate of received kbyte/sec out of data service")
                     .Labels({})
                     .Register(*metrics_registry)),
 io_receive_packet_sec(BuildGauge()

@@ -23,7 +23,7 @@
 #define __CHAOSFramework__DeviceSharedDataWorkerMetricCollector__
 
 #include "DeviceSharedDataWorker.h"
-#include "DeviceSharedDataWorkerMetric.h"
+#include <chaos/common/metric/metric.h>
 
 #include <memory>
 
@@ -35,11 +35,13 @@ namespace chaos{
             
             class DeviceSharedDataWorkerMetricCollector:
             public DeviceSharedDataWorker {
-                ChaosSharedPtr<DeviceSharedDataWorkerMetric> data_worker_metric;
+                chaos::common::metric::CounterUniquePtr counter_dataset_in_uptr;
+                chaos::common::metric::GaugeUniquePtr gauge_queued_dataset_uptr;
+                chaos::common::metric::GaugeUniquePtr gauge_queued_memory_uptr;
             protected:
                 void executeJob(WorkerJobPtr job_info, void* cookie);
             public:
-                DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric);
+                DeviceSharedDataWorkerMetricCollector();
                 ~DeviceSharedDataWorkerMetricCollector();
                 int submitJobInfo(WorkerJobPtr job_info);
                 
