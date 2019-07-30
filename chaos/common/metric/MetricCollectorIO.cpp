@@ -24,16 +24,10 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::common::metric;
-
-static const char * const METRIC_KEY_PACKET_COUNT = "packet_count";
-static const char * const METRIC_KEY_BANDWITH = "kb_sec";
+using namespace chaos::common::async_central;
 
 MetricCollectorIO::MetricCollectorIO():
 MetricCollector(),
-pack_count(0),
-bandwith(0),
-pack_count_for_ut(0.0),
-bw_for_ut(0.0),
 last_sample_ts(0){
     //received pack and bw in the
 //    addMetric(METRIC_KEY_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
@@ -43,6 +37,14 @@ last_sample_ts(0){
 
 MetricCollectorIO::~MetricCollectorIO() {
     
+}
+
+void MetricCollectorIO::startLogging() {
+    AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
+}
+
+void MetricCollectorIO::stopLogging() {
+    AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 //void MetricCollectorIO::fetchMetricForTimeDiff(uint64_t time_diff) {

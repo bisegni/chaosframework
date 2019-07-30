@@ -36,19 +36,14 @@ namespace chaos {
             public MetricCollector,
             public chaos::common::async_central::TimerHandler {
             protected:
-                //! messagge that hase beens sent since last metric acquisition
-                boost::atomic<uint64_t> pack_count;
-                //! toatl bandwith since last metric acquisition
-                boost::atomic<uint64_t> bandwith;
-                //variable for calculation
-                double pack_count_for_ut;
-                double bw_for_ut;
                 uint64_t last_sample_ts;
                 void timeout();
                 virtual void fetchMetricForTimeDiff(uint64_t time_diff) = 0;
             public:
                 MetricCollectorIO();
                 ~MetricCollectorIO();
+                void startLogging();
+                void stopLogging();
             };
         }
     }

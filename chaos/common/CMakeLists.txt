@@ -143,10 +143,12 @@ SET(common_lib_src ${common_lib_src}
                     cronus_manager/CronusManager.cpp
                     cronus_manager/CronJob.cpp)
 
+#if (CHAOS_PROMETHEUS)
 SET(common_lib_src ${common_lib_src}
+                    metric/MetricManager.cpp
                     metric/MetricCollector.cpp
                     metric/MetricCollectorIO.cpp)
-
+#endif
 SET(common_lib_src ${common_lib_src}
                     data/CDataWrapper.cpp
                     data/CDataBuffer.cpp
@@ -241,9 +243,6 @@ SET(common_lib_src ${common_lib_src}
                     direct_io/impl/ZMQDirectIOServer.cpp
                     direct_io/impl/ZMQBaseClass.cpp
                     direct_io/impl/ZMQDirectIOClientConnection.cpp
-                    direct_io/DirectIODispatcherMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionSharedMetricIO.cpp
                     direct_io/channel/DirectIOVirtualChannel.cpp
                     direct_io/channel/DirectIOVirtualClientChannel.cpp
                     direct_io/channel/DirectIOVirtualServerChannel.cpp
@@ -253,6 +252,13 @@ SET(common_lib_src ${common_lib_src}
                     direct_io/channel/DirectIOPerformanceClientChannel.cpp
                     direct_io/channel/DirectIOSystemAPIServerChannel.cpp
                     direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
+
+#if (CHAOS_PROMETHEUS)
+SET(common_lib_src ${common_lib_src}
+                    direct_io/DirectIODispatcherMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionSharedMetricIO.cpp)
+#endif
 
 SET(common_lib_src ${common_lib_src}
                     io/IODataDriver.cpp
@@ -283,11 +289,13 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
                     rpc/RpcClient.cpp
                     rpc/RpcServer.cpp
-                    rpc/RpcClientMetricCollector.cpp
-                    rpc/RpcServerMetricCollector.cpp
                     rpc/zmq/ZMQClient.cpp
                     rpc/zmq/ZMQServer.cpp)
-
+#if (CHAOS_PROMETHEUS)
+SET(common_lib_src ${common_lib_src}
+                    rpc/RpcClientMetricCollector.cpp
+                    rpc/RpcServerMetricCollector.cpp)
+#endif
 SET(common_lib_src ${common_lib_src}
                     utility/NamedService.cpp
                     utility/StartableService.cpp

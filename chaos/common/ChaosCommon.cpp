@@ -20,6 +20,10 @@
  */
 #include <chaos/common/ChaosCommon.h>
 
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/MetricManager.h>
+#endif
+
 #include <errno.h>
 #include <csignal>
 #include <fstream>
@@ -266,6 +270,10 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
         
+#if CHAOS_PROMETHEUS
+        common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
+#endif
+        
         //Starting Async central
         common::utility::InizializableService::initImplementation(AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
         common::utility::StartableService::initImplementation(NetworkBroker::getInstance(), init_data, "NetworkBroker", __PRETTY_FUNCTION__);
@@ -353,6 +361,10 @@ void ChaosAbstractCommon::deinit() {
     
     //shutdown logger
     chaos::common::log::LogManager::getInstance()->deinit();
+    
+#if CHAOS_PROMETHEUS
+    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
+#endif
 }
 
 void ChaosAbstractCommon::start() {}

@@ -11,8 +11,6 @@ IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ENDIF()
 
-MESG("test message ${CHAOS_PROMETHEUS}")
-
 IF (COMPILE_HAZELCAST_LIVE_DRIVER)
   MESG("Install hazelcast c++ client")
   ExternalProject_Add(

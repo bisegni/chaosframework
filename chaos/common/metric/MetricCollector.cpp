@@ -33,9 +33,6 @@ MetricCollector::MetricCollector() {}
 MetricCollector::~MetricCollector() {}
 
 
-void MetricCollector::startLogging() {
+void MetricCollector::startLogging() {}
 
-}
-
-void MetricCollector::stopLogging() {
-}
+void MetricCollector::stopLogging() {}

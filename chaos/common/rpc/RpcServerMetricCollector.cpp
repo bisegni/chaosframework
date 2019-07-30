@@ -57,6 +57,13 @@ RpcServerMetricCollector::~RpcServerMetricCollector() {
 void RpcServerMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapper_server)
     utility::StartableService::initImplementation(wrapper_server, init_data, wrapper_server->getName(), __PRETTY_FUNCTION__);
+    MetricManager::getInstance()->createCounterFamily("rpc_received_packet", "Is the count of the packet received from the rpc driver");
+    packet_async_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_packet",{{"type","async"}});
+    packet_sync_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_packet",{{"type","sync"}});
+    
+    MetricManager::getInstance()->createCounterFamily("rpc_received_data", "Is the count of the bytes received from the rpc driver");
+    data_async_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_data",{{"type","async"}});
+    data_sync_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_data",{{"type","sync"}});
 }
 
 /*
@@ -99,29 +106,22 @@ void RpcServerMetricCollector::setCommandDispatcher(RpcServerHandler *_wrapperd_
 // method called when the rpc server receive a new data
 CDWUniquePtr RpcServerMetricCollector::dispatchCommand(CDWUniquePtr action_pack) {
     CHAOS_ASSERT(wrapperd_server_handler)
-    int size = 0;
     CDWUniquePtr result;
     //inrement packec count
-    pack_count++;
+    (*packet_async_count_uptr)++;
+    (*data_async_count_uptr) += action_pack->getBSONRawSize();
     result = wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
-    //increment packet size
-    action_pack->getBSONRawData(size);
-    bandwith+=size;
     return result;
 }
 
 // execute an action in synchronous mode
 CDWUniquePtr RpcServerMetricCollector::executeCommandSync(CDWUniquePtr action_pack) {
     CHAOS_ASSERT(wrapperd_server_handler)
-    int size = 0;
     CDWUniquePtr result;
     //inrement packec count
-    pack_count++;
-    result = wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
-    //increment packet size
-    action_pack->getBSONRawData(size);
-    bandwith+=size;
-    return result;
+    (*packet_sync_count_uptr)++;
+    (*data_sync_count_uptr) += action_pack->getBSONRawSize();
+    return wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
 }
 
 void RpcServerMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {

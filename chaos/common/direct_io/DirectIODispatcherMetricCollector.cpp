@@ -23,6 +23,7 @@
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+using namespace chaos::common::metric;
 using namespace chaos::common::direct_io;
 
 static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
@@ -36,7 +37,10 @@ MetricCollectorIO(),
 endpoint_alive_count(0) {
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
-//    addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
+    MetricManager::getInstance()->createCounterFamily("directio_sent_packet", "Is the count of the packet sent to direct io driver");
+    MetricManager::getInstance()->createCounterFamily("directio_sent_data", "Is the data rate (in byte) of the packet sent to direct io driver");
+    pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("directio_sent_packet");
+    bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("directio_sent_data");
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
@@ -48,37 +52,37 @@ void DirectIODispatcherMetricCollector::start()  {
     //flow back to base class
     DirectIODispatcher::start();
     //start metric logging
-    startLogging();
+    //startLogging();
 }
 
 // Stop the implementation
 void DirectIODispatcherMetricCollector::stop()  {
     //stop metric logging
-    stopLogging();
+    //stopLogging();
     //flow back to base class
     DirectIODispatcher::stop();
 }
 
 //! Allocate a new endpoint
 DirectIOServerEndpoint *DirectIODispatcherMetricCollector::getNewEndpoint() {
-    endpoint_alive_count++;
+//    endpoint_alive_count++;
     return DirectIODispatcher::getNewEndpoint();
 }
 
 //! Relase the endpoint
 void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_release) {
     DirectIODispatcher::releaseEndpoint(endpoint_to_release);
-    endpoint_alive_count--;
+//    endpoint_alive_count--;
 }
 
 // Event for a new data received
 int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                             chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packet count
-    pack_count++;
+    (*pack_count_uptr)++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    (*bandwith_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
     return DirectIODispatcher::priorityDataReceived(MOVE(data_pack),
@@ -89,10 +93,10 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
 int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                            chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packec count
-    pack_count++;
+    (*pack_count_uptr)++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    (*bandwith_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
     return DirectIODispatcher::serviceDataReceived(MOVE(data_pack),

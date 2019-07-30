@@ -42,12 +42,10 @@ DirectIOClientConnectionSharedMetricIO::~DirectIOClientConnectionSharedMetricIO(
 }
 
 void DirectIOClientConnectionSharedMetricIO::incrementPackCount() {
-    pack_count++;
 }
 
 //increment packet size
 void DirectIOClientConnectionSharedMetricIO::incrementBandWidth(uint64_t increment) {
-    bandwith+=increment;
 }
 
 void DirectIOClientConnectionSharedMetricIO::fetchMetricForTimeDiff(uint64_t time_diff) {
