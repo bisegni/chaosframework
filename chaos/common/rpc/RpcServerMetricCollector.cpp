@@ -57,13 +57,10 @@ RpcServerMetricCollector::~RpcServerMetricCollector() {
 void RpcServerMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapper_server)
     utility::StartableService::initImplementation(wrapper_server, init_data, wrapper_server->getName(), __PRETTY_FUNCTION__);
-    MetricManager::getInstance()->createCounterFamily("rpc_received_packet", "Is the count of the packet received from the rpc driver");
-    packet_async_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_packet",{{"type","async"}});
-    packet_sync_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_packet",{{"type","sync"}});
-    
-    MetricManager::getInstance()->createCounterFamily("rpc_received_data", "Is the count of the bytes received from the rpc driver");
-    data_async_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_data",{{"type","async"}});
-    data_sync_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_received_data",{{"type","sync"}});
+    packet_async_count_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","rpc_async"}});
+    data_async_count_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","rpc_async"}});
+    packet_sync_count_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","rpc_sync"}});
+    data_sync_count_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","rpc_sync"}});
 }
 
 /*

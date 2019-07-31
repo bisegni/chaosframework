@@ -35,7 +35,6 @@ namespace chaos{
             
             class DeviceSharedDataWorkerMetricCollector:
             public DeviceSharedDataWorker {
-                chaos::common::metric::CounterUniquePtr counter_dataset_in_uptr;
                 chaos::common::metric::GaugeUniquePtr gauge_queued_dataset_uptr;
                 chaos::common::metric::GaugeUniquePtr gauge_queued_memory_uptr;
             protected:
@@ -43,7 +42,7 @@ namespace chaos{
             public:
                 DeviceSharedDataWorkerMetricCollector();
                 ~DeviceSharedDataWorkerMetricCollector();
-                int submitJobInfo(WorkerJobPtr job_info);
+                int submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait = chaos::common::constants::MDSHistoryQueuePushTimeoutinMSec);
                 
             };
         }

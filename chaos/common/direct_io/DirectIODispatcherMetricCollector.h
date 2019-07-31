@@ -37,8 +37,8 @@ namespace chaos {
             public DirectIODispatcher,
             public chaos::common::metric::MetricCollectorIO {
                 int32_t endpoint_alive_count;
-                chaos::common::metric::CounterUniquePtr pack_count_uptr;
-                chaos::common::metric::CounterUniquePtr bandwith_uptr;
+                chaos::common::metric::CounterUniquePtr coutenr_pack_uptr;
+                chaos::common::metric::CounterUniquePtr counter_data_uptr;
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:

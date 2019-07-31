@@ -57,7 +57,7 @@ CacheDriverSharedMetricIO::~CacheDriverSharedMetricIO() {
 void CacheDriverSharedMetricIO::incrementSetBandWidth(uint32_t increment) {
     boost::shared_lock<boost::shared_mutex> rl(metric_mutex);
     (*set_pack_count_uptr)++;
-    (*set_bandwith_uptr) += ((double)increment/1000);
+    (*set_bandwith_uptr) += ((double)increment);
 }
 
 void CacheDriverSharedMetricIO::incrementGetBandWidth(uint32_t increment) {

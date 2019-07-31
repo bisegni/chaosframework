@@ -711,8 +711,6 @@
 		329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F041B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h */; };
 		329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */; };
 		329C1F0A1B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */; };
-		329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */; };
-		329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329DEB731D2E457F0050E914 /* chaos_errors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329DEB721D2E457F0050E914 /* chaos_errors.cpp */; };
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
@@ -2153,8 +2151,6 @@
 		329C1F041B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcherMetricCollector.h; sourceTree = "<group>"; };
 		329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnectionMetricCollector.cpp; sourceTree = "<group>"; };
 		329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionMetricCollector.h; sourceTree = "<group>"; };
-		329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnectionSharedMetricIO.cpp; sourceTree = "<group>"; };
-		329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionSharedMetricIO.h; sourceTree = "<group>"; };
 		329C1F101B58F46700A84D55 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329DEB721D2E457F0050E914 /* chaos_errors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chaos_errors.cpp; sourceTree = "<group>"; };
@@ -4733,8 +4729,6 @@
 				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
 				3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */,
 				3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */,
-				329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */,
-				329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */,
 				329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */,
 				329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */,
 				32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */,
@@ -6264,7 +6258,6 @@
 				32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */,
 				32A88BDA1CF8228A001DBAF5 /* lopcodes.h in Headers */,
 				32FF2AAA1E6D79EC00117985 /* DataBuffer.h in Headers */,
-				329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */,
 				32A88BD11CF8228A001DBAF5 /* llex.h in Headers */,
 				3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */,
 				32B73E9F18D9D80F00F0B187 /* PerformanceManagment.h in Headers */,
@@ -7072,7 +7065,6 @@
 				32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */,
 				32A88BC91CF8228A001DBAF5 /* ldump.c in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
-				329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */,
 				32B6BD341E1E88F800A9F86C /* SharedCommandDispatcher.cpp in Sources */,
 				32F9F8161D8FD7030023948D /* CronJob.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
@@ -7583,6 +7575,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"CacheDriverMetricCollector.*",
+					"CacheDriverSharedMetricIO.*",
+					"DeviceSharedDataWorkerMetricCollector.*",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -7636,6 +7633,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXCLUDED_SOURCE_FILE_NAMES = "DeviceSharedDataWorkerMetricCollector.*";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -8076,15 +8074,15 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
 					"-lboost_log_setup",
+					"-lboost_random",
+					"-lboost_log",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-lboost_program_options",
+					"-lboost_thread",
+					"-lboost_system",
+					"-lboost_chrono",
 				);
 			};
 			name = Debug;
@@ -8104,15 +8102,15 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
 					"-lboost_log_setup",
+					"-lboost_random",
+					"-lboost_log",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-lboost_program_options",
+					"-lboost_thread",
+					"-lboost_system",
+					"-lboost_chrono",
 				);
 			};
 			name = Release;
@@ -8125,6 +8123,15 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					metric.h,
+					"Metric*.h",
+					"Metric*.cpp",
+					"RpcClientMetricCollector.*",
+					"RpcServerMetricCollector.*",
+					"DirectIOClientConnectionMetricCollector.*",
+					"DirectIODispatcherMetricCollector.*",
+				);
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -8613,10 +8620,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMPILER_INDEX_STORE_ENABLE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"CHAOS_PROMETHEUS=1",
-					"BOOST_ALL_DYN_LINK=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "CHAOS_PROMETHEUS=1";
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
@@ -8624,15 +8628,15 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_random",
 					"-lboost_log_setup",
+					"-lboost_random",
+					"-lboost_log",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-lboost_program_options",
+					"-lboost_thread",
+					"-lboost_system",
+					"-lboost_chrono",
 				);
 			};
 			name = Prometheus;
@@ -8654,7 +8658,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"BOOST_ALL_DYN_LINK=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -8846,15 +8849,15 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
+					"DEBUG=1",
 					"USE_CASSANDRA_DRIVER=1",
-					"BOOST_ALL_DYN_LINK=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";

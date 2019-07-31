@@ -98,26 +98,28 @@ chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator-=(const dou
 MetricManager::MetricManager():
 http_exposer(new prometheus::Exposer(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_METRIC_WEB_SERVER_PORT))),
 metrics_registry(std::make_shared<Registry>()),
-io_send_byte_sec(BuildGauge()
-                 .Name("io_send_byte_sec")
+io_send_byte_sec(BuildCounter()
+                 .Name("io_tx_data")
                  .Help("The data rate of transmitted kbyte/sec out of data service")
                  .Labels({})
                  .Register(*metrics_registry)),
-io_send_packet_sec(BuildGauge()
-                   .Name("io_send_packet_sec")
+io_send_packet_sec(BuildCounter()
+                   .Name("io_tx_packet")
                    .Help("The data rate of transmitted packet out of data service")
                    .Labels({})
                    .Register(*metrics_registry)),
-io_receive_byte_sec(BuildGauge()
-                    .Name("io_receive_receive_sec")
+io_receive_byte_sec(BuildCounter()
+                    .Name("io_rx_data")
                     .Help("The data rate of received kbyte/sec out of data service")
                     .Labels({})
                     .Register(*metrics_registry)),
-io_receive_packet_sec(BuildGauge()
-                      .Name("io_receive_packet_sec")
+io_receive_packet_sec(BuildCounter()
+                      .Name("io_rx_packet")
                       .Help("The data rate of received packet out of data service")
                       .Labels({})
-                      .Register(*metrics_registry)){}
+                      .Register(*metrics_registry)) {
+    http_exposer->RegisterCollectable(metrics_registry);
+}
 
 MetricManager::~MetricManager() {}
 
@@ -130,20 +132,20 @@ void MetricManager::deinit() {
     http_exposer.reset();
 }
 
-GaugeUniquePtr MetricManager::getNewTxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return GaugeUniquePtr(new chaos::common::metric::Gauge(io_send_byte_sec.Add(label)));
+CounterUniquePtr MetricManager::getNewTxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
+    return CounterUniquePtr(new chaos::common::metric::Counter(io_send_byte_sec.Add(label)));
 }
 
-GaugeUniquePtr MetricManager::getNewRxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return GaugeUniquePtr(new chaos::common::metric::Gauge(io_receive_byte_sec.Add(label)));
+CounterUniquePtr MetricManager::getNewRxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
+    return CounterUniquePtr(new chaos::common::metric::Counter(io_receive_byte_sec.Add(label)));
 }
 
-GaugeUniquePtr MetricManager::getNewTxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return GaugeUniquePtr(new chaos::common::metric::Gauge(io_send_packet_sec.Add(label)));
+CounterUniquePtr MetricManager::getNewTxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
+    return CounterUniquePtr(new chaos::common::metric::Counter(io_send_packet_sec.Add(label)));
 }
 
-GaugeUniquePtr MetricManager::getNewRxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return GaugeUniquePtr(new chaos::common::metric::Gauge(io_receive_packet_sec.Add(label)));
+CounterUniquePtr MetricManager::getNewRxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
+    return CounterUniquePtr(new chaos::common::metric::Counter(io_receive_packet_sec.Add(label)));
 }
 
 void MetricManager::createCounterFamily(const std::string& name,

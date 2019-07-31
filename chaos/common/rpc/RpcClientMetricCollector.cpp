@@ -52,10 +52,8 @@ RpcClientMetricCollector::~RpcClientMetricCollector() {
 void RpcClientMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapped_client)
     utility::StartableService::initImplementation(wrapped_client, init_data, wrapped_client->getName(), __PRETTY_FUNCTION__);
-    MetricManager::getInstance()->createCounterFamily("rpc_sent_packet", "Is the count of the packet sent to rpc driver");
-    MetricManager::getInstance()->createCounterFamily("rpc_sent_data", "Is the data rate in byte of the packet sent to rpc driver");
-    packet_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_sent_packet");
-    bw_counter_uptr = MetricManager::getInstance()->getNewCounterFromFamily("rpc_sent_data");
+    packet_count_uptr = MetricManager::getInstance()->getNewTxPacketRateMetricFamily({{"driver","rpc"}});
+    bw_counter_uptr = MetricManager::getInstance()->getNewTxDataRateMetricFamily({{"driver","rpc"}});
 }
 
 /*

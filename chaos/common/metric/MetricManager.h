@@ -96,10 +96,10 @@ namespace chaos {
                 LMapFamilyGauge      map_gauge;
                 
                 //io base metrics family for data and packet rate
-                prometheus::Family<prometheus::Gauge>& io_send_byte_sec;
-                prometheus::Family<prometheus::Gauge>& io_send_packet_sec;
-                prometheus::Family<prometheus::Gauge>& io_receive_byte_sec;
-                prometheus::Family<prometheus::Gauge>& io_receive_packet_sec;
+                prometheus::Family<prometheus::Counter>& io_send_byte_sec;
+                prometheus::Family<prometheus::Counter>& io_send_packet_sec;
+                prometheus::Family<prometheus::Counter>& io_receive_byte_sec;
+                prometheus::Family<prometheus::Counter>& io_receive_packet_sec;
                 
                 
                 
@@ -110,10 +110,10 @@ namespace chaos {
                 void deinit();
             public:
                 
-                GaugeUniquePtr getNewTxDataRateMetricFamily(const std::map<std::string,std::string>& label);
-                GaugeUniquePtr getNewRxDataRateMetricFamily(const std::map<std::string,std::string>& label);
-                GaugeUniquePtr getNewTxPacketRateMetricFamily(const std::map<std::string,std::string>& label);
-                GaugeUniquePtr getNewRxPacketRateMetricFamily(const std::map<std::string,std::string>& label);
+                CounterUniquePtr getNewTxDataRateMetricFamily(const std::map<std::string,std::string>& label);
+                CounterUniquePtr getNewRxDataRateMetricFamily(const std::map<std::string,std::string>& label);
+                CounterUniquePtr getNewTxPacketRateMetricFamily(const std::map<std::string,std::string>& label);
+                CounterUniquePtr getNewRxPacketRateMetricFamily(const std::map<std::string,std::string>& label);
                 
                 void createCounterFamily(const std::string& name,
                                          const std::string& desc);

@@ -37,10 +37,8 @@ MetricCollectorIO(),
 endpoint_alive_count(0) {
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
-    MetricManager::getInstance()->createCounterFamily("directio_sent_packet", "Is the count of the packet sent to direct io driver");
-    MetricManager::getInstance()->createCounterFamily("directio_sent_data", "Is the data rate (in byte) of the packet sent to direct io driver");
-    pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("directio_sent_packet");
-    bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("directio_sent_data");
+    coutenr_pack_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","direct_io"}});
+    counter_data_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","direct_io"}});
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
@@ -79,10 +77,10 @@ void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *
 int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                             chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packet count
-    (*pack_count_uptr)++;
+    (*coutenr_pack_uptr)++;
     
     //increment packet size
-    (*bandwith_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    (*counter_data_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
     return DirectIODispatcher::priorityDataReceived(MOVE(data_pack),
@@ -93,10 +91,10 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
 int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                            chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packec count
-    (*pack_count_uptr)++;
+    (*coutenr_pack_uptr)++;
     
     //increment packet size
-    (*bandwith_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    (*counter_data_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
 
     //flow back to base class
     return DirectIODispatcher::serviceDataReceived(MOVE(data_pack),

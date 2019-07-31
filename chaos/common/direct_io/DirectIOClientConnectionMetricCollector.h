@@ -24,7 +24,6 @@
 
 #include <chaos/common/metric/metric.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
-#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -39,8 +38,9 @@ namespace chaos {
             class DirectIOClientConnectionMetricCollector:
             public DirectIOClientConnection {
                 friend class DirectIOClient;
-                ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> shared_collector;
                 DirectIOClientConnection *wrapped_connection;
+                chaos::common::metric::CounterUniquePtr counter_dataseet_sent;
+                chaos::common::metric::CounterUniquePtr counter_data_sent;
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:

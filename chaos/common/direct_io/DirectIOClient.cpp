@@ -25,9 +25,9 @@
 
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
-#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
+#ifdef CHAOS_PROMETHEUS
 #include <chaos/common/direct_io/DirectIOClientConnectionMetricCollector.h>
-
+#endif
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
@@ -79,13 +79,12 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
         
         result = _getNewConnectionImpl(server_description,
                                        endpoint);
-#ifdef CHAOS_PROMETHEUS
-        if(result){
+        if(result &&
+           GlobalConfiguration::getInstance()->isMetricEnabled()){
             result = new DirectIOClientConnectionMetricCollector(server_description,
                                                                  endpoint,
                                                                  result);
         }
-#endif
     }
     return result;
 }
@@ -93,20 +92,17 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
 //! Release the connection
 void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
     if(connection_to_release) {
-
-#ifdef CHAOS_PROMETHEUS
+        if(GlobalConfiguration::getInstance()->isMetricEnabled()) {
             //the metric allocator of direct io is a direct subclass of DirectIODispatcher
             DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
             if(metric_collector) {
                 _releaseConnectionImpl(metric_collector->wrapped_connection);
                 delete(metric_collector);
             }
-#else
+        } else {
             _releaseConnectionImpl(connection_to_release);
-#endif
+        }
     }
 }
 
-void DirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
-    
-}
+void DirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {}

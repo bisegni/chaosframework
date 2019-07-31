@@ -112,6 +112,8 @@ namespace chaos {
         static const char * const   OPT_REST_POLL_TIME_US               = "rest-poll-us";
 #if CHAOS_PROMETHEUS
         //! config file parameter
+        static const char * const   OPT_METRIC_ENABLE                   = "enable_metric";
+        //! config file parameter
         static const char * const   OPT_METRIC_WEB_SERVER_PORT           = "metrics-http-port";
 #endif
 

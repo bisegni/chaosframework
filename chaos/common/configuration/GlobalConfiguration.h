@@ -340,6 +340,8 @@ x = hasOption(y);
         static void fillKVParameter(std::map<std::string, std::string>& kvmap,
                                     const std::vector<std::string>& kv_vector,
                                     const std::string& regex);
+        
+        bool isMetricEnabled();
     };
 }
 #endif

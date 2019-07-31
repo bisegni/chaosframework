@@ -97,6 +97,7 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(ext_unt::InitOption::OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM, po::value< std::vector<std::string> >(), ext_unt::InitOption::OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM_DESC);
         
 #if CHAOS_PROMETHEUS
+        addOption(InitOption::OPT_METRIC_ENABLE, po::value< bool >()->zero_tokens(), "Enable metric");
         addOption(InitOption::OPT_METRIC_WEB_SERVER_PORT, po::value< std::string >()->default_value("8080"), "Specify the port where publish the prometheus metrics");
 #endif
     } catch (po::error &e) {
@@ -528,4 +529,12 @@ MapStrKeyStrValue& GlobalConfiguration::getDirectIOClientImplKVParam() {
 
 MapStrKeyStrValue& GlobalConfiguration::getScriptVMKVParam() {
     return map_kv_param_script_vm;
+}
+
+bool GlobalConfiguration::isMetricEnabled() {
+#if CHAOS_PROMETHEUS
+    return hasOption(InitOption::OPT_METRIC_ENABLE);
+#else
+    return false;
+#endif
 }

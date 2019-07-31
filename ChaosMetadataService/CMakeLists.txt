@@ -259,7 +259,6 @@ SET(cnd_src  ${cnd_src}	api/agent/logging/AgentLoggingApiGroup.cpp
 #Worker
 SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
                         worker/DeviceSharedDataWorker.cpp
-                        worker/DeviceSharedDataWorkerMetric.cpp
                         worker/DeviceSharedDataWorkerMetricCollector.cpp)
 
 #Persistence

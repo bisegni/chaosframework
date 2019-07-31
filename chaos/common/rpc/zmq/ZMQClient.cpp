@@ -30,7 +30,9 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::pool;
+#if CHAOS_PROMETHEUS
 using namespace chaos::common::metric;
+#endif
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;

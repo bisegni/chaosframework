@@ -85,13 +85,10 @@ void QueryDataConsumer::init(void *init_data)  {
         idx++) {
         DataWorkerSharedPtr tmp;
 #if CHAOS_PROMETHEUS
-//        if(ChaosMetadataService::getInstance()->setting.worker_setting.log_metric) {
             INFO << "Enable dataset processing worker metric";
             tmp = ChaosMakeSharedPtr<worker::DeviceSharedDataWorkerMetricCollector>();
 #else
-//        } else {
             tmp = ChaosMakeSharedPtr<chaos::metadata_service::worker::DeviceSharedDataWorker>();
-//        }
 #endif
         device_data_worker.push_back(tmp);
         StartableService::initImplementation(*tmp, NULL, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);

@@ -270,8 +270,10 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
         
-#if CHAOS_PROMETHEUS
-        common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
+#if CHAOS_PROMETEUS
+        if(GlobalConfiguration::getInstance()-isMetricEnbled()){
+            common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
+        }
 #endif
         
         //Starting Async central
@@ -299,20 +301,20 @@ void ChaosAbstractCommon::init(void *init_data) {
                                                                               NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                               NodeDomainAndActionRPC::ACTION_GET_BUILD_INFO,
                                                                               "Return the build info of current chaos node instance");
-                                                                              
+        
         AbstActionDescShrPtr action_description2 = addActionDescritionInstance<ChaosAbstractCommon>(this,
-                                                                              &ChaosAbstractCommon::getProcessInfo,
-                                                                              NodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                              NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
-                                                                              "Return the process info of current chaos node instance");
+                                                                                                    &ChaosAbstractCommon::getProcessInfo,
+                                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                    NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
+                                                                                                    "Return the process info of current chaos node instance");
         
         AbstActionDescShrPtr actionDescription3 = addActionDescritionInstance<ChaosAbstractCommon>(this,
-                                                                                        &ChaosAbstractCommon::_registrationAck,
-                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                                    NodeDomainAndActionRPC::ACTION_REGISTRATION_ACK,
-                                                                                    "Generic ack to a registration request");
-             
-                                                                                       
+                                                                                                   &ChaosAbstractCommon::_registrationAck,
+                                                                                                   NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                   NodeDomainAndActionRPC::ACTION_REGISTRATION_ACK,
+                                                                                                   "Generic ack to a registration request");
+        
+        
         
         NetworkBroker::getInstance()->registerAction(this);
     } catch (...) {
@@ -361,9 +363,10 @@ void ChaosAbstractCommon::deinit() {
     
     //shutdown logger
     chaos::common::log::LogManager::getInstance()->deinit();
-    
 #if CHAOS_PROMETHEUS
-    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
+    if(GlobalConfiguration::getInstance()->isMetricEnabled()){
+        CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
+    }
 #endif
 }
 
