@@ -256,8 +256,7 @@ SET(common_lib_src ${common_lib_src}
 #if (CHAOS_PROMETHEUS)
 SET(common_lib_src ${common_lib_src}
                     direct_io/DirectIODispatcherMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionSharedMetricIO.cpp)
+                    direct_io/DirectIOClientConnectionMetricCollector.cpp)
 #endif
 
 SET(common_lib_src ${common_lib_src}
@@ -265,7 +264,7 @@ SET(common_lib_src ${common_lib_src}
                     io/IODirectIODriver.cpp
                     io/ManagedDirectIODataDriver.cpp
                     io/QueryCursor.cpp
-					io/QueryIndexCursor.cpp
+					          io/QueryIndexCursor.cpp
                     io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -307,7 +306,7 @@ SET(common_lib_src ${common_lib_src}
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
-					utility/ProcessInfo.cpp
+					          utility/ProcessInfo.cpp
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
                     utility/Base64Util.cpp
@@ -374,9 +373,6 @@ IF (NOT DEFINED BUILD_FORCE_STATIC)
 
 ENDIF ()
 
-#SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
-# separate_arguments(common_lib_library)
-
 IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
 ELSE ()
@@ -395,18 +391,24 @@ IF (CLING_VIRTUAL_MACHINE)
 ENDIF()
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
+
+SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} libzmq.a)
+
 IF(CLING_VIRTUAL_MACHINE)
   MESSAGE(STATUS "LINKING clingIntepreter")
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib} clingInterpreter )
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} clingInterpreter)
 ELSE()
 IF (WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ALL_WINDOWS_LIBPATH})
-ELSE(WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} ${ALL_WINDOWS_LIBPATH})
 ENDIF(WIN32)
 ENDIF()
 
+IF(CHAOS_PROMETHEUS)
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} prometheus-cpp-core prometheus-cpp-pull)
+ENDIF(CHAOS_PROMETHEUS)
 
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
