@@ -319,6 +319,9 @@ x = hasOption(y);
         int32_t getLocalServerBasePort();
         
         string getLocalServerAddressAnBasePort();
+#if CHAOS_PROMETHEUS
+        int32_t getHttpMetricsPort();
+#endif
         
         /*
          return the address of metadataserver
@@ -340,8 +343,6 @@ x = hasOption(y);
         static void fillKVParameter(std::map<std::string, std::string>& kvmap,
                                     const std::vector<std::string>& kv_vector,
                                     const std::string& regex);
-        
-        bool isMetricEnabled();
     };
 }
 #endif

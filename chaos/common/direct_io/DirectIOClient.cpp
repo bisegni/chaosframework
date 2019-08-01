@@ -79,12 +79,13 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
         
         result = _getNewConnectionImpl(server_description,
                                        endpoint);
-        if(result &&
-           GlobalConfiguration::getInstance()->isMetricEnabled()){
+#if CHAOS_PROMETHEUS
+        if(result){
             result = new DirectIOClientConnectionMetricCollector(server_description,
                                                                  endpoint,
                                                                  result);
         }
+#endif
     }
     return result;
 }
@@ -92,16 +93,16 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
 //! Release the connection
 void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
     if(connection_to_release) {
-        if(GlobalConfiguration::getInstance()->isMetricEnabled()) {
-            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
-            DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
-            if(metric_collector) {
-                _releaseConnectionImpl(metric_collector->wrapped_connection);
-                delete(metric_collector);
-            }
-        } else {
-            _releaseConnectionImpl(connection_to_release);
+#ifdef CHAOS_PROMETHEUS
+        //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+        DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
+        if(metric_collector) {
+            _releaseConnectionImpl(metric_collector->wrapped_connection);
+            delete(metric_collector);
         }
+#else
+        _releaseConnectionImpl(connection_to_release);
+#endif
     }
 }
 

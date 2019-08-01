@@ -245,7 +245,9 @@ void ChaosAbstractCommon::init(void *init_data) {
             LERR_ << "error setting signal handler for SIGSEGV";
         }
 #endif
-        
+#if CHAOS_PROMETHEUS
+        LAPP_ << "Metric HTTP port: " << GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_METRIC_WEB_SERVER_PORT);
+#endif
         err = uname(&u_name);
         if (err == -1) {
             LAPP_ << "Platform: " << strerror(errno);
@@ -364,9 +366,7 @@ void ChaosAbstractCommon::deinit() {
     //shutdown logger
     chaos::common::log::LogManager::getInstance()->deinit();
 #if CHAOS_PROMETHEUS
-    if(GlobalConfiguration::getInstance()->isMetricEnabled()){
-        CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
-    }
+    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
 #endif
 }
 

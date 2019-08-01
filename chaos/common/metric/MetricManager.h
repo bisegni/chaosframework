@@ -69,6 +69,7 @@ namespace chaos {
                 prometheus::Gauge& operator++(int);
                 double operator+(const double d) const;
                 double operator-(const double d) const;
+                double operator=(const double d) const;
                 Gauge& operator+=(const double d);
                 Gauge& operator-=(const double d);
             };

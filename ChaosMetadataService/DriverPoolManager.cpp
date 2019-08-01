@@ -46,12 +46,7 @@ void DriverPoolManager::init(void *init_data)  {
     //InizializableService::initImplementation(cache_pool, NULL, "CacheDriverPool", __PRETTY_FUNCTION__);
     const std::string cache_impl_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.cache_driver_impl+"CacheDriver";
 #if CHAOS_PROMETHEUS
-    if(GlobalConfiguration::getInstance()->isMetricEnabled()) {
-        cache_driver.reset(new CacheDriverMetricCollector(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name)), cache_impl_name);
-    } else {
-        cache_driver.reset(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name),
-                           cache_impl_name);
-    }
+    cache_driver.reset(new CacheDriverMetricCollector(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name)), cache_impl_name);
 #else
     cache_driver.reset(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name),
                        cache_impl_name);

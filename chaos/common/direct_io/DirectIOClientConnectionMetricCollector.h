@@ -36,11 +36,14 @@ namespace chaos {
              the metric collection da data that flow through the DirectIO
              */
             class DirectIOClientConnectionMetricCollector:
-            public DirectIOClientConnection {
+            public DirectIOClientConnection,
+            public chaos::common::metric::MetricCollectorIO {
                 friend class DirectIOClient;
                 DirectIOClientConnection *wrapped_connection;
                 chaos::common::metric::CounterUniquePtr counter_dataseet_sent;
                 chaos::common::metric::CounterUniquePtr counter_data_sent;
+                chaos::common::metric::GaugeUniquePtr   gauge_bandwidth_uptr;
+                double current_bandwidth;
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:

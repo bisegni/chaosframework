@@ -34,11 +34,15 @@ static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 
 DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector():
 MetricCollectorIO(),
-endpoint_alive_count(0) {
+endpoint_alive_count(0),
+current_bandwidth(0){
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
     coutenr_pack_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","direct_io"}});
     counter_data_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","direct_io"}});
+    
+    MetricManager::getInstance()->createGaugeFamily("rx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data received by direct-io dispatcher");
+    gauge_bandwidth_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rx_bandwidth_direct_io_dispatcher");
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
@@ -50,27 +54,25 @@ void DirectIODispatcherMetricCollector::start()  {
     //flow back to base class
     DirectIODispatcher::start();
     //start metric logging
-    //startLogging();
+    startLogging();
 }
 
 // Stop the implementation
 void DirectIODispatcherMetricCollector::stop()  {
     //stop metric logging
-    //stopLogging();
+    stopLogging();
     //flow back to base class
     DirectIODispatcher::stop();
 }
 
 //! Allocate a new endpoint
 DirectIOServerEndpoint *DirectIODispatcherMetricCollector::getNewEndpoint() {
-//    endpoint_alive_count++;
     return DirectIODispatcher::getNewEndpoint();
 }
 
 //! Relase the endpoint
 void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_release) {
     DirectIODispatcher::releaseEndpoint(endpoint_to_release);
-//    endpoint_alive_count--;
 }
 
 // Event for a new data received
@@ -80,7 +82,9 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
     (*coutenr_pack_uptr)++;
     
     //increment packet size
-    (*counter_data_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    long total_data = data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    current_bandwidth += total_data;
+    (*counter_data_uptr)+= total_data;
 
     //flow back to base class
     return DirectIODispatcher::priorityDataReceived(MOVE(data_pack),
@@ -94,7 +98,9 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
     (*coutenr_pack_uptr)++;
     
     //increment packet size
-    (*counter_data_uptr)+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    long total_data = data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    current_bandwidth += total_data;
+    (*counter_data_uptr)+= total_data;
 
     //flow back to base class
     return DirectIODispatcher::serviceDataReceived(MOVE(data_pack),
@@ -102,4 +108,7 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
 }
 
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
+    double sec = time_diff/1000;
+    if(sec == 0) return;
+    (*gauge_bandwidth_uptr) = ((current_bandwidth / sec)/1024); current_bandwidth = 0;
 }

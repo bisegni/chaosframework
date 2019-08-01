@@ -30,9 +30,9 @@ using namespace chaos::metadata_service::worker;
 
 DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector():
 DeviceSharedDataWorker(){
-    MetricManager::getInstance()->createGaugeFamily("mds_dataset_storage_queue", "Is the metric for storage queue");
-    gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_dataset_storage_queue",{{"type","queued_dataset_number"}});
-    gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_dataset_storage_queue",{{"type","queued_dataset_memeory"}});
+    MetricManager::getInstance()->createGaugeFamily("mds_storage_queue", "Metrics for storage mds queue, element in queue are waiting to be porcessed by object storage driver");
+    gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_element"}});
+    gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_data"}});
 }
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}

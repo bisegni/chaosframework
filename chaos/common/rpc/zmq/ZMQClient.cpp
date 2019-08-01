@@ -18,6 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>

@@ -98,7 +98,7 @@ void GlobalConfiguration::preParseStartupParameters()  {
         
 #if CHAOS_PROMETHEUS
         addOption(InitOption::OPT_METRIC_ENABLE, po::value< bool >()->zero_tokens(), "Enable metric");
-        addOption(InitOption::OPT_METRIC_WEB_SERVER_PORT, po::value< std::string >()->default_value("8080"), "Specify the port where publish the prometheus metrics");
+        addOption(InitOption::OPT_METRIC_WEB_SERVER_PORT, po::value< std::string >()->default_value("10000"), "Specify the port where publish the prometheus metrics");
 #endif
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
@@ -334,10 +334,18 @@ void GlobalConfiguration::checkDefaultOption()  {
     configuration->addStringValue(InitOption::OPT_TIME_CALIBRATION_NTP_SERVER, time_calibration_ntp_server);
     
     CHECK_AND_DEFINE_OPTION(std::vector<std::string>, script_vm_kv_param, InitOption::OPT_SCRIPT_VM_KV_PARAM);
-    //fill the key value list
+    // fill the key value list
     if(script_vm_kv_param.size()) {
         fillKVParameter(map_kv_param_script_vm, script_vm_kv_param, "");
     }
+
+#if CHAOS_PROMETHEUS
+    // configura http metric port
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(std::string, httpMetricPort, InitOption::OPT_METRIC_WEB_SERVER_PORT, "10000");
+    httpMetricPort = boost::lexical_cast<std::string>(InetUtility::scanForLocalFreePort(boost::lexical_cast<int32_t>(httpMetricPort)));
+    configuration->addStringValue(InitOption::OPT_METRIC_WEB_SERVER_PORT, httpMetricPort);
+    
+#endif
 }
 
 
@@ -500,6 +508,12 @@ int32_t GlobalConfiguration::getLocalServerBasePort() {
     return configuration->getInt32Value("base_port");
 }
 
+#if CHAOS_PROMETHEUS
+int32_t GlobalConfiguration::getHttpMetricsPort() {
+    return configuration->getInt32Value(InitOption::OPT_METRIC_WEB_SERVER_PORT);
+}
+#endif
+
 string GlobalConfiguration::getLocalServerAddressAnBasePort(){
     char buf[128];
     string addr = configuration->getStringValue("local_ip");
@@ -529,12 +543,4 @@ MapStrKeyStrValue& GlobalConfiguration::getDirectIOClientImplKVParam() {
 
 MapStrKeyStrValue& GlobalConfiguration::getScriptVMKVParam() {
     return map_kv_param_script_vm;
-}
-
-bool GlobalConfiguration::isMetricEnabled() {
-#if CHAOS_PROMETHEUS
-    return hasOption(InitOption::OPT_METRIC_ENABLE);
-#else
-    return false;
-#endif
 }

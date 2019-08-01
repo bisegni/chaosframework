@@ -99,12 +99,8 @@ void NetworkBroker::init(void *initData) {
         //allocate the dispatcher
         MB_LAPP  << "Allocate DirectIODispatcher";
 #if CHAOS_PROMETHEUS
-        if(GlobalConfiguration::getInstance()->isMetricEnabled()) {
-            // install metric awahre dispatcher subclass
-            direct_io_dispatcher = new chaos::common::direct_io::DirectIODispatcherMetricCollector();
-        } else {
-            direct_io_dispatcher = new common::direct_io::DirectIODispatcher();
-        }
+        // install metric awahre dispatcher subclass
+        direct_io_dispatcher = new chaos::common::direct_io::DirectIODispatcherMetricCollector();
 #else
         direct_io_dispatcher = new common::direct_io::DirectIODispatcher();
 #endif

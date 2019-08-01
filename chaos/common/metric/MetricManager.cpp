@@ -83,7 +83,10 @@ double chaos::common::metric::Gauge::operator-(const double d) const {
     impl.Decrement(d);
     return impl.Value();
 }
-
+double chaos::common::metric::Gauge::operator=(const double d) const {
+    impl.Set(d);
+    return impl.Value();
+}
 chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator+=(const double d) {
     impl.Increment(d);
     return *this;
@@ -96,11 +99,11 @@ chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator-=(const dou
 
 #pragma mark Manager
 MetricManager::MetricManager():
-http_exposer(new prometheus::Exposer(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_METRIC_WEB_SERVER_PORT))),
+http_exposer(new prometheus::Exposer(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_METRIC_WEB_SERVER_PORT))),
 metrics_registry(std::make_shared<Registry>()),
 io_send_byte_sec(BuildCounter()
                  .Name("io_tx_data")
-                 .Help("The data rate of transmitted kbyte/sec out of data service")
+                 .Help("The data rate of transmitted out of data service")
                  .Labels({})
                  .Register(*metrics_registry)),
 io_send_packet_sec(BuildCounter()
@@ -110,7 +113,7 @@ io_send_packet_sec(BuildCounter()
                    .Register(*metrics_registry)),
 io_receive_byte_sec(BuildCounter()
                     .Name("io_rx_data")
-                    .Help("The data rate of received kbyte/sec out of data service")
+                    .Help("The data rate of received out of data service")
                     .Labels({})
                     .Register(*metrics_registry)),
 io_receive_packet_sec(BuildCounter()
@@ -151,6 +154,10 @@ CounterUniquePtr MetricManager::getNewRxPacketRateMetricFamily(const std::map<st
 void MetricManager::createCounterFamily(const std::string& name,
                                         const std::string& desc) {
     LMapFamilyCounterWriteLock wl = map_counter.getWriteLockObject();
+    
+    //check if family already exists
+    if(map_counter().find(name) != map_counter().end()) return;
+    
     map_counter().insert(MapFamilyCounterPair(name,
                                               BuildCounter()
                                               .Name(name)
@@ -162,6 +169,10 @@ void MetricManager::createCounterFamily(const std::string& name,
 void MetricManager::createGaugeFamily(const std::string& name,
                                       const std::string& desc) {
     LMapFamilyGaugeWriteLock wl = map_gauge.getWriteLockObject();
+    
+    //check if family already exists
+    if(map_gauge().find(name) != map_gauge().end()) return;
+    
     map_gauge().insert(MapFamilyGaugePair(name,
                                           BuildGauge()
                                           .Name(name)
