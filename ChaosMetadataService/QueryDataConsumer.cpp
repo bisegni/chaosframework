@@ -22,11 +22,13 @@
 #include "QueryDataConsumer.h"
 #include "DriverPoolManager.h"
 #include "worker/DeviceSharedDataWorker.h"
-#include "worker/DeviceSharedDataWorkerMetricCollector.h"
 #include "persistence/persistence.h"
 
-#include <chaos/common/network/NetworkBroker.h>
+#if CHAOS_PROMETHEUS
+#include "worker/DeviceSharedDataWorkerMetricCollector.h"
+#endif
 
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/utility/DataBuffer.h>

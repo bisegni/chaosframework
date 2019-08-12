@@ -143,12 +143,6 @@ SET(common_lib_src ${common_lib_src}
                     cronus_manager/CronusManager.cpp
                     cronus_manager/CronJob.cpp)
 
-#if (CHAOS_PROMETHEUS)
-SET(common_lib_src ${common_lib_src}
-                    metric/MetricManager.cpp
-                    metric/MetricCollector.cpp
-                    metric/MetricCollectorIO.cpp)
-#endif
 SET(common_lib_src ${common_lib_src}
                     data/CDataWrapper.cpp
                     data/CDataBuffer.cpp
@@ -253,12 +247,6 @@ SET(common_lib_src ${common_lib_src}
                     direct_io/channel/DirectIOSystemAPIServerChannel.cpp
                     direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
 
-#if (CHAOS_PROMETHEUS)
-SET(common_lib_src ${common_lib_src}
-                    direct_io/DirectIODispatcherMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionMetricCollector.cpp)
-#endif
-
 SET(common_lib_src ${common_lib_src}
                     io/IODataDriver.cpp
                     io/IODirectIODriver.cpp
@@ -290,11 +278,6 @@ SET(common_lib_src ${common_lib_src}
                     rpc/RpcServer.cpp
                     rpc/zmq/ZMQClient.cpp
                     rpc/zmq/ZMQServer.cpp)
-#if (CHAOS_PROMETHEUS)
-SET(common_lib_src ${common_lib_src}
-                    rpc/RpcClientMetricCollector.cpp
-                    rpc/RpcServerMetricCollector.cpp)
-#endif
 SET(common_lib_src ${common_lib_src}
                     utility/NamedService.cpp
                     utility/StartableService.cpp
@@ -347,6 +330,23 @@ SET(common_lib_src ${common_lib_src}
                     trigger/AbstractSubject.cpp
                     trigger/TriggerExecutionEnviroment.cpp
                     trigger/trigger_types.cpp)
+
+IF(CHAOS_PROMETHEUS)
+MESG("Add source code for metrics: ${CHAOS_PROMETHEUS}")  
+SET(common_lib_src ${common_lib_src}
+                    metric/MetricManager.cpp
+                    metric/MetricCollector.cpp
+                    metric/MetricCollectorIO.cpp)
+
+SET(common_lib_src ${common_lib_src}
+                    direct_io/DirectIODispatcherMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionMetricCollector.cpp)
+SET(common_lib_src ${common_lib_src}
+                    rpc/RpcClientMetricCollector.cpp
+                    rpc/RpcServerMetricCollector.cpp)
+ELSE(CHAOS_PROMETHEUS)
+MESG("Metrics source code is not included")  
+ENDIF(CHAOS_PROMETHEUS)
 
 SET(common_lib_src ${common_lib_src}
                     ChaosCommonWin.cpp)

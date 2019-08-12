@@ -32,9 +32,11 @@
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 //-----------for metric collection---------
+#if (CHAOS_PROMETHEUS)
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
 #include <chaos/common/rpc/RpcServerMetricCollector.h>
 #include <chaos/common/direct_io/DirectIODispatcherMetricCollector.h>
+#endif
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 

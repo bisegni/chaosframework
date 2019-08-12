@@ -258,8 +258,7 @@ SET(cnd_src  ${cnd_src}	api/agent/logging/AgentLoggingApiGroup.cpp
 
 #Worker
 SET(cnd_src  ${cnd_src}	worker/DataWorker.cpp
-                        worker/DeviceSharedDataWorker.cpp
-                        worker/DeviceSharedDataWorkerMetricCollector.cpp)
+                        worker/DeviceSharedDataWorker.cpp)
 
 #Persistence
 SET(cnd_src  ${cnd_src} persistence/data_access/UnitServerDataAccess.cpp
@@ -282,12 +281,10 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-						persistence/mongodb/MongoDBScriptDataAccess.cpp
+						            persistence/mongodb/MongoDBScriptDataAccess.cpp
                         persistence/mongodb/MongoDBAgentDataAccess.cpp)
 #Caching
 SET(cnd_src  ${cnd_src}	cache_system/CacheDriver.cpp
-                        cache_system/CacheDriverMetricCollector.cpp
-                        cache_system/CacheDriverSharedMetricIO.cpp
                         cache_system/CouchbaseCacheDriver.cpp)
 
 
@@ -340,6 +337,12 @@ SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp
 
 SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
                         batch/general/CreateSnapshotBatch.cpp)
+
+if(CHAOS_PROMETHEUS)
+SET(cnd_src  ${cnd_src}	worker/DeviceSharedDataWorkerMetricCollector.cpp
+                        cache_system/CacheDriverMetricCollector.cpp
+                        cache_system/CacheDriverSharedMetricIO.cpp)
+ENDIF(CHAOS_PROMETHEUS)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
 
