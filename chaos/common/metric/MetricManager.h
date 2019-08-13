@@ -30,9 +30,8 @@
 
 #include <prometheus/exposer.h>
 #include <prometheus/registry.h>
-
-
-
+#include <prometheus/counter.h>
+#include <prometheus/gauge.h>
 namespace chaos {
     namespace common {
         namespace metric {
@@ -41,26 +40,26 @@ namespace chaos {
             /*!
              Counter abstraction
              */
-            class Counter {
+            class CCounter {
                 friend class MetricManager;
                 prometheus::Counter& impl;
-                Counter(prometheus::Counter& _impl);
+                CCounter(prometheus::Counter& _impl);
             public:
                 double operator()();
                 prometheus::Counter& operator++();
                 prometheus::Counter& operator++(int);
                 double operator+(const double d) const;
-                Counter& operator+=(const double d);
+                CCounter& operator+=(const double d);
             };
             
             /*!
              Gauge abstraction
              */
-            class Gauge {
+            class CGauge {
                 friend class MetricManager;
                 prometheus::Gauge& impl;
                 
-                Gauge(prometheus::Gauge& _impl);
+                CGauge(prometheus::Gauge& _impl);
             public:
                 double operator()();
                 prometheus::Gauge& operator--();
@@ -70,12 +69,12 @@ namespace chaos {
                 double operator+(const double d) const;
                 double operator-(const double d) const;
                 double operator=(const double d) const;
-                Gauge& operator+=(const double d);
-                Gauge& operator-=(const double d);
+                CGauge& operator+=(const double d);
+                CGauge& operator-=(const double d);
             };
             
-            typedef ChaosUniquePtr<Counter> CounterUniquePtr;
-            typedef ChaosUniquePtr<Gauge> GaugeUniquePtr;
+            typedef ChaosUniquePtr<CCounter> CounterUniquePtr;
+            typedef ChaosUniquePtr<CGauge> GaugeUniquePtr;
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, prometheus::Family<prometheus::Counter>&, MapFamilyCounter);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapFamilyCounter, LMapFamilyCounter);

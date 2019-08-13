@@ -1,3 +1,4 @@
+.devcontainer
 *.pro.user*
 cmake-build-debug
 ccs/qrc_*
