@@ -26,73 +26,73 @@ using namespace chaos::common::metric;
 
 using namespace prometheus;
 #pragma mark Counter
-chaos::common::metric::Counter::Counter(prometheus::Counter& _impl):
+chaos::common::metric::CCounter::CCounter(prometheus::Counter& _impl):
 impl(_impl){}
 
-double chaos::common::metric::Counter::operator()() {
+double chaos::common::metric::CCounter::operator()() {
     return impl.Value();
 }
-prometheus::Counter& chaos::common::metric::Counter::operator++() {
+prometheus::Counter& chaos::common::metric::CCounter::operator++() {
     impl.Increment();
     return impl;
 }
-prometheus::Counter& chaos::common::metric::Counter::operator++(int) {
+prometheus::Counter& chaos::common::metric::CCounter::operator++(int) {
     impl.Increment();
     return impl;
 }
-double chaos::common::metric::Counter::operator+(const double d) const {
+double chaos::common::metric::CCounter::operator+(const double d) const {
     impl.Increment(d);
     return impl.Value();
 }
-chaos::common::metric::Counter& chaos::common::metric::Counter::operator+=(const double d) {
+chaos::common::metric::CCounter& chaos::common::metric::CCounter::operator+=(const double d) {
     impl.Increment(d);
     return *this;
 }
 #pragma mark Gauge
-chaos::common::metric::Gauge::Gauge(prometheus::Gauge& _impl):
+chaos::common::metric::CGauge::CGauge(prometheus::Gauge& _impl):
 impl(_impl){}
 
-double chaos::common::metric::Gauge::operator()() {
+double chaos::common::metric::CGauge::operator()() {
     return impl.Value();
 }
 
-prometheus::Gauge& chaos::common::metric::Gauge::operator--() {
+prometheus::Gauge& chaos::common::metric::CGauge::operator--() {
     impl.Decrement();
     return impl;
 }
 
-prometheus::Gauge& chaos::common::metric::Gauge::operator++() {
+prometheus::Gauge& chaos::common::metric::CGauge::operator++() {
     impl.Increment();
     return impl;
 }
 
-prometheus::Gauge& chaos::common::metric::Gauge::operator--(int) {
+prometheus::Gauge& chaos::common::metric::CGauge::operator--(int) {
     impl.Decrement();
     return impl;
 }
 
-prometheus::Gauge& chaos::common::metric::Gauge::operator++(int) {
+prometheus::Gauge& chaos::common::metric::CGauge::operator++(int) {
     impl.Increment();
     return impl;
 }
-double chaos::common::metric::Gauge::operator+(const double d) const {
+double chaos::common::metric::CGauge::operator+(const double d) const {
     impl.Increment(d);
     return impl.Value();
 }
-double chaos::common::metric::Gauge::operator-(const double d) const {
+double chaos::common::metric::CGauge::operator-(const double d) const {
     impl.Decrement(d);
     return impl.Value();
 }
-double chaos::common::metric::Gauge::operator=(const double d) const {
+double chaos::common::metric::CGauge::operator=(const double d) const {
     impl.Set(d);
     return impl.Value();
 }
-chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator+=(const double d) {
+chaos::common::metric::CGauge& chaos::common::metric::CGauge::operator+=(const double d) {
     impl.Increment(d);
     return *this;
 }
 
-chaos::common::metric::Gauge& chaos::common::metric::Gauge::operator-=(const double d) {
+chaos::common::metric::CGauge& chaos::common::metric::CGauge::operator-=(const double d) {
     impl.Decrement(d);
     return *this;
 }
@@ -136,19 +136,19 @@ void MetricManager::deinit() {
 }
 
 CounterUniquePtr MetricManager::getNewTxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return CounterUniquePtr(new chaos::common::metric::Counter(io_send_byte_sec.Add(label)));
+    return CounterUniquePtr(new chaos::common::metric::CCounter(io_send_byte_sec.Add(label)));
 }
 
 CounterUniquePtr MetricManager::getNewRxDataRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return CounterUniquePtr(new chaos::common::metric::Counter(io_receive_byte_sec.Add(label)));
+    return CounterUniquePtr(new chaos::common::metric::CCounter(io_receive_byte_sec.Add(label)));
 }
 
 CounterUniquePtr MetricManager::getNewTxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return CounterUniquePtr(new chaos::common::metric::Counter(io_send_packet_sec.Add(label)));
+    return CounterUniquePtr(new chaos::common::metric::CCounter(io_send_packet_sec.Add(label)));
 }
 
 CounterUniquePtr MetricManager::getNewRxPacketRateMetricFamily(const std::map<std::string,std::string>& label) {
-    return CounterUniquePtr(new chaos::common::metric::Counter(io_receive_packet_sec.Add(label)));
+    return CounterUniquePtr(new chaos::common::metric::CCounter(io_receive_packet_sec.Add(label)));
 }
 
 void MetricManager::createCounterFamily(const std::string& name,
@@ -186,7 +186,7 @@ CounterUniquePtr MetricManager::getNewCounterFromFamily(const std::string& famil
     LMapFamilyCounterReadLock wl = map_counter.getReadLockObject();
     MapFamilyCounterIterator i = map_counter().find(family_name);
     if(i == map_counter().end()) return CounterUniquePtr();
-    return CounterUniquePtr(new chaos::common::metric::Counter(i->second.Add(label)));
+    return CounterUniquePtr(new chaos::common::metric::CCounter(i->second.Add(label)));
 }
 
 GaugeUniquePtr MetricManager::getNewGaugeFromFamily(const std::string& family_name,
@@ -194,5 +194,5 @@ GaugeUniquePtr MetricManager::getNewGaugeFromFamily(const std::string& family_na
     LMapFamilyGaugeReadLock wl = map_gauge.getReadLockObject();
     MapFamilyGaugeIterator i = map_gauge().find(family_name);
     if(i == map_gauge().end()) return GaugeUniquePtr();
-    return GaugeUniquePtr(new chaos::common::metric::Gauge(i->second.Add(label)));
+    return GaugeUniquePtr(new chaos::common::metric::CGauge(i->second.Add(label)));
 }
