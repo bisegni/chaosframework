@@ -23,8 +23,8 @@
 #include "ChaosMetadataService.h"
 
 #if CHAOS_PROMETHEUS
-#include "cache_ssytem/CacheDriverMetricCollector.h"
-#endi
+#include "cache_sytem/CacheDriverMetricCollector.h"
+#endif
 
 #include <limits>
 #include <chaos/common/global.h>
