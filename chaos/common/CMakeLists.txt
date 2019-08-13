@@ -380,9 +380,13 @@ ELSE ()
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
+IF (CHAOS_PROMETHEUS)
+add_dependencies(${PROJECT_NAME} prometheus)
+endif()
 
 #IF (NOT WIN32)
 #add dependency to libzmq
+
 add_dependencies(${PROJECT_NAME} libzmq)
 #ENDIF(NOT WIN32)
 
