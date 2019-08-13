@@ -1,0 +1,60 @@
+buildType:
+  default: debug
+  choices:
+    debug:
+      short: Debug
+      long: Emit debug information
+      buildType: Debug
+    release:
+      short: Release
+      long: Optimize generated code
+      buildType: Release
+    asan:
+      short: Asan
+      long: Instrument with Address Sanitizer
+      buildType: Asan
+    tsan:
+      short: Tsan
+      long: Instrument with Thread Sanitizer
+      buildType: Tsan
+prometheus:
+  default: off
+  choices:
+    on:
+      short: PrometheusON
+      long: Active the prometeus metrics
+      settings:
+        CHAOS_PROMETHEUS: ON
+    off:
+      short: PrometheusOFF
+      long: Disable the prometeus metrics
+      settings:
+        CHAOS_PROMETHEUS: OFF
+
+boost_dynamic:
+  default: off
+  choices:
+    on:
+      short: BoostDynON
+      long: Active the boost dinamic link
+      settings:
+        CHAOS_BOOST_DYNAMIC: ON
+    off:
+      short: BoostDynOFF
+      long: Disable the boost dinamic link
+      settings:
+        CHAOS_BOOST_DYNAMIC: OFF
+
+test:
+  default: on
+  choices:
+    on:
+      short: TestON
+      long: Active the test building
+      settings:
+        CHAOS_ARCHITECTURE_TEST: ON
+    off:
+      short: TestOFF
+      long: Disable the test building
+      settings:
+        CHAOS_ARCHITECTURE_TEST: OFF
