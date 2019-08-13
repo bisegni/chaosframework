@@ -22,6 +22,10 @@
 #include "DriverPoolManager.h"
 #include "ChaosMetadataService.h"
 
+#if CHAOS_PROMETHEUS
+#include "cache_ssytem/CacheDriverMetricCollector.h"
+#endi
+
 #include <limits>
 #include <chaos/common/global.h>
 
