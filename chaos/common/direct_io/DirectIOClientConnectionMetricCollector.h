@@ -24,7 +24,6 @@
 
 #include <chaos/common/metric/metric.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
-#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -37,16 +36,19 @@ namespace chaos {
              the metric collection da data that flow through the DirectIO
              */
             class DirectIOClientConnectionMetricCollector:
-            public DirectIOClientConnection {
+            public DirectIOClientConnection,
+            public chaos::common::metric::MetricCollectorIO {
                 friend class DirectIOClient;
-                ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> shared_collector;
                 DirectIOClientConnection *wrapped_connection;
+                chaos::common::metric::CounterUniquePtr counter_dataseet_sent;
+                chaos::common::metric::CounterUniquePtr counter_data_sent;
+                chaos::common::metric::GaugeUniquePtr   gauge_bandwidth_uptr;
+                double current_bandwidth;
             protected:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:
                 DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                         uint16_t _endpoint,
-                                                        ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                         DirectIOClientConnection *_wrapped_connection);
                 
                 ~DirectIOClientConnectionMetricCollector();

@@ -23,6 +23,7 @@
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+using namespace chaos::common::metric;
 using namespace chaos::common::direct_io;
 
 #define DIOCCMC_INFO INFO_LOG(DirectIOClientConnectionMetricCollector)
@@ -31,38 +32,50 @@ using namespace chaos::common::direct_io;
 
 DirectIOClientConnectionMetricCollector::DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                                                  uint16_t _endpoint,
-                                                                                 ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> _shared_collector,
                                                                                  DirectIOClientConnection *_wrapped_connection):
 DirectIOClientConnection(_server_description,
                          _endpoint),
-shared_collector(_shared_collector),
-wrapped_connection(_wrapped_connection) {
+MetricCollectorIO(),
+wrapped_connection(_wrapped_connection),
+current_bandwidth(0) {
     DIOCCMC_DBG_ << "Allocate collector";
+    counter_dataseet_sent = MetricManager::getInstance()->getNewTxPacketRateMetricFamily({{"driver","direct_io"}});
+    counter_data_sent = MetricManager::getInstance()->getNewTxDataRateMetricFamily({{"driver","direct_io"}});
+    
+    MetricManager::getInstance()->createGaugeFamily("tx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data transmitted by direct-io dispatcher");
+    gauge_bandwidth_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("tx_bandwidth_direct_io_dispatcher");
+    
+    startLogging();
 }
 
 DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollector() {
     DIOCCMC_DBG_ << "Deallocate collector";
+    stopLogging();
 }
 
 
 //! inherited method
 int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack) {
-    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    CHAOS_ASSERT(wrapped_connection)
     //inrement packec count
-    shared_collector->incrementPackCount();
+    (*counter_dataseet_sent)++;
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    total_data += current_bandwidth;
+    (*counter_data_sent) += current_bandwidth;
     return wrapped_connection->sendPriorityData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack,
                                                               DirectIODataPackSPtr& asynchronous_answer) {
-    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    CHAOS_ASSERT(wrapped_connection)
     //inrement packec count
-    shared_collector->incrementPackCount();
+    (*counter_dataseet_sent)++;
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    total_data += current_bandwidth;
+    (*counter_data_sent) += current_bandwidth;
     return wrapped_connection->sendPriorityData(MOVE(data_pack),
                                                 asynchronous_answer);
 }
@@ -70,22 +83,32 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSP
 
 //! inherited method
 int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack) {
-    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    CHAOS_ASSERT(wrapped_connection)
     //inrement packec count
-    shared_collector->incrementPackCount();
+    (*counter_dataseet_sent)++;
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    total_data += current_bandwidth;
+    (*counter_data_sent) += current_bandwidth;
     return wrapped_connection->sendServiceData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                              chaos::common::direct_io::DirectIODataPackSPtr& asynchronous_answer) {
-    CHAOS_ASSERT(wrapped_connection && shared_collector)
+    CHAOS_ASSERT(wrapped_connection)
     //inrement packec count
-    shared_collector->incrementPackCount();
+    (*counter_dataseet_sent)++;
     
     //increment packet size
-    shared_collector->incrementBandWidth(data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
+    total_data += current_bandwidth;
+    (*counter_data_sent) += current_bandwidth;
     return wrapped_connection->sendServiceData(MOVE(data_pack),
                                                asynchronous_answer);
+}
+
+void DirectIOClientConnectionMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
+    double sec = time_diff/1000;
+    if(sec == 0) return;
+    (*gauge_bandwidth_uptr) = ((current_bandwidth / sec)/1024); current_bandwidth = 0;
 }

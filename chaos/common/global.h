@@ -207,7 +207,7 @@ delete(x); x=NULL;
 LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<CSLIB_VERSION_NUMBER;\
- LAPP_ << "Build ID:"<<CSLIB_BUILD_ID;\
+LAPP_ << "Build ID:"<<CSLIB_BUILD_ID;\
 LAPP_ << "Build Date:"<<__DATE__ <<" " <<__TIME__;	\
 LAPP_ << "-----------------------------------------";
 

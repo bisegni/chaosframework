@@ -40,7 +40,11 @@ namespace chaos {
                 bool dispose_forwarder_on_exit;
                 RpcServer *wrapper_server;
                 RpcServerHandler *wrapperd_server_handler;
- 
+                chaos::common::metric::CounterUniquePtr packet_async_count_uptr;
+                chaos::common::metric::CounterUniquePtr packet_sync_count_uptr;
+                
+                chaos::common::metric::CounterUniquePtr data_async_count_uptr;
+                chaos::common::metric::CounterUniquePtr data_sync_count_uptr;
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:
                 RpcServerMetricCollector(const std::string& forwarder_implementation,

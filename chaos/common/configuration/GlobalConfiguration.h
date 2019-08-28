@@ -319,6 +319,9 @@ x = hasOption(y);
         int32_t getLocalServerBasePort();
         
         string getLocalServerAddressAnBasePort();
+#if CHAOS_PROMETHEUS
+        int32_t getHttpMetricsPort();
+#endif
         
         /*
          return the address of metadataserver

@@ -38,6 +38,8 @@ namespace chaos {
             public RpcClient {
                 bool dispose_forwarder_on_exit;
                 RpcClient *wrapped_client;
+                chaos::common::metric::CounterUniquePtr packet_count_uptr;
+                chaos::common::metric::CounterUniquePtr bw_counter_uptr;
             private:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:

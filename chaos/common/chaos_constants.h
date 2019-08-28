@@ -60,16 +60,6 @@ namespace chaos {
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the log max size
         static const char * const   OPT_LOG_MAX_SIZE_MB                 = "log-max-size";
-        //! enable metric loggin on console backend
-        static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
-        //! enable metric loggin on file backend
-        static const char * const   OPT_LOG_METRIC_ON_FILE              = "log-metric-on-file";
-        //! enable metric loggin on file backend
-        static const char * const   OPT_LOG_METRIC_ON_FILE_PATH         = "log-metric-on-file-path";
-        //! activate the loggin of metric on rpc system
-        static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
-        //! the time between the update of rpc metric on persistence backend (in seconds)
-        static const char * const   OPT_RPC_LOG_METRIC_UPDATE_INTERVAL  = "rpc-log-metric-update-interval";
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
         //! Specify the implementation to use for rp messaging
@@ -96,12 +86,6 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_SERVER_IMPL_KV_PARAM  = "direct-io-server-kv-param";
         //! Specify the key/values (string:string) map for direct io client implementation parameters
         static const char * const   OPT_DIRECT_IO_CLIENT_IMPL_KV_PARAM  = "direct-io-client-kv-param";
-        //! activate the loggin of metric on rpc system
-        static const char * const   OPT_DIRECT_IO_LOG_METRIC            = "direct-io-log-metric";
-        //! activate the merged or separate metric on target endpoint
-        static const char * const   OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT = "direct-io-client-log-metric-mep";
-        //! the time between the update of rpc metric on persistence backend (in seconds)
-        static const char * const   OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL = "direct-io-log-metric-update-interval";
         //!disable the event system
         static const char * const   OPT_EVENT_DISABLE                   = "event-disable";
         //! Specify the metadata address for the metadataserver
@@ -125,7 +109,13 @@ namespace chaos {
         //!multiple key value parameter that are passed to script virtual machine
         static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
         //!rest poll time us
-        static const char * const   OPT_REST_POLL_TIME_US              = "rest-poll-us";
+        static const char * const   OPT_REST_POLL_TIME_US               = "rest-poll-us";
+#if CHAOS_PROMETHEUS
+        //! config file parameter
+        static const char * const   OPT_METRIC_ENABLE                   = "enable_metric";
+        //! config file parameter
+        static const char * const   OPT_METRIC_WEB_SERVER_PORT           = "metrics-http-port";
+#endif
 
     }
     /** @} */ // end of ParamOption

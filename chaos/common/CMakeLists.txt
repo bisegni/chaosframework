@@ -144,14 +144,6 @@ SET(common_lib_src ${common_lib_src}
                     cronus_manager/CronJob.cpp)
 
 SET(common_lib_src ${common_lib_src}
-                    metric/MetricCollector.cpp
-                    metric/MetricCollectorIO.cpp
-                    metric/AbstractMetricBackend.cpp
-                    metric/ConsoleMetricBackend.cpp
-                    metric/FileMetricBackend.cpp
-                    metric/CSVFileMetricBackend.cpp)
-
-SET(common_lib_src ${common_lib_src}
                     data/CDataWrapper.cpp
                     data/CDataBuffer.cpp
                     data/CDataVariant.cpp
@@ -245,9 +237,6 @@ SET(common_lib_src ${common_lib_src}
                     direct_io/impl/ZMQDirectIOServer.cpp
                     direct_io/impl/ZMQBaseClass.cpp
                     direct_io/impl/ZMQDirectIOClientConnection.cpp
-                    direct_io/DirectIODispatcherMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionMetricCollector.cpp
-                    direct_io/DirectIOClientConnectionSharedMetricIO.cpp
                     direct_io/channel/DirectIOVirtualChannel.cpp
                     direct_io/channel/DirectIOVirtualClientChannel.cpp
                     direct_io/channel/DirectIOVirtualServerChannel.cpp
@@ -263,7 +252,7 @@ SET(common_lib_src ${common_lib_src}
                     io/IODirectIODriver.cpp
                     io/ManagedDirectIODataDriver.cpp
                     io/QueryCursor.cpp
-					io/QueryIndexCursor.cpp
+					          io/QueryIndexCursor.cpp
                     io/SharedManagedDirecIoDataDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -287,11 +276,8 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
                     rpc/RpcClient.cpp
                     rpc/RpcServer.cpp
-                    rpc/RpcClientMetricCollector.cpp
-                    rpc/RpcServerMetricCollector.cpp
                     rpc/zmq/ZMQClient.cpp
                     rpc/zmq/ZMQServer.cpp)
-
 SET(common_lib_src ${common_lib_src}
                     utility/NamedService.cpp
                     utility/StartableService.cpp
@@ -303,7 +289,7 @@ SET(common_lib_src ${common_lib_src}
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
-					utility/ProcessInfo.cpp
+					          utility/ProcessInfo.cpp
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
                     utility/Base64Util.cpp
@@ -345,6 +331,23 @@ SET(common_lib_src ${common_lib_src}
                     trigger/TriggerExecutionEnviroment.cpp
                     trigger/trigger_types.cpp)
 
+IF(CHAOS_PROMETHEUS)
+MESG("Add source code for metrics: ${CHAOS_PROMETHEUS}")  
+SET(common_lib_src ${common_lib_src}
+                    metric/MetricManager.cpp
+                    metric/MetricCollector.cpp
+                    metric/MetricCollectorIO.cpp)
+
+SET(common_lib_src ${common_lib_src}
+                    direct_io/DirectIODispatcherMetricCollector.cpp
+                    direct_io/DirectIOClientConnectionMetricCollector.cpp)
+SET(common_lib_src ${common_lib_src}
+                    rpc/RpcClientMetricCollector.cpp
+                    rpc/RpcServerMetricCollector.cpp)
+ELSE(CHAOS_PROMETHEUS)
+MESG("Metrics source code is not included")  
+ENDIF(CHAOS_PROMETHEUS)
+
 SET(common_lib_src ${common_lib_src}
                     ChaosCommonWin.cpp)
 #compile lua chaos vm and core files
@@ -370,9 +373,6 @@ IF (NOT DEFINED BUILD_FORCE_STATIC)
 
 ENDIF ()
 
-#SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
-# separate_arguments(common_lib_library)
-
 IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
 ELSE ()
@@ -380,9 +380,13 @@ ELSE ()
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
+IF (CHAOS_PROMETHEUS)
+add_dependencies(${PROJECT_NAME} prometheus)
+endif()
 
 #IF (NOT WIN32)
 #add dependency to libzmq
+
 add_dependencies(${PROJECT_NAME} libzmq)
 #ENDIF(NOT WIN32)
 
@@ -391,18 +395,24 @@ IF (CLING_VIRTUAL_MACHINE)
 ENDIF()
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
+
+SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} libzmq.a)
+
 IF(CLING_VIRTUAL_MACHINE)
   MESSAGE(STATUS "LINKING clingIntepreter")
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib} clingInterpreter )
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} clingInterpreter)
 ELSE()
 IF (WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ALL_WINDOWS_LIBPATH})
-ELSE(WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} libzmq.a ${FrameworkLib})
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} ${ALL_WINDOWS_LIBPATH})
 ENDIF(WIN32)
 ENDIF()
 
+IF(CHAOS_PROMETHEUS)
+  SET(BUILD_LIBRARY ${BUILD_LIBRARY} prometheus-cpp-core prometheus-cpp-pull)
+ENDIF(CHAOS_PROMETHEUS)
 
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)

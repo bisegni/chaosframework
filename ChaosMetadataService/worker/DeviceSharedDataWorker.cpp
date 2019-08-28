@@ -21,7 +21,6 @@
 
 #include "../ChaosMetadataService.h"
 #include "DeviceSharedDataWorker.h"
-#include "../cache_system/CacheDriverMetricCollector.h"
 #include "../DriverPoolManager.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>

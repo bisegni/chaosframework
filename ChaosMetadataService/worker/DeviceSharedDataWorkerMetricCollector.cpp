@@ -25,65 +25,52 @@
 
 #include <chaos/common/global.h>
 
+using namespace chaos::common::metric;
 using namespace chaos::metadata_service::worker;
 
-DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(ChaosSharedPtr<DeviceSharedDataWorkerMetric> _data_worker_metric):
-DeviceSharedDataWorker(),
-data_worker_metric(_data_worker_metric){}
+DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector():
+DeviceSharedDataWorker(){
+    MetricManager::getInstance()->createGaugeFamily("mds_storage_queue", "Metrics for storage mds queue, element in queue are waiting to be porcessed by object storage driver");
+    gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_element"}});
+    gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_data"}});
+}
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
 
 void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
     DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
-    int tag = job.key_tag;
     uint32_t total_data = (uint32_t)job.data_pack->size() + (uint32_t)job.key.size();
     DeviceSharedDataWorker::executeJob(job_info, cookie);
-    switch(tag) {
-        case 0:// storicize only
-        case 2:// storicize and live
-            //increment metric for data stored on vfs
-            data_worker_metric->incrementOutputBandwith(total_data);
+    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
+        case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
+        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
+            (*gauge_queued_dataset_uptr)--;
+            (*gauge_queued_memory_uptr)-=total_data;
             break;
-            
-        case 1:{// live only
+        }
+        case DataServiceNodeDefinitionType::DSStorageTypeLive:
+        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }
     }
-    //decrement metric that this packet has been removed from queue
-    data_worker_metric->decrementQueueSize(total_data);
 }
 
-int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) {
-    int err = 0;
+int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait) {
     DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
-    int tag = job.key_tag;
     uint32_t total_data = (uint32_t)job.data_pack->size()  + (uint32_t)job.key.size();
-    data_worker_metric->incrementInputBandwith(total_data);
     
-    switch(tag) {
-        case 0:// storicize only
-        case 2:// storicize and live
-            //write data on stage file
-            data_worker_metric->incrementQueueSize(total_data);
+    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
+        case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
+        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
+            (*gauge_queued_dataset_uptr)++;
+            (*gauge_queued_memory_uptr)+=total_data;
             break;
-            
-        case 1:{// live only
-           
+        }
+        case DataServiceNodeDefinitionType::DSStorageTypeLive:
+        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }
     }
-    err = DeviceSharedDataWorker::submitJobInfo(job_info);
-    switch(tag) {
-        case 0:// storicize only
-        case 2:// storicize and live
-            //write data on stage file
-           
-            break;
-            
-        case 1:{// live only
-            break;
-        }
-    }
-    return err;
+    return DeviceSharedDataWorker::submitJobInfo(job_info);
 }

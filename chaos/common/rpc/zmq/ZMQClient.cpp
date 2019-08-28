@@ -18,6 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
@@ -30,7 +31,9 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::pool;
-
+#if CHAOS_PROMETHEUS
+using namespace chaos::common::metric;
+#endif
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
@@ -58,6 +61,11 @@ RpcClient(alias),
 zmq_context(NULL),
 zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){    
     seq_id=0;
+#if CHAOS_PROMETHEUS
+    //add custom driver metric
+    chaos::common::metric::MetricManager::getInstance()->createGaugeFamily("rpc_zmq_client_queue", "Element in queue that need to forwarded by the zmq client");
+    counter_queuend_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_queue");
+#endif
 }
 
 ZMQClient::~ZMQClient(){}
@@ -143,6 +151,9 @@ bool ZMQClient::submitMessage(NFISharedPtr forwardInfo,
             processBufferElement(MOVE(forwardInfo));
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(MOVE(forwardInfo));
+#if CHAOS_PROMETHEUS
+            (*counter_queuend_uptr)++;
+#endif
         }
     } catch(CException& ex){
         //in this case i need to delete the memory
@@ -287,6 +298,10 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
     zmq_msg_t	reply;
     zmq_msg_t	message;
     zmq_msg_init (&reply);
+    
+#if CHAOS_PROMETHEUS
+    (*counter_queuend_uptr)--;
+#endif
     
     //get remote ip
     //serialize the call packet

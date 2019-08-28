@@ -21,6 +21,7 @@ option(USE_GPT "Uses Google Performance tool to perform analisys" OFF)
 option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
+option(CHAOS_PROMETHEUS "Enable Prometheus metrics support" OFF)
 if (WIN32)
 option(CHAOS_MDS "Chaos Data Service" OFF)
 option(CHAOS_AGENT "Chaos Agent Service" OFF)
@@ -102,7 +103,7 @@ ENDIF()
 
 IF (USE_GPT)
     #google performance tools
-    MESG("Add Google Performance Tools as external project")
+    MESG("Add Google Performance Tools dependency")
     ExternalProject_Add(
     google_pt
     GIT_REPOSITORY https://github.com/gperftools/gperftools.git
@@ -127,6 +128,25 @@ IF (USE_GPT)
     MESG("${GPT_LIBRARY_DIR}")
 ENDIF()
 
+IF (CHAOS_PROMETHEUS)
+  #google performance tools
+  MESG("Add Prometheus metrics dependency")
+  ExternalProject_Add(
+  prometheus
+  GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
+  GIT_TAG master
+  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/prometheus-prefix"
+  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
+  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON
+                -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  LOG_DOWNLOAD ON
+  LOG_CONFIGURE ON
+  LOG_BUILD ON)
+  # add definition for compilation
+  add_definitions(-DCHAOS_PROMETHEUS=1)
+ENDIF()
+
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
@@ -147,7 +167,6 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure CUToolkit Layer")
   ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
-  
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 

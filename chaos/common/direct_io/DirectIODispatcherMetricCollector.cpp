@@ -23,6 +23,7 @@
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+using namespace chaos::common::metric;
 using namespace chaos::common::direct_io;
 
 static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
@@ -31,13 +32,17 @@ static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 #define DIODMC_DBG_ DBG_LOG(DirectIODispatcherMetricCollector)
 #define DIODMC_ERR_ ERR_LOG(DirectIODispatcherMetricCollector)
 
-DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector(const std::string& direct_io_server_impl):
-MetricCollectorIO(direct_io_server_impl,
-                  GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL)),
-endpoint_alive_count(0) {
+DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector():
+MetricCollectorIO(),
+endpoint_alive_count(0),
+current_bandwidth(0){
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
-    addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
+    coutenr_pack_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","direct_io"}});
+    counter_data_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","direct_io"}});
+    
+    MetricManager::getInstance()->createGaugeFamily("rx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data received by direct-io dispatcher");
+    gauge_bandwidth_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rx_bandwidth_direct_io_dispatcher");
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
@@ -62,24 +67,24 @@ void DirectIODispatcherMetricCollector::stop()  {
 
 //! Allocate a new endpoint
 DirectIOServerEndpoint *DirectIODispatcherMetricCollector::getNewEndpoint() {
-    endpoint_alive_count++;
     return DirectIODispatcher::getNewEndpoint();
 }
 
 //! Relase the endpoint
 void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_release) {
     DirectIODispatcher::releaseEndpoint(endpoint_to_release);
-    endpoint_alive_count--;
 }
 
 // Event for a new data received
 int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                             chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packet count
-    pack_count++;
+    (*coutenr_pack_uptr)++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    long total_data = data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    current_bandwidth += total_data;
+    (*counter_data_uptr)+= total_data;
 
     //flow back to base class
     return DirectIODispatcher::priorityDataReceived(MOVE(data_pack),
@@ -90,10 +95,12 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(chaos::common::direc
 int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
                                                            chaos::common::direct_io::DirectIODataPackSPtr& synchronous_answer) {
     //inrement packec count
-    pack_count++;
+    (*coutenr_pack_uptr)++;
     
     //increment packet size
-    bandwith+=data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    long total_data = data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader);
+    current_bandwidth += total_data;
+    (*counter_data_uptr)+= total_data;
 
     //flow back to base class
     return DirectIODispatcher::serviceDataReceived(MOVE(data_pack),
@@ -101,8 +108,7 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
 }
 
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    updateMetricValue(METRIC_KEY_ENDPOINT_ALIVE,
-                      &endpoint_alive_count,
-                      sizeof(int32_t));
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
+    double sec = time_diff/1000;
+    if(sec == 0) return;
+    (*gauge_bandwidth_uptr) = ((current_bandwidth / sec)/1024); current_bandwidth = 0;
 }

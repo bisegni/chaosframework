@@ -22,6 +22,10 @@
 #include "DriverPoolManager.h"
 #include "ChaosMetadataService.h"
 
+#if CHAOS_PROMETHEUS
+#include "cache_system/CacheDriverMetricCollector.h"
+#endif
+
 #include <limits>
 #include <chaos/common/global.h>
 
@@ -45,8 +49,13 @@ void DriverPoolManager::init(void *init_data)  {
     //init cache pool
     //InizializableService::initImplementation(cache_pool, NULL, "CacheDriverPool", __PRETTY_FUNCTION__);
     const std::string cache_impl_name = ChaosMetadataService::getInstance()->setting.cache_driver_setting.cache_driver_impl+"CacheDriver";
+#if CHAOS_PROMETHEUS
+    cache_driver.reset(new CacheDriverMetricCollector(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name)), cache_impl_name);
+#else
     cache_driver.reset(ObjectFactoryRegister<chaos::metadata_service::cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name),
-                             cache_impl_name);
+                       cache_impl_name);
+#endif
+    
     if(cache_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Cache Driver found", %cache_impl_name), __PRETTY_FUNCTION__);
     cache_driver.init(NULL, __PRETTY_FUNCTION__);
     
@@ -59,7 +68,7 @@ void DriverPoolManager::init(void *init_data)  {
     
     const std::string storage_impl_name = ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl + "ObjectStorageDriver";
     storage_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(storage_impl_name),
-                             storage_impl_name);
+                         storage_impl_name);
     if(storage_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Object Storage Driver found", %storage_impl_name), __PRETTY_FUNCTION__);
     storage_driver.init(NULL, __PRETTY_FUNCTION__);
 }
