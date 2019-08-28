@@ -21,6 +21,7 @@
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
+
 #include <boost/format.hpp>
 
 using namespace chaos::common::rpc;
@@ -33,8 +34,7 @@ using namespace chaos::common::metric;
 RpcClientMetricCollector::RpcClientMetricCollector(const std::string& forwarder_implementation,
                                                    RpcClient *_wrapped_client,
                                                    bool _dispose_forwarder_on_exit):
-MetricCollectorIO(forwarder_implementation,
-                GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL)),
+MetricCollectorIO(),
 RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit) {
@@ -52,6 +52,8 @@ RpcClientMetricCollector::~RpcClientMetricCollector() {
 void RpcClientMetricCollector::init(void *init_data) {
     CHAOS_ASSERT(wrapped_client)
     utility::StartableService::initImplementation(wrapped_client, init_data, wrapped_client->getName(), __PRETTY_FUNCTION__);
+    packet_count_uptr = MetricManager::getInstance()->getNewTxPacketRateMetricFamily({{"driver","rpc"}});
+    bw_counter_uptr = MetricManager::getInstance()->getNewTxDataRateMetricFamily({{"driver","rpc"}});
 }
 
 /*
@@ -59,7 +61,7 @@ void RpcClientMetricCollector::init(void *init_data) {
  */
 void RpcClientMetricCollector::start() {
     CHAOS_ASSERT(wrapped_client)
-    startLogging();
+//    startLogging();
     utility::StartableService::startImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
 
@@ -68,7 +70,7 @@ void RpcClientMetricCollector::start() {
  */
 void RpcClientMetricCollector::stop() {
     CHAOS_ASSERT(wrapped_client)
-    stopLogging();
+//    stopLogging();
     utility::StartableService::stopImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
 
@@ -87,22 +89,26 @@ void RpcClientMetricCollector::setServerHandler(chaos::RpcServerHandler *_server
 
 bool RpcClientMetricCollector::submitMessage(chaos::common::network::NFISharedPtr forward_info, bool on_this_thread) {
     CHAOS_ASSERT(wrapped_client)
-    int size = 0;
-    bool result = true;
-    
-    result = wrapped_client->submitMessage(MOVE(forward_info),
-                                           on_this_thread);
-    
     //inrement packec count
-    pack_count++;
-    
-    //increment packet size
-    forward_info->message->getBSONRawData(size);
-    bandwith+=size;
-    
-    return result;
+    (*packet_count_uptr)++;
+    if(forward_info->hasMessage()) {
+        (*bw_counter_uptr) += forward_info->message->getBSONRawSize();
+    }
+    return wrapped_client->submitMessage(MOVE(forward_info),
+                                         on_this_thread);
 }
 
 void RpcClientMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
+//    double sec = time_diff/1000;
+//    if(sec == 0) return;
+//    pack_count_for_ut = pack_count / sec; pack_count = 0;
+//    bw_for_ut = ((bandwith / sec)/1024); bandwith = 0;
+//
+//    updateMetricValue(METRIC_KEY_PACKET_COUNT,
+//                      &pack_count_for_ut,
+//                      sizeof(double));
+//    updateMetricValue(METRIC_KEY_BANDWITH,
+//                      &bw_for_ut,
+//                      sizeof(double));
+    
 }

@@ -32,15 +32,15 @@ namespace chaos {
         namespace cache_system {
             class CacheDriverSharedMetricIO:
             public chaos::common::metric::MetricCollectorIO {
-
+                
                 //! count the pack that are been set to the cache
-                boost::atomic<uint32_t> set_pack_count;
+                chaos::common::metric::CounterUniquePtr set_pack_count_uptr;
                 //! count the total bandwith in set caching operation
-                boost::atomic<uint32_t> set_bandwith;
+                chaos::common::metric::CounterUniquePtr set_bandwith_uptr;
                 //! count the pack that are been get to the cache
-                boost::atomic<uint32_t> get_pack_count;
+                chaos::common::metric::CounterUniquePtr get_pack_count_uptr;
                 //! ount the total bandwith in set caching operation
-                boost::atomic<uint32_t> get_bandwith;
+                chaos::common::metric::CounterUniquePtr get_bandwith_uptr;
                 
                 boost::shared_mutex metric_mutex;
             protected:

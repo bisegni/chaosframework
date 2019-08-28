@@ -1,5 +1,7 @@
+.devcontainer
+*.pro.user*
+cmake-build-debug
 ccs/qrc_*
-.vscode/
 ccs/compile_commands.json
 .scannerwork
 asan_leak_suppression.txt

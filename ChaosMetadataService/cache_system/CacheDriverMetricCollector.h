@@ -25,6 +25,8 @@
 #include "CacheDriverSharedMetricIO.h"
 #include "CacheDriver.h"
 
+#include <chaos/common/metric/metric.h>
+
 #include <boost/thread.hpp>
 
 namespace chaos {
@@ -37,9 +39,14 @@ namespace chaos {
             class CacheDriverMetricCollector:
             public CacheDriver {
                 CacheDriver *wrapped_cache_driver;
-                
-                boost::mutex mutex_shared_collector;
-                static ChaosSharedPtr<CacheDriverSharedMetricIO> shared_collector;
+                //! count the pack that are been set to the cache
+                chaos::common::metric::CounterUniquePtr set_pack_count_uptr;
+                //! count the total bandwith in set caching operation
+                chaos::common::metric::CounterUniquePtr set_bandwith_uptr;
+                //! count the pack that are been get to the cache
+                chaos::common::metric::CounterUniquePtr get_pack_count_uptr;
+                //! ount the total bandwith in set caching operation
+                chaos::common::metric::CounterUniquePtr get_bandwith_uptr;
             public:
                 //!base constructo rwith the wrapped dariver
                 CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver);
@@ -54,9 +61,9 @@ namespace chaos {
                 int getData(const ChaosStringVector&    keys,
                             MultiCacheData&             multi_data);
                 //!inherited method
-                int addServer(std::string server_desc);
+                int addServer(const std::string& server_desc);
                 //!inherited method
-                int removeServer(std::string server_desc);
+                int removeServer(const std::string& server_desc);
                 //!inherited method
                 void init(void *init_data);
                 //!inherited method

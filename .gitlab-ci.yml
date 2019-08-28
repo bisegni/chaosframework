@@ -63,7 +63,7 @@ test_u_14_04_gcc49:
   script:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
-    - apt-get update
+    - apt-get -y update
     - apt-get -y install lcov gcovr
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
@@ -107,7 +107,7 @@ build_u_16_04_gcc5:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake  -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
+    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DCHAOS_SANITIZER=TestFramework .
     - make clean
     - make  -j $NPROC
     - make install
@@ -163,8 +163,10 @@ build_u_18_04_gcc73:
   script:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
+    - apt -y update
+    - apt -y install zlib1g-dev libcurl4-gnutls-dev
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
+    - cmake  -DCHAOS_PROMETHEUS=ON -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON  -DUSE_GPT=ON .
     - make clean
     - make  -j $NPROC
     - make install
@@ -221,7 +223,9 @@ build_dbg_c7:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+    - yum -y update
+    - yum -y install libcurl-devel
+    - cmake  -DCHAOS_PROMETHEUS=ON -DCHAOS_AGENT=OFF -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo .
     - make clean
     - make  -j $NPROC
     - make install
@@ -254,7 +258,7 @@ test_dbg_c7:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
-    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
+    - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib:/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib64
     - export HEAPCHECK=normal
     - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   artifacts:
@@ -307,7 +311,9 @@ build_rel_c7:
     - git config --global user.name "Claudio Bisegni"
     - git config --global user.email "Claudio.Bisegni@lnf.infn.it"
     - tools/chaos_clean.sh
-    - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON .
+    - yum -y update
+    - yum -y install libcurl-devel
+    - cmake  -DCHAOS_PROMETHEUS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCHAOS_VERSION_MAJOR="$CI_COMMIT_REF_NAME.$CHAOS_LIB_HASH" -DCHAOS_VERSION_MINOR="$CI_JOB_STAGE.$CI_COMMIT_SHA" -DCHAOS_BUILD_ID=${CI_PIPELINE_ID} -DCHAOS_ARCHITECTURE_TEST=ON .
     - make clean
     - make  -j $NPROC
     - make install

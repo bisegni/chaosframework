@@ -22,6 +22,5 @@
 #define CHAOSFramework_cache_sytem_h
 //#include "MemcachedCacheDriver.h"
 #include "CouchbaseCacheDriver.h"
-#include "CacheDriverMetricCollector.h"
 #include "cache_system_types.h"
 #endif

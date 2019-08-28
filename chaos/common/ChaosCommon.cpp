@@ -20,6 +20,10 @@
  */
 #include <chaos/common/ChaosCommon.h>
 
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/MetricManager.h>
+#endif
+
 #include <errno.h>
 #include <csignal>
 #include <fstream>
@@ -241,7 +245,9 @@ void ChaosAbstractCommon::init(void *init_data) {
             LERR_ << "error setting signal handler for SIGSEGV";
         }
 #endif
-        
+#if CHAOS_PROMETHEUS
+        LAPP_ << "Metric HTTP port: " << GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_METRIC_WEB_SERVER_PORT);
+#endif
         err = uname(&u_name);
         if (err == -1) {
             LAPP_ << "Platform: " << strerror(errno);
@@ -265,6 +271,12 @@ void ChaosAbstractCommon::init(void *init_data) {
         GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
         
         LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+        
+#if CHAOS_PROMETEUS
+        if(GlobalConfiguration::getInstance()-isMetricEnbled()){
+            common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
+        }
+#endif
         
         //Starting Async central
         common::utility::InizializableService::initImplementation(AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
@@ -291,20 +303,20 @@ void ChaosAbstractCommon::init(void *init_data) {
                                                                               NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                               NodeDomainAndActionRPC::ACTION_GET_BUILD_INFO,
                                                                               "Return the build info of current chaos node instance");
-                                                                              
+        
         AbstActionDescShrPtr action_description2 = addActionDescritionInstance<ChaosAbstractCommon>(this,
-                                                                              &ChaosAbstractCommon::getProcessInfo,
-                                                                              NodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                              NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
-                                                                              "Return the process info of current chaos node instance");
+                                                                                                    &ChaosAbstractCommon::getProcessInfo,
+                                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                    NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
+                                                                                                    "Return the process info of current chaos node instance");
         
         AbstActionDescShrPtr actionDescription3 = addActionDescritionInstance<ChaosAbstractCommon>(this,
-                                                                                        &ChaosAbstractCommon::_registrationAck,
-                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                                    NodeDomainAndActionRPC::ACTION_REGISTRATION_ACK,
-                                                                                    "Generic ack to a registration request");
-             
-                                                                                       
+                                                                                                   &ChaosAbstractCommon::_registrationAck,
+                                                                                                   NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                   NodeDomainAndActionRPC::ACTION_REGISTRATION_ACK,
+                                                                                                   "Generic ack to a registration request");
+        
+        
         
         NetworkBroker::getInstance()->registerAction(this);
     } catch (...) {
@@ -353,6 +365,9 @@ void ChaosAbstractCommon::deinit() {
     
     //shutdown logger
     chaos::common::log::LogManager::getInstance()->deinit();
+#if CHAOS_PROMETHEUS
+    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::metric::MetricManager::getInstance(), "MetricManager", __PRETTY_FUNCTION__);)
+#endif
 }
 
 void ChaosAbstractCommon::start() {}

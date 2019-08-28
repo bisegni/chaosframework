@@ -22,6 +22,10 @@
 #include <chaos/common/pool/ResourcePool.h>
 #include <chaos/common/chaos_types.h>
 
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/metric.h>
+#endif
+
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -61,6 +65,10 @@ namespace chaos {
         boost::shared_mutex map_socket_mutex;
         SocketMap map_socket;
         ChaosAtomic<uint64_t> seq_id;
+#if CHAOS_PROMETHEUS
+        //custom driver metrics
+        chaos::common::metric::GaugeUniquePtr counter_queuend_uptr;
+#endif
     protected:
         void *zmq_context;
         virtual void processBufferElement(NFISharedPtr element);

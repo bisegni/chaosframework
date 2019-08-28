@@ -25,9 +25,9 @@
 
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
-#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
+#ifdef CHAOS_PROMETHEUS
 #include <chaos/common/direct_io/DirectIOClientConnectionMetricCollector.h>
-
+#endif
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
@@ -75,44 +75,17 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
     DirectIOClientConnection *result = NULL;
     DEBUG_CODE(DIOLDBG_ << "Requested a new connection for a server description " << server_description_with_endpoint;)
     if(decodeServerDescriptionWithEndpoint(server_description_with_endpoint, server_description, endpoint)) {
-        DEBUG_CODE(DIOLDBG_ << "scomposed into server description " << server_description << " and endpoint " << endpoint;)
+        DEBUG_CODE(DIOLDBG_ << "decomposed into server description " << server_description << " and endpoint " << endpoint;)
         
         result = _getNewConnectionImpl(server_description,
                                        endpoint);
-        
-        if(result &&
-           GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_DIRECT_IO_LOG_METRIC) &&
-           GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
-            //lock the map
-            boost::unique_lock<boost::mutex> wl(mutex_map_shared_collectors);
-            
-            //prepare key in case with need to split themetric for endpoint
-            std::string server_key = server_description;
-            if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT)) {
-                //we need to merge the endpoint
-                server_key = "merge_together";
-            } else {
-                server_key = server_description_with_endpoint;
-            }
-            //create the collector key
-            SharedCollectorKey key(server_key);
-            ChaosSharedPtr<DirectIOClientConnectionSharedMetricIO> shared_collector;
-            
-            //check if we have already allcoated thecollector
-            if(map_shared_collectors.count(key)==0) {
-                shared_collector.reset(new DirectIOClientConnectionSharedMetricIO(getName(), server_description_with_endpoint));
-                map_shared_collectors.insert(make_pair(key, shared_collector));
-            } else {
-                shared_collector = map_shared_collectors[key];
-            }
-            
-            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+#if CHAOS_PROMETHEUS
+        if(result){
             result = new DirectIOClientConnectionMetricCollector(server_description,
                                                                  endpoint,
-                                                                 shared_collector,
                                                                  result);
         }
-        
+#endif
     }
     return result;
 }
@@ -120,19 +93,17 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& se
 //! Release the connection
 void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
     if(connection_to_release) {
-        if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
-            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
-            DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
-            if(metric_collector) {
-                _releaseConnectionImpl(metric_collector->wrapped_connection);
-                delete(metric_collector);
-            }
-        } else  {
-            _releaseConnectionImpl(connection_to_release);
+#ifdef CHAOS_PROMETHEUS
+        //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+        DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
+        if(metric_collector) {
+            _releaseConnectionImpl(metric_collector->wrapped_connection);
+            delete(metric_collector);
         }
+#else
+        _releaseConnectionImpl(connection_to_release);
+#endif
     }
 }
 
-void DirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
-    
-}
+void DirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {}

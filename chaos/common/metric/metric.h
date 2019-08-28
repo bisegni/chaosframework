@@ -22,11 +22,8 @@
 #ifndef CHAOSFramework_metric_h
 #define CHAOSFramework_metric_h
 
+#include <chaos/common/metric/MetricManager.h>
 #include <chaos/common/metric/MetricCollector.h>
 #include <chaos/common/metric/MetricCollectorIO.h>
-#include <chaos/common/metric/AbstractMetricBackend.h>
-#include <chaos/common/metric/FileMetricBackend.h>
-#include <chaos/common/metric/CSVFileMetricBackend.h>
-#include <chaos/common/metric/ConsoleMetricBackend.h>
 
 #endif
