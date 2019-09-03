@@ -392,8 +392,8 @@ if(LIB_NEED)
   #  include_directories(${Boost_INCLUDE_DIRS})
 else()
   MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
-#  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
-  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
+  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://dl.bintray.com/boostorg/release/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION}/source "${CHAOS_BOOST_FLAGS}")
+#  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
 endif()
 
 
