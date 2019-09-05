@@ -13,7 +13,7 @@ IF(CHAOS_TARGET)
 ## there is the risk that for old targets it selects epoll that is not supported in old kernels
   MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET}")
   SET(ZMQ_FLAGS "-DPOLLER=poll")
-ELSE
+ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
 ENDIF()
