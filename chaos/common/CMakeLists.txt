@@ -9,7 +9,13 @@ ELSE(WIN32)
 IF(NOT CHAOS_DISABLE_EVENTFD)
   CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
+IF(CHAOS_TARGET)
+## there is the risk that for old targets it selects epoll that is not supported in old kernels
+  MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET}")
+  SET(ZMQ_FLAGS "-DPOLLER=poll")
+ELSE
   SET(ZMQ_FLAGS "")
+ENDIF()
 ENDIF()
 ENDIF(WIN32)
 	IF (CHAOS_TARGET)
