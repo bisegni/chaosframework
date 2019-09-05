@@ -1,0 +1,6 @@
+---
+Changed:
+- The object store implementation on sincgle collection now use a parameter 'use_orderby_in_search'
+  to enable he orderby on the search query. By default it is off. To enbale the parameter
+  value need to be 'on'
+Deploy notes: []
