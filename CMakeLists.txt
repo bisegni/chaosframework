@@ -55,8 +55,9 @@ ENDIF()
 ###### Required Libraries
 if (NOT WIN32)
 CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
-
-CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+if(CHAOS_MDS)
+  CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+ENDIF()
 endif()
 #########
 
