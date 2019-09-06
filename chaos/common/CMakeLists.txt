@@ -18,11 +18,11 @@ ELSE()
 ENDIF()
 ENDIF()
 ENDIF(WIN32)
-	IF (CHAOS_TARGET)
-	MESG("Configure libzmq with autotools")  
-	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
-	ELSE()
-	MESG("Configure libzmq as CMake")
+#	IF (CHAOS_TARGET)
+#	MESG("Configure libzmq with autotools")  
+#	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
+#	ELSE()
+#	MESG("Configure libzmq as CMake")
 	ExternalProject_Add(
 	 libzmq
 	 GIT_REPOSITORY https://github.com/zeromq/libzmq.git
@@ -31,11 +31,11 @@ ENDIF(WIN32)
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
 	 CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} ${ZMQ_FLAGS} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
 	 LOG_DOWNLOAD ON
 	 LOG_CONFIGURE ON
 	 LOG_BUILD ON)
-	ENDIF()
+#	ENDIF()
 
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
