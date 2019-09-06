@@ -11,18 +11,18 @@ IF(NOT CHAOS_DISABLE_EVENTFD)
 ELSE()
 IF(CHAOS_TARGET)
 ## there is the risk that for old targets it selects epoll that is not supported in old kernels
-  MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET}")
-  SET(ZMQ_FLAGS "-DPOLLER=poll")
+  MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET} with compilers ${CMAKE_CXX_COMPILER}")
+  SET(ZMQ_FLAGS "--with-poller=poll")
 ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
 ENDIF()
 ENDIF(WIN32)
-#	IF (CHAOS_TARGET)
-#	MESG("Configure libzmq with autotools")  
-#	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
-#	ELSE()
-#	MESG("Configure libzmq as CMake")
+IF (CHAOS_TARGET)
+	  MESG("Configure libzmq with autotools")  
+	  CheckConfigureBuild(zmq libzmq:v4.3.1 "${ZMQ_FLAGS}" https://github.com/zeromq)
+	ELSE()
+	  MESG("Configure libzmq as CMake")
 	ExternalProject_Add(
 	 libzmq
 	 GIT_REPOSITORY https://github.com/zeromq/libzmq.git
@@ -31,11 +31,11 @@ ENDIF(WIN32)
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
 	 CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} ${ZMQ_FLAGS} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} ${ZMQ_FLAGS} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 	 LOG_DOWNLOAD ON
 	 LOG_CONFIGURE ON
 	 LOG_BUILD ON)
-#	ENDIF()
+     ENDIF()
 
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
