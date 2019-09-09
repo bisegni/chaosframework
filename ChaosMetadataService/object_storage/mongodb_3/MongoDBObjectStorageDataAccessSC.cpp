@@ -169,8 +169,7 @@ batch_size_limit(DEFAULT_BATCH_SIZE_IN_BYTE),
 push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
 push_current_step_left(push_timeout_multiplier),
 write_timeout(common::constants::ObjectStorageTimeoutinMSec),
-read_timeout(common::constants::ObjectStorageTimeoutinMSec),
-use_orderby_in_search_query(false) {
+read_timeout(common::constants::ObjectStorageTimeoutinMSec){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -211,10 +210,6 @@ use_orderby_in_search_query(false) {
             write_options.acknowledge_level(write_concern::level::k_majority);
         }
     }
-    if(obj_stoarge_kvp.count("use_orderby_in_search")) {
-        use_orderby_in_search_query = (obj_stoarge_kvp["use_orderby_in_search"].compare("on") == 0);
-    }
-    DBG << CHAOS_FORMAT("Use order by on search query %1%", %use_orderby_in_search_query);
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
 
@@ -576,10 +571,9 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
         opts.read_preference(secondary).batch_size(30);
-        if(use_orderby_in_search_query) {
-            opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-                                    kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
-        }
+        opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
+                                kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
+        
         
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
@@ -641,10 +635,9 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
-        if(use_orderby_in_search_query) {
-            opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
-                                    kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
-        }
+        opts.sort(make_document(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
+                                kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
+        
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                                   "Projection",
                                                                                   bsoncxx::to_json(builder.view()),
