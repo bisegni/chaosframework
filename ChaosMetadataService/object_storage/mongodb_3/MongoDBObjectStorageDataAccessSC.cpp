@@ -291,7 +291,7 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&            k
      
     //check if we need to push or wait timeout or other incoming data
     curret_batch_size += stored_object.getBSONRawSize();
-     BlobSetLWriteLock wl = batch_set.getWriteLockObject();
+    BlobSetLWriteLock wl = batch_set.getWriteLockObject();
     batch_set().insert(current_data);
     return err;
 }
@@ -571,6 +571,11 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         auto opts  = options::find{};
         //set page len
         opts.limit(page_len);
+        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
         //set read form secondary
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
@@ -638,6 +643,11 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
         
         auto opts  = options::find{};
         opts.limit(search.page_len);
+        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
