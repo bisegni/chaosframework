@@ -42,7 +42,7 @@ current_bandwidth(0) {
     counter_dataseet_sent = MetricManager::getInstance()->getNewTxPacketRateMetricFamily({{"driver","direct_io"}});
     counter_data_sent = MetricManager::getInstance()->getNewTxDataRateMetricFamily({{"driver","direct_io"}});
     
-    MetricManager::getInstance()->createGaugeFamily("tx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data transmitted by direct-io dispatcher");
+    MetricManager::getInstance()->createGaugeFamily("tx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data transmitted by direct-io dispatcher[Kbyte]");
     gauge_bandwidth_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("tx_bandwidth_direct_io_dispatcher");
     
     startLogging();
@@ -62,8 +62,8 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSP
     
     //increment packet size
     int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    total_data += current_bandwidth;
-    (*counter_data_sent) += current_bandwidth;
+    current_bandwidth += total_data;
+    (*counter_data_sent) += total_data;
     return wrapped_connection->sendPriorityData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSPtr data_pack,
@@ -74,8 +74,8 @@ int DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPackSP
     
     //increment packet size
     int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    total_data += current_bandwidth;
-    (*counter_data_sent) += current_bandwidth;
+    current_bandwidth += total_data;
+    (*counter_data_sent) += total_data;
     return wrapped_connection->sendPriorityData(MOVE(data_pack),
                                                 asynchronous_answer);
 }
@@ -89,8 +89,8 @@ int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::dire
     
     //increment packet size
     int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    total_data += current_bandwidth;
-    (*counter_data_sent) += current_bandwidth;
+    current_bandwidth += total_data;
+    (*counter_data_sent) += total_data;
     return wrapped_connection->sendServiceData(MOVE(data_pack));
 }
 int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::direct_io::DirectIODataPackSPtr data_pack,
@@ -101,8 +101,8 @@ int DirectIOClientConnectionMetricCollector::sendServiceData(chaos::common::dire
     
     //increment packet size
     int32_t total_data = (data_pack->header.channel_header_size+data_pack->header.channel_data_size + sizeof(DirectIODataPackDispatchHeader));
-    total_data += current_bandwidth;
-    (*counter_data_sent) += current_bandwidth;
+    current_bandwidth += total_data;
+    (*counter_data_sent) += total_data;
     return wrapped_connection->sendServiceData(MOVE(data_pack),
                                                asynchronous_answer);
 }

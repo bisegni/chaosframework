@@ -46,7 +46,8 @@ CacheDriverMetricCollector::~CacheDriverMetricCollector() {
 int CacheDriverMetricCollector::putData(const std::string& key,
                                         CacheData data) {
     CHAOS_ASSERT(wrapped_cache_driver)
-    if(data->size()) {
+    if(data &&
+       data->size()) {
         (*set_pack_count_uptr)++;
         (*set_bandwith_uptr) += data->size();
     }
@@ -60,7 +61,8 @@ int CacheDriverMetricCollector::getData(const std::string& key,
     CHAOS_ASSERT(wrapped_cache_driver)
     int err =  wrapped_cache_driver->getData(key,
                                              data);
-    if(data->size()) {
+    if(data &&
+       data->size()) {
         (*get_pack_count_uptr)++;
         (*get_bandwith_uptr)+=data->size();
     }
@@ -71,9 +73,11 @@ int CacheDriverMetricCollector::getData(const ChaosStringVector&    keys,
     CHAOS_ASSERT(wrapped_cache_driver)
     int err =  wrapped_cache_driver->getData(keys,
                                              multi_data);
-    if(multi_data.size()) {
-        (*get_pack_count_uptr)++;
-        (*get_bandwith_uptr)+=multi_data.size();
+    for (auto&& element : multi_data) {
+        if(element.second) {
+            (*get_pack_count_uptr)++;
+            (*get_bandwith_uptr)+=element.second->size();
+        }
     }
     return err;
 }
