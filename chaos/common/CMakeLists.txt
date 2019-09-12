@@ -9,14 +9,28 @@ ELSE(WIN32)
 IF(NOT CHAOS_DISABLE_EVENTFD)
   CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
 ELSE()
+IF(CHAOS_TARGET)
+## there is the risk that for old targets it selects epoll that is not supported in old kernels
+  MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET} with compilers ${CMAKE_CXX_COMPILER}")
+  SET(ZMQ_FLAGS "--with-poller=select --disable-eventfd --enable-static --enable-force-CXX98-compat --disable-curve --disable-curve-keygen --disable-libunwind")
+#  SET(ZMQ_FLAGS "")
+ELSE()
   SET(ZMQ_FLAGS "")
 ENDIF()
+ENDIF()
 ENDIF(WIN32)
-	IF (CHAOS_TARGET)
-	MESG("Configure libzmq with autotools")  
-	CheckConfigureBuild(zmq libzmq "${ZMQ_FLAGS}" https://github.com/zeromq)
+IF (CHAOS_TARGET)
+  IF(NEW_ZMQ)
+      MESG("Configure NEW libzmq with autotools")  
+      CheckConfigureBuild(zmq libzmq:v4.3.1 "${ZMQ_FLAGS}" https://github.com/zeromq)
+
+    ELSE()
+      ## ifdef to support OLD ZMQ into code
+      ADD_DEFINITIONS(-DOLD_ZMQ)
+      CheckConfigureBuild(zmq zeromq4-1 "" https://github.com/zeromq)
+   ENDIF()
 	ELSE()
-	MESG("Configure libzmq as CMake")
+	  MESG("Configure libzmq as CMake")
 	ExternalProject_Add(
 	 libzmq
 	 GIT_REPOSITORY https://github.com/zeromq/libzmq.git
@@ -25,11 +39,11 @@ ENDIF(WIN32)
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libzmq-build"
 	 CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} ${ZMQ_FLAGS} -DCMAKE_BUILD_TYPE=Release -DENABLE_DRAFTS=1 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 	 LOG_DOWNLOAD ON
 	 LOG_CONFIGURE ON
 	 LOG_BUILD ON)
-	ENDIF()
+     ENDIF()
 
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
