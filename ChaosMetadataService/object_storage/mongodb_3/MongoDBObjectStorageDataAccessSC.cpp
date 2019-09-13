@@ -52,7 +52,6 @@
 
 static constexpr char MONGODB_DB_NAME[]                 = "chaos";
 static constexpr char MONGODB_DAQ_COLL_NAME[]           = "daq";
-static constexpr char MONGODB_DAQ_INDEX_COLL_NAME[]     = "daq_index";
 static constexpr char MONGODB_DAQ_DATA_FIELD[]          = "data";
 static constexpr int  DEFAULT_BATCH_SIZE_IN_BYTE        = 1*1024*1024; // 1 mbyte
 static constexpr int  DEFAULT_BATCH_TIMEOUT_MULTIPLIER  = 0;           // 1 seconds
@@ -141,18 +140,20 @@ static void initSearchIndex(mongocxx::database& db,
     }
 }
 
-static void initSearchData(mongocxx::database& db,
-                           std::string col_name) {
+//ndk_uid: 1dpck_ats: 1dpck_ds_tag: 1
+static void initAgeingIndex(mongocxx::database& db,
+                            std::string col_name) {
     if(findIndex(db,
                  col_name,
-                 "order_index")) {
+                 "ageing_index")) {
         return;
     }
     auto index_builder = builder::basic::document{};
     mongocxx::options::index index_options{};
-    index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
-    index_builder.append(kvp(CHAOS_FORMAT("data.%1%",%chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
-    index_options.name("order_index");
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
+    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
+    index_options.name("ageing_index");
     try{
         db[col_name].create_index(index_builder.view(), index_options);
     } catch( mongocxx::operation_exception& e) {
@@ -179,7 +180,8 @@ read_timeout(common::constants::ObjectStorageTimeoutinMSec){
    
     //data collection
     initShardIndex(db, MONGODB_DAQ_COLL_NAME);
-    initSearchData(db, MONGODB_DAQ_COLL_NAME);
+    initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
+    initAgeingIndex(db, MONGODB_DAQ_COLL_NAME);
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_stoarge_kvp.count("wtimeout")) {
         write_timeout=strtoul(obj_stoarge_kvp["wtimeout"].c_str(),0,0);
@@ -526,7 +528,7 @@ int MongoDBObjectStorageDataAccessSC::deleteObject(const std::string& key,
      
 }
 
-int MongoDBObjectStorageDataAccessSC::findObject(const std::string&                                          key,
+int MongoDBObjectStorageDataAccessSC::findObject(const std::string&                                        key,
                                                const ChaosStringSet&                                       meta_tags,
                                                const uint64_t                                              timestamp_from,
                                                const uint64_t                                              timestamp_to,
@@ -642,6 +644,7 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
                                      kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
                                      kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
                                      kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+        
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
         opts.read_preference(secondary).max_time(std::chrono::milliseconds(read_timeout));
