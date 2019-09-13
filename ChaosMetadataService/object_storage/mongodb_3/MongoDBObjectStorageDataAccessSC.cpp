@@ -252,10 +252,19 @@ void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batc
     }
 }
 
-int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&            key,
+int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key,
                                                const ChaosStringSetConstSPtr meta_tags,
                                                const CDataWrapper&           stored_object) {
     int err = 0;
+    
+    if(!stored_object.hasKey(chaos::DataPackCommonKey::DPCK_DEVICE_ID)||
+       stored_object.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||
+       stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) ||
+       stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
+           ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", %stored_object.getJSONString());
+        return -1;
+    }
+    
     bsoncxx::oid new_data_oid;
     BlobShrdPtr current_data = ChaosMakeSharedPtr<bsoncxx::builder::basic::document>();
     const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
@@ -568,11 +577,12 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         auto opts  = options::find{};
         //set page len
         opts.limit(page_len);
-        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
-                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+//        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+//                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+        opts.hint(hint("paged_daq_seq_search_index"));
         //set read form secondary
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
@@ -639,11 +649,12 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
         
         auto opts  = options::find{};
         opts.limit(search.page_len);
-        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
-                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
-                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+//        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+//                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+        opts.hint(hint("paged_daq_seq_search_index"));
         
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
