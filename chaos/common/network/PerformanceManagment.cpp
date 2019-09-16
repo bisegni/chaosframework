@@ -69,7 +69,7 @@ void PerformanceManagment::init(void *init_parameter)  {
 void PerformanceManagment::start()  {
 	PMLAPP_ << "Start the purger thread";
 
-    AsyncCentralManager::getInstance()->addTimer(this, 0, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
+    AsyncCentralManager::getInstance()->addTimer(this, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec, chaos::common::constants::PerformanceManagerTimersTimeoutinMSec);
 }
 
 //Stop the implementation

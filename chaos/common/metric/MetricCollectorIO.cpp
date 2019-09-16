@@ -40,7 +40,7 @@ MetricCollectorIO::~MetricCollectorIO() {
 }
 
 void MetricCollectorIO::startLogging() {
-    AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
+    AsyncCentralManager::getInstance()->addTimer(this, chaos::common::constants::MetricCollectorTimeoutinMSec, chaos::common::constants::MetricCollectorTimeoutinMSec);
 }
 
 void MetricCollectorIO::stopLogging() {
