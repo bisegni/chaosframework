@@ -33,7 +33,10 @@ DeviceSharedDataWorker(){
     MetricManager::getInstance()->createGaugeFamily("mds_storage_queue", "Metrics for storage mds queue, element in queue are waiting to be porcessed by object storage driver");
     gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_element"}});
     gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_data"}});
-    counter_rejeted_element_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_storage_queue",{{"type","rejected_element"}});
+    
+    MetricManager::getInstance()->createCounterFamily("mds_storage_queue_rejected", "Metrics for rejected element, that have waited to long for being stored");
+    counter_rejeted_element_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_storage_queue_rejected",{{"type","rejected_element"}});
+
 }
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
