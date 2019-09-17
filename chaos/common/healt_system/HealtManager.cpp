@@ -171,7 +171,7 @@ int HealtManager::sayHello()  {
 }
 
 void HealtManager::start()  {
-    AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
+    AsyncCentralManager::getInstance()->addTimer(this, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
     //say hello to mds
     //    int32_t retry =HELLO_PHASE_RETRY;
     //    while(retry--){
@@ -486,7 +486,7 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
                                                                                           MOVE(data_pack),
                                                                                           DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
         if(err) {
-            HM_ERR << "Error pushinghealth datapack for node:" << heath_set->node_uid << " with code:" << err;
+            HM_ERR << "Error pushing health datapack for node:" << heath_set->node_uid << " with code:" << err;
         }
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_uid;

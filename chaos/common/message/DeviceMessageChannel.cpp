@@ -148,7 +148,7 @@ void DeviceMessageChannel::setOnline(OnlineState new_online_state) {
             
         }
         //enable auto reconnection if we need
-        if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, MESSAGE_CHANNEL_FIRE_RECONNECT);}
+        if(auto_reconnection) {async_central::AsyncCentralManager::getInstance()->addTimer(this, MESSAGE_CHANNEL_FIRE_RECONNECT, MESSAGE_CHANNEL_FIRE_RECONNECT);}
     } else {
         DMCINFO << CHAOS_FORMAT("Device %1% is respawned",%device_network_address->device_id);
         //disable auto reconnection
@@ -214,7 +214,7 @@ OnlineState DeviceMessageChannel::isOnline() {
 void DeviceMessageChannel::setAutoReconnection(bool _auto_reconnection) {
     if((auto_reconnection = _auto_reconnection)){
         if(online == OnlineStateOnline ||
-           online == OnlineStateUnknown) {async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, MESSAGE_CHANNEL_FIRE_RECONNECT);}
+           online == OnlineStateUnknown) {async_central::AsyncCentralManager::getInstance()->addTimer(this, MESSAGE_CHANNEL_FIRE_RECONNECT, MESSAGE_CHANNEL_FIRE_RECONNECT);}
     } else {
         async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     }

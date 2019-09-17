@@ -263,9 +263,9 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key
     int err = 0;
     
     if(!stored_object.hasKey(chaos::DataPackCommonKey::DPCK_DEVICE_ID)||
-       stored_object.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||
-       stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) ||
-       stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
+       !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||
+       !stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) ||
+       !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
            ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", %stored_object.getJSONString());
         return -1;
     }
