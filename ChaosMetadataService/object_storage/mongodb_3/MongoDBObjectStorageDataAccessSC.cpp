@@ -216,7 +216,7 @@ search_hint_name("paged_daq_seq_search_index"){
     //set the hint name
     if(obj_stoarge_kvp.count("hint_name")) {
         search_hint_name = obj_stoarge_kvp["hint_name"];
-        DBG<<" Defined Hint:"<<search_hint_name;
+        DBG<<" Defined Hint:\""<<search_hint_name<<"\"";
 
     }
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
