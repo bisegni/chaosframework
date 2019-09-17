@@ -170,7 +170,8 @@ batch_size_limit(DEFAULT_BATCH_SIZE_IN_BYTE),
 push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
 push_current_step_left(push_timeout_multiplier),
 write_timeout(common::constants::ObjectStorageTimeoutinMSec),
-read_timeout(common::constants::ObjectStorageTimeoutinMSec){
+read_timeout(common::constants::ObjectStorageTimeoutinMSec),
+search_hint_name("paged_daq_seq_search_index"){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -211,6 +212,10 @@ read_timeout(common::constants::ObjectStorageTimeoutinMSec){
             DBG<<" Write Majority";
             write_options.acknowledge_level(write_concern::level::k_majority);
         }
+    }
+    //set the hint name
+    if(obj_stoarge_kvp.count("hint_name")) {
+        search_hint_name = obj_stoarge_kvp["hint_name"];
     }
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
 }
@@ -555,7 +560,6 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
     try{
         //normalize time offset
         uint64_t t_start = timestamp_from;
-;
         uint64_t t_stop = timestamp_to;
         if(t_start>t_stop){std::swap(t_start, t_stop);}
         builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), key));
@@ -582,7 +586,7 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
-        opts.hint(hint("paged_daq_seq_search_index"));
+        opts.hint(hint(search_hint_name));
         //set read form secondary
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);
@@ -654,7 +658,7 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
 //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
-        opts.hint(hint("paged_daq_seq_search_index"));
+        opts.hint(hint(search_hint_name));
         
         read_preference secondary;
         secondary.mode(read_preference::read_mode::k_nearest);

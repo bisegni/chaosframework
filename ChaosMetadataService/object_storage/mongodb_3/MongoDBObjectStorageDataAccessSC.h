@@ -62,6 +62,8 @@ namespace chaos {
                     int32_t             push_current_step_left;
                     BlobSetL            batch_set;
                     uint32_t            write_timeout,read_timeout;
+                    std::string         search_hint_name;
+                    
                     mongocxx::write_concern       write_options;
                     std::future<void> current_push_future;
                 protected:

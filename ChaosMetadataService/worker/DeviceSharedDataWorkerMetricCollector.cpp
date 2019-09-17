@@ -33,6 +33,7 @@ DeviceSharedDataWorker(){
     MetricManager::getInstance()->createGaugeFamily("mds_storage_queue", "Metrics for storage mds queue, element in queue are waiting to be porcessed by object storage driver");
     gauge_queued_dataset_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_element"}});
     gauge_queued_memory_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_queue",{{"type","queued_data"}});
+    counter_rejeted_element_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_storage_queue",{{"type","rejected_element"}});
 }
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
@@ -60,17 +61,23 @@ int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info, 
     DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
     uint32_t total_data = (uint32_t)job.data_pack->size()  + (uint32_t)job.key.size();
     
-    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
-        case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
-        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
-            (*gauge_queued_dataset_uptr)++;
-            (*gauge_queued_memory_uptr)+=total_data;
-            break;
+    //try to push data
+    int err = DeviceSharedDataWorker::submitJobInfo(job_info);
+    if(!err) {
+        switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
+            case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
+            case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
+                (*gauge_queued_dataset_uptr)++;
+                (*gauge_queued_memory_uptr)+=total_data;
+                break;
+            }
+            case DataServiceNodeDefinitionType::DSStorageTypeLive:
+            case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
+                break;
+            }
         }
-        case DataServiceNodeDefinitionType::DSStorageTypeLive:
-        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
-            break;
-        }
+    } else {
+        (*counter_rejeted_element_uptr)++;
     }
-    return DeviceSharedDataWorker::submitJobInfo(job_info);
+    return err;
 }
