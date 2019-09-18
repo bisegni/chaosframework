@@ -11,7 +11,7 @@
 
 namespace chaos {
     namespace metadata_service {
-#define OPT_HA_ZONE_NAME                   "ha-zone-name"
+#define OPT_HA_ZONE_NAME                "ha-zone-name"
 #define OPT_BATCH_SANDBOX_SIZE          "batch-sandbox-size"
 #define OPT_PERSITENCE_IMPL				"persistence-impl"
 #define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence-servers"
@@ -28,16 +28,9 @@ namespace chaos {
 #define OPT_CACHE_DRIVER_KVP                    "cache-driver-kvp"
 #define OPT_CACHE_DRIVER_POOL_MIN_INSTANCE      "cache-driver-pool-min-instance"
         
-#define OPT_ARCHIVER_LOG_METRIC                  "archiver-log-metric"
-#define OPT_ARCHIVER_LOG_METRIC_UPDATE_INTERVAL  "archiver-log-metric-update-interval"
 #define OPT_ARCHIVER_NUM                         "archiver-instances"
 #define OPT_ARCHIVER_THREAD                      "archiver-thread"
-        
-        //stage data indexer
-#define OPT_INDEXER_WORKER_NUM			"indexer-worker-num"
-#define OPT_INDEXER_SCAN_DELAY			"indexer-scan-delay"
-#define INDEXER_DEFAULT_WORKER_NUMBER	1
-#define INDEXER_DEFAULT_SCAN_DELAY		60
+#define OPT_ARCHIVER_QUEUE_PUSH_TIMEOUT          "archiver-queue-push-timeout"
     }
 }
 #endif

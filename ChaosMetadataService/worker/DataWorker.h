@@ -49,8 +49,7 @@ namespace chaos {
 			typedef struct DataWorkerSetting {
                 unsigned int        instances;
 				unsigned int        thread_number;
-                bool                log_metric;
-                uint32_t            log_metric_update_interval;
+                unsigned int        queue_push_timeout;
 			} DataWorkerSetting;
 			
 			class DataWorker:

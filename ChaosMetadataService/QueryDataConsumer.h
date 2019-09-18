@@ -63,6 +63,7 @@ namespace chaos{
             
             
             boost::atomic<uint16_t>                 device_data_worker_index;
+            int64_t         storage_queue_push_timeout;
             DataWorkerVec	device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
