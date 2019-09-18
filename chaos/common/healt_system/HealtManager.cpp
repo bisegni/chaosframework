@@ -484,7 +484,7 @@ void HealtManager::_publish(const ChaosSharedPtr<NodeHealtSet>& heath_set,
         //store data on cache
         err = SharedManagedDirecIoDataDriver::getInstance()->getSharedDriver()->storeHealthData(heath_set->node_publish_key,
                                                                                           MOVE(data_pack),
-                                                                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory);
+                                                                                          DataServiceNodeDefinitionType::DSStorageTypeLive);
         if(err) {
             HM_ERR << "Error pushing health datapack for node:" << heath_set->node_uid << " with code:" << err;
         }
