@@ -244,7 +244,7 @@ int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(cu_alarm_key,
                                           MOVE(dataset),
-                                          /*DataServiceNodeDefinitionType::DSStorageTypeLiveHistory*/,
+                                          /*DataServiceNodeDefinitionType::DSStorageTypeLiveHistory*/
                                           storage_type,
                                           current_tags());
             break;
