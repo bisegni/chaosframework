@@ -34,14 +34,6 @@ int main(int argc, const char * argv[]) {
                                                                                                         "default",
                                                                                                         &ChaosMetadataService::getInstance()->setting.ha_zone_name);
         //archiver
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_ARCHIVER_LOG_METRIC,
-                                                                                                   "Enable log metric for archiver",
-                                                                                                   &ChaosMetadataService::getInstance()->setting.worker_setting.log_metric);
-        
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_ARCHIVER_LOG_METRIC_UPDATE_INTERVAL,
-                                                                                                     "Specify the archiver log interval in second",
-                                                                                                     1,
-                                                                                                     &ChaosMetadataService::getInstance()->setting.worker_setting.log_metric_update_interval);
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ARCHIVER_NUM,
                                                                                                          "The number of the archiver instance, each instance is an own queue",
                                                                                                          1,
@@ -50,6 +42,10 @@ int main(int argc, const char * argv[]) {
                                                                                                          "The thread number of each archiver instance",
                                                                                                          1,
                                                                                                          &ChaosMetadataService::getInstance()->setting.worker_setting.thread_number);
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ARCHIVER_QUEUE_PUSH_TIMEOUT,
+                                                                                                         "The timeout that is wait by the dataset that is waiting to be pushed into storage queue after which it is rejected",
+                                                                                                         chaos::common::constants::MDSHistoryQueuePushTimeoutinMSec,
+                                                                                                         &ChaosMetadataService::getInstance()->setting.worker_setting.queue_push_timeout);
         
         //cache parameter
         

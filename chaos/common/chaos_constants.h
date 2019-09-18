@@ -174,7 +174,7 @@ namespace chaos {
              mds to permit queue to can accept this new dataset. after that the new dataset
              is nto accepted by sublayer.
              */
-            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 15000;
+            static const unsigned int MDSHistoryQueuePushTimeoutinMSec          = 60000;
     	}
 
     };

@@ -1,0 +1,5 @@
+---
+Added:
+- New archiver-queue-push-timeout option that permit to set the timeout value that
+  determiante the time that a dataset need to waih to enter into storage queue, after
+  which it will be rejected

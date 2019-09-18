@@ -61,7 +61,8 @@ QueryDataConsumer::QueryDataConsumer():
 server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
-device_data_worker_index(0){}
+device_data_worker_index(0),
+storage_queue_push_timeout(ChaosMetadataService::getInstance()->setting.worker_setting.queue_push_timeout){}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -147,7 +148,8 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         job->key_tag = hst_tag;
         job->data_pack = channel_data;
         job->meta_tag = MOVE(meta_tag_set);
-        if((err = device_data_worker[index_to_use]->submitJobInfo(job))) {
+        if((err = device_data_worker[index_to_use]->submitJobInfo(job,
+                                                                  storage_queue_push_timeout))) {
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
         }
     }
