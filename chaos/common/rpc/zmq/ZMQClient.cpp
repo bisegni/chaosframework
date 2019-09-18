@@ -61,14 +61,25 @@ RpcClient(alias),
 zmq_context(NULL),
 zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){    
     seq_id=0;
+
 #if CHAOS_PROMETHEUS
     //add custom driver metric
     chaos::common::metric::MetricManager::getInstance()->createGaugeFamily("rpc_zmq_client_queue", "Element in queue that need to forwarded by the zmq client");
+    chaos::common::metric::MetricManager::getInstance()->createGaugeFamily("rpc_zmq_client_errors", "ZMQ Client errors");
     counter_queuend_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_queue");
+    counter_zmqerror_uptr= MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_errors");
+#else
+    counter_zmqerror_uptr=new uint32_t;
+    *counter_zmqerror_uptr=0;
 #endif
 }
 
-ZMQClient::~ZMQClient(){}
+ZMQClient::~ZMQClient(){
+    #ifndef CHAOS_PROMETHEUS
+    delete counter_zmqerror_uptr;
+    #endif
+
+}
 
 /*
  Initialization method for output buffer
@@ -154,6 +165,8 @@ bool ZMQClient::submitMessage(NFISharedPtr forwardInfo,
 #if CHAOS_PROMETHEUS
             (*counter_queuend_uptr)++;
 #endif
+
+
         }
     } catch(CException& ex){
         //in this case i need to delete the memory
@@ -215,6 +228,7 @@ ZMQSocketPoolDef* ZMQClient::allocateResource(const std::string& pool_identifica
         url.append(pool_identification);
         if((err = zmq_connect(socket_def->socket, url.c_str()))) {
             ZMQC_LERR << "Error "<< err <<" connecting socket to " <<pool_identification;
+             (*counter_zmqerror_uptr)++;
         } else {
             DEBUG_CODE(ZMQC_LAPP << "New socket for "<<pool_identification;)
             socket_def->identity = common::utility::UUIDUtil::generateUUIDLite();
@@ -227,6 +241,7 @@ ZMQSocketPoolDef* ZMQClient::allocateResource(const std::string& pool_identifica
     if(err) {
         if(socket_def->socket) {
             ZMQC_LERR << "Error during configuration of the socket for "<<pool_identification;
+             (*counter_zmqerror_uptr)++;
             zmq_close(socket_def->socket);
             //reset socket
             socket_def->socket = NULL;
@@ -269,6 +284,7 @@ int ZMQClient::sendMessage(void *socket,
         //error creating the message
         err = zmq_errno();
         ZMQC_LERR << "Error initializing message with error:" << zmq_strerror(err);
+         (*counter_zmqerror_uptr)++;
     } else {
         //copy content into message
         memcpy(zmq_msg_data(&message),
@@ -278,6 +294,7 @@ int ZMQClient::sendMessage(void *socket,
         if((err = zmq_msg_send(&message, socket, more_to_send?ZMQ_SNDMORE:ZMQ_DONTWAIT)) == -1){
             err = zmq_errno();
             ZMQC_LERR << "Error sending message with error:" << zmq_strerror(err);
+             (*counter_zmqerror_uptr)++;
         } else {
             //reset the error
             err = 0;
@@ -317,6 +334,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                         ErrorRpcCoce::EC_RPC_NO_SOCKET,
                                         "GetSocketForNFI failed",
                                         __PRETTY_FUNCTION__);
+            (*counter_zmqerror_uptr)++;
             return;
         }
         
@@ -327,6 +345,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                         "Socket creation error",
                                         __PRETTY_FUNCTION__);
             deleteSocket(socket_info);
+            (*counter_zmqerror_uptr)++;
             return;
         }
         
@@ -338,7 +357,9 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                     new MemoryManagement(message_data))) == -1) {
             int32_t sent_error = zmq_errno();
             std::string error_message =zmq_strerror(sent_error);
+            (*counter_zmqerror_uptr)++;
             ZMQC_LERR << "Error allocating zmq messagecode:" << sent_error << " message:" <<error_message;
+             (*counter_zmqerror_uptr)++;
             if(messageInfo->is_request) {
                 forwadSubmissionResultError(MOVE(messageInfo),
                                             (ErrorRpcCoce::EC_RPC_IMPL_ERR-1),
@@ -354,6 +375,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message = zmq_strerror(sent_error);
                 ZMQC_LERR << "Error sending message seq_id:"<<loc_seq_id<<" with code:" << sent_error << " message:" <<error_message<<" @"<<messageInfo->destinationAddr;
+                 (*counter_zmqerror_uptr)++;
                 if(messageInfo->is_request) {
                     forwadSubmissionResultError(MOVE(messageInfo),
                                                 ErrorRpcCoce::EC_RPC_SENDING_DATA,
@@ -374,6 +396,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                     int32_t sent_error = zmq_errno();
                     std::string error_message = zmq_strerror(sent_error);
                     ZMQC_LERR << "Error receiving ack for message seq_id:"<<loc_seq_id<<" with code:" << sent_error << " message:" <<error_message<<" @"<<messageInfo->destinationAddr;
+                     (*counter_zmqerror_uptr)++;
                     if(messageInfo->is_request) {
                         forwadSubmissionResultError(MOVE(messageInfo),
                                                     ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA,
@@ -393,6 +416,8 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                             rid_ack=tmp->getInt64Value("seq_id");
                             if(rid_ack!=loc_seq_id){
                                 ZMQC_LERR<<"MISMATCH request id:"<<loc_seq_id<<" to:@"<<messageInfo->destinationAddr<<" ack id:"<<rid_ack <<" from @"<<messageInfo->sender_node_id;
+
+                                (*counter_zmqerror_uptr)++;
                             }
                         }
                     }
@@ -424,8 +449,10 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
         if(socket_info) {releaseSocket(socket_info);}
     }catch (std::exception& e) {
         ZMQC_LERR << "Error during message forwarding:"<< e.what();
+         (*counter_zmqerror_uptr)++;
     } catch (...) {
         ZMQC_LERR << "General error during message forwarding:";
+         (*counter_zmqerror_uptr)++;
     }
     zmq_msg_close (&message);
     zmq_msg_close (&reply);
