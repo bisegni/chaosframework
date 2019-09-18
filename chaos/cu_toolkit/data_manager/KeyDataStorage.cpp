@@ -185,15 +185,10 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
     int err=0;
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive ||
        override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeLive) {
-        //live is enbaled
-        //        if(use_timing_info) {
         if((now - storage_live_time_last_push) >= storage_live_time) {
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
             storage_live_time_last_push = now;
         }
-        //        } else {
-        //            effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
-        //        }
     }
     
     if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory ||
@@ -249,21 +244,23 @@ int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(cu_alarm_key,
                                           MOVE(dataset),
-                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          /*DataServiceNodeDefinitionType::DSStorageTypeLiveHistory*/,
+                                          storage_type,
                                           current_tags());
             break;
         case KeyDataStorageDomainDevAlarm:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(dev_alarm_key,
                                           MOVE(dataset),
-                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          /*DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,*/
+                                          storage_type,
                                           current_tags());
             break;
         case KeyDataStorageDomainHealth:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeHealthData(health_key,
                                                 MOVE(dataset),
-                                                DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                                DataServiceNodeDefinitionType::DSStorageTypeLive,
                                                 current_tags());
             break;
         case KeyDataStorageDomainCustom:

@@ -57,8 +57,8 @@ namespace chaos {
             //keep track of process resource usage
             //ProcStat service_proc_stat;
             
-            ChaosMetadataService(){};
-            ~ChaosMetadataService(){};
+            ChaosMetadataService();
+            ~ChaosMetadataService();
             static void signalHanlder(int);
             
             //! convert param_key to a string of string hash map
