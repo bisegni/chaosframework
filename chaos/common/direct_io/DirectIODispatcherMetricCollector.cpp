@@ -41,7 +41,7 @@ current_bandwidth(0){
     coutenr_pack_uptr = MetricManager::getInstance()->getNewRxPacketRateMetricFamily({{"driver","direct_io"}});
     counter_data_uptr = MetricManager::getInstance()->getNewRxDataRateMetricFamily({{"driver","direct_io"}});
     
-    MetricManager::getInstance()->createGaugeFamily("rx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data received by direct-io dispatcher [Kbyte]");
+    MetricManager::getInstance()->createGaugeFamily("rx_bandwidth_direct_io_dispatcher", "Metric for bandwith measure on data received by direct-io dispatcher [byte]");
     gauge_bandwidth_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rx_bandwidth_direct_io_dispatcher");
 }
 
@@ -110,5 +110,5 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(chaos::common::direct
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
     double sec = time_diff/1000;
     if(sec == 0) return;
-    (*gauge_bandwidth_uptr) = ((current_bandwidth / sec)/1024); current_bandwidth = 0;
+    (*gauge_bandwidth_uptr) = (current_bandwidth / sec); current_bandwidth = 0;
 }

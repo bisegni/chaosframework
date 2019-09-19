@@ -35,14 +35,16 @@
 #include <mongocxx/pool.hpp>
 #include "ShardKeyManagement.h"
 
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/metric.h>
+#endif //CHAOS_PROMETHEUS
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
             namespace mongodb_3 {
                 class NewMongoDBObjectStorageDriver;
                 
-               
-                    typedef ChaosSharedPtr<bsoncxx::builder::basic::document> BlobShrdPtr;
+                typedef ChaosSharedPtr<bsoncxx::builder::basic::document> BlobShrdPtr;
 
                  CHAOS_DEFINE_LOCKABLE_OBJECT(std::set<BlobShrdPtr>, BlobSetL);
                 //! define a lockable seet for betch entries
@@ -50,7 +52,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
                 class MongoDBObjectStorageDataAccessSC:
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
-                public chaos::common::async_central::TimerHandler {
+                public chaos::common::metric::MetricCollectorIO {
                     friend class NewMongoDBObjectStorageDriver;
                     mongocxx::pool&     pool_ref;
                     ShardKeyManagement  shrd_key_manager;
@@ -66,6 +68,14 @@ namespace chaos {
                     
                     mongocxx::write_concern       write_options;
                     std::future<void> current_push_future;
+                    
+                    //metric
+#if CHAOS_PROMETHEUS
+                    double current_write_data;
+                    chaos::common::metric::GaugeUniquePtr gauge_write_rate_uptr;
+                    double current_read_data;
+                    chaos::common::metric::GaugeUniquePtr gauge_read_rate_uptr;
+#endif
                 protected:
                     MongoDBObjectStorageDataAccessSC(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccessSC();
@@ -73,7 +83,7 @@ namespace chaos {
 
                     void executePush(std::set<BlobShrdPtr>&& _batch_element_to_store);
                     //!TimeOutHnadler inherited
-                    void timeout();
+                    void fetchMetricForTimeDiff(uint64_t time_diff);
                     
                     inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::database& db,
                                                                        const std::string& _id);

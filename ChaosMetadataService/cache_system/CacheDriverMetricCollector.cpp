@@ -31,11 +31,11 @@ wrapped_cache_driver(_wrapped_cache_driver){
     //init the shared collector
     MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_count", "Is the number of dataset that are stored in cache");
     set_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_count");
-    MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_bandwith", "Is the bandwidth of dataset that are stored in cache (in kbyte)");
+    MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_bandwith", "Is the bandwidth of dataset that are stored in cache (in byte)");
     set_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_bandwith");
     MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_count", "Is the number of dataset that are retrieved from the cache");
     get_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_count");
-    MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_bandwith", "Is the bandwidth of dataset that are retrieved from the cache (in kbyte)");
+    MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_bandwith", "Is the bandwidth of dataset that are retrieved from the cache (in byte)");
     get_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_bandwith");
 }
 

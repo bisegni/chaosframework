@@ -272,10 +272,8 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
         
-#if CHAOS_PROMETEUS
-        if(GlobalConfiguration::getInstance()-isMetricEnbled()){
-            common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
-        }
+#if CHAOS_PROMETHEUS
+        common::utility::InizializableService::initImplementation(chaos::common::metric::MetricManager::getInstance(), init_data, "MetricManager", __PRETTY_FUNCTION__);
 #endif
         
         //Starting Async central

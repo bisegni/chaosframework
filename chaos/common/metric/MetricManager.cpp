@@ -126,9 +126,7 @@ io_receive_packet_sec(BuildCounter()
 
 MetricManager::~MetricManager() {}
 
-void MetricManager::init(void *data) {
-    
-}
+void MetricManager::init(void *data) {}
 
 void MetricManager::deinit() {
     metrics_registry.reset();

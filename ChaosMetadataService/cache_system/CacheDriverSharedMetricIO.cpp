@@ -39,11 +39,11 @@ MetricCollectorIO(){
     //add custom key
     MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_count", "Is the number of dataset that are stored in cache");
     set_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_count");
-    MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_bandwith", "Is the bandwidth of dataset that are stored in cache (in kbyte)");
+    MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_bandwith", "Is the bandwidth of dataset that are stored in cache (in byte)");
     set_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_bandwith");
     MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_count", "Is the number of dataset that are retrieved from the cache");
     get_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_count");
-    MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_bandwith", "Is the bandwidth of dataset that are retrieved from the cache (in kbyte)");
+    MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_bandwith", "Is the bandwidth of dataset that are retrieved from the cache (in byte)");
     get_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_bandwith");
     //start logging
 //    startLogging();
@@ -57,13 +57,13 @@ CacheDriverSharedMetricIO::~CacheDriverSharedMetricIO() {
 void CacheDriverSharedMetricIO::incrementSetBandWidth(uint32_t increment) {
     boost::shared_lock<boost::shared_mutex> rl(metric_mutex);
     (*set_pack_count_uptr)++;
-    (*set_bandwith_uptr) += ((double)increment);
+    (*set_bandwith_uptr) += (double)increment;
 }
 
 void CacheDriverSharedMetricIO::incrementGetBandWidth(uint32_t increment) {
     boost::shared_lock<boost::shared_mutex> rl(metric_mutex);
     (*get_pack_count_uptr)++;
-    (*get_bandwith_uptr)+=((double)increment/1000);
+    (*get_bandwith_uptr)+=(double)increment;
 }
 
 void CacheDriverSharedMetricIO::fetchMetricForTimeDiff(uint64_t time_diff) {
