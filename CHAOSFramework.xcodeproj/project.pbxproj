@@ -472,7 +472,6 @@
 		326933F21D5089C20033D9E9 /* dataset_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933F01D5089C20033D9E9 /* dataset_event.h */; };
 		326ACF7F1E01525D00AD011E /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6A1E01525D00AD011E /* CacheDriver.cpp */; };
 		326ACF801E01525D00AD011E /* CacheDriverMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */; };
-		326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF6E1E01525D00AD011E /* CacheDriverSharedMetricIO.cpp */; };
 		326ACF821E01525D00AD011E /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF701E01525D00AD011E /* CouchbaseCacheDriver.cpp */; };
 		326ACF841E01525D00AD011E /* ObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF761E01525D00AD011E /* ObjectStorageDataAccess.cpp */; };
 		326ACF851E01525D00AD011E /* MongoDBObjectStorageDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326ACF791E01525D00AD011E /* MongoDBObjectStorageDataAccess.cpp */; };
@@ -1859,8 +1858,6 @@
 		326ACF6B1E01525D00AD011E /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CacheDriverMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326ACF6D1E01525D00AD011E /* CacheDriverMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverMetricCollector.h; sourceTree = "<group>"; };
-		326ACF6E1E01525D00AD011E /* CacheDriverSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverSharedMetricIO.cpp; sourceTree = "<group>"; };
-		326ACF6F1E01525D00AD011E /* CacheDriverSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverSharedMetricIO.h; sourceTree = "<group>"; };
 		326ACF701E01525D00AD011E /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		326ACF711E01525D00AD011E /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
 		326ACF761E01525D00AD011E /* ObjectStorageDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectStorageDataAccess.cpp; sourceTree = "<group>"; };
@@ -4149,8 +4146,6 @@
 				326ACF6B1E01525D00AD011E /* CacheDriver.h */,
 				326ACF6C1E01525D00AD011E /* CacheDriverMetricCollector.cpp */,
 				326ACF6D1E01525D00AD011E /* CacheDriverMetricCollector.h */,
-				326ACF6E1E01525D00AD011E /* CacheDriverSharedMetricIO.cpp */,
-				326ACF6F1E01525D00AD011E /* CacheDriverSharedMetricIO.h */,
 				326ACF701E01525D00AD011E /* CouchbaseCacheDriver.cpp */,
 				326ACF711E01525D00AD011E /* CouchbaseCacheDriver.h */,
 			);
@@ -6893,7 +6888,6 @@
 				32A626C2213FB99D00D63009 /* StartStop.cpp in Sources */,
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				325F022D213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp in Sources */,
-				326ACF811E01525D00AD011E /* CacheDriverSharedMetricIO.cpp in Sources */,
 				32B6B771213E8C7600D7ECF8 /* UpdateProperty.cpp in Sources */,
 				326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */,
 				32B6B773213E8C7600D7ECF8 /* CommandTemplateSet.cpp in Sources */,

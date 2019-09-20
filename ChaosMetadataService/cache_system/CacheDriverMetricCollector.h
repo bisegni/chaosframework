@@ -22,7 +22,6 @@
 #ifndef __CHAOSFramework__CacheDriverMetricCollector__
 #define __CHAOSFramework__CacheDriverMetricCollector__
 
-#include "CacheDriverSharedMetricIO.h"
 #include "CacheDriver.h"
 
 #include <chaos/common/metric/metric.h>

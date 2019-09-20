@@ -227,9 +227,13 @@ search_hint_name("paged_daq_seq_search_index") {
     
     // allocate metrics
 #if CHAOS_PROMETHEUS
-    MetricManager::getInstance()->createGaugeFamily("mds_mongodb_io_rate", "Misure the data rate for the data sent and read from mongodb database [byte]");
+    MetricManager::getInstance()->createGaugeFamily("mds_mongodb_io_rate", "Measure the data rate for the data sent and read from mongodb database [byte]");
     gauge_write_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","write_byte_sec"}});
     gauge_read_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","read_byte_sec"}});
+    
+    MetricManager::getInstance()->createGaugeFamily("mds_mongodb_operation_time", "Measure the time spent by mongo db to complete operation [milliseconds]");
+    gauge_insert_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_operation_time", {{"type","insert_time"}});
+    gauge_query_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_operation_time", {{"type","query_time"}});
 #endif
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
     //    startLogging();
@@ -264,24 +268,28 @@ void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batc
                           bulk_data_write.append(model::insert_one(current_element->view()));
                       });
         
-        auto bulk_data_result = bulk_data_write.execute();
         
+#if CHAOS_PROMETHEUS
+        auto bulk_data_result = computeTimeForOperationInGauge< mongocxx::stdx::optional<result::bulk_write> >(gauge_insert_time_uptr,
+                                                                                                               [&bulk_data_write]() -> mongocxx::stdx::optional<result::bulk_write> {
+                                                                                                                   return bulk_data_write.execute();
+                                                                                                               });
+#else
+        auto bulk_data_result = bulk_data_write.execute();
+#endif
         if(bulk_data_result->inserted_count() != _batch_element_to_store.size()) {
             ERR << "Data not all data has been isert into database";
-        } else {
-#if CHAOS_PROMETHEUS
-            current_write_data += curren_data_to_send;
-#endif
         }
+        
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();
         ERR << CHAOS_FORMAT("[%1%] - %2%", %err%e.what());
     }
 }
 
-int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key,
-                                                 const ChaosStringSetConstSPtr meta_tags,
-                                                 const CDataWrapper&           stored_object) {
+int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&             key,
+                                                 const ChaosStringSetConstSPtr  meta_tags,
+                                                 const CDataWrapper&            stored_object) {
     int err = 0;
     
     if(!stored_object.hasKey(chaos::DataPackCommonKey::DPCK_DEVICE_ID)||
@@ -320,7 +328,6 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key
     current_data->append(bsoncxx::builder::concatenate(zone_daq_info.getIndexDocument().view()));
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
     current_data->append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
-    
     
     //check if we need to push or wait timeout or other incoming data
     curret_batch_size += stored_object.getBSONRawSize();
@@ -368,7 +375,8 @@ CDWShrdPtr MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
     opts.read_preference(read_pref).max_time(std::chrono::milliseconds(read_timeout));
     
     try {
-        bsoncxx::stdx::optional<bsoncxx::document::value> result_find = coll_data.find_one(make_document(kvp("_id", bsoncxx::oid(_id))), opts);
+        bsoncxx::stdx::optional<bsoncxx::document::value> result_find;
+        result_find = coll_data.find_one(make_document(kvp("_id", bsoncxx::oid(_id))), opts);
         if(result_find) {
             //we have found data
             auto daq_data_view = result_find->view()[MONGODB_DAQ_DATA_FIELD];
@@ -617,7 +625,16 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
         
         ChaosStringSet foud_ids;
+#if CHAOS_PROMETHEUS
+        auto cursor = computeTimeForOperationInGauge< mongocxx::cursor >(gauge_query_time_uptr,
+                                                                         [&coll_index,
+                                                                          &builder,
+                                                                          &opts]() -> mongocxx::cursor  {
+                                                                             return coll_index.find(builder.view(),opts);
+                                                                         });
+#else
         auto cursor = coll_index.find(builder.view(),opts);
+#endif
         for(auto && document : cursor){
             auto element = document[MONGODB_DAQ_DATA_FIELD];
             if(element.type() == bsoncxx::type::k_document &&
@@ -690,7 +707,16 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
                                                                                   "Projection",
                                                                                   bsoncxx::to_json(builder.view()),
                                                                                   bsoncxx::to_json(opts.projection().value().view()))));
+#if CHAOS_PROMETHEUS
+        auto cursor = computeTimeForOperationInGauge< mongocxx::cursor >(gauge_query_time_uptr,
+                                                                         [&coll_index,
+                                                                          &builder,
+                                                                          &opts]() -> mongocxx::cursor  {
+                                                                             return coll_index.find(builder.view(),opts);
+                                                                         });
+#else
         auto cursor = coll_index.find(builder.view(),opts);
+#endif
         //get the size
         
         //if(size) {
