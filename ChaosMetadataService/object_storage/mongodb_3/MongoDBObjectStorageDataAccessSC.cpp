@@ -71,7 +71,9 @@ using namespace mongocxx;
 using namespace bsoncxx;
 using namespace boost;
 using namespace chaos::common::data;
+#if CHAOS_PROMETHEUS
 using namespace chaos::common::metric;
+#endif
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::common::batch_command;
@@ -172,9 +174,11 @@ push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
 push_current_step_left(push_timeout_multiplier),
 write_timeout(common::constants::ObjectStorageTimeoutinMSec),
 read_timeout(common::constants::ObjectStorageTimeoutinMSec),
-search_hint_name("paged_daq_seq_search_index"),
-current_write_data(0),
-current_read_data(0){
+search_hint_name("paged_daq_seq_search_index") {
+#if CHAOS_PROMETHEUS
+    current_write_data = 0;
+    current_read_data = 0;
+#endif
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -222,16 +226,18 @@ current_read_data(0){
     }
     
     // allocate metrics
+#if CHAOS_PROMETHEUS
     MetricManager::getInstance()->createGaugeFamily("mds_mongodb_io_rate", "Misure the data rate for the data sent and read from mongodb database [byte]");
     gauge_write_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","write_byte_sec"}});
     gauge_read_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","read_byte_sec"}});
+#endif
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
-//    startLogging();
+    //    startLogging();
 }
 
 MongoDBObjectStorageDataAccessSC::~MongoDBObjectStorageDataAccessSC() {
     AsyncCentralManager::getInstance()->removeTimer(this);
-//    stopLogging();
+    //    stopLogging();
 }
 
 void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batch_element_to_store) {
@@ -263,7 +269,9 @@ void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batc
         if(bulk_data_result->inserted_count() != _batch_element_to_store.size()) {
             ERR << "Data not all data has been isert into database";
         } else {
+#if CHAOS_PROMETHEUS
             current_write_data += curren_data_to_send;
+#endif
         }
     } catch (const bulk_write_exception& e) {
         err =  e.code().value();
@@ -272,15 +280,15 @@ void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batc
 }
 
 int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key,
-                                               const ChaosStringSetConstSPtr meta_tags,
-                                               const CDataWrapper&           stored_object) {
+                                                 const ChaosStringSetConstSPtr meta_tags,
+                                                 const CDataWrapper&           stored_object) {
     int err = 0;
     
     if(!stored_object.hasKey(chaos::DataPackCommonKey::DPCK_DEVICE_ID)||
        !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||
        !stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) ||
        !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
-           ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", %stored_object.getJSONString());
+        ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", %stored_object.getJSONString());
         return -1;
     }
     
@@ -313,7 +321,7 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key
     bsoncxx::document::view view_daq_data((const std::uint8_t*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
     current_data->append(kvp(std::string(MONGODB_DAQ_DATA_FIELD), view_daq_data));
     
-     
+    
     //check if we need to push or wait timeout or other incoming data
     curret_batch_size += stored_object.getBSONRawSize();
     BlobSetLWriteLock wl = batch_set.getWriteLockObject();
@@ -322,9 +330,11 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key
 }
 
 void MongoDBObjectStorageDataAccessSC::timeout() {
-//    if(sec == 0) return;
+#if CHAOS_PROMETHEUS
+    //    if(sec == 0) return;
     (*gauge_write_rate_uptr) = current_write_data; current_write_data = 0;
     (*gauge_read_rate_uptr) = current_read_data; current_read_data = 0;
+#endif
     //
     if(push_current_step_left) {
         push_current_step_left--;
@@ -347,7 +357,7 @@ void MongoDBObjectStorageDataAccessSC::timeout() {
 }
 
 CDWShrdPtr MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
-                                                       const std::string& _id) {
+                                                         const std::string& _id) {
     CDWShrdPtr result;
     int err = 0;
     collection coll_data = db[MONGODB_DAQ_COLL_NAME];
@@ -362,7 +372,9 @@ CDWShrdPtr MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
         if(result_find) {
             //we have found data
             auto daq_data_view = result_find->view()[MONGODB_DAQ_DATA_FIELD];
+#if CHAOS_PROMETHEUS
             current_read_data += daq_data_view.get_value().get_document().value.length();
+#endif
             result = ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data());
         } else {
             //create empty object for not found data
@@ -376,7 +388,7 @@ CDWShrdPtr MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
 }
 
 VectorObject MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& db,
-                                                         const ChaosStringSet& _ids) {
+                                                           const ChaosStringSet& _ids) {
     VectorObject result;
     int err = 0;
     //access a collection
@@ -403,7 +415,9 @@ VectorObject MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& d
         auto cursor = coll_data.find(builder.view(), opts);
         for(auto && document : cursor){
             auto daq_data_view = document[MONGODB_DAQ_DATA_FIELD];
+#if CHAOS_PROMETHEUS
             current_read_data += daq_data_view.get_value().get_document().value.length();
+#endif
             result.push_back(ChaosMakeSharedPtr<CDataWrapper>((const char *)daq_data_view.get_value().get_document().value.data()));
         }
     } catch (const mongocxx::exception &e) {
@@ -414,8 +428,8 @@ VectorObject MongoDBObjectStorageDataAccessSC::getDataByID(mongocxx::database& d
 }
 
 int MongoDBObjectStorageDataAccessSC::getObject(const std::string& key,
-                                              const uint64_t& timestamp,
-                                              CDWShrdPtr& object_ptr_ref) {
+                                                const uint64_t& timestamp,
+                                                CDWShrdPtr& object_ptr_ref) {
     int err = 0;
     //get client the connection
     auto client = pool_ref.acquire();
@@ -449,7 +463,7 @@ int MongoDBObjectStorageDataAccessSC::getObject(const std::string& key,
 }
 
 int MongoDBObjectStorageDataAccessSC::getLastObject(const std::string& key,
-                                                  CDWShrdPtr& object_ptr_ref) {
+                                                    CDWShrdPtr& object_ptr_ref) {
     
     int err = 0;
     //get client the connection
@@ -489,9 +503,9 @@ int MongoDBObjectStorageDataAccessSC::getLastObject(const std::string& key,
 
 
 int MongoDBObjectStorageDataAccessSC::deleteObject(const std::string& key,
-                                                 uint64_t start_timestamp,
-                                                 uint64_t end_timestamp) {
-   int err = 0;
+                                                   uint64_t start_timestamp,
+                                                   uint64_t end_timestamp) {
+    int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
     auto db = (*client)[MONGODB_DB_NAME];
@@ -542,16 +556,16 @@ int MongoDBObjectStorageDataAccessSC::deleteObject(const std::string& key,
     }
     
     return err;
-     
+    
 }
 
 int MongoDBObjectStorageDataAccessSC::findObject(const std::string&                                        key,
-                                               const ChaosStringSet&                                       meta_tags,
-                                               const uint64_t                                              timestamp_from,
-                                               const uint64_t                                              timestamp_to,
-                                               const uint32_t                                              page_len,
-                                               abstraction::VectorObject&                                  found_object_page,
-                                               common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+                                                 const ChaosStringSet&                                       meta_tags,
+                                                 const uint64_t                                              timestamp_from,
+                                                 const uint64_t                                              timestamp_to,
+                                                 const uint32_t                                              page_len,
+                                                 abstraction::VectorObject&                                  found_object_page,
+                                                 common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -584,11 +598,11 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         auto opts  = options::find{};
         //set page len
         opts.limit(page_len);
-//        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
-//                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+        //        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+        //                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
         opts.hint(hint(search_hint_name));
         //set read form secondary
         read_preference secondary;
@@ -604,12 +618,14 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
         
         ChaosStringSet foud_ids;
         auto cursor = coll_index.find(builder.view(),opts);
-         for(auto && document : cursor){
+        for(auto && document : cursor){
             auto element = document[MONGODB_DAQ_DATA_FIELD];
             if(element.type() == bsoncxx::type::k_document &&
                !element.get_document().view().empty()){
                 CDWShrdPtr new_obj(new CDataWrapper((const char *)element.get_document().view().data()));
+#if CHAOS_PROMETHEUS
                 current_read_data += new_obj->getBSONRawSize();
+#endif
                 found_object_page.push_back(new_obj);
             }
             last_record_found_seq.run_id = document["data"]["cudk_run_id"].get_int64();
@@ -624,8 +640,8 @@ int MongoDBObjectStorageDataAccessSC::findObject(const std::string&             
 
 //inhertied method
 int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
-                                                    VectorObject& found_object_page,
-                                                    chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+                                                      VectorObject& found_object_page,
+                                                      chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -657,11 +673,11 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
         
         auto opts  = options::find{};
         opts.limit(search.page_len);
-//        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
-//                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
-//                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
+        //        opts.hint(hint(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID),1),
+        //                                     kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP),1),
+        //                                     kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS),1))));
         opts.hint(hint(search_hint_name));
         
         read_preference secondary;
@@ -698,7 +714,7 @@ int MongoDBObjectStorageDataAccessSC::findObjectIndex(const DataSearch& search,
 
 //inhertied method
 int MongoDBObjectStorageDataAccessSC::getObjectByIndex(const CDWShrdPtr& index,
-                                                     CDWShrdPtr& found_object) {
+                                                       CDWShrdPtr& found_object) {
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -726,7 +742,9 @@ int MongoDBObjectStorageDataAccessSC::getObjectByIndex(const CDWShrdPtr& index,
             //we have found data
             auto result_view = result.value().view()[MONGODB_DAQ_DATA_FIELD];
             found_object = ChaosMakeSharedPtr<CDataWrapper>((const char *)result_view.raw());
+#if CHAOS_PROMETHEUS
             current_read_data += found_object->getBSONRawSize();
+#endif
         } else {
             //create empty object for not found data
             found_object = ChaosMakeSharedPtr<CDataWrapper>();
@@ -739,9 +757,9 @@ int MongoDBObjectStorageDataAccessSC::getObjectByIndex(const CDWShrdPtr& index,
 }
 
 int MongoDBObjectStorageDataAccessSC::countObject(const std::string& key,
-                                                const uint64_t timestamp_from,
-                                                const uint64_t timestamp_to,
-                                                const uint64_t& object_count) {
+                                                  const uint64_t timestamp_from,
+                                                  const uint64_t timestamp_to,
+                                                  const uint64_t& object_count) {
     int err = 0;
     auto client  = pool_ref.acquire();
     return err;
