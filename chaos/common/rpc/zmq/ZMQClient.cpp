@@ -69,16 +69,15 @@ zmq_timeout(RpcConfigurationKey::GlobalRPCTimeoutinMSec){
     counter_queuend_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_queue");
     counter_zmqerror_uptr= MetricManager::getInstance()->getNewGaugeFromFamily("rpc_zmq_client_errors");
 #else
-    counter_zmqerror_uptr=new uint32_t;
+    counter_zmqerror_uptr.reset(new uint32_t);
     *counter_zmqerror_uptr=0;
 #endif
 }
 
 ZMQClient::~ZMQClient(){
-    #ifndef CHAOS_PROMETHEUS
-    delete counter_zmqerror_uptr;
-    #endif
-
+//    #ifndef CHAOS_PROMETHEUS
+//    delete counter_zmqerror_uptr;
+//    #endif
 }
 
 /*

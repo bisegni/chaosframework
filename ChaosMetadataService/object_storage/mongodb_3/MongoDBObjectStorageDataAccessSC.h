@@ -52,7 +52,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
                 class MongoDBObjectStorageDataAccessSC:
                 public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
-                public chaos::common::metric::MetricCollectorIO {
+                public chaos::common::async_central::TimerHandler {
                     friend class NewMongoDBObjectStorageDriver;
                     mongocxx::pool&     pool_ref;
                     ShardKeyManagement  shrd_key_manager;
@@ -83,7 +83,7 @@ namespace chaos {
 
                     void executePush(std::set<BlobShrdPtr>&& _batch_element_to_store);
                     //!TimeOutHnadler inherited
-                    void fetchMetricForTimeDiff(uint64_t time_diff);
+                    void timeout();
                     
                     inline chaos::common::data::CDWShrdPtr getDataByID(mongocxx::database& db,
                                                                        const std::string& _id);

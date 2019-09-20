@@ -70,7 +70,7 @@ namespace chaos {
         chaos::common::metric::GaugeUniquePtr counter_queuend_uptr;
         chaos::common::metric::GaugeUniquePtr counter_zmqerror_uptr;
 #else
-        uint32_t* counter_zmqerror_uptr;
+        ChaosUniquePtr<uint32_t> counter_zmqerror_uptr;
 #endif
     protected:
         void *zmq_context;

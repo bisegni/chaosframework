@@ -225,13 +225,13 @@ current_read_data(0){
     MetricManager::getInstance()->createGaugeFamily("mds_mongodb_io_rate", "Misure the data rate for the data sent and read from mongodb database [byte]");
     gauge_write_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","write_byte_sec"}});
     gauge_read_rate_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_io_rate", {{"type","read_byte_sec"}});
-//    AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
-    startLogging();
+    AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
+//    startLogging();
 }
 
 MongoDBObjectStorageDataAccessSC::~MongoDBObjectStorageDataAccessSC() {
-//    AsyncCentralManager::getInstance()->removeTimer(this);
-    stopLogging();
+    AsyncCentralManager::getInstance()->removeTimer(this);
+//    stopLogging();
 }
 
 void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batch_element_to_store) {
@@ -321,11 +321,10 @@ int MongoDBObjectStorageDataAccessSC::pushObject(const std::string&          key
     return err;
 }
 
-void MongoDBObjectStorageDataAccessSC::fetchMetricForTimeDiff(uint64_t time_diff) {
-    double sec = time_diff/1000;
-    if(sec == 0) return;
-    (*gauge_write_rate_uptr) = (current_write_data / sec); current_write_data = 0;
-    (*gauge_read_rate_uptr) = (current_read_data / sec); current_read_data = 0;
+void MongoDBObjectStorageDataAccessSC::timeout() {
+//    if(sec == 0) return;
+    (*gauge_write_rate_uptr) = current_write_data; current_write_data = 0;
+    (*gauge_read_rate_uptr) = current_read_data; current_read_data = 0;
     //
     if(push_current_step_left) {
         push_current_step_left--;
