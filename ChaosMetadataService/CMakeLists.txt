@@ -340,8 +340,7 @@ SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp
 
 if(CHAOS_PROMETHEUS)
 SET(cnd_src  ${cnd_src}	worker/DeviceSharedDataWorkerMetricCollector.cpp
-                        cache_system/CacheDriverMetricCollector.cpp
-                        cache_system/CacheDriverSharedMetricIO.cpp)
+                        cache_system/CacheDriverMetricCollector.cpp)
 ENDIF(CHAOS_PROMETHEUS)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
