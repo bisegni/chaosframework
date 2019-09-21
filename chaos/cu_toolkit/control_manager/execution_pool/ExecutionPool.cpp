@@ -29,6 +29,8 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::network;
+
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 using namespace chaos::cu::control_manager::execution_pool;
