@@ -31,6 +31,7 @@
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
+#include <chaos/common/rpc/ChaosRpc.h>
 //-----------for metric collection---------
 #if (CHAOS_PROMETHEUS)
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
