@@ -24,6 +24,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
 using namespace chaos::common::direct_io;
+using namespace chaos::common::network;
 
 //! base constructor
 PerformanceNodeChannel::PerformanceNodeChannel(NetworkBroker *msg_broker,

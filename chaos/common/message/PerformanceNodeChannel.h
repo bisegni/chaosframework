@@ -40,7 +40,7 @@ namespace chaos {
             public MessageChannel {
 				friend class chaos::common::network::NetworkBroker;
                 
-				ChaosUniquePtr<CNetworkAddress> node_network_address;
+				ChaosUniquePtr<chaos::common::network::CNetworkAddress> node_network_address;
 				chaos_direct_io::DirectIOClient *client_instance;
 				chaos_direct_io::DirectIOPerformanceSession *local_performance_session;
 			protected:
@@ -49,8 +49,8 @@ namespace chaos {
 				 The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
 				 ip:port:cu_node_address(instance):deviceID
 				 */
-				PerformanceNodeChannel(NetworkBroker *msg_broker,
-                                       CNetworkAddress *_node_network_address,
+				PerformanceNodeChannel(chaos::common::network::NetworkBroker *msg_broker,
+                                       chaos::common::network::CNetworkAddress *_node_network_address,
                                        chaos_direct_io::DirectIOClient *_client_instance,
                                        MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
 				~PerformanceNodeChannel();

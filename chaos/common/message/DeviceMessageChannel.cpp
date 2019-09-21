@@ -24,6 +24,7 @@
 using namespace chaos::common::message;
 using namespace chaos::common::utility;
 using namespace chaos::common::data;
+using namespace chaos::common::network;
 #define MESSAGE_CHANNEL_FIRE_RECONNECT 60000
 
 #define DMCINFO INFO_LOG(DeviceMessageChannel)
@@ -34,7 +35,7 @@ using namespace chaos::common::data;
 if(isOnline()!=OnlineStateOnline) return x;
 
 //------------------------------------
-DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msg_broker,
+DeviceMessageChannel::DeviceMessageChannel(chaos::common::network::NetworkBroker *msg_broker,
                                            CDeviceNetworkAddress *_device_network_address,
                                            bool _self_managed,
                                            MessageRequestDomainSHRDPtr _new_message_request_domain):
@@ -78,7 +79,7 @@ void DeviceMessageChannel::deinit() {
 }
 
 #pragma health utility
-void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *new_device_network_address) {
+void DeviceMessageChannel::setNewAddress(chaos::common::network::CDeviceNetworkAddress *new_device_network_address) {
     NodeMessageChannel::setNewAddress(new_device_network_address);
     device_network_address = new_device_network_address;
     DMCINFO << boost::str(boost::format("New network address for device %1% has been set[%2%/%3%]")%device_network_address->device_id%device_network_address->node_id%device_network_address->ip_port);

@@ -44,6 +44,7 @@ using namespace chaos;
 using namespace chaos::common::io;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::network;
 
 using namespace std;
 using namespace boost;

@@ -27,6 +27,7 @@
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
+using namespace chaos::common::network;
 
 #define MSG_INFO INFO_LOG(MDSMessageChannel)
 #define MSG_DBG DBG_LOG(MDSMessageChannel)

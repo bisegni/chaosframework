@@ -46,8 +46,8 @@ namespace chaos {
                  The base constructor prepare the base class constructor call to be adapted for metadataserver comunication. For the MDS the node address is
                  "system"(ip:port:system)
                  */
-                MDSMessageChannel(NetworkBroker *network_broker,
-                                  const std::vector<CNetworkAddress>& mds_node_address,
+                MDSMessageChannel(chaos::common::network::NetworkBroker *network_broker,
+                                  const std::vector<chaos::common::network::CNetworkAddress>& mds_node_address,
                                   MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
             public:
@@ -134,7 +134,7 @@ namespace chaos {
                  \return error code
                  */
                 int getNetworkAddressForDevice(const std::string& identificationID,
-                                               CDeviceNetworkAddress** deviceNetworkAddress,
+                                               chaos::common::network::CDeviceNetworkAddress** deviceNetworkAddress,
                                                uint32_t millisec_to_wait=5000);
                 
                 //! Get curent dataset for device

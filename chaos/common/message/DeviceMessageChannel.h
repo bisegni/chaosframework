@@ -71,7 +71,7 @@ namespace chaos {
                 ChaosSharedMutex mutex_online_state;
                 int online_retry;
                 MDSMessageChannel *local_mds_channel;
-                CDeviceNetworkAddress *device_network_address;
+                chaos::common::network::CDeviceNetworkAddress *device_network_address;
                 
                 void setOnline(OnlineState new_online_state);
                 void tryToReconnect();
@@ -81,8 +81,8 @@ namespace chaos {
                  The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
                  ip:port:cu_node_address(instance):deviceID
                  */
-                DeviceMessageChannel(NetworkBroker *msgBroker,
-                                     CDeviceNetworkAddress *_device_network_address,
+                DeviceMessageChannel(chaos::common::network::NetworkBroker *msgBroker,
+                                     chaos::common::network::CDeviceNetworkAddress *_device_network_address,
                                      bool _self_managed = false,
                                      MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
@@ -132,7 +132,7 @@ namespace chaos {
                 OnlineState isOnline();
                 
                 //!update the adress of the device
-                void setNewAddress(CDeviceNetworkAddress *_deviceAddress);
+                void setNewAddress(chaos::common::network::CDeviceNetworkAddress *_deviceAddress);
                 
                 //! set channel in auto reconnection mode
                 /*!
