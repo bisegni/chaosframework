@@ -28,7 +28,7 @@
 #define EDM_LERR ERR_LOG(EventDispatchManager)
 
 using namespace chaos::metadata_service_client::event;
-
+using namespace chaos::common::network;
 //! default private constructor called only by chaos_metadata_service_client class
 EventDispatchManager::EventDispatchManager(chaos::metadata_service_client::ClientSetting *_setting):
 setting(_setting),
