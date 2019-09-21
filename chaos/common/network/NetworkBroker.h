@@ -25,7 +25,7 @@
 #include <string>
 #include <boost/thread/mutex.hpp>
 
-#include <chaos/common/rpc/ChaosRpc.h>
+
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -44,6 +44,8 @@ namespace chaos {
 	//forward declaration
 	class AbstractCommandDispatcher;
 	class AbstractEventDispatcher;
+	class RpcClient;
+	class RpcServer;
 
 	namespace common {
         namespace event {

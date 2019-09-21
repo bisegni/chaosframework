@@ -79,7 +79,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 friend class chaos::common::network::NetworkBroker;
                 
                 //! Message broker associated with the channel instance
-                NetworkBroker *broker;
+                chaos::common::network::NetworkBroker *broker;
                 
                 //! the use of shared pointer of MessageRequestDomain permit to share the same response domain to different messahe channel
                 ChaosSharedPtr<MessageRequestDomain> message_request_domain;
@@ -103,7 +103,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 /*!
                  Private constructor called by NetworkBroker
                  */
-                MessageChannel(NetworkBroker *_broker,
+                MessageChannel(chaos::common::network::NetworkBroker *_broker,
                                MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
                 /*!
@@ -114,7 +114,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 /*!
                  Return the broker for that channel
                  */
-                NetworkBroker *getBroker();
+                chaos::common::network::NetworkBroker *getBroker();
                 
                 //!promises handler for request results introspection
                 /*!
