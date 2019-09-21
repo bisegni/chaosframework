@@ -35,7 +35,7 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
 
-                    CNetworkAddress * control_unit_address;
+                    chaos::common::network::CNetworkAddress * control_unit_address;
                     ChaosUniquePtr<RequestInfo> request;
 
                     std::string cu_id;

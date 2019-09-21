@@ -28,7 +28,7 @@
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
-
+using namespace chaos::common::network;
 //! default consturctor
 ApiManagment::ApiManagment(){}
 

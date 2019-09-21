@@ -36,7 +36,7 @@ namespace chaos {
                     DECLARE_MDS_COMMAND_ALIAS
                     uint32_t retry_number;
                     
-                    CNetworkAddress * control_unit_address;
+                    chaos::common::network::CNetworkAddress * control_unit_address;
                     chaos::common::data::CDWUniquePtr message;
                     ChaosUniquePtr<RequestInfo> request;
                     
