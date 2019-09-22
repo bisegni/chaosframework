@@ -63,7 +63,7 @@ namespace chaos {
 			/*! \class DeviceAddress
 			 this permit to abtsrac the chaos address of single node througt rpc system
 			 */
-			struct CDeviceNetworkAddress : public CNodeNetworkAddress {
+			struct CDeviceNetworkAddress : public chaos::common::network::CNodeNetworkAddress {
 				//the ipo for the host that run the control unit
 				std::string device_id;
                 CDeviceNetworkAddress(){};

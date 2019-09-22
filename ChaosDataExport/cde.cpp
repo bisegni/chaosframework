@@ -44,6 +44,7 @@ using namespace chaos::common::utility;
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::node_controller;
+using namespace chaos::common::network;
 using namespace boost;
 
 #define OPT_CU_ID           "device-id"
