@@ -29,7 +29,7 @@ public:
         ASSERT_NO_THROW(chaos::common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), NULL, "NetworkBroker", __PRETTY_FUNCTION__););
         ASSERT_NO_THROW(chaos::common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
         
-        endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
+        endpoint = chaos::common::network::NetworkBroker::getInstance()->getDirectIOServerEndpoint();
         ASSERT_TRUE(endpoint);
         
         connection = chaos::common::network::NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection("localhost:1672:30175|0");
@@ -37,7 +37,7 @@ public:
     }
     void TearDown() {
         if(endpoint){
-            ASSERT_NO_THROW(NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(endpoint));
+            ASSERT_NO_THROW(chaos::common::network::NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(endpoint));
         }
         
         if(connection) {
