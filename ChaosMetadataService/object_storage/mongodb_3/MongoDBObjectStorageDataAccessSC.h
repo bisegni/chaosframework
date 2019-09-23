@@ -84,10 +84,8 @@ namespace chaos {
                     
                     //metric
 #if CHAOS_PROMETHEUS
-                    double current_write_data;
-                    chaos::common::metric::GaugeUniquePtr gauge_write_rate_uptr;
-                    double current_read_data;
-                    chaos::common::metric::GaugeUniquePtr gauge_read_rate_uptr;
+                    chaos::common::metric::CounterUniquePtr counter_write_data_uptr;
+                    chaos::common::metric::CounterUniquePtr counter_read_data_uptr;
                     chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
                     chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
 #endif
