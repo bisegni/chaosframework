@@ -24,11 +24,15 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
 #include "ChaosMetadataService.h"
-
+#include "test/Testing.h"
 using namespace chaos::metadata_service;
 
 int main(int argc, const char * argv[]) {
     try {
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_TEST,
+                                                                                                   "Enable testing mode",
+                                                                                                   &ChaosMetadataService::getInstance()->setting.testing_mode);
+        
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_HA_ZONE_NAME,
                                                                                                         "Set the zone where mds need to be attached",
                                                                                                         "default",
@@ -81,6 +85,9 @@ int main(int argc, const char * argv[]) {
                                                                                                                      &ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list);
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP,
                                                                                                                      "The key value multitoken for obj storage implementation driver (k:v)");
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOptionZeroTokens(OPT_OBJ_STORAGE_TEST_FIND,
+                                                                                                   "Test the storage driver findind data for a device id",
+                                                                                                   &ChaosMetadataService::getInstance()->setting.object_storage_setting.test_find);
         
         //persistence
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_BATCH_SANDBOX_SIZE,
@@ -105,7 +112,13 @@ int main(int argc, const char * argv[]) {
                                                                                                          &ChaosMetadataService::getInstance()->setting.cron_job_ageing_management_repeat_time);
         ChaosMetadataService::getInstance()->init(argc, argv);
         
-        ChaosMetadataService::getInstance()->start();
+        if(ChaosMetadataService::getInstance()->setting.testing_mode) {
+            chaos::metadata_service::test::Testing test_suite;
+            test_suite.executeTest();
+        } else {
+            ChaosMetadataService::getInstance()->start();
+        }
+        
     } catch (chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
     }

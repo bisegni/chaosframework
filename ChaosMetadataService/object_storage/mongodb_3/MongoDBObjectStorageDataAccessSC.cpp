@@ -232,12 +232,10 @@ search_hint_name("paged_daq_seq_search_index") {
     gauge_query_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_mongodb_operation_time", {{"type","query_time"}});
 #endif
     AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
-    //    startLogging();
 }
 
 MongoDBObjectStorageDataAccessSC::~MongoDBObjectStorageDataAccessSC() {
     AsyncCentralManager::getInstance()->removeTimer(this);
-    //    stopLogging();
 }
 
 void MongoDBObjectStorageDataAccessSC::executePush(std::set<BlobShrdPtr>&& _batch_element_to_store) {

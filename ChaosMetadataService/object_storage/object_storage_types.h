@@ -39,12 +39,15 @@ namespace chaos {
 #define OPT_OBJ_STORAGE_LOG_METRIC                  "obj-storage-driver-log-metric"
 #define OPT_OBJ_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "obj-storage-driver-log-metric-update-interval"
 #define OPT_OBJ_STORAGE_DRIVER_KVP                  "obj-storage-kvp"
-            
+#define OPT_OBJ_STORAGE_TEST_FIND                   "obj-storage-test-find"
+        
             //!
             struct ObjStorageSetting {
                 std::string			driver_impl;
                 ChaosStringVector   url_list;
                 MapKVP              key_value_custom_param;
+                //test
+                bool                test_find;
             };
         }
     }

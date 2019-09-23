@@ -11,6 +11,8 @@
 
 namespace chaos {
     namespace metadata_service {
+    
+#define OPT_TEST                        "test"
 #define OPT_HA_ZONE_NAME                "ha-zone-name"
 #define OPT_BATCH_SANDBOX_SIZE          "batch-sandbox-size"
 #define OPT_PERSITENCE_IMPL				"persistence-impl"
@@ -31,6 +33,7 @@ namespace chaos {
 #define OPT_ARCHIVER_NUM                         "archiver-instances"
 #define OPT_ARCHIVER_THREAD                      "archiver-thread"
 #define OPT_ARCHIVER_QUEUE_PUSH_TIMEOUT          "archiver-queue-push-timeout"
+
     }
 }
 #endif

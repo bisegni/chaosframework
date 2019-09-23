@@ -141,6 +141,9 @@
 		322A3BC31CEE1A7F00FAD9DA /* luna.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BC01CEE1A7F00FAD9DA /* luna.h */; };
 		322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */; };
 		322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */; };
+		322D64AB2338FE89007790B5 /* Testing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D64A92338FE89007790B5 /* Testing.cpp */; };
+		322D64AF2338FFE1007790B5 /* ObjectStorageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D64AD2338FFE1007790B5 /* ObjectStorageTest.cpp */; };
+		322D64B3233904AF007790B5 /* ObjectStoreFindDeviceID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D64B1233904AF007790B5 /* ObjectStoreFindDeviceID.cpp */; };
 		322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 322DE35418D467E5006F1551 /* ConcuredUsedItem.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
@@ -1411,6 +1414,13 @@
 		322A3BC01CEE1A7F00FAD9DA /* luna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luna.h; sourceTree = "<group>"; };
 		322A3BC61CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptableExecutionUnit.cpp; sourceTree = "<group>"; };
 		322A3BC71CEE1AA900FAD9DA /* ScriptableExecutionUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptableExecutionUnit.h; sourceTree = "<group>"; };
+		322D64A92338FE89007790B5 /* Testing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Testing.cpp; sourceTree = "<group>"; };
+		322D64AA2338FE89007790B5 /* Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Testing.h; sourceTree = "<group>"; };
+		322D64AD2338FFE1007790B5 /* ObjectStorageTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectStorageTest.cpp; sourceTree = "<group>"; };
+		322D64AE2338FFE1007790B5 /* ObjectStorageTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectStorageTest.h; sourceTree = "<group>"; };
+		322D64B02339008A007790B5 /* test_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_types.h; sourceTree = "<group>"; };
+		322D64B1233904AF007790B5 /* ObjectStoreFindDeviceID.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectStoreFindDeviceID.cpp; sourceTree = "<group>"; };
+		322D64B2233904AF007790B5 /* ObjectStoreFindDeviceID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectStoreFindDeviceID.h; sourceTree = "<group>"; };
 		322DE35418D467E5006F1551 /* ConcuredUsedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcuredUsedItem.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -3181,6 +3191,20 @@
 			path = property;
 			sourceTree = "<group>";
 		};
+		322D64A82338FE62007790B5 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				322D64A92338FE89007790B5 /* Testing.cpp */,
+				322D64AA2338FE89007790B5 /* Testing.h */,
+				322D64AD2338FFE1007790B5 /* ObjectStorageTest.cpp */,
+				322D64AE2338FFE1007790B5 /* ObjectStorageTest.h */,
+				322D64B1233904AF007790B5 /* ObjectStoreFindDeviceID.cpp */,
+				322D64B2233904AF007790B5 /* ObjectStoreFindDeviceID.h */,
+				322D64B02339008A007790B5 /* test_types.h */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
 		322EC1B41D3405C30012467C /* state_flag */ = {
 			isa = PBXGroup;
 			children = (
@@ -3212,6 +3236,7 @@
 				326ACF9A1E01594C00AD011E /* QueryDataConsumer.h */,
 				32FC7EDF1A7008780029C2A2 /* mds_constants.h */,
 				32FC7EE01A7008FA0029C2A2 /* mds_types.h */,
+				322D64A82338FE62007790B5 /* test */,
 				32F9F8201D9031BD0023948D /* cron_job */,
 				32B2999E1BDA7C7B000D3716 /* common */,
 				32B3E11A1A7A385C007B7802 /* batch */,
@@ -6780,6 +6805,7 @@
 				32809C7F1A9C847400C02C12 /* ControlUnitDataAccess.cpp in Sources */,
 				326ACF9C1E01594C00AD011E /* QueryDataConsumer.cpp in Sources */,
 				326ACF9B1E01594C00AD011E /* DriverPoolManager.cpp in Sources */,
+				322D64AF2338FFE1007790B5 /* ObjectStorageTest.cpp in Sources */,
 				32B6B77D213E8C7600D7ECF8 /* CommandTemplateGet.cpp in Sources */,
 				32B6B79A213EA6DD00D7ECF8 /* UpdateBindType.cpp in Sources */,
 				32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */,
@@ -6789,6 +6815,7 @@
 				32FF2ABA1E6EE70300117985 /* AgentLoggingNodeManagement.cpp in Sources */,
 				326ACF861E01525D00AD011E /* MongoDBObjectStorageDriver.cpp in Sources */,
 				32B6B779213E8C7600D7ECF8 /* CommandGet.cpp in Sources */,
+				322D64B3233904AF007790B5 /* ObjectStoreFindDeviceID.cpp in Sources */,
 				325F0245213EE20400270077 /* ManageCUType.cpp in Sources */,
 				325F0243213EE20400270077 /* GetDescription.cpp in Sources */,
 				32B6B77B213E8C7600D7ECF8 /* GetNodeNetworkAddress.cpp in Sources */,
@@ -6895,6 +6922,7 @@
 				32F9F8261D90330E0023948D /* MDSCronusManager.cpp in Sources */,
 				32B6B776213E8C7600D7ECF8 /* ClearCommandQueue.cpp in Sources */,
 				32A626C5213FBBA000D63009 /* CopyInstance.cpp in Sources */,
+				322D64AB2338FE89007790B5 /* Testing.cpp in Sources */,
 				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
 				325F0244213EE20400270077 /* LoadUnloadControlUnit.cpp in Sources */,
 				325F022B213ED99C00270077 /* SetVariable.cpp in Sources */,

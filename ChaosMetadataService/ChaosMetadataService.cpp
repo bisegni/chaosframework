@@ -75,8 +75,26 @@ void ChaosMetadataService::init(istringstream &initStringStream)  {
  */
 void ChaosMetadataService::init(void *init_data)  {
     try {
-        ChaosCommon<ChaosMetadataService>::init(init_data);
+        //parse dirver paramter
+        if(getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_KV_PARAMTER)) {
+            fillKVParameter(setting.persistence_kv_param_map,
+                            getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
+        }
+        if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
+            GlobalConfiguration::getInstance()->fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
+                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP), "");
+        }
         
+        if(getGlobalConfigurationInstance()->hasOption(OPT_OBJ_STORAGE_DRIVER_KVP)) {
+            GlobalConfiguration::getInstance()->fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP), "");
+        }
+        
+        if(setting.testing_mode) {
+            return;
+        }
+        
+        ChaosCommon<ChaosMetadataService>::init(init_data);
         if (signal((int) SIGINT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
             throw CException(-1, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
         }
@@ -100,31 +118,12 @@ void ChaosMetadataService::init(void *init_data)  {
             throw chaos::CException(-4, "No persistence's server list provided", __PRETTY_FUNCTION__);
         }
         
-        if(getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_KV_PARAMTER)) {
-            fillKVParameter(setting.persistence_kv_param_map,
-                            getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
-        }
-        
         //check for mandatory configuration
         if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
             //no cache server provided
             throw chaos::CException(-3, "No cache server provided", __PRETTY_FUNCTION__);
         }
         
-        
-        if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
-            GlobalConfiguration::getInstance()->fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
-                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP), "");
-//            fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
-//                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
-        }
-        
-        if(getGlobalConfigurationInstance()->hasOption(OPT_OBJ_STORAGE_DRIVER_KVP)) {
-            GlobalConfiguration::getInstance()->fillKVParameter(setting.object_storage_setting.key_value_custom_param,
-                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP), "");
-//            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
-//                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
-        }
         
         //initilize driver pool manager
         InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
@@ -159,6 +158,9 @@ void ChaosMetadataService::init(void *init_data)  {
 void ChaosMetadataService::start()  {
     //lock o monitor for waith the end
     try {
+        if(setting.testing_mode) {
+            return;
+        }
         ChaosCommon<ChaosMetadataService>::start();
         StartableService::startImplementation(MDSBatchExecutor::getInstance(), "MDSBatchExecutor", __PRETTY_FUNCTION__);
         //start batch system
@@ -233,6 +235,9 @@ void ChaosMetadataService::timeout() {
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop() {
+    if(setting.testing_mode) {
+        return;
+    }
     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     
     //stop data consumer
@@ -249,6 +254,9 @@ void ChaosMetadataService::stop() {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit() {
+    if(setting.testing_mode) {
+        return;
+    }
     InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);

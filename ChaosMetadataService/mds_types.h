@@ -35,6 +35,8 @@
 namespace chaos{
     namespace metadata_service {
         struct setting {
+            //determinate if we are in testing mode
+            bool                                testing_mode;
             //!define the availability zone that own the metadata service instance(the default zone is "default")
             std::string                         ha_zone_name;
             //!identify the number of the sandbox to use in the batch system

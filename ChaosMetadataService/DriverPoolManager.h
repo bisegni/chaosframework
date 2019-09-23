@@ -47,6 +47,10 @@ namespace chaos{
             chaos::common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> storage_driver;
             chaos::common::utility::InizializableServiceContainer<chaos::metadata_service::cache_system::CacheDriver> cache_driver;
 
+            bool enable_storage_driver;
+            bool enable_persistence_driver;
+            bool enable_cache_driver;
+            
             DriverPoolManager();
             ~DriverPoolManager();
         protected:
