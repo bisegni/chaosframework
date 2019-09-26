@@ -35,21 +35,32 @@
 #include <mongocxx/pool.hpp>
 #include "ShardKeyManagement.h"
 
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/metric.h>
+#endif //CHAOS_PROMETHEUS
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
             namespace mongodb_3 {
                 class NewMongoDBObjectStorageDriver;
                 
-                typedef struct {
-                    bsoncxx::builder::basic::document index_document;
-                    bsoncxx::builder::basic::document data_document;
-                } DaqBlob;
+                typedef ChaosSharedPtr<bsoncxx::builder::basic::document> BlobShrdPtr;
                 
-                typedef ChaosSharedPtr<DaqBlob> DaqBlobShrdPtr;
-                
+                CHAOS_DEFINE_LOCKABLE_OBJECT(std::set<BlobShrdPtr>, BlobSetL);
                 //! define a lockable seet for betch entries
-                CHAOS_DEFINE_LOCKABLE_OBJECT(std::set<DaqBlobShrdPtr>, DaqBlobSetL);
+                
+                
+#if CHAOS_PROMETHEUS
+                template<typename ReturnType>
+                ReturnType computeTimeForOperationInGauge(chaos::common::metric::GaugeUniquePtr& gauge,
+                                                          std::function<ReturnType()> function) {
+                    boost::posix_time::ptime start = boost::posix_time::second_clock::local_time();
+                    ReturnType ret = function();
+                    boost::posix_time::ptime end = boost::posix_time::second_clock::local_time();
+                    (*gauge) = (end - start).total_milliseconds();
+                    return ret;
+                }
+#endif
                 
                 //! Data Access for producer manipulation data
                 class MongoDBObjectStorageDataAccess:
@@ -64,16 +75,27 @@ namespace chaos {
                     uint64_t            batch_size_limit;
                     int32_t             push_timeout_multiplier;
                     int32_t             push_current_step_left;
-                    DaqBlobSetL         batch_set;
+                    BlobSetL            batch_set;
                     uint32_t            write_timeout,read_timeout;
+                    std::string         search_hint_name;
+                    std::string         search_hint_name_tag;
+                    
                     mongocxx::write_concern       write_options;
                     std::future<void> current_push_future;
+                    
+                    //metric
+#if CHAOS_PROMETHEUS
+                    chaos::common::metric::CounterUniquePtr counter_write_data_uptr;
+                    chaos::common::metric::CounterUniquePtr counter_read_data_uptr;
+                    chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
+                    chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
+#endif
                 protected:
                     MongoDBObjectStorageDataAccess(mongocxx::pool& _pool_ref);
                     ~MongoDBObjectStorageDataAccess();
                     
-
-                    void executePush(std::set<DaqBlobShrdPtr>&& _batch_element_to_store);
+                    
+                    void executePush(std::set<BlobShrdPtr>&& _batch_element_to_store);
                     //!TimeOutHnadler inherited
                     void timeout();
                     
