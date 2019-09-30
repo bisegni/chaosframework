@@ -37,8 +37,8 @@
 #include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 
-using namespace chaos::common::utility;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
@@ -60,7 +60,6 @@ namespace chaos{
             DirectIOServerEndpoint					*server_endpoint;
             DirectIODeviceServerChannel				*device_channel;
             DirectIOSystemAPIServerChannel			*system_api_channel;
-            
             
             boost::atomic<uint16_t>                 device_data_worker_index;
             int64_t         storage_queue_push_timeout;

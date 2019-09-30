@@ -101,42 +101,41 @@ static bool findIndex(mongocxx::database& db,
     return found;
 }
 
-static void initShardIndex(mongocxx::database& db,
-                           const std::string& col_name) {
-    if(findIndex(db,
-                 col_name,
-                 "shard_index")) {
-        return;
-    }
-    auto index_builder = builder::basic::document{};
-    mongocxx::options::index index_options{};
-    index_builder.append(kvp("zone_key", 1));
-    index_builder.append(kvp("shard_key", 1));
-    index_options.name("shard_index");
-    try{
-        db[col_name].create_index(index_builder.view(), index_options);
-    } catch( mongocxx::operation_exception& e) {
-        //fail to create index
-        ERR << e.what();
-    }
-}
 static void initSearchIndex(mongocxx::database& db,
                             std::string col_name) {
-    if(findIndex(db,
-                 col_name,
-                 "paged_daq_seq_search_index")) {
-        return;
-    }
-    auto index_builder = builder::basic::document{};
-    mongocxx::options::index index_options{};
-    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
-    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
-    index_builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
-    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
-    index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
-    index_options.name("paged_daq_seq_search_index");
     try{
-        db[col_name].create_index(index_builder.view(), index_options);
+        
+        
+        //search with tag
+        if(findIndex(db,
+                     col_name,
+                     "simple_search_uid_dataset_with_tag") == false) {
+            mongocxx::options::index index_options{};
+            index_options.background(true)
+                            .name("simple_search_uid_dataset_with_tag");
+            auto index_builder = builder::basic::document{};
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
+            index_builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
+            db[col_name].create_index(index_builder.view(), index_options);
+        }
+        //search with tag
+        if(findIndex(db,
+                     col_name,
+                     "simple_search_uid_dataset") == false) {
+            mongocxx::options::index index_options{};
+            auto index_builder = builder::basic::document{};
+            index_options.background(true)
+            .name("simple_search_uid_dataset");
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
+            index_builder.append(kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1));
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1));
+            index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_TIMESTAMP), 1));
+            db[col_name].create_index(index_builder.view(), index_options);
+        }
+        
     } catch( mongocxx::operation_exception& e) {
         //fail to create index
         ERR << e.what();
@@ -174,8 +173,8 @@ push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
 push_current_step_left(push_timeout_multiplier),
 write_timeout(common::constants::ObjectStorageTimeoutinMSec),
 read_timeout(common::constants::ObjectStorageTimeoutinMSec),
-search_hint_name(""),
-search_hint_name_tag(""){
+search_hint_name("simple_search_uid_dataset"),
+search_hint_name_tag("simple_search_uid_dataset_with_tag"){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -183,9 +182,6 @@ search_hint_name_tag(""){
     auto db = (*client)[MONGODB_DB_NAME];
     
     //data collection
-    //initShardIndex(db, MONGODB_DAQ_COLL_NAME);
-    //initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
-    //initAgeingIndex(db, MONGODB_DAQ_COLL_NAME);
     MapKVP& obj_stoarge_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_stoarge_kvp.count("wtimeout")) {
         write_timeout=strtoul(obj_stoarge_kvp["wtimeout"].c_str(),0,0);
@@ -218,12 +214,18 @@ search_hint_name_tag(""){
     }
     //set the hint name
     if(obj_stoarge_kvp.count("hint_name")) {
-        search_hint_name = obj_stoarge_kvp["hint_name"];
         DBG<<"Defined Hint:\""<<search_hint_name<<"\"";
+        search_hint_name = obj_stoarge_kvp["hint_name"];
     }
     if(obj_stoarge_kvp.count("hint_name_tag")) {
-        search_hint_name_tag = obj_stoarge_kvp["hint_name_tag"];
         DBG<<"Defined Hint For Tag Search:\""<<search_hint_name_tag<<"\"";
+        search_hint_name_tag = obj_stoarge_kvp["hint_name_tag"];
+    }
+    if(obj_stoarge_kvp.count("apply_index")){
+        DBG<<"Apply Search index:";
+        initSearchIndex(db, MONGODB_DAQ_COLL_NAME);
+        DBG<<"Apply Ageing index:";
+        initAgeingIndex(db, MONGODB_DAQ_COLL_NAME);
     }
     // allocate metrics
 #if CHAOS_PROMETHEUS

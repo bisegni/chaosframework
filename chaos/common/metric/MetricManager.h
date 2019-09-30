@@ -32,6 +32,7 @@
 #include <prometheus/registry.h>
 #include <prometheus/counter.h>
 #include <prometheus/gauge.h>
+#include <prometheus/histogram.h>
 namespace chaos {
     namespace common {
         namespace metric {
@@ -73,14 +74,34 @@ namespace chaos {
                 CGauge& operator-=(const double d);
             };
             
-            typedef ChaosUniquePtr<CCounter> CounterUniquePtr;
-            typedef ChaosUniquePtr<CGauge> GaugeUniquePtr;
+            /*!
+             Histogram abstraction
+             */
+            class CHistogram {
+                friend class MetricManager;
+                prometheus::Histogram& impl;
+                
+                CHistogram(prometheus::Histogram& _impl);
+            public:
+                void observe(double value);
+            };
+            typedef prometheus::Histogram::BucketBoundaries CHistogramBoudaries;
+            
+            //mrtics smart pointer
+            typedef ChaosUniquePtr<CGauge>      GaugeUniquePtr;
+            typedef ChaosUniquePtr<CCounter>    CounterUniquePtr;
+            typedef ChaosUniquePtr<CHistogram>  HistogramUniquePtr;
+            
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, prometheus::Family<prometheus::Counter>&, MapFamilyCounter);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapFamilyCounter, LMapFamilyCounter);
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, prometheus::Family<prometheus::Gauge>&, MapFamilyGauge);
             CHAOS_DEFINE_LOCKABLE_OBJECT(MapFamilyGauge, LMapFamilyGauge);
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, prometheus::Family<prometheus::Histogram>&, MapFamilyHistogram);
+            CHAOS_DEFINE_LOCKABLE_OBJECT(MapFamilyHistogram, LMapFamilyHistogram);
+            
             /*!
              Central managment for metric exposition to Prometheus
              */
@@ -92,16 +113,15 @@ namespace chaos {
                 ChaosUniquePtr<prometheus::Exposer>     http_exposer;
                 ChaosSharedPtr<prometheus::Registry>    metrics_registry;
                 
-                LMapFamilyCounter    map_counter;
                 LMapFamilyGauge      map_gauge;
+                LMapFamilyCounter    map_counter;
+                LMapFamilyHistogram  map_histogram;
                 
                 //io base metrics family for data and packet rate
                 prometheus::Family<prometheus::Counter>& io_send_byte_sec;
                 prometheus::Family<prometheus::Counter>& io_send_packet_sec;
                 prometheus::Family<prometheus::Counter>& io_receive_byte_sec;
                 prometheus::Family<prometheus::Counter>& io_receive_packet_sec;
-                
-                
                 
                 MetricManager();
                 ~MetricManager();
@@ -121,11 +141,18 @@ namespace chaos {
                 void createGaugeFamily(const std::string& name,
                                        const std::string& desc);
                 
+                void createHistogramFamily(const std::string& name,
+                                           const std::string& desc);
+                
                 CounterUniquePtr getNewCounterFromFamily(const std::string& family_name,
                                                          const std::map<std::string,std::string>& label = {});
                 
                 GaugeUniquePtr getNewGaugeFromFamily(const std::string& family_name,
                                                      const std::map<std::string,std::string>& label = {});
+                
+                HistogramUniquePtr getNewHistogramFromFamily(const std::string& family_name,
+                                                             const std::map<std::string,std::string>& label = {},
+                                                             const CHistogramBoudaries& boundaries = {});
                 
             };
         }
