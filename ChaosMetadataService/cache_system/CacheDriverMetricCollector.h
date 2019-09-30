@@ -39,13 +39,21 @@ namespace chaos {
             public CacheDriver {
                 CacheDriver *wrapped_cache_driver;
                 //! count the pack that are been set to the cache
-                chaos::common::metric::CounterUniquePtr set_pack_count_uptr;
+                chaos::common::metric::CounterUniquePtr metric_counter_set_pack_count_uptr;
                 //! count the total bandwith in set caching operation
-                chaos::common::metric::CounterUniquePtr set_bandwith_uptr;
+                chaos::common::metric::CounterUniquePtr metric_counter_set_bandwith_uptr;
                 //! count the pack that are been get to the cache
-                chaos::common::metric::CounterUniquePtr get_pack_count_uptr;
+                chaos::common::metric::CounterUniquePtr metric_counter_get_pack_count_uptr;
                 //! ount the total bandwith in set caching operation
-                chaos::common::metric::CounterUniquePtr get_bandwith_uptr;
+                chaos::common::metric::CounterUniquePtr metric_counter_get_bandwith_uptr;
+                
+                //metric histogram that sumamrize the size of element set
+                //in chache
+                chaos::common::metric::HistogramUniquePtr   metric_histogram_set_size_uptr;
+                
+                //metric histogram that sumamrize the size of element returned
+                chaos::common::metric::HistogramUniquePtr   metric_histogram_get_size_uptr;
+                
             public:
                 //!base constructo rwith the wrapped dariver
                 CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver);
