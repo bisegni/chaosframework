@@ -25,18 +25,29 @@
 using namespace chaos::common::metric;
 using namespace chaos::metadata_service::cache_system;
 
+static CHistogramBoudaries size_buondaries = {1024, 2*1024, 4*1024, 8*1024, 16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024};
+
 CacheDriverMetricCollector::CacheDriverMetricCollector(CacheDriver *_wrapped_cache_driver):
 CacheDriver(_wrapped_cache_driver->getName()),
 wrapped_cache_driver(_wrapped_cache_driver){
     //init the shared collector
     MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_count", "Is the number of dataset that are stored in cache");
-    set_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_count");
+    metric_counter_set_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_count");
+    
     MetricManager::getInstance()->createCounterFamily("mds_cache_set_dataset_bandwith", "Is the bandwidth of dataset that are stored in cache (in byte)");
-    set_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_bandwith");
+    metric_counter_set_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_set_dataset_bandwith");
+    
     MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_count", "Is the number of dataset that are retrieved from the cache");
-    get_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_count");
+    metric_counter_get_pack_count_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_count");
+    
     MetricManager::getInstance()->createCounterFamily("mds_cache_get_dataset_bandwith", "Is the bandwidth of dataset that are retrieved from the cache (in byte)");
-    get_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_bandwith");
+    metric_counter_get_bandwith_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_cache_get_dataset_bandwith");
+    
+    MetricManager::getInstance()->createHistogramFamily("mds_cache_set_object_size", "Is the counter (per size) of elements stored in cache");
+    metric_histogram_set_size_uptr = MetricManager::getInstance()->getNewHistogramFromFamily("mds_cache_set_object_size", {}, size_buondaries);
+    
+    MetricManager::getInstance()->createHistogramFamily("mds_cache_get_object_size", "Is the counter (per size) of elements retrieved from cache");
+    metric_histogram_get_size_uptr = MetricManager::getInstance()->getNewHistogramFromFamily("mds_cache_set_object_size", {}, size_buondaries);
 }
 
 CacheDriverMetricCollector::~CacheDriverMetricCollector() {
@@ -48,8 +59,8 @@ int CacheDriverMetricCollector::putData(const std::string& key,
     CHAOS_ASSERT(wrapped_cache_driver)
     if(data &&
        data->size()) {
-        (*set_pack_count_uptr)++;
-        (*set_bandwith_uptr) += data->size();
+        (*metric_counter_set_pack_count_uptr)++;
+        (*metric_counter_set_bandwith_uptr) += data->size();
     }
     int err =  wrapped_cache_driver->putData(key,
                                              data);
@@ -63,8 +74,9 @@ int CacheDriverMetricCollector::getData(const std::string& key,
                                              data);
     if(data &&
        data->size()) {
-        (*get_pack_count_uptr)++;
-        (*get_bandwith_uptr)+=data->size();
+        metric_histogram_set_size_uptr->observe(data->size());
+        (*metric_counter_get_pack_count_uptr)++;
+        (*metric_counter_get_bandwith_uptr)+=data->size();
     }
     return err;
 }
@@ -75,8 +87,9 @@ int CacheDriverMetricCollector::getData(const ChaosStringVector&    keys,
                                              multi_data);
     for (auto&& element : multi_data) {
         if(element.second) {
-            (*get_pack_count_uptr)++;
-            (*get_bandwith_uptr)+=element.second->size();
+            metric_histogram_get_size_uptr->observe(element.second->size());
+            (*metric_counter_get_pack_count_uptr)++;
+            (*metric_counter_get_bandwith_uptr)+=element.second->size();
         }
     }
     return err;

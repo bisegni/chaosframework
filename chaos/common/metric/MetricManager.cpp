@@ -25,7 +25,7 @@
 using namespace chaos::common::metric;
 
 using namespace prometheus;
-#pragma mark Counter
+#pragma mark CCounter
 chaos::common::metric::CCounter::CCounter(prometheus::Counter& _impl):
 impl(_impl){}
 
@@ -48,7 +48,7 @@ chaos::common::metric::CCounter& chaos::common::metric::CCounter::operator+=(con
     impl.Increment(d);
     return *this;
 }
-#pragma mark Gauge
+#pragma mark CGauge
 chaos::common::metric::CGauge::CGauge(prometheus::Gauge& _impl):
 impl(_impl){}
 
@@ -95,6 +95,14 @@ chaos::common::metric::CGauge& chaos::common::metric::CGauge::operator+=(const d
 chaos::common::metric::CGauge& chaos::common::metric::CGauge::operator-=(const double d) {
     impl.Decrement(d);
     return *this;
+}
+
+#pragma mark CHistogram
+chaos::common::metric::CHistogram::CHistogram(prometheus::Histogram& _impl):
+impl(_impl){}
+
+void chaos::common::metric::CHistogram::observe(double value) {
+    impl.Observe(value);
 }
 
 #pragma mark Manager
@@ -179,6 +187,21 @@ void MetricManager::createGaugeFamily(const std::string& name,
                                           .Register(*metrics_registry)));
 }
 
+void MetricManager::createHistogramFamily(const std::string& name,
+                                          const std::string& desc) {
+    LMapFamilyHistogramWriteLock wl = map_histogram.getWriteLockObject();
+    
+    //check if family already exists
+    if(map_histogram().find(name) != map_histogram().end()) return;
+    
+    map_histogram().insert(MapFamilyHistogramPair(name,
+                                                  BuildHistogram()
+                                                  .Name(name)
+                                                  .Help(desc)
+                                                  .Labels({})
+                                                  .Register(*metrics_registry)));
+}
+
 CounterUniquePtr MetricManager::getNewCounterFromFamily(const std::string& family_name,
                                                         const std::map<std::string,std::string>& label) {
     LMapFamilyCounterReadLock wl = map_counter.getReadLockObject();
@@ -193,4 +216,13 @@ GaugeUniquePtr MetricManager::getNewGaugeFromFamily(const std::string& family_na
     MapFamilyGaugeIterator i = map_gauge().find(family_name);
     if(i == map_gauge().end()) return GaugeUniquePtr();
     return GaugeUniquePtr(new chaos::common::metric::CGauge(i->second.Add(label)));
+}
+
+HistogramUniquePtr MetricManager::getNewHistogramFromFamily(const std::string& family_name,
+                                                            const std::map<std::string,std::string>& label,
+                                                            const CHistogramBoudaries& boundaries) {
+    LMapFamilyHistogramReadLock wl = map_histogram.getReadLockObject();
+    MapFamilyHistogramIterator i = map_histogram().find(family_name);
+    if(i == map_histogram().end()) return HistogramUniquePtr();
+    return HistogramUniquePtr(new chaos::common::metric::CHistogram(i->second.Add(label, boundaries)));
 }

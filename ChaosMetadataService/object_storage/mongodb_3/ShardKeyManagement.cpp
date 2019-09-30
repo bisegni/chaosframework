@@ -35,12 +35,7 @@ using namespace bsoncxx::builder::basic;
 
 #pragma mark DaqZoneInfo
 DaqZonedInfo::DaqZonedInfo():
-index_zone_doc(builder::basic::document{}),
 data_zone_doc(builder::basic::document{}){}
-
-builder::basic::document& DaqZonedInfo::getIndexDocument() {
-    return index_zone_doc;
-}
 
 builder::basic::document& DaqZonedInfo::getDataDocument() {
     return data_zone_doc;
@@ -112,8 +107,6 @@ DaqZonedInfo ShardKeyManagement::getNewDataPack(const std::string& key,
     wr->unlock();
 
     int64_t shard_info = shard_info_it->second->getShardValue(now_in_ms, new_size_byte);
-    zone_info.getIndexDocument().append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_index"));
-    zone_info.getIndexDocument().append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
 
     zone_info.getDataDocument().append(bsoncxx::builder::basic::kvp("zone_key", zone_alias+"_data"));
     zone_info.getDataDocument().append(bsoncxx::builder::basic::kvp("shard_key", shard_info));
