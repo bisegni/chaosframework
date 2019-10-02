@@ -59,6 +59,7 @@ int CacheDriverMetricCollector::putData(const std::string& key,
     CHAOS_ASSERT(wrapped_cache_driver)
     if(data &&
        data->size()) {
+        metric_histogram_set_size_uptr->observe(data->size());
         (*metric_counter_set_pack_count_uptr)++;
         (*metric_counter_set_bandwith_uptr) += data->size();
     }
@@ -74,7 +75,7 @@ int CacheDriverMetricCollector::getData(const std::string& key,
                                              data);
     if(data &&
        data->size()) {
-        metric_histogram_set_size_uptr->observe(data->size());
+        metric_histogram_get_size_uptr->observe(data->size());
         (*metric_counter_get_pack_count_uptr)++;
         (*metric_counter_get_bandwith_uptr)+=data->size();
     }
