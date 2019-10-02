@@ -47,7 +47,7 @@ wrapped_cache_driver(_wrapped_cache_driver){
     metric_histogram_set_size_uptr = MetricManager::getInstance()->getNewHistogramFromFamily("mds_cache_set_object_size", {}, size_buondaries);
     
     MetricManager::getInstance()->createHistogramFamily("mds_cache_get_object_size", "Is the counter (per size) of elements retrieved from cache");
-    metric_histogram_get_size_uptr = MetricManager::getInstance()->getNewHistogramFromFamily("mds_cache_set_object_size", {}, size_buondaries);
+    metric_histogram_get_size_uptr = MetricManager::getInstance()->getNewHistogramFromFamily("mds_cache_get_object_size", {}, size_buondaries);
 }
 
 CacheDriverMetricCollector::~CacheDriverMetricCollector() {

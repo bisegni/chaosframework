@@ -29,6 +29,7 @@ unix:!macx {
 }
 
 macx:{
+    CONFIG += app_bundle
     LIBS +=  -lchaos_common
 }
 
