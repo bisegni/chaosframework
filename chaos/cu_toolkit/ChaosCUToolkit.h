@@ -60,6 +60,7 @@ namespace chaos{
             static void signalHanlder(int);
         protected:
             void closeUIToolkit();
+            chaos::common::data::CDWUniquePtr nodeShutDown(chaos::common::data::CDWUniquePtr data);
         public:
             typedef boost::mutex::scoped_lock lock;
             //! C and C++ attribute parser

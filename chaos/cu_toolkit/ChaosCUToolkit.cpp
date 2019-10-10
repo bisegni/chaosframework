@@ -30,15 +30,16 @@
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include "windowsCompliant.h"
 using namespace std;
-using namespace chaos::common::utility;
-
 using namespace chaos::cu;
-using namespace chaos::common::healt_system;
-using namespace chaos::common::io;
 using namespace chaos::cu::data_manager;
+using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
-using namespace chaos::cu::driver_manager;
+
+using namespace chaos::common::io;
+using namespace chaos::common::data;
+using namespace chaos::common::utility;
+using namespace chaos::common::healt_system;
 using namespace chaos::common::metadata_logging;
 
 //boost::mutex ChaosCUToolkit::monitor;
@@ -241,9 +242,6 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
   if ((signalNumber == SIGABRT) || (signalNumber == SIGSEGV)) {
     LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: " << signalNumber;
     sigignore(signalNumber);
-
-
-
     waitCloseSemaphore.unlock();
     sleep(5);
     exit(1);
@@ -260,4 +258,9 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //exit(0);
   }
   sleep(1);
+}
+
+CDWUniquePtr ChaosCUToolkit::nodeShutDown(chaos::common::data::CDWUniquePtr data) {
+    waitCloseSemaphore.unlock();
+    return ChaosCommon<ChaosCUToolkit>::nodeShutDown(MOVE(data));
 }

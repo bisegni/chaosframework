@@ -391,10 +391,12 @@ CDWUniquePtr ChaosAbstractCommon::getProcessInfo(CHAOS_UNUSED CDWUniquePtr data)
     
 }
 CDWUniquePtr ChaosAbstractCommon::nodeShutDown(CHAOS_UNUSED CDWUniquePtr data) {
-    LAPP_ << "NODE SHUTDOWN IMMEDIATELY";
-    stop();
-    deinit();
-    exit(0); 
-
+    if(data->hasKey("kill") &&
+       data->isBoolValue("kill") &&
+       data->getBoolValue("kill")) {
+        int32_t timeout = CDW_GET_INT32_WITH_DEFAULT(data, "timeout", 5);
+        sleep(timeout);
+        exit(0);
+    }
     return CDWUniquePtr();   
 }

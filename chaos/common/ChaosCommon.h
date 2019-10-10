@@ -119,7 +119,7 @@ namespace chaos {
 
         chaos::common::data::CDWUniquePtr getBuildInfo(chaos::common::data::CDWUniquePtr data);
         chaos::common::data::CDWUniquePtr getProcessInfo(chaos::common::data::CDWUniquePtr data);
-        chaos::common::data::CDWUniquePtr nodeShutDown(chaos::common::data::CDWUniquePtr data);
+        virtual chaos::common::data::CDWUniquePtr nodeShutDown(chaos::common::data::CDWUniquePtr data);
 
         GlobalConfiguration* getGlobalConfigurationInstance();
     };
