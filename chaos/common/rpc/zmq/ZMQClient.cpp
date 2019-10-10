@@ -156,16 +156,14 @@ bool ZMQClient::submitMessage(NFISharedPtr forwardInfo,
             throw CException(0, "No message in description", __PRETTY_FUNCTION__);
         //allocate new forward info
         //submit action
+        #if CHAOS_PROMETHEUS
+            (*counter_queuend_uptr)++;
+        #endif
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
             processBufferElement(MOVE(forwardInfo));
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(MOVE(forwardInfo));
-#if CHAOS_PROMETHEUS
-            (*counter_queuend_uptr)++;
-#endif
-
-
         }
     } catch(CException& ex){
         //in this case i need to delete the memory

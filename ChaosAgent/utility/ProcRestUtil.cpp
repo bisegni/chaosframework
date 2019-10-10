@@ -113,6 +113,7 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         throw ex;
     }
 }
+
 bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_info) {
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
