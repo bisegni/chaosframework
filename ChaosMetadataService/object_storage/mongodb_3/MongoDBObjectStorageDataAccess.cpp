@@ -173,8 +173,8 @@ push_timeout_multiplier(DEFAULT_BATCH_TIMEOUT_MULTIPLIER),
 push_current_step_left(push_timeout_multiplier),
 write_timeout(common::constants::ObjectStorageTimeoutinMSec),
 read_timeout(common::constants::ObjectStorageTimeoutinMSec),
-search_hint_name("simple_search_uid_dataset"),
-search_hint_name_tag("simple_search_uid_dataset_with_tag"){
+search_hint_name(),
+search_hint_name_tag(){
     //get client the connection
     auto client = pool_ref.acquire();
     
@@ -214,12 +214,12 @@ search_hint_name_tag("simple_search_uid_dataset_with_tag"){
     }
     //set the hint name
     if(obj_stoarge_kvp.count("hint_name")) {
-        DBG<<"Defined Hint:\""<<search_hint_name<<"\"";
         search_hint_name = obj_stoarge_kvp["hint_name"];
+        DBG<<"Defined Hint:\""<<search_hint_name<<"\"";
     }
     if(obj_stoarge_kvp.count("hint_name_tag")) {
-        DBG<<"Defined Hint For Tag Search:\""<<search_hint_name_tag<<"\"";
         search_hint_name_tag = obj_stoarge_kvp["hint_name_tag"];
+        DBG<<"Defined Hint For Tag Search:\""<<search_hint_name_tag<<"\"";
     }
     if(obj_stoarge_kvp.count("apply_index")){
         DBG<<"Apply Search index:";
