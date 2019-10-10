@@ -307,6 +307,12 @@ void ChaosAbstractCommon::init(void *init_data) {
                                                                                                     NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                     NodeDomainAndActionRPC::ACTION_GET_PROCESS_INFO,
                                                                                                     "Return the process info of current chaos node instance");
+
+        AbstActionDescShrPtr action_description3 = addActionDescritionInstance<ChaosAbstractCommon>(this,
+                                                                                                    &ChaosAbstractCommon::nodeShutDown,
+                                                                                                    NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                    NodeDomainAndActionRPC::ACTION_NODE_SHUTDOWN,
+                                                                                                    "Shutdown node immediately");
         
         AbstActionDescShrPtr actionDescription3 = addActionDescritionInstance<ChaosAbstractCommon>(this,
                                                                                                    &ChaosAbstractCommon::_registrationAck,
@@ -383,4 +389,12 @@ CDWUniquePtr ChaosAbstractCommon::getBuildInfo(CHAOS_UNUSED CDWUniquePtr data) {
 CDWUniquePtr ChaosAbstractCommon::getProcessInfo(CHAOS_UNUSED CDWUniquePtr data) {
     return GlobalConfiguration::getInstance()->getProcessInfoRef().fullStat();
     
+}
+CDWUniquePtr ChaosAbstractCommon::nodeShutDown(CHAOS_UNUSED CDWUniquePtr data) {
+    LAPP_ << "NODE SHUTDOWN IMMEDIATELY";
+    stop();
+    deinit();
+    exit(0); 
+
+    return CDWUniquePtr();   
 }

@@ -450,6 +450,8 @@ namespace chaos {
         static const char * const ACTION_GET_BUILD_INFO                             = "getBuildInfo";
             //! get the process information form node instance
         static const char * const ACTION_GET_PROCESS_INFO                             = "getProcessInfo";
+           //! shutdown chaos process
+        static const char * const ACTION_NODE_SHUTDOWN                           = "nodeShutDown";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
