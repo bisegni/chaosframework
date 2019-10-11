@@ -395,6 +395,11 @@ CDWUniquePtr ChaosAbstractCommon::nodeShutDown(CHAOS_UNUSED CDWUniquePtr data) {
        data->isBoolValue("kill") &&
        data->getBoolValue("kill")) {
         int32_t timeout = CDW_GET_INT32_WITH_DEFAULT(data, "timeout", 5);
+        LAPP_ << "SHUTDOWN COMMAND:"<<data->getCompliantJSONString()<<" ABOUT TO EXIT IN:"<<timeout<< " seconds";
+
+        stop();
+        deinit();
+        
         sleep(timeout);
         exit(0);
     }
