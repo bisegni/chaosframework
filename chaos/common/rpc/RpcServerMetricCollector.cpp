@@ -105,8 +105,8 @@ CDWUniquePtr RpcServerMetricCollector::dispatchCommand(CDWUniquePtr action_pack)
     CHAOS_ASSERT(wrapperd_server_handler)
     CDWUniquePtr result;
     //inrement packec count
-    (*packet_async_count_uptr)++;
-    (*data_async_count_uptr) += action_pack->getBSONRawSize();
+    (*packet_sync_count_uptr)++;
+    (*data_sync_count_uptr) += action_pack->getBSONRawSize();
     result = wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
     return result;
 }
@@ -116,8 +116,8 @@ CDWUniquePtr RpcServerMetricCollector::executeCommandSync(CDWUniquePtr action_pa
     CHAOS_ASSERT(wrapperd_server_handler)
     CDWUniquePtr result;
     //inrement packec count
-    (*packet_sync_count_uptr)++;
-    (*data_sync_count_uptr) += action_pack->getBSONRawSize();
+    (*packet_async_count_uptr)++;
+    (*data_async_count_uptr) += action_pack->getBSONRawSize();
     return wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
 }
 
