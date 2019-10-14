@@ -148,12 +148,15 @@ namespace chaos {
                  */
                 virtual void deinit();
             public:
+                void setAutoEvitionForDeadUrl(bool auto_eviction);
                 //! check if an address si online
                 bool checkIfAddressIsOnline(const chaos::common::network::CNetworkAddress& address);
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
+                //! check if channel has a specific node
+                bool hasNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove all configured node
                 void removeAllNode();
                 //! get the rpc published host and port

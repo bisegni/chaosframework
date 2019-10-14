@@ -33,18 +33,21 @@ using namespace boost::asio;
 using namespace chaos::common::async_central;
 
 //----------------------------------------------------------------------------------------------------
-
-
-AsyncCentralManager::AsyncCentralManager():
+AsioEngine::AsioEngine():
 asio_service(),
 asio_default_work(asio_service) {}
+
+AsioEngine::~AsioEngine(){}
+
+AsyncCentralManager::AsyncCentralManager() {}
 
 AsyncCentralManager::~AsyncCentralManager() {}
 
 // Initialize instance
 void AsyncCentralManager::init(void *init_data)  {
+    asio_engine.reset(new AsioEngine());
     ACM_LAPP_ << "Allocating event loop";
-    asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_service));
+    asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_engine->asio_service));
     
     ACM_LAPP_ << "Allocating job async runner";
     async_pool_runner.reset(new AsyncPoolRunner(1));
@@ -62,9 +65,9 @@ void AsyncCentralManager::deinit()  {
                                                         __PRETTY_FUNCTION__);
     
     ACM_LAPP_ << "Stop event loop";
-    asio_service.stop();
+    asio_engine->asio_service.stop();
     asio_thread_group.join_all();
-    
+    asio_engine.reset();
 }
 
 int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
@@ -76,7 +79,7 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
         //check if already installed
         if(timer_handler->timer) return 0;
         
-        if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
+        if((timer_handler->timer = new  deadline_timer(asio_engine->asio_service)) == NULL) {
             err = -1;
         } else {
             timer_handler->delay = repeat;

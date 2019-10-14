@@ -91,7 +91,7 @@ namespace chaos {
 			public chaos::common::utility::Singleton<NetworkBroker> {
 				friend class chaos::common::utility::Singleton<NetworkBroker>;
 				//! performance session managment
-				chaos::common::network::PerformanceManagment performance_session_managment;
+//				chaos::common::network::PerformanceManagment performance_session_managment;
 				
                 //! point to current host and port
                 std::string published_host_and_port;

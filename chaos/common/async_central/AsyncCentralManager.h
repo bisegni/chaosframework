@@ -40,6 +40,14 @@ namespace chaos {
 			//! forward declaration
 			class TimerHandler;
 			
+            struct AsioEngine {
+                boost::asio::io_service         asio_service;
+                boost::asio::io_service::work   asio_default_work;
+                
+                AsioEngine();
+                ~AsioEngine();
+            };
+            
 			/*!
 			 Managment class fot the async central
 			 */
@@ -51,8 +59,7 @@ namespace chaos {
                 ChaosUniquePtr<AsyncPoolRunner>  async_pool_runner;
                 
                 //timer
-				boost::asio::io_service         asio_service;
-                boost::asio::io_service::work   asio_default_work;
+                ChaosUniquePtr<AsioEngine>      asio_engine;
                 boost::thread_group             asio_thread_group;
                 
                 boost::mutex mutex;

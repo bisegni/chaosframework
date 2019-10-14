@@ -157,6 +157,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     ASSERT_EQ(future->getError(),  0);
     ist_2.reset();
 }
+
 TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     CDWUniquePtr pack(new CDataWrapper());
     pack->addStringValue("echo", "value");
@@ -199,6 +200,41 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
     ist_2.reset();
+}
+
+TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    
+    //allcoate one remote server
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
+    const CNetworkAddress addr_srv_1 = ist_1->getAddress();
+    //allocate multiaddress message channel
+    
+    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
+    msg_chnl->setAutoEvitionForDeadUrl(true);
+    
+    //call to first server
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                                                                              "actionWithResult",
+                                                                                              ChaosMoveOperator(pack),
+                                                                                              1000);
+    msg_chnl->addNode(addr_srv_1);
+    // false because no server are set
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  0);
+    
+    ist_1.reset();
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
+    //waith for evicction
+    while(msg_chnl->hasNode(addr_srv_1)) {
+        sleep(1);
+    }
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {

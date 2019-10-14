@@ -95,6 +95,10 @@ void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url)
                                                  1000);
 }
 
+void MultiAddressMessageChannel::setAutoEvitionForDeadUrl(bool auto_eviction) {
+    service_feeder.setAutoEvitionForDeadUrl(auto_eviction);
+}
+
 bool MultiAddressMessageChannel::checkIfAddressIsOnline(const CNetworkAddress& address) {
     if(service_feeder.hasURL(address.ip_port) == false) {
         return false;
@@ -108,6 +112,10 @@ void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
 
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
     service_feeder.removeURL(node_address.ip_port);
+}
+
+bool MultiAddressMessageChannel::hasNode(const chaos::common::network::CNetworkAddress& node_address) {
+    return service_feeder.hasURL(node_address.ip_port);
 }
 
 void MultiAddressMessageChannel::removeAllNode() {
@@ -142,7 +150,6 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 }
 
 void MultiAddressMessageChannel::timeout() {
-   
     service_feeder.checkForAliveService();
     if(service_feeder.getOfflineSize() == 0) {
         AsyncCentralManager::getInstance()->removeTimer(this);

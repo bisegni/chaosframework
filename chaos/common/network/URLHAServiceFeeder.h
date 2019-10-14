@@ -41,21 +41,20 @@ namespace chaos {
             
             //!contains the infromation for retry logic
             struct ServiceRetryInformation {
-                const uint32_t offline_index;
-                const std::string offline_url;
+                const uint32_t service_index;
+                const std::string service_url;
                 uint32_t retry_times;
                 uint64_t retry_timeout;
-                
-                ServiceRetryInformation(const uint32_t _offline_index,
-                                        const std::string& _offline_url):
-                offline_index(_offline_index),
-                offline_url(_offline_url),
+                ServiceRetryInformation(const uint32_t _service_index,
+                                        const std::string& _service_url):
+                service_index(_service_index),
+                service_url(_service_url),
                 retry_times(0),
                 retry_timeout(0){}
                 
                 ServiceRetryInformation(const ServiceRetryInformation& sri):
-                offline_index(sri.offline_index),
-                offline_url(sri.offline_url),
+                service_index(sri.service_index),
+                service_url(sri.service_url),
                 retry_times(sri.retry_times),
                 retry_timeout(sri.retry_timeout){}
             };
@@ -74,6 +73,13 @@ namespace chaos {
                 boost::mutex mutex_queue;
                 std::queue< ChaosSharedPtr<ServiceRetryInformation> > retry_queue;
                 std::queue<uint32_t> respawned_queue;
+                
+                //! if true dead server are evicted after some number of retry
+                bool auto_eviction_url;
+                
+                //! specify the number of maximum retry for a url after wich it will declared dead
+                unsigned int max_service_retry_for_dead;
+
             public:
                 
                 using URLServiceFeeder::hasURL;
@@ -113,6 +119,12 @@ namespace chaos {
                 
                 //! set url has offline
                 void setIndexAsOffline(const uint32_t remote_index);
+                
+                //!set the auto eviction fo the url declared dead
+                /*!
+                    An url is declared dead when it has overflowed the maximun number of retry
+                 */
+                void setAutoEvitionForDeadUrl(bool _auto_eviction_url);
                 
                 //!check if a service has been respawned
                 /*!

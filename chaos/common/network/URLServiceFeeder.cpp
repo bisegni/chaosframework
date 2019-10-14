@@ -252,6 +252,7 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 	available_url.insert(idx);
     //remove index url association
     mapping_url_index.removebyRightKey(idx);
+    memset(service_list[idx], 0, sizeof(URLService));
 }
 
 //!return the url string from index

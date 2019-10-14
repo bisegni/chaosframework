@@ -37,6 +37,8 @@ URLHAServiceFeeder::URLHAServiceFeeder(std::string alias,
                                        URLHAServiceCheckerFeederHandler *_service_checker_handler):
 URLServiceFeeder(alias,
                  _handler),
+auto_eviction_url(false),
+max_service_retry_for_dead(3),
 service_checker_handler(_service_checker_handler) {
     setRetryTime(1000, 10000);
 }
@@ -83,23 +85,26 @@ void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
     uint32_t url_index = getIndexFromURL(remote_address);
     URLServiceFeeder::setURLOffline(url_index);
     ChaosSharedPtr<ServiceRetryInformation> sri(new ServiceRetryInformation(url_index,
-                                                                               remote_address));
+                                                                            remote_address));
     sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     
     retry_queue.push(sri);
     
-    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after "<<min_retry_time<<" ms at " <<sri->retry_timeout;
+    URLHASF_INFO << "Service for  " << sri->service_url << " gone offline check after "<<min_retry_time<<" ms at " <<sri->retry_timeout;
 }
 
-//! set url has offline
 void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
     boost::unique_lock<boost::mutex> wr(mutex_queue);
     URLServiceFeeder::setURLOffline(remote_index);
     ChaosSharedPtr<ServiceRetryInformation> sri(new ServiceRetryInformation(remote_index,
-                                                                               getURLForIndex(remote_index)));
+                                                                            getURLForIndex(remote_index)));
     sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     retry_queue.push(sri);
-    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after:"<<min_retry_time<<" ms at " <<sri->retry_timeout;
+    URLHASF_INFO << "Service for  " << sri->service_url << " gone offline check after:"<<min_retry_time<<" ms at " <<sri->retry_timeout;
+}
+
+void URLHAServiceFeeder::setAutoEvitionForDeadUrl(bool _auto_eviction_url) {
+    auto_eviction_url = _auto_eviction_url;
 }
 
 void URLHAServiceFeeder::checkForAliveService() {
@@ -110,26 +115,37 @@ void URLHAServiceFeeder::checkForAliveService() {
     
     while (retry_queue.size() &&
            max_element-- > 0) {
+        // remove temporary form retry queue
         ChaosSharedPtr<ServiceRetryInformation> sri = retry_queue.front();retry_queue.pop();
         wr.unlock();
         if(current_ts>= sri->retry_timeout) {
             sri->retry_times++;
-            URLHASF_INFO << "Check if service " << sri->offline_url << " has respawn";
-            if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri->offline_index))){
+            URLHASF_INFO << "Check if service " << sri->service_url << " has respawn";
+            if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri->service_index))){
                 //!service returned online
-                URLHASF_INFO << "Service " << sri->offline_url << " returned online";
+                URLHASF_INFO << "Service " << sri->service_url << " returned online";
                 wr.lock();
-                respawned_queue.push(sri->offline_index);
+                respawned_queue.push(sri->service_index);
             } else {
-                //service still in offline
-                sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * min_retry_time)%10000);
+                //check if we need to auto evic the dead url
+                if(auto_eviction_url &&
+                   (sri->retry_times % max_service_retry_for_dead) == 0) {
+                    // we need to evict the service
+                    URLServiceFeeder::removeURL(sri->service_index, true);
+                } else {
+                    //service still in offline
+                    sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * min_retry_time)%10000);
+                    
+                    URLHASF_INFO << "Service " << sri->service_url << " still offline wait for " << sri->retry_timeout-current_ts << " milliseocnds";
+                    wr.lock();
+                    // readd to retry queue
+                    retry_queue.push(sri);
+                }
                 
-                URLHASF_INFO << "Service " << sri->offline_url << " still offline wait for " << sri->retry_timeout-current_ts << " milliseocnds";
-                wr.lock();
-                retry_queue.push(sri);
             }
         }else{
             wr.lock();
+            // readd to retry queue
             retry_queue.push(sri);
         }
     }
