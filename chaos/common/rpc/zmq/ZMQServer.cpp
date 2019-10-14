@@ -64,7 +64,10 @@ void ZMQServer::init(void *init_data) {
     try {
         run_server = true;
         
-        port_number = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_PORT);
+        if(!port_number) {
+            //no one has set alternate port number so use the default
+            port_number = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_PORT);
+        }
         
         thread_number = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER);
         

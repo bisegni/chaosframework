@@ -1032,6 +1032,7 @@
 		32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */; };
 		32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */; };
 		32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */; };
+		32CFCE352354638700740369 /* RPCMultiaddressMessageChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFCE332354638700740369 /* RPCMultiaddressMessageChannelTest.cpp */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -2583,6 +2584,8 @@
 		32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriver.cpp; sourceTree = "<group>"; };
 		32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriver.h; sourceTree = "<group>"; };
 		32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriverInterface.cpp; sourceTree = "<group>"; };
+		32CFCE332354638700740369 /* RPCMultiaddressMessageChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RPCMultiaddressMessageChannelTest.cpp; sourceTree = "<group>"; };
+		32CFCE342354638700740369 /* RPCMultiaddressMessageChannelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RPCMultiaddressMessageChannelTest.h; sourceTree = "<group>"; };
 		32CFD5DD1B2704FF0060AED5 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
 		32CFD5DE1B27097C0060AED5 /* CDataWrapperKeyValueSetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDataWrapperKeyValueSetter.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
@@ -3400,6 +3403,8 @@
 			children = (
 				3238884321627C0300CC8A2B /* RPCTest.cpp */,
 				3238884421627C0300CC8A2B /* RPCTest.h */,
+				32CFCE332354638700740369 /* RPCMultiaddressMessageChannelTest.cpp */,
+				32CFCE342354638700740369 /* RPCMultiaddressMessageChannelTest.h */,
 			);
 			path = rpc;
 			sourceTree = "<group>";
@@ -6940,6 +6945,7 @@
 				3238887A21627C0500CC8A2B /* TestBatchDefault.cpp in Sources */,
 				3238888C21627C0500CC8A2B /* ScriptClingTest.cpp in Sources */,
 				3238887E21627C0500CC8A2B /* MemcachedEmbedded.cpp in Sources */,
+				32CFCE352354638700740369 /* RPCMultiaddressMessageChannelTest.cpp in Sources */,
 				3238887821627C0500CC8A2B /* BatchComandTest.cpp in Sources */,
 				3238888021627C0500CC8A2B /* QueueTest.cpp in Sources */,
 				3238888D21627C0500CC8A2B /* ScriptTest.cpp in Sources */,

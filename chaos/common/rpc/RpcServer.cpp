@@ -27,6 +27,10 @@ NamedService(alias),
 port_number(0),
 command_handler(NULL){}
 
+void RpcServer::setAlternatePortAddress(int new_port_address) {
+    port_number = new_port_address;
+}
+
 /*!
  Return the published port
  */
