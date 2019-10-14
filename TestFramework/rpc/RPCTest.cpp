@@ -52,7 +52,7 @@ CDWUniquePtr RpcHandler::actionWithResult(CDWUniquePtr action_data) {
 
 CDWUniquePtr RpcHandler::actionWithNoResult(CDWUniquePtr action_data) {
     actionWithNoResultCounter++;
-    return NULL;
+    return CDWUniquePtr();
 }
 
 
