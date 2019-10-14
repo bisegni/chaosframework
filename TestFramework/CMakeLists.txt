@@ -42,10 +42,12 @@ SET(TestFrameworkSource main.cpp
                         trigger/TriggerTest.cpp
                         utility/FutureHelperTest.cpp
                         utility/TemplatedMapTest.cpp
+                        utility/FutureHelperTest.cpp
                         direct_io/DirectIOTest.cpp
                         direct_io/DirectIODeviceServerChannelTest.cpp
                         direct_io/DirectIOSystemServerChannelTest.cpp
-                        utility/FutureHelperTest.cpp)
+                        rpc/RPCTest.cpp
+                        rpc/RPCMultiaddressMessageChannelTest.cpp)
 
 SET(TestFrameworkSource ${TestFrameworkSource} script/ScriptTest.cpp)
 
