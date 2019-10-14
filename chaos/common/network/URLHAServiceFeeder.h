@@ -75,6 +75,10 @@ namespace chaos {
                 std::queue< ChaosSharedPtr<ServiceRetryInformation> > retry_queue;
                 std::queue<uint32_t> respawned_queue;
             public:
+                
+                using URLServiceFeeder::hasURL;
+                using URLServiceFeeder::getIndexFromURL;
+                using URLServiceFeeder::isOnline;
                 URLHAServiceFeeder(std::string alias,
                                    URLServiceFeederHandler *_service_feeder_handler,
                                    URLHAServiceCheckerFeederHandler *_service_checker_handler);

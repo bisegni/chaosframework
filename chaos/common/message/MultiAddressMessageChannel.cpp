@@ -87,23 +87,29 @@ void MultiAddressMessageChannel::deinit() {
     AsyncCentralManager::getInstance()->removeTimer(this);
     MessageChannel::deinit();
 }
+
 void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url) {
     service_feeder.setURLAsOffline(offline_url);
     AsyncCentralManager::getInstance()->addTimer(this,
                                                  1000,
                                                  1000);
 }
-//
+
+bool MultiAddressMessageChannel::checkIfAddressIsOnline(const CNetworkAddress& address) {
+    if(service_feeder.hasURL(address.ip_port) == false) {
+        return false;
+    }
+    return service_feeder.isOnline(service_feeder.getIndexFromURL(address.ip_port));
+}
+
 void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
     service_feeder.addURL(chaos::common::network::URL(node_address.ip_port));
 }
 
-//
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
     service_feeder.removeURL(node_address.ip_port);
 }
 
-//! remove all configured node
 void MultiAddressMessageChannel::removeAllNode() {
     service_feeder.clear(true);
 }
@@ -114,7 +120,6 @@ void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     if(service) delete(service);
 }
 
-//
 void* MultiAddressMessageChannel::serviceForURL(const URL& url,
                                                 uint32_t service_index) {
     MMCFeederService *service = new MMCFeederService(url.getURL());

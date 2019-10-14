@@ -88,7 +88,7 @@ bool MultiAddressMessageRequestFuture::wait() {
                         
                         //set current server offline
                         parent_mn_message_channel->setURLAsOffline(last_used_address);
-                        // working = false;
+                        break;
                     }
                 }
             } else {
@@ -99,12 +99,13 @@ bool MultiAddressMessageRequestFuture::wait() {
                     MAMRF_INFO << "We have retried " << retry_on_same_server << " times on " << last_used_address;
                     //switchOnOtherServer();
                     parent_mn_message_channel->setURLAsOffline(last_used_address);
-                    // working = false;
+                    break;
                 }
             }
         }
-        
+        //check if we need to retry to another server
         if(working) {
+            MAMRF_INFO << "Try to send message to another server if available";
             //we need to try to send request to another server
             current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                                action_name,
@@ -112,6 +113,7 @@ bool MultiAddressMessageRequestFuture::wait() {
                                                                                last_used_address);
             if(current_future.get() == NULL) {
                 MAMRF_ERR << "Retramission has not ben possible, no other server are available";
+                working = false;
             }
         }
     }

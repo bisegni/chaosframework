@@ -148,6 +148,8 @@ namespace chaos {
                  */
                 virtual void deinit();
             public:
+                //! check if an address si online
+                bool checkIfAddressIsOnline(const chaos::common::network::CNetworkAddress& address);
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel

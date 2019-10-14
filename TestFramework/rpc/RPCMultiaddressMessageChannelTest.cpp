@@ -23,7 +23,7 @@
 
 #include<chaos/common/global.h>
 #include<chaos/common/chaos_constants.h>
-#include<chaos/common/message/NodeMessageChannel.h>
+#include<chaos/common/message/MultiAddressMessageChannel.h>
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::network;
@@ -34,10 +34,10 @@ RpcHandler2::RpcHandler2():
 actionWithResultCounter(0){
     //register the action for the response
     DeclareAction::addActionDescritionInstance<RpcHandler2>(this,
-                                                           &RpcHandler2::actionWithResult,
-                                                           "test_rpc",
-                                                           "actionWithResult",
-                                                           "actionWithResult");
+                                                            &RpcHandler2::actionWithResult,
+                                                            "test_rpc",
+                                                            "actionWithResult",
+                                                            "actionWithResult");
 }
 RpcHandler2::~RpcHandler2(){}
 CDWUniquePtr RpcHandler2::actionWithResult(CDWUniquePtr action_data) {
@@ -56,8 +56,9 @@ RpcServerInstance::RpcServerInstance() {
     // get the rpc type to instantiate
     rpc_server.reset(ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Server"));
     rpc_server->setAlternatePortAddress(freeFoundPort);
+    rpc_server->setCommandDispatcher(rpc_dispatcher.get());
     EXPECT_NO_THROW({StartableService::initImplementation(rpc_server.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_server->getName(), __PRETTY_FUNCTION__);});
-
+    
     string rpc_client_name = chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Client";
     rpc_client.reset(ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name));
     EXPECT_NO_THROW(StartableService::initImplementation(rpc_client.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_client->getName(), __PRETTY_FUNCTION__));
@@ -105,14 +106,55 @@ void RPCMultiaddressMessageChannelTest::TearDown() {
 
 #pragma mark Tests
 TEST_F(RPCMultiaddressMessageChannelTest, BaseTest) {
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    
+    //allcoate two remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
+    
+    //allocate multiaddress message channel
     std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
-//    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(node_address);
-//    ChaosUniquePtr<MessageRequestFuture> future = msg_chnl->sendRequestWithFuture("localhost:8888",
-//                                                                                  "test_rpc",
-//                                                                                  "actionWithResult",
-//                                                                                  ChaosMoveOperator(pack));
+    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(node_address);
+    
+    //call to first server
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                                                                              "actionWithResult",
+                                                                                              ChaosMoveOperator(pack),
+                                                                                              1000);
+    // first server respose
+    ASSERT_TRUE(future->wait());
+    
+    // second server respose
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    
+    ASSERT_TRUE(future->wait());
+    
+    //kill first server
+    ist_1.reset();
+    
+    //try to sent message to second server respose
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    ASSERT_TRUE(future->wait());
+
+    
+    //recreate one
+    ist_1 = startRpcServer();
+    while(msg_chnl->checkIfAddressIsOnline(node_address[0]) == false) {
+        sleep(1);
+    }
+    
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    ASSERT_TRUE(future->wait());
     ist_1.reset();
     ist_2.reset();
 }
