@@ -251,13 +251,11 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     
     //allcoate two remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
-    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
-
+    
     // allocate multiaddress message channel
 //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
     msg_chnl->addNode(ist_1->getAddress());
-    msg_chnl->addNode(ist_2->getAddress());
     
     //call to first server
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
@@ -265,14 +263,6 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
                                                                                               ChaosMoveOperator(pack),
                                                                                               1000);
     // first server respose
-    ASSERT_TRUE(future->wait());
-    ASSERT_EQ(future->getError(),  0);
-    // second server respose
-    future = msg_chnl->sendRequestWithFuture("test_rpc",
-                                             "actionWithResult",
-                                             ChaosMoveOperator(pack),
-                                             1000);
-    
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
     //kill first server
@@ -284,7 +274,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
                                              ChaosMoveOperator(pack),
                                              1000);
     ASSERT_TRUE(future->wait());
-    ASSERT_EQ(future->getError(),  0);
+    ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
     
     //recreate one
     ist_1 = startRpcServer();
@@ -298,5 +288,47 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
     ist_1.reset();
+}
+
+TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    
+    //allcoate two remote server
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
+    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
+    
+    // allocate multiaddress message channel
+//    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
+    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
+    msg_chnl->addNode(ist_1->getAddress());
+    msg_chnl->addNode(ist_2->getAddress());
+    //call to first server
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                                                                              "actionWithResult",
+                                                                                              ChaosMoveOperator(pack),
+                                                                                              1000);
+    // first server respose
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  0);
+
+    
+    //try to sent message to second server respose
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  0);
+    
+    //kill first server
+    ist_1.reset();
+    
+    future = msg_chnl->sendRequestWithFuture("test_rpc",
+                                             "actionWithResult",
+                                             ChaosMoveOperator(pack),
+                                             1000);
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  0);
     ist_2.reset();
 }
