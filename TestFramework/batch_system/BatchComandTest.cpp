@@ -44,7 +44,6 @@ TEST_F(BatchCommandTest, BatchCommandNormalSubmition) {
     uint64_t command_id = 0;
     std::srand((unsigned int)std::time(0));
     TestCommandExecutor executor;
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::initImplementation(executor, NULL, "TestCommandExecutor", __PRETTY_FUNCTION__););
     
     executor.installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
@@ -62,13 +61,11 @@ TEST_F(BatchCommandTest, BatchCommandNormalSubmition) {
     ASSERT_EQ(executor.killed_count, 0);
     ASSERT_NO_THROW(StartableService::stopImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::deinitImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__););
 }
 TEST_F(BatchCommandTest, BatchCommandStackSubmition) {
     uint64_t command_id = 0;
     std::srand((unsigned int)std::time(0));
     TestCommandExecutor executor;
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::initImplementation(executor, NULL, "TestCommandExecutor", __PRETTY_FUNCTION__););
     
     executor.installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
@@ -88,13 +85,11 @@ TEST_F(BatchCommandTest, BatchCommandStackSubmition) {
     ASSERT_EQ(executor.killed_count, 0);
     ASSERT_NO_THROW(StartableService::stopImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::deinitImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__););
 }
 TEST_F(BatchCommandTest, BatchCommandRandomSubmition) {
     uint64_t command_id = 0;
     std::srand((unsigned int)std::time(0));
     TestCommandExecutor executor;
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::initImplementation(executor, NULL, "TestCommandExecutor", __PRETTY_FUNCTION__););
     
     executor.installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
@@ -112,5 +107,4 @@ TEST_F(BatchCommandTest, BatchCommandRandomSubmition) {
     
     ASSERT_NO_THROW(StartableService::stopImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(StartableService::deinitImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__););
-    ASSERT_NO_THROW(chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__););
 }

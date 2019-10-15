@@ -67,7 +67,6 @@ TEST(FutureHelperTests, Base) {
     future_excpt_counter = 0;
     future_to_counter = 0;
     promises_counter = 0;
-    ASSERT_NO_THROW(InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__));
     MessageRequestDomainFutureHelperShrdPtr helper_test(new MessageRequestDomainFutureHelper(5000,30000));
     MessageRequestDomainFutureHelper::Future        new_shared_future;
     MessageRequestDomainFutureHelper::CounterType   new_id;
@@ -91,5 +90,4 @@ TEST(FutureHelperTests, Base) {
     ASSERT_EQ(future_counter, (promises_counter - future_to_counter));
     ASSERT_EQ(promises_counter, NUMBER_OF_TEST);
     ASSERT_NO_THROW(helper_test->deinit());
-    ASSERT_NO_THROW(InizializableService::deinitImplementation(AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__));
 }

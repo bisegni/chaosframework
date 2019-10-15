@@ -1110,6 +1110,7 @@
 		32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */; };
 		32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501418A15BF000782435 /* DirectIODispatcher.cpp */; };
 		32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501518A15BF000782435 /* DirectIODispatcher.h */; };
+		32EB093523560525003ECAC1 /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EB093323560525003ECAC1 /* Environment.cpp */; };
 		32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */; };
 		32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEF91B4E58F300278C42 /* MetricCollector.h */; };
 		32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */; };
@@ -2693,6 +2694,8 @@
 		32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerEndpoint.h; sourceTree = "<group>"; };
 		32EA501418A15BF000782435 /* DirectIODispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODispatcher.cpp; sourceTree = "<group>"; };
 		32EA501518A15BF000782435 /* DirectIODispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcher.h; sourceTree = "<group>"; };
+		32EB093323560525003ECAC1 /* Environment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Environment.cpp; sourceTree = "<group>"; };
+		32EB093423560525003ECAC1 /* Environment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Environment.h; sourceTree = "<group>"; };
 		32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollector.cpp; sourceTree = "<group>"; };
 		32EBDEF91B4E58F300278C42 /* MetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollector.h; sourceTree = "<group>"; };
 		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -3354,6 +3357,8 @@
 			children = (
 				3238884521627C0300CC8A2B /* CMakeLists.txt */,
 				3238882F21627B9600CC8A2B /* main.cpp */,
+				32EB093323560525003ECAC1 /* Environment.cpp */,
+				32EB093423560525003ECAC1 /* Environment.h */,
 				3238883921627C0300CC8A2B /* batch_system */,
 				3238884921627C0400CC8A2B /* cache */,
 				3238887121627C0500CC8A2B /* data */,
@@ -6949,6 +6954,7 @@
 				3238887821627C0500CC8A2B /* BatchComandTest.cpp in Sources */,
 				3238888021627C0500CC8A2B /* QueueTest.cpp in Sources */,
 				3238888D21627C0500CC8A2B /* ScriptTest.cpp in Sources */,
+				32EB093523560525003ECAC1 /* Environment.cpp in Sources */,
 				3238888121627C0500CC8A2B /* ExternalUnitMulticlientTest.cpp in Sources */,
 				3238889021627C0500CC8A2B /* TestVariant.cpp in Sources */,
 			);
