@@ -60,7 +60,7 @@ URLServiceFeeder::~URLServiceFeeder() {
         return;
     for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//element with the list ar object and are allocated with with new
-            delete (service_list[idx]);
+            delete(service_list[idx]);
 
     }
     //all list was allocated with malloc
@@ -252,7 +252,8 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 	available_url.insert(idx);
     //remove index url association
     mapping_url_index.removebyRightKey(idx);
-    memset(service_list[idx], 0, sizeof(URLService));
+    service_list[idx]->priority = 0;
+    service_list[idx]->service = NULL;
 }
 
 //!return the url string from index
