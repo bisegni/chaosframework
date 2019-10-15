@@ -96,7 +96,7 @@ void RPCMultiaddressMessageChannelTest::SetUp() {
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
     chaos::GlobalConfiguration::getInstance()->parseStartupParameters(0, NULL);
     
-    common::utility::InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__);
+    ASSERT_NO_THROW(common::utility::InizializableService::initImplementation(AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__););
     
     std::string local_ip = chaos::common::utility::InetUtility::scanForLocalNetworkAddress();
     chaos::GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
@@ -106,7 +106,7 @@ void RPCMultiaddressMessageChannelTest::SetUp() {
 void RPCMultiaddressMessageChannelTest::TearDown() {
     ASSERT_NO_THROW(chaos::common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(chaos::common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(), "NetworkBroker", __PRETTY_FUNCTION__););
-    common::utility::InizializableService::deinitImplementation(AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__);
+    ASSERT_NO_THROW(common::utility::InizializableService::deinitImplementation(AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__););
 }
 
 #pragma mark Tests
@@ -165,10 +165,11 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     //allcoate two remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
-    
+    const CNetworkAddress addr_srv_1 = ist_1->getAddress();
+    const CNetworkAddress addr_srv_2 = ist_2->getAddress();
     //allocate multiaddress message channel
 //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
-    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(node_address);
+    MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
     msg_chnl->addNode(ist_1->getAddress());
     msg_chnl->addNode(ist_2->getAddress());
     //call to first server
@@ -191,7 +192,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     ist_1.reset();
     
     //remove it
-    msg_chnl->removeNode(node_address[0]);
+    msg_chnl->removeNode(addr_srv_1);
     
     //try to sent message to second server respose
     future = msg_chnl->sendRequestWithFuture("test_rpc",
@@ -245,7 +246,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     //allcoate two remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer();
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
-    
+
     // allocate multiaddress message channel
 //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
