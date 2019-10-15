@@ -167,9 +167,10 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
     
     //allocate multiaddress message channel
-    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
+//    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(node_address);
-    
+    msg_chnl->addNode(ist_1->getAddress());
+    msg_chnl->addNode(ist_2->getAddress());
     //call to first server
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
                                                                                               "actionWithResult",
