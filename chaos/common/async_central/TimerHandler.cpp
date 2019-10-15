@@ -35,6 +35,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 TimerHandler::TimerHandler():
+terminated(false),
 timer(NULL),
 delay(0){}
 
@@ -43,7 +44,7 @@ TimerHandler::~TimerHandler() {
 }
 
 void TimerHandler::timerTimeout(const boost::system::error_code& error) {
-   if(!error){
+   if(!error && !terminated){
         uint64_t start_ts = TimingUtil::getTimeStamp();
         //call timer handler
         timeout();
@@ -52,10 +53,10 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
         
         //wait for next call with the delat correct
         wait(delay-spent_time);
-   } else  if (error ==  boost::asio::error::operation_aborted) {
+   } else if (error ==  boost::asio::error::operation_aborted) {
        ERR << "Timer thread: " << boost::this_thread::get_id() << ", handle_timeout error " << error.message();
    }
-//    if(wait_sem.isInWait()){wait_sem.unlock();}
+    if(terminated){wait_sem.unlock();}
 }
 
 void TimerHandler::wait(uint64_t _delay) {
@@ -69,15 +70,12 @@ void TimerHandler::wait(uint64_t _delay) {
 
 void TimerHandler::removeTimer() {
     if(timer == NULL) return;
+    terminated = true;
     std::size_t remain = 0;
     try{
         remain = timer->cancel();
-//        if(remain == 0) {
-//            //waith the signal
-//            wait_sem.wait();
-//        }
     } catch(boost::system::system_error& ex) {}
-
+    if(remain)wait_sem.wait();
     delete(timer);
     timer = NULL;
 }

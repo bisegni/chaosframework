@@ -69,7 +69,7 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
                                   uint64_t repeat) {
     int err = 0;
     try{
-        boost::unique_lock<boost::mutex> l(mutex);
+//        boost::unique_lock<boost::mutex> l(mutex);
         //check if already installed
         if(timer_handler->timer) return 0;
         
@@ -91,7 +91,7 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
 int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
     int err = 0;
     try{
-        boost::unique_lock<boost::mutex> l(mutex);
+//        boost::unique_lock<boost::mutex> l(mutex);
         timer_handler->removeTimer();
     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::system::system_error> >& ex){
         err = -2;

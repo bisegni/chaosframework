@@ -55,7 +55,7 @@ namespace chaos {
                 boost::asio::io_service::work   asio_default_work;
                 boost::thread_group             asio_thread_group;
                 
-                boost::mutex mutex;
+//                boost::mutex mutex;
 				
 				AsyncCentralManager();
 				~AsyncCentralManager();
