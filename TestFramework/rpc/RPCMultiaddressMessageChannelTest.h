@@ -20,12 +20,13 @@
  */
 #ifndef MultiaddressMessageChannel_hpp
 #define MultiaddressMessageChannel_hpp
-
+#include <set>
 #include <gtest/gtest.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/network/URLHAServiceFeeder.h>
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -58,10 +59,12 @@ public testing::Test {
 protected:
     ChaosUniquePtr<RpcServerInstance> startRpcServer();
 public:
+    std::set<std::string> evicted_url;
     RPCMultiaddressMessageChannelTest();
     ~RPCMultiaddressMessageChannelTest();
     void SetUp();
     void TearDown();
+    void evitionHandler(const chaos::common::network::ServiceRetryInformation& sri);
 };
 
 #endif /* MultiaddressMessageChannel_hpp */

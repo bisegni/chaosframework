@@ -91,8 +91,12 @@ ChaosUniquePtr<RpcServerInstance> RPCMultiaddressMessageChannelTest::startRpcSer
     return ChaosUniquePtr<RpcServerInstance>(new RpcServerInstance());
 }
 
+void RPCMultiaddressMessageChannelTest::evitionHandler(const chaos::common::network::ServiceRetryInformation& sri) {
+    evicted_url.insert(sri.service_url);
+}
 
 void RPCMultiaddressMessageChannelTest::SetUp() {
+    evicted_url.clear();
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
     chaos::GlobalConfiguration::getInstance()->parseStartupParameters(0, NULL);
     
@@ -205,6 +209,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
+//    ChaosBind(&PropertyCollector::changeHandler, this, ChaosBindPlaceholder(_1), ChaosBindPlaceholder(_2), ChaosBindPlaceholder(_3))
     CDWUniquePtr pack(new CDataWrapper());
     pack->addStringValue("echo", "value");
     
@@ -214,6 +219,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     //allocate multiaddress message channel
     
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
+    msg_chnl->setEvitionHandler(ChaosBind(&RPCMultiaddressMessageChannelTest::evitionHandler, this, ChaosBindPlaceholder(_1)));
     msg_chnl->setAutoEvitionForDeadUrl(true);
     
     //call to first server
@@ -237,6 +243,9 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     while(msg_chnl->hasNode(addr_srv_1)) {
         sleep(1);
     }
+    
+    ASSERT_EQ(evicted_url.size(), 1);
+    ASSERT_NE(evicted_url.find(addr_srv_1.ip_port), evicted_url.end());
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {

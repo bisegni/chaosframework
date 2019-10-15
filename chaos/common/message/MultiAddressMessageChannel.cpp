@@ -99,6 +99,10 @@ void MultiAddressMessageChannel::setAutoEvitionForDeadUrl(bool auto_eviction) {
     service_feeder.setAutoEvitionForDeadUrl(auto_eviction);
 }
 
+void MultiAddressMessageChannel::setEvitionHandler(chaos::common::network::URLHAServiceFeeder::EvitionHandler new_evition_handler) {
+    service_feeder.setEvitionHandler(new_evition_handler);
+}
+
 bool MultiAddressMessageChannel::checkIfAddressIsOnline(const CNetworkAddress& address) {
     if(service_feeder.hasURL(address.ip_port) == false) {
         return false;

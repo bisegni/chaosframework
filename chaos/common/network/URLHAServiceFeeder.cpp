@@ -107,6 +107,10 @@ void URLHAServiceFeeder::setAutoEvitionForDeadUrl(bool _auto_eviction_url) {
     auto_eviction_url = _auto_eviction_url;
 }
 
+void URLHAServiceFeeder::setEvitionHandler(EvitionHandler new_evition_handler) {
+    evition_handler = new_evition_handler;
+}
+
 void URLHAServiceFeeder::checkForAliveService() {
     
     uint64_t current_ts = TimingUtil::getTimeStamp();
@@ -122,7 +126,7 @@ void URLHAServiceFeeder::checkForAliveService() {
             sri->retry_times++;
             URLHASF_INFO << "Check if service " << sri->service_url << " has respawn";
             if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri->service_index))){
-                //!service returned online
+                //!service has became online
                 URLHASF_INFO << "Service " << sri->service_url << " returned online";
                 wr.lock();
                 respawned_queue.push(sri->service_index);
@@ -130,6 +134,10 @@ void URLHAServiceFeeder::checkForAliveService() {
                 //check if we need to auto evic the dead url
                 if(auto_eviction_url &&
                    (sri->retry_times % max_service_retry_for_dead) == 0) {
+                    if(evition_handler) {
+                        // call evition handler
+                        evition_handler(*sri);
+                    }
                     // we need to evict the service
                     URLServiceFeeder::removeURL(sri->service_index, true);
                 } else {
@@ -141,9 +149,8 @@ void URLHAServiceFeeder::checkForAliveService() {
                     // readd to retry queue
                     retry_queue.push(sri);
                 }
-                
             }
-        }else{
+        } else {
             wr.lock();
             // readd to retry queue
             retry_queue.push(sri);

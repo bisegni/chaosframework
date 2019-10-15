@@ -149,6 +149,8 @@ namespace chaos {
                 virtual void deinit();
             public:
                 void setAutoEvitionForDeadUrl(bool auto_eviction);
+                //! set the evition handler
+                void setEvitionHandler(chaos::common::network::URLHAServiceFeeder::EvitionHandler new_evition_handler);
                 //! check if an address si online
                 bool checkIfAddressIsOnline(const chaos::common::network::CNetworkAddress& address);
                 //! add a new node to the channel
