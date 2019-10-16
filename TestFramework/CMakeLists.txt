@@ -40,6 +40,7 @@ SET(TestFrameworkSource main.cpp
                         state_flag_catalog/TestStateFlagCatalog.cpp
                         templated_key_value_hash/TemplateKeyValueHashMap.cpp
                         trigger/TriggerTest.cpp
+                        utility/TimerTest.cpp
                         utility/FutureHelperTest.cpp
                         utility/TemplatedMapTest.cpp
                         utility/FutureHelperTest.cpp
