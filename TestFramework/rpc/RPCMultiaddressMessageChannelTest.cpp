@@ -57,21 +57,22 @@ RpcServerInstance::RpcServerInstance() {
     // get the rpc type to instantiate
     rpc_server.reset(ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Server"));
     rpc_server->setAlternatePortAddress(freeFoundPort);
-    rpc_server->setCommandDispatcher(rpc_dispatcher.get());
+    
     EXPECT_NO_THROW({StartableService::initImplementation(rpc_server.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_server->getName(), __PRETTY_FUNCTION__);});
     
     string rpc_client_name = chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Client";
     rpc_client.reset(ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name));
     EXPECT_NO_THROW(StartableService::initImplementation(rpc_client.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_client->getName(), __PRETTY_FUNCTION__));
-    rpc_dispatcher->setRpcForwarder(rpc_client.get());
     
-    EXPECT_NO_THROW(StartableService::startImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
+    rpc_dispatcher->setRpcForwarder(rpc_client.get());
+    rpc_server->setCommandDispatcher(rpc_dispatcher.get());
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__));
+    EXPECT_NO_THROW(StartableService::startImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
 }
 
 RpcServerInstance::~RpcServerInstance() {
-    EXPECT_NO_THROW({StartableService::stopImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__);});
     EXPECT_NO_THROW(StartableService::stopImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
+    EXPECT_NO_THROW({StartableService::stopImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__);});
     EXPECT_NO_THROW({StartableService::stopImplementation(rpc_dispatcher.get(), "DefaultCommandDispatcher", __PRETTY_FUNCTION__);});
     
     EXPECT_NO_THROW({StartableService::deinitImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__);});

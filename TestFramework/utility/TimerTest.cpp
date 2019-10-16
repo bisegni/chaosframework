@@ -35,7 +35,7 @@ TEST(TimerTest, MultiStartStopReuseSameTimer) {
     boost::random::mt19937 rng;
     boost::random::uniform_int_distribution<> timeou_rnd_gen(1,1000);
     TimerExample t;
-    for(int idx = 0; idx < 100; idx++) {
+    for(int idx = 0; idx < 10; idx++) {
         std::cout << "[          ] " << "-" << idx << "-Start...";
         AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rng));
         usleep(timeou_rnd_gen(rng)*1000);
@@ -47,7 +47,7 @@ TEST(TimerTest, MultiStartStopReuseSameTimer) {
 TEST(TimerTest, MultiStartStop) {
     boost::random::mt19937 rng;
     boost::random::uniform_int_distribution<> timeou_rnd_gen(1,1000);
-    for(int idx = 0; idx < 100; idx++) {
+    for(int idx = 0; idx < 10; idx++) {
         TimerExample t;
         std::cout << "[          ] " << "-" << idx << "-Start...";
         AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rng));
@@ -59,7 +59,7 @@ TEST(TimerTest, MultiStartStop) {
 
 TEST(TimerTest, MultiStartCounter) {
     TimerExample::counter = 0;
-    for(int idx = 0; idx < 100; idx++) {
+    for(int idx = 0; idx < 10; idx++) {
         TimerExample t;
         std::cout << "[          ] " << "-" << idx << "-Start...";
         AsyncCentralManager::getInstance()->addTimer(&t, 0, 1000);
@@ -67,5 +67,5 @@ TEST(TimerTest, MultiStartCounter) {
         AsyncCentralManager::getInstance()->removeTimer(&t);
         std::cout << "end" << std::endl;
     }
-    ASSERT_EQ(TimerExample::counter, 100);
+    ASSERT_EQ(TimerExample::counter, 10);
 }
