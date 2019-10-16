@@ -271,6 +271,15 @@ CDWUniquePtr CDataWrapper::getCSDataValue(const std::string& key) const{
         return CDWUniquePtr(new CDataWrapper());
     }
 }
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::getCSProjection(const std::vector<std::string>&keys) const{
+    CDWUniquePtr ret(new CDataWrapper());
+    for(std::vector<std::string>::const_iterator i=keys.begin();i!=keys.end();i++){
+        copyKeyTo(*i,*ret.get());
+    }
+    return ret;
+
+}
+
 std::string CDataWrapper::getJsonValue(const std::string& key) const{
     ChaosUniquePtr<CDataWrapper> tmp=getCSDataValue(key);
     if(tmp.get()){
@@ -1061,6 +1070,7 @@ string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) const{
     }
     return std::string(values[pos]->value.v_utf8.str, values[pos]->value.v_utf8.len);
 }
+
 
 double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) const{
     if(values[pos]->value_type != BSON_TYPE_DOUBLE){

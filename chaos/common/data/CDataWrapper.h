@@ -117,6 +117,9 @@ namespace chaos {
                 void addCSDataValue(const std::string&, const CDataWrapper&);
                 //get a csdata value
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSDataValue(const std::string&) const;
+                //get a projection of a vector of keys
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSProjection(const std::vector<std::string>&) const;
+
                 //add a string value
                 //void addStringValue(const char *, const char *);
                 //add a string value
@@ -346,7 +349,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 int32_t getInt32ElementAtIndex(const int) const;
                 int64_t getInt64ElementAtIndex(const int) const;
                 bool getBoolElementAtIndex(const int) const;
-
+              
+               
                 ChaosUniquePtr<CDataWrapper> getCDataWrapperElementAtIndex(const int) const;
                 std::string getJSONString();
                 std::string getCanonicalJSONString();
@@ -375,6 +379,14 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                     ss<<"type at index ["<<pos<<"] cannot convert, typeid:"<<values[pos]->value_type;
                     throw CException(1, ss.str(), __PRETTY_FUNCTION__);
                     return 0;
+                }
+
+                operator std::vector<std::string>(){
+                    std::vector<std::string> ret;
+                    for(int cnt=0;cnt<size();cnt++){
+                        ret.push_back(getStringElementAtIndex(cnt));
+                    }
+                    return ret;
                 }
                 const char * getRawValueAtIndex(const int key,uint32_t& size) const;
                 size_t size() const;
