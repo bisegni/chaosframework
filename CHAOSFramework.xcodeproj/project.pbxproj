@@ -457,6 +457,7 @@
 		32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32661C6F1AA74E4700F1A721 /* NodeMessageChannel.cpp */; };
 		32661C751AA867E100F1A721 /* MessageRequestFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32661C731AA867E100F1A721 /* MessageRequestFuture.cpp */; };
 		32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 32661C741AA867E100F1A721 /* MessageRequestFuture.h */; };
+		32668B47235770A0004F6D69 /* TimerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32668B45235770A0004F6D69 /* TimerTest.cpp */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
 		3266ED78224D4312009D1CFB /* QueryIndexCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266ED76224D4312009D1CFB /* QueryIndexCursor.cpp */; };
 		3266ED79224D4312009D1CFB /* QueryIndexCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3266ED77224D4312009D1CFB /* QueryIndexCursor.h */; };
@@ -1838,6 +1839,8 @@
 		32661C721AA76EEB00F1A721 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32661C731AA867E100F1A721 /* MessageRequestFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageRequestFuture.cpp; sourceTree = "<group>"; };
 		32661C741AA867E100F1A721 /* MessageRequestFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageRequestFuture.h; sourceTree = "<group>"; };
+		32668B45235770A0004F6D69 /* TimerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimerTest.cpp; sourceTree = "<group>"; };
+		32668B46235770A0004F6D69 /* TimerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimerTest.h; sourceTree = "<group>"; };
 		3266A5DD18A6315600637592 /* ZMQBaseClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMQBaseClass.h; sourceTree = "<group>"; };
 		3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQBaseClass.cpp; sourceTree = "<group>"; };
 		3266ED76224D4312009D1CFB /* QueryIndexCursor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QueryIndexCursor.cpp; sourceTree = "<group>"; };
@@ -3470,6 +3473,8 @@
 				3238885B21627C0400CC8A2B /* FutureHelperTest.cpp */,
 				3238885C21627C0400CC8A2B /* FutureHelperTest.h */,
 				3238885D21627C0400CC8A2B /* TemplatedMapTest.cpp */,
+				32668B45235770A0004F6D69 /* TimerTest.cpp */,
+				32668B46235770A0004F6D69 /* TimerTest.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -6950,6 +6955,7 @@
 				3238887A21627C0500CC8A2B /* TestBatchDefault.cpp in Sources */,
 				3238888C21627C0500CC8A2B /* ScriptClingTest.cpp in Sources */,
 				3238887E21627C0500CC8A2B /* MemcachedEmbedded.cpp in Sources */,
+				32668B47235770A0004F6D69 /* TimerTest.cpp in Sources */,
 				32CFCE352354638700740369 /* RPCMultiaddressMessageChannelTest.cpp in Sources */,
 				3238887821627C0500CC8A2B /* BatchComandTest.cpp in Sources */,
 				3238888021627C0500CC8A2B /* QueueTest.cpp in Sources */,

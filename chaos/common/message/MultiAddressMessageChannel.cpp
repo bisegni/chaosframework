@@ -81,6 +81,10 @@ MultiAddressMessageChannel::~MultiAddressMessageChannel() {
 
 void MultiAddressMessageChannel::init() {
     MessageChannel::init();
+    //time for check the reconenction
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 1000,
+                                                 1000);
 }
 
 void MultiAddressMessageChannel::deinit() {
@@ -90,9 +94,6 @@ void MultiAddressMessageChannel::deinit() {
 
 void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url) {
     service_feeder.setURLAsOffline(offline_url);
-    AsyncCentralManager::getInstance()->addTimer(this,
-                                                 1000,
-                                                 1000);
 }
 
 void MultiAddressMessageChannel::setAutoEvitionForDeadUrl(bool auto_eviction) {
@@ -155,9 +156,9 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 
 void MultiAddressMessageChannel::timeout() {
     service_feeder.checkForAliveService();
-    if(service_feeder.getOfflineSize() == 0) {
-        AsyncCentralManager::getInstance()->removeTimer(this);
-    }
+//    if(service_feeder.getOfflineSize() == 0) {
+//        AsyncCentralManager::getInstance()->removeTimer(this);
+//    }
 }
 
 //! get the rpc published host and port

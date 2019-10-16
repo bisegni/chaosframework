@@ -119,12 +119,10 @@ void ZMQServer::stop() {
 void ZMQServer::deinit() {
     run_server = false;
     ZMQS_LAPP << "Stopping thread";
-    //wiath all thread
+    //wait all thread
     zmq_ctx_shutdown(zmq_context);
-    
     thread_group.join_all();
     zmq_ctx_destroy(zmq_context);
-    
     ZMQS_LAPP << "Thread stopped";
 }
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);

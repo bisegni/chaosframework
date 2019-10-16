@@ -35,33 +35,43 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 TimerHandler::TimerHandler():
-terminated(false),
-timer(NULL),
+stoppped(false),
+need_signal(false),
+cicle_test(false),
 delay(0){}
 
-TimerHandler::~TimerHandler() {
-    delete(timer);
+TimerHandler::~TimerHandler() {}
+
+void TimerHandler::reset() {
+    need_signal = false;
+    stoppped = false;
+    cicle_test = false;
+    timer.reset();
+    delay = 0;
 }
 
 void TimerHandler::timerTimeout(const boost::system::error_code& error) {
-   if(!error && !terminated){
+    if(error) return;
+    cicle_test = false;
+    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
+    if(!stoppped){
         uint64_t start_ts = TimingUtil::getTimeStamp();
         //call timer handler
         timeout();
-        
         uint64_t spent_time = TimingUtil::getTimeStamp()-start_ts;
-        
         //wait for next call with the delat correct
         wait(delay-spent_time);
-   } else if (error ==  boost::asio::error::operation_aborted) {
-       ERR << "Timer thread: " << boost::this_thread::get_id() << ", handle_timeout error " << error.message();
-   }
-    if(terminated){wait_sem.unlock();}
+    }
+    if(stoppped){
+        cicle_test = false;
+    }
+    if(need_signal){wait_answer_condition.notify_one();}
 }
 
 void TimerHandler::wait(uint64_t _delay) {
-    if(timer == NULL) return;
+    if(timer.get() == NULL) return;
     //repeat rate
+    cicle_test = true;
     timer->expires_from_now(boost::posix_time::milliseconds(_delay));
     timer->async_wait(boost::bind(&TimerHandler::timerTimeout,
                                   this,
@@ -69,13 +79,18 @@ void TimerHandler::wait(uint64_t _delay) {
 }
 
 void TimerHandler::removeTimer() {
-    if(timer == NULL) return;
-    terminated = true;
+    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
+    stoppped = true;
     std::size_t remain = 0;
     try{
-        remain = timer->cancel();
+        if(timer.get()) {
+            remain = timer->cancel();
+        }
     } catch(boost::system::system_error& ex) {}
-    if(remain)wait_sem.wait();
-    delete(timer);
-    timer = NULL;
+    if((remain==0) && cicle_test) {
+        need_signal = true;
+        //we are in acse of a timer task can't be stopped
+        while(cicle_test){wait_answer_condition.wait(lock);};
+    }
+    
 }

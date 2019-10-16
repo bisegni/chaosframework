@@ -69,11 +69,12 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
                                   uint64_t repeat) {
     int err = 0;
     try{
-//        boost::unique_lock<boost::mutex> l(mutex);
+        boost::unique_lock<boost::mutex> l(mutex);
         //check if already installed
         if(timer_handler->timer) return 0;
-        
-        if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
+        timer_handler->reset();
+        timer_handler->timer.reset(new deadline_timer(asio_service));
+        if(timer_handler->timer.get() == NULL) {
             err = -1;
         } else {
             timer_handler->delay = repeat;
@@ -91,8 +92,9 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
 int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
     int err = 0;
     try{
-//        boost::unique_lock<boost::mutex> l(mutex);
+        boost::unique_lock<boost::mutex> l(mutex);
         timer_handler->removeTimer();
+        timer_handler->timer.reset();
     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::system::system_error> >& ex){
         err = -2;
     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::lock_error> > & ex) {
