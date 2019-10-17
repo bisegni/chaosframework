@@ -20,10 +20,16 @@
  */
 
 #include <gtest/gtest.h>
+
+#include <boost/random.hpp>
+#include <boost/generator_iterator.hpp>
+#include <boost/random/random_device.hpp>
+
 #include "TimerTest.h"
 
 using namespace chaos::common::async_central;
 
+static boost::random_device rd;
 uint32_t TimerExample::counter = 0;
 
 void TimerExample::timeout(){
@@ -32,26 +38,24 @@ void TimerExample::timeout(){
 }
 
 TEST(TimerTest, MultiStartStopReuseSameTimer) {
-    boost::random::mt19937 rng;
     boost::random::uniform_int_distribution<> timeou_rnd_gen(1,1000);
     TimerExample t;
     for(int idx = 0; idx < 10; idx++) {
         std::cout << "[          ] " << "-" << idx << "-Start...";
-        AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rng));
-        usleep(timeou_rnd_gen(rng)*1000);
+        AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rd));
+        usleep(timeou_rnd_gen(rd)*1000);
         AsyncCentralManager::getInstance()->removeTimer(&t);
         std::cout << "end" << std::endl;
     }
 }
 
 TEST(TimerTest, MultiStartStop) {
-    boost::random::mt19937 rng;
     boost::random::uniform_int_distribution<> timeou_rnd_gen(1,1000);
     for(int idx = 0; idx < 10; idx++) {
         TimerExample t;
         std::cout << "[          ] " << "-" << idx << "-Start...";
-        AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rng));
-        usleep(timeou_rnd_gen(rng)*1000);
+        AsyncCentralManager::getInstance()->addTimer(&t, 0, timeou_rnd_gen(rd));
+        usleep(timeou_rnd_gen(rd)*1000);
         AsyncCentralManager::getInstance()->removeTimer(&t);
         std::cout << "end" << std::endl;
     }
