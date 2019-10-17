@@ -71,7 +71,7 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
     try{
         boost::unique_lock<boost::mutex> l(mutex);
         //check if already installed
-        if(timer_handler->timer) return 0;
+        if(timer_handler->timer.get()) return 0;
         timer_handler->reset();
         timer_handler->timer.reset(new deadline_timer(asio_service));
         if(timer_handler->timer.get() == NULL) {
