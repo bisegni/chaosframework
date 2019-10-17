@@ -30,6 +30,20 @@ using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
+
+
+
+#pragma mark util
+static bool portInUse(unsigned short port) {
+    using namespace boost::asio;
+    using ip::tcp;
+    io_service svc;
+    tcp::acceptor a(svc);
+    boost::system::error_code ec;
+    a.open(tcp::v4(), ec) || a.bind({ tcp::v4(), port }, ec);
+    return ec == boost::system::errc::address_in_use;
+}
+
 #pragma mark RpcHandler2
 RpcHandler2::RpcHandler2():
 actionWithResultCounter(0){
@@ -47,8 +61,16 @@ CDWUniquePtr RpcHandler2::actionWithResult(CDWUniquePtr action_data) {
 }
 
 #pragma mark RpcServerInstance
+int32_t RpcServerInstance::freeFoundPort = 9000;
 RpcServerInstance::RpcServerInstance() {
-    int32_t freeFoundPort = InetUtility::scanForLocalFreePort(8888);
+    startup(freeFoundPort++);
+}
+RpcServerInstance::RpcServerInstance(const CNetworkAddress& forced_address) {
+    std::string port_str = forced_address.ip_port.substr(forced_address.ip_port.find(":")+1);
+    startup(std::atoi(port_str.c_str()));
+}
+
+void RpcServerInstance::startup(int32_t port) {
     rpc_dispatcher.reset(ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher"));
     rpc_dispatcher->registerAction(&rpc_handler);
     EXPECT_NO_THROW(StartableService::initImplementation(rpc_dispatcher.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), "DefaultCommandDispatcher", __PRETTY_FUNCTION__));
@@ -56,7 +78,7 @@ RpcServerInstance::RpcServerInstance() {
     
     // get the rpc type to instantiate
     rpc_server.reset(ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Server"));
-    rpc_server->setAlternatePortAddress(freeFoundPort);
+    rpc_server->setAlternatePortAddress(port);
     
     EXPECT_NO_THROW({StartableService::initImplementation(rpc_server.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_server->getName(), __PRETTY_FUNCTION__);});
     
@@ -68,6 +90,9 @@ RpcServerInstance::RpcServerInstance() {
     rpc_server->setCommandDispatcher(rpc_dispatcher.get());
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__));
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
+    
+    //wait for open port
+    while(!portInUse(port));
 }
 
 RpcServerInstance::~RpcServerInstance() {
@@ -90,6 +115,10 @@ RPCMultiaddressMessageChannelTest::~RPCMultiaddressMessageChannelTest(){}
 
 ChaosUniquePtr<RpcServerInstance> RPCMultiaddressMessageChannelTest::startRpcServer() {
     return ChaosUniquePtr<RpcServerInstance>(new RpcServerInstance());
+}
+
+ChaosUniquePtr<RpcServerInstance> RPCMultiaddressMessageChannelTest::startRpcServer(const CNetworkAddress& forced_address) {
+    return ChaosUniquePtr<RpcServerInstance>(new RpcServerInstance(forced_address));
 }
 
 void RPCMultiaddressMessageChannelTest::evitionHandler(const chaos::common::network::ServiceRetryInformation& sri) {
@@ -169,6 +198,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
     const CNetworkAddress addr_srv_1 = ist_1->getAddress();
     const CNetworkAddress addr_srv_2 = ist_2->getAddress();
+    ASSERT_NE(addr_srv_1.ip_port, addr_srv_2.ip_port);
     //allocate multiaddress message channel
 //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
@@ -256,7 +286,8 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     // allocate multiaddress message channel
 //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
-    msg_chnl->addNode(ist_1->getAddress());
+    const CNetworkAddress addr_src_1 = ist_1->getAddress();
+    msg_chnl->addNode(addr_src_1);
     
     //call to first server
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
@@ -278,7 +309,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
     
     //recreate one
-    ist_1 = startRpcServer();
+    ist_1 = startRpcServer(addr_src_1);
     //wait some time for permit messagechannel reconnection
     do{
         sleep(1);

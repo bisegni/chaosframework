@@ -43,12 +43,15 @@ protected:
 };
 
 class RpcServerInstance {
+    static int32_t freeFoundPort;
     RpcHandler2 rpc_handler;
     ChaosUniquePtr<chaos::AbstractCommandDispatcher> rpc_dispatcher;
     ChaosUniquePtr<chaos::RpcClient> rpc_client;
     ChaosUniquePtr<chaos::RpcServer> rpc_server;
+    void startup(int32_t port);
 public:
     RpcServerInstance();
+    RpcServerInstance(const CNetworkAddress& forced_address);
     ~RpcServerInstance();
     const CNetworkAddress getAddress();
 };
@@ -58,6 +61,7 @@ public testing::Test {
     RpcHandler2 rpc_handler;
 protected:
     ChaosUniquePtr<RpcServerInstance> startRpcServer();
+    ChaosUniquePtr<RpcServerInstance> startRpcServer(const CNetworkAddress& forced_address);
 public:
     std::set<std::string> evicted_url;
     RPCMultiaddressMessageChannelTest();
