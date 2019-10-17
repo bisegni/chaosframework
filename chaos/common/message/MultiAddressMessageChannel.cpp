@@ -116,7 +116,7 @@ void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
 }
 
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
-    service_feeder.removeURL(node_address.ip_port);
+    service_feeder.removeURL(node_address.ip_port, true);
 }
 
 bool MultiAddressMessageChannel::hasNode(const chaos::common::network::CNetworkAddress& node_address) {

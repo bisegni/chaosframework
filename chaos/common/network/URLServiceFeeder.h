@@ -95,7 +95,7 @@ namespace chaos {
                  \param idx index of the service
                  \param deallocate_service if true perform the service deallocation
                  */
-                virtual void removeURL(uint32_t idx, bool dispose_service = false);
+                virtual void removeURL(uint32_t idx, bool dispose_service = true);
                 
                 //!return the url string from index
                 std::string getURLForIndex(uint32_t idx);

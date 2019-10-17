@@ -247,7 +247,9 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 		return;
 	}
 	//delete service instance
-    if(dispose_service) {handler->disposeService(service_list[idx]->service);}
+    if(dispose_service) {
+        handler->disposeService(service_list[idx]->service);
+    }
 	removeFromOnlineQueue(idx);
 	available_url.insert(idx);
     //remove index url association
