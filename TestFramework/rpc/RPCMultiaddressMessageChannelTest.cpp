@@ -156,7 +156,6 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     
     //allcoate one remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
-    DEBUG_PRINTER("server_1 opened on " << ist_1->getAddress().ip_port)
     //allocate multiaddress message channel
     
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
@@ -192,7 +191,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     ist_1.reset();
     DEBUG_PRINTER("Destroied server 1")
     msg_chnl->addNode(ist_2->getAddress());
-    DEBUG_PRINTER("server_2 opened on " << ist_2->getAddress().ip_port)
+    DEBUG_PRINTER("channel association to server [" << ist_2->getAddress().ip_port << "]")
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
@@ -272,7 +271,6 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     //allcoate one remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
     const CNetworkAddress addr_srv_1 = ist_1->getAddress();
-    DEBUG_PRINTER("server_1 opened on " << addr_srv_1.ip_port);
     //allocate multiaddress message channel
     
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
