@@ -31,6 +31,7 @@ using namespace chaos::common::message;
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
+#define BASE_TEST_TCP_PORT 20000
 #define DEBUG_PRINTER(x) std::cout << "[          ] " << x <<std::endl;
 
 #pragma mark util
@@ -155,7 +156,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     pack->addStringValue("echo", "value");
     
     //allcoate one remote server
-    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
     //allocate multiaddress message channel
     
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
@@ -210,10 +211,10 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     pack->addStringValue("echo", "value");
     
     //allcoate two remote server
-    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
-    ASSERT_EQ(ist_1->getAddress().ip_port, "127.0.0.1:10000");
-    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer(10001);
-    ASSERT_EQ(ist_2->getAddress().ip_port, "127.0.0.1:10001");
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
+    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer(BASE_TEST_TCP_PORT+1);
+    ASSERT_EQ(ist_2->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %(BASE_TEST_TCP_PORT+1)));
     const CNetworkAddress addr_srv_1 = ist_1->getAddress();
     const CNetworkAddress addr_srv_2 = ist_2->getAddress();
     
@@ -269,7 +270,8 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     pack->addStringValue("echo", "value");
     
     //allcoate one remote server
-    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
     const CNetworkAddress addr_srv_1 = ist_1->getAddress();
     //allocate multiaddress message channel
     
@@ -312,8 +314,8 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     pack->addStringValue("echo", "value");
     
     //allcoate two remote server
-    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
-    ASSERT_EQ(ist_1->getAddress().ip_port, "127.0.0.1:10000");
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
     const CNetworkAddress addr1 = ist_1->getAddress();
     // allocate multiaddress message channel
     //    std::vector<CNetworkAddress> node_address = {ist_1->getAddress(), ist_2->getAddress()};
@@ -343,8 +345,8 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
     DEBUG_PRINTER("Wait and got answer")
     //recreate one
-    ist_1 = startRpcServer(10000);
-    ASSERT_EQ(ist_1->getAddress().ip_port, "127.0.0.1:10000");
+    ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
     DEBUG_PRINTER("restarted server_1 on same port [" << ist_1->getAddress().ip_port << "]");
     //wait some time for permit messagechannel reconnection
     do{
@@ -368,10 +370,10 @@ TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
     pack->addStringValue("echo", "value");
     
     //allcoate two remote server
-    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
-    ASSERT_EQ(ist_1->getAddress().ip_port, "127.0.0.1:10000");
-    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer(10001);
-    ASSERT_EQ(ist_2->getAddress().ip_port, "127.0.0.1:10001");
+    ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(BASE_TEST_TCP_PORT);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
+    ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer(BASE_TEST_TCP_PORT+1);
+    ASSERT_EQ(ist_1->getAddress().ip_port, CHAOS_FORMAT("127.0.0.1:%1%", %BASE_TEST_TCP_PORT));
     const CNetworkAddress addr1 = ist_1->getAddress();
     const CNetworkAddress addr2 = ist_2->getAddress();
     // allocate multiaddress message channel
