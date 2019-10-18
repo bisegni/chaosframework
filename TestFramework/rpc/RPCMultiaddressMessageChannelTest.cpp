@@ -156,28 +156,33 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     
     //allcoate one remote server
     ChaosUniquePtr<RpcServerInstance> ist_1 = startRpcServer(10000);
-    DEBUG_PRINTER("- server_1 opened on " << ist_1->getAddress().ip_port)
+    DEBUG_PRINTER("server_1 opened on " << ist_1->getAddress().ip_port)
     //allocate multiaddress message channel
     
     MultiAddressMessageChannel *msg_chnl = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel();
-    
+    DEBUG_PRINTER("got channel")
     //call to first server
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
                                                                                               "actionWithResult",
                                                                                               ChaosMoveOperator(pack),
                                                                                               1000);
+    DEBUG_PRINTER("Sent request")
     // false because no server are set
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
+    DEBUG_PRINTER("Wait end got what expcted")
     //add first
     msg_chnl->addNode(ist_1->getAddress());
+    DEBUG_PRINTER("Add address")
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
     // false because no server are set
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait end got what expcted")
     DEBUG_PRINTER("remove server_1 [" << ist_1->getAddress().ip_port << "]")
     msg_chnl->removeNode(ist_1->getAddress());
     
@@ -185,17 +190,20 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
     ChaosUniquePtr<RpcServerInstance> ist_2 = startRpcServer();
     //stop first server because now second has different port
     ist_1.reset();
-    
+    DEBUG_PRINTER("Destroied server 1")
     msg_chnl->addNode(ist_2->getAddress());
     DEBUG_PRINTER("server_2 opened on " << ist_2->getAddress().ip_port)
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request")
     // false because no server are set
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait end got what expcted")
     ist_2.reset();
+    DEBUG_PRINTER("Destroied server 2")
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
@@ -223,31 +231,37 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
                                                                                               "actionWithResult",
                                                                                               ChaosMoveOperator(pack),
                                                                                               1000);
+    DEBUG_PRINTER("Sent request")
     // first server respose
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
     // second server respose
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
-    
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
     //kill first server
     ist_1.reset();
-    
+    DEBUG_PRINTER("Destroied server 1")
     //remove it
     msg_chnl->removeNode(addr_srv_1);
-    DEBUG_PRINTER("- remove server_1 [" << addr_srv_1.ip_port << "]")
+    DEBUG_PRINTER("remove server_1 [" << addr_srv_1.ip_port << "]")
     //try to sent message to second server respose
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
     ist_2.reset();
+    DEBUG_PRINTER("Destroied server 2")
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
@@ -265,23 +279,26 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     msg_chnl->setEvitionHandler(ChaosBind(&RPCMultiaddressMessageChannelTest::evitionHandler, this, ChaosBindPlaceholder(_1)));
     msg_chnl->setAutoEvitionForDeadUrl(true);
     msg_chnl->addNode(addr_srv_1);
-    
+    DEBUG_PRINTER("Got channel");
     //call to first server
     ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture("test_rpc",
                                                                                               "actionWithResult",
                                                                                               ChaosMoveOperator(pack),
                                                                                               1000);
+    DEBUG_PRINTER("Sent request");
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
-    
+    DEBUG_PRINTER("Wait and got answer")
     ist_1.reset();
-    DEBUG_PRINTER("stopped server_1 [" << addr_srv_1.ip_port << "]");
+    DEBUG_PRINTER("Destroied server 1")
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request");
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
+    DEBUG_PRINTER("Wait and got answer")
     //waith for evicction
     DEBUG_PRINTER("wait for eviciton server_1 [" << addr_srv_1.ip_port << "]");
     while(msg_chnl->hasNode(addr_srv_1)) {
@@ -310,24 +327,27 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
                                                                                               "actionWithResult",
                                                                                               ChaosMoveOperator(pack),
                                                                                               1000);
+    DEBUG_PRINTER("Sent request");
     // first server respose
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
     //kill first server
     ist_1.reset();
-    DEBUG_PRINTER("stopped server_1 [" << addr1.ip_port << "]");
+    DEBUG_PRINTER("Destroied server 1")
     //try to sent message to second server respose
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
-    
+    DEBUG_PRINTER("Wait and got answer")
     //recreate one
     ist_1 = startRpcServer(10000);
     ASSERT_EQ(ist_1->getAddress().ip_port, "127.0.0.1:10000");
-    DEBUG_PRINTER("restart server_1 on same port [" << ist_1->getAddress().ip_port << "]");
+    DEBUG_PRINTER("restarted server_1 on same port [" << ist_1->getAddress().ip_port << "]");
     //wait some time for permit messagechannel reconnection
     do{
         sleep(1);
@@ -336,11 +356,13 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
                                                  "actionWithResult",
                                                  ChaosMoveOperator(pack),
                                                  1000);
+        DEBUG_PRINTER("Sent request")
         ASSERT_TRUE(future->wait());
         //    ASSERT_EQ(future->getError(),  0);
     } while (future->getError() == chaos::ErrorRpcCoce::EC_RPC_REQUEST_FUTURE_NOT_AVAILABLE);
     DEBUG_PRINTER("reconnected server_1 [" << ist_1->getAddress().ip_port << "]");
     ist_1.reset();
+    DEBUG_PRINTER("Destroied server 1")
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
@@ -376,18 +398,21 @@ TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
-    
+    DEBUG_PRINTER("Wait and got answer")
     //kill first server
     ist_1.reset();
-    DEBUG_PRINTER("stopped server_1 [" << addr1.ip_port << "]");
+    DEBUG_PRINTER("Destroied server 1")
     future = msg_chnl->sendRequestWithFuture("test_rpc",
                                              "actionWithResult",
                                              ChaosMoveOperator(pack),
                                              1000);
+    DEBUG_PRINTER("Sent request")
     ASSERT_TRUE(future->wait());
     ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
     ist_2.reset();
-    DEBUG_PRINTER("stopped server_2 [" << addr1.ip_port << "]");
+    DEBUG_PRINTER("Destroied server 2")
 }
