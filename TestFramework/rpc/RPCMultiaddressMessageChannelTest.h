@@ -51,6 +51,7 @@ class RpcServerInstance {
     void startup(int32_t port);
 public:
     RpcServerInstance();
+    RpcServerInstance(int32_t port);
     RpcServerInstance(const CNetworkAddress& forced_address);
     ~RpcServerInstance();
     const CNetworkAddress getAddress();
@@ -61,6 +62,7 @@ public testing::Test {
     RpcHandler2 rpc_handler;
 protected:
     ChaosUniquePtr<RpcServerInstance> startRpcServer();
+    ChaosUniquePtr<RpcServerInstance> startRpcServer(int32_t port);
     ChaosUniquePtr<RpcServerInstance> startRpcServer(const CNetworkAddress& forced_address);
 public:
     std::set<std::string> evicted_url;
