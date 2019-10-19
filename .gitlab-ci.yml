@@ -68,7 +68,7 @@ test_u_14_04_gcc49:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_output=xml:report_test.xml --gtest_repeat=10 --gtest_break_on_failure --log-on-console --log-level debug
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_output=xml:report_test.xml --gtest_repeat=10 --gtest_break_on_failure
     - lcov -c -d chaos --output-file coverage.info
     - genhtml coverage.info --output-directory coverage_html
     - gcovr -k -r chaos --object-directory=chaos
@@ -260,7 +260,7 @@ test_dbg_c7:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib:/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib64
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure --log-on-console --log-level debug
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   artifacts:
     paths:
         - 'chaos-distrib-x86_64-Linux'
@@ -431,7 +431,7 @@ test_u_14_04_gcc48_c98:
     - export PPROF_PATH=chaos-distrib-x86_64-Linux/bin/pprof
     - export LD_LIBRARY_PATH=/builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/lib
     - export HEAPCHECK=normal
-    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure --log-on-console --log-level debug
+    - chaos-distrib-x86_64-Linux/bin/TestFramework --gtest_repeat=10 --gtest_break_on_failure
   only:
     refs:
       - web
