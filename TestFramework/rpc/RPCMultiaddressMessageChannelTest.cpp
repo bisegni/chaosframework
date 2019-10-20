@@ -113,7 +113,7 @@ void RpcServerInstance::startup(int32_t port) {
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
     
     //wait for open port
-    while(!portInUse(port));
+    // while(!portInUse(port));
     DEBUG_PRINTER("Server opened on port" << port);
 }
 
