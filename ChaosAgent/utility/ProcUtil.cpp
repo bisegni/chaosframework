@@ -39,7 +39,7 @@
 using namespace std;
 
 using namespace chaos::common;
-
+using namespace chaos::common::network;
 using namespace chaos::agent::utility;
 using namespace chaos::service_common::data::agent;
 
