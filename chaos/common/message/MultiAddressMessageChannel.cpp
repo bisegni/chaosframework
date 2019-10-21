@@ -127,7 +127,10 @@ void MultiAddressMessageChannel::removeAllNode() {
     service_feeder.clear(true);
 }
 
-//
+size_t MultiAddressMessageChannel::getNumberOfManagedNodes() {
+    return service_feeder.getNumberOfURL();
+}
+
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     if(service) delete(service);
@@ -156,9 +159,6 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 
 void MultiAddressMessageChannel::timeout() {
     service_feeder.checkForAliveService();
-//    if(service_feeder.getOfflineSize() == 0) {
-//        AsyncCentralManager::getInstance()->removeTimer(this);
-//    }
 }
 
 //! get the rpc published host and port

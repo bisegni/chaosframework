@@ -44,6 +44,9 @@ bool DomainActions::addActionDescriptor(AbstActionDescShrPtr actionDescriptorPtr
     //check is the domain is the same
     if((*actionDescriptorPtr).getTypeValue(AbstractActionDescriptor::ActionDomain) != domainName ) return false;
     
+    //enable action
+    actionDescriptorPtr->setEnabled(true);
+    
     //add the description
     actionDescriptionsMap.insert(make_pair((*actionDescriptorPtr).getTypeValue(AbstractActionDescriptor::ActionName), actionDescriptorPtr));
     
@@ -63,7 +66,6 @@ void DomainActions::removeActionDescriptor(AbstActionDescShrPtr actionDescriptor
     //lock the action for write, so we can schedule it
     actionDescriptorPtr->setEnabled(false);
 
-    
     //here need to be made some controll in case that action is running 
     actionDescriptionsMap.erase((*actionDescriptorPtr).getTypeValue(AbstractActionDescriptor::ActionName));
 }

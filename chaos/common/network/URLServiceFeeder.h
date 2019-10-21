@@ -132,6 +132,9 @@ namespace chaos {
                 
                 //! set the feed mode
                 void setFeedMode(URLServiceFeedMode new_feed_mode);
+                
+                //!Return the total number for managed url
+                size_t getNumberOfURL();
             protected:
                 boost::mutex mutex_internal;
                 //! contain the service index rule information

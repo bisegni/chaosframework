@@ -18,12 +18,10 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#ifndef MultiaddressMessageChannel_hpp
-#define MultiaddressMessageChannel_hpp
 
+#ifndef MDSChannelTest_hpp
+#define MDSChannelTest_hpp
 #include "RpcServerInstance.h"
-
-#include <set>
 #include <gtest/gtest.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
@@ -35,28 +33,25 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/action/DeclareAction.h>
-class RpcHandler2:
+
+class BestEndpointRPCHandler:
 public chaos::DeclareAction {
+    const std::vector<std::string> node_rpc_url;
 public:
-    ChaosAtomic<uint32_t> actionWithResultCounter;
-    RpcHandler2();
-    ~RpcHandler2();
+    BestEndpointRPCHandler(const std::vector<std::string>& _node_rpc_url);
+    ~BestEndpointRPCHandler();
 protected:
-    chaos::common::data::CDWUniquePtr actionWithResult(chaos::common::data::CDWUniquePtr action_data);
+    chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr action_data);
 };
 
-class RPCMultiaddressMessageChannelTest:
+class RPCMDSChannelTest:
 public testing::Test {
-protected:
-    ChaosUniquePtr<RpcServerInstance> startRpcServer(int32_t port, ChaosSharedPtr<RpcHandler2> handler);
-    ChaosUniquePtr<RpcServerInstance> startRpcServer(const CNetworkAddress& forced_address, ChaosSharedPtr<RpcHandler2> handler);
 public:
-    std::set<std::string> evicted_url;
-    RPCMultiaddressMessageChannelTest();
-    ~RPCMultiaddressMessageChannelTest();
+    RPCMDSChannelTest();
+    ~RPCMDSChannelTest();
     void SetUp();
     void TearDown();
     void evitionHandler(const chaos::common::network::ServiceRetryInformation& sri);
 };
 
-#endif /* MultiaddressMessageChannel_hpp */
+#endif /* MDSChannelTest_hpp */

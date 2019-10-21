@@ -23,7 +23,8 @@
 
 #include <chaos/common/network/URLHAServiceFeeder.h>
 
-#define RETRY_TIME 1000
+#define RETRY_TIME                  1000
+#define MAX_RERTY_TIMES_FOR_DEAD    3
 
 #define URLHASF_INFO    INFO_LOG(URLHAServiceFeeder) << "["<<getName()<<"] - "
 #define URLHASF_DBG     DBG_LOG(URLHAServiceFeeder) << "["<<getName()<<"] - "
@@ -38,7 +39,7 @@ URLHAServiceFeeder::URLHAServiceFeeder(std::string alias,
 URLServiceFeeder(alias,
                  _handler),
 auto_eviction_url(false),
-max_service_retry_for_dead(3),
+max_service_retry_for_dead(MAX_RERTY_TIMES_FOR_DEAD),
 service_checker_handler(_service_checker_handler) {
     setRetryTime(1000, 10000);
 }
@@ -49,6 +50,10 @@ void URLHAServiceFeeder::setRetryTime(const uint32_t _min_retry_time,
                                       const uint32_t _max_retry_time) {
     min_retry_time = _min_retry_time;
     max_retry_time = _max_retry_time;
+}
+
+void URLHAServiceFeeder::setMaxRetryForDeadDeclaration(unsigned int max_retry) {
+    max_service_retry_for_dead = max_retry;
 }
 
 uint32_t URLHAServiceFeeder::addURL(const URL& new_url,
@@ -112,7 +117,6 @@ void URLHAServiceFeeder::setEvitionHandler(EvitionHandler new_evition_handler) {
 }
 
 void URLHAServiceFeeder::checkForAliveService() {
-    
     uint64_t current_ts = TimingUtil::getTimeStamp();
     boost::unique_lock<boost::mutex> wr(mutex_queue);
     size_t max_element = retry_queue.size();

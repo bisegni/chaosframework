@@ -29,6 +29,8 @@ using namespace chaos::common::utility;
 using namespace chaos::common::message;
 using namespace chaos::common::network;
 
+#define NORMAL_NUMBER_OF_ENDPOINT   3
+
 #define MSG_INFO INFO_LOG(MDSMessageChannel)
 #define MSG_DBG DBG_LOG(MDSMessageChannel)
 #define MSG_ERR ERR_LOG(MDSMessageChannel)
@@ -47,29 +49,55 @@ MDSMessageChannel::MDSMessageChannel(NetworkBroker *network_broker,
                                      MessageRequestDomainSHRDPtr _new_message_request_domain):
 MultiAddressMessageChannel(network_broker,
                            mds_node_address,
-                           _new_message_request_domain){}
+                           _new_message_request_domain){
+    //register eviction feature on superclass
+    setEvitionHandler(ChaosBind(&MDSMessageChannel::evictionHandler, this, ChaosBindPlaceholder(_1)));
+    setAutoEvitionForDeadUrl(true);
+}
 
-//! return last sendxxx error code
+MDSMessageChannel::~MDSMessageChannel(){}
+
+void MDSMessageChannel::init() {
+    MultiAddressMessageChannel::init();
+}
+
+void MDSMessageChannel::deinit(){
+    MultiAddressMessageChannel::deinit();
+}
+
+void MDSMessageChannel::timout() {
+    int err = 0;
+    CDWUniquePtr bestEndpointConf;
+    
+    //run multimessage layer task
+    MultiAddressMessageChannel::timeout();
+    
+    if(MultiAddressMessageChannel::getNumberOfManagedNodes() == NORMAL_NUMBER_OF_ENDPOINT) return;
+    
+    //try to get the number of remote url to maximum number
+    if((err = getDataDriverBestConfiguration(bestEndpointConf)) || (bestEndpointConf.get() == NULL)) {
+        MSG_ERR << "Error fetching best endpoint";
+        return;
+    }
+    
+}
+
+void MDSMessageChannel::evictionHandler(const chaos::common::network::ServiceRetryInformation& service_retry_information) {
+    MSG_INFO << CHAOS_FORMAT("Evicted server -> %1%", %service_retry_information.service_url);
+}
+
 int32_t MDSMessageChannel::getLastErrorCode() {
     return MultiAddressMessageChannel::getLastErrorCode();
 }
 
-//! return last sendxxx error message
 const std::string& MDSMessageChannel::getLastErrorMessage() {
     return MultiAddressMessageChannel::getLastErrorMessage();
 }
 
-//! return last sendxxx error domain
 const std::string& MDSMessageChannel::getLastErrorDomain() {
     return MultiAddressMessageChannel::getLastErrorDomain();
 }
 
-
-//! Send heartbeat
-/*!
- Send the heartbeat for an identification ID. This can be an id for a device or an uitoolkit instance
- \param identificationID identification id of a device or a client
- */
 void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identification_id) {
     ChaosUniquePtr<chaos::common::data::CDataWrapper> hb_message(new CDataWrapper());
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
@@ -121,7 +149,6 @@ int MDSMessageChannel::getProcessInfo(CDWUniquePtr& result) {
     return err;
 }
 
-//! Send unit server CU states to MDS
 int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {
@@ -147,8 +174,6 @@ int MDSMessageChannel::sendUnitServerCUStates(CDWUniquePtr device_dataset,
     return last_error_code;
 }
 
-
-//! Send unit server description to MDS
 int MDSMessageChannel::sendNodeRegistration(CDWUniquePtr node_description,
                                             bool requestCheck,
                                             uint32_t millisec_to_wait) {
@@ -231,11 +256,6 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDWUniquePtr node_information,
     return last_error_code;
 }
 
-//! Get node address for identification id
-/*!
- Return the node address for an identification id
- nodeNetworkAddress node address structure to be filled with identification id network info
- */
 int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identification_id,
                                                   CDeviceNetworkAddress** deviceNetworkAddress,
                                                   uint32_t millisec_to_wait) {
@@ -263,14 +283,6 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
     return last_error_code;
 }
 
-
-//! Get curent dataset for device
-/*!
- Return the node address for an identification id
- \param identificationID id for wich we need to get the network address information
- \param millisec_to_wait delay after wich the wait is interrupt
- \return if the infromation is found, a CDataWrapper for dataset desprition is returned
- */
 int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification_id,
                                                CDWUniquePtr& device_definition,
                                                uint32_t millisec_to_wait) {
@@ -291,7 +303,6 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
     return last_error_code;
 }
 
-//! retrieve a dataset related to a snapshot name of a given cu
 int  MDSMessageChannel::loadSnapshotNodeDataset(const std::string& snapname,
                                                 const std::string& node_uid,
                                                 chaos::common::data::CDataWrapper& data_set,
@@ -356,10 +367,6 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
     return last_error_code;
 }
 
-//! return the configuration for the data driver
-/*!
- Return the besta available data service at the monent within the configuraiton for data driver
- */
 int MDSMessageChannel::getDataDriverBestConfiguration(CDWUniquePtr& device_definition,
                                                       uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
@@ -437,6 +444,7 @@ int MDSMessageChannel::deleteSnapshot(const std::string& snapshot_name,
     }
     return err;
 }
+
 int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                                       std::map<uint64_t,std::string>& snapshot_found,
                                       uint32_t millisec_to_wait){
@@ -480,8 +488,8 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
         err = -1;
     }
     return err;
-    
 }
+
 int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
                                       ChaosStringVector& snapshot_found,
                                       uint32_t millisec_to_wait) {
@@ -496,7 +504,6 @@ int MDSMessageChannel::searchSnapshot(const std::string& query_filter,
     }
     return ret;
 }
-
 
 int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
                                              ChaosStringVector& node_found,
@@ -532,7 +539,6 @@ int MDSMessageChannel::searchNodeForSnapshot(const std::string& snapshot_name,
     }
     return err;
 }
-
 
 int MDSMessageChannel::searchSnapshotForNode(const std::string& node_uid,
                                              ChaosStringVector& snapshot_found,
@@ -625,7 +631,6 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
     return err;
 }
 
-
 int MDSMessageChannel::getVariable(const std::string& variable_name,
                                    chaos::common::data::CDWUniquePtr& variable_value,
                                    uint32_t millisec_to_wait) {
@@ -709,7 +714,6 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
     return err;
 }
 
-
 ChaosUniquePtr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                           const std::string& action_name,
                                                                                           chaos::common::data::CDWUniquePtr request_pack,
@@ -733,4 +737,3 @@ void MDSMessageChannel::callMethod(const std::string& action_domain,
     return MultiAddressMessageChannel::sendMessage(action_domain,
                                                    action_name);
 }
-

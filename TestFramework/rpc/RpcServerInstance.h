@@ -18,10 +18,9 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#ifndef MultiaddressMessageChannel_hpp
-#define MultiaddressMessageChannel_hpp
 
-#include "RpcServerInstance.h"
+#ifndef RpcServerInstance_hpp
+#define RpcServerInstance_hpp
 
 #include <set>
 #include <gtest/gtest.h>
@@ -35,28 +34,19 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/action/DeclareAction.h>
-class RpcHandler2:
-public chaos::DeclareAction {
+
+class RpcServerInstance {
+    std::vector< ChaosSharedPtr<chaos::DeclareAction> > actions;
+    ChaosUniquePtr<chaos::AbstractCommandDispatcher> rpc_dispatcher;
+    ChaosUniquePtr<chaos::RpcClient> rpc_client;
+    ChaosUniquePtr<chaos::RpcServer> rpc_server;
+    void startup(int32_t port, std::vector< ChaosSharedPtr<chaos::DeclareAction> > actions);
 public:
-    ChaosAtomic<uint32_t> actionWithResultCounter;
-    RpcHandler2();
-    ~RpcHandler2();
-protected:
-    chaos::common::data::CDWUniquePtr actionWithResult(chaos::common::data::CDWUniquePtr action_data);
+    RpcServerInstance(int32_t port, std::vector< ChaosSharedPtr<chaos::DeclareAction> > _actions);
+    RpcServerInstance(int32_t port, ChaosSharedPtr<chaos::DeclareAction> _actions);
+    RpcServerInstance(const CNetworkAddress& forced_address, ChaosSharedPtr<chaos::DeclareAction> _actions);
+    ~RpcServerInstance();
+    const CNetworkAddress getAddress();
 };
 
-class RPCMultiaddressMessageChannelTest:
-public testing::Test {
-protected:
-    ChaosUniquePtr<RpcServerInstance> startRpcServer(int32_t port, ChaosSharedPtr<RpcHandler2> handler);
-    ChaosUniquePtr<RpcServerInstance> startRpcServer(const CNetworkAddress& forced_address, ChaosSharedPtr<RpcHandler2> handler);
-public:
-    std::set<std::string> evicted_url;
-    RPCMultiaddressMessageChannelTest();
-    ~RPCMultiaddressMessageChannelTest();
-    void SetUp();
-    void TearDown();
-    void evitionHandler(const chaos::common::network::ServiceRetryInformation& sri);
-};
-
-#endif /* MultiaddressMessageChannel_hpp */
+#endif /* RpcServerInstance_hpp */

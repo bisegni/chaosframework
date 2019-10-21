@@ -89,6 +89,7 @@ public:
     using URLServiceFeeder::hasURL;
     using URLServiceFeeder::getIndexFromURL;
     using URLServiceFeeder::isOnline;
+    using URLServiceFeeder::getNumberOfURL;
     
     URLHAServiceFeeder(std::string alias,
                        URLServiceFeederHandler *_service_feeder_handler,
@@ -98,6 +99,14 @@ public:
     //! Set the retry time edge
     void setRetryTime(const uint32_t _min_retry_time,
                       const uint32_t _max_retry_time);
+    
+    //! Set the number ofr retry for deaclare a server dead
+    /*!
+     during reconnection logic if a server has reaced the maximun number
+     of retry, set by max_retry paramter, it is declared ded and ca be evicted
+     \param max_retry the number of retry after which a server is declared dead
+     */
+    void setMaxRetryForDeadDeclaration(unsigned int max_retry);
     
     //!Add a new URL Object and return the associated index
     uint32_t addURL(const URL& new_url, uint32_t priority = 0);
@@ -143,6 +152,7 @@ public:
      */
     void checkForAliveService();
     
+    //! Return the number ofr offline url
     size_t getOfflineSize();
 };
 

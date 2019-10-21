@@ -366,6 +366,8 @@
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
 		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
+		325FAC0A235DA86F008E0F79 /* MDSChannelTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FAC08235DA86F008E0F79 /* MDSChannelTest.cpp */; };
+		325FAC0D235DAFF9008E0F79 /* RpcServerInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FAC0B235DAFF9008E0F79 /* RpcServerInstance.cpp */; };
 		325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */; };
 		325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC85B1AF7910300DB9D66 /* NewUS.cpp */; };
 		325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC85C1AF7910300DB9D66 /* NewUS.h */; };
@@ -1714,6 +1716,10 @@
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = SlowCommand.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		325FAC08235DA86F008E0F79 /* MDSChannelTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MDSChannelTest.cpp; sourceTree = "<group>"; };
+		325FAC09235DA86F008E0F79 /* MDSChannelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDSChannelTest.h; sourceTree = "<group>"; };
+		325FAC0B235DAFF9008E0F79 /* RpcServerInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServerInstance.cpp; sourceTree = "<group>"; };
+		325FAC0C235DAFF9008E0F79 /* RpcServerInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RpcServerInstance.h; sourceTree = "<group>"; };
 		325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriverInterface.h; sourceTree = "<group>"; };
 		325FC85B1AF7910300DB9D66 /* NewUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewUS.cpp; sourceTree = "<group>"; };
 		325FC85C1AF7910300DB9D66 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
@@ -3409,10 +3415,14 @@
 		3238884221627C0300CC8A2B /* rpc */ = {
 			isa = PBXGroup;
 			children = (
+				325FAC0B235DAFF9008E0F79 /* RpcServerInstance.cpp */,
+				325FAC0C235DAFF9008E0F79 /* RpcServerInstance.h */,
 				3238884321627C0300CC8A2B /* RPCTest.cpp */,
 				3238884421627C0300CC8A2B /* RPCTest.h */,
 				32CFCE332354638700740369 /* RPCMultiaddressMessageChannelTest.cpp */,
 				32CFCE342354638700740369 /* RPCMultiaddressMessageChannelTest.h */,
+				325FAC08235DA86F008E0F79 /* MDSChannelTest.cpp */,
+				325FAC09235DA86F008E0F79 /* MDSChannelTest.h */,
 			);
 			path = rpc;
 			sourceTree = "<group>";
@@ -6932,6 +6942,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				325FAC0A235DA86F008E0F79 /* MDSChannelTest.cpp in Sources */,
 				3238888321627C0500CC8A2B /* TestURLFeeder.cpp in Sources */,
 				3238888521627C0500CC8A2B /* TemplatedMapTest.cpp in Sources */,
 				3238888921627C0500CC8A2B /* TriggerTest.cpp in Sources */,
@@ -6955,6 +6966,7 @@
 				3238887A21627C0500CC8A2B /* TestBatchDefault.cpp in Sources */,
 				3238888C21627C0500CC8A2B /* ScriptClingTest.cpp in Sources */,
 				3238887E21627C0500CC8A2B /* MemcachedEmbedded.cpp in Sources */,
+				325FAC0D235DAFF9008E0F79 /* RpcServerInstance.cpp in Sources */,
 				32668B47235770A0004F6D69 /* TimerTest.cpp in Sources */,
 				32CFCE352354638700740369 /* RPCMultiaddressMessageChannelTest.cpp in Sources */,
 				3238887821627C0500CC8A2B /* BatchComandTest.cpp in Sources */,

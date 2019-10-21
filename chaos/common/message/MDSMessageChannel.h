@@ -31,8 +31,8 @@ namespace chaos {
     namespace common {
         namespace message {
             
-          //  using namespace std;
-//using namespace chaos::common::data;
+            //  using namespace std;
+            //using namespace chaos::common::data;
             //! Message Channel specialize for metadataserver comunication
             /*!
              This class represent a message chanel for comunication with the Metadata Server
@@ -40,6 +40,8 @@ namespace chaos {
             class MDSMessageChannel:
             protected MultiAddressMessageChannel {
                 friend class chaos::common::network::NetworkBroker;
+                //!Evition handler
+                void evictionHandler(const chaos::common::network::ServiceRetryInformation& service_retry_information);
             protected:
                 //! base constructor
                 /*!
@@ -50,6 +52,19 @@ namespace chaos {
                                   const std::vector<chaos::common::network::CNetworkAddress>& mds_node_address,
                                   MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
+                ~MDSMessageChannel();
+                /*!
+                 Initialization phase of the channel
+                 */
+                void init();
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                void deinit();
+                
+                //!Timer handler
+                void timout();
             public:
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
@@ -73,8 +88,8 @@ namespace chaos {
                 
                 //!Return the mds build info
                 int getBuildInfo(chaos::common::data::CDWUniquePtr& result);
-
-                 //!Return the mds build info
+                
+                //!Return the mds build info
                 int getProcessInfo(chaos::common::data::CDWUniquePtr& result);
                 
                 //! Send Unit server registration to MDS
