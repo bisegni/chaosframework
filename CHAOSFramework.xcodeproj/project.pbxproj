@@ -330,6 +330,7 @@
 		325A84CF2108970D0036C1CA /* FSUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2A631E65D17900117985 /* FSUtility.cpp */; };
 		325A84D0210897120036C1CA /* Base64Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325A84C821085ED60036C1CA /* Base64Util.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
+		325B8E59235E4549002422DB /* ProcRestUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B8E58235E4549002422DB /* ProcRestUtil.cpp */; };
 		325C285B20B800AB007D2971 /* ShardKeyManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
@@ -1659,6 +1660,8 @@
 		325A84C821085ED60036C1CA /* Base64Util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Base64Util.cpp; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
 		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
+		325B8E58235E4549002422DB /* ProcRestUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcRestUtil.cpp; sourceTree = "<group>"; };
+		325B8E5A235E4555002422DB /* ProcRestUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcRestUtil.h; sourceTree = "<group>"; };
 		325C285920B800AB007D2971 /* ShardKeyManagement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShardKeyManagement.h; sourceTree = "<group>"; };
 		325C285A20B800AB007D2971 /* ShardKeyManagement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShardKeyManagement.cpp; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
@@ -5663,6 +5666,8 @@
 		32DF7EF81E7AF6B800B7FCDD /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				325B8E58235E4549002422DB /* ProcRestUtil.cpp */,
+				325B8E5A235E4555002422DB /* ProcRestUtil.h */,
 				32DF7EF91E7AF6B800B7FCDD /* PipeLineReader.cpp */,
 				32DF7EFA1E7AF6B800B7FCDD /* PipeLineReader.h */,
 				329614971E851FCB00FE33B7 /* ProcUtil.cpp */,
@@ -7344,6 +7349,7 @@
 				326413AB1E44C7DD0035E175 /* AgentRegister.cpp in Sources */,
 				329614A81E8545F000FE33B7 /* GetUSStatistic.cpp in Sources */,
 				32E6F4391E48689E0068320E /* ProcessWorker.cpp in Sources */,
+				325B8E59235E4549002422DB /* ProcRestUtil.cpp in Sources */,
 				326413A21E44AD750035E175 /* ChaosAgent.cpp in Sources */,
 				3264139C1E44ACE60035E175 /* main.cpp in Sources */,
 				32DF7EFC1E7AF6B800B7FCDD /* PipeLineReader.cpp in Sources */,

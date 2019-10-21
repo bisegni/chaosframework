@@ -224,8 +224,8 @@ void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         
         //append metadata server from agent configuration
-        VectorMetadatserver mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
-        for(VectorMetadatserverIterator mds_it = mds_vec.begin(),
+        VectorNetworkAddress mds_vec = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+        for(VectorNetworkAddressIterator mds_it = mds_vec.begin(),
             end = mds_vec.end();
             mds_it != end;
             mds_it++) {
