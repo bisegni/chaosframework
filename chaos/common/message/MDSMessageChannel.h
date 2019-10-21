@@ -40,6 +40,10 @@ namespace chaos {
             class MDSMessageChannel:
             protected MultiAddressMessageChannel {
                 friend class chaos::common::network::NetworkBroker;
+                
+                //!Auto configure endpoint
+                bool auto_configure_endpoint;
+                
                 //!Evition handler
                 void evictionHandler(const chaos::common::network::ServiceRetryInformation& service_retry_information);
             protected:
@@ -49,7 +53,7 @@ namespace chaos {
                  "system"(ip:port:system)
                  */
                 MDSMessageChannel(chaos::common::network::NetworkBroker *network_broker,
-                                  const std::vector<chaos::common::network::CNetworkAddress>& mds_node_address,
+                                  const chaos::common::network::VectorNetworkAddress& mds_node_address,
                                   MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
                 ~MDSMessageChannel();
@@ -63,9 +67,13 @@ namespace chaos {
                  */
                 void deinit();
                 
-                //!Timer handler
-                void timout();
+                //!Management handler
+                void manageResource();
             public:
+                using MultiAddressMessageChannel::getNumberOfManagedNodes;
+                
+                void setEndpointAutoConfiguration(bool _auto_configure_endpoint);
+                
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
                 

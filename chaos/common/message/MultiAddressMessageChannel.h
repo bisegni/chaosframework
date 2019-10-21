@@ -139,7 +139,9 @@ namespace chaos {
                 /*!
                  Super class can overwrite this method to achieve mantainance work
                  */
-                virtual void timeout();
+                void timeout();
+                //! implementad by superclass for management work
+                virtual void manageResource();
                 void setURLAsOffline(const std::string& offline_url);
                 
                 /*!

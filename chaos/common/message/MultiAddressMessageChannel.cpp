@@ -159,7 +159,10 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 
 void MultiAddressMessageChannel::timeout() {
     service_feeder.checkForAliveService();
+    manageResource();
 }
+
+void MultiAddressMessageChannel::manageResource() {}
 
 //! get the rpc published host and port
 void MultiAddressMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {

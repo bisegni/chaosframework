@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/InetUtility.h>
@@ -45,11 +46,12 @@ last_error_domain = "No Domain";\
 }
 
 MDSMessageChannel::MDSMessageChannel(NetworkBroker *network_broker,
-                                     const std::vector<CNetworkAddress>& mds_node_address,
+                                     const VectorNetworkAddress& mds_node_address,
                                      MessageRequestDomainSHRDPtr _new_message_request_domain):
 MultiAddressMessageChannel(network_broker,
                            mds_node_address,
-                           _new_message_request_domain){
+                           _new_message_request_domain),
+auto_configure_endpoint(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_METADATASERVER_AUTO_CONF)) {
     //register eviction feature on superclass
     setEvitionHandler(ChaosBind(&MDSMessageChannel::evictionHandler, this, ChaosBindPlaceholder(_1)));
     setAutoEvitionForDeadUrl(true);
@@ -65,14 +67,14 @@ void MDSMessageChannel::deinit(){
     MultiAddressMessageChannel::deinit();
 }
 
-void MDSMessageChannel::timout() {
+void MDSMessageChannel::manageResource() {
     int err = 0;
     CDWUniquePtr bestEndpointConf;
     
     //run multimessage layer task
-    MultiAddressMessageChannel::timeout();
     
-    if(MultiAddressMessageChannel::getNumberOfManagedNodes() == NORMAL_NUMBER_OF_ENDPOINT) return;
+    if(MultiAddressMessageChannel::getNumberOfManagedNodes() == NORMAL_NUMBER_OF_ENDPOINT ||
+       !auto_configure_endpoint) return;
     
     //try to get the number of remote url to maximum number
     if((err = getDataDriverBestConfiguration(bestEndpointConf)) || (bestEndpointConf.get() == NULL)) {
@@ -80,10 +82,33 @@ void MDSMessageChannel::timout() {
         return;
     }
     
+    if(!bestEndpointConf->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR) ||
+       !bestEndpointConf->isVectorValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+        MSG_ERR << "Node key has not been found";
+        return;
+    }
+    unsigned int server_to_add = (unsigned int)(NORMAL_NUMBER_OF_ENDPOINT - MultiAddressMessageChannel::getNumberOfManagedNodes());
+    
+    CMultiTypeDataArrayWrapperSPtr vec = bestEndpointConf->getVectorValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+    for(int idx = 0;
+        idx < vec->size() &&
+        server_to_add;
+        idx++) {
+        CNetworkAddress na(vec->getStringElementAtIndex(idx));
+        if(!MultiAddressMessageChannel::hasNode(na)) {
+            MultiAddressMessageChannel::addNode(na);
+            server_to_add--;
+            MSG_INFO << CHAOS_FORMAT("Configured new server -> %1%", %na.ip_port);
+        }
+    }
 }
 
 void MDSMessageChannel::evictionHandler(const chaos::common::network::ServiceRetryInformation& service_retry_information) {
     MSG_INFO << CHAOS_FORMAT("Evicted server -> %1%", %service_retry_information.service_url);
+}
+
+void MDSMessageChannel::setEndpointAutoConfiguration(bool _auto_configure_endpoint) {
+    auto_configure_endpoint = _auto_configure_endpoint;
 }
 
 int32_t MDSMessageChannel::getLastErrorCode() {

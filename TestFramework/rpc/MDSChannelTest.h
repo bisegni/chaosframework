@@ -36,19 +36,19 @@
 
 class BestEndpointRPCHandler:
 public chaos::DeclareAction {
-    const std::vector<std::string> node_rpc_url;
+    const VectorNetworkAddress node_rpc_url;
 public:
-    BestEndpointRPCHandler(const std::vector<std::string>& _node_rpc_url);
+    BestEndpointRPCHandler(const VectorNetworkAddress& _node_rpc_url);
     ~BestEndpointRPCHandler();
 protected:
     chaos::common::data::CDWUniquePtr execute(chaos::common::data::CDWUniquePtr action_data);
 };
 
-class RPCMDSChannelTest:
+class MDSChannelTest:
 public testing::Test {
 public:
-    RPCMDSChannelTest();
-    ~RPCMDSChannelTest();
+    MDSChannelTest();
+    ~MDSChannelTest();
     void SetUp();
     void TearDown();
     void evitionHandler(const chaos::common::network::ServiceRetryInformation& sri);

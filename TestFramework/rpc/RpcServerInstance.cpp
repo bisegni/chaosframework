@@ -45,49 +45,49 @@ RpcServerInstance::RpcServerInstance(const CNetworkAddress& forced_address, Chao
 }
 
 void RpcServerInstance::startup(int32_t port, std::vector< ChaosSharedPtr<chaos::DeclareAction> > actions) {
-    DEBUG_PRINTER("Open new server on port" << port);
-    DEBUG_PRINTER("Create dispatcher")
+    DEBUG_PRINTER("Open new server on port " << port);
+//    DEBUG_PRINTER("Create dispatcher")
     rpc_dispatcher.reset(ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher"));
     
-    DEBUG_PRINTER("Create rpc client")
+//    DEBUG_PRINTER("Create rpc client")
     string rpc_client_name = chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Client";
     rpc_client.reset(ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name));
-    DEBUG_PRINTER("Create rpc server")
+//    DEBUG_PRINTER("Create rpc server")
     rpc_server.reset(ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(chaos::GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION)+"Server"));
     rpc_server->setAlternatePortAddress(port);
     
     
-    DEBUG_PRINTER("Init rpc dispatcher")
+//    DEBUG_PRINTER("Init rpc dispatcher")
     EXPECT_NO_THROW(StartableService::initImplementation(rpc_dispatcher.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), "DefaultCommandDispatcher", __PRETTY_FUNCTION__));
     
-    DEBUG_PRINTER("register action")
+//    DEBUG_PRINTER("register action")
     for(std::vector< ChaosSharedPtr<chaos::DeclareAction> >::const_iterator it = actions.begin(),
         end = actions.end();
         it != end;
         it++) {
       rpc_dispatcher->registerAction((*it).get());
     }
-    DEBUG_PRINTER("Set client in dispatcher")
+//    DEBUG_PRINTER("Set client in dispatcher")
     rpc_dispatcher->setRpcForwarder(rpc_client.get());
-    DEBUG_PRINTER("Set dispatcher in server")
+//    DEBUG_PRINTER("Set dispatcher in server")
     rpc_server->setCommandDispatcher(rpc_dispatcher.get());
     
-    DEBUG_PRINTER("Init rpc Server")
+//    DEBUG_PRINTER("Init rpc Server")
     EXPECT_NO_THROW({StartableService::initImplementation(rpc_server.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_server->getName(), __PRETTY_FUNCTION__);});
-    DEBUG_PRINTER("Init rpc client")
+//    DEBUG_PRINTER("Init rpc client")
     EXPECT_NO_THROW(StartableService::initImplementation(rpc_client.get(), static_cast<void*>(chaos::GlobalConfiguration::getInstance()->getConfiguration()), rpc_client->getName(), __PRETTY_FUNCTION__));
     
-    DEBUG_PRINTER("Start rpc dispatcher")
+//    DEBUG_PRINTER("Start rpc dispatcher")
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_dispatcher.get(), "DefaultCommandDispatcher", __PRETTY_FUNCTION__));
     
-    DEBUG_PRINTER("Start RPC Client")
+//    DEBUG_PRINTER("Start RPC Client")
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_client.get(), rpc_client->getName(), __PRETTY_FUNCTION__));
-    DEBUG_PRINTER("Start RPC Server")
+//    DEBUG_PRINTER("Start RPC Server")
     EXPECT_NO_THROW(StartableService::startImplementation(rpc_server.get(), rpc_server->getName(), __PRETTY_FUNCTION__));
     
     //wait for open port
     // while(!portInUse(port));
-    DEBUG_PRINTER("Server opened on port" << port);
+    DEBUG_PRINTER("Server opened on port " << port);
 }
 
 RpcServerInstance::~RpcServerInstance() {

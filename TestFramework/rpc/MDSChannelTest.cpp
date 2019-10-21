@@ -20,33 +20,44 @@
  */
 
 #include "MDSChannelTest.h"
+#include <chaos/common/message/MDSMessageChannel.h>
+
+#define DEBUG_PRINTER(x) std::cout << "[          ] " << x <<std::endl;
 
 using namespace chaos::common::data;
+using namespace chaos::common::message;
 
 #define BASE_TEST_TCP_PORT 20000
 
-BestEndpointRPCHandler::BestEndpointRPCHandler(const std::vector<std::string>& _node_rpc_url):
-node_rpc_url(_node_rpc_url){}
+BestEndpointRPCHandler::BestEndpointRPCHandler(const VectorNetworkAddress& _node_rpc_url):
+node_rpc_url(_node_rpc_url){
+    //register the action for the response
+    DeclareAction::addActionDescritionInstance<BestEndpointRPCHandler>(this,
+                                                            &BestEndpointRPCHandler::execute,
+                                                            chaos::DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                            "getBestEndpoints",
+                                                            "getBestEndpoints");
+}
 BestEndpointRPCHandler::~BestEndpointRPCHandler() {}
 
 chaos::common::data::CDWUniquePtr BestEndpointRPCHandler::execute(CDWUniquePtr action_data) {
     CDWUniquePtr result(new CDataWrapper());
     
-    for(std::vector<std::string>::const_iterator it = node_rpc_url.begin(),
+    for(VectorNetworkAddressConstIterator it = node_rpc_url.begin(),
         end = node_rpc_url.end();
         it != end;
         it++){
-        result->appendStringToArray(*it);
+        result->appendStringToArray(it->ip_port);
     }
     result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
     return result;
 }
 
-RPCMDSChannelTest::RPCMDSChannelTest() {}
+MDSChannelTest::MDSChannelTest() {}
 
-RPCMDSChannelTest::~RPCMDSChannelTest() {}
+MDSChannelTest::~MDSChannelTest() {}
 
-void RPCMDSChannelTest::SetUp() {
+void MDSChannelTest::SetUp() {
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
     chaos::GlobalConfiguration::getInstance()->parseStartupParameters(0, NULL);
     
@@ -56,25 +67,109 @@ void RPCMDSChannelTest::SetUp() {
     ASSERT_NO_THROW(chaos::common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
 }
 
-void RPCMDSChannelTest::TearDown() {
+void MDSChannelTest::TearDown() {
     ASSERT_NO_THROW(chaos::common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
     ASSERT_NO_THROW(chaos::common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(), "NetworkBroker", __PRETTY_FUNCTION__););
 }
 
 #pragma mark Tests
-TEST_F(RPCMDSChannelTest, AutoFillEndpoint) {
-//    CDWUniquePtr pack(new CDataWrapper());
-//    pack->addStringValue("echo", "value");
-//    std::vector<std::string> node_rpc_url;
-//    //allocate the number of endpoint for test
-//    node_rpc_url.push_back("localhost:20000");
-//    node_rpc_url.push_back("localhost:20001");
-//    node_rpc_url.push_back("localhost:20002");
-//    BestEndpointRPCHandler bep_srv_1(node_rpc_url);
-//    
-//    //allcoate one remote server
-//    ChaosUniquePtr<RpcServerInstance> ist_1(new RpcServerInstance(BASE_TEST_TCP_PORT, bep_srv_1);
-//    //allocate multiaddress message channel
-//    
-//    ist_1.reset();
+CDWUniquePtr getDatapackForMds() {
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    return pack;
+}
+
+TEST_F(MDSChannelTest, AutoFillEndpoint) {
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    VectorNetworkAddress url_for_bep;
+    //allocate the number of endpoint for test
+    url_for_bep.push_back(CNetworkAddress("localhost:20000"));
+    url_for_bep.push_back(CNetworkAddress("localhost:20001"));
+    url_for_bep.push_back(CNetworkAddress("localhost:20002"));
+    ChaosSharedPtr<BestEndpointRPCHandler> bepRPC = ChaosMakeSharedPtr<BestEndpointRPCHandler>(url_for_bep);
+    
+    VectorNetworkAddress init_mds;
+    init_mds.push_back(CNetworkAddress("localhost:20000"));
+    
+    //allcoate one remote server
+    ChaosUniquePtr<RpcServerInstance> ist_1(new RpcServerInstance(BASE_TEST_TCP_PORT, bepRPC));
+    ChaosUniquePtr<RpcServerInstance> ist_2(new RpcServerInstance(BASE_TEST_TCP_PORT+1, bepRPC));
+    ChaosUniquePtr<RpcServerInstance> ist_3(new RpcServerInstance(BASE_TEST_TCP_PORT+2, bepRPC));
+    
+    //allocate multiaddress message channel
+    MDSMessageChannel *msg_chnl = NetworkBroker::getInstance()->getMetadataserverMessageChannel(init_mds);
+    msg_chnl->setEndpointAutoConfiguration(true);
+    DEBUG_PRINTER("got channel")
+    
+    while(msg_chnl->getNumberOfManagedNodes() != 3){
+        sleep(1);
+        DEBUG_PRINTER("Wait for new node auto configuration:" << msg_chnl->getNumberOfManagedNodes());
+    }
+    DEBUG_PRINTER("MDSChannel has autoconfigurato up to maximum server");
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
+    ist_1.reset();
+    ist_2.reset();
+    ist_3.reset();
+}
+
+TEST_F(MDSChannelTest, AutoFillEndpointAfterEviction) {
+    int wait_iteration = 40;
+    CDWUniquePtr pack(new CDataWrapper());
+    pack->addStringValue("echo", "value");
+    VectorNetworkAddress url_for_bep;
+    //allocate the number of endpoint for test
+    url_for_bep.push_back(CNetworkAddress("localhost:20000"));
+    url_for_bep.push_back(CNetworkAddress("localhost:20001"));
+    url_for_bep.push_back(CNetworkAddress("localhost:20002"));
+    ChaosSharedPtr<BestEndpointRPCHandler> bepRPC = ChaosMakeSharedPtr<BestEndpointRPCHandler>(url_for_bep);
+    
+    VectorNetworkAddress init_mds;
+    init_mds.push_back(CNetworkAddress("localhost:20000"));
+    init_mds.push_back(CNetworkAddress("localhost:20001"));
+    init_mds.push_back(CNetworkAddress("localhost:20002"));
+    //allcoate one remote server
+    ChaosUniquePtr<RpcServerInstance> ist_1(new RpcServerInstance(BASE_TEST_TCP_PORT, bepRPC));
+    ChaosUniquePtr<RpcServerInstance> ist_2(new RpcServerInstance(BASE_TEST_TCP_PORT+1, bepRPC));
+    ChaosUniquePtr<RpcServerInstance> ist_3(new RpcServerInstance(BASE_TEST_TCP_PORT+2, bepRPC));
+    
+    //allocate multiaddress message channel
+    MDSMessageChannel *msg_chnl = NetworkBroker::getInstance()->getMetadataserverMessageChannel(init_mds);
+    msg_chnl->setEndpointAutoConfiguration(true);
+    DEBUG_PRINTER("got channel")
+    ASSERT_EQ(msg_chnl->getNumberOfManagedNodes(), 3);
+    
+    //stop one server and wait for eviction
+    ist_1.reset();
+    //send some request sto let channel discover the death server
+    CDWUniquePtr data = getDatapackForMds();
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = msg_chnl->sendRequestWithFuture(chaos::NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                              chaos::NodeDomainAndActionRPC::ACTION_ECHO_TEST,
+                                                                                              ChaosMoveOperator(data),
+                                                                                              1000);
+    DEBUG_PRINTER("Sent request")
+    // first server respose
+    ASSERT_TRUE(future->wait());
+    ASSERT_EQ(future->getError(),  0);
+    DEBUG_PRINTER("Wait and got answer")
+    while(msg_chnl->getNumberOfManagedNodes() == 3 && wait_iteration){
+        sleep(1);
+        wait_iteration--;
+        DEBUG_PRINTER("Wait for eviction");
+    }
+    ASSERT_NE(wait_iteration, 0);
+    DEBUG_PRINTER("Restart server adn wait for auto configuration");
+    ist_1.reset(new RpcServerInstance(BASE_TEST_TCP_PORT, bepRPC));
+    wait_iteration = 40;
+    while(msg_chnl->getNumberOfManagedNodes() != 3 && wait_iteration){
+        sleep(1);
+        wait_iteration--;
+        DEBUG_PRINTER("Wait for autoconfiguration");
+    }
+    ASSERT_NE(wait_iteration, 0);
+    DEBUG_PRINTER("MDSChannel has autoconfigurato up to maximum server");
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
+    ist_1.reset();
+    ist_2.reset();
+    ist_3.reset();
 }

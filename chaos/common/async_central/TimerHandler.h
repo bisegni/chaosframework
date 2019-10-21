@@ -48,7 +48,7 @@ namespace chaos {
                 ChaosUniquePtr<boost::asio::deadline_timer> timer;
                 uint64_t    delay;
                 void timerTimeout(const boost::system::error_code& error);
-                void wait(uint64_t _delay);
+                void wait(int64_t _delay);
                 void removeTimer();
                 void reset();
 			public:

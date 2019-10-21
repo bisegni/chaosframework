@@ -23,6 +23,8 @@
 #define ChaosFramework_NetworkAddress_h
 
 #include <string>
+
+#include <chaos/common/chaos_types.h>
 namespace chaos {
 	namespace common {
 		namespace network {
@@ -84,6 +86,9 @@ namespace chaos {
                                     std::string()),
                 device_id(_device_id){};
 			};
+            
+            
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::network::CNetworkAddress, VectorNetworkAddress);
 		}
 	}
 }

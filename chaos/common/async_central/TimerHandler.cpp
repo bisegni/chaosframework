@@ -27,6 +27,8 @@
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include <cmath>
+
 #define INFO    INFO_LOG(TimerHandler)
 #define DBG     DBG_LOG(TimerHandler)
 #define ERR     ERR_LOG(TimerHandler)
@@ -55,12 +57,18 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
     cicle_test = false;
     boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
     if(!stoppped){
-        uint64_t start_ts = TimingUtil::getTimeStamp();
+        int64_t start_ts = TimingUtil::getTimeStamp();
         //call timer handler
         timeout();
-        uint64_t spent_time = TimingUtil::getTimeStamp()-start_ts;
+        int64_t spent_time = TimingUtil::getTimeStamp()-start_ts;
         //wait for next call with the delat correct
-        wait(delay-spent_time);
+        if(std::abs(spent_time) > delay) {
+            //quantize the slot
+            lldiv_t divresult = std::div(std::abs(spent_time),delay);
+            wait(divresult.rem);
+        } else {
+            wait(delay-spent_time);
+        }
     }
     if(stoppped){
         cicle_test = false;
@@ -68,7 +76,7 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
     if(need_signal){wait_answer_condition.notify_one();}
 }
 
-void TimerHandler::wait(uint64_t _delay) {
+void TimerHandler::wait(int64_t _delay) {
     if(timer.get() == NULL) return;
     //repeat rate
     cicle_test = true;

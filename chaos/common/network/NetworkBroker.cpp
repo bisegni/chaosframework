@@ -611,6 +611,21 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(MessageRequest
     }
     return channel;
 }
+/*!
+ Performe the creation of metadata server
+ */
+MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(const VectorNetworkAddress& endpoints, MessageRequestDomainSHRDPtr shared_request_domain) {
+    MDSMessageChannel *channel = (shared_request_domain.get() == NULL)?
+    (new MDSMessageChannel(this, endpoints, global_request_domain)):
+    (new MDSMessageChannel(this, endpoints, shared_request_domain));
+    if(channel){
+        channel->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(channel->getChannelUUID(), static_cast<MessageChannel*>(channel)));
+    }
+    return channel;
+}
+
 
 //!Metadata server channel creation
 /*!

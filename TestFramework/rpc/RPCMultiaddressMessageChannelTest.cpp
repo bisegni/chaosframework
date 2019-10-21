@@ -154,6 +154,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AddRemoteURL) {
 
     ist_2.reset();
     DEBUG_PRINTER("Destroied server 2")
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
@@ -214,6 +215,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, RemoveRemoteURL) {
     DEBUG_PRINTER("Wait and got answer")
     ist_2.reset();
     DEBUG_PRINTER("Destroied server 2")
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
@@ -258,6 +260,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, AutoEviction) {
     DEBUG_PRINTER("evicted server_1 [" << addr_srv_1.ip_port << "]");
     ASSERT_EQ(evicted_url.size(), 1);
     ASSERT_NE(evicted_url.find(addr_srv_1.ip_port), evicted_url.end());
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
@@ -314,6 +317,7 @@ TEST_F(RPCMultiaddressMessageChannelTest, Reconnection) {
     DEBUG_PRINTER("reconnected server_1 [" << ist_1->getAddress().ip_port << "]");
     ist_1.reset();
     DEBUG_PRINTER("Destroied server 1")
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
 }
 
 TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
@@ -368,4 +372,5 @@ TEST_F(RPCMultiaddressMessageChannelTest, Failover) {
     DEBUG_PRINTER("Wait and got answer")
     ist_2.reset();
     DEBUG_PRINTER("Destroied server 2")
+    NetworkBroker::getInstance()->disposeMessageChannel(msg_chnl);
 }
