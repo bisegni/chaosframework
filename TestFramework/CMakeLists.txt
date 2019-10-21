@@ -48,6 +48,8 @@ SET(TestFrameworkSource main.cpp
                         direct_io/DirectIODeviceServerChannelTest.cpp
                         direct_io/DirectIOSystemServerChannelTest.cpp
                         rpc/RPCTest.cpp
+                        rpc/MDSChannelTest.cpp
+                        rpc/RpcServerInstance.cpp
                         rpc/RPCMultiaddressMessageChannelTest.cpp)
 
 SET(TestFrameworkSource ${TestFrameworkSource} script/ScriptTest.cpp)
