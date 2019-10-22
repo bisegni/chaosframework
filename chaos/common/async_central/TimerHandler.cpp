@@ -64,8 +64,9 @@ void TimerHandler::timerTimeout(const boost::system::error_code& error) {
         //wait for next call with the delat correct
         if(std::abs(spent_time) > delay) {
             //quantize the slot
-            lldiv_t divresult = std::lldiv(std::abs(spent_time),delay);
-            wait(divresult.rem);
+          //  lldiv_t divresult = std::lldiv(std::abs(spent_time),delay);
+           // wait(divresult.rem);
+           wait(std::abs(spent_time)%delay);
         } else {
             wait(delay-spent_time);
         }
