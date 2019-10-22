@@ -54,7 +54,7 @@ using namespace chaos::common::message;
  
  */
 NetworkBroker::NetworkBroker():
-performance_session_managment(this),
+//performance_session_managment(this),
 event_client(NULL),
 event_server(NULL),
 event_dispatcher(NULL),
@@ -211,7 +211,7 @@ void NetworkBroker::init(void *initData) {
         throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
     MB_LAPP  << "Initialize performance session manager";
-    StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
+//    StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
     
     //get host and port for fastly set it into the requests
     published_host_and_port.clear();
@@ -225,10 +225,8 @@ void NetworkBroker::init(void *initData) {
  * All rpc adapter and command siaptcer are deinitilized
  */
 void NetworkBroker::deinit() {
-    //delete the shared mds channel instance
-    
-    MB_LAPP  << "Deinitialize performance session manager";
-    CHAOS_NOT_THROW(StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
+    //remove global request domain before delete all, it use internally NetworBroker singleton
+    global_request_domain.reset();
     
     //---------------------------- D I R E C T I/O ----------------------------
     CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);)
@@ -299,7 +297,6 @@ void NetworkBroker::deinit() {
     CHAOS_NOT_THROW(StartableService::deinitImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(rpc_dispatcher);
     //---------------------------- R P C ----------------------------
-    
 }
 
 /*!
@@ -315,14 +312,14 @@ void NetworkBroker::start(){
     StartableService::startImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
-    StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+//    StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
 /*!
  * all part are started
  */
 void NetworkBroker::stop() {
-    CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
+//    CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
@@ -577,18 +574,18 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
             new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
             break;
         }
-        case PERFORMANCE:{
-            if(!node_network_address) return NULL;
-            channel = use_shared_request_domain?
-            new common::message::PerformanceNodeChannel(this,
-                                                        node_network_address,
-                                                        performance_session_managment.getLocalDirectIOClientInstance(),
-                                                        global_request_domain):
-            new common::message::PerformanceNodeChannel(this,
-                                                        node_network_address,
-                                                        performance_session_managment.getLocalDirectIOClientInstance());
-            break;
-        }
+//        case PERFORMANCE:{
+//            if(!node_network_address) return NULL;
+//            channel = use_shared_request_domain?
+//            new common::message::PerformanceNodeChannel(this,
+//                                                        node_network_address,
+//                                                        performance_session_managment.getLocalDirectIOClientInstance(),
+//                                                        global_request_domain):
+//            new common::message::PerformanceNodeChannel(this,
+//                                                        node_network_address,
+//                                                        performance_session_managment.getLocalDirectIOClientInstance());
+//            break;
+//        }
     }
     //check if the channel has been created
     if(channel){
@@ -614,6 +611,21 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(MessageRequest
     }
     return channel;
 }
+/*!
+ Performe the creation of metadata server
+ */
+MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(const VectorNetworkAddress& endpoints, MessageRequestDomainSHRDPtr shared_request_domain) {
+    MDSMessageChannel *channel = (shared_request_domain.get() == NULL)?
+    (new MDSMessageChannel(this, endpoints, global_request_domain)):
+    (new MDSMessageChannel(this, endpoints, shared_request_domain));
+    if(channel){
+        channel->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(channel->getChannelUUID(), static_cast<MessageChannel*>(channel)));
+    }
+    return channel;
+}
+
 
 //!Metadata server channel creation
 /*!

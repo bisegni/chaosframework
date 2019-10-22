@@ -31,6 +31,7 @@ namespace chaos {
 			class NetworkBroker;
 		}
 		namespace message {
+            
                 //using namespace std;
                 //using namespace chaos::common::network;
 			//! Message Channel constructed with a node address

@@ -22,7 +22,9 @@
 #ifndef __CHAOSFramework__TimerHandler__
 #define __CHAOSFramework__TimerHandler__
 #include <boost/asio.hpp>
-#include <chaos/common/thread/WaitSemaphore.h>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+#include <chaos/common/chaos_types.h>
 namespace chaos {
 	namespace common {
 		namespace async_central {
@@ -35,13 +37,20 @@ namespace chaos {
 			 */
             class TimerHandler {
 				friend class AsyncCentralManager;
-                //boost timer
-                //WaitSemaphore wait_sem;
-                boost::asio::deadline_timer *timer;
+                //keep track of new wait call for timer
+                bool stoppped;
+                bool need_signal;
+                bool cicle_test;
+                        //! mutext used for unlock and wait esclusive access
+                boost::mutex wait_answer_mutex;
+                //! condition variable for wait the answer
+                boost::condition_variable wait_answer_condition;
+                ChaosUniquePtr<boost::asio::deadline_timer> timer;
                 uint64_t    delay;
                 void timerTimeout(const boost::system::error_code& error);
-                void wait(uint64_t _delay);
+                void wait(int64_t _delay);
                 void removeTimer();
+                void reset();
 			public:
 				TimerHandler();
 				~TimerHandler();

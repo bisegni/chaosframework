@@ -74,6 +74,8 @@ namespace chaos {
     public:
         RpcServer(const std::string& alias);
         
+        void setAlternatePortAddress(int new_port_address);
+        
         /*!
          Return the published port
          */

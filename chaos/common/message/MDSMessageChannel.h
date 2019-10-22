@@ -31,8 +31,8 @@ namespace chaos {
     namespace common {
         namespace message {
             
-          //  using namespace std;
-//using namespace chaos::common::data;
+            //  using namespace std;
+            //using namespace chaos::common::data;
             //! Message Channel specialize for metadataserver comunication
             /*!
              This class represent a message chanel for comunication with the Metadata Server
@@ -40,6 +40,12 @@ namespace chaos {
             class MDSMessageChannel:
             protected MultiAddressMessageChannel {
                 friend class chaos::common::network::NetworkBroker;
+                
+                //!Auto configure endpoint
+                bool auto_configure_endpoint;
+                
+                //!Evition handler
+                void evictionHandler(const chaos::common::network::ServiceRetryInformation& service_retry_information);
             protected:
                 //! base constructor
                 /*!
@@ -47,10 +53,27 @@ namespace chaos {
                  "system"(ip:port:system)
                  */
                 MDSMessageChannel(chaos::common::network::NetworkBroker *network_broker,
-                                  const std::vector<chaos::common::network::CNetworkAddress>& mds_node_address,
+                                  const chaos::common::network::VectorNetworkAddress& mds_node_address,
                                   MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
+                ~MDSMessageChannel();
+                /*!
+                 Initialization phase of the channel
+                 */
+                void init();
+                
+                /*!
+                 Initialization phase of the channel
+                 */
+                void deinit();
+                
+                //!Management handler
+                void manageResource();
             public:
+                using MultiAddressMessageChannel::getNumberOfManagedNodes;
+                
+                void setEndpointAutoConfiguration(bool _auto_configure_endpoint);
+                
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
                 
@@ -73,8 +96,8 @@ namespace chaos {
                 
                 //!Return the mds build info
                 int getBuildInfo(chaos::common::data::CDWUniquePtr& result);
-
-                 //!Return the mds build info
+                
+                //!Return the mds build info
                 int getProcessInfo(chaos::common::data::CDWUniquePtr& result);
                 
                 //! Send Unit server registration to MDS

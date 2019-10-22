@@ -34,6 +34,7 @@
 #include <chaos/common/event/event.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/network/PerformanceManagment.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/message/MessageRequestDomain.h>
 #include <chaos/common/direct_io/DirectIO.h>
@@ -79,7 +80,7 @@ namespace chaos {
 				DEVICE,             /*!< Identify a device specific channel used to send data pack to the target control unit */
 				PERFORMANCE         /*!< Identify a performance specific channel used to send and receive various performance information and test between two chaos node using directio system */
 			} EntityType;
-			
+            
 			//! Message Broker
 			/*!
 			 The NetworkBroker is the manager for the message in chaos framework. It contains the reference to
@@ -91,7 +92,7 @@ namespace chaos {
 			public chaos::common::utility::Singleton<NetworkBroker> {
 				friend class chaos::common::utility::Singleton<NetworkBroker>;
 				//! performance session managment
-				chaos::common::network::PerformanceManagment performance_session_managment;
+//				chaos::common::network::PerformanceManagment performance_session_managment;
 				
                 //! point to current host and port
                 std::string published_host_and_port;
@@ -307,6 +308,11 @@ namespace chaos {
 				 */
                 chaos::common::message::MDSMessageChannel *getMetadataserverMessageChannel(chaos::common::message::MessageRequestDomainSHRDPtr shared_request_domain = chaos::common::message::MessageRequestDomainSHRDPtr());
 
+                //!Metadata server channel creation
+                /*!
+                 Performe the creation of metadata server
+                 */
+                chaos::common::message::MDSMessageChannel *getMetadataserverMessageChannel(const VectorNetworkAddress& endpoints ,chaos::common::message::MessageRequestDomainSHRDPtr shared_request_domain = chaos::common::message::MessageRequestDomainSHRDPtr());
 				
 				//!Device channel creation
 				/*!

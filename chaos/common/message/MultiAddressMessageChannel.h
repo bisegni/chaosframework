@@ -135,7 +135,13 @@ namespace chaos {
                 void* serviceForURL(const chaos::common::network::URL& url,
                                     uint32_t service_index);
                 bool serviceOnlineCheck(void *service_ptr);
+                //! TimerHandler::timeout
+                /*!
+                 Super class can overwrite this method to achieve mantainance work
+                 */
                 void timeout();
+                //! implementad by superclass for management work
+                virtual void manageResource();
                 void setURLAsOffline(const std::string& offline_url);
                 
                 /*!
@@ -148,17 +154,27 @@ namespace chaos {
                  */
                 virtual void deinit();
             public:
+                //!@ URLHAServiceFeeder::setAutoEvitionForDeadUrl
+                void setAutoEvitionForDeadUrl(bool auto_eviction);
+                //! URLHAServiceFeeder::setEvitionHandler
+                void setEvitionHandler(chaos::common::network::URLHAServiceFeeder::EvitionHandler new_evition_handler);
+                //! check if an address si online
+                bool checkIfAddressIsOnline(const chaos::common::network::CNetworkAddress& address);
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
+                //! check if channel has a specific node
+                bool hasNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove all configured node
                 void removeAllNode();
+                //! return the number of managed nodes
+                size_t getNumberOfManagedNodes();
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
                 /*!
                  \brief send a message
-                 \param node_id id of the remote node within a network broker interface
+                 \param action_domain is the rpc domain
                  \param action_name the name of the action to call
                  \param message_pack the data to send, the pointer is not deallocated and is copied into the pack
                  \param on_this_thread notify when the message need to be sent synCronusly or in async  way

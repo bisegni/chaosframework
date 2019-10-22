@@ -93,7 +93,7 @@ namespace chaos {
          Constructor di default per i
          */
         RpcClient(const std::string& alias);
-        
+        virtual ~RpcClient();
         virtual void setServerHandler(RpcServerHandler *_server_handler);
         
         //! return the numebr of message that are waiting to be sent

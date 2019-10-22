@@ -54,14 +54,8 @@ message_channel(NULL) {
 MetadataLoggingManager::~MetadataLoggingManager() {}
 
 void MetadataLoggingManager::init(void *init_data)  {
-    if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size() > 0) {
-        message_channel = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
-        if(message_channel) {
-            MLM_INFO << "We have got a message channel so we can forward the log";
-        } else {
-            MLM_ERR << "We have had error opening a message channel so all log will be stored locally[in future release]";
-        }
-    }
+    message_channel = NetworkBroker::getInstance()->getMetadataserverMessageChannel();
+    CHAOS_LASSERT_EXCEPTION(message_channel, MLM_ERR, -1 , "Error gettin mds channel");
     
     CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
@@ -151,20 +145,10 @@ int MetadataLoggingManager::sendLogEntry(CDWUniquePtr log_entry) {
                                                                                                          2000);
     //wait for ack
     if(log_future->wait()) {
-        //we have got semthing
-        /*DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
-         "\n" << log_future->getErrorMessage() << "\n" <<
-         log_future->getErrorDomain(););*/
-        if((err = log_future->getError())) {
-            MLM_ERR << "Error forwarding log entry with code:" << err<<"Domain:"<<log_future->getErrorDomain()<<" msg:"<<log_future->getErrorMessage();
-        } else {
-            //log has been successfully forwarded
-            DEBUG_CODE(MLM_DBG << "Log has been successfully forwarded");
-        }
+        err = log_future->getError();
     } else {
         //we can't be able to send log to any mds server so detach it and need to store it
-        //for later transmisison
-        //log_future->detachMessageData();
+        DEBUG_CODE(MLM_ERR << "we can't be able to send log to any mds server");
         err = -10000;
     }
     return err;

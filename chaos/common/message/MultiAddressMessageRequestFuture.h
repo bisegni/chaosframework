@@ -65,7 +65,6 @@ namespace chaos{
                                                  chaos::common::data::CDWUniquePtr _message_pack,
                                                  int32_t _timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec);
                 inline void retryOfflineServer();
-                inline void switchOnOtherServer();
             public:
                 //!private destructor
                 ~MultiAddressMessageRequestFuture();

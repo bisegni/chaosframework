@@ -27,7 +27,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/InizializableService.h>
-#include <chaos/common/message/MultiAddressMessageChannel.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 
@@ -64,7 +64,7 @@ namespace chaos {
                 MetadataLoggingInstancesMap map_instance;
                 
                 //!internal nework broker for creation and deallocaiton of mds channels
-                chaos::common::message::MultiAddressMessageChannel *message_channel;
+                chaos::common::message::MDSMessageChannel *message_channel;
                 
                 MetadataLoggingManager();
                 ~MetadataLoggingManager();
