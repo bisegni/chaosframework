@@ -1,0 +1,5 @@
+---
+Added:
+- New metadata-server-auto-conf paramter permit, if specified (no value is necessary)
+  to activate mds auto configuration
+Deploy notes: []
