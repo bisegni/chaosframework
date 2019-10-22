@@ -223,6 +223,8 @@ typedef ChaosSharedPtr<ChaosStringSet> ChaosStringSetSPtr;
 typedef ChaosUniquePtr<const ChaosStringSet> ChaosStringSetConstUPtr;
 typedef ChaosSharedPtr<const ChaosStringSet> ChaosStringSetConstSPtr;
 
+CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, MapStrKeyStrValue);
+
 #define CHAOS_SCAN_VECTOR_ITERATOR(iter, vec, to_execute)\
 for(iter it = vec.begin();\
 it != vec.end();\

@@ -81,40 +81,61 @@ MultiAddressMessageChannel::~MultiAddressMessageChannel() {
 
 void MultiAddressMessageChannel::init() {
     MessageChannel::init();
+    //time for check the reconenction
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 1000,
+                                                 1000);
 }
 
 void MultiAddressMessageChannel::deinit() {
     AsyncCentralManager::getInstance()->removeTimer(this);
     MessageChannel::deinit();
 }
+
 void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url) {
     service_feeder.setURLAsOffline(offline_url);
-    AsyncCentralManager::getInstance()->addTimer(this,
-                                                 1000,
-                                                 1000);
 }
-//
+
+void MultiAddressMessageChannel::setAutoEvitionForDeadUrl(bool auto_eviction) {
+    service_feeder.setAutoEvitionForDeadUrl(auto_eviction);
+}
+
+void MultiAddressMessageChannel::setEvitionHandler(chaos::common::network::URLHAServiceFeeder::EvitionHandler new_evition_handler) {
+    service_feeder.setEvitionHandler(new_evition_handler);
+}
+
+bool MultiAddressMessageChannel::checkIfAddressIsOnline(const CNetworkAddress& address) {
+    if(service_feeder.hasURL(address.ip_port) == false) {
+        return false;
+    }
+    return service_feeder.isOnline(service_feeder.getIndexFromURL(address.ip_port));
+}
+
 void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
     service_feeder.addURL(chaos::common::network::URL(node_address.ip_port));
 }
 
-//
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
-    service_feeder.removeURL(node_address.ip_port);
+    service_feeder.removeURL(node_address.ip_port, true);
 }
 
-//! remove all configured node
+bool MultiAddressMessageChannel::hasNode(const chaos::common::network::CNetworkAddress& node_address) {
+    return service_feeder.hasURL(node_address.ip_port);
+}
+
 void MultiAddressMessageChannel::removeAllNode() {
     service_feeder.clear(true);
 }
 
-//
+size_t MultiAddressMessageChannel::getNumberOfManagedNodes() {
+    return service_feeder.getNumberOfURL();
+}
+
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     if(service) delete(service);
 }
 
-//
 void* MultiAddressMessageChannel::serviceForURL(const URL& url,
                                                 uint32_t service_index) {
     MMCFeederService *service = new MMCFeederService(url.getURL());
@@ -137,12 +158,11 @@ bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
 }
 
 void MultiAddressMessageChannel::timeout() {
-   
     service_feeder.checkForAliveService();
-    if(service_feeder.getOfflineSize() == 0) {
-        AsyncCentralManager::getInstance()->removeTimer(this);
-    }
+    manageResource();
 }
+
+void MultiAddressMessageChannel::manageResource() {}
 
 //! get the rpc published host and port
 void MultiAddressMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {

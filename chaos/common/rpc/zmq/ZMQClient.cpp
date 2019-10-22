@@ -128,13 +128,13 @@ void ZMQClient::stop() {
  Deinitialization method for output buffer
  */
 void ZMQClient::deinit() {
-    ZMQC_LAPP << "deinitialization";
-    map_socket.clear();
-    
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
     CObjectProcessingQueue<NetworkForwardInfo>::clear();
     CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
+
+    ZMQC_LAPP << "deinitialization";
+    map_socket.clear();
     
     //destroy the zmq context
     zmq_ctx_shutdown(zmq_context);
@@ -179,7 +179,6 @@ ZMQSocketPool::ResourceSlot *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi)
     if(it != map_socket.end()){
         return it->second->getNewResource();
     } else {
-        
         ChaosSharedPtr< ZMQSocketPool > socket_pool(new ZMQSocketPool(nfi->destinationAddr, this));
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getNewResource();

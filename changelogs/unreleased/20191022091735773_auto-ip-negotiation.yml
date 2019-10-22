@@ -1,0 +1,6 @@
+---
+Added:
+- MultiAddressMessageChannel has been updated to evict dead server after some retry
+  and during wait method retry to other node the messages
+- MDSChannel uses new  MultiAddressMessageChannel feature to auto configure new node
+  using only one address in startup parameter

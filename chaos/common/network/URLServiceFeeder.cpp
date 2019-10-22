@@ -60,7 +60,7 @@ URLServiceFeeder::~URLServiceFeeder() {
         return;
     for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//element with the list ar object and are allocated with with new
-            delete (service_list[idx]);
+            delete(service_list[idx]);
 
     }
     //all list was allocated with malloc
@@ -247,11 +247,15 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 		return;
 	}
 	//delete service instance
-    if(dispose_service) {handler->disposeService(service_list[idx]->service);}
+    if(dispose_service) {
+        handler->disposeService(service_list[idx]->service);
+    }
 	removeFromOnlineQueue(idx);
 	available_url.insert(idx);
     //remove index url association
     mapping_url_index.removebyRightKey(idx);
+    service_list[idx]->priority = 0;
+    service_list[idx]->service = NULL;
 }
 
 //!return the url string from index
@@ -280,4 +284,10 @@ bool URLServiceFeeder::hasURL(const std::string& url) {
 
 void URLServiceFeeder::setFeedMode(URLServiceFeedMode new_feed_mode) {
 	feed_mode = new_feed_mode;
+}
+
+
+size_t URLServiceFeeder::getNumberOfURL() {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
+    return mapping_url_index.size();
 }

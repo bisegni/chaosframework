@@ -100,7 +100,7 @@ bool PublishTarget::removeServer(const std::string &server_url_erase) {
         return false;
     }
     //remove server
-    connection_feeder.removeURL(connection_feeder.getIndexFromURL(server_url_erase));
+    connection_feeder.removeURL(connection_feeder.getIndexFromURL(server_url_erase), true);
     INFO << CHAOS_FORMAT("Remove url %1% from the endpoint", %server_url_erase%connection_feeder.getName());
     return true;
 }

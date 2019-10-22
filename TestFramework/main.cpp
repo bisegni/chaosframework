@@ -21,15 +21,21 @@
 
 #include <gtest/gtest.h>
 #include <chaos/common/log/LogManager.h>
+#include <chaos/common/async_central/async_central.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <csignal>
-
+#include "Environment.h"
 int main(int argc,  char ** argv) {
     chaos::GlobalConfiguration::getInstance()->preParseStartupParameters();
     chaos::GlobalConfiguration::getInstance()->parseStartupParametersAllowingUnregistered(argc, const_cast<const char **>(argv));
-
-    chaos::common::log::LogManager::getInstance()->init();
+//    ::testing::Environment* const env = ::testing::AddGlobalTestEnvironment(new Environment);
     ::testing::InitGoogleTest(&argc, argv);
 
-    return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    chaos::common::log::LogManager::getInstance()->init();
+    chaos::common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), NULL, "AsyncCentralManager", __PRETTY_FUNCTION__);
+    int result = RUN_ALL_TESTS();
+    chaos::common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), "AsyncCentralManager", __PRETTY_FUNCTION__);
+    chaos::common::log::LogManager::getInstance()->deinit();
+    return result;
 }

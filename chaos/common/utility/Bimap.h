@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__Bimap_h
 #define __CHAOSFramework__Bimap_h
 
-#include <chaos/common/data/cache/FastHash.h>
+#include <chaos/common/global.h>
 
 #include <map>
 
@@ -69,6 +69,11 @@ namespace chaos {
                 
                 A findByRightKey(B b) {
                     return right_map[b];
+                }
+                
+                size_t size() {
+                    CHAOS_ASSERT(left_map.size() == right_map.size());
+                    return left_map.size();
                 }
             };
         }

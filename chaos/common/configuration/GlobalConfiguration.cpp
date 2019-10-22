@@ -64,6 +64,8 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]");
         addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
+        addOption(InitOption::OPT_METADATASERVER_AUTO_CONF, po::value< bool >()->zero_tokens(), "Enable auto configuration for metadataserver endpoints");
+        
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
@@ -324,6 +326,9 @@ void GlobalConfiguration::checkDefaultOption()  {
     }
     finalizeMetadataServerAddress();
     
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(auto_conf_mds_endpoint, InitOption::OPT_METADATASERVER_AUTO_CONF);
+    configuration->addBoolValue(InitOption::OPT_METADATASERVER_AUTO_CONF, auto_conf_mds_endpoint);
+    
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(enable_time_calibration, InitOption::OPT_TIME_CALIBRATION);
     configuration->addBoolValue(InitOption::OPT_TIME_CALIBRATION, enable_time_calibration);
     
@@ -483,7 +488,7 @@ string GlobalConfiguration::getMetadataServerAddress() {
     return server_array->getStringElementAtIndex(0);
 }
 
-VectorMetadatserver GlobalConfiguration::getMetadataServerAddressList() {
+VectorNetworkAddress GlobalConfiguration::getMetadataServerAddressList() {
     std::vector<CNetworkAddress> result;
     CMultiTypeDataArrayWrapperSPtr server_array = configuration->getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS);
     for(int idx = 0;

@@ -86,6 +86,14 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
             
         }
         result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+        
+        //add rpc information for found nodes
+        BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
+            if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)){
+                result->appendStringToArray(ds_element->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+            }
+        }
+        result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
     } else {
         LOG_AND_TROW(GBE_ERR, -1, "No best endpoint found");
     }

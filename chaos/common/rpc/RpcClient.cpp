@@ -38,6 +38,8 @@ NamedService(alias),
 syncrhonous_call(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)),
 server_handler(NULL){}
 
+RpcClient::~RpcClient(){}
+
 /*!
  Forward to dispatcher the error during the forwarding of the request message
  */

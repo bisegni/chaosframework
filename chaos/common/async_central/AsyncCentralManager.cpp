@@ -33,8 +33,6 @@ using namespace boost::asio;
 using namespace chaos::common::async_central;
 
 //----------------------------------------------------------------------------------------------------
-
-
 AsyncCentralManager::AsyncCentralManager():
 asio_service(),
 asio_default_work(asio_service) {}
@@ -64,7 +62,6 @@ void AsyncCentralManager::deinit()  {
     ACM_LAPP_ << "Stop event loop";
     asio_service.stop();
     asio_thread_group.join_all();
-    
 }
 
 int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
@@ -74,9 +71,10 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
     try{
         boost::unique_lock<boost::mutex> l(mutex);
         //check if already installed
-        if(timer_handler->timer) return 0;
-        
-        if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
+        if(timer_handler->timer.get()) return 0;
+        timer_handler->reset();
+        timer_handler->timer.reset(new deadline_timer(asio_service));
+        if(timer_handler->timer.get() == NULL) {
             err = -1;
         } else {
             timer_handler->delay = repeat;
@@ -96,6 +94,7 @@ int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
     try{
         boost::unique_lock<boost::mutex> l(mutex);
         timer_handler->removeTimer();
+        timer_handler->timer.reset();
     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::system::system_error> >& ex){
         err = -2;
     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::lock_error> > & ex) {
