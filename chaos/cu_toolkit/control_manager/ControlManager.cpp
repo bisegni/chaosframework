@@ -659,7 +659,7 @@ void ControlManager::timeout() {
                 }
             } else {
                 LCMDBG_ << "[Publishing] Unit server registration not sucessfull, turn off the timer";
-                chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+                TimerHandler::stopMe();
             }
             break;
             //Publishing
@@ -673,7 +673,7 @@ void ControlManager::timeout() {
             //Published
         case 2:
             LCMAPP_ << "[Published] Unit server registration completed, turn off the timer";
-            chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+            TimerHandler::stopMe();
             
             LCMAPP_ << "[Published] Start control units registration state machine";
             startControlUnitSMThread();
@@ -681,7 +681,7 @@ void ControlManager::timeout() {
             //Published failed
         case 3:
             LCMAPP_ << "[Published failed] Perform Unpublishing state";
-            chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+            TimerHandler::stopMe();
             use_unit_server = false;
             break;
     }

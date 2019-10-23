@@ -8661,6 +8661,8 @@
 					"-lboost_thread",
 					"-lboost_system",
 					"-lboost_chrono",
+					"-lprometheus-cpp-core",
+					"-lprometheus-cpp-pull",
 				);
 			};
 			name = Prometheus;
@@ -8702,8 +8704,6 @@
 					"$(inherited)",
 					"-lzmq",
 					"-ljsoncpp",
-					"-lprometheus-cpp-core",
-					"-lprometheus-cpp-pull",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

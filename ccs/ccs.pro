@@ -9,9 +9,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
-
+CONFIG+=sdk_no_version_check
 QMAKE_CXXFLAGS += -std=c++11
-#QMAKE_MAC_SDK = macosx10.12
+#QMAKE_MAC_SDK = macosx10.15
 
 TARGET = ccs
 TEMPLATE = app

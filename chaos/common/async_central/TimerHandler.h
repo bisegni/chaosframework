@@ -41,6 +41,7 @@ namespace chaos {
                 bool stoppped;
                 bool need_signal;
                 bool cicle_test;
+                bool stop_me;
                         //! mutext used for unlock and wait esclusive access
                 boost::mutex wait_answer_mutex;
                 //! condition variable for wait the answer
@@ -51,6 +52,9 @@ namespace chaos {
                 void wait(int64_t _delay);
                 void removeTimer();
                 void reset();
+            protected:
+                //! method can be called witin timout handler to stop execution
+                void stopMe();
 			public:
 				TimerHandler();
 				~TimerHandler();

@@ -187,7 +187,7 @@ void AgentRegister::timeout() {
             HealtManager::getInstance()->addNodeMetricValue(ChaosAgent::getInstance()->settings.agent_uid,
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
-            AsyncCentralManager::getInstance()->removeTimer(this);
+            TimerHandler::stopMe();
             HealtManager::getInstance()->removeNode(ChaosAgent::getInstance()->settings.agent_uid);
             break;
         case AgentRegisterStateStartRegistering: {
@@ -212,7 +212,7 @@ void AgentRegister::timeout() {
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
             //stop timer
-            AsyncCentralManager::getInstance()->removeTimer(this);
+            TimerHandler::stopMe();
             
             //register all action
             try{

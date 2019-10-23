@@ -40,6 +40,7 @@ TimerHandler::TimerHandler():
 stoppped(false),
 need_signal(false),
 cicle_test(false),
+stop_me(false),
 delay(0){}
 
 TimerHandler::~TimerHandler() {}
@@ -55,18 +56,20 @@ void TimerHandler::reset() {
 void TimerHandler::timerTimeout(const boost::system::error_code& error) {
     if(error) return;
     cicle_test = false;
+    stop_me = false;
     boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
     if(!stoppped){
         int64_t start_ts = TimingUtil::getTimeStamp();
         //call timer handler
         timeout();
+        if(stop_me) {
+            reset();
+            return;
+        }
         int64_t spent_time = TimingUtil::getTimeStamp()-start_ts;
         //wait for next call with the delat correct
         if(std::abs(spent_time) > delay) {
-            //quantize the slot
-          //  lldiv_t divresult = std::lldiv(std::abs(spent_time),delay);
-           // wait(divresult.rem);
-           wait(std::abs(spent_time)%delay);
+            wait(std::abs(spent_time)%delay);
         } else {
             wait(delay-spent_time);
         }
@@ -101,5 +104,8 @@ void TimerHandler::removeTimer() {
         //we are in acse of a timer task can't be stopped
         while(cicle_test){wait_answer_condition.wait(lock);};
     }
-    
+}
+
+void TimerHandler::stopMe() {
+    stop_me = true;
 }

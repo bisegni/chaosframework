@@ -84,114 +84,21 @@ HealtManager::~HealtManager() {
 
 void HealtManager::updateProcInfo() {
     //used to compute the resource occupaiton between sampling time
-//    struct rusage local_process_resurce_usage;
-//    double local_usr_time = 0;
-//    double local_sys_time = 0;
-//    //samplig time in seconds
-//    uint64_t sampling_time = TimingUtil::getTimeStamp()/1000;
-//    getrusage(RUSAGE_SELF, &local_process_resurce_usage);
-//    local_usr_time = (double)local_process_resurce_usage.ru_utime.tv_sec + ((double)local_process_resurce_usage.ru_utime.tv_usec / 1000000.0);
-//    local_sys_time = (double)local_process_resurce_usage.ru_stime.tv_sec + ((double)local_process_resurce_usage.ru_stime.tv_usec / 1000000.0);
-//    if(last_usr_time &&
-//       last_sys_time &&
-//       last_sampling_time) {
-//        uint64_t temp_ts = (sampling_time-last_sampling_time);
-//        if(temp_ts > 0) {
-//            current_proc_info.usr_time = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
-//            current_proc_info.sys_time = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
-//        }else {
-//            current_proc_info.usr_time = current_proc_info.sys_time = 0;
-//        }
-//
-//    }
-//    last_usr_time = local_usr_time;
-//    last_sys_time = local_sys_time;
-//    last_sampling_time = sampling_time;
-//    current_proc_info.swap_rsrc = local_process_resurce_usage.ru_nswap;
     ProcStatCalculator::update(current_proc_info);
 }
 
 
-void HealtManager::init(void *init_data)  {
-}
+void HealtManager::init(void *init_data)  {}
 
 int HealtManager::sayHello()  {
-    //    int retry = 0;
-    //    bool saying_hello = true;
-    //    HM_INFO << "Start hello, searching metadata services";
-    //    CDataWrapper *hello_pack = new CDataWrapper();
-    //    //add node id
-    //    hello_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
-    //                               GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
-    //    hello_pack->addStringValue(NodeDefinitionKey::NODE_TYPE,
-    //                               NodeType::NODE_TYPE_HEALT_PROCESS);
-    //    hello_pack->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
-    //                              TimingUtil::getTimeStamp());
-    //    ChaosUniquePtr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
-    //                                                                                                        HealtProcessDomainAndActionRPC::ACTION_PROCESS_WELCOME,
-    //                                                                                                        hello_pack,
-    //                                                                                                        1000);
-    //    do{
-    //        if(future->wait()) {
-    //            saying_hello = false;
-    //            if(future->getError()) {
-    //                throw CException(future->getError(),
-    //                                 future->getErrorMessage(),
-    //                                 future->getErrorDomain());
-    //            } else if(!future->getResult()) {
-    //                //we have received no result or no server list
-    //                throw CException(-1,
-    //                                 "Empty answer from hello message",
-    //                                 __PRETTY_FUNCTION__);
-    //            } else {
-    //                if(!future->getResult()->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
-    //                    //we have received no result or no server list
-    //                    throw CException(-2,
-    //                                     "No server list on hello answer",
-    //                                     __PRETTY_FUNCTION__);
-    //                } else {
-    //                    //we have result and need to update the driver
-    //                    io_data_driver->updateConfiguration(future->getResult());
-    //                    return 0;
-    //                }
-    //            }
-    //        } else {
-    //            if(retry++ >= 10) {
-    //                throw CException(-3,
-    //                                 "Exceed the maximum number of retry  to wait the answer",
-    //                                 __PRETTY_FUNCTION__);
-    //            } else {
-    //                HM_INFO << "Retry waiting answer ("<<retry<<")";
-    //
-    //            }
-    //        }
-    //        sleep(1);
-    //    }while(saying_hello);
     return -1;
 }
 
 void HealtManager::start()  {
-    AsyncCentralManager::getInstance()->addTimer(this, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
-    //say hello to mds
-    //    int32_t retry =HELLO_PHASE_RETRY;
-    //    while(retry--){
-    //        try{
-    //            if(sayHello()==0){
-    //                HM_INFO << "Found ("<<retry<<")";
-    //                //add timer to publish all node healt very 5 second
-    //
-    //                return;
-    //            }
-    //        } catch(chaos::CException& ex) {
-    //            DECODE_CHAOS_EXCEPTION(ex);
-    //        }
-    //        HM_INFO << "Retry hello again ("<<retry<<")";
-    //    }
-    //    throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
 }
 
 void HealtManager::stop()  {
-    //add timer to publish all node healt very 5 second
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
