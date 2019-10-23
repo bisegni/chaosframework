@@ -30,7 +30,6 @@ build_u_14_04_gcc49:
     - make clean
     - /tmp/build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j $NPROC install
   cache:
-    key: x86_64_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -112,7 +111,6 @@ build_u_16_04_gcc5:
     - make  -j $NPROC
     - make install
   cache:
-    key: UBUNTU_1604_LLVM7_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -171,7 +169,6 @@ build_u_18_04_gcc73:
     - make  -j $NPROC
     - make install
   cache:
-    key: UBUNTU_1604_LLVM7_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -230,7 +227,6 @@ build_dbg_c7:
     - make  -j $NPROC
     - make install
   cache:
-    key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -318,7 +314,6 @@ build_rel_c7:
     - make  -j $NPROC
     - make install
   cache:
-    key: x86_64_centos7_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -403,7 +398,6 @@ build_u_14_04_gcc48_c98:
     - make  -j $NPROC
     - make install
   cache:
-    key: x86_64_c98_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -454,7 +448,6 @@ build_arm:
     - make  -j $NPROC
     - make install
   cache:
-    key: arm-compilation_$CI_BUILD_REF_NAME
     paths:
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   artifacts:
@@ -542,9 +535,7 @@ exp_llvm_scan_coverity:
     - tar czvf chaos.tgz cov-int
     - curl --form token=i9B9MI9n53zWdx2iSS4Qvg --form email=bisegni@lnf.infn.it --form file=@/tmp/chaos.tgz --form version="1.0.0" --form description="Beta"  https://scan.coverity.com/builds?project=%21CHAOS+Control+System
   cache:
-    key: scan_coverity_$CI_BUILD_REF_NAME
     paths:
-        - /builds/chaos-lnf-control/chaosframework/chaos-distrib-x86_64-Linux/
         - /builds/chaos-lnf-control/chaosframework/config/CACHE/
   only:
     refs:
