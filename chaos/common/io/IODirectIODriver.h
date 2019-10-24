@@ -185,6 +185,7 @@ namespace chaos{
                                           uint64_t              start_ts,
                                           uint64_t              end_ts,
                                           const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          const ChaosStringSet& projection_keys = ChaosStringSet(),
                                           uint32_t              page      = DEFAULT_PAGE_LEN);
 
                 QueryCursor* performQuery(const std::string& key,
@@ -200,6 +201,7 @@ namespace chaos{
                                           uint64_t              sequid,
                                           uint64_t              runid,
                                           const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                          const ChaosStringSet& projection_keys = ChaosStringSet(),
                                           uint32_t              page      = DEFAULT_PAGE_LEN);
 
                 void releaseQuery(QueryCursor *query_cursor);

@@ -72,6 +72,7 @@ phase(QueryPhaseNotStarted),
 start_seq(0),
 runid_seq(0),
 meta_tags(ChaosStringSet()),
+projection_keys(ChaosStringSet()),
 api_error(0){}
 
 QueryCursor::QueryCursor(const std::string& _query_id,
@@ -80,6 +81,7 @@ QueryCursor::QueryCursor(const std::string& _query_id,
                          uint64_t _start_ts,
                          uint64_t _end_ts,
                          const ChaosStringSet& _meta_tags,
+                         const ChaosStringSet& _projection_keys,
                          uint32_t default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
@@ -91,6 +93,7 @@ phase(QueryPhaseNotStarted),
 start_seq(0),
 runid_seq(0),
 meta_tags(_meta_tags),
+projection_keys(_projection_keys),
 api_error(0){}
 
 QueryCursor::QueryCursor(const std::string& _query_id,
@@ -111,6 +114,7 @@ phase(QueryPhaseNotStarted),
 start_seq(_sequid),
 runid_seq(_runid),
 meta_tags(ChaosStringSet()),
+projection_keys(ChaosStringSet()),
 api_error(0){
     if(_sequid>0){
         phase = QueryPhaseStarted;
@@ -127,6 +131,7 @@ QueryCursor::QueryCursor(const std::string& _query_id,
                          uint64_t _sequid,
                          uint64_t _runid,
                          const ChaosStringSet& _meta_tags,
+                         const ChaosStringSet& _projection_keys,
                          uint32_t default_page_len):
 query_id(_query_id),
 connection_feeder(_connection_feeder),
@@ -138,6 +143,7 @@ phase(QueryPhaseNotStarted),
 start_seq(_sequid),
 runid_seq(_runid),
 meta_tags(_meta_tags),
+projection_keys(_projection_keys),
 api_error(0){
     if(_sequid>0){
         phase = QueryPhaseStarted;
@@ -212,6 +218,7 @@ int QueryCursor::fetchData() {
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        meta_tags,
+                                                                       projection_keys,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,

@@ -56,7 +56,7 @@ using namespace boost;
 #define OPT_START_TIME      "start-time"
 #define OPT_END_TIME		"end-time"
 #define OPT_TAGS            "tags"
-
+#define OPT_PROJECTION      "prj"
 
 void sendBackOnRow() {
     std::cout << "\r" <<std::flush;
@@ -172,6 +172,7 @@ int main(int argc, const char* argv[]) {
     string start_time;
     string end_time;
     ChaosStringVector meta_tags;
+    ChaosStringVector projection_key_vec;
     std::string err_str;
     std::ostream	*destination_stream = NULL;
     std::ofstream	destination_file;
@@ -199,6 +200,7 @@ int main(int argc, const char* argv[]) {
         ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
         ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_PAGE_LENGHT, "query page lenght", 30, &page_len);
         ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<ChaosStringVector>(OPT_TAGS, "Meta tags list", &meta_tags);
+        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<ChaosStringVector>(OPT_PROJECTION, "Projection keys list", &projection_key_vec);
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -278,10 +280,18 @@ int main(int argc, const char* argv[]) {
             it++) {
             search_tags.insert(*it);
         }
+        ChaosStringSet projection_keys;
+        for(ChaosStringVectorIterator it = projection_key_vec.begin(),
+            end = projection_key_vec.end();
+            it != end;
+            it++) {
+            projection_keys.insert(*it);
+        }
         controller->executeTimeIntervallQuery(chaos::cu::data_manager::KeyDataStorageDomainOutput,
                                               start_ts,
                                               end_ts,
                                               search_tags,
+                                              projection_keys,
                                               &query_cursor,
                                               page_len);
         

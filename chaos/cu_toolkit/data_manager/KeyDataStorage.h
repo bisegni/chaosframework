@@ -170,14 +170,16 @@ namespace chaos{
                                      KeyDataStorageDomain dataset_domain,
                                      const uint64_t start_ts,
                                      const uint64_t end_ts,
-                                     const ChaosStringSet& meta_tags);
+                                     const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                     const ChaosStringSet& projection_keys = ChaosStringSet());
                 
                 int performGeneralQuery(chaos::common::io::QueryCursor **cursor,
                                         const std::string& node_id,
                                         KeyDataStorageDomain dataset_domain,
                                         const uint64_t start_ts,
                                         const uint64_t end_ts,
-                                        const ChaosStringSet& meta_tags);
+                                        const ChaosStringSet& meta_tags = ChaosStringSet(),
+                                        const ChaosStringSet& projection_keys = ChaosStringSet());
                 
                 void releseQuery(chaos::common::io::QueryCursor *cursor);
             };

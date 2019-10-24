@@ -164,6 +164,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                     data_pack->channel_data) {
                     BufferSPtr result_data;
                     ChaosStringSet meta_tags;
+                    ChaosStringSet projection_keys;
                     QueryResultPage result_page;
                     CDWUniquePtr query(new CDataWrapper(data_pack->channel_data->data()));
                     BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
@@ -187,28 +188,38 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                             meta_tags.insert(meta_tags_vec->getStringElementAtIndex(idx));
                         }
                     }
+                    if(query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_PROJECTION_KEYS) &&
+                       query->isVectorValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_PROJECTION_KEYS)) {
+                        CMultiTypeDataArrayWrapperSPtr projection_keys_vec = query->getVectorValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_PROJECTION_KEYS);
+                        for(int idx = 0;
+                            idx < projection_keys_vec->size();
+                            idx++) {
+                            projection_keys.insert(projection_keys_vec->getStringElementAtIndex(idx));
+                        }
+                    }
                     //call server api if we have at least the key
                     if((key.compare("") != 0)) {
                         if(channel_opcode == opcode::DeviceChannelOpcodeQueryDataCloud) {
                             err = handler->consumeDataCloudQuery(*header,
                                                                  key,
                                                                  meta_tags,
+                                                                 projection_keys,
                                                                  start_ts,
                                                                  end_ts,
                                                                  last_sequence_info,//in-out
                                                                  result_page);
                         } else if(channel_opcode == opcode::DeviceChannelOpcodeQueryDataCloudIndex) {
                             err = handler->consumeDataIndexCloudQuery(*header,
-                                                                 key,
-                                                                 meta_tags,
-                                                                 start_ts,
-                                                                 end_ts,
-                                                                 last_sequence_info,//in-out
-                                                                 result_page);
+                                                                      key,
+                                                                      meta_tags,
+                                                                      projection_keys,
+                                                                      start_ts,
+                                                                      end_ts,
+                                                                      last_sequence_info,//in-out
+                                                                      result_page);
                         } else {
                             err = -100;
                         }
-                        
                     }
                     if(err == 0) {
                         //manage emory for retur data

@@ -114,7 +114,7 @@ deviceChannel(NULL),devId(_deviceID) {
 }
 
 CUController::~CUController() {
-
+    
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<devId;
     stopTracking();
     
@@ -130,14 +130,14 @@ CUController::~CUController() {
     if(ioLiveDataDriver.get()){
         LDBG_<<"["<<__PRETTY_FUNCTION__<<"] io LiveDataDriver use:"<<ioLiveDataDriver.use_count();
         // deinit is called also by the destructur of IODirectDriver  
-      /*  if(ioLiveDataDriver.use_count()==1){
-            ioLiveDataDriver->deinit();
-        }
-        ioLiveDataDriver.reset();
-        */
+        /*  if(ioLiveDataDriver.use_count()==1){
+         ioLiveDataDriver->deinit();
+         }
+         ioLiveDataDriver.reset();
+         */
     }
     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] removed Device Controller:"<<devId;
-
+    
 }
 
 
@@ -946,11 +946,11 @@ int   CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain,chaos::
 int CUController::fetchAllDataset() {
     int err = 0;
     if(ioLiveDataDriver.get()==NULL){
-            LERR_<<"NO IO DRIVER!!!!!";
-            return -1;
-
+        LERR_<<"NO IO DRIVER!!!!!";
+        return -1;
+        
     }
-   // ChaosReadLock lock(trackMutext);
+    // ChaosReadLock lock(trackMutext);
     chaos::common::data::VectorCDWShrdPtr results;
     if((err = ioLiveDataDriver->retriveMultipleData(channel_keys,
                                                     results)) == 0) {
@@ -971,7 +971,7 @@ int CUController::fetchAllDataset() {
 
 
 ChaosSharedPtr<chaos::common::data::CDataWrapper>  CUController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
-  //  ChaosReadLock lock(trackMutext);
+    //  ChaosReadLock lock(trackMutext);
     size_t value_len = 0;
     char *value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
     if(value){
@@ -1105,18 +1105,20 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t      end_ts,
                                              QueryCursor** query_cursor,
                                              uint32_t      page) {
-  executeTimeIntervallQuery(
-      domain,
-      start_ts,
-      end_ts,
-      ChaosStringSet(),
-      query_cursor,
-      page);
+    executeTimeIntervallQuery(
+                              domain,
+                              start_ts,
+                              end_ts,
+                              ChaosStringSet(),
+                              ChaosStringSet(),
+                              query_cursor,
+                              page);
 }
 void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                              uint64_t start_ts,
                                              uint64_t end_ts,
                                              const ChaosStringSet& meta_tags,
+                                             const ChaosStringSet& projection_keys,
                                              QueryCursor **query_cursor,
                                              uint32_t page) {
     if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
@@ -1124,6 +1126,7 @@ void CUController::executeTimeIntervallQuery(DatasetDomain domain,
                                                        start_ts,
                                                        end_ts,
                                                        meta_tags,
+                                                       projection_keys,
                                                        page);
     }
 }
@@ -1135,15 +1138,16 @@ void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
                                             const uint64_t runid,
                                             chaos::common::io::QueryCursor **query_cursor,
                                             const uint32_t page_len){
-executeTimeIntervalQuery(
-    domain,
-    start_ts,
-    end_ts,
-    seqid,
-    runid,
-    ChaosStringSet(),
-    query_cursor,
-    page_len);
+    executeTimeIntervalQuery(
+                             domain,
+                             start_ts,
+                             end_ts,
+                             seqid,
+                             runid,
+                             ChaosStringSet(),
+                             ChaosStringSet(),
+                             query_cursor,
+                             page_len);
 }
 
 void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
@@ -1152,6 +1156,7 @@ void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
                                             const uint64_t seqid,
                                             const uint64_t runid,
                                             const ChaosStringSet& meta_tags,
+                                            const ChaosStringSet& projection_keys,
                                             chaos::common::io::QueryCursor **query_cursor,
                                             const uint32_t page_len){
     if((domain>=0) && (domain<=DPCK_LAST_DATASET_INDEX)){
@@ -1161,6 +1166,7 @@ void CUController::executeTimeIntervalQuery(const DatasetDomain domain,
                                                        seqid,
                                                        runid,
                                                        meta_tags,
+                                                       projection_keys,
                                                        page_len);
     }
     
@@ -1183,10 +1189,10 @@ int CUController::loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag
 int CUController::createNewSnapshot(const std::string& snapshot_tag,
                                     const std::vector<std::string>& other_snapped_device) {
     
-     if(ioLiveDataDriver.get()==NULL){
-            LERR_<<"NO IO DRIVER!!!!!";
-            return -1;
-
+    if(ioLiveDataDriver.get()==NULL){
+        LERR_<<"NO IO DRIVER!!!!!";
+        return -1;
+        
     }
     std::vector<std::string> device_id_in_snap = other_snapped_device;
     device_id_in_snap.push_back(devId);
@@ -1195,12 +1201,12 @@ int CUController::createNewSnapshot(const std::string& snapshot_tag,
 }
 
 int CUController::deleteSnapshot(const std::string& snapshot_tag) {
-if(ioLiveDataDriver.get()==NULL){
-            LERR_<<"NO IO DRIVER!!!!!";
-            return -1;
-
+    if(ioLiveDataDriver.get()==NULL){
+        LERR_<<"NO IO DRIVER!!!!!";
+        return -1;
+        
     }
-        return mdsChannel->deleteSnapshot(snapshot_tag);
+    return mdsChannel->deleteSnapshot(snapshot_tag);
 }
 
 int CUController::getSnapshotList(ChaosStringVector& snapshot_list) {

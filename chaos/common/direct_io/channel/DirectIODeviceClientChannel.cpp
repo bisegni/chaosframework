@@ -246,6 +246,7 @@ int DirectIODeviceClientChannel::requestLastOutputData(const ChaosStringVector& 
 
 int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                                                 const ChaosStringSet& meta_tags,
+                                                const ChaosStringSet& projection_keys,
                                                 const uint64_t start_ts,
                                                 const uint64_t end_ts,
                                                 const uint32_t page_dimension,
@@ -265,6 +266,7 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_RUN_ID, last_sequence_id.run_id);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_LAST_DP_COUNTER, last_sequence_id.datapack_counter);
+    //add tags
     for(ChaosStringSetConstIterator it = meta_tags.begin(),
         end = meta_tags.end();
         it != end;
@@ -272,6 +274,14 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
         query_description.appendStringToArray(*it);
     }
     query_description.finalizeArrayForKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_META_TAGS);
+    //add projection
+    for(ChaosStringSetConstIterator it = projection_keys.begin(),
+        end = projection_keys.end();
+        it != end;
+        it++) {
+        query_description.appendStringToArray(*it);
+    }
+    query_description.finalizeArrayForKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_PROJECTION_KEYS);
     //copy the query id on header
     query_data_cloud_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloud>()->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode

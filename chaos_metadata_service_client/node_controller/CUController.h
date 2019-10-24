@@ -479,6 +479,7 @@ namespace chaos {
                                                const uint64_t                   start_ts,
                                                const uint64_t                   end_ts,
                                                const ChaosStringSet&            meta_tags,
+                                               const ChaosStringSet&            projection_keys,
                                                chaos::common::io::QueryCursor** query_cursor,
                                                const uint32_t                   page_len = DEFAULT_PAGE_LEN);
 
@@ -496,6 +497,7 @@ namespace chaos {
                                               const uint64_t                   seqid,
                                               const uint64_t                   runid,
                                               const ChaosStringSet&            meta_tags,
+                                              const ChaosStringSet&            projection_keys,
                                               chaos::common::io::QueryCursor** query_cursor,
                                               const uint32_t                   page_len = DEFAULT_PAGE_LEN);
 

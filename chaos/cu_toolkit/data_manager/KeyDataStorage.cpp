@@ -456,11 +456,13 @@ int KeyDataStorage::performSelfQuery(chaos::common::io::QueryCursor **cursor,
                                      const KeyDataStorageDomain dataset_domain,
                                      const uint64_t start_ts,
                                      const uint64_t end_ts,
-                                     const ChaosStringSet& meta_tags) {
+                                     const ChaosStringSet& meta_tags,
+                                     const ChaosStringSet& projection_keys) {
     *cursor = io_data_driver->performQuery(getDomainString(dataset_domain),
                                            start_ts,
                                            end_ts,
-                                           meta_tags);
+                                           meta_tags,
+                                           projection_keys);
     return ((*cursor == NULL)?-1:0);
 }
 
@@ -469,12 +471,14 @@ int KeyDataStorage::performGeneralQuery(chaos::common::io::QueryCursor **cursor,
                                         KeyDataStorageDomain dataset_domain,
                                         const uint64_t start_ts,
                                         const uint64_t end_ts,
-                                        const ChaosStringSet& meta_tags) {
+                                        const ChaosStringSet& meta_tags,
+                                        const ChaosStringSet& projection_keys) {
     *cursor = io_data_driver->performQuery(getDomainString(node_id,
                                                            dataset_domain),
                                            start_ts,
                                            end_ts,
-                                           meta_tags);
+                                           meta_tags,
+                                           projection_keys);
     return ((*cursor == NULL)?-1:0);
 }
 

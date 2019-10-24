@@ -38,8 +38,8 @@ namespace chaos {
     namespace InitOption{
         //! for print the help
         static const char * const	OPT_HELP                            = "help";
+        //! Show the version 
         static const char * const	OPT_VERSION                         = "version";
-        
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf-file";
         //! Specify when the log must be forwarded on console

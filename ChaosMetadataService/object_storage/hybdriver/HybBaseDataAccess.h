@@ -38,101 +38,102 @@
 #include <future>
 
 namespace chaos {
-    namespace metadata_service {
-        namespace object_storage {
-            namespace hybdriver {
-                class NewMongoDBObjectStorageDriver;
-                
-                typedef struct DaqIndex {
-                    std::string key;
-                    int64_t shard_value;
-                    int64_t run_id;
-                    int64_t seq_id;
-                    DaqIndex& operator=(DaqIndex&& copy) {
-                        key         = std::move(copy.key);
-                        shard_value = std::move(copy.shard_value);
-                        run_id      = std::move(copy.run_id);
-                        seq_id      = std::move(copy.seq_id);
-                        return *this;
-                    }
-                } DaqIndex;
-                
-                typedef struct {
-                    DaqIndex index;
-                    bsoncxx::builder::basic::document mongo_document;
-                    chaos::common::data::BufferUPtr data_blob;
-                } DaqBlob;
-                
-                typedef ChaosSharedPtr<DaqBlob> DaqBlobSPtr;
-                
-                //! Data Access for producer manipulation data
-                class HybBaseDataAccess:
-                public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
-                    friend class HybBaseDriver;
-                    //size of the batch
-                    uint32_t batch_size;
-                    //batch timeout in milliseconds
-                    uint32_t batch_timeout;
-                    int64_t  next_timeout;
-                    ChaosSharedPtr<mongocxx::pool> pool_ref;
-                    ShardKeyManagement shrd_key_manager;
-                    
-                    ChaosUniquePtr<std::set<DaqBlobSPtr>> blob_set_uptr;
-                    std::future<void> current_push_future;
-                    
-                    virtual int storeData(const DaqBlob& daq_blob) = 0;
-                    
-                    virtual int retrieveData(const DaqIndex& index,
-                                             chaos::common::data::CDWUniquePtr& object) = 0;
-                    //execute the push of the data
-                    void executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_set_uptr);
-                public:
-                    HybBaseDataAccess();
-                    ~HybBaseDataAccess();
-                    //inhertied method
-                    int pushObject(const std::string&                       key,
-                                   const ChaosStringSetConstSPtr            meta_tags,
-                                   const chaos::common::data::CDataWrapper& stored_object);
-                    
-                    //inhertied method
-                    int getObject(const std::string&               key,
-                                  const uint64_t&                  timestamp,
-                                  chaos::common::data::CDWShrdPtr& object_ptr_ref);
-                    
-                    //!inherited method
-                    int getLastObject(const std::string&               key,
-                                      chaos::common::data::CDWShrdPtr& object_ptr_ref);
-                    //inhertied method
-                    int deleteObject(const std::string& key,
-                                     uint64_t           start_timestamp,
-                                     uint64_t           end_timestamp);
-                    //inhertied method
-                    int findObject(const std::string&                                              key,
-                                   const ChaosStringSet&                                           meta_tags,
-                                   const uint64_t                                                  timestamp_from,
-                                   const uint64_t                                                  timestamp_to,
-                                   const uint32_t                                                  page_len,
-                                   metadata_service::object_storage::abstraction::VectorObject&    found_object_page,
-                                   common::direct_io::channel::opcode_headers::SearchSequence&     last_record_found_seq);
-                    
-                    //inhertied method
-                    int findObjectIndex(const abstraction::DataSearch& search,
-                                        abstraction::VectorObject& found_object_page,
-                                        chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
-                    
-                    //inhertied method
-                    int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
-                                         chaos::common::data::CDWShrdPtr& found_object);
-                    
-                    //inhertied method
-                    int countObject(const std::string& key,
-                                    const uint64_t     timestamp_from,
-                                    const uint64_t     timestamp_to,
-                                    const uint64_t&    object_count);
-                };
-            }
-        }
+namespace metadata_service {
+namespace object_storage {
+namespace hybdriver {
+class NewMongoDBObjectStorageDriver;
+
+typedef struct DaqIndex {
+    std::string key;
+    int64_t shard_value;
+    int64_t run_id;
+    int64_t seq_id;
+    DaqIndex& operator=(DaqIndex&& copy) {
+        key         = std::move(copy.key);
+        shard_value = std::move(copy.shard_value);
+        run_id      = std::move(copy.run_id);
+        seq_id      = std::move(copy.seq_id);
+        return *this;
     }
+} DaqIndex;
+
+typedef struct {
+    DaqIndex index;
+    bsoncxx::builder::basic::document mongo_document;
+    chaos::common::data::BufferUPtr data_blob;
+} DaqBlob;
+
+typedef ChaosSharedPtr<DaqBlob> DaqBlobSPtr;
+
+//! Data Access for producer manipulation data
+class HybBaseDataAccess:
+public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
+    friend class HybBaseDriver;
+    //size of the batch
+    uint32_t batch_size;
+    //batch timeout in milliseconds
+    uint32_t batch_timeout;
+    int64_t  next_timeout;
+    ChaosSharedPtr<mongocxx::pool> pool_ref;
+    ShardKeyManagement shrd_key_manager;
+    
+    ChaosUniquePtr<std::set<DaqBlobSPtr>> blob_set_uptr;
+    std::future<void> current_push_future;
+    
+    virtual int storeData(const DaqBlob& daq_blob) = 0;
+    
+    virtual int retrieveData(const DaqIndex& index,
+                             chaos::common::data::CDWUniquePtr& object) = 0;
+    //execute the push of the data
+    void executePush(ChaosUniquePtr<std::set<DaqBlobSPtr>> _blob_set_uptr);
+public:
+    HybBaseDataAccess();
+    ~HybBaseDataAccess();
+    //inhertied method
+    int pushObject(const std::string&                       key,
+                   const ChaosStringSetConstSPtr            meta_tags,
+                   const chaos::common::data::CDataWrapper& stored_object);
+    
+    //inhertied method
+    int getObject(const std::string&               key,
+                  const uint64_t&                  timestamp,
+                  chaos::common::data::CDWShrdPtr& object_ptr_ref);
+    
+    //!inherited method
+    int getLastObject(const std::string&               key,
+                      chaos::common::data::CDWShrdPtr& object_ptr_ref);
+    //inhertied method
+    int deleteObject(const std::string& key,
+                     uint64_t           start_timestamp,
+                     uint64_t           end_timestamp);
+    //inhertied method
+    int findObject(const std::string&                                               key,
+                   const ChaosStringSet&                                            meta_tags,
+                   const ChaosStringSet&                                            projection_keys,
+                   const uint64_t                                                   timestamp_from,
+                   const uint64_t                                                   timestamp_to,
+                   const uint32_t                                                   page_len,
+                   metadata_service::object_storage::abstraction::VectorObject&     found_object_page,
+                   common::direct_io::channel::opcode_headers::SearchSequence&      last_record_found_seq);
+    
+    //inhertied method
+    int findObjectIndex(const abstraction::DataSearch& search,
+                        abstraction::VectorObject& found_object_page,
+                        chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+    
+    //inhertied method
+    int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
+                         chaos::common::data::CDWShrdPtr& found_object);
+    
+    //inhertied method
+    int countObject(const std::string& key,
+                    const uint64_t     timestamp_from,
+                    const uint64_t     timestamp_to,
+                    const uint64_t&    object_count);
+};
+}
+}
+}
 }
 
 #endif /* __CHAOSFramework_E927A5B7_1CA0_802F_AA20_DD63646EA30A_HybBaseDataAccess_h */

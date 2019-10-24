@@ -230,13 +230,14 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     return err;
 }
 
-int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
-                                               const ChaosStringSet& meta_tags,
-                                               const uint64_t timestamp_from,
-                                               const uint64_t timestamp_to,
-                                               const uint32_t page_len,
-                                               object_storage::abstraction::VectorObject& found_object_page,
-                                               SearchSequence& last_record_found_seq) {
+int MongoDBObjectStorageDataAccess::findObject(const std::string&                           key,
+                                               const ChaosStringSet&                        meta_tags,
+                                               const ChaosStringSet&                        projection_keys,
+                                               const uint64_t                               timestamp_from,
+                                               const uint64_t                               timestamp_to,
+                                               const uint32_t                               page_len,
+                                               object_storage::abstraction::VectorObject&   found_object_page,
+                                               SearchSequence&                              last_record_found_seq) {
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {

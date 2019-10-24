@@ -319,13 +319,14 @@ int HybBaseDataAccess::deleteObject(const std::string& key,
     
 }
 
-int HybBaseDataAccess::findObject(const std::string&                                          key,
-                                  const ChaosStringSet&                                       meta_tags,
-                                  const uint64_t                                              timestamp_from,
-                                  const uint64_t                                              timestamp_to,
-                                  const uint32_t                                              page_len,
-                                  abstraction::VectorObject&                                  found_object_page,
-                                  common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+int HybBaseDataAccess::findObject(const std::string&                                            key,
+                                  const ChaosStringSet&                                         meta_tags,
+                                  const ChaosStringSet&                                         projection_keys,
+                                  const uint64_t                                                timestamp_from,
+                                  const uint64_t                                                timestamp_to,
+                                  const uint32_t                                                page_len,
+                                  abstraction::VectorObject&                                    found_object_page,
+                                  common::direct_io::channel::opcode_headers::SearchSequence&   last_record_found_seq) {
     int err = 0;
     auto client  = pool_ref->acquire();
     //access to database
