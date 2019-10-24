@@ -54,7 +54,6 @@ void ManagedDirectIODataDriver::init(void *init_parameter) {
     }
     if(!conf->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         throw CException(err, "No valid DS returned: "+conf->getJSONString(), __PRETTY_FUNCTION__);
-
     }
     updateConfiguration(conf.get());
 }

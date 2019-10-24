@@ -79,6 +79,8 @@ namespace chaos {
                     /*!
                      Perform a query on a data cloud key(aka device id)
                      \param key to search
+                     \param meta_tags filter the query result the dataset tages with set values
+                     \param projection_keys return per each dataset only the fileds identify by the keys in the set
                      \param start_ts start of timestamp to search
                      \param end_ts end of the timestamp where limit the search
                      \param last_sequence is an input-outpu field that permit to give sequence of the last found
@@ -88,6 +90,7 @@ namespace chaos {
                      */
                     int queryDataCloud(const std::string& key,
                                        const ChaosStringSet& meta_tags,
+                                       const ChaosStringSet& projection_keys,
                                        const uint64_t start_ts,
                                        const uint64_t end_ts,
                                        const uint32_t page_dimension,

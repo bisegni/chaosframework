@@ -71,10 +71,12 @@ namespace chaos {
                     static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
                     //!is the node unique id for wich we whant the results
                     static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
-                    //identify the last run id found
+                    //!identify the last run id found
                     static const char * const QUERY_PARAM_SEARCH_LAST_RUN_ID            = "qp_data_cloud_last_run_id";
-                    //if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
+                    //!if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
                     static const char * const QUERY_PARAM_SEARCH_LAST_DP_COUNTER		= "qp_data_cloud_last_dp_counter";
+                    //!is the key for query projection (the other keys in datapack are removed)
+                    static const char * const QUERY_PARAM_PROJECTION_KEYS               = "qp_data_cloud_projection_keys";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode

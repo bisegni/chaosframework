@@ -425,6 +425,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                         start_ts,
                         end_ts,
                         ChaosStringSet(),
+                        ChaosStringSet(),
                         page_len);
 }
 
@@ -432,6 +433,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t start_ts,
                                             const uint64_t end_ts,
                                             const ChaosStringSet& meta_tags,
+                                            const ChaosStringSet& projection_keys,
                                             const uint32_t page_len) {
     QueryCursor *q = (use_index ? new QueryIndexCursor(UUIDUtil::generateUUID(),
                                                connectionFeeder,
@@ -439,6 +441,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                                start_ts,
                                                end_ts,
                                                meta_tags,
+                                               projection_keys,
                                                page_len):
                                 new QueryCursor(UUIDUtil::generateUUID(),
                                                 connectionFeeder,
@@ -446,6 +449,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                                 start_ts,
                                                 end_ts,
                                                 meta_tags,
+                                                projection_keys,
                                                 page_len));
     if(q) {
         //add query to map
@@ -469,6 +473,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                         sequid,
                         runid,
                         ChaosStringSet(),
+                        ChaosStringSet(),
                         page_len);
 }
 
@@ -478,6 +483,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             const uint64_t sequid,
                                             const uint64_t runid,
                                             const ChaosStringSet& meta_tags,
+                                            const ChaosStringSet& projection_keys,
                                             uint32_t page_len) {
     QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
                                      connectionFeeder,
@@ -487,6 +493,7 @@ QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                      sequid,
                                      runid,
                                      meta_tags,
+                                     projection_keys,
                                      page_len);
     if(q) {
         //add query to map

@@ -25,49 +25,51 @@
 #include <chaos/common/io/QueryCursor.h>
 
 namespace chaos {
-    namespace common {
-        namespace io {
-            class QueryIndexCursor:
-            public QueryCursor {
-            protected:
-                int fetchData();
-            public:
-                QueryIndexCursor(const std::string& _query_id,
-                                 chaos::common::network::URLServiceFeeder& _connection_feeder,
-                                 const std::string& _node_id,
-                                 uint64_t _start_ts,
-                                 uint64_t _end_ts,
-                                 uint32_t page_len=DEFAULT_PAGE_LEN);
-                
-                QueryIndexCursor(const std::string&                        _query_id,
-                                 chaos::common::network::URLServiceFeeder& _connection_feeder,
-                                 const std::string&                        _node_id,
-                                 uint64_t                                  _start_ts,
-                                 uint64_t                                  _end_ts,
-                                 const ChaosStringSet&                     _meta_tags,
-                                 uint32_t                                  page_len = DEFAULT_PAGE_LEN);
-                
-                QueryIndexCursor(const std::string&                        _query_id,
-                                 chaos::common::network::URLServiceFeeder& _connection_feeder,
-                                 const std::string&                        _node_id,
-                                 uint64_t                                  _start_ts,
-                                 uint64_t                                  _end_ts,
-                                 uint64_t                                  _sequid,
-                                 uint64_t                                  _runid,
-                                 uint32_t                                  page_len = DEFAULT_PAGE_LEN);
-                
-                QueryIndexCursor(const std::string& _query_id,
-                                 chaos::common::network::URLServiceFeeder& _connection_feeder,
-                                 const std::string& _node_id,
-                                 uint64_t _start_ts,
-                                 uint64_t _end_ts,
-                                 uint64_t _sequid,
-                                 uint64_t _runid,
-                                 const ChaosStringSet& _meta_tags,
-                                 uint32_t page_len=DEFAULT_PAGE_LEN);
-            };
-        }
-    }
+namespace common {
+namespace io {
+class QueryIndexCursor:
+public QueryCursor {
+protected:
+    int fetchData();
+public:
+    QueryIndexCursor(const std::string& _query_id,
+                     chaos::common::network::URLServiceFeeder& _connection_feeder,
+                     const std::string& _node_id,
+                     uint64_t _start_ts,
+                     uint64_t _end_ts,
+                     uint32_t page_len=DEFAULT_PAGE_LEN);
+    
+    QueryIndexCursor(const std::string&                        _query_id,
+                     chaos::common::network::URLServiceFeeder& _connection_feeder,
+                     const std::string&                        _node_id,
+                     uint64_t                                  _start_ts,
+                     uint64_t                                  _end_ts,
+                     const ChaosStringSet&                     _meta_tags,
+                     const ChaosStringSet&                     _projection_keys,
+                     uint32_t                                  page_len = DEFAULT_PAGE_LEN);
+    
+    QueryIndexCursor(const std::string&                        _query_id,
+                     chaos::common::network::URLServiceFeeder& _connection_feeder,
+                     const std::string&                        _node_id,
+                     uint64_t                                  _start_ts,
+                     uint64_t                                  _end_ts,
+                     uint64_t                                  _sequid,
+                     uint64_t                                  _runid,
+                     uint32_t                                  page_len = DEFAULT_PAGE_LEN);
+    
+    QueryIndexCursor(const std::string& _query_id,
+                     chaos::common::network::URLServiceFeeder&  _connection_feeder,
+                     const std::string&                         _node_id,
+                     uint64_t                                   _start_ts,
+                     uint64_t                                   _end_ts,
+                     uint64_t                                   _sequid,
+                     uint64_t                                   _runid,
+                     const ChaosStringSet&                      _meta_tags,
+                     const ChaosStringSet&                      _projection_keys,
+                     uint32_t                                   page_len=DEFAULT_PAGE_LEN);
+};
+}
+}
 }
 
 

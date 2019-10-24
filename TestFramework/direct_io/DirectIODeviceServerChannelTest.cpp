@@ -22,7 +22,7 @@
 #include "DirectIOChannelTest.h"
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
-
+#include <string>
 #include <limits>
 
 using namespace chaos::common::data;
@@ -150,6 +150,7 @@ public:
     int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                               const std::string& search_key,
                               const ChaosStringSet& meta_tags,
+                              const ChaosStringSet& projection_keys,
                               const uint64_t search_start_ts,
                               const uint64_t search_end_ts,
                               opcode_headers::SearchSequence& last_element_found_seq,
@@ -349,8 +350,8 @@ TEST_F(DirectIOChannelTest, DeviceChannelTest) {
         QueryResultPage results;
         SearchSequence sseq = {1,2};
         int page_dimension = 100;
-        ASSERT_TRUE(client_channel->queryDataCloud("search", ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
-        ASSERT_FALSE(client_channel->queryDataCloud("search", ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
+        ASSERT_TRUE(client_channel->queryDataCloud("search", ChaosStringSet(), ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
+        ASSERT_FALSE(client_channel->queryDataCloud("search", ChaosStringSet(), ChaosStringSet(), std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max(), page_dimension, sseq, results));
         ASSERT_EQ(page_dimension, results.size());
         ASSERT_EQ(sseq.run_id, 2);
         ASSERT_EQ(sseq.datapack_counter, 3);

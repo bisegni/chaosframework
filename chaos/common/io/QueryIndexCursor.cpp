@@ -51,6 +51,7 @@ QueryIndexCursor::QueryIndexCursor(const std::string&                        _qu
                                    uint64_t                                  _start_ts,
                                    uint64_t                                  _end_ts,
                                    const ChaosStringSet&                     _meta_tags,
+                                   const ChaosStringSet&                     _projection_keys,
                                    uint32_t                                  page_len):
 QueryCursor(_query_id,
             _connection_feeder,
@@ -58,6 +59,7 @@ QueryCursor(_query_id,
             _start_ts,
             _end_ts,
             _meta_tags,
+            _projection_keys,
             page_len){}
 
 QueryIndexCursor::QueryIndexCursor(const std::string&                        _query_id,
@@ -85,6 +87,7 @@ QueryIndexCursor::QueryIndexCursor(const std::string& _query_id,
                                    uint64_t _sequid,
                                    uint64_t _runid,
                                    const ChaosStringSet& _meta_tags,
+                                   const ChaosStringSet& _projection_keys,
                                    uint32_t page_len):
 QueryCursor(_query_id,
             _connection_feeder,
@@ -94,6 +97,7 @@ QueryCursor(_query_id,
             _sequid,
             _runid,
             _meta_tags,
+            _projection_keys,
             page_len){}
 
 int QueryIndexCursor::fetchData() {
@@ -101,6 +105,7 @@ int QueryIndexCursor::fetchData() {
     if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        meta_tags,
+                                                                       projection_keys,
                                                                        start_ts,
                                                                        end_ts,
                                                                        page_len,

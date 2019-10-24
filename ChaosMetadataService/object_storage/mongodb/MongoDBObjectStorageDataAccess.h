@@ -30,76 +30,77 @@
 #include "ShardKeyManagement.h"
 
 namespace chaos {
-    namespace metadata_service {
-        namespace object_storage {
-            namespace mongodb {
-                class MongoDBObjectStorageDriver;
-                
-                //! Data Access for producer manipulation data
-                class MongoDBObjectStorageDataAccess:
-                public chaos::metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
-                protected chaos::service_common::persistence::mongodb::MongoDBAccessor {
-                    friend class MongoDBObjectStorageDriver;
-                   
-                    //object storage custom parameter
-                    MapKVP obj_stoarge_kvp;
-                    const mongo::WriteConcern *storage_write_concern;
-                    
-                    inline void addTimeRange(mongo::BSONObjBuilder& builder,
-                                             const std::string& time_operator,
-                                             uint64_t timestamp);
-                    //!manage the partiiton value for shard key for every managerd key
-                    ShardKeyManagement shrd_key_manager;
-                protected:
-                    MongoDBObjectStorageDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
-                    ~MongoDBObjectStorageDataAccess();
-                public:
-                    //inhertied method
-                    int pushObject(const std::string& key,
-                                   const ChaosStringSetConstSPtr meta_tags,
-                                   const chaos::common::data::CDataWrapper& stored_object);
-                    
-                    //inhertied method
-                    int getObject(const std::string& key,
-                                  const uint64_t& timestamp,
-                                  chaos::common::data::CDWShrdPtr& object_ptr_ref);
-                    
-                    //!inherited method
-                    int getLastObject(const std::string& key,
-                                      chaos::common::data::CDWShrdPtr& object_ptr_ref);
-                    
-                    //inhertied method
-                    int deleteObject(const std::string& key,
-                                     uint64_t start_timestamp,
-                                     uint64_t end_timestamp);
-                    
-                    //inhertied method
-                    int findObject(const std::string& key,
-                                   const ChaosStringSet& meta_tags,
-                                   const uint64_t timestamp_from,
-                                   const uint64_t timestamp_to,
-                                   const uint32_t page_len,
-                                   object_storage::abstraction::VectorObject& found_object_page,
-                                   chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
-                    
-                    //inhertied method
-                    int findObjectIndex(const abstraction::DataSearch& search,
-                                        abstraction::VectorObject& found_object_page,
-                                        chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
-                    
-                    //inhertied method
-                    int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
-                                         chaos::common::data::CDWShrdPtr& found_object);
-                    
-                    //inhertied method
-                    int countObject(const std::string& key,
-                                    const uint64_t timestamp_from,
-                                    const uint64_t timestamp_to,
-                                    const uint64_t& object_count);
-                };
-            }
-        }
-    }
+namespace metadata_service {
+namespace object_storage {
+namespace mongodb {
+class MongoDBObjectStorageDriver;
+
+//! Data Access for producer manipulation data
+class MongoDBObjectStorageDataAccess:
+public chaos::metadata_service::object_storage::abstraction::ObjectStorageDataAccess,
+protected chaos::service_common::persistence::mongodb::MongoDBAccessor {
+    friend class MongoDBObjectStorageDriver;
+    
+    //object storage custom parameter
+    MapKVP obj_stoarge_kvp;
+    const mongo::WriteConcern *storage_write_concern;
+    
+    inline void addTimeRange(mongo::BSONObjBuilder& builder,
+                             const std::string& time_operator,
+                             uint64_t timestamp);
+    //!manage the partiiton value for shard key for every managerd key
+    ShardKeyManagement shrd_key_manager;
+protected:
+    MongoDBObjectStorageDataAccess(const ChaosSharedPtr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+    ~MongoDBObjectStorageDataAccess();
+public:
+    //inhertied method
+    int pushObject(const std::string& key,
+                   const ChaosStringSetConstSPtr meta_tags,
+                   const chaos::common::data::CDataWrapper& stored_object);
+    
+    //inhertied method
+    int getObject(const std::string& key,
+                  const uint64_t& timestamp,
+                  chaos::common::data::CDWShrdPtr& object_ptr_ref);
+    
+    //!inherited method
+    int getLastObject(const std::string& key,
+                      chaos::common::data::CDWShrdPtr& object_ptr_ref);
+    
+    //inhertied method
+    int deleteObject(const std::string& key,
+                     uint64_t start_timestamp,
+                     uint64_t end_timestamp);
+    
+    //inhertied method
+    int findObject(const std::string& key,
+                   const ChaosStringSet& meta_tags,
+                   const ChaosStringSet& projection_keys,
+                   const uint64_t timestamp_from,
+                   const uint64_t timestamp_to,
+                   const uint32_t page_len,
+                   object_storage::abstraction::VectorObject& found_object_page,
+                   chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+    
+    //inhertied method
+    int findObjectIndex(const abstraction::DataSearch& search,
+                        abstraction::VectorObject& found_object_page,
+                        chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
+    
+    //inhertied method
+    int getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
+                         chaos::common::data::CDWShrdPtr& found_object);
+    
+    //inhertied method
+    int countObject(const std::string& key,
+                    const uint64_t timestamp_from,
+                    const uint64_t timestamp_to,
+                    const uint64_t& object_count);
+};
+}
+}
+}
 }
 
 #endif /* __CHAOSFramework__B2D2009_02A2_468B_9C5C_1D184ECB470F_MongoDBObjectStorageDataAccess_h */

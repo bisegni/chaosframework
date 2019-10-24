@@ -112,7 +112,7 @@ static void initSearchIndex(mongocxx::database& db,
                      "simple_search_uid_dataset_with_tag") == false) {
             mongocxx::options::index index_options{};
             index_options.background(true)
-                            .name("simple_search_uid_dataset_with_tag");
+            .name("simple_search_uid_dataset_with_tag");
             auto index_builder = builder::basic::document{};
             index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1));
             index_builder.append(kvp(std::string(chaos::DataPackCommonKey::DPCK_DATASET_TAGS), 1));
@@ -564,13 +564,14 @@ int MongoDBObjectStorageDataAccess::deleteObject(const std::string& key,
     
 }
 
-int MongoDBObjectStorageDataAccess::findObject(const std::string&                                        key,
-                                               const ChaosStringSet&                                       meta_tags,
-                                               const uint64_t                                              timestamp_from,
-                                               const uint64_t                                              timestamp_to,
-                                               const uint32_t                                              page_len,
-                                               abstraction::VectorObject&                                  found_object_page,
-                                               common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+int MongoDBObjectStorageDataAccess::findObject(const std::string&                                           key,
+                                               const ChaosStringSet&                                        meta_tags,
+                                               const ChaosStringSet&                                        projection_keys,
+                                               const uint64_t                                               timestamp_from,
+                                               const uint64_t                                               timestamp_to,
+                                               const uint32_t                                               page_len,
+                                               abstraction::VectorObject&                                   found_object_page,
+                                               common::direct_io::channel::opcode_headers::SearchSequence&  last_record_found_seq) {
     int err = 0;
     auto client  = pool_ref.acquire();
     //access to database
@@ -616,8 +617,13 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
         opts.sort(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1),
                                 kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                                 kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
-        
-        
+        if(projection_keys.size()) {
+            auto prj_builder = builder::basic::document{};
+            for(auto& it: projection_keys) {
+                prj_builder.append(kvp(it, 1));
+            }
+            opts.projection(prj_builder.view());
+        }
         
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_1_ENTRY("Query", bsoncxx::to_json(builder.view()))));
         
@@ -700,7 +706,13 @@ int MongoDBObjectStorageDataAccess::findObjectIndex(const DataSearch& search,
         opts.sort(make_document(kvp(std::string(chaos::DataPackCommonKey::DPCK_DEVICE_ID), 1),
                                 kvp(std::string(chaos::ControlUnitDatapackCommonKey::RUN_ID), 1),
                                 kvp(std::string(chaos::DataPackCommonKey::DPCK_SEQ_ID), 1)));
-        
+        if(search.projection_keys.size()) {
+            auto prj_builder = builder::basic::document{};
+            for(auto& it: search.projection_keys) {
+                prj_builder.append(kvp(it, 1));
+            }
+            opts.projection(prj_builder.view());
+        }
         DEBUG_CODE(DBG<<log_message("findObject", "find", DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                                   "Projection",
                                                                                   bsoncxx::to_json(builder.view()),
