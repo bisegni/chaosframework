@@ -388,6 +388,13 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                     }
                     return ret;
                 }
+                 operator std::set<std::string>(){
+                    std::set<std::string> ret;
+                    for(int cnt=0;cnt<size();cnt++){
+                        ret.insert(getStringElementAtIndex(cnt));
+                    }
+                    return ret;
+                }
                 const char * getRawValueAtIndex(const int key,uint32_t& size) const;
                 size_t size() const;
             };
