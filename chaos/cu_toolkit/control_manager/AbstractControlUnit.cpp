@@ -1707,7 +1707,7 @@ CDWUniquePtr AbstractControlUnit::setDatasetAttribute(CDWUniquePtr dataset_attri
     //get all input attribute name for input and bidirectional directions
     getDatasetAttributesName(DataType::Input, in_attribute_name);
     getDatasetAttributesName(DataType::Bidirectional, in_attribute_name);
-
+    attribute_value_shared_cache->getAttributeNames(DOMAIN_CUSTOM,in_attribute_name);
     if (dataset_attribute_values->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
       //get the contrl unit id
       std::string node_id = dataset_attribute_values->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
