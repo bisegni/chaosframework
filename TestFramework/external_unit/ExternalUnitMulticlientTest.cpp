@@ -117,7 +117,7 @@ void TestClient::run() {
   ExternalUnitManager::getInstance()->initilizeConnection(*this,
                                                           "http",
                                                           "application/bson-json",
-                                                          "ws://localhost:8080/echo");
+                                                          "ws://localhost:" HTTP_ADAPTER_DEFAULT_PORT "/echo");
   while (ExternalUnitClientEndpoint::isOnline() == false ||
          ExternalUnitClientEndpoint::getAcceptedState() != 1) {
     ASSERT_LE(retry++, 240);
