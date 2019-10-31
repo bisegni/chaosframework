@@ -52,7 +52,7 @@ HTTPServerAdapter::~HTTPServerAdapter() {}
 
 void HTTPServerAdapter::init(void *init_data)  {
     //scsan configuration
-    setting.publishing_port = "9080";
+    setting.publishing_port = HTTP_ADAPTER_DEFAULT_PORT;
     setting.thread_number = GlobalConfiguration::getInstance()->getOption<unsigned int>(InitOption::OPT_UNIT_GATEWAY_WORKER_THREAD_NUMBER);
     if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_UNIT_GATEWAY_ADAPTER_KV_PARAM)) {
         std::map<string, string> http_param;

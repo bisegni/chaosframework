@@ -26,6 +26,7 @@ namespace chaos{
     namespace common {
         namespace external_unit {
             namespace InitOption {
+                #define HTTP_ADAPTER_DEFAULT_PORT "9090"
                 static const char * const   OPT_UNIT_GATEWAY_ENABLE                         = "unit-gateway-enable";
                 static const char * const   OPT_UNIT_GATEWAY_ENABLE_DESC                    = "Enable the management of external unit management";
                 static const bool           OPT_UNIT_GATEWAY_ENABLE_DEFAULT                 =  false;
