@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0.0)
 
 project(ccs)
 
@@ -47,39 +47,7 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/include)
 LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib)
 
-#INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
-
-
-#MESSAGE( STATUS "QT_INCLUDE_DIR:         " ${QT_INCLUDE_DIR})
-
-# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtCore)
-# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtWidgets)
-# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtGui)
-# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtPrintSupport)
-# INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}/QtSql)
-
-# MESSAGE(">>qt5_wrap_cpp")
-# qt5_wrap_cpp(ccs_include_moc
-#              monitor/handler/healt/HealtHeartbeatHandler.h
-#              monitor/handler/healt/HealtStatusHandler.h
-#              monitor/handler/system/SystemControlUnitRunScheduleDelay.h
-#              monitor/handler/AbstractAttributeHandler.h
-#               monitor/handler/AbstractTSTaggedAttributeHandler.h
-#               monitor/handler/MonitorBinaryAttributeHandler.h
-#               monitor/handler/MonitorBoolAttributeHandler.h
-#               monitor/handler/MonitorDoubleAttributeHandler.h
-#               monitor/handler/MonitorInt32AttributeHandler.h
-#               monitor/handler/MonitorInt64AttributeHandler.h
-#               monitor/handler/MonitorStringAttributeHandler.h
-#               monitor/handler/MonitorTSTaggedBinaryAttributeHandler.h
-#               monitor/handler/MonitorTSTaggedDoubleAttributeHandler.h
-#               monitor/handler/MonitorTSTaggedInt32AttributeHandler.h
-#               monitor/handler/MonitorTSTaggedInt64AttributeHandler.h
-#               monitor/handler/MonitorTSTaggedStringAttributeHandler.h
-#               monitor/handler/MonitorTSTaggetBoolAttributeHandler.h)
-
-
-MESSAGE(">>Tell CMake to create the helloworld executable")
+MESSAGE(">>Tell CMake to create the ccs executable")
 
 QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS})
 QT5_ADD_RESOURCES(RESOURCES_RCC ${RESOURCES})
@@ -161,81 +129,51 @@ set(sources
     external_lib/QtNodeEditor/StyleCollection.cpp
     language_editor/CLINGLanguageSupport.cpp
     language_editor/JsonEditor.cpp
-    # language_editor/JsonEditor.ui
     language_editor/LuaLanguageSupport.cpp
     language_editor/ScriptEditor.cpp
-    # language_editor/ScriptEditor.ui
     log_browser/ApplicationErrorLogging.cpp
-    # log_browser/ApplicationErrorLogging.ui
     log_browser/LogBrowser.cpp
-    # log_browser/LogBrowser.ui
     logic/property_switch/MultiPropertyLogicSwitch.cpp
     logic/property_switch/SwitchAggregator.cpp
     node/agent/AgentEditor.cpp
-    # node/agent/AgentEditor.ui
     node/agent/AgentNodeAssociationEditor.cpp
-    # node/agent/AgentNodeAssociationEditor.ui
     node/agent/AgentSetting.cpp
-    # node/agent/AgentSetting.ui
     node/connection_manager/ConnectionEditor.cpp
-    # node/connection_manager/ConnectionEditor.ui
     node/connection_manager/model/ControlUnitNodeDataModel.cpp
     node/control_unit/AttributeValueRangeDialog.cpp
-    # node/control_unit/AttributeValueRangeDialog.ui
     node/control_unit/CommandTemplateInstanceEditor.cpp
-    # node/control_unit/CommandTemplateInstanceEditor.ui
     node/control_unit/ControlUnitCommandTemplateEditor.cpp
-    # node/control_unit/ControlUnitCommandTemplateEditor.ui
     node/control_unit/ControlUnitEditor.cpp
-    # node/control_unit/ControlUnitEditor.ui
     node/control_unit/ControUnitInstanceEditor.cpp
-    # node/control_unit/ControUnitInstanceEditor.ui
     node/control_unit/DriverDescriptionInputDialog.cpp
-    # node/control_unit/DriverDescriptionInputDialog.ui
     node/data_service/CreateEditDataService.cpp
-    # node/data_service/CreateEditDataService.ui
     node/data_service/DataServiceEditor.cpp
-    # node/data_service/DataServiceEditor.ui
     node/unit_server/UnitServerEditor.cpp
-    # node/unit_serverUnitServerEditor.ui
     plot/AbstractBinaryPlotAdapter.cpp
     plot/BufferPlot.cpp
-    # plot/BufferPlot.ui
     plot/NodeAttributePlotting.cpp
-    # plot/NodeAttributePlotting.ui
     preference/PreferenceDialog.cpp
-    # preference/PreferenceDialog.ui
     preference/PreferenceManager.cpp
     preference/PreferenceMDSHostListModel.cpp
     preference/SelectNetworkDomain.cpp
-    # preference/SelectNetworkDomain.ui
     presenter/PresenterWidget.cpp
     script/CreateNewScriptDialog.cpp
-    # script/CreateNewScriptDialog.ui
     script/ScriptDescriptionWidget.cpp
-    # script/ScriptDescriptionWidget.ui
     script/ScriptInstanceManagerWidget.cpp
-    # script/ScriptInstanceManagerWidget.ui
     script/ScriptManager.cpp
-    # script/ScriptManager.ui
     script/editor/CodeEditor.cpp
     search/SearchNodeResult.cpp
-    # search/searchnoderesult.ui
     snapshot/NewSnapshot.cpp
-    # snapshot/NewSnapshot.ui
     snapshot/NodeInSnapshotTableModel.cpp
     snapshot/NodeListModel.cpp
     snapshot/SnapshotManager.cpp
-    # snapshot/SnapshotManager.ui
     snapshot/SnapshotTableModel.cpp
     status_manager/StatusManager.cpp
     tree_group/AddNewDomain.cpp
-    # tree_group/AddNewDomain.ui
     tree_group/DomainListModel.cpp
     tree_group/GroupTreeItem.cpp
     tree_group/GroupTreeModel.cpp
     tree_group/TreeGroupManager.cpp
-    # tree_group/TreeGroupManager.ui
     monitor/healt/HealtMonitorWidget.cpp
     monitor/healt/HealtPresenterWidget.cpp
     monitor/healt/HealtWidgetsListPresenteWidget.cpp
@@ -284,14 +222,30 @@ set(sources
     ${ccs_include_moc}
 )
 
-add_executable(ccs
-        ${sources}
-        #${SRCS}
-        #${HEADERS}
-        ${ccs_include_moc}
-        ${UIS_HDRS}
+IF(UNIX AND NOT APPLE)
+        MESSAGE(">>Add Linux Exacutable")
+        ADD_EXECUTABLE(ccs
+                        ${sources}
+                        ${ccs_include_moc}
+                        ${UIS_HDRS})
+ELSE()
+        MESSAGE(">>Add OSX Exacutable")
+        #Bundle (OSX)
+        # the property added to Info.plist
+        set(MACOSX_BUNDLE_ICON_FILE chaos.icns)
 
-)
+        # And this part tells CMake where to find and install the file itself
+        set(CHAOS_ICON ${CMAKE_CURRENT_SOURCE_DIR}/chaos.icns)
+        set_source_files_properties(${CHAOS_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+        ADD_EXECUTABLE(ccs
+                        MACOSX_BUNDLE
+                        ${CHAOS_ICON}
+                        ${sources}
+                        ${ccs_include_moc}
+                        ${UIS_HDRS})
+
+ENDIF()
+
 
 
 MESSAGE(">>Target libraries")

@@ -11,7 +11,7 @@ PRECOMPILED_HEADER = precomp_header.h
 CONFIG += precompile_header
 CONFIG+=sdk_no_version_check
 QMAKE_CXXFLAGS += -std=c++11
-#QMAKE_MAC_SDK = macosx10.15
+
 
 TARGET = ccs
 TEMPLATE = app
@@ -29,6 +29,7 @@ unix:!macx {
 }
 
 macx:{
+    ICON = $$PRO_FILE_PWD/chaos.icns
     CONFIG += app_bundle
     LIBS +=  -lchaos_common
 }
