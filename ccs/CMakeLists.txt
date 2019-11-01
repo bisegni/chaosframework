@@ -218,15 +218,18 @@ set(sources
     widget/WidgetDynamicList.cpp
     widget/StorageBurst.cpp
     widget/CLedIndicatorCUBusy.cpp
-    resources.qrc
+    theme/theme.qrc
     ${ccs_include_moc}
 )
+
+# QT5_ADD_RESOURCES(RCC_SOURCES  theme/theme.qrc)
 
 IF(UNIX AND NOT APPLE)
         MESSAGE(">>Add Linux Exacutable")
         ADD_EXECUTABLE(ccs
                         ${sources}
                         ${ccs_include_moc}
+                        # ${RCC_SOURCES}
                         ${UIS_HDRS})
 ELSE()
         MESSAGE(">>Add OSX Exacutable")
@@ -237,11 +240,14 @@ ELSE()
         # And this part tells CMake where to find and install the file itself
         set(CHAOS_ICON ${CMAKE_CURRENT_SOURCE_DIR}/chaos.icns)
         set_source_files_properties(${CHAOS_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+        file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/theme/*")
+        SET_SOURCE_FILES_PROPERTIES(${RES_SOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
         ADD_EXECUTABLE(ccs
                         MACOSX_BUNDLE
                         ${CHAOS_ICON}
                         ${sources}
                         ${ccs_include_moc}
+                        ${RES_SOURCES}
                         ${UIS_HDRS})
 
 ENDIF()

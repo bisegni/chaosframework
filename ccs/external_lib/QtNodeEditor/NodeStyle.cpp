@@ -14,14 +14,14 @@
 
 using QtNodes::NodeStyle;
 
-inline void initResources() { Q_INIT_RESOURCE(resources); }
+// inline void initResources() { Q_INIT_RESOURCE(resources); }
 
 NodeStyle::
 NodeStyle()
 {
   // Explicit resources inialization for preventing the static initialization
   // order fiasco: https://isocpp.org/wiki/faq/ctors#static-init-order
-  initResources();
+  // initResources();
 
   // This configuration is stored inside the compiled unit and is loaded statically
   loadJsonFile(":DefaultStyle.json");
