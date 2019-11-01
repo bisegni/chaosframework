@@ -162,11 +162,13 @@ ChaosAbstractCommon::ChaosAbstractCommon()
 ChaosAbstractCommon::~ChaosAbstractCommon() {}
 
 void ChaosAbstractCommon::preparseConfigFile(std::istream &config_file_stream) {
+    GlobalConfiguration::getInstance()->loadStartupParameterFromEnv();
     GlobalConfiguration::getInstance()->loadStreamParameter(config_file_stream);
     GlobalConfiguration::getInstance()->scanOption();
 }
 
 void ChaosAbstractCommon::preparseCommandOption(int argc, const char *argv[]) {
+    GlobalConfiguration::getInstance()->loadStartupParameterFromEnv();
     GlobalConfiguration::getInstance()->loadStartupParameter(argc, argv);
     GlobalConfiguration::getInstance()->scanOption();
     

@@ -123,6 +123,7 @@ x = hasOption(y);
 //                             const std::string& regex);
     public:
         void loadStartupParameter(int, const char* argv[]);
+        void loadStartupParameterFromEnv();
         void loadStreamParameter(std::istream &config_file);
         void scanOption();
         void checkDefaultOption();

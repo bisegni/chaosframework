@@ -157,6 +157,18 @@ void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
     }
 }
 
+void GlobalConfiguration::loadStartupParameterFromEnv()  {
+    try{
+        //
+        po::store(po::parse_environment(desc, "CHAOS-"), vm);
+        po::notify(vm);
+    }catch (po::error &e) {
+        //write error also on cerr
+        std::cerr << e.what();
+        throw CException(0, e.what(), __PRETTY_FUNCTION__);
+    }
+}
+
 void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
     try{
         //
@@ -166,7 +178,6 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
-        
     }
 }
 
@@ -187,28 +198,18 @@ void GlobalConfiguration::scanOption()   {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
-        
     }
-    
-    
 }
 
 void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) {
-    //int rpcServerPort;
-    //int rpcServerThreadNumber;
-    //string metadataServerAddress;
-    //vector<string> liveDataServer;
     try{
-        //
         po::store(optionsParser, vm);
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
-        
     }
-    
     //scan option
     scanOption();
     
