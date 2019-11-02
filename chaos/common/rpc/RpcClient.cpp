@@ -145,3 +145,11 @@ void RpcClient::setServerHandler(RpcServerHandler *_server_handler) {
 uint64_t RpcClient::getMessageQueueSize() {
     return 0;
 }
+
+void RpcClient::setSynchronousRPCState(bool _syncrhonous_call) {
+    syncrhonous_call = _syncrhonous_call;
+}
+
+bool RpcClient::getynchronousRPCState()const {
+    return syncrhonous_call;
+}

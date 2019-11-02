@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(ccs)
 
+option(CHAOS_PROMETHEUS "Enable Prometheus metrics support" OFF)
+
 MESSAGE(">>Find the Qt5 library")
 FIND_PACKAGE(Qt5Widgets REQUIRED)
 FIND_PACKAGE(Qt5Core REQUIRED)
@@ -252,28 +254,23 @@ ELSE()
 
 ENDIF()
 
-
+set(CCS_LINK_LIB    Qt5::Core
+                    Qt5::Gui
+                    Qt5::Sql
+                    Qt5::Widgets
+                    Qt5::PrintSupport
+                    chaos_common
+                    chaos_metadata_service_client
+                    zmq)
+IF (CHAOS_PROMETHEUS)
+    MESSAGE(">>Enable prometheus supports")
+    set(CCS_LINK_LIB    ${CCS_LINK_LIB} 
+                        prometheus-cpp-core
+                        prometheus-cpp-pull)
+ENDIF()
 
 MESSAGE(">>Target libraries")
-target_link_libraries(ccs
-                      Qt5::Core
-                      Qt5::Gui
-                      Qt5::Sql
-                      Qt5::Widgets
-                      Qt5::PrintSupport
-                      chaos_common
-                      chaos_metadata_service_client
-                      zmq
-                      boost_chrono
-                      boost_log
-                      boost_log_setup
-                      boost_system
-                      boost_thread
-                      boost_program_options
-                      boost_regex
-                      boost_filesystem
-                      #mongoose
-                      jsoncpp)
+target_link_libraries(ccs ${CCS_LINK_LIB})
 
 
 MESSAGE(">>END")

@@ -102,6 +102,10 @@ namespace chaos {
          of internal queue message
          */
         virtual uint64_t getMessageQueueSize();
+        
+        //! Set dinamically the synchronousRpcFeautres
+        void setSynchronousRPCState(bool _syncrhonous_call);
+        bool getynchronousRPCState()const;
     };
 }
 #endif
