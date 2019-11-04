@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-#include "../../widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h"
+#include "../../widget/designer/ui/CDatasetAttributeLabel.h"
 #include "CDatasetAttributeLabelPlugin.h"
 #include "CDatasetAttributeLabelMenu.h"
 

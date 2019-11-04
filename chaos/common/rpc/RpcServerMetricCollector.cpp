@@ -118,7 +118,7 @@ CDWUniquePtr RpcServerMetricCollector::executeCommandSync(CDWUniquePtr action_pa
     //inrement packec count
     (*packet_async_count_uptr)++;
     (*data_async_count_uptr) += action_pack->getBSONRawSize();
-    return wrapperd_server_handler->dispatchCommand(MOVE(action_pack));
+    return wrapperd_server_handler->executeCommandSync(MOVE(action_pack));
 }
 
 void RpcServerMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {

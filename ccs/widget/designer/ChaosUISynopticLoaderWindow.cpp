@@ -28,8 +28,7 @@ ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
             SLOT(customMenuRequested(QPoint)));
 }
 
-ChaosUISynopticLoaderWindow::~ChaosUISynopticLoaderWindow()
-{
+ChaosUISynopticLoaderWindow::~ChaosUISynopticLoaderWindow() {
     delete ui;
 }
 
@@ -74,6 +73,13 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
     if(!fileName.size()) {
         return;
     }
+
+    //allocate js engine for new ui
+    if(js_engine.data() != nullptr) {
+        js_engine->collectGarbage();
+    }
+    js_engine.reset(new QJSEngine());
+    js_engine->installExtensions(QJSEngine::ConsoleExtension);
     qDebug() << "load file:" << fileName;
     //we can load ui file
 
@@ -90,6 +96,10 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
         if(cw->deviceID() == nullptr ||
                 cw->deviceID().compare("") == 0) {continue;}
 
+        //-------add object to script engine;
+        js_engine->globalObject().setProperty(cw->objectName(), js_engine->newQObject(cw));
+        //-------add object to script engine;
+
         QSharedPointer<CUNodeRoot> device_root;
         if(hash_device_root.contains(cw->deviceID())) {
             device_root = hash_device_root.find(cw->deviceID()).value();
@@ -101,17 +111,14 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
                          SIGNAL(updateDatasetAttribute(QString, QVariant)),
                          cw,
                          SLOT(updateData(QString, QVariant)));
-        //        cu_object_hash.insert(cw->deviceID(), cw);
     }
     ui->enableUIAction->setEnabled(true);
-
-    //    QMetaObject::invokeMethod(this, "windowIsShown", Qt::QueuedConnection);
 }
 
 void ChaosUISynopticLoaderWindow::customMenuRequested(QPoint point) {
     QWidget *child_at_position = centralWidget()->childAt(point);
     if(child_at_position == nullptr ||
-       child_at_position->inherits("ChaosBaseDatasetUI") == false) return;
+            child_at_position->inherits("ChaosBaseDatasetUI") == false) return;
     ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(child_at_position);
     QMenu *menu=new QMenu(this);
     QAction *ac1 = new QAction(QString("Edit script for %1").arg(cw->objectName()), this);
@@ -130,32 +137,40 @@ void ChaosUISynopticLoaderWindow::editScript() {
     QWidget *chaos_ui = centralWidget()->findChild<QWidget*>(pAction->data().toString());
     if(chaos_ui == nullptr) return;
 
-    ScriptSignalDialog scriptDialog(getSignal(chaos_ui));
+    ScriptSignalDialog scriptDialog(chaos_ui);
     scriptDialog.setWindowTitle(tr("Script Editor"));
-    scriptDialog.exec();
-}
+    if(scriptDialog.exec() == QDialog::Accepted) {
+        //install cript
+        QObject::disconnect(chaos_ui,nullptr,nullptr,nullptr);
 
-QStringList ChaosUISynopticLoaderWindow::getSignal(QWidget *wgt) {
-    QStringList signalSignatures;
-    if(wgt == nullptr) return signalSignatures;
+        //re-install all script on event
+        QMap<QString, QSharedPointer<StructSignalFunction> > compiledScript = scriptDialog.getScript();
+        auto iter = compiledScript.begin();
+        while(iter != compiledScript.end()) {
+            //compile the jslsot
+            qDebug() << "Compile script:\n" << iter.value()->script_source;
+            QJSValue compiled_function = js_engine->evaluate(iter.value()->script_source);
+            if(compiled_function.isError()) {
+                qDebug()<< "\nUncaught exception at line"
+                        << compiled_function.property("lineNumber").toInt()
+                        << ":" << compiled_function.toString();
 
-    const QMetaObject *thisMeta = wgt->metaObject();
-    for(int methodIdx = 0;
-        methodIdx < thisMeta->methodCount();
-        ++methodIdx) {
-        QMetaMethod method = thisMeta->method(methodIdx);
-        qDebug() << QString(method.methodSignature());
-        switch(method.methodType()) {
-        case QMetaMethod::Signal:
-            signalSignatures.append(QString(method.methodSignature()));
-            break;
-        default:
-            break;
+            } else {
+                qDebug() << "Attach function:\n" << iter.value()->function_name << "to signla " << iter.value()->signal_name << " of widget "<< chaos_ui->objectName();
+                QString js_connection = QString("%1.%2.connect(%3)").arg(chaos_ui->objectName()).arg(iter.value()->signal_name).arg(iter.value()->function_name);
+                QJSValue compiled_connection = js_engine->evaluate(js_connection);
+                if(compiled_connection.isError()) {
+                    qDebug()<< "\nUncaught exception at line"
+                            << compiled_connection.property("lineNumber").toInt()
+                            << ":" << compiled_connection.toString();
+
+                }
+            }
+            iter++;
         }
     }
-    return signalSignatures;
-}
 
+}
 
 void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& /*node_uid*/,
                                                          OnlineState /*old_status*/,

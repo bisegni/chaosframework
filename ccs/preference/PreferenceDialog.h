@@ -36,6 +36,10 @@ private slots:
     void on_pushButtonRemoveConfiguration_clicked();
     void on_comboBoxConfigurations_currentTextChanged(const QString &selected_configuration);
 
+    void on_pushButtonSave_accepted();
+
+    void on_pushButtonNetworkSave_clicked();
+
 private:
     QSettings settings;
     PreferenceMDSHostListModel list_model_mds_address;

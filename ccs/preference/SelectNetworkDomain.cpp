@@ -45,6 +45,11 @@ void SelectNetworkDomain::loadAllConfiguration() {
 }
 
 void SelectNetworkDomain::on_pushButtonCancel_clicked() {
+    emit selectionAborted();
+    reject();
+}
+
+void SelectNetworkDomain::on_pushButtonSelection_clicked() {
     //check configuration
     bool configured = false;
     try{
@@ -53,21 +58,14 @@ void SelectNetworkDomain::on_pushButtonCancel_clicked() {
             emit networkDomainSelected(ui->comboBoxConfigurations->currentText());
             accept();
         }
-    } catch(chaos::CException& ex) {
-
-    } catch(...) {
-
     }
+    catch(chaos::CException& ex) {}
+    catch(...) {}
     if(configured == false) {
         QMessageBox::critical(this,
                               "Configuraiton check",
                               "Configuraiton has failede plese try onether one");
     }
-}
-
-void SelectNetworkDomain::on_pushButtonSelection_clicked() {
-    emit selectionAborted();
-    reject();
 }
 
 void SelectNetworkDomain::on_pushButtonPreferenceDialog_clicked() {

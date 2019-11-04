@@ -23,14 +23,16 @@ INSTALLS += target
 
 }
 
-include(../../widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.pri)
+include(../../widget/designer/ui/ui.pri)
 
 #! [2]
 HEADERS += CDatasetAttributeLabelMenu.h \
            CDatasetAttributeLabelDialog.h \
-           CDatasetAttributeLabelPlugin.h
+           CDatasetAttributeLabelPlugin.h \
+           ChaosWidgets.h
 SOURCES += CDatasetAttributeLabelMenu.cpp \
            CDatasetAttributeLabelDialog.cpp \
-           CDatasetAttributeLabelPlugin.cpp
+           CDatasetAttributeLabelPlugin.cpp \
+           ChaosWidgets.cpp
 OTHER_FILES += CDatasetAttributeLabelPlugin.json
 #! [2]

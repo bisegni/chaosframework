@@ -69,7 +69,7 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButtonSelection">
+      <widget class="QPushButton" name="pushButtonCancel_2">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -96,7 +96,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonCancel">
+      <widget class="QPushButton" name="pushButtonSelection">
        <property name="text">
         <string>Select</string>
        </property>
