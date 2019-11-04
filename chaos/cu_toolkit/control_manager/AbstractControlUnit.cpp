@@ -1968,7 +1968,8 @@ int AbstractControlUnit::pushCustomDataset() {
   if (!custom_attribute_cache.hasChanged()) return err;
   //get the cdatawrapper for the pack
   int64_t    cur_us                   = TimingUtil::getTimeStampInMicroseconds();
-  CDWShrdPtr custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
+  if(key_data_storage.get()){
+    CDWShrdPtr custom_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainCustom);
   if (custom_attribute_dataset.get()) {
     custom_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
     //input dataset timestamp is added only when pushed on cache
@@ -1983,6 +1984,7 @@ int AbstractControlUnit::pushCustomDataset() {
     if(!err){custom_attribute_cache.resetChangedIndex();}
   } else {
         ACULERR_ << " Cannot allocate packet.. err:"<<err;
+  }
   }
   return err;
 }
