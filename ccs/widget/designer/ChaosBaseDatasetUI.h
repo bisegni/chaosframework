@@ -8,7 +8,6 @@ class ChaosBaseDatasetUI:
     Q_OBJECT
     Q_PROPERTY(QString deviceID READ deviceID WRITE setDeviceID)
     Q_PROPERTY(DatasetType datasetType READ datasetType WRITE setDatasetType)
-    Q_PROPERTY(QString attributeName READ attributeName WRITE setAttributeName)
 
 public:
     enum DatasetType { System, Input, Output};
@@ -22,9 +21,6 @@ public:
     void setDatasetType(const DatasetType &new_dataset_type);
     DatasetType datasetType() const;
 
-
-    QString attributeName() const;
-    void setAttributeName(const QString& new_attribute_name);
 signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);
@@ -38,7 +34,6 @@ private slots:
 private:
     QVariant p_value;
     QString p_device_id;
-    QString p_attribute_name;
     DatasetType p_dataset_type;
 };
 

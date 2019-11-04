@@ -2,11 +2,11 @@
 #define CDATASETATTRIBUTELABEL_H
 
 #include <QLabel>
-#include "../ChaosBaseDatasetUI.h"
+#include "../ChaosBaseDatasetAttributeUI.h"
 
 
 class CDatasetAttributeLabel :
-        public ChaosBaseDatasetUI {
+        public ChaosBaseDatasetAttributeUI {
     Q_OBJECT
 public:
     explicit CDatasetAttributeLabel(QWidget *parent = nullptr);

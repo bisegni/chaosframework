@@ -24,17 +24,9 @@ ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
 }
 
-QString ChaosBaseDatasetUI::attributeName() const {
-    return p_attribute_name;
-}
-
-void ChaosBaseDatasetUI::setAttributeName(const QString& new_attribute_name) {
-    p_attribute_name = new_attribute_name;
-}
-
 void ChaosBaseDatasetUI::updateData(QString attribute_name,
                                     QVariant attribute_value) {
-    if(attribute_name.compare(p_attribute_name) != 0) return;
+    Q_UNUSED(attribute_name)
     QMetaObject::invokeMethod(this,
                               "updateValue",
                               Qt::QueuedConnection,

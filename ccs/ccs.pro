@@ -190,11 +190,12 @@ SOURCES += main.cpp\
     language_editor/CLINGLanguageSupport.cpp \
     widget/StorageBurst.cpp \
     widget/CLedIndicatorCUBusy.cpp \
-    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.cpp \
     widget/designer/CUNodeRoot.cpp \
+    widget/designer/ChaosBaseDatasetAttributeUI.cpp \
     widget/designer/ChaosBaseDatasetUI.cpp \
     widget/designer/ChaosUISynopticLoaderWindow.cpp \
-    widget/designer/ScriptSignalDialog.cpp
+    widget/designer/ScriptSignalDialog.cpp \
+    widget/designer/ui/CDatasetAttributeLabel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -374,11 +375,12 @@ HEADERS  += \
     language_editor/CLINGLanguageSupport.h \
     widget/StorageBurst.h \
     widget/CLedIndicatorCUBusy.h \
-    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h \
     widget/designer/CUNodeRoot.h \
+    widget/designer/ChaosBaseDatasetAttributeUI.h \
     widget/designer/ChaosBaseDatasetUI.h \
     widget/designer/ChaosUISynopticLoaderWindow.h \
-    widget/designer/ScriptSignalDialog.h
+    widget/designer/ScriptSignalDialog.h \
+    widget/designer/ui/CDatasetAttributeLabel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

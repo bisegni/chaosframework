@@ -1,4 +1,4 @@
-#include "../../widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.h"
+#include "../../widget/designer/ui/CDatasetAttributeLabel.h"
 #include "CDatasetAttributeLabelDialog.h"
 
 #include <QtDesigner/QDesignerFormWindowInterface>

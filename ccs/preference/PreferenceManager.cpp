@@ -1,6 +1,7 @@
 #include "PreferenceManager.h"
 
 #include <QSettings>
+#include <QDebug>
 
 using namespace chaos::metadata_service_client;
 
@@ -9,7 +10,7 @@ PreferenceManager::PreferenceManager() {}
 PreferenceManager::~PreferenceManager() {}
 
 bool PreferenceManager::activeNetworkConfiguration(const QString &configuration_name) {
-    QSettings settings;
+    QSettings settings("it.infn", "ccs");
     ChaosMetadataServiceClient::getInstance()->clearServerList();
 
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
@@ -17,10 +18,12 @@ bool PreferenceManager::activeNetworkConfiguration(const QString &configuration_
     if(settings.childGroups().contains(configuration_name) == false) return false;
     settings.beginGroup(configuration_name);
 
+    qDebug() << "Using mds address:";
     int mds_address_size = settings.beginReadArray("mds_address");
     for (int i = 0; i < mds_address_size; ++i) {
         settings.setArrayIndex(i);
         ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+        qDebug() << settings.value("address");
     }
     settings.endArray();
     settings.endGroup();
@@ -40,7 +43,7 @@ bool PreferenceManager::activeNetworkConfiguration(const QString &configuration_
 }
 
 QStringList PreferenceManager::getNetworkConfigurationNames() {
-    QSettings settings;
+    QSettings settings("it.infn", "ccs");
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
     const QStringList result = settings.childGroups();
     settings.endGroup();
@@ -48,7 +51,7 @@ QStringList PreferenceManager::getNetworkConfigurationNames() {
 }
 
 QString  PreferenceManager::getActiveNetworkConfigurationName() {
-    QSettings settings;
+    QSettings settings("it.infn", "ccs");
     settings.beginGroup(PREFERENCE_NETWORK_GROUP_NAME);
     const QString current_setting = settings.value("active_configuration").toString();
     settings.endGroup();

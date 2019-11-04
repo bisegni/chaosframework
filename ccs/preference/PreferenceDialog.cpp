@@ -6,6 +6,7 @@
 
 PreferenceDialog::PreferenceDialog(QWidget *parent) :
     QDialog(parent),
+    settings("it.infn", "ccs"),
     ui(new Ui::PreferenceDialog) {
     ui->setupUi(this);
 
@@ -106,9 +107,7 @@ void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {
                                                         &ok);
     if (ok && !new_mds_address.isEmpty()) {
         list_model_mds_address.addMDSServer(new_mds_address);
-        updateMDSConfiguration();
     }
-
 }
 
 void PreferenceDialog::on_pushButtonRemoveSelectedMDSRpcEndpoint_clicked() {
@@ -116,7 +115,6 @@ void PreferenceDialog::on_pushButtonRemoveSelectedMDSRpcEndpoint_clicked() {
     foreach(QModelIndex selected, selected_row) {
         list_model_mds_address.removeRow(selected.row());
     }
-    updateMDSConfiguration();
 }
 
 void PreferenceDialog::on_pushButtonAddNewConfiguration_clicked() {
@@ -144,5 +142,14 @@ void PreferenceDialog::on_pushButtonRemoveConfiguration_clicked() {
 }
 
 void PreferenceDialog::on_comboBoxConfigurations_currentTextChanged(const QString &selected_configuration) {
+    //then load selected
     loadMDSConfiguration(selected_configuration);
+}
+
+void PreferenceDialog::on_pushButtonSave_accepted(){
+
+}
+
+void PreferenceDialog::on_pushButtonNetworkSave_clicked() {
+    updateMDSConfiguration();
 }

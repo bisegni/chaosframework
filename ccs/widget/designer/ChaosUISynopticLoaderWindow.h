@@ -34,7 +34,7 @@ private slots:
     void editScript();
 private:
     bool ui_enabled;
-    QJSEngine js_engine;
+    QSharedPointer<QJSEngine> js_engine;
     //contains correlation for cu and his associated ui;
     QMultiHash<QString, QSharedPointer<CUNodeRoot> > hash_device_root;
     Ui::ChaosUISynopticLoaderWindow *ui;
@@ -55,7 +55,6 @@ private:
 
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
     void closeEvent(QCloseEvent *event);
-    QStringList getSignal(QWidget *wgt);
 };
 
 #endif // CHAOSUISYNOPTICLOADERWINDOW_H

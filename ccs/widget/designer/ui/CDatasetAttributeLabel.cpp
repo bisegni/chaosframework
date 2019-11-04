@@ -3,7 +3,7 @@
 #include <QDebug>
 
 CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent) :
-    ChaosBaseDatasetUI(parent) {
+    ChaosBaseDatasetAttributeUI(parent) {
     labelValue = new QLabel(this);
     QHBoxLayout *layout = new QHBoxLayout();
     labelValue->setText("Dataset Value");
