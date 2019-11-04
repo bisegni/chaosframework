@@ -58,54 +58,28 @@
 
 //! [0]
 CDatasetAttributeLabelPlugin::CDatasetAttributeLabelPlugin(QObject *parent)
-    : QObject(parent)
-{
-}
+    : QObject(parent){}
 
-QString CDatasetAttributeLabelPlugin::name() const
-{
-    return QStringLiteral("CDatasetAttributeLabel");
-}
+QString CDatasetAttributeLabelPlugin::name() const {return QStringLiteral("CDatasetAttributeLabel");}
 
-QString CDatasetAttributeLabelPlugin::group() const
-{
-    return QStringLiteral("Chaos UI");
-}
+QString CDatasetAttributeLabelPlugin::group() const {return QStringLiteral("Chaos UI");}
 
-QString CDatasetAttributeLabelPlugin::toolTip() const
-{
-    return QString();
-}
+QString CDatasetAttributeLabelPlugin::toolTip() const {return QString();}
 
-QString CDatasetAttributeLabelPlugin::whatsThis() const
-{
-    return QString();
-}
+QString CDatasetAttributeLabelPlugin::whatsThis() const {return QString();}
 
-QString CDatasetAttributeLabelPlugin::includeFile() const
-{
-    return QStringLiteral("CDatasetAttributeLabel.h");
-}
+QString CDatasetAttributeLabelPlugin::includeFile() const {return QStringLiteral("CDatasetAttributeLabel.h");}
 
-QIcon CDatasetAttributeLabelPlugin::icon() const
-{
-    return QIcon();
-}
+QIcon CDatasetAttributeLabelPlugin::icon() const {return QIcon();}
 
-bool CDatasetAttributeLabelPlugin::isContainer() const
-{
-    return false;
-}
+bool CDatasetAttributeLabelPlugin::isContainer() const {return false;}
+
+bool CDatasetAttributeLabelPlugin::isInitialized() const { return initialized; }
 
 QWidget *CDatasetAttributeLabelPlugin::createWidget(QWidget *parent)
 {
     CDatasetAttributeLabel *cLabel = new CDatasetAttributeLabel(parent);
     return cLabel;
-}
-
-bool CDatasetAttributeLabelPlugin::isInitialized() const
-{
-    return initialized;
 }
 
 void CDatasetAttributeLabelPlugin::initialize(QDesignerFormEditorInterface *formEditor)
@@ -114,7 +88,7 @@ void CDatasetAttributeLabelPlugin::initialize(QDesignerFormEditorInterface *form
         return;
 
     QExtensionManager *manager = formEditor->extensionManager();
-    Q_ASSERT(manager != 0);
+    Q_ASSERT(manager != nullptr);
 
 //    manager->registerExtensions(new CDatasetAttributeLabelMenuFactory(manager),
 //                                Q_TYPEID(QDesignerTaskMenuExtension));

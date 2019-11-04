@@ -12,9 +12,12 @@ void ChaosBaseDatasetAttributeUI::setAttributeName(const QString& new_attribute_
 }
 
 
-void ChaosBaseDatasetAttributeUI::updateData(QString attribute_name,
-                                            QVariant attribute_value) {
-    if(p_attribute_name.compare(attribute_name) != 0) return;
-    ChaosBaseDatasetUI::updateData(attribute_name,
+void ChaosBaseDatasetAttributeUI::updateData(int dataset_type,
+                                             QString attribute_name,
+                                             QVariant attribute_value) {
+    //check for right data to manage
+    if(attributeName().compare(attribute_name) != 0) return;
+    ChaosBaseDatasetUI::updateData(dataset_type,
+                                   attribute_name,
                                    attribute_value);
 }

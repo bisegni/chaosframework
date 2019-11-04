@@ -3,6 +3,10 @@
 
 #include <QWidget>
 #include <QVariant>
+
+//#include <choas/common/chaos_types.h>
+//#include <chaos_metadata_service_client/node_monitor/node_monitor_types.h>
+
 class ChaosBaseDatasetUI:
         public QWidget {
     Q_OBJECT
@@ -10,7 +14,21 @@ class ChaosBaseDatasetUI:
     Q_PROPERTY(DatasetType datasetType READ datasetType WRITE setDatasetType)
 
 public:
-    enum DatasetType { System, Input, Output};
+    typedef enum {
+                    OnlineStateNotFound,
+                    OnlineStateUnknown,
+                    OnlineStateON,
+                    OnlineStateOFF
+                } OnlineState;
+
+    enum DatasetType { Output/*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT*/,
+                       Input /*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT*/,
+                       Custom /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM*/,
+                       System /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM*/,
+                       Health /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH*/,
+                       DevAlarm /*= chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM*/,
+                       CUAlarm  /*= chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM */};
+
     Q_ENUM(DatasetType)
 
     ChaosBaseDatasetUI(QWidget *parent = nullptr);
@@ -24,9 +42,10 @@ public:
 signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);
-
 public slots:
-    virtual void updateData(QString attribute_name,
+    virtual void updateOnlineState(OnlineState state);
+    virtual void updateData(int dataset_type,
+                            QString attribute_name,
                             QVariant attribute_value);
 private slots:
     virtual void updateValue(QVariant variant_value) = 0;

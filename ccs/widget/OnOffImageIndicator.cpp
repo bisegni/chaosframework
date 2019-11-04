@@ -21,5 +21,5 @@ void OnOffImageIndicator::off() {
 }
 
 void OnOffImageIndicator::setState(bool on) {
-     StateImageIndicatorWidget::setState(on?1:0);
+    StateImageIndicatorWidget::setState(on?1:0);
 }

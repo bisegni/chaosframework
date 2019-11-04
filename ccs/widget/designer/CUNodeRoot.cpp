@@ -12,28 +12,25 @@ CUNodeRoot::CUNodeRoot(QString device_id, QObject *parent) :
     m_device_id(device_id){}
 
 
-void CUNodeRoot::setCurrentAttributeValue(QString attribute_name,
+void CUNodeRoot::setCurrentAttributeValue(int dataset_type,
+                                          QString attribute_name,
                                           QVariant attribute_value) {
-    emit updateDatasetAttribute(attribute_name,
+    emit updateDatasetAttribute(dataset_type,
+                                attribute_name,
                                 attribute_value);
 }
 
-
-void CUNodeRoot::init(){
-
+void CUNodeRoot::setOnlineState(ChaosBaseDatasetUI::OnlineState state) {
+    emit updateOnlineState(state);
 }
 
-void CUNodeRoot::start(){
+void CUNodeRoot::init(){}
 
-}
+void CUNodeRoot::start(){}
 
-void CUNodeRoot::stop() {
+void CUNodeRoot::stop() {}
 
-}
-
-void CUNodeRoot::deinit() {
-
-}
+void CUNodeRoot::deinit() {}
 
 void CUNodeRoot::onApiDone(const QString& /*tag*/,
                            QSharedPointer<chaos::common::data::CDataWrapper> /*api_result*/) {

@@ -2,7 +2,7 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent) :
+CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent):
     ChaosBaseDatasetAttributeUI(parent) {
     labelValue = new QLabel(this);
     QHBoxLayout *layout = new QHBoxLayout();

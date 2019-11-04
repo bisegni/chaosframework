@@ -13,7 +13,8 @@ public:
     QString attributeName() const;
     void setAttributeName(const QString& new_attribute_name);
 public slots:
-    void updateData(QString attribute_name,
+    void updateData(int dataset_type,
+                    QString attribute_name,
                     QVariant attribute_value);
 
 private:

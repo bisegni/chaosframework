@@ -195,7 +195,8 @@ SOURCES += main.cpp\
     widget/designer/ChaosBaseDatasetUI.cpp \
     widget/designer/ChaosUISynopticLoaderWindow.cpp \
     widget/designer/ScriptSignalDialog.cpp \
-    widget/designer/ui/CDatasetAttributeLabel.cpp
+    widget/designer/ui/CDatasetAttributeLabel.cpp \
+    widget/designer/ui/CUOnlineLedndicator.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -380,7 +381,8 @@ HEADERS  += \
     widget/designer/ChaosBaseDatasetUI.h \
     widget/designer/ChaosUISynopticLoaderWindow.h \
     widget/designer/ScriptSignalDialog.h \
-    widget/designer/ui/CDatasetAttributeLabel.h
+    widget/designer/ui/CDatasetAttributeLabel.h \
+    widget/designer/ui/CUOnlineLedndicator.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -1,6 +1,4 @@
-#! [0]
 QT      += widgets designer
-#! [0]
 
 QTDIR_build {
 # This is only for the Qt build. Do not use externally. We mean it.
@@ -9,7 +7,6 @@ PLUGIN_CLASS_NAME = CDatasetAttributeLabelPlugin
 load(qt_plugin)
 CONFIG += install_ok
 } else {
-# Public example:
 
 #! [1]
 TEMPLATE = lib
@@ -23,9 +20,11 @@ INSTALLS += target
 
 }
 
-include(../../widget/designer/ui/ui.pri)
+include(../../widget/designerui.pri)
+#PRECOMPILED_HEADER = $$PWD/../../precomp_header.h
+#CONFIG += $$PWD/../../precompile_header
+INCLUDEPATH += $$PWD/../../../usr/local/include
 
-#! [2]
 HEADERS += CDatasetAttributeLabelMenu.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
@@ -35,4 +34,3 @@ SOURCES += CDatasetAttributeLabelMenu.cpp \
            CDatasetAttributeLabelPlugin.cpp \
            ChaosWidgets.cpp
 OTHER_FILES += CDatasetAttributeLabelPlugin.json
-#! [2]

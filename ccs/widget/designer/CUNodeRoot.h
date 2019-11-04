@@ -3,7 +3,10 @@
 
 #include <QObject>
 #include <QVariant>
+
 #include "../../api_async_processor/ApiSubmitter.h"
+
+#include "ChaosBaseDatasetUI.h"
 
 /**
  * @brief The CUNodeRoot class
@@ -22,16 +25,21 @@ public:
     explicit CUNodeRoot(QString device_id,
                         QObject *parent = nullptr);
 
-    void setCurrentAttributeValue(QString attribute_name,
+    void setCurrentAttributeValue(int dataset_type,
+                                  QString attribute_name,
                                   QVariant attribute_value);
+    void setOnlineState(ChaosBaseDatasetUI::OnlineState state);
 signals:
     /**
      * @brief updateDatasetAttribute send signel when a new update on a dataset attribute is triggered
      * @param attribute_name
      * @param attribute_value
      */
-    void updateDatasetAttribute(QString attribute_name,
+    void updateDatasetAttribute(int dataset_type,
+                                QString attribute_name,
                                 QVariant attribute_value);
+
+    void updateOnlineState(ChaosBaseDatasetUI::OnlineState state);
 public slots:
     void init();
     void start();

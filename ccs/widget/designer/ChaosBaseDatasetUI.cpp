@@ -24,9 +24,15 @@ ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
 }
 
-void ChaosBaseDatasetUI::updateData(QString attribute_name,
+void ChaosBaseDatasetUI::updateOnlineState(OnlineState state) {
+    setEnabled(state);
+}
+
+void ChaosBaseDatasetUI::updateData(int dataset_type,
+                                    QString attribute_name,
                                     QVariant attribute_value) {
     Q_UNUSED(attribute_name)
+    if(datasetType() != dataset_type) return;
     QMetaObject::invokeMethod(this,
                               "updateValue",
                               Qt::QueuedConnection,

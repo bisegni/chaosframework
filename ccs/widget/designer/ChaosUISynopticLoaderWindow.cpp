@@ -107,10 +107,17 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
             hash_device_root.insert(cw->deviceID(), device_root = QSharedPointer<CUNodeRoot>(new CUNodeRoot(cw->deviceID())));
         }
         qDebug() << "Found chaos widget " << cw->objectName() << " for device id " << cw->deviceID();
+        //connect root signal to widget slots
+        //online state
         QObject::connect(device_root.data(),
-                         SIGNAL(updateDatasetAttribute(QString, QVariant)),
+                         SIGNAL(updateOnlineState(bool)),
                          cw,
-                         SLOT(updateData(QString, QVariant)));
+                         SLOT(updateOnlineState(bool)));
+        //dataset update
+        QObject::connect(device_root.data(),
+                         SIGNAL(updateDatasetAttribute(int, QString, QVariant)),
+                         cw,
+                         SLOT(updateData(int, QString, QVariant)));
     }
     ui->enableUIAction->setEnabled(true);
 }
@@ -172,13 +179,14 @@ void ChaosUISynopticLoaderWindow::editScript() {
 
 }
 
-void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& /*node_uid*/,
-                                                         OnlineState /*old_status*/,
-                                                         OnlineState  /*new_status*/) {
-    //    online_status = new_status;
-    //    QMetaObject::invokeMethod(this,
-    //                              "updateUIStatus",
-    //                              Qt::QueuedConnection);
+void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& control_unit_uid,
+                                                         OnlineState /*old_state*/,
+                                                         OnlineState  new_state) {
+    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
+    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == hash_device_root.end()) return;
+    //signal to root cu
+    cu_root_iterator.value()->setOnlineState((ChaosBaseDatasetUI::OnlineState)new_state);
 }
 
 void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
@@ -188,8 +196,10 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
 
+    //signal every update to root cu
     for (MapDatasetKeyValuesPair element : dataset_key_values) {
-        cu_root_iterator.value()->setCurrentAttributeValue(QString::fromStdString(element.first),
+        cu_root_iterator.value()->setCurrentAttributeValue(dataset_type,
+                                                           QString::fromStdString(element.first),
                                                            toQVariant(element.second));
     }
 }

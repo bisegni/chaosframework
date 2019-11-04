@@ -4,8 +4,7 @@
 #include <QLabel>
 #include "../ChaosBaseDatasetAttributeUI.h"
 
-
-class CDatasetAttributeLabel :
+class CDatasetAttributeLabel:
         public ChaosBaseDatasetAttributeUI {
     Q_OBJECT
 public:
