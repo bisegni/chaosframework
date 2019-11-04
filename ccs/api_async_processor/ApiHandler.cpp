@@ -2,6 +2,9 @@
 
 #include "../error/ErrorManager.h"
 
+ApiHandler::ApiHandler(){}
+ApiHandler::~ApiHandler(){}
+
 //!Api has ben called successfully
 void ApiHandler::onApiDone(const QString& tag,
                            QSharedPointer<chaos::common::data::CDataWrapper> api_result){

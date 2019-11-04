@@ -32,6 +32,7 @@
 #include "node/agent/AgentSetting.h"
 #include "node/connection_manager/ConnectionEditor.h"
 #include "GlobalServices.h"
+#include "widget/designer/ChaosUISynopticLoaderWindow.h"
 
 #include "metatypes.h"
 
@@ -221,6 +222,7 @@ void MainController::initApplicationMenuBar() {
     //Data
     menu = main_menu_bar.addMenu("&Tools");
     menu->addAction("Node Monitor", this, SLOT(actionNewNodeMonitor()),QKeySequence(Qt::CTRL + Qt::Key_T));
+    menu->addAction("Synoptic Viewer", this, SLOT(actionNewSynopticViewer()));
     menu->addSeparator();
     menu->addAction("Switch Network Domain...", this, SLOT(actionSwitchNetworkConfiguration()));
     menu->addSeparator();
@@ -289,6 +291,10 @@ void MainController::actionNewNodeMonitor() {
 
 void MainController::actionConnectionManager() {
     openInWindow(new ConnectionEditor());
+}
+
+void MainController::actionNewSynopticViewer() {
+    openInWindow(new ChaosUISynopticLoaderWindow());
 }
 
 void MainController::actionApplicationLogBrowser() {

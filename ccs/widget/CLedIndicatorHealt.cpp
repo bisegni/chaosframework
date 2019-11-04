@@ -49,8 +49,8 @@ void CLedIndicatorHealt::updateUIStatus() {
     }
 }
 
-void CLedIndicatorHealt::nodeChangedOnlineState(const std::string& node_uid,
-                                                 chaos::metadata_service_client::node_monitor::OnlineState old_state,
+void CLedIndicatorHealt::nodeChangedOnlineState(const std::string& /*node_uid*/,
+                                                 chaos::metadata_service_client::node_monitor::OnlineState /*old_state*/,
                                                  chaos::metadata_service_client::node_monitor::OnlineState new_state) {
     alive_state = new_state;
     QMetaObject::invokeMethod(this,

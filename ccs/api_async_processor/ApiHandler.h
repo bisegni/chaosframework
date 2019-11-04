@@ -7,6 +7,8 @@
 
 class ApiHandler{
 public:
+    ApiHandler();
+    virtual ~ApiHandler();
     //!Api has ben called successfully
     virtual void onApiDone(const QString& tag,
                            QSharedPointer<chaos::common::data::CDataWrapper> api_result);
