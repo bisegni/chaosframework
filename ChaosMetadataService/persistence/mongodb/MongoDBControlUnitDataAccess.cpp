@@ -240,7 +240,6 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 if(type == DataType::TYPE_BYTEARRAY) {
                     //we need to have addtional information for binary data
                     if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
-                        
                         if(dataset_element->isVector(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
                             //we have multipler value for subtype
                             mongo::BSONArrayBuilder subtype_array_builder;
@@ -258,6 +257,11 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                             dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE
                             << dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
                         }
+                    }
+                    
+                    if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION)) {
+                        dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION
+                        << dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION);
                     }
                 }
                 

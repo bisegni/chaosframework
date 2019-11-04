@@ -29,7 +29,6 @@ unix:!macx {
 }
 
 macx:{
-    ICON = $$PRO_FILE_PWD/chaos.icns
     CONFIG += app_bundle
     LIBS +=  -lchaos_common
 }

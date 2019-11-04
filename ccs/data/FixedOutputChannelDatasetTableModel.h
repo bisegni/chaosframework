@@ -25,7 +25,7 @@ protected:
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
 private:
-    QString getSubTypeForCode(int code) const;
+    QString getSubTypeForCode(QSharedPointer<chaos::common::data::CDataWrapper> element) const;
 };
 
 #endif // FIXEDOUTPUTCHANNELDATASETTABLEMODEL_H
