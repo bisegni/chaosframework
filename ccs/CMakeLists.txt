@@ -11,7 +11,7 @@ FIND_PACKAGE(Qt5Sql REQUIRED)
 FIND_PACKAGE(Qt5Gui REQUIRED)
 FIND_PACKAGE(Qt5PrintSupport REQUIRED)
 FIND_PACKAGE(Qt5Qml REQUIRED)
-
+FIND_PACKAGE(Qt5UiTools REQUIRED)
 # set(QT_USE_QTSQL 1)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include precomp_header.h -w")
@@ -37,7 +37,8 @@ MESSAGE(">>QT GUI DIR: " ${Qt5Gui_INCLUDE_DIRS})
 MESSAGE(">>QT SQL DIR: " ${Qt5Sql_INCLUDE_DIRS})
 MESSAGE(">>QT SQL DIR: " ${Qt5PrintSupport_INCLUDE_DIRS})
 MESSAGE(">>QT LIB DIR: " ${Qt5Widgets_LIBRARIES})
-MESSAGE(">>QT LIB DIR: " ${Qt5Qml_LIBRARIES})
+MESSAGE(">>QT QML DIR: " ${Qt5Qml_LIBRARIES})
+MESSAGE(">>QT UITOOLS DIR: " ${Qt5UiTools_LIBRARIES})
 
 SET(QT_QMAKE_EXECUTABLE ${QT_ROOT_DIR}/gcc_64/bin/qmake)
 MESSAGE(STATUS "QT_QMAKE_EXECUTABLE: " ${QT_QMAKE_EXECUTABLE})
@@ -47,6 +48,7 @@ INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5Sql_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5PrintSupport_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5Qml_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Qt5UiTools_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR_QtCore})
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/include)
@@ -223,6 +225,11 @@ set(sources
     widget/WidgetDynamicList.cpp
     widget/StorageBurst.cpp
     widget/CLedIndicatorCUBusy.cpp
+    widget/designer/ChaosUISynopticLoaderWindow.cpp
+    widget/designer/ScriptSignalDialog.cpp
+    widget/designer/CUNodeRoot.cpp
+    widget/designer/ChaosBaseDatasetUI.cpp
+    widget/designer/ChaosBaseDatasetAttributeUI.cpp
     theme/theme.qrc
     ${ccs_include_moc}
 )
@@ -262,6 +269,8 @@ set(CCS_LINK_LIB    Qt5::Core
                     Qt5::Sql
                     Qt5::Widgets
                     Qt5::PrintSupport
+                    Qt5::Qml
+                    Qt5::UiTools
                     chaos_common
                     chaos_metadata_service_client
                     zmq)
