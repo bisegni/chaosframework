@@ -78,6 +78,7 @@ bool CDatasetAttributeLabelPlugin::isInitialized() const { return initialized; }
 
 QWidget *CDatasetAttributeLabelPlugin::createWidget(QWidget *parent)
 {
+    Q_INIT_RESOURCE(theme);
     CDatasetAttributeLabel *cLabel = new CDatasetAttributeLabel(parent);
     return cLabel;
 }

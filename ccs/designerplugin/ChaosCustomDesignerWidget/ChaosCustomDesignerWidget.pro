@@ -3,7 +3,7 @@ QT      += widgets designer
 QTDIR_build {
 # This is only for the Qt build. Do not use externally. We mean it.
 PLUGIN_TYPE = designer
-PLUGIN_CLASS_NAME = CDatasetAttributeLabelPlugin
+PLUGIN_CLASS_NAME = ChaosCustomDesignerWidget
 load(qt_plugin)
 CONFIG += install_ok
 } else {
@@ -36,3 +36,6 @@ SOURCES += CDatasetAttributeLabelMenu.cpp \
            CUOnlineLedIndicatorPlugin.cpp \
            ChaosWidgets.cpp
 OTHER_FILES += CDatasetAttributeLabelPlugin.json
+
+RESOURCES += \
+    ../../theme/theme.qrc

@@ -51,6 +51,7 @@ MainController::~MainController() {}
 
 bool MainController::init(int argc, const char **argv) {
     //set application information
+    Q_INIT_RESOURCE(theme);
     ((QApplication*)QApplication::instance())->setQuitOnLastWindowClosed(false);
     QApplication::setApplicationName("ChaosControlStudio");
     QApplication::setApplicationVersion("1.0.0-alpha");
