@@ -210,14 +210,18 @@ void DomainActionsScheduler::processBufferElement(CDWShrdPtr rpc_call_action) {
                 remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {
-            LAPP_ << "Error during action execution:"<<ex.what();
+            LERR_ << "Exception caught during action execution:"<<ex.what();
             DECODE_CHAOS_EXCEPTION(ex)
             //set error in response is it's needed
             if(needAnswer && remote_action_result.get()) {
                 DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remote_action_result, ex)
             }
+        } catch(std::exception& ex){
+            LERR_ << "std Exception caught during action execution:"<<ex.what();
+            if(needAnswer) remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
+
         } catch(...){
-            LAPP_ << "General error during action execution";
+            LERR_ << "Unknown Exception caught during action execution";
             //set error in response is it's needed
             if(needAnswer) remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
         }
