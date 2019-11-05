@@ -28,9 +28,11 @@ INCLUDEPATH += $$PWD/../../../usr/local/include
 HEADERS += CDatasetAttributeLabelMenu.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
+           CUOnlineLedIndicatorPlugin.h \
            ChaosWidgets.h
 SOURCES += CDatasetAttributeLabelMenu.cpp \
            CDatasetAttributeLabelDialog.cpp \
            CDatasetAttributeLabelPlugin.cpp \
+           CUOnlineLedIndicatorPlugin.cpp \
            ChaosWidgets.cpp
 OTHER_FILES += CDatasetAttributeLabelPlugin.json

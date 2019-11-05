@@ -24,21 +24,26 @@ ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
 }
 
-void ChaosBaseDatasetUI::updateOnlineState(OnlineState state) {
-    setEnabled(state);
+void ChaosBaseDatasetUI::updateOnlineStateSlot(int state) {
+    //setEnabled(state==OnlineStateON);
+    updateOnline((OnlineState)state);
+//    QMetaObject::invokeMethod(this,
+//                              "updateOnline",
+//                              Qt::QueuedConnection,
+//                              Q_ARG(OnlineState, ));
 }
 
 void ChaosBaseDatasetUI::updateData(int dataset_type,
-                                    QString attribute_name,
-                                    QVariant attribute_value) {
-    Q_UNUSED(attribute_name)
+                                        QString attribute_name,
+                                        QVariant attribute_value) {
     if(datasetType() != dataset_type) return;
-    QMetaObject::invokeMethod(this,
-                              "updateValue",
-                              Qt::QueuedConnection,
-                              Q_ARG(QVariant, attribute_value));
+    //keep track of the new value
+    updateValue(attribute_value);
+//    QMetaObject::invokeMethod(this,
+//                              "updateValue",
+//                              Qt::QueuedConnection,
+//                              Q_ARG(QVariant, attribute_value));
     //emit the changed value
     emit attributeValueChanged(p_value, attribute_value);
-    //keep track of the new value
     p_value = attribute_value;
 }

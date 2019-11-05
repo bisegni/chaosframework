@@ -110,14 +110,18 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
         //connect root signal to widget slots
         //online state
         QObject::connect(device_root.data(),
-                         SIGNAL(updateOnlineState(bool)),
+                         &CUNodeRoot::updateOnlineState,
+                         //                         SIGNAL(updateOnlineState(int)),
                          cw,
-                         SLOT(updateOnlineState(bool)));
+                         //                         SLOT(updateOnlineStateSlot(int)));
+                         &ChaosBaseDatasetUI::updateOnlineStateSlot);
         //dataset update
         QObject::connect(device_root.data(),
-                         SIGNAL(updateDatasetAttribute(int, QString, QVariant)),
+                         //                         SIGNAL(updateDatasetAttribute(int, QString, QVariant)),
+                         &CUNodeRoot::updateDatasetAttribute,
                          cw,
-                         SLOT(updateData(int, QString, QVariant)));
+                         &ChaosBaseDatasetUI::updateData);
+        //                         SLOT(updateData(int, QString, QVariant)));
     }
     ui->enableUIAction->setEnabled(true);
 }

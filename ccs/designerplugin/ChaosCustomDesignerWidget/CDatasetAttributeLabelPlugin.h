@@ -49,8 +49,8 @@
 ****************************************************************************/
 
 //! [0]
-#ifndef TICTACTOEPLUGIN_H
-#define TICTACTOEPLUGIN_H
+#ifndef CDATASETATTRIBUTELABELPLUGIN_H
+#define CDATASETATTRIBUTELABELPLUGIN_H
 
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 

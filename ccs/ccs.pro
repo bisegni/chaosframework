@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT += core gui sql
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport uitools qml
 
 PRECOMPILED_HEADER = precomp_header.h
@@ -196,7 +197,7 @@ SOURCES += main.cpp\
     widget/designer/ChaosUISynopticLoaderWindow.cpp \
     widget/designer/ScriptSignalDialog.cpp \
     widget/designer/ui/CDatasetAttributeLabel.cpp \
-    widget/designer/ui/CUOnlineLedndicator.cpp
+    widget/designer/ui/CUOnlineLedIndicator.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -382,7 +383,7 @@ HEADERS  += \
     widget/designer/ChaosUISynopticLoaderWindow.h \
     widget/designer/ScriptSignalDialog.h \
     widget/designer/ui/CDatasetAttributeLabel.h \
-    widget/designer/ui/CUOnlineLedndicator.h
+    widget/designer/ui/CUOnlineLedIndicator.h
 
 FORMS    += \
     search/searchnoderesult.ui \

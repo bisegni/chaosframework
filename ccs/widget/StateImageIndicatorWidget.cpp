@@ -12,7 +12,7 @@ StateImageIndicatorWidget::StateImageIndicatorWidget(QWidget *parent):
     blink_timer.setInterval(250);
 }
 
-void StateImageIndicatorWidget::paintEvent(QPaintEvent *)
+void StateImageIndicatorWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 

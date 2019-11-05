@@ -20,7 +20,7 @@ void CUNodeRoot::setCurrentAttributeValue(int dataset_type,
                                 attribute_value);
 }
 
-void CUNodeRoot::setOnlineState(ChaosBaseDatasetUI::OnlineState state) {
+void CUNodeRoot::setOnlineState(int state) {
     emit updateOnlineState(state);
 }
 

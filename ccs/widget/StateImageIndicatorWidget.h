@@ -22,14 +22,14 @@ class StateImageIndicatorWidget :
     Q_OBJECT
 
 public:
-    explicit StateImageIndicatorWidget(QWidget *parent = 0);
+    explicit StateImageIndicatorWidget(QWidget *parent = nullptr);
     void addState(int state_value,
                   QSharedPointer<QIcon> state_icon,
                   bool blonk_on_repeat_set = false);
     int getState();
     void blink();
-    void paintEvent ( QPaintEvent *  );
-signals:
+protected:
+    void paintEvent ( QPaintEvent * event ) override;
 
 public slots:
     void setState(int state);

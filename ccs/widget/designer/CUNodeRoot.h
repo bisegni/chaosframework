@@ -28,7 +28,7 @@ public:
     void setCurrentAttributeValue(int dataset_type,
                                   QString attribute_name,
                                   QVariant attribute_value);
-    void setOnlineState(ChaosBaseDatasetUI::OnlineState state);
+    void setOnlineState(int state);
 signals:
     /**
      * @brief updateDatasetAttribute send signel when a new update on a dataset attribute is triggered
@@ -39,7 +39,7 @@ signals:
                                 QString attribute_name,
                                 QVariant attribute_value);
 
-    void updateOnlineState(ChaosBaseDatasetUI::OnlineState state);
+    void updateOnlineState(int state);
 public slots:
     void init();
     void start();

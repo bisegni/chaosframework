@@ -15,11 +15,11 @@ class ChaosBaseDatasetUI:
 
 public:
     typedef enum {
-                    OnlineStateNotFound,
-                    OnlineStateUnknown,
-                    OnlineStateON,
-                    OnlineStateOFF
-                } OnlineState;
+        OnlineStateNotFound,
+        OnlineStateUnknown,
+        OnlineStateON,
+        OnlineStateOFF
+    } OnlineState;
 
     enum DatasetType { Output/*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT*/,
                        Input /*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT*/,
@@ -43,11 +43,12 @@ signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);
 public slots:
-    virtual void updateOnlineState(OnlineState state);
+    virtual void updateOnlineStateSlot(int state);
     virtual void updateData(int dataset_type,
-                            QString attribute_name,
-                            QVariant attribute_value);
-private slots:
+                               QString attribute_name,
+                                QVariant attribute_value);
+protected:
+    virtual void updateOnline(ChaosBaseDatasetUI::OnlineState state) = 0;
     virtual void updateValue(QVariant variant_value) = 0;
 
 private:

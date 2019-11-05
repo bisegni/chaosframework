@@ -2,6 +2,7 @@
 #define CDATASETATTRIBUTELABEL_H
 
 #include <QLabel>
+
 #include "../ChaosBaseDatasetAttributeUI.h"
 
 class CDatasetAttributeLabel:
@@ -10,8 +11,9 @@ class CDatasetAttributeLabel:
 public:
     explicit CDatasetAttributeLabel(QWidget *parent = nullptr);
     ~CDatasetAttributeLabel();
-private slots:
-    void updateValue(QVariant new_value);
+protected:
+    void updateOnline(ChaosBaseDatasetUI::OnlineState state);
+    void updateValue(QVariant variant_value);
 
 private:
     QLabel *labelValue;

@@ -15,6 +15,8 @@ CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent):
 
 CDatasetAttributeLabel::~CDatasetAttributeLabel() {}
 
+void CDatasetAttributeLabel::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
+
 void CDatasetAttributeLabel::updateValue(QVariant new_value) {
     labelValue->setText(new_value.toString());
     qDebug() << "CDatasetAttributeLabel updated with value "<< new_value.toString();
