@@ -41,9 +41,21 @@ private:
 
     QWidget *loadUiFile(QWidget *parent, QString filePath);
     // monitor handler
-    void nodeChangedOnlineState(const std::string& node_uid,
+    void nodeChangedOnlineState(const std::string& control_unit_uid,
                                 chaos::metadata_service_client::node_monitor::OnlineState old_status,
                                 chaos::metadata_service_client::node_monitor::OnlineState new_status);
+
+    void nodeChangedInternalState(const std::string& node_uid, const std::string&,
+                                  const std::string& new_status);
+
+    void nodeChangedProcessResource(const std::string& node_uid,
+                                    const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
+                                    const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
+
+    void nodeChangedErrorInformation(const std::string& node_uid,
+                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&,
+                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&);
+
     void updatedDS(const std::string& control_unit_uid,
                    int dataset_type,
                    chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);

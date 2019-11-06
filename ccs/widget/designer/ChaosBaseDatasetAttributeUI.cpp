@@ -16,8 +16,8 @@ void ChaosBaseDatasetAttributeUI::updateData(int dataset_type,
                                              QString attribute_name,
                                              QVariant attribute_value) {
     //check for right data to manage
-    qDebug() << "received value for: " << attribute_name << " we are:" << attributeName();
     if(attributeName().compare(attribute_name) != 0) return;
+//    qDebug() << "received value for: " << attributeName() << " value:" << attribute_value.toString();
     ChaosBaseDatasetUI::updateData(dataset_type,
                                    attribute_name,
                                    attribute_value);

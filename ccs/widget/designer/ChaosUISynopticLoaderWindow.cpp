@@ -187,17 +187,42 @@ void ChaosUISynopticLoaderWindow::editScript() {
 void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& control_unit_uid,
                                                          OnlineState /*old_state*/,
                                                          OnlineState  new_state) {
-    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
+//    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
     //signal to root cu
-    cu_root_iterator.value()->setOnlineState((ChaosBaseDatasetUI::OnlineState)new_state);
+    cu_root_iterator.value()->setOnlineState(static_cast<ChaosBaseDatasetUI::OnlineState>(new_state));
+}
+
+void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& control_unit_uid,
+                                                           const std::string& /*old_status*/,
+                                                           const std::string& new_status) {
+//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid);
+    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == hash_device_root.end()) return;
+    cu_root_iterator.value()->setCurrentAttributeValue(chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
+                                                       QString::fromStdString(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS),
+                                                       QVariant(QString::fromStdString(new_status)));
+}
+
+void ChaosUISynopticLoaderWindow::nodeChangedProcessResource(const std::string& control_unit_uid,
+                                                             const ProcessResource& /*old_proc_res*/,
+                                                             const ProcessResource& new_proc_res) {
+//    qDebug() << QString("%5 nodeChangedProcessResource: usr:%1 sys:%2 swp:%3 upt:%4").arg(new_proc_res.usr_res).arg(new_proc_res.sys_res).arg(new_proc_res.swp_res).arg(new_proc_res.uptime).arg(QString::fromStdString(control_unit_uid));
+
+}
+
+void ChaosUISynopticLoaderWindow::nodeChangedErrorInformation(const std::string& control_unit_uid,
+                                                              const ErrorInformation& /*old_status*/,
+                                                              const ErrorInformation& /*new_status*/) {
+    qDebug()<< QString::fromStdString(control_unit_uid) << "nodeChangedErrorInformation: ";
+
 }
 
 void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
-    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
+//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
 
@@ -211,7 +236,7 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
 
 void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& control_unit_uid,
                                                 int dataset_type) {
-    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
+//    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
     //    data_found = false;
     //    storage_type = DSStorageTypeUndefined;
     //    QMetaObject::invokeMethod(this,

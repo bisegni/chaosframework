@@ -20,6 +20,7 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/dispatcher/SharedCommandDispatcher.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 

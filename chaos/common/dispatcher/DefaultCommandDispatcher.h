@@ -25,7 +25,7 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/thread/ChaosThread.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/dispatcher/DomainActionsScheduler.h>

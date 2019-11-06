@@ -27,6 +27,7 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <chaos/common/chaos_errors.h>
 
 using namespace chaos;
 using namespace chaos::common::data;

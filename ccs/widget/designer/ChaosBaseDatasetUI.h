@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVariant>
+#include <chaos/common/chaos_constants.h>
 
 class ChaosBaseDatasetUI:
         public QWidget {
@@ -18,13 +19,13 @@ public:
         OnlineStateOFF
     } OnlineState;
 
-    enum DatasetType { Output/*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT*/,
-                       Input /*   = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT*/,
-                       Custom /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM*/,
-                       System /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM*/,
-                       Health /*  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH*/,
-                       DevAlarm /*= chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM*/,
-                       CUAlarm  /*= chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM */};
+    enum DatasetType { Output = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                       Input = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+                       Custom = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
+                       System = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                       Health = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
+                       DevAlarm = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM,
+                       CUAlarm  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM};
 
     Q_ENUM(DatasetType)
 
@@ -42,8 +43,8 @@ signals:
 public slots:
     virtual void updateOnlineStateSlot(int state);
     virtual void updateData(int dataset_type,
-                               QString attribute_name,
-                                QVariant attribute_value);
+                            QString attribute_name,
+                            QVariant attribute_value);
 protected:
     virtual void updateOnline(ChaosBaseDatasetUI::OnlineState state) = 0;
     virtual void updateValue(QVariant variant_value) = 0;

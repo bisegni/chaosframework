@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__MessageRequestFuture__
 #define __CHAOSFramework__MessageRequestFuture__
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/thread/FutureHelper.h>
 #include <chaos/common/data/CDataWrapper.h>
