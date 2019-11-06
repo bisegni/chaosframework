@@ -253,9 +253,9 @@ execute_process(
 
       if( EXISTS "${CHAOS_BUNDLE}/driver")
 	IF(NOT EXISTS "${TOP_DIRECTORY}/UnitServer" )
-	  MESG("Generating UnitServer, looking for CUs in ${CHAOS_BUNDLE}/driver, please wait...")
+	  MESG("Generating UnitServer, looking for CUs in ${CHAOS_BUNDLE}/driver, build dir:${CMAKE_BINARY_DIR} please wait...")
 	  execute_process(
-	    COMMAND chaosframework/tools/chaos_generate_us.sh -i driver -o ${TOP_DIRECTORY}
+	    COMMAND chaosframework/tools/chaos_generate_us.sh -i driver -o ${TOP_DIRECTORY} -b ${CMAKE_BINARY_DIR}
 	    WORKING_DIRECTORY ${CHAOS_BUNDLE}
 	    RESULT_VARIABLE err
 	    OUTPUT_VARIABLE out
