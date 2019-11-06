@@ -1375,38 +1375,44 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
     attribute_setting.addAttribute(attribute_names[idx], attributeInfo.maxSize, attributeInfo.valueType, attributeInfo.binType);
 
     if (!attributeInfo.defaultValue.size()) continue;
-
+    
     //setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
     try {
       switch (attributeInfo.valueType) {
         case DataType::TYPE_BOOLEAN: {
           bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
           attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
+          ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
           break;
         }
         case DataType::TYPE_DOUBLE: {
           double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
           attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
+          ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
           break;
         }
         case DataType::TYPE_INT32: {
           int32_t val = strtoul(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
           attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
+          ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
           break;
         }
         case DataType::TYPE_INT64: {
           int64_t val = strtoll(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
           attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
+          ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
           break;
         }
         case DataType::TYPE_CLUSTER: {
           CDataWrapper tmp;
           tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
           attribute_setting.setValueForAttribute(idx, tmp);
+          ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<attributeInfo.defaultValue.c_str();
         }
         case DataType::TYPE_STRING: {
           const char* val = attributeInfo.defaultValue.c_str();
           attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
+           ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
           break;
         }
         case DataType::TYPE_BYTEARRAY: {
