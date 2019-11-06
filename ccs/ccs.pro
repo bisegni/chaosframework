@@ -13,6 +13,7 @@ CONFIG += precompile_header
 CONFIG+=sdk_no_version_check
 QMAKE_CXXFLAGS += -std=c++11
 
+include(widget/designerui.pri)
 
 TARGET = ccs
 TEMPLATE = app
@@ -192,12 +193,8 @@ SOURCES += main.cpp\
     widget/StorageBurst.cpp \
     widget/CLedIndicatorCUBusy.cpp \
     widget/designer/CUNodeRoot.cpp \
-    widget/designer/ChaosBaseDatasetAttributeUI.cpp \
-    widget/designer/ChaosBaseDatasetUI.cpp \
     widget/designer/ChaosUISynopticLoaderWindow.cpp \
-    widget/designer/ScriptSignalDialog.cpp \
-    widget/designer/ui/CDatasetAttributeLabel.cpp \
-    widget/designer/ui/CUOnlineLedIndicator.cpp
+    widget/designer/ScriptSignalDialog.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -378,12 +375,8 @@ HEADERS  += \
     widget/StorageBurst.h \
     widget/CLedIndicatorCUBusy.h \
     widget/designer/CUNodeRoot.h \
-    widget/designer/ChaosBaseDatasetAttributeUI.h \
-    widget/designer/ChaosBaseDatasetUI.h \
     widget/designer/ChaosUISynopticLoaderWindow.h \
-    widget/designer/ScriptSignalDialog.h \
-    widget/designer/ui/CDatasetAttributeLabel.h \
-    widget/designer/ui/CUOnlineLedIndicator.h
+    widget/designer/ScriptSignalDialog.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -433,5 +426,4 @@ FORMS    += \
 
 DISTFILES += \
     dark_orange.stylesheet \
-    CMakeLists.txt \
-    widget/designer/CDatasetAttributeLabel/CDatasetAttributeLabel.pri
+    CMakeLists.txt

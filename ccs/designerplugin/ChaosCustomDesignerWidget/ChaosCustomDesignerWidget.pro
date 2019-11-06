@@ -20,17 +20,21 @@ INSTALLS += target
 
 }
 
+PRECOMPILED_HEADER = precomp_plugin_header.h
+CONFIG += precomp_plugin_header
 include(../../widget/designerui.pri)
-#PRECOMPILED_HEADER = $$PWD/../../precomp_header.h
-#CONFIG += $$PWD/../../precompile_header
+
 INCLUDEPATH += $$PWD/../../../usr/local/include
 
 HEADERS += CDatasetAttributeLabelMenu.h \
+           CDatasetAttributeImagePlugin.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
            CUOnlineLedIndicatorPlugin.h \
-           ChaosWidgets.h
+           ChaosWidgets.h \
+           precomp_header.h
 SOURCES += CDatasetAttributeLabelMenu.cpp \
+           CDatasetAttributeImagePlugin.cpp \
            CDatasetAttributeLabelDialog.cpp \
            CDatasetAttributeLabelPlugin.cpp \
            CUOnlineLedIndicatorPlugin.cpp \

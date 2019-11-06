@@ -39,10 +39,6 @@ void ChaosBaseDatasetUI::updateData(int dataset_type,
     if(datasetType() != dataset_type) return;
     //keep track of the new value
     updateValue(attribute_value);
-//    QMetaObject::invokeMethod(this,
-//                              "updateValue",
-//                              Qt::QueuedConnection,
-//                              Q_ARG(QVariant, attribute_value));
     //emit the changed value
     emit attributeValueChanged(p_value, attribute_value);
     p_value = attribute_value;
