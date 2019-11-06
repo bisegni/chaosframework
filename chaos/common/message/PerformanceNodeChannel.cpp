@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
 using namespace chaos::common::data;
 using namespace chaos::common::utility;

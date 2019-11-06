@@ -27,6 +27,7 @@ include(../../widget/designerui.pri)
 INCLUDEPATH += $$PWD/../../../usr/local/include
 
 HEADERS += CDatasetAttributeLabelMenu.h \
+           CDatasetAttributeHealthLabelPlugin.h \
            CDatasetAttributeImagePlugin.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
@@ -34,6 +35,7 @@ HEADERS += CDatasetAttributeLabelMenu.h \
            ChaosWidgets.h \
            precomp_header.h
 SOURCES += CDatasetAttributeLabelMenu.cpp \
+           CDatasetAttributeHealthLabelPlugin.cpp \
            CDatasetAttributeImagePlugin.cpp \
            CDatasetAttributeLabelDialog.cpp \
            CDatasetAttributeLabelPlugin.cpp \

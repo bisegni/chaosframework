@@ -29,8 +29,9 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
 
-#include <chaos/common/data/entity_db/EntityDB.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/entity_db/EntityDB.h>
 
 #define CUSCHEMA_DEFAULT_STRING_LENGHT 4096
 namespace chaos {

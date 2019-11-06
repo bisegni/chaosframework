@@ -21,7 +21,6 @@
 #ifndef ChaosFramework_ConstrolSystemConstants_h
 #define ChaosFramework_ConstrolSystemConstants_h
 
-#include <chaos/common/chaos_errors.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 #include <chaos/common/external_unit/external_unit_constants.h>
 

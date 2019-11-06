@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/message/MessageRequestFuture.h>
 
 #include <chaos/common/utility/UUIDUtil.h>

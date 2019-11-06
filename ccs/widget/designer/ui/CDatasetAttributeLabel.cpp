@@ -9,8 +9,6 @@ CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent):
     labelValue->setText("Dataset Value");
     layout->addWidget(labelValue);
     setLayout(layout);
-
-//    connect(this, SIGNAL(valueChanged(QVariant)), this, SLOT(updateValue(QVariant)));
 }
 
 CDatasetAttributeLabel::~CDatasetAttributeLabel() {}
@@ -19,5 +17,4 @@ void CDatasetAttributeLabel::updateOnline(ChaosBaseDatasetUI::OnlineState /*stat
 
 void CDatasetAttributeLabel::updateValue(QVariant new_value) {
     labelValue->setText(new_value.toString());
-    qDebug() << "CDatasetAttributeLabel updated with value "<< new_value.toString();
 }
