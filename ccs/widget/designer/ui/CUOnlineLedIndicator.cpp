@@ -8,7 +8,6 @@
 
 CUOnlineLedIndicator::CUOnlineLedIndicator(QWidget *parent):
     ChaosBaseDatasetAttributeUI(parent),
-    blink_counter(0),
     current_state(0),
     map_mutex(QMutex::Recursive){
     timeouted.reset(new QIcon(":/images/red_circle_indicator.png"));
@@ -49,19 +48,18 @@ void CUOnlineLedIndicator::setState(int new_sate) {
 void CUOnlineLedIndicator::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     QMutexLocker l(&map_mutex);
-    if(map_state_info.contains(current_state) &&
-            (blink_counter%2) == 0) {
+    if(map_state_info.contains(current_state)) {
         if(map_state_info[current_state]->icon.isNull() == false) {
-            QSize aSize = map_state_info[current_state]->icon->actualSize(size());
-            painter.drawPixmap(QRect(0,0,width(),height()),
-                               map_state_info[current_state]->icon->pixmap(aSize),
-                               QRect(0,0,aSize.width(),aSize.height()));
+            map_state_info[current_state]->icon->paint(&painter, rect());
+//            QSize aSize = map_state_info[current_state]->icon->actualSize(size());
+//            painter.drawPixmap(QRect(0,0,width(),height()),
+//                               map_state_info[current_state]->icon->pixmap(aSize),
+//                               QRect(0,0,aSize.width(),aSize.height()));
         }
     }
 }
 
 void CUOnlineLedIndicator::updateOnline(ChaosBaseDatasetUI::OnlineState state) {
-    bool v = isEnabled();
     qDebug() << QString("updateOnline on %1").arg(deviceID());
     switch(state) {
     case OnlineStateNotFound:

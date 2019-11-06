@@ -5,9 +5,10 @@
 #include "ScriptSignalDialog.h"
 
 #include <QFile>
-#include <QtUiTools>
-#include <QFileDialog>
 #include <QDebug>
+#include <QtUiTools>
+#include <QByteArray>
+#include <QFileDialog>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -208,8 +209,9 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
     }
 }
 
-void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& /*control_unit_uid*/,
-                                                int /*dataset_type*/) {
+void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& control_unit_uid,
+                                                int dataset_type) {
+    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
     //    data_found = false;
     //    storage_type = DSStorageTypeUndefined;
     //    QMetaObject::invokeMethod(this,
@@ -257,7 +259,7 @@ QVariant ChaosUISynopticLoaderWindow::toQVariant(chaos::common::data::CDataVaria
     }
     case DataType::DataType::TYPE_BYTEARRAY: {
         ChaosSharedPtr<CDataBuffer> shared_buffer = chaos_value.asCDataBufferShrdPtr();
-        result.setValue(shared_buffer);
+        result.setValue(QByteArray::fromRawData(shared_buffer->getBuffer(), shared_buffer->getBufferSize()));
         break;
     }
     default:

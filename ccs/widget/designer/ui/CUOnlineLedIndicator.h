@@ -21,7 +21,7 @@ class CUOnlineLedIndicator:
     Q_OBJECT
 public:
     explicit CUOnlineLedIndicator(QWidget *parent = nullptr);
-    virtual ~CUOnlineLedIndicator();
+    virtual ~CUOnlineLedIndicator() override;
     void addState(int state_value,
                   QSharedPointer<QIcon> state_icon,
                   bool blonk_on_repeat_set = false);
@@ -37,7 +37,6 @@ protected:
 private:
     OnlineState online_current_state;
     int current_state;
-    int blink_counter;
     mutable QMutex map_mutex;
     QMap<int, QSharedPointer<CUOnlineLedIndicatorStateInfo> > map_state_info;
     QSharedPointer<QIcon> timeouted;
