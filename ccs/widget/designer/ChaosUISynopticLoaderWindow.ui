@@ -61,6 +61,8 @@
     <addaction name="loadUIFileAction"/>
     <addaction name="separator"/>
     <addaction name="enableUIAction"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Script"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -73,6 +75,11 @@
   <action name="enableUIAction">
    <property name="text">
     <string>Enable</string>
+   </property>
+  </action>
+  <action name="actionEdit_Script">
+   <property name="text">
+    <string>Edit Script</string>
    </property>
   </action>
  </widget>

@@ -45,18 +45,16 @@ void CUOnlineLedIndicator::setState(int new_sate) {
     repaint();
 }
 
-void CUOnlineLedIndicator::paintEvent(QPaintEvent */*event*/) {
+void CUOnlineLedIndicator::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QMutexLocker l(&map_mutex);
     if(map_state_info.contains(current_state)) {
         if(map_state_info[current_state]->icon.isNull() == false) {
             map_state_info[current_state]->icon->paint(&painter, rect());
-//            QSize aSize = map_state_info[current_state]->icon->actualSize(size());
-//            painter.drawPixmap(QRect(0,0,width(),height()),
-//                               map_state_info[current_state]->icon->pixmap(aSize),
-//                               QRect(0,0,aSize.width(),aSize.height()));
         }
     }
+
+    ChaosBaseDatasetAttributeUI::paintEvent(event);
 }
 
 void CUOnlineLedIndicator::updateOnline(ChaosBaseDatasetUI::OnlineState state) {

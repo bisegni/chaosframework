@@ -1,12 +1,12 @@
 #ifndef CHAOSUIBASE_H
 #define CHAOSUIBASE_H
 
-#include <QWidget>
+#include <QFrame>
 #include <QVariant>
 #include <chaos/common/chaos_constants.h>
 
 class ChaosBaseDatasetUI:
-        public QWidget {
+        public QFrame {
     Q_OBJECT
     Q_PROPERTY(QString deviceID READ deviceID WRITE setDeviceID)
     Q_PROPERTY(DatasetType datasetType READ datasetType WRITE setDatasetType)
@@ -41,6 +41,7 @@ signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);
 public slots:
+    void chaosWidgetEditMode(bool new_edit_mode);
     virtual void updateOnlineStateSlot(int state);
     virtual void updateData(int dataset_type,
                             QString attribute_name,
@@ -50,6 +51,7 @@ protected:
     virtual void updateValue(QVariant variant_value) = 0;
 
 private:
+    bool edit_mode;
     QVariant p_value;
     QString p_device_id;
     DatasetType p_dataset_type;

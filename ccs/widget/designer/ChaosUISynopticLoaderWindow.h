@@ -32,6 +32,8 @@ private slots:
     void customMenuRequested(QPoint point);
 
     void editScript();
+    void on_actionEdit_Script_triggered();
+
 private:
     bool ui_enabled;
     QSharedPointer<QJSEngine> js_engine;
@@ -67,6 +69,7 @@ private:
 
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
     void closeEvent(QCloseEvent *event);
+    ChaosBaseDatasetUI *getChaosWidgetParent(QObject *w);
 };
 
 #endif // CHAOSUISYNOPTICLOADERWINDOW_H

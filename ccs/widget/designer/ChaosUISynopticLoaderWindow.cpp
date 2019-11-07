@@ -21,7 +21,6 @@ ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
     ui(new Ui::ChaosUISynopticLoaderWindow) {
     ui->setupUi(this);
     ui->enableUIAction->setEnabled(false);
-
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,
             SIGNAL(customContextMenuRequested(QPoint)),
@@ -112,26 +111,37 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
         //online state
         QObject::connect(device_root.data(),
                          &CUNodeRoot::updateOnlineState,
-                         //                         SIGNAL(updateOnlineState(int)),
                          cw,
-                         //                         SLOT(updateOnlineStateSlot(int)));
                          &ChaosBaseDatasetUI::updateOnlineStateSlot);
         //dataset update
         QObject::connect(device_root.data(),
-                         //                         SIGNAL(updateDatasetAttribute(int, QString, QVariant)),
                          &CUNodeRoot::updateDatasetAttribute,
                          cw,
                          &ChaosBaseDatasetUI::updateData);
-        //                         SLOT(updateData(int, QString, QVariant)));
     }
     ui->enableUIAction->setEnabled(true);
 }
 
+
+void ChaosUISynopticLoaderWindow::on_actionEdit_Script_triggered() {
+    //set edit mode on all chaos widget
+    QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
+    foreach(QWidget *ancestor, chaos_ui_widgets) {
+        if(ancestor->inherits("ChaosBaseDatasetUI") == false) {continue;}
+
+        ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(ancestor);
+        //set edit mode
+        QMetaObject::invokeMethod(cw,
+                                  "chaosWidgetEditMode",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(bool, true));
+    }
+}
+
 void ChaosUISynopticLoaderWindow::customMenuRequested(QPoint point) {
-    QWidget *child_at_position = centralWidget()->childAt(point);
-    if(child_at_position == nullptr ||
-            child_at_position->inherits("ChaosBaseDatasetUI") == false) return;
-    ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(child_at_position);
+    QWidget *child_at_position = childAt(point);
+    ChaosBaseDatasetUI *cw  = getChaosWidgetParent(child_at_position);
+    if(cw == nullptr) return;
     QMenu *menu=new QMenu(this);
     QAction *ac1 = new QAction(QString("Edit script for %1").arg(cw->objectName()), this);
     ac1->setData(QVariant(cw->objectName()));
@@ -187,7 +197,7 @@ void ChaosUISynopticLoaderWindow::editScript() {
 void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& control_unit_uid,
                                                          OnlineState /*old_state*/,
                                                          OnlineState  new_state) {
-//    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
+    //    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
     //signal to root cu
@@ -197,7 +207,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& cont
 void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& control_unit_uid,
                                                            const std::string& /*old_status*/,
                                                            const std::string& new_status) {
-//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid);
+    //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid);
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
     cu_root_iterator.value()->setCurrentAttributeValue(chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
@@ -208,7 +218,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& co
 void ChaosUISynopticLoaderWindow::nodeChangedProcessResource(const std::string& control_unit_uid,
                                                              const ProcessResource& /*old_proc_res*/,
                                                              const ProcessResource& new_proc_res) {
-//    qDebug() << QString("%5 nodeChangedProcessResource: usr:%1 sys:%2 swp:%3 upt:%4").arg(new_proc_res.usr_res).arg(new_proc_res.sys_res).arg(new_proc_res.swp_res).arg(new_proc_res.uptime).arg(QString::fromStdString(control_unit_uid));
+    //    qDebug() << QString("%5 nodeChangedProcessResource: usr:%1 sys:%2 swp:%3 upt:%4").arg(new_proc_res.usr_res).arg(new_proc_res.sys_res).arg(new_proc_res.swp_res).arg(new_proc_res.uptime).arg(QString::fromStdString(control_unit_uid));
 
 }
 
@@ -222,7 +232,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedErrorInformation(const std::string&
 void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
-//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
+    //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
     auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == hash_device_root.end()) return;
 
@@ -236,7 +246,7 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
 
 void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& control_unit_uid,
                                                 int dataset_type) {
-//    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
+    //    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
     //    data_found = false;
     //    storage_type = DSStorageTypeUndefined;
     //    QMetaObject::invokeMethod(this,
@@ -299,4 +309,18 @@ void ChaosUISynopticLoaderWindow::closeEvent(QCloseEvent *event) {
         monitor(key, false);
     }
     QMainWindow::closeEvent(event);
+}
+
+ChaosBaseDatasetUI *ChaosUISynopticLoaderWindow::getChaosWidgetParent(QObject *w) {
+    QObject *cur = w;
+    ChaosBaseDatasetUI *result = nullptr;
+    if(!w) return nullptr;
+    do {
+        if(cur->inherits("ChaosBaseDatasetUI")) {
+            result = reinterpret_cast<ChaosBaseDatasetUI*>(cur);
+        } else {
+            cur = cur->parent();
+        }
+    }while(cur && !result);
+    return result;
 }

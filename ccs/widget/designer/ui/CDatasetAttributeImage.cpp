@@ -18,7 +18,7 @@ QSize CDatasetAttributeImage::minimumSizeHint() const {
     return QSize(100, 100);
 }
 
-void CDatasetAttributeImage::paintEvent(QPaintEvent */*event*/) {
+void CDatasetAttributeImage::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     if(image_loaded && !image_ptr->isNull()) {
         QImage scaled = image_ptr->scaled(size(), Qt::KeepAspectRatio);
@@ -29,6 +29,8 @@ void CDatasetAttributeImage::paintEvent(QPaintEvent */*event*/) {
     } else {
         image_placeholder.paint(&painter, rect());
     }
+
+    ChaosBaseDatasetAttributeUI::paintEvent(event);
 }
 
 void CDatasetAttributeImage::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
