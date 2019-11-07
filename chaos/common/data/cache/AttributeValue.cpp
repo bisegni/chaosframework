@@ -258,12 +258,12 @@ bool AttributeValue::isGood() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
-    CDataWrapper *result = NULL;
+CDWUniquePtr AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
+    CDWUniquePtr result;
     if(!from_json) {
-        result = new CDataWrapper((const char *)value_buffer);
+        result.reset(new CDataWrapper((const char *)value_buffer));
     } else {
-        result = new CDataWrapper();
+        result.reset(new CDataWrapper());
         result->setSerializedJsonData((const char *)value_buffer);
     }
     return result;
@@ -272,7 +272,7 @@ CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
+void AttributeValue::writeToCDataWrapper( CDataWrapper& data_wrapper) {
     switch(type) {
         case chaos::DataType::TYPE_BYTEARRAY:{
             switch(sub_type.size()) {

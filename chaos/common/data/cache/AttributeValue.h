@@ -130,10 +130,10 @@ namespace chaos{
                     /*!
                      This will work only if the contained data is a cdata buffer serialization
                      */
-                    CDataWrapper *getValueAsCDatawrapperPtr(bool from_json = false);
+                    CDWUniquePtr getValueAsCDatawrapperPtr(bool from_json = false);
                     
                         //! write to data wrapper as key value
-                    void writeToCDataWrapper(CDataWrapper& data_wrapper);
+                    void writeToCDataWrapper( CDataWrapper& data_wrapper);
 
                         //! 
                     std::string toString();

@@ -470,6 +470,18 @@ void         AbstractControlUnit::doInitRpCheckList() {
       break;
     }
     CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE) {
+      std::string cu_load_param=getCUParam();
+
+      if(isCUParamInJson()){
+        getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size(),
+                                          chaos::DataType::TYPE_CLUSTER);
+      } else {
+        getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size(),
+                                          chaos::DataType::TYPE_STRING);
+      }
+      getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, (void *)cu_load_param.c_str(),
+                                               cu_load_param.size());
+      
       //define the implementations custom variable
       unitDefineCustomAttribute();
       break;
