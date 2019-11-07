@@ -11,7 +11,7 @@ public:
     ChaosBaseDatasetAttributeUI(QWidget *parent = nullptr);
 
     QString attributeName() const;
-    void setAttributeName(const QString& new_attribute_name);
+    virtual void setAttributeName(const QString& new_attribute_name);
 public slots:
     void updateData(int dataset_type,
                     QString attribute_name,

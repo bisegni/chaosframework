@@ -2,8 +2,7 @@
 
 #include <QImageReader>
 #include <QPainter>
-
-//#include <chaos/common/data/CDataBuffer.h>
+#include <QDebug>
 
 CDatasetAttributeImage::CDatasetAttributeImage(QWidget *parent):
     ChaosBaseDatasetAttributeUI(parent),
@@ -11,28 +10,23 @@ CDatasetAttributeImage::CDatasetAttributeImage(QWidget *parent):
     image_placeholder(QIcon(":/images/image_placeholder.png")),
     image_ptr(new QImage()){}
 
-QSize CDatasetAttributeImage::sizeHint() const
-{
+QSize CDatasetAttributeImage::sizeHint() const {
     return QSize(100, 100);
 }
 
-QSize CDatasetAttributeImage::minimumSizeHint() const
-{
+QSize CDatasetAttributeImage::minimumSizeHint() const {
     return QSize(100, 100);
 }
 
 void CDatasetAttributeImage::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     if(image_loaded && !image_ptr->isNull()) {
-
-        int deltaX = size().width() - image_ptr->size().width();
-        int deltaY = size().height() - image_ptr->size().height();
-
-        // Just apply coordinates transformation to draw where we need.
+        QImage scaled = image_ptr->scaled(size(), Qt::KeepAspectRatio);
+        int deltaX = size().width() - scaled.size().width();
+        int deltaY = size().height() - scaled.size().height();
         painter.translate(deltaX / 2, deltaY / 2);
-        painter.drawImage(0,0,*image_ptr);
+        painter.drawImage(0,0, scaled);
     } else {
-        //draw icon for icon identification
         image_placeholder.paint(&painter, rect());
     }
 }

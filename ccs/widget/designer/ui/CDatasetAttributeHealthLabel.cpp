@@ -5,9 +5,11 @@
 CDatasetAttributeHealthLabel::CDatasetAttributeHealthLabel(QWidget *parent):
     ChaosBaseDatasetAttributeUI(parent) {
     labelValue = new QLabel(this);
-    QHBoxLayout *layout = new QHBoxLayout();
+    QHBoxLayout *layout = new QHBoxLayout(this);
     labelValue->setText("Health Value");
     layout->addWidget(labelValue);
+    layout->setSpacing(-1);
+    layout->setMargin(0);
     setLayout(layout);
     setDatasetType(ChaosBaseDatasetUI::Health);
 }
