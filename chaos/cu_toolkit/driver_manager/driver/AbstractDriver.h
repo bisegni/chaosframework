@@ -27,6 +27,7 @@
 
 #include <boost/thread.hpp>
 
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
