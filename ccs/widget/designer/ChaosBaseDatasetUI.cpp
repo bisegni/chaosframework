@@ -34,8 +34,7 @@ void ChaosBaseDatasetUI::updateOnlineStateSlot(int state) {
 void ChaosBaseDatasetUI::updateData(int dataset_type,
                                     QString attribute_name,
                                     QVariant attribute_value) {
-
-    qDebug() << "ChaosBaseDatasetUI::updateData:" << dataset_type << "[" << datasetType() << "]" << " attrbiute:" << attribute_name;
+//    qDebug() << "ChaosBaseDatasetUI::updateData:" << dataset_type << "[" << datasetType() << "]" << " attrbiute:" << attribute_name;
     if(datasetType() != dataset_type) return;
     //keep track of the new value
     updateValue(attribute_value);

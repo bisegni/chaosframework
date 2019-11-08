@@ -1,6 +1,7 @@
 #ifndef CUNODEROOT_H
 #define CUNODEROOT_H
 
+#include <QMap>
 #include <QObject>
 #include <QVariant>
 
@@ -40,15 +41,27 @@ signals:
                                 QVariant attribute_value);
 
     void updateOnlineState(int state);
+
+    //singla that infomr that change set has been applyed
+    void changeSetCommitted();
 public slots:
     void init();
     void start();
     void stop();
     void deinit();
-
+    //add a new changeset attribute value
+    void attributeChangeSetUpdated(QString,
+                                   QString attribute_name,
+                                   QVariant attribute_value);
+    //!remove a change set
+    void attributeChangeSetClear(QString device_id,
+                                   QString attribute_name);
+    //!apply all changeset
+    void commitChangeSet();
 private:
     ApiSubmitter api_submitter;
     const QString m_device_id;
+    QMap<QString, QVariant> map_attribute_value;
 
     // api submittion handler
     void onApiDone(const QString& tag,

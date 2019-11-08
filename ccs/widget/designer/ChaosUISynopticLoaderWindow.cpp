@@ -2,6 +2,8 @@
 #include "ui_ChaosUISynopticLoaderWindow.h"
 #include "../../error/ErrorManager.h"
 #include "ChaosBaseDatasetUI.h"
+#include "ChaosBaseCommandButtonUI.h"
+#include "ChaosBaseDatasetAttributeUI.h"
 #include "ScriptSignalDialog.h"
 
 #include <QFile>
@@ -47,7 +49,7 @@ void ChaosUISynopticLoaderWindow::windowIsShown() {
 void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
     if(ui_enabled) {
         //disable ui
-        foreach(const QString& key, hash_device_root.keys()){
+        foreach(const QString& key, map_device_root.keys()){
             monitor(key, false);
         }
         //all is gone whell change menu text
@@ -55,7 +57,7 @@ void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
         ui_enabled = false;
     } else {
         //enable ui
-        foreach(const QString& key, hash_device_root.keys()){
+        foreach(const QString& key, map_device_root.keys()){
             monitor(key, true);
         }
         //all is gone whell change menu text
@@ -89,35 +91,66 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
     //update internal structure to improve performance
     QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
     foreach(QWidget *ancestor, chaos_ui_widgets) {
-        if(ancestor->inherits("ChaosBaseDatasetUI") == false) {continue;}
+        //register for command
+        if(ancestor->inherits("ChaosBaseCommandButtonUI")) {
+            ChaosBaseCommandButtonUI *command_ui = reinterpret_cast<ChaosBaseCommandButtonUI*>(ancestor);
+            QObject::connect(command_ui,
+                             &ChaosBaseCommandButtonUI::commitChangeSet,
+                             this,
+                             &ChaosUISynopticLoaderWindow::commitChangeSet);
+            QObject::connect(command_ui,
+                             &ChaosBaseCommandButtonUI::rollbackChangeSet,
+                             this,
+                             &ChaosUISynopticLoaderWindow::rollbackChangeSet);
+        } else if(ancestor->inherits("ChaosBaseDatasetUI")) {
+            ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(ancestor);
 
-        ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(ancestor);
+            if(cw->deviceID() == nullptr ||
+                    cw->deviceID().compare("") == 0) {continue;}
 
-        if(cw->deviceID() == nullptr ||
-                cw->deviceID().compare("") == 0) {continue;}
+            //-------add object to script engine;
+            js_engine->globalObject().setProperty(cw->objectName(), js_engine->newQObject(cw));
+            //-------add object to script engine;
 
-        //-------add object to script engine;
-        js_engine->globalObject().setProperty(cw->objectName(), js_engine->newQObject(cw));
-        //-------add object to script engine;
+            QSharedPointer<CUNodeRoot> device_root;
+            if(map_device_root.contains(cw->deviceID())) {
+                device_root = map_device_root.find(cw->deviceID()).value();
+            } else {
+                map_device_root.insert(cw->deviceID(), device_root = QSharedPointer<CUNodeRoot>(new CUNodeRoot(cw->deviceID())));
+            }
+            qDebug() << "Found chaos widget " << cw->objectName() << " for device id " << cw->deviceID();
+            //connect root signal to widget slots
+            //online state
+            QObject::connect(device_root.data(),
+                             &CUNodeRoot::updateOnlineState,
+                             cw,
+                             &ChaosBaseDatasetUI::updateOnlineStateSlot);
 
-        QSharedPointer<CUNodeRoot> device_root;
-        if(hash_device_root.contains(cw->deviceID())) {
-            device_root = hash_device_root.find(cw->deviceID()).value();
-        } else {
-            hash_device_root.insert(cw->deviceID(), device_root = QSharedPointer<CUNodeRoot>(new CUNodeRoot(cw->deviceID())));
+            //dataset update
+            QObject::connect(device_root.data(),
+                             &CUNodeRoot::updateDatasetAttribute,
+                             cw,
+                             &ChaosBaseDatasetUI::updateData);
+
+            //register for change-set
+            if(ancestor->inherits("ChaosBaseDatasetAttributeUI") == true) {
+                ChaosBaseDatasetAttributeUI *attr_ui = reinterpret_cast<ChaosBaseDatasetAttributeUI*>(ancestor);
+                //connect root signal to ui
+                QObject::connect(device_root.data(),
+                                 &CUNodeRoot::changeSetCommitted,
+                                 attr_ui,
+                                 &ChaosBaseDatasetAttributeUI::changeSetCommitted);
+                //conenct ui signal to root
+                QObject::connect(attr_ui,
+                                 &ChaosBaseDatasetAttributeUI::attributeChangeSetUpdated,
+                                 device_root.data(),
+                                 &CUNodeRoot::attributeChangeSetUpdated);
+                QObject::connect(attr_ui,
+                                 &ChaosBaseDatasetAttributeUI::attributeChangeSetClear,
+                                 device_root.data(),
+                                 &CUNodeRoot::attributeChangeSetClear);
+            }
         }
-        qDebug() << "Found chaos widget " << cw->objectName() << " for device id " << cw->deviceID();
-        //connect root signal to widget slots
-        //online state
-        QObject::connect(device_root.data(),
-                         &CUNodeRoot::updateOnlineState,
-                         cw,
-                         &ChaosBaseDatasetUI::updateOnlineStateSlot);
-        //dataset update
-        QObject::connect(device_root.data(),
-                         &CUNodeRoot::updateDatasetAttribute,
-                         cw,
-                         &ChaosBaseDatasetUI::updateData);
     }
     ui->enableUIAction->setEnabled(true);
 }
@@ -198,8 +231,8 @@ void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& cont
                                                          OnlineState /*old_state*/,
                                                          OnlineState  new_state) {
     //    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
-    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
-    if(cu_root_iterator == hash_device_root.end()) return;
+    auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == map_device_root.end()) return;
     //signal to root cu
     cu_root_iterator.value()->setOnlineState(static_cast<ChaosBaseDatasetUI::OnlineState>(new_state));
 }
@@ -208,8 +241,8 @@ void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& co
                                                            const std::string& /*old_status*/,
                                                            const std::string& new_status) {
     //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid);
-    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
-    if(cu_root_iterator == hash_device_root.end()) return;
+    auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == map_device_root.end()) return;
     cu_root_iterator.value()->setCurrentAttributeValue(chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
                                                        QString::fromStdString(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS),
                                                        QVariant(QString::fromStdString(new_status)));
@@ -233,8 +266,8 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
     //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
-    auto cu_root_iterator = hash_device_root.find(QString::fromStdString(control_unit_uid));
-    if(cu_root_iterator == hash_device_root.end()) return;
+    auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
+    if(cu_root_iterator == map_device_root.end()) return;
 
     //signal every update to root cu
     for (MapDatasetKeyValuesPair element : dataset_key_values) {
@@ -305,7 +338,7 @@ QVariant ChaosUISynopticLoaderWindow::toQVariant(chaos::common::data::CDataVaria
 
 void ChaosUISynopticLoaderWindow::closeEvent(QCloseEvent *event) {
     //disable ui
-    foreach(const QString& key, hash_device_root.keys()){
+    foreach(const QString& key, map_device_root.keys()){
         monitor(key, false);
     }
     QMainWindow::closeEvent(event);
@@ -323,4 +356,27 @@ ChaosBaseDatasetUI *ChaosUISynopticLoaderWindow::getChaosWidgetParent(QObject *w
         }
     }while(cur && !result);
     return result;
+}
+
+void ChaosUISynopticLoaderWindow::commitChangeSet() {
+    QMapIterator<QString, QSharedPointer<CUNodeRoot> > i(map_device_root);
+    while (i.hasNext()) {
+        i.next();
+        qDebug() << "Apply change set to:" << i.key();
+        QMetaObject::invokeMethod(i.value().get(),
+                                  "commitChangeSet",
+                                  Qt::QueuedConnection);
+    }
+
+
+    //    //signal every update to root cu
+    //    for (MapDatasetKeyValuesPair element : dataset_key_values) {
+    //        cu_root_iterator.value()->setCurrentAttributeValue(dataset_type,
+    //                                                           QString::fromStdString(element.first),
+    //                                                           toQVariant(element.second));
+    //    }
+}
+
+void ChaosUISynopticLoaderWindow::rollbackChangeSet() {
+
 }

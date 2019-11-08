@@ -43,6 +43,7 @@ namespace chaos {
                 struct ControlUnitInputDatasetChangeSet {
                     std::string cu_uid;
                     std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> > change_set;
+                    ControlUnitInputDatasetChangeSet(const std::string _cu_uid);
                     ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
                                                      const std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> >& _change_set);
                 };

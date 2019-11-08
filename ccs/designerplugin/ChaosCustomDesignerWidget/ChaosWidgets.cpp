@@ -1,17 +1,23 @@
 #include "ChaosWidgets.h"
 
-#include <CDatasetAttributeHealthLabelPlugin.h>
+//ui
+#include <CUOnlineLedIndicatorPlugin.h>
 #include <CDatasetAttributeLabelPlugin.h>
 #include <CDatasetAttributeImagePlugin.h>
-#include <CUOnlineLedIndicatorPlugin.h>
-//#include "../metatypes.h"
+#include <CDatasetAttributeHealthLabelPlugin.h>
+#include <CDatasetAttributeSetValueLineEditPlugin.h>
+//command
+#include <CChangeSetGlobalCommitPlugin.h>
 
 ChaosWidgets::ChaosWidgets(QObject *parent):
     QObject(parent) {
-    widgets.append(new CDatasetAttributeHealthLabelPlugin(this));
+    widgets.append(new CUOnlineLedIndicatorPlugin(this));
     widgets.append(new CDatasetAttributeLabelPlugin(this));
     widgets.append(new CDatasetAttributeImagePlugin(this));
-    widgets.append(new CUOnlineLedIndicatorPlugin(this));
+    widgets.append(new CDatasetAttributeHealthLabelPlugin(this));
+    widgets.append(new CDatasetAttributeSetValueLineEditPlugin(this));
+
+    widgets.append(new CChangeSetGlobalCommitPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> ChaosWidgets::customWidgets() const {

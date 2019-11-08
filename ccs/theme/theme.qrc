@@ -11,5 +11,6 @@
         <file>pause_black.png</file>
         <file>gear_black.png</file>
         <file>image_placeholder.png</file>
+        <file>clear-gray.jpg</file>
     </qresource>
 </RCC>

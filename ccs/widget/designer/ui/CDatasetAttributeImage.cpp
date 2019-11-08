@@ -21,7 +21,7 @@ QSize CDatasetAttributeImage::minimumSizeHint() const {
 void CDatasetAttributeImage::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     if(image_loaded && !image_ptr->isNull()) {
-        QImage scaled = image_ptr->scaled(size(), Qt::KeepAspectRatio);
+        QImage scaled = image_ptr->scaled(size(), Qt::KeepAspectRatio,  Qt::SmoothTransformation);
         int deltaX = size().width() - scaled.size().width();
         int deltaY = size().height() - scaled.size().height();
         painter.translate(deltaX / 2, deltaY / 2);

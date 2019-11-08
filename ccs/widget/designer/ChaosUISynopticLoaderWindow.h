@@ -5,7 +5,7 @@
 #include "../ChaosMonitorWidgetCompanion.h"
 
 #include <QJSEngine>
-#include <QMultiHash>
+#include <QMap>
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QSharedPointer>
@@ -32,13 +32,18 @@ private slots:
     void customMenuRequested(QPoint point);
 
     void editScript();
+
     void on_actionEdit_Script_triggered();
 
+    //global changeset commit
+    void commitChangeSet();
+    //global change set rollback
+    void rollbackChangeSet();
 private:
     bool ui_enabled;
     QSharedPointer<QJSEngine> js_engine;
     //contains correlation for cu and his associated ui;
-    QMultiHash<QString, QSharedPointer<CUNodeRoot> > hash_device_root;
+    QMap<QString, QSharedPointer<CUNodeRoot> > map_device_root;
     Ui::ChaosUISynopticLoaderWindow *ui;
 
     QWidget *loadUiFile(QWidget *parent, QString filePath);

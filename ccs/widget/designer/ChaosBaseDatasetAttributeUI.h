@@ -16,7 +16,14 @@ public slots:
     void updateData(int dataset_type,
                     QString attribute_name,
                     QVariant attribute_value);
-
+    // widget if is a input one need to clear his state to show as normal
+    virtual void changeSetCommitted();
+signals:
+    void attributeChangeSetUpdated(QString device_id,
+                                   QString attribute_name,
+                                   QVariant attribute_value);
+    void attributeChangeSetClear(QString device_id,
+                                 QString attribute_name);
 private:
     QString p_attribute_name;
 };
