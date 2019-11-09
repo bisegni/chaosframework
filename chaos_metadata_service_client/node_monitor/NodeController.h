@@ -55,7 +55,6 @@ namespace chaos {
                 //count the time we have got the same timestamp
                 bool was_online;
                 unsigned int zero_diff_count_on_ts;
-                uint64_t last_recevied_ts;
                 std::string last_received_status;
                
                 //!last dataset received for helth data
@@ -70,6 +69,8 @@ namespace chaos {
                 inline void _fireHealthDatasetChanged();
                 void updateData();
             protected:
+                //! is the last recevide ts superclass can help assigning this value using other dataset
+                uint64_t last_recevied_ts;
                 //the list of all registered handlers
                 boost::mutex        list_handler_mutex;
                 MonitoHandlerList   list_handler;
@@ -85,6 +86,9 @@ namespace chaos {
                                         const chaos::metadata_service_client::monitor_system::KeyValue& value);
                 //!inherited method
                 virtual void quantumSlotHasNoData(const std::string& key);
+                
+                //!compute the online states logic
+                bool computeOnlineState(uint64_t received_ts);
             public:
                 
                 virtual ~NodeController();

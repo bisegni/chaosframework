@@ -106,33 +106,7 @@ void NodeController::updateData() {
         }
     }
     
-    uint64_t received_ts = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
-    if(last_recevied_ts == 0) {
-        last_recevied_ts = received_ts;
-        //unknown
-        _setOnlineState(OnlineStateUnknown);
-    } else {
-        if((received_ts - last_recevied_ts) > 0) {
-            //online
-            was_online = true;
-            zero_diff_count_on_ts = 0;
-            _setOnlineState(OnlineStateON);
-        } else {
-            if(((++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE) == true) ||
-               (last_recevied_ts == 0)||
-               (was_online == false)) {
-                //offline
-                _setOnlineState(OnlineStateOFF);
-            } else {
-                if(last_recevied_ts == 0) {
-                    //unknown
-                    _setOnlineState(OnlineStateUnknown);
-                }
-            }
-        }
-        //keep track of current timestamp
-        last_recevied_ts = received_ts;
-        
+    if(computeOnlineState(last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP))) {
         //update internal state
         _setNodeInternalState(last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
         
@@ -168,6 +142,38 @@ void NodeController::updateData() {
     }
     
     _fireHealthDatasetChanged();
+}
+
+bool NodeController::computeOnlineState(uint64_t received_ts) {
+    bool result = false;
+    if(last_recevied_ts == 0) {
+        last_recevied_ts = received_ts;
+        //unknown
+        _setOnlineState(OnlineStateUnknown);
+    } else {
+        result = true;
+        if((received_ts - last_recevied_ts) > 0) {
+            //online
+            was_online = true;
+            zero_diff_count_on_ts = 0;
+            _setOnlineState(OnlineStateON);
+        } else {
+            if(((++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE) == true) ||
+               (last_recevied_ts == 0)||
+               (was_online == false)) {
+                //offline
+                _setOnlineState(OnlineStateOFF);
+            } else {
+                if(last_recevied_ts == 0) {
+                    //unknown
+                    _setOnlineState(OnlineStateUnknown);
+                }
+            }
+        }
+        //keep track of current timestamp
+        last_recevied_ts = received_ts;
+    }
+    return result;
 }
 
 void NodeController::quantumSlotHasData(const std::string& key,

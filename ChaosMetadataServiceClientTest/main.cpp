@@ -89,21 +89,6 @@ int main(int argc, const char *argv[]){
     ChaosMetadataServiceClient::getInstance()->start();
     ChaosMetadataServiceClient::getInstance()->enableMonitor();
     
-
-//    DeviceMessageChannel *dmc = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress("rt_sin_a"), true);
-//    while (true) {
-//        ChaosUniquePtr<MessageRequestFuture> req = dmc->sendCustomRequestWithFuture("actionTestOne", CDWUniquePtr());
-//        if(req->wait(5000)) {
-//            if(req->getError() == 0 &&
-//               req->getResult()) {
-//                std::cout << req->getResult()->getJSONString() << std::endl;
-//            }
-//        }
-//        
-//        sleep(1);
-//    }
-//    NetworkBroker::getInstance()->disposeMessageChannel(dmc);
-    
     try{
         switch (operation){
             case 0:{

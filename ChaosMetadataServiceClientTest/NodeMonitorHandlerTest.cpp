@@ -75,32 +75,32 @@ NodeMonitorHandlerTest::~NodeMonitorHandlerTest() {
 void NodeMonitorHandlerTest::nodeChangedOnlineState(const std::string& node_uid,
                                                     OnlineState old_status,
                                                     OnlineState new_status) {
-    LAPP_ << node_uid << " - nodeChangedOnlineState: " << getStatusDesc(new_status)<<"["<<getStatusDesc(old_status)<<"]";
+    std::cout  << node_uid << " - nodeChangedOnlineState: " << getStatusDesc(new_status)<<"["<<getStatusDesc(old_status)<<"]" << std::endl;
 }
 
 
 void NodeMonitorHandlerTest::nodeChangedInternalState(const std::string& node_uid,
                                                       const std::string& old_status,
                                                       const std::string& new_status) {
-    LAPP_ << node_uid << " - nodeChangedInternalState: " << new_status<<"["<<old_status<<"]";
+    std::cout  << node_uid << " - nodeChangedInternalState: " << new_status<<"["<<old_status<<"]";
 }
 
 void NodeMonitorHandlerTest::nodeChangedProcessResource(const std::string& node_uid,
                                                         const ProcessResource& old_proc_res,
                                                         const ProcessResource& new_proc_res) {
-    LAPP_ << boost::str(boost::format("%5% nodeChangedProcessResource: usr:%1% sys:%2% swp:%3% upt:%4%")%new_proc_res.usr_res%new_proc_res.sys_res%new_proc_res.swp_res%new_proc_res.uptime%node_uid);
+    std::cout  << boost::str(boost::format("%5% nodeChangedProcessResource: usr:%1% sys:%2% swp:%3% upt:%4%")%new_proc_res.usr_res%new_proc_res.sys_res%new_proc_res.swp_res%new_proc_res.uptime%node_uid) << std::endl;
     
 }
 
 void NodeMonitorHandlerTest::nodeChangedErrorInformation(const std::string& node_uid,
                                                          const ErrorInformation& old_status,
                                                          const ErrorInformation& new_status) {
-    LAPP_<< node_uid << "nodeChangedErrorInformation: ";
+    std::cout << node_uid << "nodeChangedErrorInformation: " << std::endl;
     
 }
 
 void NodeMonitorHandlerTest::nodeHasBeenRestarted(const std::string& node_uid) {
-    LAPP_<< node_uid << "nodeHasBeenRestarted: " << node_uid;
+    std::cout << node_uid << "nodeHasBeenRestarted: " << std::endl;
 }
 
 void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,

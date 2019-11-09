@@ -47,6 +47,12 @@ ControlUnitController::~ControlUnitController() { }
 void ControlUnitController::quantumSlotHasData(const std::string &key,
                                                const chaos::metadata_service_client::monitor_system::KeyValue &value) {
     bool changed = false;
+    
+    if(value->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
+        //improve livenes status computation
+        computeOnlineState(value->getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP));
+    }
+    
     if (key.compare(cu_output_ds_key) == 0) {
         if((changed = CHECK_DS_CHANGED(last_ds_output, value))) {
             //update output datset key
