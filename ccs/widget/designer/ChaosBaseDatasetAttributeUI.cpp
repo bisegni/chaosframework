@@ -31,7 +31,8 @@ void ChaosBaseDatasetAttributeUI::updateData(int dataset_type,
 void ChaosBaseDatasetAttributeUI::changeSetCommitted() {}
 
 void ChaosBaseDatasetAttributeUI::dragEnterEvent(QDragEnterEvent* event) {
-    if (event->mimeData()->hasFormat("application/chaos-uid-dataset-attribute")) {
+    if (event->mimeData()->hasFormat("application/chaos-uid-dataset-attribute") ||
+            event->mimeData()->hasFormat("application/chaos-node-uid-list")) {
         event->acceptProposedAction();
         chaosWidgetEditMode(true);
     } else {
@@ -58,7 +59,20 @@ void ChaosBaseDatasetAttributeUI::dropEvent(QDropEvent *event) {
         int dataset;
         QString attribute_name;
         dataStream >> node_uid >> dataset >> attribute_name;
+        setDeviceID(node_uid);
+        setDatasetType(static_cast<DatasetType>(dataset));
+        setAttributeName(attribute_name);
         qDebug() << QString("drop for %1-%2-%3").arg(node_uid).arg(dataset).arg(attribute_name);
+        event->acceptProposedAction();
+    } if(event->mimeData()->hasFormat("application/chaos-node-uid-list")) {
+        QByteArray encoded = event->mimeData()->data("application/chaos-node-uid-list");
+        QDataStream stream(&encoded, QIODevice::ReadOnly);
+        while (!stream.atEnd()) {
+            QString node_uid;
+            stream >> node_uid;
+            setDeviceID(node_uid);
+            qDebug() << QString("drop for %1").arg(node_uid);
+        }
         event->acceptProposedAction();
     } else {
         event->ignore();
