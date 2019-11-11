@@ -80,7 +80,6 @@ void CUNodeRoot::commitChangeSet() {
         api_submitter.submitApiResult("APPLY-CHANGESET",
                                       GET_CHAOS_API_PTR(SetInputDatasetAttributeValues)->execute(change_vec));
     }
-
     //signal commit operation
     emit changeSetCommitted();
 }

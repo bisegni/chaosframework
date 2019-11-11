@@ -209,7 +209,15 @@ void ControlUnitEditor::initUI() {
     //reset the splitter in mode to hide the lists
     on_checkBoxShowAlarms_clicked();
     ui->listViewAlarm->setModel(&alarm_list_model);
+    ui->listViewAlarm->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->listViewAlarm->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->listViewAlarm->setDragEnabled(true);
+    ui->listViewAlarm->setDragDropMode(QTableView::DragOnly);
     ui->listViewWarning->setModel(&warning_list_model);
+    ui->listViewWarning->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->listViewWarning->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->listViewWarning->setDragEnabled(true);
+    ui->listViewWarning->setDragDropMode(QTableView::DragOnly);
     //manage command stat
     ui->widgetCommandStatistic->setVisible(false);
     //busy flag

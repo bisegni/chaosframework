@@ -8,9 +8,10 @@
 
 #include <QFile>
 #include <QDebug>
-#include <QtUiTools>
+#include <QtCore>
 #include <QByteArray>
 #include <QFileDialog>
+#include <QLibraryInfo>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -28,23 +29,17 @@ ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
             SIGNAL(customContextMenuRequested(QPoint)),
             this,
             SLOT(customMenuRequested(QPoint)));
+    //set form search builder path
+    //    formBuilder.addPluginPath(QLibraryInfo::location(QLibraryInfo::PluginsPath)+"/designer");
+    //    formBuilder.addPluginPath(QProcessEnvironment::systemEnvironment().value("DYLD_LIBRARY_PATH"));
+
 }
 
 ChaosUISynopticLoaderWindow::~ChaosUISynopticLoaderWindow() {
     delete ui;
 }
 
-QWidget *ChaosUISynopticLoaderWindow::loadUiFile(QWidget *parent, QString filePath) {
-    QFile file(filePath);
-    file.open(QIODevice::ReadOnly);
-
-    QUiLoader loader;
-    return loader.load(&file, parent);
-}
-
-void ChaosUISynopticLoaderWindow::windowIsShown() {
-
-}
+void ChaosUISynopticLoaderWindow::windowIsShown() {}
 
 void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
     if(ui_enabled) {
@@ -67,10 +62,47 @@ void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
     ui->loadUIFileAction->setEnabled(!ui_enabled);
 }
 
+QWidget *ChaosUISynopticLoaderWindow::loadUiFile(QWidget *parent, QString filePath) {
+    QFile file(filePath);
+    file.open(QIODevice::ReadOnly);
+
+    //retain compressed ui
+    compressed_loaded_ui = qCompress(file.readAll(),9);
+
+    //reset file to be loaded form ui tools
+    file.reset();
+    return formLoader.load(&file, parent);
+}
+
+
+void ChaosUISynopticLoaderWindow::on_actionSave_UI_as_triggered() {
+    QString fname = QFileDialog::getSaveFileName(this, tr("File destination"), QDir::homePath(), "User Interface (*.cuf);" );
+    QFileInfo file_info(fname);
+    fname = file_info.absolutePath()+"/"+file_info.fileName()+".cuf";
+    QFile file(fname);
+    file.open(QIODevice::WriteOnly);
+    //QDataStream stream( &file );
+    //save chaos file ui formar cuf(Chaos Ui Format)
+    QJsonObject chaos_dataset_config;
+    //add ui
+    chaos_dataset_config.insert("ui", QString(compressed_loaded_ui.toBase64()));
+    //add chaos widget attribute
+    QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
+    foreach(QWidget *ancestor, chaos_ui_widgets) {
+        //register for command
+        if(!ancestor->inherits("ChaosBaseUI")) continue;
+        ChaosBaseUI *chaos_ui = reinterpret_cast<ChaosBaseUI*>(ancestor);
+
+        chaos_dataset_config.insert(chaos_ui->objectName(), QJsonValue(chaos_ui->serialize()));
+    }
+    QJsonDocument doc(chaos_dataset_config);
+    file.write(doc.toJson(QJsonDocument::Indented));
+}
+
 void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open ui file"),
-                                                    "$HOME",
+                                                    QDir::homePath(),
                                                     tr("Ui Files (*.ui)"));
     if(!fileName.size()) {
         return;
@@ -218,18 +250,17 @@ void ChaosUISynopticLoaderWindow::editScript() {
                     qDebug()<< "\nUncaught exception at line"
                             << compiled_connection.property("lineNumber").toInt()
                             << ":" << compiled_connection.toString();
-
                 }
             }
             iter++;
         }
     }
-
 }
 
 void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& control_unit_uid,
-                                                         OnlineState /*old_state*/,
+                                                         OnlineState old_state,
                                                          OnlineState  new_state) {
+    Q_UNUSED(old_state)
     //    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
     auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == map_device_root.end()) return;
@@ -238,8 +269,9 @@ void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& cont
 }
 
 void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& control_unit_uid,
-                                                           const std::string& /*old_status*/,
+                                                           const std::string& old_status,
                                                            const std::string& new_status) {
+    Q_UNUSED(old_status)
     //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid);
     auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == map_device_root.end()) return;
@@ -249,15 +281,20 @@ void ChaosUISynopticLoaderWindow::nodeChangedInternalState(const std::string& co
 }
 
 void ChaosUISynopticLoaderWindow::nodeChangedProcessResource(const std::string& control_unit_uid,
-                                                             const ProcessResource& /*old_proc_res*/,
+                                                             const ProcessResource& old_proc_res,
                                                              const ProcessResource& new_proc_res) {
+    Q_UNUSED(control_unit_uid)
+    Q_UNUSED(old_proc_res)
+    Q_UNUSED(new_proc_res)
     //    qDebug() << QString("%5 nodeChangedProcessResource: usr:%1 sys:%2 swp:%3 upt:%4").arg(new_proc_res.usr_res).arg(new_proc_res.sys_res).arg(new_proc_res.swp_res).arg(new_proc_res.uptime).arg(QString::fromStdString(control_unit_uid));
 
 }
 
 void ChaosUISynopticLoaderWindow::nodeChangedErrorInformation(const std::string& control_unit_uid,
-                                                              const ErrorInformation& /*old_status*/,
-                                                              const ErrorInformation& /*new_status*/) {
+                                                              const ErrorInformation& old_status,
+                                                              const ErrorInformation& new_status) {
+    Q_UNUSED(old_status)
+    Q_UNUSED(new_status)
     qDebug()<< QString::fromStdString(control_unit_uid) << "nodeChangedErrorInformation: ";
 
 }
@@ -279,6 +316,8 @@ void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
 
 void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& control_unit_uid,
                                                 int dataset_type) {
+    Q_UNUSED(control_unit_uid)
+    Q_UNUSED(dataset_type)
     //    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
     //    data_found = false;
     //    storage_type = DSStorageTypeUndefined;

@@ -59,6 +59,7 @@
      <string>File</string>
     </property>
     <addaction name="loadUIFileAction"/>
+    <addaction name="actionSave_UI_as"/>
     <addaction name="separator"/>
     <addaction name="enableUIAction"/>
     <addaction name="separator"/>
@@ -80,6 +81,11 @@
   <action name="actionEdit_Script">
    <property name="text">
     <string>Edit Script</string>
+   </property>
+  </action>
+  <action name="actionSave_UI_as">
+   <property name="text">
+    <string>Save UI As</string>
    </property>
   </action>
  </widget>

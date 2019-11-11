@@ -22,6 +22,10 @@ protected:
                    chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
     void noDSDataFound(const std::string& control_unit_uid,
                        int dataset_type);
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::DropActions supportedDragActions() const;
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
+    QStringList mimeTypes() const;
 public:
     typedef enum StateVariableType {
         StateVariableTypeUndefined,

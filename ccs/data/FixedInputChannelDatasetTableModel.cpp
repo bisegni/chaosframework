@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QColor>
+#include <QMimeData>
 #include <QMessageBox>
 
 #include <boost/lexical_cast.hpp>
@@ -21,9 +22,7 @@ FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(const QSt
                                    parent) {
 
 }
-FixedInputChannelDatasetTableModel::~FixedInputChannelDatasetTableModel() {
 
-}
 void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
     //call superclas method taht will emit dataChagned
     data_wrapped = _dataset;
@@ -60,6 +59,50 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
         }
     }
     endResetModel();
+}
+
+
+Qt::ItemFlags FixedInputChannelDatasetTableModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags defaultFlags = ChaosAbstractDataSetTableModel::flags(index);
+    if(index.isValid()) {
+        return defaultFlags | Qt::ItemIsDragEnabled;
+    }
+    return defaultFlags;
+}
+
+Qt::DropActions FixedInputChannelDatasetTableModel::supportedDragActions() const {
+    return Qt::CopyAction;
+}
+
+QStringList FixedInputChannelDatasetTableModel::mimeTypes() const {
+    QStringList types;
+    //specify the mime operatioan for uid,dataset,and attribute
+    types << "application/chaos-uid-dataset-attribute";
+    return types;
+}
+
+QMimeData *FixedInputChannelDatasetTableModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            QSharedPointer<CDataWrapper> element = vector_doe[index.row()];
+            if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
+                //add node ui
+                stream << node_uid;
+                //add dataset
+                stream << chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
+                //add attribute name
+                stream << QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+            }
+        }
+    }
+
+    mimeData->setData("application/chaos-uid-dataset-attribute", encodedData);
+    return mimeData;
 }
 
 void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QSharedPointer<CDataWrapper>& _dataset_attribute_configuration) {
@@ -458,4 +501,9 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
 
 bool FixedInputChannelDatasetTableModel::isCellEditable(const QModelIndex &index) const {
     return index.column() == 6;
+}
+
+bool FixedInputChannelDatasetTableModel::isCellSelectable(const QModelIndex &index) const {
+    Q_UNUSED(index)
+    return true;
 }

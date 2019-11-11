@@ -2,9 +2,9 @@
 #define CHAOSBASECOMMANDBUTTONUI_H
 
 #include <QFrame>
-
+#include "ChaosBaseUI.h"
 class ChaosBaseCommandButtonUI:
-        public QFrame {
+        public ChaosBaseUI {
     Q_OBJECT
 public:
     ChaosBaseCommandButtonUI(QWidget *parent = nullptr);

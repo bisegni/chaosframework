@@ -64,3 +64,19 @@ void ChaosBaseDatasetAttributeUI::dropEvent(QDropEvent *event) {
         event->ignore();
     }
 }
+
+QJsonObject ChaosBaseDatasetAttributeUI::serialize() {
+    QJsonObject result = ChaosBaseDatasetUI::serialize();
+    if(attributeName().size()){result.insert("ChaosBaseDatasetAttributeUI::attributeName", attributeName());}
+    return result;
+}
+
+void ChaosBaseDatasetAttributeUI::deserialize(QJsonObject& serialized_data) {
+    ChaosBaseDatasetUI::deserialize(serialized_data);
+    if(serialized_data.isEmpty()){
+        return;
+    }
+    if(serialized_data.contains("ChaosBaseDatasetAttributeUI::attributeName")) {
+        setAttributeName(serialized_data["ChaosBaseDatasetAttributeUI::attributeName"].toString());
+    }
+}

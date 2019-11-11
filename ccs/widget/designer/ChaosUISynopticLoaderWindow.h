@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QSharedPointer>
+#include <QUiLoader>
 
 namespace Ui {
 class ChaosUISynopticLoaderWindow;
@@ -39,8 +40,13 @@ private slots:
     void commitChangeSet();
     //global change set rollback
     void rollbackChangeSet();
+    void on_actionSave_UI_as_triggered();
+
 private:
     bool ui_enabled;
+    //contain last laoded ui in a comrpessed format
+    QByteArray compressed_loaded_ui;
+    QUiLoader formLoader;
     QSharedPointer<QJSEngine> js_engine;
     //contains correlation for cu and his associated ui;
     QMap<QString, QSharedPointer<CUNodeRoot> > map_device_root;
@@ -49,7 +55,7 @@ private:
     QWidget *loadUiFile(QWidget *parent, QString filePath);
     // monitor handler
     void nodeChangedOnlineState(const std::string& control_unit_uid,
-                                chaos::metadata_service_client::node_monitor::OnlineState old_status,
+                                chaos::metadata_service_client::node_monitor::OnlineState old_state,
                                 chaos::metadata_service_client::node_monitor::OnlineState new_status);
 
     void nodeChangedInternalState(const std::string& node_uid, const std::string&,
@@ -60,8 +66,8 @@ private:
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
 
     void nodeChangedErrorInformation(const std::string& node_uid,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&);
+                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&old_status,
+                                     const chaos::metadata_service_client::node_monitor::ErrorInformation&new_status);
 
     void updatedDS(const std::string& control_unit_uid,
                    int dataset_type,

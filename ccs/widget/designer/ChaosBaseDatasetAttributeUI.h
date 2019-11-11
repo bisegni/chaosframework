@@ -16,6 +16,8 @@ public:
     void dragMoveEvent (QDragMoveEvent* event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
+    QJsonObject serialize();
+    void deserialize(QJsonObject& serialized_data);
 public slots:
     void updateData(int dataset_type,
                     QString attribute_name,

@@ -7,8 +7,9 @@
 #include <QFrame>
 
 ChaosBaseDatasetUI::ChaosBaseDatasetUI(QWidget *parent):
-    QFrame(parent),
-    edit_mode(false){}
+    ChaosBaseUI(parent),
+    edit_mode(false),
+    p_dataset_type(Unset){}
 
 void ChaosBaseDatasetUI::setDeviceID(const QString &new_device_id) {
     p_device_id = new_device_id;
@@ -24,6 +25,25 @@ void ChaosBaseDatasetUI::setDatasetType(const DatasetType &new_dataset_type) {
 
 ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
+}
+
+QJsonObject ChaosBaseDatasetUI::serialize() {
+    QJsonObject result = ChaosBaseUI::serialize();
+    if(deviceID().size()){result.insert("ChaosBaseDatasetUI::deviceID", deviceID());}
+    if(datasetType()!=Unset)result.insert("ChaosBaseDatasetUI::datasetType", datasetType());
+    return result;
+}
+
+void ChaosBaseDatasetUI::deserialize(QJsonObject& serialized_data) {
+    if(serialized_data.isEmpty()){
+        return;
+    }
+    if(serialized_data.contains("ChaosBaseDatasetUI::deviceID")) {
+        setDeviceID(serialized_data["ChaosBaseDatasetUI::deviceID"].toString());
+    }
+    if(serialized_data.contains("ChaosBaseDatasetUI::datasetType")) {
+        setDatasetType(static_cast<DatasetType>(serialized_data["ChaosBaseDatasetUI::datasetType"].toInt()));
+    }
 }
 
 void ChaosBaseDatasetUI::updateOnlineStateSlot(int state) {

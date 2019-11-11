@@ -3,10 +3,13 @@
 
 #include <QFrame>
 #include <QVariant>
+
 #include <chaos/common/chaos_constants.h>
 
+#include "ChaosBaseUI.h"
+
 class ChaosBaseDatasetUI:
-        public QFrame {
+        public ChaosBaseUI {
     Q_OBJECT
     Q_PROPERTY(QString deviceID READ deviceID WRITE setDeviceID)
     Q_PROPERTY(DatasetType datasetType READ datasetType WRITE setDatasetType)
@@ -25,7 +28,8 @@ public:
                        System = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
                        Health = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH,
                        DevAlarm = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM,
-                       CUAlarm  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM};
+                       CUAlarm  = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM,
+                       Unset};
 
     Q_ENUM(DatasetType)
 
@@ -37,6 +41,8 @@ public:
     void setDatasetType(const DatasetType &new_dataset_type);
     DatasetType datasetType() const;
 
+    QJsonObject serialize();
+    void deserialize(QJsonObject& serialized_data);
 signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);

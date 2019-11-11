@@ -1,13 +1,15 @@
 #include "ControlUnitStateVaribleListModel.h"
 
 #include <QBrush>
+#include <QMimeData>
+#include <QDebug>
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitStateVaribleListModel::ControlUnitStateVaribleListModel(const QString& _control_unit_id,
                                                                    StateVariableType state_variable_type,
-                                                                    QObject *parent):
+                                                                   QObject *parent):
     control_unit_id(_control_unit_id) {
     setStateVariableType(state_variable_type);
 
@@ -103,8 +105,8 @@ bool ControlUnitStateVaribleListModel::setRowCheckState(const int row, const QVa
 }
 
 void ControlUnitStateVaribleListModel::updatedDS(const std::string& control_unit_uid,
-                               int dataset_type,
-                               MapDatasetKeyValues& dataset_key_values) {
+                                                 int dataset_type,
+                                                 MapDatasetKeyValues& dataset_key_values) {
     if(dataset_type != chaos_dataset_type) return;
     beginResetModel();
     alarm_names.clear();
@@ -125,10 +127,49 @@ void ControlUnitStateVaribleListModel::updatedDS(const std::string& control_unit
 }
 
 void ControlUnitStateVaribleListModel::noDSDataFound(const std::string& control_unit_uid,
-                                   int dataset_type) {
+                                                     int dataset_type) {
     if(dataset_type != chaos::DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM) return;
     beginResetModel();
     alarm_names.clear();
     alarm_dataset.clear();
     endResetModel();
+}
+
+
+Qt::ItemFlags ControlUnitStateVaribleListModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
+    if (index.isValid())
+        return Qt::ItemIsDragEnabled | defaultFlags;
+    else
+        return defaultFlags;
+}
+
+Qt::DropActions ControlUnitStateVaribleListModel::supportedDragActions() const {
+    return Qt::CopyAction;
+}
+
+QMimeData *ControlUnitStateVaribleListModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            qDebug() << "ControlUnitStateVaribleListModel::mimeData->"<< alarm_names[index.row()];
+            //add node ui
+            stream << control_unit_id;
+            //add dataset
+            stream << chaos_dataset_type;
+            //add attribute name
+            stream << alarm_names[index.row()];
+        }
+    }
+
+    mimeData->setData("application/chaos-uid-dataset-attribute", encodedData);
+    return mimeData;
+}
+
+QStringList ControlUnitStateVaribleListModel::mimeTypes() const {
+    QStringList types;
+    types << "application/chaos-uid-dataset-attribute";
+    return types;
 }
