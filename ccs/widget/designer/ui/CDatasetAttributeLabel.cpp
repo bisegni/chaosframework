@@ -42,5 +42,4 @@ void CDatasetAttributeLabel::updateValue(QVariant new_value) {
     } else {
         labelValue->setText(new_value.toString());
     }
-
 }

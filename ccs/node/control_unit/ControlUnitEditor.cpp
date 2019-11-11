@@ -60,6 +60,10 @@ void ControlUnitEditor::initUI() {
     ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
+    ui->tableViewOutputChannel->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableViewOutputChannel->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableViewOutputChannel->setDragEnabled(true);
+    ui->tableViewOutputChannel->setDragDropMode(QTableView::DragOnly);
     ui->tableViewOutputChannel->setColumnToContents(0, true);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 

@@ -1,6 +1,7 @@
 #include "FixedOutputChannelDatasetTableModel.h"
 
 #include <QDateTime>
+#include <QDataStream>
 
 using namespace chaos::common::data;
 
@@ -9,13 +10,9 @@ FixedOutputChannelDatasetTableModel::FixedOutputChannelDatasetTableModel(const Q
                                                                          QObject *parent):
     ChaosAbstractDataSetTableModel(node_uid,
                                    dataset_type,
-                                   parent) {
+                                   parent) {}
 
-}
-
-FixedOutputChannelDatasetTableModel::~FixedOutputChannelDatasetTableModel() {
-
-}
+FixedOutputChannelDatasetTableModel::~FixedOutputChannelDatasetTableModel() {}
 
 void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
     //call superclas method taht will emit dataChagned
@@ -81,6 +78,49 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
         }
     }
     endResetModel();
+}
+
+Qt::ItemFlags FixedOutputChannelDatasetTableModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags defaultFlags = ChaosAbstractDataSetTableModel::flags(index);
+    if(index.isValid()) {
+        return defaultFlags | Qt::ItemIsDragEnabled;
+    }
+    return defaultFlags;
+}
+
+Qt::DropActions FixedOutputChannelDatasetTableModel::supportedDragActions() const {
+    return Qt::CopyAction;
+}
+
+QStringList FixedOutputChannelDatasetTableModel::mimeTypes() const {
+    QStringList types;
+    //specify the mime operatioan for uid,dataset,and attribute
+    types << "application/chaos-uid-dataset-attribute";
+    return types;
+}
+
+QMimeData *FixedOutputChannelDatasetTableModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            QSharedPointer<CDataWrapper> element = vector_doe[index.row()];
+            if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
+                //add node ui
+                stream << node_uid;
+                //add dataset
+                stream << chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
+                //add attribute name
+                stream << QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+            }
+        }
+    }
+
+    mimeData->setData("application/chaos-uid-dataset-attribute", encodedData);
+    return mimeData;
 }
 
 int FixedOutputChannelDatasetTableModel::getRowCount() const {
@@ -284,4 +324,9 @@ QVariant FixedOutputChannelDatasetTableModel::getTextAlignForData(int row, int c
     }
 
     return result;
+}
+
+bool FixedOutputChannelDatasetTableModel::isCellSelectable(const QModelIndex &index) const {
+    Q_UNUSED(index)
+    return true;
 }

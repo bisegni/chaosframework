@@ -33,6 +33,7 @@ unix:!macx {
 macx:{
     CONFIG += app_bundle
     LIBS +=  -lchaos_common
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
 }
 
 LIBS +=     -ljsoncpp\

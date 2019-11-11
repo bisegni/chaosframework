@@ -63,7 +63,7 @@ void ControlUnitController::quantumSlotHasData(const std::string &key,
         _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
                                map_ds_out,
                                changed);
-    } else if (key.compare(cu_input_ds_key) == 0) {
+     } else if (key.compare(cu_input_ds_key) == 0) {
         if((changed = CHECK_DS_CHANGED(last_ds_input, value))) {
             //update input datset key
             _updateDatsetKeyMapValue((last_ds_input = value),

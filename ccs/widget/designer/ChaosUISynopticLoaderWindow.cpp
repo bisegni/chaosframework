@@ -318,7 +318,7 @@ QVariant ChaosUISynopticLoaderWindow::toQVariant(chaos::common::data::CDataVaria
         break;
     }
     case DataType::DataType::TYPE_STRING: {
-        result.setValue(chaos_value.asString());
+        result.setValue(QString::fromStdString(chaos_value.asString()));
         break;
     }
     case DataType::DataType::TYPE_BOOLEAN: {

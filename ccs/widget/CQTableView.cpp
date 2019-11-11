@@ -2,8 +2,7 @@
 #include <QVector>
 #include <QHeaderView>
 CQTableView::CQTableView(QWidget *parent):
-    QTableView(parent){
-}
+    QTableView(parent){}
 
 void CQTableView::setColumnToContents(quint32 column,
                                       bool  force_to_content) {

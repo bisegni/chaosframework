@@ -106,7 +106,7 @@ void NodeMonitorHandlerTest::nodeHasBeenRestarted(const std::string& node_uid) {
 void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
                                        int dataset_type,
                                        MapDatasetKeyValues& dataset_key_values) {
-    LAPP_ << boost::str(boost::format("%2% updatedDS: dataset type %1%")%getDatasetDesc(dataset_type)%node_uid);
+    LAPP_ << boost::str(boost::format("%2% updatedDS: dataset type %1%")%getDatasetDesc(dataset_type)%dataset_key_values["ndk_uid"].asString());
     switch (dataset_type) {
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT: {
             std::string output_line;

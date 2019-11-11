@@ -12,6 +12,10 @@ public:
 
     QString attributeName() const;
     virtual void setAttributeName(const QString& new_attribute_name);
+    void dragEnterEvent (QDragEnterEvent* event);
+    void dragMoveEvent (QDragMoveEvent* event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
 public slots:
     void updateData(int dataset_type,
                     QString attribute_name,
