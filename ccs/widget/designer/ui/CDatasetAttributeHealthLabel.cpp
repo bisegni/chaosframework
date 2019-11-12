@@ -34,6 +34,6 @@ CDatasetAttributeHealthLabel::HealthValueType CDatasetAttributeHealthLabel::heal
 
 void CDatasetAttributeHealthLabel::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
 
-void CDatasetAttributeHealthLabel::updateValue(QVariant new_value) {
-    labelValue->setText(new_value.toString());
+void CDatasetAttributeHealthLabel::updateValue(QVariant variant_value) {
+    labelValue->setText(variant_value.toString());
 }

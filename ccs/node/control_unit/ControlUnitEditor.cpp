@@ -68,6 +68,10 @@ void ControlUnitEditor::initUI() {
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->tableViewInputChannels->setModel(&dataset_input_table_model);
+    ui->tableViewInputChannels->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableViewInputChannels->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableViewInputChannels->setDragEnabled(true);
+    ui->tableViewInputChannels->setDragDropMode(QTableView::DragOnly);
     ui->tableViewInputChannels->setColumnToContents(0, true);
     ui->tableViewInputChannels->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 

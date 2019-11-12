@@ -20,6 +20,7 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
     QMainWindow(parent),
+    ui_edit(false),
     ui_enabled(false),
     ui(new Ui::ChaosUISynopticLoaderWindow) {
     ui->setupUi(this);
@@ -60,12 +61,14 @@ void ChaosUISynopticLoaderWindow::on_enableUIAction_triggered() {
         ui_enabled = true;
     }
     ui->loadUIFileAction->setEnabled(!ui_enabled);
+    ui->editWidgetAction->setEnabled(!ui_enabled);
 }
 
 QWidget *ChaosUISynopticLoaderWindow::loadUiFile(QWidget *parent, QString filePath) {
+    QWidget *result = loadAsCUF(filePath, parent);
+    if(result) return result;
     QFile file(filePath);
     file.open(QIODevice::ReadOnly);
-
     //retain compressed ui
     compressed_loaded_ui = qCompress(file.readAll(),9);
 
@@ -74,9 +77,45 @@ QWidget *ChaosUISynopticLoaderWindow::loadUiFile(QWidget *parent, QString filePa
     return formLoader.load(&file, parent);
 }
 
+QWidget *ChaosUISynopticLoaderWindow::loadAsCUF(QString ui_file, QWidget *parent) {
+    QWidget *result_widget = nullptr;
+    QFile jsonFile(ui_file);
+    jsonFile.open(QFile::ReadOnly);
+    QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+    if(doc.isNull() || !doc.isObject()) return nullptr;
+    //perhaps we have a cuf file
+    QJsonObject o = doc.object();
+    if(!o.contains("ui")) return nullptr;
+    //we have a cuf file
+    //keep trak of encoded ui for nex save operation
+    compressed_loaded_ui = QByteArray::fromBase64(o["ui"].toString().toUtf8());
+    QByteArray uncompressed_ui = qUncompress(compressed_loaded_ui);
+    QBuffer ui_description(&uncompressed_ui);
+    result_widget = formLoader.load(&ui_description, parent);
+    if(!result_widget) return nullptr;
 
-void ChaosUISynopticLoaderWindow::on_actionSave_UI_as_triggered() {
-    QString fname = QFileDialog::getSaveFileName(this, tr("File destination"), QDir::homePath(), "User Interface (*.cuf);" );
+    //scan all chaos_ui to deserialize setting
+    QList<QWidget*> chaos_ui_widgets = result_widget->findChildren<QWidget*>();
+    foreach(QWidget *ancestor, chaos_ui_widgets) {
+        //serialize every chaos ui widget
+        if(!ancestor->inherits("ChaosBaseUI")) continue;
+        ChaosBaseUI *chaos_ui = reinterpret_cast<ChaosBaseUI*>(ancestor);
+        qDebug() << QString("Deserializing %1").arg(chaos_ui->objectName());
+        if(!o.contains(chaos_ui->objectName())) {
+            qDebug() << QString("CUF file doesn't contains %1 derialization").arg(chaos_ui->objectName());
+            continue;
+        }
+
+        //deserialize chaos widget
+        QJsonObject widget_ser = o[chaos_ui->objectName()].toObject();
+        chaos_ui->deserialize(widget_ser);
+    }
+    return result_widget;
+}
+
+
+void ChaosUISynopticLoaderWindow::on_saveUIFileAction_triggered() {
+    QString fname = QFileDialog::getSaveFileName(this, tr("File destination"), QDir::homePath(), "User Interface (*.cuf)" );
     QFileInfo file_info(fname);
     fname = file_info.absolutePath()+"/"+file_info.fileName()+".cuf";
     QFile file(fname);
@@ -89,13 +128,14 @@ void ChaosUISynopticLoaderWindow::on_actionSave_UI_as_triggered() {
     //add chaos widget attribute
     QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
     foreach(QWidget *ancestor, chaos_ui_widgets) {
-        //register for command
+        //serialize every chaos ui widget
         if(!ancestor->inherits("ChaosBaseUI")) continue;
         ChaosBaseUI *chaos_ui = reinterpret_cast<ChaosBaseUI*>(ancestor);
 
         chaos_dataset_config.insert(chaos_ui->objectName(), QJsonValue(chaos_ui->serialize()));
     }
     QJsonDocument doc(chaos_dataset_config);
+    //write file
     file.write(doc.toJson(QJsonDocument::Indented));
 }
 
@@ -103,7 +143,7 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open ui file"),
                                                     QDir::homePath(),
-                                                    tr("Ui Files (*.ui)"));
+                                                    tr("Ui Files (*.ui);; Chaos User Interface (*.cuf *.CUF)"));
     if(!fileName.size()) {
         return;
     }
@@ -187,9 +227,19 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
     ui->enableUIAction->setEnabled(true);
 }
 
-
-void ChaosUISynopticLoaderWindow::on_actionEdit_Script_triggered() {
+void ChaosUISynopticLoaderWindow::on_editWidgetAction_triggered() {
+    if(ui_enabled) return;
+    if(ui_edit) {
+        //all is gone whell change menu text
+        ui->editWidgetAction->setText(tr("Edit Mode"));
+        ui_edit = false;
+    } else {
+        //all is gone whell change menu text
+        ui->editWidgetAction->setText(tr("Run Mode"));
+        ui_edit = true;
+    }
     //set edit mode on all chaos widget
+    ui->enableUIAction->setEnabled(!ui_edit);
     QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
     foreach(QWidget *ancestor, chaos_ui_widgets) {
         if(ancestor->inherits("ChaosBaseDatasetUI") == false) {continue;}
@@ -199,7 +249,7 @@ void ChaosUISynopticLoaderWindow::on_actionEdit_Script_triggered() {
         QMetaObject::invokeMethod(cw,
                                   "chaosWidgetEditMode",
                                   Qt::QueuedConnection,
-                                  Q_ARG(bool, true));
+                                  Q_ARG(bool, ui_edit));
     }
 }
 
@@ -261,7 +311,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedOnlineState(const std::string& cont
                                                          OnlineState old_state,
                                                          OnlineState  new_state) {
     Q_UNUSED(old_state)
-    //    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
+    qDebug() << "update oline state for " << QString::fromStdString(control_unit_uid) << " new_state "<< new_state;
     auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == map_device_root.end()) return;
     //signal to root cu
@@ -302,7 +352,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedErrorInformation(const std::string&
 void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
-    //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
+//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
     auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == map_device_root.end()) return;
 
@@ -318,12 +368,6 @@ void ChaosUISynopticLoaderWindow::noDSDataFound(const std::string& control_unit_
                                                 int dataset_type) {
     Q_UNUSED(control_unit_uid)
     Q_UNUSED(dataset_type)
-    //    qDebug() << "No data found for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type;
-    //    data_found = false;
-    //    storage_type = DSStorageTypeUndefined;
-    //    QMetaObject::invokeMethod(this,
-    //                              "updateUIStatus",
-    //                              Qt::QueuedConnection);
 }
 
 bool ChaosUISynopticLoaderWindow::monitor(const QString& cu_uid,
@@ -406,16 +450,6 @@ void ChaosUISynopticLoaderWindow::commitChangeSet() {
                                   "commitChangeSet",
                                   Qt::QueuedConnection);
     }
-
-
-    //    //signal every update to root cu
-    //    for (MapDatasetKeyValuesPair element : dataset_key_values) {
-    //        cu_root_iterator.value()->setCurrentAttributeValue(dataset_type,
-    //                                                           QString::fromStdString(element.first),
-    //                                                           toQVariant(element.second));
-    //    }
 }
 
-void ChaosUISynopticLoaderWindow::rollbackChangeSet() {
-
-}
+void ChaosUISynopticLoaderWindow::rollbackChangeSet() {}

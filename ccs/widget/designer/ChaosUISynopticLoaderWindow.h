@@ -34,15 +34,17 @@ private slots:
 
     void editScript();
 
-    void on_actionEdit_Script_triggered();
-
     //global changeset commit
     void commitChangeSet();
     //global change set rollback
     void rollbackChangeSet();
-    void on_actionSave_UI_as_triggered();
+
+    void on_editWidgetAction_triggered();
+
+    void on_saveUIFileAction_triggered();
 
 private:
+    bool ui_edit;
     bool ui_enabled;
     //contain last laoded ui in a comrpessed format
     QByteArray compressed_loaded_ui;
@@ -77,6 +79,8 @@ private:
                        int dataset_type);
 
     bool monitor(const QString& cu_uid, bool enable);
+
+    QWidget *loadAsCUF(QString ui_file, QWidget *parent);
 
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
     void closeEvent(QCloseEvent *event);

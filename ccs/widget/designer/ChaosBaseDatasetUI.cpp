@@ -27,6 +27,10 @@ ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
 }
 
+bool ChaosBaseDatasetUI::isInEditMode() {
+    return edit_mode;
+}
+
 QJsonObject ChaosBaseDatasetUI::serialize() {
     QJsonObject result = ChaosBaseUI::serialize();
     if(deviceID().size()){result.insert("ChaosBaseDatasetUI::deviceID", deviceID());}
@@ -54,7 +58,6 @@ void ChaosBaseDatasetUI::updateOnlineStateSlot(int state) {
 void ChaosBaseDatasetUI::updateData(int dataset_type,
                                     QString attribute_name,
                                     QVariant attribute_value) {
-//    qDebug() << "ChaosBaseDatasetUI::updateData:" << dataset_type << "[" << datasetType() << "]" << " attrbiute:" << attribute_name;
     if(datasetType() != dataset_type) return;
     //keep track of the new value
     updateValue(attribute_value);
@@ -66,7 +69,6 @@ void ChaosBaseDatasetUI::updateData(int dataset_type,
 void ChaosBaseDatasetUI::chaosWidgetEditMode(bool new_edit_mode) {
     edit_mode = new_edit_mode;
     if(edit_mode) {
-//        setFrameStyle(QFrame::Panel | QFrame::Raised);
         setStyleSheet("QFrame { border: 2px solid red } ");
     } else {
         setFrameStyle(QFrame::NoFrame);

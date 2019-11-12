@@ -58,7 +58,7 @@ void CUOnlineLedIndicator::paintEvent(QPaintEvent *event) {
 }
 
 void CUOnlineLedIndicator::updateOnline(ChaosBaseDatasetUI::OnlineState state) {
-    qDebug() << QString("updateOnline on %1").arg(deviceID());
+    qDebug() << QString("updateOnline on %1 with state %2").arg(deviceID()).arg(state);
     switch(state) {
     case OnlineStateNotFound:
     case OnlineStateUnknown:
@@ -70,4 +70,4 @@ void CUOnlineLedIndicator::updateOnline(ChaosBaseDatasetUI::OnlineState state) {
         break;
     }
 }
-void CUOnlineLedIndicator::updateValue(QVariant /*new_value*/) {}
+void CUOnlineLedIndicator::updateValue(QVariant variant_value) {}

@@ -65,7 +65,6 @@ void CDatasetAttributeSetValueLineEdit:: returnPressed() {
         emit attributeChangeSetClear(deviceID(),
                                      attributeName());
     }
-
 }
 
 void CDatasetAttributeSetValueLineEdit::editFinisched() {

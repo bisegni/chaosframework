@@ -18,12 +18,17 @@ public:
     void dropEvent(QDropEvent *event);
     QJsonObject serialize();
     void deserialize(QJsonObject& serialized_data);
+protected:
+    void updateEditInformation();
+    void execContextualMenuForDatasetSelection(QPoint pos);
 public slots:
     void updateData(int dataset_type,
                     QString attribute_name,
                     QVariant attribute_value);
     // widget if is a input one need to clear his state to show as normal
     virtual void changeSetCommitted();
+private slots:
+    void  datasetTriggerAction(bool checked = false);
 signals:
     void attributeChangeSetUpdated(QString device_id,
                                    QString attribute_name,

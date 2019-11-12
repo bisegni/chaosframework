@@ -37,9 +37,11 @@ CDatasetAttributeLabel::AttributeType CDatasetAttributeLabel::attributeType() co
 void CDatasetAttributeLabel::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
 
 void CDatasetAttributeLabel::updateValue(QVariant new_value) {
+    QString value;
     if(attributeType() == Timestamp) {
-        labelValue->setText(QDateTime::fromMSecsSinceEpoch(new_value.toLongLong(), Qt::LocalTime).toString());
+        value = QDateTime::fromMSecsSinceEpoch(new_value.toLongLong(), Qt::LocalTime).toString();
     } else {
-        labelValue->setText(new_value.toString());
+        value = new_value.toString();
     }
+    labelValue->setText(value);
 }

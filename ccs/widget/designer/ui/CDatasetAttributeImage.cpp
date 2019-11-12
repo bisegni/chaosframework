@@ -36,7 +36,9 @@ void CDatasetAttributeImage::paintEvent(QPaintEvent *event) {
 void CDatasetAttributeImage::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
 
 void CDatasetAttributeImage::updateValue(QVariant variant_value) {
-    if(!variant_value.canConvert<QByteArray>()) return;
+    if(!variant_value.canConvert<QByteArray>()) {
+        return;
+    }
     QByteArray ba = variant_value.toByteArray();
     image_loaded = image_ptr->loadFromData(ba);
     repaint();

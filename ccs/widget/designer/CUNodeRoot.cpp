@@ -18,6 +18,7 @@ CUNodeRoot::CUNodeRoot(QString device_id, QObject *parent) :
 void CUNodeRoot::setCurrentAttributeValue(int dataset_type,
                                           QString attribute_name,
                                           QVariant attribute_value) {
+//    qDebug() << "CUNodeRoot::setCurrentAttributeValue:" << m_device_id << ":" << attribute_name << "=" << attribute_value.toString();
     emit updateDatasetAttribute(dataset_type,
                                 attribute_name,
                                 attribute_value);

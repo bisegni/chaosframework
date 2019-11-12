@@ -43,6 +43,8 @@ public:
 
     QJsonObject serialize();
     void deserialize(QJsonObject& serialized_data);
+
+    bool isInEditMode();
 signals:
     void attributeValueChanged(QVariant old_value,
                                QVariant new_value);
