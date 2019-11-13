@@ -48,7 +48,7 @@ namespace chaos {
 #ifdef OLD_PROCESS_MANAGEMENT
             common::utility::InizializableServiceContainer<external_command_pipe::ExternaCommandExecutor> external_cmd_executor;
 #else
-            ChaosSharedPtr <utility::ProcRestUtil> procRestUtil;
+            static ChaosSharedPtr <utility::ProcRestUtil> procRestUtil;
             public:
             ChaosSharedPtr <utility::ProcRestUtil> getProcessManager();
 

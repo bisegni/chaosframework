@@ -36,6 +36,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 
 chaos::WaitSemaphore ChaosAgent::wait_close_semaphore;
+ChaosSharedPtr <chaos::agent::utility::ProcRestUtil> ChaosAgent::procRestUtil;
 
 ChaosAgent::ChaosAgent() {}
 
@@ -62,7 +63,9 @@ void ChaosAgent::init(void *init_data)  {
     if (signal((int) SIGTERM, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
     }
-    
+    if (signal((int) SIGKILL, ChaosAgent::signalHanlder) == SIG_ERR) {
+        throw CException(-3, "Error registering SIGKILL signal", __PRETTY_FUNCTION__);
+    }
     if(settings.working_directory.size() == 0) {
         settings.working_directory = FSUtility::getExecutablePath();
     }
@@ -128,6 +131,6 @@ void ChaosAgent::deinit() {
 }
 
 void ChaosAgent::signalHanlder(int signal_number) {
-   
+    procRestUtil.reset();
     wait_close_semaphore.unlock();
 }
