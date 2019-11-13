@@ -35,7 +35,7 @@ cu_uid(_cu_uid){}
 
 ControlUnitInputDatasetChangeSet::ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
                                                                    const std::vector< ChaosSharedPtr<InputDatasetAttributeChangeValue> >& _change_set):
-cu_uid(),
+cu_uid(_cu_uid),
 change_set(_change_set){}
 
 API_PROXY_CD_DEFINITION(SetInputDatasetAttributeValues,

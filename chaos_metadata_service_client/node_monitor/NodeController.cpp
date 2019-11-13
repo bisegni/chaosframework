@@ -145,8 +145,8 @@ void NodeController::updateData() {
 }
 
 bool NodeController::computeOnlineState(uint64_t received_ts) {
+    if(received_ts < last_recevied_ts) return false;
     bool result = false;
-    if(received_ts < last_recevied_ts) return result;
     if(last_recevied_ts == 0) {
         last_recevied_ts = received_ts;
         //unknown

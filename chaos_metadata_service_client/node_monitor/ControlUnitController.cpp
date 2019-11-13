@@ -30,6 +30,7 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitController::ControlUnitController(const std::string &_node_uid):
 NodeController(_node_uid),
+last_seq_id(0),
 cu_output_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::OUTPUT_DATASET_POSTFIX)),
 cu_input_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::INPUT_DATASET_POSTFIX)),
 cu_system_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::SYSTEM_DATASET_POSTFIX)),
@@ -47,10 +48,16 @@ ControlUnitController::~ControlUnitController() { }
 void ControlUnitController::quantumSlotHasData(const std::string &key,
                                                const chaos::metadata_service_client::monitor_system::KeyValue &value) {
     bool changed = false;
-    
-    if(value->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
-        //improve livenes status computation
-        computeOnlineState(value->getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP));
+    uint64_t cur_seq_id = 0;
+    if(value->hasKey(DataPackCommonKey::DPCK_SEQ_ID)) {
+        cur_seq_id = value->getUInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+        if(last_seq_id && cur_seq_id>last_seq_id) {
+            if(value->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
+                //improve livenes status computation
+                computeOnlineState(value->getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP));
+            }
+        }
+        last_seq_id = cur_seq_id;
     }
     
     if (key.compare(cu_output_ds_key) == 0) {

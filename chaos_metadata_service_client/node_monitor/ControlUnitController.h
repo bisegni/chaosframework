@@ -36,6 +36,8 @@ namespace chaos {
                 friend class NodeMonitor;
                 friend class NodeFetcher;
                 
+                uint64_t last_seq_id;
+                
                 std::string cu_output_ds_key;
                 //!last dataset received for helth data
                 chaos::metadata_service_client::monitor_system::KeyValue last_ds_output;
