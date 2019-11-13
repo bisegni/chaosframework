@@ -8,6 +8,7 @@ HEADERS += $$PWD/designer/ui/CDatasetAttributeLabel.h \
             $$PWD/designer/ui/CChangeSetGlobalCommit.h \
             $$PWD/designer/ui/CDatasetAttributeHealthLabel.h \
             $$PWD/designer/ui/CDatasetAttributeImage.h \
+            $$PWD/designer/ui/CDatasetAttributeSetValueComboBox.h \
             $$PWD/designer/ui/CDatasetAttributeSetValueLineEdit.h \
             $$PWD/designer/ui/CUOnlineLedIndicator.h \
             $$PWD/designer/ui/ChaosBaseCommandButtonUI.h
@@ -20,5 +21,6 @@ SOURCES += $$PWD/designer/ui/CDatasetAttributeLabel.cpp \
             $$PWD/designer/ui/CChangeSetGlobalCommit.cpp \
             $$PWD/designer/ui/CDatasetAttributeHealthLabel.cpp \
             $$PWD/designer/ui/CDatasetAttributeImage.cpp \
+            $$PWD/designer/ui/CDatasetAttributeSetValueComboBox.cpp \
             $$PWD/designer/ui/CDatasetAttributeSetValueLineEdit.cpp \
             $$PWD/designer/ui/CUOnlineLedIndicator.cpp
