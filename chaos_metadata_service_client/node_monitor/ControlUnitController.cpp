@@ -49,16 +49,16 @@ void ControlUnitController::quantumSlotHasData(const std::string &key,
                                                const chaos::metadata_service_client::monitor_system::KeyValue &value) {
     bool changed = false;
     uint64_t cur_seq_id = 0;
-    if(value->hasKey(DataPackCommonKey::DPCK_SEQ_ID)) {
-        cur_seq_id = value->getUInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
-        if(last_seq_id && cur_seq_id>last_seq_id) {
-            if(value->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
-                //improve livenes status computation
-                computeOnlineState(value->getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-            }
-        }
-        last_seq_id = cur_seq_id;
-    }
+//    if(value->hasKey(DataPackCommonKey::DPCK_SEQ_ID)) {
+//        cur_seq_id = value->getUInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+//        if(last_seq_id && cur_seq_id>last_seq_id) {
+//            if(value->hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
+//                //improve livenes status computation
+//                computeOnlineState(value->getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP));
+//            }
+//        }
+//        last_seq_id = cur_seq_id;
+//    }
     
     if (key.compare(cu_output_ds_key) == 0) {
         if((changed = CHECK_DS_CHANGED(last_ds_output, value))) {
