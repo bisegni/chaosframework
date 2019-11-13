@@ -63,9 +63,9 @@ void ChaosAgent::init(void *init_data)  {
     if (signal((int) SIGTERM, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
     }
-    if (signal((int) SIGKILL, ChaosAgent::signalHanlder) == SIG_ERR) {
+   /* if (signal((int) SIGKILL, ChaosAgent::signalHanlder) == SIG_ERR) {
         throw CException(-3, "Error registering SIGKILL signal", __PRETTY_FUNCTION__);
-    }
+    }*/
     if(settings.working_directory.size() == 0) {
         settings.working_directory = FSUtility::getExecutablePath();
     }
