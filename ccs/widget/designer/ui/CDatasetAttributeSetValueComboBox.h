@@ -13,13 +13,13 @@
 class CDatasetAttributeSetValueComboBox:
         public ChaosBaseDatasetAttributeUI {
     Q_OBJECT
-    Q_PROPERTY(QVariant setup READ setup WRITE setSetup)
+    Q_PROPERTY(QString setup READ setup WRITE setSetup)
 public:
     explicit CDatasetAttributeSetValueComboBox(QWidget *parent = nullptr);
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
-    void setSetup(QVariant new_combo_label_value);
-    QVariant setup();
+    void setSetup(QString new_combo_label_value);
+    QString setup();
 private slots:
     void changeSetCommitted();
     void currentIndexChanged(int index);
@@ -31,7 +31,7 @@ protected:
 private:
     bool value_committed;
     QComboBox *combo_box;
-    QVariant p_setup;
+    QString p_setup;
 };
 
 #endif // CDATASETATTRIBUTESETVALUECOMBOBOX_H

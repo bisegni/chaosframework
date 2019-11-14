@@ -29,8 +29,7 @@ public:
     QWidget *createWidget(QWidget *parent) override;
     bool isInitialized() const override;
     void initialize(QDesignerFormEditorInterface *formEditor) override;
-    QString domXml() const override;
-
+    QString domXml() const;
 private:
     bool initialized = false;
 };

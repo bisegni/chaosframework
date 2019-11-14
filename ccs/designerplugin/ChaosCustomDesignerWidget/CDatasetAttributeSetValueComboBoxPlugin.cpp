@@ -28,23 +28,21 @@ bool CDatasetAttributeSetValueComboBoxPlugin::isContainer() const {return false;
 
 bool CDatasetAttributeSetValueComboBoxPlugin::isInitialized() const { return initialized; }
 
-QWidget *CDatasetAttributeSetValueComboBoxPlugin::createWidget(QWidget *parent)
-{
+QWidget *CDatasetAttributeSetValueComboBoxPlugin::createWidget(QWidget *parent) {
     Q_INIT_RESOURCE(theme);
-    CDatasetAttributeSetValueComboBox *cLabel = new CDatasetAttributeSetValueComboBox(parent);
-    return cLabel;
+    CDatasetAttributeSetValueComboBox *widget = new CDatasetAttributeSetValueComboBox(parent);
+    return widget;
 }
 
-void CDatasetAttributeSetValueComboBoxPlugin::initialize(QDesignerFormEditorInterface *formEditor)
-{
+void CDatasetAttributeSetValueComboBoxPlugin::initialize(QDesignerFormEditorInterface *formEditor) {
     if (initialized)
         return;
 
     QExtensionManager *manager = formEditor->extensionManager();
     Q_ASSERT(manager != nullptr);
 
-        manager->registerExtensions(new CDatasetAttributeSetValueComboBoxMenuFactory(manager),
-                                    Q_TYPEID(QDesignerTaskMenuExtension));
+    manager->registerExtensions(new CDatasetAttributeSetValueComboBoxMenuFactory(manager),
+                                Q_TYPEID(QDesignerTaskMenuExtension));
 
 
     initialized = true;
@@ -59,7 +57,7 @@ QString CDatasetAttributeSetValueComboBoxPlugin::domXml() const
         <customwidget>\
             <class>CDatasetAttributeSetValueComboBox</class>\
             <propertyspecifications>\
-            <tooltip name=\"deviceID\">Device id</tooltip>\
+            <stringpropertyspecification name=\"setup\" notr=\"true\" type=\"multiline\"/>\
             </propertyspecifications>\
         </customwidget>\
     </customwidgets>\

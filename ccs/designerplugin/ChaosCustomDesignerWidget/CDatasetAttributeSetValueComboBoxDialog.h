@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QTableView>
 #include <QAbstractTableModel>
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 class QDialogButtonBox;
@@ -65,6 +66,7 @@ public:
     bool removeRows(int position, int rows, const QModelIndex &index = QModelIndex()) override;
     const QVector<Element> &getElements() const;
     QMap<QString, QVariant> getElementsAsMap() const;
+    QJsonDocument getElementsAsJsonDocument() const;
 private:
     QVector<Element> elements;
 };

@@ -12,11 +12,13 @@
 #include <QHeaderView>
 #include <QSpacerItem>
 #include <QDebug>
+#include <QJsonObject>
+#include <QJsonArray>
 
 CDatasetAttributeSetValueComboBoxDialog::CDatasetAttributeSetValueComboBoxDialog(CDatasetAttributeSetValueComboBox *_combo_widget, QWidget *parent)
     : QDialog(parent)
     , table_model(new SetValueComboBoxDialogTableModel(this))
-//    , editor(new CDatasetAttributeSetValueComboBox())
+    //    , editor(new CDatasetAttributeSetValueComboBox())
     , combo_widget(_combo_widget)
     , buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok
                                      | QDialogButtonBox::Cancel
@@ -30,7 +32,7 @@ CDatasetAttributeSetValueComboBoxDialog::CDatasetAttributeSetValueComboBoxDialog
     tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     tableView->setSortingEnabled(true);
 
-//    editor->setSetup(combo_widget->setup());
+    //    editor->setSetup(combo_widget->setup());
     connect(buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked,
             this, &CDatasetAttributeSetValueComboBoxDialog::resetState);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &CDatasetAttributeSetValueComboBoxDialog::saveState);
@@ -74,14 +76,15 @@ void CDatasetAttributeSetValueComboBoxDialog::addRow(bool checked) {
 
 void CDatasetAttributeSetValueComboBoxDialog::removeRow(bool checked) {
     foreach(QModelIndex i, tableView->selectionModel()->selectedRows()) {
-       table_model->removeRow(i.row());
+        table_model->removeRow(i.row());
     }
 }
 
 void CDatasetAttributeSetValueComboBoxDialog::saveState() {
 
     if (QDesignerFormWindowInterface *formWindow = QDesignerFormWindowInterface::findFormWindow(combo_widget)) {
-        formWindow->cursor()->setProperty("setup", QVariant(table_model->getElementsAsMap()));
+        qDebug() << "CDatasetAttributeSetValueComboBoxDialog::saveState";
+        formWindow->cursor()->setProperty("setup", table_model->getElementsAsJsonDocument().toJson(QJsonDocument::Compact));
     }
     accept();
 }
@@ -204,4 +207,20 @@ QMap<QString, QVariant> SetValueComboBoxDialogTableModel::getElementsAsMap() con
         result.insert(e.label, e.value);
     }
     return result;
+}
+
+QJsonDocument SetValueComboBoxDialogTableModel::getElementsAsJsonDocument() const {
+    QJsonDocument doc;
+    QJsonArray arr;
+
+    QVectorIterator<Element> it(elements);
+    while (it.hasNext()) {
+        Element e = it.next();
+        QJsonObject o;
+        o.insert("label", e.label);
+        o.insert("value", QJsonValue::fromVariant(e.value));
+        arr.push_back(o);
+    }
+    doc.setArray(arr);
+    return doc;
 }
