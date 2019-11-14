@@ -6,6 +6,7 @@
 #include <CDatasetAttributeImagePlugin.h>
 #include <CDatasetAttributeHealthLabelPlugin.h>
 #include <CDatasetAttributeSetValueLineEditPlugin.h>
+#include <CDatasetAttributeSetValueComboBoxPlugin.h>
 //command
 #include <CChangeSetGlobalCommitPlugin.h>
 
@@ -16,6 +17,7 @@ ChaosWidgets::ChaosWidgets(QObject *parent):
     widgets.append(new CDatasetAttributeImagePlugin(this));
     widgets.append(new CDatasetAttributeHealthLabelPlugin(this));
     widgets.append(new CDatasetAttributeSetValueLineEditPlugin(this));
+    widgets.append(new CDatasetAttributeSetValueComboBoxPlugin(this));
 
     widgets.append(new CChangeSetGlobalCommitPlugin(this));
 }

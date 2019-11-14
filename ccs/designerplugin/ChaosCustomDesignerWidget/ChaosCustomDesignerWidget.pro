@@ -32,6 +32,9 @@ HEADERS += CDatasetAttributeLabelMenu.h \
            CDatasetAttributeImagePlugin.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
+           CDatasetAttributeSetValueComboBoxDialog.h \
+           CDatasetAttributeSetValueComboBoxMenuExtension.h \
+           CDatasetAttributeSetValueComboBoxPlugin.h \
            CDatasetAttributeSetValueLineEditPlugin.h \
            CUOnlineLedIndicatorPlugin.h \
            ChaosWidgets.h \
@@ -42,6 +45,9 @@ SOURCES += CDatasetAttributeLabelMenu.cpp \
            CDatasetAttributeImagePlugin.cpp \
            CDatasetAttributeLabelDialog.cpp \
            CDatasetAttributeLabelPlugin.cpp \
+           CDatasetAttributeSetValueComboBoxDialog.cpp \
+           CDatasetAttributeSetValueComboBoxMenuExtension.cpp \
+           CDatasetAttributeSetValueComboBoxPlugin.cpp \
            CDatasetAttributeSetValueLineEditPlugin.cpp \
            CUOnlineLedIndicatorPlugin.cpp \
            ChaosWidgets.cpp

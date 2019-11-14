@@ -9,7 +9,7 @@ CDatasetAttributeSetValueComboBox::CDatasetAttributeSetValueComboBox(QWidget *pa
 ChaosBaseDatasetAttributeUI(parent) {
         //configure line edit
         combo_box = new QComboBox(this);
-//        connect(line_edit, &QLineEdit::textChanged, this, &CDatasetAttributeSetValueLineEdit::valueUpdated);
+//        connect(combo_box, &QComboBox::currentIndexChanged, this, &CDatasetAttributeSetValueComboBox::currentIndexChanged);
 //        connect(line_edit, &QLineEdit::editingFinished, this, &CDatasetAttributeSetValueLineEdit::editFinisched);
 //        connect(line_edit, &QLineEdit::returnPressed, this, &CDatasetAttributeSetValueLineEdit::returnPressed);
 
@@ -35,6 +35,19 @@ QSize CDatasetAttributeSetValueComboBox::minimumSizeHint() const {
     return QSize(40, 16);
 }
 
+void CDatasetAttributeSetValueComboBox::setSetup(QVariant new_setup) {
+    p_setup = new_setup;
+    combo_box->clear();
+    //load label into combo box
+    QMap<QString, QVariant> lable_values = new_setup.toMap();
+    for (QMap<QString, QVariant>::iterator i = lable_values.begin(); i != lable_values.end(); ++i) {
+        combo_box->addItem(i.key(), i.value());
+    }
+}
+
+QVariant CDatasetAttributeSetValueComboBox::setup() {
+    return p_setup;
+}
 
 void CDatasetAttributeSetValueComboBox::reset() {}
 
@@ -44,6 +57,10 @@ void CDatasetAttributeSetValueComboBox::changeSetCommitted() {
 //    value_committed = false;
 //    line_edit->setText(QString());
 //    editFinisched();
+}
+
+void CDatasetAttributeSetValueComboBox::currentIndexChanged(int index) {
+    //called whrn user select an index
 }
 
 void CDatasetAttributeSetValueComboBox::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
