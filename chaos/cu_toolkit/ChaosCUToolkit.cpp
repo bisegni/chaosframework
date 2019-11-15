@@ -176,6 +176,8 @@ void ChaosCUToolkit::start() {
     LAPP_ << "-----------------------------------------";
     //at this point i must with for end signal
     waitCloseSemaphore.wait();
+    LAPP_ << "------ ORDERED EXIT";
+
   } catch (CException& ex) {
     DECODE_CHAOS_EXCEPTION(ex);
   } catch (...) {
@@ -242,14 +244,14 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
   if ((signalNumber == SIGABRT) || (signalNumber == SIGSEGV)) {
     LAPP_ << "INTERNAL ERROR, please provide log, Catch SIGNAL: " << signalNumber;
     sigignore(signalNumber);
-    waitCloseSemaphore.unlock();
+    waitCloseSemaphore.notifyAll();
     sleep(5);
     exit(1);
     //throw CFatalException(signalNumber,"trapped signal",__PRETTY_FUNCTION__);
   } else if ((signalNumber == SIGTERM) || (signalNumber == SIGINT)) {
     sigignore(signalNumber);
-    LAPP_ << "CATCH Interrupting signal  exiting ...";
-    waitCloseSemaphore.unlock();
+    LAPP_ << "CATCH Interrupting signal  "<<signalNumber<<" exiting ...";
+    waitCloseSemaphore.notifyAll();
     sleep(5);
     exit(0);
   } else {

@@ -42,6 +42,7 @@ std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     boost::replace_all(result,"/","_");
     return result;
 }
+
 void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
     std::string exec_command;
