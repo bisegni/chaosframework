@@ -7,8 +7,8 @@
 #include <QMap>
 #include <QSize>
 #include <QVariant>
+#include <QPalette>
 #include <QComboBox>
-
 
 class CDatasetAttributeSetValueComboBox:
         public ChaosBaseDatasetAttributeUI {
@@ -32,6 +32,7 @@ private:
     bool value_committed;
     QComboBox *combo_box;
     QString p_setup;
+    QMap<QVariant, QString> map_value_label;
 };
 
 #endif // CDATASETATTRIBUTESETVALUECOMBOBOX_H
