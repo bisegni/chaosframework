@@ -27,6 +27,8 @@
 #include <chaos/common/data/CDataBuffer.h>
 #include <json/json.h>
 
+#include <chaos/common/data/CDataVariant.h>
+
 #include <boost/scoped_ptr.hpp>
 
 #include <boost/shared_ptr.hpp>
@@ -49,7 +51,6 @@ namespace chaos {
         namespace data {
             using namespace std;
             class CDataWrapper;
-            class CDataVariant;
             /*!
              Class to read the and arry of multivalue
              */
@@ -239,23 +240,29 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 }
                 template<typename T>
                 T getValue(const std::string& key) const{
+
                     T v;
                     if(hasKey(key) == false) {throw chaos::CException(-1, "Key not present", __PRETTY_FUNCTION__);}
-                    switch(getValueType(key)){
+                    v=(T)getVariantValue(key);
+                   /* switch(getValueType(key)){
                         case chaos::DataType::TYPE_BOOLEAN:{
-                            v = static_cast<T>(getBoolValue(key));
+                            v = getVariantValue(key).asBool();
                             break;
                         }
                         case chaos::DataType::TYPE_INT32:{
-                            v = static_cast<T>(getInt32Value(key));
+                            v = getVariantValue(key).asInt32();
                             break;
                         }
                         case chaos::DataType::TYPE_INT64:{
-                            v = static_cast<T>(getInt64Value(key));
+                            v = getVariantValue(key).asInt64();
                             break;
                         }
                         case chaos::DataType::TYPE_DOUBLE:{
-                            v = static_cast<T>(getDoubleValue(key));
+                            v = getVariantValue(key).asDouble();
+                            break;
+                        }
+                        case chaos::DataType::TYPE_STRING:{
+                            v = getVariantValue(key).asString();
                             break;
                         }
                         default:{
@@ -263,7 +270,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                             ss<<"cannot get key\""<<key<<"\" to type:"<<getValueType(key);
                             throw chaos::CException(-2,ss.str(),__PRETTY_FUNCTION__);
                         }
-                    }
+                    }*/
                     return v;
                 }
                 //return the binary data value

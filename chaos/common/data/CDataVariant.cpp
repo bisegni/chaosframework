@@ -21,7 +21,7 @@
 
 #include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/exception/CException.h>
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <sstream>
 
 using namespace chaos;
@@ -264,6 +264,9 @@ CDataVariant& CDataVariant::operator=(const CDataVariant& rhs) {
 int32_t CDataVariant::asInt32() const {
     return  boost::apply_visitor( int32_t_visitor(), _internal_variant );
 }
+char CDataVariant::asChar() const {
+    return  boost::apply_visitor( int32_t_visitor(), _internal_variant );
+}
 
 CDataVariant::operator int32_t() const {
     return asInt32();
@@ -285,12 +288,19 @@ CDataVariant::operator int64_t() const {
     return asInt64();
 }
 
+CDataVariant::operator char() const {
+    return asChar();
+}
+
 uint64_t CDataVariant::asUInt64() const {
     return  boost::apply_visitor( uint64_t_visitor(), _internal_variant );
 }
 
 CDataVariant::operator uint64_t() const {
     return asUInt64();
+}
+CDataVariant::operator long long int() const {
+    return (long long int) asInt64();
 }
 
 double CDataVariant::asDouble() const {

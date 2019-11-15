@@ -19,7 +19,6 @@
  */
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <boost/lexical_cast.hpp>
@@ -795,9 +794,10 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
             return CDataVariant(getBinaryValueAsCDataBuffer(key));
             break;
         default:
-            return CDataVariant();
             break;
     }
+    return CDataVariant();
+
 }
 
 //------------------------checking utility
