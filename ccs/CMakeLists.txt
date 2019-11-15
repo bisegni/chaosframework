@@ -228,8 +228,10 @@ set(sources
     widget/designer/ChaosUISynopticLoaderWindow.cpp
     widget/designer/ScriptSignalDialog.cpp
     widget/designer/CUNodeRoot.cpp
+    widget/designer/ChaosBaseUI.cpp
     widget/designer/ChaosBaseDatasetUI.cpp
     widget/designer/ChaosBaseDatasetAttributeUI.cpp
+    widget/designer/ChaosBaseCommandButtonUI.cpp
     theme/theme.qrc
     ${ccs_include_moc}
 )

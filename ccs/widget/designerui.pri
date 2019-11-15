@@ -24,3 +24,5 @@ SOURCES += $$PWD/designer/ui/CDatasetAttributeLabel.cpp \
             $$PWD/designer/ui/CDatasetAttributeSetValueComboBox.cpp \
             $$PWD/designer/ui/CDatasetAttributeSetValueLineEdit.cpp \
             $$PWD/designer/ui/CUOnlineLedIndicator.cpp
+
+DISTFILES +=

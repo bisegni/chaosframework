@@ -55,3 +55,6 @@ OTHER_FILES += CDatasetAttributeLabelPlugin.json
 
 RESOURCES += \
     ../../theme/theme.qrc
+
+DISTFILES += \
+    CMakeLists.txt

@@ -69,7 +69,7 @@ void CDatasetAttributeSetValueComboBox::changeSetCommitted() {
 }
 
 void CDatasetAttributeSetValueComboBox::currentIndexChanged(int index) {
-    combo_box->setStyleSheet("QComboBox { background-color: rgb(94,170,255); foreground-color: rgb(10,10,10);}");
+    combo_box->setStyleSheet("QComboBox { background-color: rgb(94,170,255); text-color: rgb(10,10,10);}");
     //called whrn user select an index
     emit attributeChangeSetUpdated(deviceID(),
                                    attributeName(),
