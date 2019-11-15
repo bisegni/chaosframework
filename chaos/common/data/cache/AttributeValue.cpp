@@ -288,8 +288,12 @@ void AttributeValue::writeToCDataWrapper( CDataWrapper& data_wrapper) {
         }
         case chaos::DataType::TYPE_CLUSTER:{
             CDataWrapper p;
-            p.setSerializedJsonData((const char*)value_buffer);
+            if(value_buffer && ((*(const char *)value_buffer)!=0)){
+                p.setSerializedJsonData((const char*)value_buffer);
+            }
             data_wrapper.addCSDataValue(name,p);
+
+            
             break;
         }
         case chaos::DataType::TYPE_STRING:{

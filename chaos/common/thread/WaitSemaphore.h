@@ -121,7 +121,11 @@ namespace chaos {
             answered = true;
             wait_answer_condition.notify_one();
         }
-        
+         void notifyAll(){
+           
+            answered = true;
+            wait_answer_condition.notify_all();
+        }
         bool isInWait() {
             return inWait;
         }
