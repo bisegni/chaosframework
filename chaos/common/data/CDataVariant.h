@@ -137,10 +137,7 @@ namespace chaos {
                 
                 uint64_t asUInt64() const;
                 operator uint64_t() const;
-                #if __cplusplus >= 201103L
-
-                operator long long int() const;
-                #endif
+    
                 double asDouble() const;
                 operator double() const;
                 

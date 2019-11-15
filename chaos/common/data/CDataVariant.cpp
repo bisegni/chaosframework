@@ -300,12 +300,7 @@ CDataVariant::operator uint64_t() const {
     return asUInt64();
 }
 
-#if __cplusplus >= 201103L
-          
-CDataVariant::operator long long int() const {
-    return (long long int) asInt64();
-}
-#endif
+
 double CDataVariant::asDouble() const {
     return  boost::apply_visitor(double_visitor(), _internal_variant );
 }
