@@ -240,6 +240,7 @@ set(sources
 
 IF(UNIX AND NOT APPLE)
         MESSAGE(">>Add Linux Exacutable")
+	LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib64)
         ADD_EXECUTABLE(ccs
                         ${sources}
                         ${ccs_include_moc}
@@ -285,6 +286,6 @@ ENDIF()
 
 MESSAGE(">>Target libraries")
 target_link_libraries(ccs ${CCS_LINK_LIB})
-
+install (TARGETS ccs RUNTIME DESTINATION RUNTIME DESTINATION bin)
 
 MESSAGE(">>END")
