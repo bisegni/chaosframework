@@ -104,22 +104,22 @@ void ChaosBaseDatasetAttributeUI::execContextualMenuForDatasetSelection(QPoint p
     contextMenu->addAction(newAct);
 
     newAct = new QAction(tr("System"), contextMenu);
-    newAct->setData(Output);
+    newAct->setData(System);
     connect(newAct, &QAction::triggered, this, &ChaosBaseDatasetAttributeUI::datasetTriggerAction);
     contextMenu->addAction(newAct);
 
     newAct = new QAction(tr("Health"), contextMenu);
-    newAct->setData(Input);
+    newAct->setData(Health);
     connect(newAct, &QAction::triggered, this, &ChaosBaseDatasetAttributeUI::datasetTriggerAction);
     contextMenu->addAction(newAct);
 
     newAct = new QAction(tr("DevAlarm"), contextMenu);
-    newAct->setData(Custom);
+    newAct->setData(DevAlarm);
     connect(newAct, &QAction::triggered, this, &ChaosBaseDatasetAttributeUI::datasetTriggerAction);
     contextMenu->addAction(newAct);
 
     newAct = new QAction(tr("CUAlarm"), contextMenu);
-    newAct->setData(Custom);
+    newAct->setData(CUAlarm);
     connect(newAct, &QAction::triggered, this, &ChaosBaseDatasetAttributeUI::datasetTriggerAction);
     contextMenu->addAction(newAct);
 

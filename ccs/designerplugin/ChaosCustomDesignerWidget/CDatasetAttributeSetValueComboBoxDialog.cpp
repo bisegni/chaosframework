@@ -17,14 +17,16 @@
 
 CDatasetAttributeSetValueComboBoxDialog::CDatasetAttributeSetValueComboBoxDialog(CDatasetAttributeSetValueComboBox *_combo_widget, QWidget *parent)
     : QDialog(parent)
-    , table_model(new SetValueComboBoxDialogTableModel(this))
     //    , editor(new CDatasetAttributeSetValueComboBox())
     , combo_widget(_combo_widget)
     , buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok
                                      | QDialogButtonBox::Cancel
                                      | QDialogButtonBox::Reset)) {
+
+    QJsonDocument j_doc = QJsonDocument::fromJson(_combo_widget->setup().toUtf8());
+
     tableView = new QTableView();
-    tableView->setModel(table_model);
+    tableView->setModel(new SetValueComboBoxDialogTableModel(j_doc, this));
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->verticalHeader()->hide();
@@ -96,6 +98,21 @@ SetValueComboBoxDialogTableModel::SetValueComboBoxDialogTableModel(QObject *pare
 SetValueComboBoxDialogTableModel::SetValueComboBoxDialogTableModel(const QVector<Element> &_elements, QObject *parent)
     : QAbstractTableModel(parent),
       elements(_elements) {}
+
+SetValueComboBoxDialogTableModel::SetValueComboBoxDialogTableModel(const QJsonDocument& _elements, QObject *parent)
+    : QAbstractTableModel(parent) {
+    if(_elements.isNull() || !_elements.isArray()) {return;}
+
+    QJsonArray j_arr = _elements.array();
+    for (auto v : j_arr) {
+        QJsonObject element = v.toObject();
+        qDebug() << QString("SetValueComboBoxDialogTableModel -> %1-%2").arg(element["label"].toString()).arg(element["value"].toString());
+        Element e;
+        e.label = element["label"].toString();
+        e.value = element["value"].toVariant();
+        elements.push_back(e);
+    }
+}
 
 int SetValueComboBoxDialogTableModel::rowCount(const QModelIndex &parent) const {
     return parent.isValid() ? 0 : elements.size();

@@ -10,7 +10,7 @@ CDatasetAttributeSetValueComboBox::CDatasetAttributeSetValueComboBox(QWidget *pa
     ChaosBaseDatasetAttributeUI(parent) {
     //configure line edit
     combo_box = new QComboBox(this);
-    //        connect(combo_box, &QComboBox::currentIndexChanged, this, &CDatasetAttributeSetValueComboBox::currentIndexChanged);
+    QObject::connect(combo_box, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CDatasetAttributeSetValueComboBox::currentIndexChanged);
     //        connect(line_edit, &QLineEdit::editingFinished, this, &CDatasetAttributeSetValueLineEdit::editFinisched);
     //        connect(line_edit, &QLineEdit::returnPressed, this, &CDatasetAttributeSetValueLineEdit::returnPressed);
 
@@ -21,10 +21,6 @@ CDatasetAttributeSetValueComboBox::CDatasetAttributeSetValueComboBox(QWidget *pa
     layout->addWidget(combo_box);
     setLayout(layout);
     setDatasetType(ChaosBaseDatasetUI::Input);
-    //        base_line_edit_color = line_edit->palette();
-    //        edited_line_edit_color = QPalette(base_line_edit_color);
-    //        edited_line_edit_color.setColor(QPalette::Base, QColor(94,170,255));
-    //        edited_line_edit_color.setColor(QPalette::Foreground, QColor(10,10,10));
 }
 
 
@@ -38,8 +34,10 @@ QSize CDatasetAttributeSetValueComboBox::minimumSizeHint() const {
 
 void CDatasetAttributeSetValueComboBox::setSetup(QString new_setup) {
     qDebug() << "CDatasetAttributeSetValueComboBox::setSetup";
+    combo_box->blockSignals(true);
     p_setup = new_setup;
     combo_box->clear();
+    map_value_label.clear();
     //load label into combo box
     QJsonDocument j_doc = QJsonDocument::fromJson(new_setup.toUtf8());
     if(j_doc.isNull() || !j_doc.isArray()) {return;}
@@ -49,11 +47,9 @@ void CDatasetAttributeSetValueComboBox::setSetup(QString new_setup) {
         QJsonObject element = v.toObject();
         qDebug() << QString("CDatasetAttributeSetValueComboBox::setSetup -> %1-%2").arg(element["label"].toString()).arg(element["value"].toString());
         combo_box->addItem(element["label"].toString(), element["value"].toVariant());
+        map_value_label.insert(element["value"].toVariant(), element["label"].toString());
     }
-    //    QMap<QString, QVariant> lable_values = new_setup.toMap();
-    //    for (QMap<QString, QVariant>::iterator i = lable_values.begin(); i != lable_values.end(); ++i) {
-    //        combo_box->addItem(i.key(), i.value());
-    //    }
+    combo_box->blockSignals(false);
 }
 
 QString CDatasetAttributeSetValueComboBox::setup() {
@@ -65,20 +61,34 @@ void CDatasetAttributeSetValueComboBox::reset() {}
 
 
 void CDatasetAttributeSetValueComboBox::changeSetCommitted() {
-    qDebug()<< "CDatasetAttributeSetValueComboBox::changeSetCommitted" << deviceID() << ":" <<attributeName();
+    qDebug() << "CDatasetAttributeSetValueComboBox::changeSetCommitted" << deviceID() << ":" <<attributeName();
+     combo_box->setStyleSheet("QComboBox {}");
     //    value_committed = false;
     //    line_edit->setText(QString());
     //    editFinisched();
 }
 
 void CDatasetAttributeSetValueComboBox::currentIndexChanged(int index) {
+    combo_box->setStyleSheet("QComboBox { background-color: rgb(94,170,255); foreground-color: rgb(10,10,10);}");
     //called whrn user select an index
+    emit attributeChangeSetUpdated(deviceID(),
+                                   attributeName(),
+                                   combo_box->itemData(index));
 }
 
-void CDatasetAttributeSetValueComboBox::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}
+void CDatasetAttributeSetValueComboBox::updateOnline(ChaosBaseDatasetUI::OnlineState state) {
+
+}
 
 void CDatasetAttributeSetValueComboBox::updateValue(QVariant variant_value) {
-    //    line_edit->setPlaceholderText(variant_value.toString());
+    //check if the combo box has the value
+    combo_box->blockSignals(true);
+    if(!map_value_label.contains(variant_value)) {
+        combo_box->setCurrentIndex(-1);
+    } else {
+        combo_box->setCurrentText(map_value_label.find(variant_value).value());
+    }
+    combo_box->blockSignals(false);
 }
 
 
