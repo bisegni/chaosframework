@@ -6,6 +6,18 @@ option(CHAOS_PROMETHEUS "Enable Prometheus metrics support" OFF)
 MESSAGE(">>Find the Qt5 library")
 FIND_PACKAGE(Qt5Widgets REQUIRED)
 FIND_PACKAGE(Qt5Designer REQUIRED)
+
+# Get Qt root directory
+get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+get_filename_component(_dir ${_filepath} PATH)
+IF(UNIX AND NOT APPLE)
+    set(QT_ROOT_DIR "${_dir}/..")
+ELSE()
+    set(QT_ROOT_DIR "${_dir}/../..")    
+ENDIF()
+
+SET(QT_PLUGINS_DIR ${QT_ROOT_DIR}/plugins)
+
 SET(CMAKE_CXX_STANDARD 11)
 
 MESSAGE(">>Find includes in corresponding build directories")
@@ -40,7 +52,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../../../usr/local/lib)
 
 MESSAGE(">>Tell CMake to create the ccs executable")
 
-QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS})
+QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS}) 
 QT5_ADD_RESOURCES(RESOURCES_RCC ${RESOURCES})
 
 set(SOURCE
@@ -77,5 +89,16 @@ set(CP_LINK_LIB    Qt5::Core
 add_library(ChaosCustomDesignerWidget SHARED ${SOURCE})
 
 target_link_libraries(ChaosCustomDesignerWidget ${CP_LINK_LIB})
+IF(UNIX AND NOT APPLE)
+MESSAGE(">>Add Linux Library")
+    # ADD_LIBRARY(ChaosCustomDesignerWidget SHARED ${CUSTOM_WIDGET_SOURCE})
+    install(TARGETS ChaosCustomDesignerWidget DESTINATION lib)
+    INSTALL( TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
+ELSE()
+    MESSAGE(">>Add OSX Library")
+    #Bundle (OSX)
+    # the property added to Info.plist
 
-install(TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
+    INSTALL( TARGETS ChaosCustomDesignerWidget  DESTINATION "${CMAKE_SOURCE_DIR}/ccs.app/Contents/PlugIns/designer")
+    INSTALL( TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
+ENDIF()
