@@ -17,7 +17,11 @@ FIND_PACKAGE(Qt5Designer REQUIRED)
 # Get Qt root directory
 get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
 get_filename_component(_dir ${_filepath} PATH)
-set(QT_ROOT_DIR "${_dir}/../..")
+IF(UNIX AND NOT APPLE)
+    set(QT_ROOT_DIR "${_dir}/..")
+ELSE()
+    set(QT_ROOT_DIR "${_dir}/../..")    
+ENDIF()
 SET(QT_PLUGINS_DIR ${QT_ROOT_DIR}/plugins)
 
 # set(QT_USE_QTSQL 1)
