@@ -1,14 +1,14 @@
 #include "ChaosWidgets.h"
 
 //ui
-#include <CUOnlineLedIndicatorPlugin.h>
-#include <CDatasetAttributeLabelPlugin.h>
-#include <CDatasetAttributeImagePlugin.h>
-#include <CDatasetAttributeHealthLabelPlugin.h>
-#include <CDatasetAttributeSetValueLineEditPlugin.h>
-#include <CDatasetAttributeSetValueComboBoxPlugin.h>
+#include "CUOnlineLedIndicatorPlugin.h"
+#include "CDatasetAttributeLabelPlugin.h"
+#include "CDatasetAttributeImagePlugin.h"
+#include "CDatasetAttributeHealthLabelPlugin.h"
+#include "CDatasetAttributeSetValueLineEditPlugin.h"
+#include "CDatasetAttributeSetValueComboBoxPlugin.h"
 //command
-#include <CChangeSetGlobalCommitPlugin.h>
+#include "CChangeSetGlobalCommitPlugin.h"
 
 ChaosWidgets::ChaosWidgets(QObject *parent):
     QObject(parent) {

@@ -12,6 +12,18 @@ FIND_PACKAGE(Qt5Gui REQUIRED)
 FIND_PACKAGE(Qt5PrintSupport REQUIRED)
 FIND_PACKAGE(Qt5Qml REQUIRED)
 FIND_PACKAGE(Qt5UiTools REQUIRED)
+FIND_PACKAGE(Qt5Designer REQUIRED)
+
+# Get Qt root directory
+get_property(_filepath TARGET "Qt5::Core" PROPERTY LOCATION_RELEASE)
+get_filename_component(_dir ${_filepath} PATH)
+IF(UNIX AND NOT APPLE)
+    set(QT_ROOT_DIR "${_dir}/..")
+ELSE()
+    set(QT_ROOT_DIR "${_dir}/../..")    
+ENDIF()
+SET(QT_PLUGINS_DIR ${QT_ROOT_DIR}/plugins)
+
 # set(QT_USE_QTSQL 1)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include precomp_header.h -w")
@@ -31,6 +43,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+
+MESSAGE(">>QT Directory: " ${CMAKE_PREFIX_PATH})
 MESSAGE(">>QT Version: " ${Qt5Widgets_VERSION})
 MESSAGE(">>QT WIDGET DIR: " ${Qt5Widgets_INCLUDE_DIRS})
 MESSAGE(">>QT GUI DIR: " ${Qt5Gui_INCLUDE_DIRS})
@@ -39,6 +53,7 @@ MESSAGE(">>QT SQL DIR: " ${Qt5PrintSupport_INCLUDE_DIRS})
 MESSAGE(">>QT LIB DIR: " ${Qt5Widgets_LIBRARIES})
 MESSAGE(">>QT QML DIR: " ${Qt5Qml_LIBRARIES})
 MESSAGE(">>QT UITOOLS DIR: " ${Qt5UiTools_LIBRARIES})
+MESSAGE(">>QT Plugins DIR: " ${QT_PLUGINS_DIR})
 
 SET(QT_QMAKE_EXECUTABLE ${QT_ROOT_DIR}/gcc_64/bin/qmake)
 MESSAGE(STATUS "QT_QMAKE_EXECUTABLE: " ${QT_QMAKE_EXECUTABLE})
@@ -49,6 +64,7 @@ INCLUDE_DIRECTORIES(${Qt5Sql_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5PrintSupport_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5Qml_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Qt5UiTools_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Qt5Designer_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR_QtCore})
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/include)
@@ -59,7 +75,7 @@ MESSAGE(">>Tell CMake to create the ccs executable")
 QT5_WRAP_CPP(HEADERS_MOC ${QT_HEADERS})
 QT5_ADD_RESOURCES(RESOURCES_RCC ${RESOURCES})
 
-set(sources
+set(CCS_SOURCE
     main.cpp
     MainController.cpp
     GlobalServices.cpp
@@ -233,24 +249,59 @@ set(sources
     widget/designer/ChaosBaseDatasetAttributeUI.cpp
     widget/designer/ChaosBaseCommandButtonUI.cpp
     theme/theme.qrc
-    ${ccs_include_moc}
+    # ${ccs_include_moc}
 )
 
-# QT5_ADD_RESOURCES(RCC_SOURCES  theme/theme.qrc)
+MESSAGE(">>Tell CMake to create the chaos custom widget library")
+set(CUSTOM_WIDGET_SOURCE
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeLabelMenu.cpp
+    designerplugin/ChaosCustomDesignerWidget/CChangeSetGlobalCommitPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeHealthLabelPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeImagePlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeLabelDialog.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeLabelPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeSetValueComboBoxDialog.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeSetValueComboBoxMenuExtension.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeSetValueComboBoxPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CDatasetAttributeSetValueLineEditPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/CUOnlineLedIndicatorPlugin.cpp
+    designerplugin/ChaosCustomDesignerWidget/ChaosWidgets.cpp
+    theme/theme.qrc)
+
+set(CUSTOM_WIDGET_SOURCE ${CUSTOM_WIDGET_SOURCE}
+    widget/designer/ChaosBaseUI.cpp
+    widget/designer/ChaosBaseDatasetUI.cpp
+    widget/designer/ChaosBaseDatasetAttributeUI.cpp
+    widget/designer/ChaosBaseCommandButtonUI.cpp
+    widget/designer/ui/CChangeSetGlobalCommit.cpp
+    widget/designer/ui/CDatasetAttributeHealthLabel.cpp
+    widget/designer/ui/CDatasetAttributeImage.cpp
+    widget/designer/ui/CDatasetAttributeLabel.cpp
+    widget/designer/ui/CDatasetAttributeSetValueComboBox.cpp
+    widget/designer/ui/CDatasetAttributeSetValueLineEdit.cpp
+    widget/designer/ui/CUOnlineLedIndicator.cpp)
 
 IF(UNIX AND NOT APPLE)
         MESSAGE(">>Add Linux Exacutable")
-	LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib64)
+        LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib64)
         ADD_EXECUTABLE(ccs
-                        ${sources}
-                        ${ccs_include_moc}
-                        # ${RCC_SOURCES}
+                        ${CCS_SOURCE}
+                        # ${ccs_include_moc}
                         ${UIS_HDRS})
+        # ADD_LIBRARY(ChaosCustomDesignerWidget SHARED ${CUSTOM_WIDGET_SOURCE})
+        install (TARGETS ccs RUNTIME DESTINATION RUNTIME DESTINATION bin)
+        # install(TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
 ELSE()
+        #get deployer
+        get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+        get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+        find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+        
         MESSAGE(">>Add OSX Exacutable")
+        MESSAGE(">>Mac deployer ${MACDEPLOYQT_EXECUTABLE}")
         #Bundle (OSX)
         # the property added to Info.plist
-        set(MACOSX_BUNDLE_ICON_FILE chaos.icns)
+        SET(MACOSX_BUNDLE_ICON_FILE chaos.icns)
 
         # And this part tells CMake where to find and install the file itself
         set(CHAOS_ICON ${CMAKE_CURRENT_SOURCE_DIR}/chaos.icns)
@@ -260,12 +311,22 @@ ELSE()
         ADD_EXECUTABLE(ccs
                         MACOSX_BUNDLE
                         ${CHAOS_ICON}
-                        ${sources}
-                        ${ccs_include_moc}
+                        ${CCS_SOURCE}
+                        # ${ccs_include_moc}
                         ${RES_SOURCES}
                         ${UIS_HDRS})
+        INSTALL( TARGETS ccs DESTINATION ${CMAKE_SOURCE_DIR})
 
+        ADD_CUSTOM_COMMAND(TARGET ccs POST_BUILD
+                            COMMAND "${MACDEPLOYQT_EXECUTABLE}"
+                                    "$<TARGET_FILE_DIR:ccs>/../.."
+                                    "-libpath=${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib"
+                                    -always-overwrite
+                            COMMENT "Running macdeployqt..."
+)
 ENDIF()
+
+# set(CP_LINK_LIB   Qt5::Core Qt5::Designer)
 
 set(CCS_LINK_LIB    Qt5::Core
                     Qt5::Gui
@@ -286,6 +347,6 @@ ENDIF()
 
 MESSAGE(">>Target libraries")
 target_link_libraries(ccs ${CCS_LINK_LIB})
-install (TARGETS ccs RUNTIME DESTINATION RUNTIME DESTINATION bin)
-
+# target_link_libraries(ChaosCustomDesignerWidget ${CP_LINK_LIB})
+add_subdirectory(designerplugin/ChaosCustomDesignerWidget)
 MESSAGE(">>END")

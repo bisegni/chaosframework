@@ -30,6 +30,7 @@ ChaosUISynopticLoaderWindow::ChaosUISynopticLoaderWindow(QWidget *parent) :
             SIGNAL(customContextMenuRequested(QPoint)),
             this,
             SLOT(customMenuRequested(QPoint)));
+    qDebug() << "Form Loader path" << formLoader.pluginPaths();
     //set form search builder path
     //    formBuilder.addPluginPath(QLibraryInfo::location(QLibraryInfo::PluginsPath)+"/designer");
     //    formBuilder.addPluginPath(QProcessEnvironment::systemEnvironment().value("DYLD_LIBRARY_PATH"));
