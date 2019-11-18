@@ -284,14 +284,20 @@ IF(UNIX AND NOT APPLE)
                         ${CCS_SOURCE}
                         # ${ccs_include_moc}
                         ${UIS_HDRS})
-        ADD_LIBRARY(ChaosCustomDesignerWidget SHARED ${CUSTOM_WIDGET_SOURCE})
+        # ADD_LIBRARY(ChaosCustomDesignerWidget SHARED ${CUSTOM_WIDGET_SOURCE})
         install (TARGETS ccs RUNTIME DESTINATION RUNTIME DESTINATION bin)
-        install(TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
+        # install(TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
 ELSE()
+        #get deployer
+        get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+        get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+        find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+        
         MESSAGE(">>Add OSX Exacutable")
+        MESSAGE(">>Mac deployer ${MACDEPLOYQT_EXECUTABLE}")
         #Bundle (OSX)
         # the property added to Info.plist
-        set(MACOSX_BUNDLE_ICON_FILE chaos.icns)
+        SET(MACOSX_BUNDLE_ICON_FILE chaos.icns)
 
         # And this part tells CMake where to find and install the file itself
         set(CHAOS_ICON ${CMAKE_CURRENT_SOURCE_DIR}/chaos.icns)
@@ -305,13 +311,18 @@ ELSE()
                         # ${ccs_include_moc}
                         ${RES_SOURCES}
                         ${UIS_HDRS})
-        ADD_LIBRARY(ChaosCustomDesignerWidget SHARED ${CUSTOM_WIDGET_SOURCE})
         INSTALL( TARGETS ccs DESTINATION ${CMAKE_SOURCE_DIR})
-        INSTALL( TARGETS ChaosCustomDesignerWidget  DESTINATION "${CMAKE_SOURCE_DIR}/ccs.app/Contents/Frameworks/Designer")
-        INSTALL( TARGETS ChaosCustomDesignerWidget DESTINATION ${QT_PLUGINS_DIR}/designer)
+
+        ADD_CUSTOM_COMMAND(TARGET ccs POST_BUILD
+                            COMMAND "${MACDEPLOYQT_EXECUTABLE}"
+                                    "$<TARGET_FILE_DIR:ccs>/../.."
+                                    "-libpath=${CMAKE_CURRENT_LIST_DIR}/../usr/local/lib"
+                                    -always-overwrite
+                            COMMENT "Running macdeployqt..."
+)
 ENDIF()
 
-set(CP_LINK_LIB   Qt5::Core Qt5::Designer chaos_common)
+# set(CP_LINK_LIB   Qt5::Core Qt5::Designer)
 
 set(CCS_LINK_LIB    Qt5::Core
                     Qt5::Gui
@@ -332,6 +343,6 @@ ENDIF()
 
 MESSAGE(">>Target libraries")
 target_link_libraries(ccs ${CCS_LINK_LIB})
-target_link_libraries(ChaosCustomDesignerWidget ${CP_LINK_LIB})
-
+# target_link_libraries(ChaosCustomDesignerWidget ${CP_LINK_LIB})
+add_subdirectory(designerplugin/ChaosCustomDesignerWidget)
 MESSAGE(">>END")
