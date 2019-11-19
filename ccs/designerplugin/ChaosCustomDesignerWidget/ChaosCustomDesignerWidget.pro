@@ -32,6 +32,7 @@ HEADERS += CDatasetAttributeLabelMenu.h \
            CDatasetAttributeImagePlugin.h \
            CDatasetAttributeLabelDialog.h \
            CDatasetAttributeLabelPlugin.h \
+           CDatasetAttributeSet2VButtonPlugin.h \
            CDatasetAttributeSetValueComboBoxDialog.h \
            CDatasetAttributeSetValueComboBoxMenuExtension.h \
            CDatasetAttributeSetValueComboBoxPlugin.h \
@@ -45,6 +46,7 @@ SOURCES += CDatasetAttributeLabelMenu.cpp \
            CDatasetAttributeImagePlugin.cpp \
            CDatasetAttributeLabelDialog.cpp \
            CDatasetAttributeLabelPlugin.cpp \
+           CDatasetAttributeSet2VButtonPlugin.cpp \
            CDatasetAttributeSetValueComboBoxDialog.cpp \
            CDatasetAttributeSetValueComboBoxMenuExtension.cpp \
            CDatasetAttributeSetValueComboBoxPlugin.cpp \

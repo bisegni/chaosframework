@@ -9,7 +9,7 @@
 class CDatasetAttributeSetValueLineEdit:
         public ChaosBaseDatasetAttributeUI {
     Q_OBJECT
-     Q_PROPERTY(QString inputMask READ inputMask WRITE setInputMask)
+    Q_PROPERTY(QString attributeValue READ inputMask WRITE setInputMask)
 public:
     explicit CDatasetAttributeSetValueLineEdit(QWidget *parent = nullptr);
     QSize sizeHint() const;

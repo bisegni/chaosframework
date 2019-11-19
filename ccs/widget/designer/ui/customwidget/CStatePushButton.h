@@ -1,11 +1,11 @@
-#ifndef CSTATEVISIBLEPUSHBUTTON_H
-#define CSTATEVISIBLEPUSHBUTTON_H
+#ifndef CSTATEPUSHBUTTON_H
+#define CSTATEPUSHBUTTON_H
 
 #include <QMap>
 #include <QPushButton>
 #include <QReadWriteLock>
 
-class CStateVisiblePushButton :
+class CStatePushButton :
         public QPushButton {
 
 public:
@@ -19,7 +19,7 @@ public:
         StateInfo(const StateInfo& _state_info);
     };
 
-    CStateVisiblePushButton(QWidget *parent = nullptr);
+    CStatePushButton(QWidget *parent = nullptr);
     unsigned int currentState();
     void setButtonState(unsigned int new_state);
     unsigned int addState(const StateInfo& new_state);
@@ -35,5 +35,4 @@ private:
     QReadWriteLock       map_lock;
     QMap<unsigned int, StateInfo> map_state_info;
 };
-
-#endif // CSTATEVISIBLEPUSHBUTTON_H
+#endif // CSTATEPUSHBUTTON_H
