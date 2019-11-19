@@ -226,6 +226,13 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
         }
     }
     ui->enableUIAction->setEnabled(true);
+
+    applyFunctionToChaosBaseWidget([](ChaosBaseDatasetUI *wgdt) -> void {
+        QMetaObject::invokeMethod(wgdt,
+                                  "chaosWidgetEditMode",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(bool, false));
+    });
 }
 
 void ChaosUISynopticLoaderWindow::on_editWidgetAction_triggered() {
@@ -242,16 +249,12 @@ void ChaosUISynopticLoaderWindow::on_editWidgetAction_triggered() {
     //set edit mode on all chaos widget
     ui->enableUIAction->setEnabled(!ui_edit);
     QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
-    foreach(QWidget *ancestor, chaos_ui_widgets) {
-        if(ancestor->inherits("ChaosBaseDatasetUI") == false) {continue;}
-
-        ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(ancestor);
-        //set edit mode
-        QMetaObject::invokeMethod(cw,
+    applyFunctionToChaosBaseWidget([this](ChaosBaseDatasetUI *wgdt) -> void {
+        QMetaObject::invokeMethod(wgdt,
                                   "chaosWidgetEditMode",
                                   Qt::QueuedConnection,
                                   Q_ARG(bool, ui_edit));
-    }
+    });
 }
 
 void ChaosUISynopticLoaderWindow::customMenuRequested(QPoint point) {
@@ -353,7 +356,7 @@ void ChaosUISynopticLoaderWindow::nodeChangedErrorInformation(const std::string&
 void ChaosUISynopticLoaderWindow::updatedDS(const std::string& control_unit_uid,
                                             int dataset_type,
                                             MapDatasetKeyValues& dataset_key_values) {
-//    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
+    //    qDebug() << "updatedDS for " << QString::fromStdString(control_unit_uid) << " ds_type "<< dataset_type << "attributes:"<<dataset_key_values.size();
     auto cu_root_iterator = map_device_root.find(QString::fromStdString(control_unit_uid));
     if(cu_root_iterator == map_device_root.end()) return;
 
@@ -454,3 +457,14 @@ void ChaosUISynopticLoaderWindow::commitChangeSet() {
 }
 
 void ChaosUISynopticLoaderWindow::rollbackChangeSet() {}
+
+//private
+void ChaosUISynopticLoaderWindow::applyFunctionToChaosBaseWidget(std::function<void(ChaosBaseDatasetUI*)>  function) {
+    QList<QWidget*> chaos_ui_widgets = centralWidget()->findChildren<QWidget*>();
+    foreach(QWidget *ancestor, chaos_ui_widgets) {
+        if(ancestor->inherits("ChaosBaseDatasetUI") == false) {continue;}
+
+        ChaosBaseDatasetUI *cw = reinterpret_cast<ChaosBaseDatasetUI*>(ancestor);
+        function(cw);
+    }
+}

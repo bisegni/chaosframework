@@ -28,8 +28,9 @@ bool CDatasetAttributeImagePlugin::isInitialized() const { return initialized; }
 QWidget *CDatasetAttributeImagePlugin::createWidget(QWidget *parent)
 {
     Q_INIT_RESOURCE(theme);
-    CDatasetAttributeImage *cLabel = new CDatasetAttributeImage(parent);
-    return cLabel;
+    CDatasetAttributeImage *chaos_widget = new CDatasetAttributeImage(parent);
+    chaos_widget->chaosWidgetEditMode(true);
+    return chaos_widget;
 }
 
 void CDatasetAttributeImagePlugin::initialize(QDesignerFormEditorInterface *formEditor)

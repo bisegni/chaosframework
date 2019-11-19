@@ -30,6 +30,7 @@ QWidget *CDatasetAttributeSetValueLineEditPlugin::createWidget(QWidget *parent)
 {
     Q_INIT_RESOURCE(theme);
     CDatasetAttributeSetValueLineEdit *chaos_widget = new CDatasetAttributeSetValueLineEdit(parent);
+
     return chaos_widget;
 }
 
