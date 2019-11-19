@@ -127,7 +127,8 @@ for c in $listah; do
     header=`echo $c | $SED 's/src\///' | $SED 's/source\///' | $SED "s/\.\//$prefix\//g"`;
     filenamespace=""
 #    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c |$SED 's/namespace\s\+\(\w\+\)\s*{/\1/g'`;
-    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c | $SED 's/namespace\ *//g' |$SED 's/[\ {]//g'|grep -v '}'`
+    namespace=`grep -v '}' $c | grep -o 'namespace\s\+\w\+\s*{' | $SED 's/namespace\ *//g' |$SED 's/[\ {]//g'`
+    echo "NAMESPACE->$namespace"
   #  namespace=`grep -o 'namespace\s\+\w\+' $c | $SED 's/^namespace //g'`
 #`grep -o 'namespace\s\+\w\+' $c | $SED 's/namespace\ *//g' | tr '\n' ' '`;
     oldbb=$bb
