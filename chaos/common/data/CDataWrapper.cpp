@@ -691,16 +691,18 @@ void CDataWrapper::setSerializedData(const char* bson_data) {
 
 //reinitialize the object with bson data
 void CDataWrapper::setSerializedJsonData(const char* json_data) {
-    bson_error_t err;
-    size_t len = (size_t)strlen(json_data);
-    bson =ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
-                                            len,
-                                            &err));
-    if(bson==NULL){
-        std::stringstream ss;
-        ss<<"cannot serialize json:'"<<json_data<<"'";
-        throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+  bson_error_t err;
+  size_t       len = (size_t)strlen(json_data);
+  if (len) {
+    bson = ALLOCATE_BSONT(bson_new_from_json((const uint8_t*)json_data,
+                                             len,
+                                             &err));
+    if (bson == NULL) {
+      std::stringstream ss;
+      ss << "cannot serialize json:'" << json_data << "'";
+      throw CException(1, ss.str(), __PRETTY_FUNCTION__);
     }
+  }
 }
 
 //append all elemento of an
