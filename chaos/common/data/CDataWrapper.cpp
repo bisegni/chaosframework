@@ -1000,6 +1000,30 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const void* val){
     }
     return -1;
 }
+int CDataWrapper::setValue(const std::string& key,const void* val,size_t size){
+     bson_iter_t it;
+     bson_iter_init(&it, static_cast<bson_t*>(bson.get()));
+    if(bson_iter_find_case(&it, key.c_str()) == false)
+        return -1;
+    return setBson(&it,val,size);
+}
+
+             
+int CDataWrapper::setBson(const bson_iter_t *v ,const void* val,size_t size){
+    if(ITER_TYPE(v)== BSON_TYPE_BINARY){
+         bson_value_t *vv = (bson_value_t *)bson_iter_value((bson_iter_t *)v);
+        // without check is more useful, the programmer must be aware of the preallocated data size
+       /* if(size>=vv->value.v_binary.data_len){
+            std::stringstream ss;
+            ss<<"size bigger than prellocated:"<<vv->value.v_binary.data_len;
+            throw CException(1, ss.str(), __PRETTY_FUNCTION__);
+        }*/
+        memcpy((void*)(v->raw + v->d3), (void*)val,size);
+        vv->value.v_binary.data_len=size;
+        return vv->value.v_binary.data_len;
+    }
+    return -1;
+}
 int CDataWrapper::setBson(const bson_iter_t *v ,const CDataWrapper* val){
     if(ITER_TYPE(v)== BSON_TYPE_DOCUMENT){
         const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);

@@ -104,6 +104,8 @@ namespace chaos {
                 int setBson(const bson_iter_t *,const bool& val);
                 int setBson(const bson_iter_t * ,const std::string& val);
                 int setBson(const bson_iter_t * ,const void* val);
+                int setBson(const bson_iter_t *v ,const void* val,size_t size);
+
                 int setBson(const bson_iter_t *v ,const CDataWrapper* val);
 
             public:
@@ -194,6 +196,7 @@ namespace chaos {
 std::stringstream ss;\
 ss<<"cannot get or cast to '" << #type<<"'";\
 throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
+                int setValue(const std::string& key,const void* val,size_t size);
 
                 template<typename T>
                 int setValue(const std::string& key,const T& val){
