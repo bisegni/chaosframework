@@ -26,7 +26,7 @@ CDatasetAttributeSetValueComboBoxDialog::CDatasetAttributeSetValueComboBoxDialog
     QJsonDocument j_doc = QJsonDocument::fromJson(_combo_widget->setup().toUtf8());
 
     tableView = new QTableView();
-    tableView->setModel(new SetValueComboBoxDialogTableModel(j_doc, this));
+    tableView->setModel(table_model = new SetValueComboBoxDialogTableModel(j_doc, this));
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->horizontalHeader()->setStretchLastSection(true);
     tableView->verticalHeader()->hide();
@@ -73,10 +73,12 @@ void CDatasetAttributeSetValueComboBoxDialog::resetState() {
 }
 
 void CDatasetAttributeSetValueComboBoxDialog::addRow(bool checked) {
+    Q_UNUSED(checked)
     table_model->insertRow(table_model->rowCount(QModelIndex()));
 }
 
 void CDatasetAttributeSetValueComboBoxDialog::removeRow(bool checked) {
+    Q_UNUSED(checked)
     foreach(QModelIndex i, tableView->selectionModel()->selectedRows()) {
         table_model->removeRow(i.row());
     }
@@ -115,11 +117,13 @@ SetValueComboBoxDialogTableModel::SetValueComboBoxDialogTableModel(const QJsonDo
 }
 
 int SetValueComboBoxDialogTableModel::rowCount(const QModelIndex &parent) const {
-    return parent.isValid() ? 0 : elements.size();
+    Q_UNUSED(parent)
+    return elements.size();
 }
 
 int SetValueComboBoxDialogTableModel::columnCount(const QModelIndex &parent) const {
-    return parent.isValid() ? 0 : 2;
+    Q_UNUSED(parent)
+    return 2;
 }
 
 QVariant SetValueComboBoxDialogTableModel::data(const QModelIndex &index, int role) const

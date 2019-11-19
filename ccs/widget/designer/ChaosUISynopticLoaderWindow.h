@@ -11,10 +11,13 @@
 #include <QSharedPointer>
 #include <QUiLoader>
 
+#include <functional>
+
 namespace Ui {
 class ChaosUISynopticLoaderWindow;
 }
 
+class ChaosBaseDatasetUI;
 class ChaosUISynopticLoaderWindow :
         public QMainWindow,
         public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
@@ -85,6 +88,7 @@ private:
     QVariant toQVariant(chaos::common::data::CDataVariant chaos_value);
     void closeEvent(QCloseEvent *event);
     ChaosBaseDatasetUI *getChaosWidgetParent(QObject *w);
+    void applyFunctionToChaosBaseWidget(std::function<void(ChaosBaseDatasetUI*)> function);
 };
 
 #endif // CHAOSUISYNOPTICLOADERWINDOW_H

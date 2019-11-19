@@ -79,8 +79,9 @@ bool CDatasetAttributeLabelPlugin::isInitialized() const { return initialized; }
 QWidget *CDatasetAttributeLabelPlugin::createWidget(QWidget *parent)
 {
     Q_INIT_RESOURCE(theme);
-    CDatasetAttributeLabel *cLabel = new CDatasetAttributeLabel(parent);
-    return cLabel;
+    CDatasetAttributeLabel *chaos_widget = new CDatasetAttributeLabel(parent);
+    chaos_widget->chaosWidgetEditMode(true);
+    return chaos_widget;
 }
 
 void CDatasetAttributeLabelPlugin::initialize(QDesignerFormEditorInterface *formEditor)

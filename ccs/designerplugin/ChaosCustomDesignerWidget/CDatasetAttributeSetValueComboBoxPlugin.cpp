@@ -30,8 +30,9 @@ bool CDatasetAttributeSetValueComboBoxPlugin::isInitialized() const { return ini
 
 QWidget *CDatasetAttributeSetValueComboBoxPlugin::createWidget(QWidget *parent) {
     Q_INIT_RESOURCE(theme);
-    CDatasetAttributeSetValueComboBox *widget = new CDatasetAttributeSetValueComboBox(parent);
-    return widget;
+    CDatasetAttributeSetValueComboBox *chaos_widget = new CDatasetAttributeSetValueComboBox(parent);
+    chaos_widget->chaosWidgetEditMode(true);
+    return chaos_widget;
 }
 
 void CDatasetAttributeSetValueComboBoxPlugin::initialize(QDesignerFormEditorInterface *formEditor) {

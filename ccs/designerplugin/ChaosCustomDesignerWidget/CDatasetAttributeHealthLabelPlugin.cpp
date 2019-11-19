@@ -27,8 +27,9 @@ bool CDatasetAttributeHealthLabelPlugin::isInitialized() const { return initiali
 
 QWidget *CDatasetAttributeHealthLabelPlugin::createWidget(QWidget *parent) {
     Q_INIT_RESOURCE(theme);
-    CDatasetAttributeHealthLabel *cLabel = new CDatasetAttributeHealthLabel(parent);
-    return cLabel;
+    CDatasetAttributeHealthLabel *chaos_widget = new CDatasetAttributeHealthLabel(parent);
+    chaos_widget->chaosWidgetEditMode(true);
+    return chaos_widget;
 }
 
 void CDatasetAttributeHealthLabelPlugin::initialize(QDesignerFormEditorInterface *formEditor) {

@@ -9,6 +9,7 @@ QT += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport uitools qml
 
 PRECOMPILED_HEADER = precomp_header.h
+CONFIG += c++11
 CONFIG += precompile_header
 CONFIG+=sdk_no_version_check
 QMAKE_CXXFLAGS += -std=c++11
