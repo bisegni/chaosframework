@@ -33,7 +33,8 @@ private slots:
 signals:
     void attributeChangeSetUpdated(QString device_id,
                                    QString attribute_name,
-                                   QVariant attribute_value);
+                                   QVariant attribute_value,
+                                   bool commit = false);
     void attributeChangeSetClear(QString device_id,
                                  QString attribute_name);
 private:

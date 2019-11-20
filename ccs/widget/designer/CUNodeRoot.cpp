@@ -18,7 +18,7 @@ CUNodeRoot::CUNodeRoot(QString device_id, QObject *parent) :
 void CUNodeRoot::setCurrentAttributeValue(int dataset_type,
                                           QString attribute_name,
                                           QVariant attribute_value) {
-//    qDebug() << "CUNodeRoot::setCurrentAttributeValue:" << m_device_id << ":" << attribute_name << "=" << attribute_value.toString();
+    //    qDebug() << "CUNodeRoot::setCurrentAttributeValue:" << m_device_id << ":" << attribute_name << "=" << attribute_value.toString();
     emit updateDatasetAttribute(dataset_type,
                                 attribute_name,
                                 attribute_value);
@@ -53,10 +53,27 @@ void CUNodeRoot::apiHasEndedWithError(const QString& /*tag*/,
 
 void CUNodeRoot::attributeChangeSetUpdated(QString /*device_id*/,
                                            QString attribute_name,
-                                           QVariant attribute_value) {
-    qDebug() << "CUNodeRoot::attributeChangeSetUpdated:" << m_device_id<< ":" << attribute_name << "=" << attribute_value.toString();
-    map_attribute_value.remove(attribute_name);
-    map_attribute_value.insert(attribute_name, attribute_value);
+                                           QVariant attribute_value,
+                                           bool commit) {
+    qDebug() << "CUNodeRoot::attributeChangeSetUpdated:" << m_device_id<< ":" << attribute_name << "=" << attribute_value.toString() << " commit:" << commit;
+    if(commit) {
+        std::vector<ChaosSharedPtr<ControlUnitInputDatasetChangeSet>> change_vec;
+        ChaosSharedPtr<ControlUnitInputDatasetChangeSet> attribute_change_set = ChaosMakeSharedPtr<ControlUnitInputDatasetChangeSet>(m_device_id.toStdString());
+        attribute_change_set->change_set.push_back(ChaosMakeSharedPtr<InputDatasetAttributeChangeValue>(attribute_name.toStdString(),
+                                                                                                        attribute_value.toString().toStdString()));
+        change_vec.push_back(attribute_change_set);
+        //!send message to mds
+        api_submitter.submitApiResult("APPLY-CHANGESET",
+                                      GET_CHAOS_API_PTR(SetInputDatasetAttributeValues)->execute(change_vec));
+
+        //notify only to sneder
+        QMetaObject::invokeMethod(sender(),
+                                  "changeSetCommitted",
+                                  Qt::QueuedConnection);
+    } else {
+        map_attribute_value.remove(attribute_name);
+        map_attribute_value.insert(attribute_name, attribute_value);
+    }
 }
 
 void CUNodeRoot::attributeChangeSetClear(QString /*device_id*/,
@@ -72,7 +89,7 @@ void CUNodeRoot::commitChangeSet() {
     while (i.hasNext()) {
         i.next();
         attribute_change_set->change_set.push_back(ChaosMakeSharedPtr<InputDatasetAttributeChangeValue>(i.key().toStdString(),
-                                                                                                       i.value().toString().toStdString()));
+                                                                                                        i.value().toString().toStdString()));
     }
     if(attribute_change_set->change_set.size()) {
         std::vector<ChaosSharedPtr<ControlUnitInputDatasetChangeSet>> change_vec;
