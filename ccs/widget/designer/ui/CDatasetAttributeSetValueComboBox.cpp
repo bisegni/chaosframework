@@ -17,7 +17,7 @@ CDatasetAttributeSetValueComboBox::CDatasetAttributeSetValueComboBox(QWidget *pa
     //add layout
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(-1);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     layout->addWidget(combo_box);
     setLayout(layout);
     setDatasetType(ChaosBaseDatasetUI::Input);
@@ -62,10 +62,13 @@ void CDatasetAttributeSetValueComboBox::reset() {}
 
 void CDatasetAttributeSetValueComboBox::changeSetCommitted() {
     qDebug() << "CDatasetAttributeSetValueComboBox::changeSetCommitted" << deviceID() << ":" <<attributeName();
-     combo_box->setStyleSheet("QComboBox {}");
-    //    value_committed = false;
-    //    line_edit->setText(QString());
-    //    editFinisched();
+    combo_box->setStyleSheet("QComboBox {}");
+}
+
+void CDatasetAttributeSetValueComboBox::changeSetRollback() {
+    qDebug() << "CDatasetAttributeSetValueComboBox::changeSetRollback" << deviceID() << ":" <<attributeName();
+    combo_box->setCurrentText(map_value_label.find(value()).value());
+    combo_box->setStyleSheet("QComboBox {}");
 }
 
 void CDatasetAttributeSetValueComboBox::currentIndexChanged(int index) {

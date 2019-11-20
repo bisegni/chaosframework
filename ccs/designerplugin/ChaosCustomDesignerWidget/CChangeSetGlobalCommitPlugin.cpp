@@ -42,18 +42,3 @@ void CChangeSetGlobalCommitPlugin::initialize(QDesignerFormEditorInterface *form
 
     initialized = true;
 }
-
-QString CChangeSetGlobalCommitPlugin::domXml() const {
-    return QLatin1String("\
-<ui language=\"c++\">\
-    <widget class=\"CChangeSetGlobalCommit\" name=\"cChangeSetGlobalCommit\"/>\
-    <customwidgets>\
-        <customwidget>\
-            <class>CChangeSetGlobalCommit</class>\
-            <propertyspecifications>\
-            <tooltip name=\"deviceID\">Device id</tooltip>\
-            </propertyspecifications>\
-        </customwidget>\
-    </customwidgets>\
-</ui>");
-}

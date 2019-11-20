@@ -27,6 +27,10 @@ ChaosBaseDatasetUI::DatasetType ChaosBaseDatasetUI::datasetType() const {
     return p_dataset_type;
 }
 
+QVariant ChaosBaseDatasetUI::value() {
+    return p_value;
+}
+
 bool ChaosBaseDatasetUI::isInEditMode() {
     return edit_mode;
 }

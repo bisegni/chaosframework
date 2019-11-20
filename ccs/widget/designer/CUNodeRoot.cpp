@@ -84,3 +84,8 @@ void CUNodeRoot::commitChangeSet() {
     //signal commit operation
     emit changeSetCommitted();
 }
+
+void CUNodeRoot::rollbackChangeSet() {
+    qDebug() << "CUNodeRoot::rollbackChangeSet:" << m_device_id;
+    emit changeSetRollback();
+}

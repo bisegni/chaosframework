@@ -213,6 +213,10 @@ void ChaosUISynopticLoaderWindow::on_loadUIFileAction_triggered() {
                                  &CUNodeRoot::changeSetCommitted,
                                  attr_ui,
                                  &ChaosBaseDatasetAttributeUI::changeSetCommitted);
+                QObject::connect(device_root.data(),
+                                 &CUNodeRoot::changeSetRollback,
+                                 attr_ui,
+                                 &ChaosBaseDatasetAttributeUI::changeSetRollback);
                 //conenct ui signal to root
                 QObject::connect(attr_ui,
                                  &ChaosBaseDatasetAttributeUI::attributeChangeSetUpdated,
@@ -456,7 +460,16 @@ void ChaosUISynopticLoaderWindow::commitChangeSet() {
     }
 }
 
-void ChaosUISynopticLoaderWindow::rollbackChangeSet() {}
+void ChaosUISynopticLoaderWindow::rollbackChangeSet() {
+    QMapIterator<QString, QSharedPointer<CUNodeRoot> > i(map_device_root);
+    while (i.hasNext()) {
+        i.next();
+        qDebug() << "Apply rollback to:" << i.key();
+        QMetaObject::invokeMethod(i.value().get(),
+                                  "rollbackChangeSet",
+                                  Qt::QueuedConnection);
+    }
+}
 
 //private
 void ChaosUISynopticLoaderWindow::applyFunctionToChaosBaseWidget(std::function<void(ChaosBaseDatasetUI*)>  function) {

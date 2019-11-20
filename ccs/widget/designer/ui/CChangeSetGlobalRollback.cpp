@@ -1,23 +1,23 @@
-#include "CChangeSetGlobalCommit.h"
+#include "CChangeSetGlobalRollback.h"
 
 #include <QBoxLayout>
 
-CChangeSetGlobalCommit::CChangeSetGlobalCommit(QWidget *parent):
+CChangeSetGlobalRollback::CChangeSetGlobalRollback(QWidget *parent):
     ChaosBaseCommandButtonUI(parent) {
     push_button = new QPushButton(this);
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(-1);
     layout->setContentsMargins(0,0,0,0);
-    push_button->setText("Commit");
+    push_button->setText("Rollback");
     layout->addWidget(push_button);
     setLayout(layout);
 
     connect(push_button,
             &QPushButton::pressed,
             this,
-            &CChangeSetGlobalCommit::pressed);
+            &CChangeSetGlobalRollback::pressed);
 }
 
-void CChangeSetGlobalCommit::pressed() {
-    emit commitChangeSet();
+void CChangeSetGlobalRollback::pressed() {
+    emit rollbackChangeSet();
 }

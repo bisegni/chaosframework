@@ -22,6 +22,7 @@ public:
     QString setup();
 private slots:
     void changeSetCommitted();
+    void changeSetRollback();
     void currentIndexChanged(int index);
 public slots:
     virtual void reset();

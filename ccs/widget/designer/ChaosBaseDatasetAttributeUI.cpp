@@ -31,6 +31,7 @@ void ChaosBaseDatasetAttributeUI::updateData(int dataset_type,
 }
 
 void ChaosBaseDatasetAttributeUI::changeSetCommitted() {}
+void ChaosBaseDatasetAttributeUI::changeSetRollback() {}
 
 void ChaosBaseDatasetAttributeUI::dragEnterEvent(QDragEnterEvent* event) {
     if (isInEditMode() &&

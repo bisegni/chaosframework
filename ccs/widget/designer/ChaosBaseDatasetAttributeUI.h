@@ -27,6 +27,7 @@ public slots:
                     QVariant attribute_value);
     // widget if is a input one need to clear his state to show as normal
     virtual void changeSetCommitted();
+    virtual void changeSetRollback();
 private slots:
     void  datasetTriggerAction(bool checked = false);
 signals:

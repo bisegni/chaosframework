@@ -10,6 +10,7 @@
 #include "CDatasetAttributeSetValueComboBoxPlugin.h"
 //command
 #include "CChangeSetGlobalCommitPlugin.h"
+#include "CChangeSetGlobalRollbackPlugin.h"
 
 ChaosWidgets::ChaosWidgets(QObject *parent):
     QObject(parent) {
@@ -22,6 +23,7 @@ ChaosWidgets::ChaosWidgets(QObject *parent):
     widgets.append(new CDatasetAttributeSetValueComboBoxPlugin(this));
 
     widgets.append(new CChangeSetGlobalCommitPlugin(this));
+    widgets.append(new CChangeSetGlobalRollbackPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> ChaosWidgets::customWidgets() const {

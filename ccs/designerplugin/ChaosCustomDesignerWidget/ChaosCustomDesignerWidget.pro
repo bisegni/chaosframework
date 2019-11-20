@@ -28,6 +28,7 @@ INCLUDEPATH += $$PWD/../../../usr/local/include
 
 HEADERS += CDatasetAttributeLabelMenu.h \
            CChangeSetGlobalCommitPlugin.h \
+           CChangeSetGlobalRollbackPlugin.h \
            CDatasetAttributeHealthLabelPlugin.h \
            CDatasetAttributeImagePlugin.h \
            CDatasetAttributeLabelDialog.h \
@@ -42,6 +43,7 @@ HEADERS += CDatasetAttributeLabelMenu.h \
            precomp_header.h
 SOURCES += CDatasetAttributeLabelMenu.cpp \
            CChangeSetGlobalCommitPlugin.cpp \
+           CChangeSetGlobalRollbackPlugin.cpp \
            CDatasetAttributeHealthLabelPlugin.cpp \
            CDatasetAttributeImagePlugin.cpp \
            CDatasetAttributeLabelDialog.cpp \

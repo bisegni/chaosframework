@@ -41,6 +41,8 @@ public:
     void setDatasetType(const DatasetType &new_dataset_type);
     DatasetType datasetType() const;
 
+    QVariant value();
+
     QJsonObject serialize();
     void deserialize(QJsonObject& serialized_data);
 

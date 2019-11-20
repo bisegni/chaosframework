@@ -5,36 +5,45 @@
 #include <QHBoxLayout>
 
 CDatasetAttributeSet2VButton::CDatasetAttributeSet2VButton(QWidget *parent):
-    ChaosBaseDatasetAttributeUI(parent){
+    ChaosBaseDatasetAttributeUI(parent),
+    _internal_state(StateUndeterminated){
     cstate_push_button = new CStatePushButton(this);
-    cstate_push_button->addState(CStatePushButton::StateInfo("Disabled", Qt::lightGray));
-    cstate_push_button->addState(CStatePushButton::StateInfo("Enable", Qt::green));
-    cstate_push_button->addState(CStatePushButton::StateInfo("In Error", Qt::red));
-    cstate_push_button->setCheckable(true);
+    cstate_push_button->addState(CStatePushButton::StateInfo("Undeterminated", Qt::lightGray));
+    cstate_push_button->addState(CStatePushButton::StateInfo("Off", Qt::darkGreen));
+    cstate_push_button->addState(CStatePushButton::StateInfo("On", Qt::green));
+//    cstate_push_button->setCheckable(true);
     connect(cstate_push_button,
             SIGNAL(clicked(bool)),
             SLOT(on_pushButton_clicked(bool)));
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(-1);
-    layout->setMargin(-1);
+    layout->setContentsMargins(0,0,0,0);
     layout->addWidget(cstate_push_button);
     setLayout(layout);
 }
 
-QString CDatasetAttributeSet2VButton::attributeSetValue() {
-    return p_attribute_setValue;
+QString CDatasetAttributeSet2VButton::attributeSetValueOn() {
+    return p_attribute_setValue_on;
 }
 
-void CDatasetAttributeSet2VButton::setAttributeSetValue(QString& new_p_attribute_setValue) {
-    p_attribute_setValue = new_p_attribute_setValue;
+void CDatasetAttributeSet2VButton::setAttributeSetValueOn(QString& new_p_attribute_setValue_on) {
+    p_attribute_setValue_on = new_p_attribute_setValue_on;
+}
+
+QString CDatasetAttributeSet2VButton::attributeSetValueOff() {
+    return p_attribute_setValue_off;
+}
+
+void CDatasetAttributeSet2VButton::setAttributeSetValueOff(QString& new_p_attribute_setValue_off) {
+    p_attribute_setValue_off = new_p_attribute_setValue_off;
 }
 
 QSize CDatasetAttributeSet2VButton::sizeHint() const {
-    return QSize(16, 16);
+    return QSize(64, 32);
 }
 
 QSize CDatasetAttributeSet2VButton::minimumSizeHint() const {
-    return QSize(16, 16);
+    return QSize(32, 32);
 }
 
 void CDatasetAttributeSet2VButton::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {
@@ -42,20 +51,43 @@ void CDatasetAttributeSet2VButton::updateOnline(ChaosBaseDatasetUI::OnlineState 
 }
 
 void CDatasetAttributeSet2VButton::updateValue(QVariant new_value) {
-    bool set_successfull = new_value.toString().compare(attributeSetValue())==0;
-    cstate_push_button->setButtonState(set_successfull);
-    cstate_push_button->setChecked(set_successfull);
+    qDebug()<< "CDatasetAttributeSet2VButton::updateValue" << deviceID() << ":" <<attributeName() << ":" << new_value;
+    bool on_successfull = (new_value == QVariant(attributeSetValueOn()));
+    bool off_successfull = (new_value== QVariant(attributeSetValueOff()));
+    if(on_successfull || off_successfull) {
+        _internal_state = on_successfull?StateOn:StateOff;
+        cstate_push_button->setButtonState(on_successfull?2:1);
+    } else {
+        _internal_state = StateUndeterminated;
+        cstate_push_button->setButtonState(0);
+    }
 }
+
+void CDatasetAttributeSet2VButton::reset() {}
 
 void CDatasetAttributeSet2VButton::changeSetCommitted() {
     qDebug()<< "CDatasetAttributeSet2VButton::changeSetCommitted" << deviceID() << ":" <<attributeName();
 }
 
+void CDatasetAttributeSet2VButton::changeSetRollback() {
+    qDebug()<< "CDatasetAttributeSet2VButton::changeSetRollback" << deviceID() << ":" <<attributeName();
+}
 
 void CDatasetAttributeSet2VButton::on_pushButton_clicked(bool cliecked) {
     Q_UNUSED(cliecked)
-    cstate_push_button->setChecked(false);
-    emit attributeChangeSetUpdated(deviceID(),
-                                   attributeName(),
-                                   QVariant(attributeSetValue()));
+    switch (_internal_state) {
+    case StateUndeterminated:
+    case StateOff:
+        //send data for on value
+        emit attributeChangeSetUpdated(deviceID(),
+                                       attributeName(),
+                                       QVariant(attributeSetValueOn()));
+        break;
+     case StateOn:
+        //send data for value off
+        emit attributeChangeSetUpdated(deviceID(),
+                                       attributeName(),
+                                       QVariant(attributeSetValueOff()));
+        break;
+    }
 }

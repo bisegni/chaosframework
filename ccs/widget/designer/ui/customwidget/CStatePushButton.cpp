@@ -25,7 +25,7 @@ CStatePushButton::StateInfo::StateInfo(const CStatePushButton::StateInfo& _state
 CStatePushButton::CStatePushButton(QWidget *parent):
     QPushButton(parent),
     current_state(0){
-//    setStyleSheet("text-align:bottom center;");
+    setStyleSheet("text-align:bottom center;");
 }
 
 unsigned int CStatePushButton::addState(const CStatePushButton::StateInfo& new_state) {
@@ -72,22 +72,12 @@ void CStatePushButton::paintEvent(QPaintEvent *p_event) {
     Q_UNUSED(p_event)
     const int distance = 10;
     QPushButton::paintEvent(p_event);
-//    qreal render_width =  (static_cast<qreal>(rect().width())-static_cast<qreal>((BORDER_OFFSET*2)));
     QPainter painter(this);
 
     //render push button background
-//    QStylePainter stype_painter(this);
-//    QStyleOptionButton option;
-//    initStyleOption(&option);
-//    //disable drawing text with style option
-//    option.text = "";
-//    stype_painter.drawControl(QStyle::CE_PushButton, option);
-
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-//    QPainterPath path;
-//    path.addRect(QRect(distance, distance, width() - 2 * distance, 3));
-    QRect indicator_rect = QRect(distance, distance, width() - 2 * distance, 3);
+    QRect indicator_rect = QRect(distance, 6, width() - 2 * distance, 3);
     QPen border_pen(Qt::gray, 1);
     painter.setPen(border_pen);
     //lock map
@@ -96,5 +86,5 @@ void CStatePushButton::paintEvent(QPaintEvent *p_event) {
     map_lock.unlock();
     painter.drawRect(indicator_rect);
     painter.setPen(QPen(isEnabled()?QApplication::palette().Inactive:QApplication::palette().Active));
-//    painter.drawRect(QRect(distance, distance, width() - 2 * distance, 3));
+
 }

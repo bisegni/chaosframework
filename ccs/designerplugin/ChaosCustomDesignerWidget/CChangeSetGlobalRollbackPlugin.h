@@ -1,5 +1,5 @@
-#ifndef CCHANGESETGLOBALCOMMITPLUGIN_H
-#define CCHANGESETGLOBALCOMMITPLUGIN_H
+#ifndef CCHANGESETGLOBALROLLBACKPLUGIN_H
+#define CCHANGESETGLOBALROLLBACKPLUGIN_H
 
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 
@@ -8,7 +8,7 @@ class QIcon;
 class QWidget;
 QT_END_NAMESPACE
 
-class CChangeSetGlobalCommitPlugin :
+class CChangeSetGlobalRollbackPlugin :
         public QObject,
         public QDesignerCustomWidgetInterface
 {
@@ -17,7 +17,7 @@ class CChangeSetGlobalCommitPlugin :
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-    explicit CChangeSetGlobalCommitPlugin(QObject *parent = nullptr);
+    explicit CChangeSetGlobalRollbackPlugin(QObject *parent = nullptr);
 
     QString name() const override;
     QString group() const override;
@@ -33,4 +33,4 @@ public:
 private:
     bool initialized = false;
 };
-#endif // CCHANGESETGLOBALCOMMITPLUGIN_H
+#endif // CCHANGESETGLOBALROLLBACKPLUGIN_H

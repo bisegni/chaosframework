@@ -44,6 +44,7 @@ signals:
 
     //singla that infomr that change set has been applyed
     void changeSetCommitted();
+    void changeSetRollback();
 public slots:
     void init();
     void start();
@@ -58,6 +59,9 @@ public slots:
                                    QString attribute_name);
     //!apply all changeset
     void commitChangeSet();
+
+    //!rollback all changeset
+    void rollbackChangeSet();
 private:
     ApiSubmitter api_submitter;
     const QString m_device_id;

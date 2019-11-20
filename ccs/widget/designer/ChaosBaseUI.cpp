@@ -1,7 +1,8 @@
 #include "ChaosBaseUI.h"
 
 ChaosBaseUI::ChaosBaseUI(QWidget *parent):
-    QFrame(parent){}
+    QFrame(parent){
+}
 
 QJsonObject ChaosBaseUI::serialize() {
     QJsonObject result;

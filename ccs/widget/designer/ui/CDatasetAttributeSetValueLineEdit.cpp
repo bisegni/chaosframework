@@ -19,7 +19,7 @@ CDatasetAttributeSetValueLineEdit::CDatasetAttributeSetValueLineEdit(QWidget *pa
     //add layout
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(-1);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     layout->addWidget(line_edit);
     setLayout(layout);
     setDatasetType(ChaosBaseDatasetUI::Input);
@@ -80,6 +80,10 @@ void CDatasetAttributeSetValueLineEdit::changeSetCommitted() {
     value_committed = false;
     line_edit->setText(QString());
     editFinisched();
+}
+
+void CDatasetAttributeSetValueLineEdit::changeSetRollback() {
+    qDebug()<< "CDatasetAttributeSetValueLineEdit::changeSetRollback" << deviceID() << ":" <<attributeName();
 }
 
 void CDatasetAttributeSetValueLineEdit::updateOnline(ChaosBaseDatasetUI::OnlineState /*state*/) {}

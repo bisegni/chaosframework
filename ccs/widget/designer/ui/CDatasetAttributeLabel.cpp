@@ -12,7 +12,7 @@ CDatasetAttributeLabel::CDatasetAttributeLabel(QWidget *parent):
     labelValue = new QLabel(this);
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(-1);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     labelValue->setText("Dataset Value");
     layout->addWidget(labelValue);
     setLayout(layout);

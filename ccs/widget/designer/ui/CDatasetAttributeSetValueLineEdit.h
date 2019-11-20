@@ -23,6 +23,7 @@ private slots:
     void editFinisched();
     void returnPressed();
     void changeSetCommitted();
+    void changeSetRollback();
 protected:
     void updateOnline(ChaosBaseDatasetUI::OnlineState state);
     void updateValue(QVariant variant_value);
