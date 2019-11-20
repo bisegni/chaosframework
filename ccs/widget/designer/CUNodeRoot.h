@@ -53,7 +53,8 @@ public slots:
     //add a new changeset attribute value
     void attributeChangeSetUpdated(QString,
                                    QString attribute_name,
-                                   QVariant attribute_value);
+                                   QVariant attribute_value,
+                                   bool commit);
     //!remove a change set
     void attributeChangeSetClear(QString device_id,
                                    QString attribute_name);

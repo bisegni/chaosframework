@@ -75,19 +75,22 @@ void CDatasetAttributeSet2VButton::changeSetRollback() {
 
 void CDatasetAttributeSet2VButton::on_pushButton_clicked(bool cliecked) {
     Q_UNUSED(cliecked)
+    //change is applyed without wait commit
     switch (_internal_state) {
     case StateUndeterminated:
     case StateOff:
         //send data for on value
         emit attributeChangeSetUpdated(deviceID(),
                                        attributeName(),
-                                       QVariant(attributeSetValueOn()));
+                                       QVariant(attributeSetValueOn()),
+                                       true);
         break;
      case StateOn:
         //send data for value off
         emit attributeChangeSetUpdated(deviceID(),
                                        attributeName(),
-                                       QVariant(attributeSetValueOff()));
+                                       QVariant(attributeSetValueOff()),
+                                       true);
         break;
     }
 }
