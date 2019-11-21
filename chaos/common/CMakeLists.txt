@@ -45,6 +45,27 @@ IF (CHAOS_TARGET)
 	 LOG_BUILD ON)
      ENDIF()
 
+if(WIN32)
+MESG("Configure libBoost as CMake")
+	ExternalProject_Add(
+	 boost
+	 GIT_REPOSITORY https://github.com/boostorg/boost.git
+	 PREFIX "${CMAKE_BINARY_DIR}/ext_dep/boost"
+	 	 
+	GIT_TAG 1_71_0
+    GIT_PROGRESS 1
+    BUILD_IN_SOURCE 1
+    UPDATE_COMMAND ""
+    CONFIGURE_COMMAND bootstrap.bat
+    BUILD_COMMAND b2 
+    INSTALL_COMMAND ""
+    LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+ENDIF(WIN32)
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
