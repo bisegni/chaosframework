@@ -40,10 +40,8 @@
 #include <signal.h>
 #include <windows.h>
 #include "ChaosCommonWin.h"
- unsigned int sleep(unsigned int seconds) {
-                                Sleep(seconds * 1000);
-                                return 0;
-                            }
+#include "../cu_toolkit/windowsCompliant.h"
+
 #endif
 using namespace chaos;
 using namespace chaos::common::data;
