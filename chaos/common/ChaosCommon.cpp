@@ -40,6 +40,7 @@
 #include <signal.h>
 #include <windows.h>
 #include "ChaosCommonWin.h"
+#include "../cu_toolkit/windowsCompliant.h"
 
 #endif
 using namespace chaos;
