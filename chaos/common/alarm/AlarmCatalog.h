@@ -94,7 +94,7 @@ namespace chaos {
                 const size_t size();
 
                 //!return the catalog size
-                 const uint8_t max();
+                 const uint8_t maxLevel();
             };
         }
     }

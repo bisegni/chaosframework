@@ -259,7 +259,6 @@ void AbstractDriver::scanForMessage() {
     } catch (...) {
       //unkonwn exception
       ADLERR_ << "an unknown exception executing opcode:" << current_message_ptr->opcode;
-      ;
       opcode_submission_result = MsgManagmentResultType::MMR_ERROR;
       strncpy(current_message_ptr->err_msg, "Unexpected exception:", DRVMSG_ERR_MSG_SIZE);
       strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
@@ -283,6 +282,7 @@ void AbstractDriver::driverInit(const chaos::common::data::CDataWrapper &data) {
 const bool AbstractDriver::isBypass() const {
   return o_exe != this;
 }
+
 void AbstractDriver::setBypass(bool bypass) {
   if (bypass) {
     LBypassDriverUnqPtrReadLock rl = bypass_driver.getReadLockObject();

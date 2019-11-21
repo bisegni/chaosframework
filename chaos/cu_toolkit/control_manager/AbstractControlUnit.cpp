@@ -2178,7 +2178,7 @@ void AbstractControlUnit::setStateVariableSeverity(StateVariableType            
     output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
     */
   AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
-  output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+  output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.maxLevel()));
 }
 
 bool AbstractControlUnit::setStateVariableSeverity(StateVariableType             variable_type,
@@ -2194,7 +2194,7 @@ bool AbstractControlUnit::setStateVariableSeverity(StateVariableType            
     output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
    */
   AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
-  output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.max()));
+  output_cache.getValueSettingByName(stateVariableEnumToName(variable_type))->setValue(CDataVariant(catalog.maxLevel()));
 
   return true;
 }
@@ -2264,7 +2264,7 @@ void AbstractControlUnit::alarmChanged(const std::string& state_variable_tag,
       break;
   }
   AttributeCache& output_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
-  output_cache.getValueSettingByName(stateVariableEnumToName((StateVariableType)variable_type))->setValue(CDataVariant(catalog.max()));
+  output_cache.getValueSettingByName(stateVariableEnumToName((StateVariableType)variable_type))->setValue(CDataVariant(catalog.maxLevel()));
 
   attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
   pushSystemDataset();

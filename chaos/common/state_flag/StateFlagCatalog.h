@@ -191,7 +191,8 @@ namespace chaos {
                 const size_t size() const;
 
                 //!return the max state level of the catalog
-                 const uint8_t max() const;
+                 const uint8_t maxLevel() const;
+                
                 //!return the name fo the catalog
                 const std::string& getName() const;
                 

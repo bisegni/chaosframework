@@ -254,7 +254,7 @@ const size_t StateFlagCatalog::size() const {
     return catalog_container().size();
 }
 
-const uint8_t StateFlagCatalog::max() const {
+const uint8_t StateFlagCatalog::maxLevel() const {
 	uint8_t maxv=0;
     LockableObjectWriteLock_t wl;
     catalog_container.getWriteLock(wl);
@@ -269,6 +269,7 @@ const uint8_t StateFlagCatalog::max() const {
         }
     return maxv;
 }
+
 const std::string& StateFlagCatalog::getName() const {
     return catalog_name;
 }
