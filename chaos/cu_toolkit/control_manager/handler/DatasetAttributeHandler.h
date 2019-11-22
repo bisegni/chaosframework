@@ -23,7 +23,7 @@
 #define __CHAOSFramework__DatasetAttributeHandler_h
 
 #include <chaos/cu_toolkit/control_manager/handler/AbstractAttributeHandler.h>
-
+#include <chaos/common/global.h>
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
@@ -74,6 +74,7 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                         if(attribute_changes_set == NULL ||
                            attribute_changes_set->hasKey(attribute_name) == false) return false;
                         //broadcast the attribute value
+                        LDBG_<<"Execute Handler on Attribute name:"<<attribute_name<<" Set value:"<<attribute_changes_set->getCompliantJSONString();
                         return ((*object_reference).*handler_pointer)(attribute_name,
                                                                       attribute_changes_set->getValue<T>(attribute_name),
                                                                       attribute_changes_set->getValueSize(attribute_name));

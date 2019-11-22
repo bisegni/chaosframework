@@ -195,6 +195,9 @@ CDataVariant::CDataVariant(CDataWrapper *buffer_value):
 type(DataType::TYPE_CLUSTER),
 _internal_variant(ChaosSharedPtr<CDataWrapper>(buffer_value)) { }
 
+CDataVariant::CDataVariant(CDWUniquePtr buffer_value):type(DataType::TYPE_CLUSTER),
+_internal_variant(ChaosSharedPtr<CDataWrapper>(buffer_value.release())) { }
+
 CDataVariant::CDataVariant(const CDataVariant& to_copy):
 type(to_copy.type),
 _internal_variant(to_copy._internal_variant) { }
