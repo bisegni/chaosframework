@@ -50,9 +50,9 @@ MESG("Configure libBoost as CMake")
 	ExternalProject_Add(
 	 boost
 	 GIT_REPOSITORY https://github.com/boostorg/boost.git
-	 PREFIX "${CMAKE_BINARY_DIR}/ext_dep/boost"
+	 PREFIX "c:/local/boost"
 	 	 
-	GIT_TAG 1_71_0
+	GIT_TAG boost-1.70.0
     GIT_PROGRESS 1
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
