@@ -146,6 +146,12 @@ namespace chaos{
 					}
 				}
 				
+				template <typename T>
+				void setOutputAttributeValue(const std::string& attribute_name,
+											 T value){
+												 setOutputAttributeValue(attribute_name,&value,sizeof(T));
+											 }
+
 				//! Set the value for a determinated variable in a determinate domain
 				void setOutputAttributeValue(const std::string& attribute_name,
 											 void * value,
