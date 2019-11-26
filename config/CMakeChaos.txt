@@ -46,6 +46,7 @@ option(CHAOS_BOOST_MINOR_VERSION "Use a predefined boost minor version" 0)
 option(CHAOS_BOOST_DYNAMIC "compile and use dynamic boost" OFF)
 option(CHAOS_BUILD_UNITSERVER "Automatically build an Unit Server that includes all CUs found in distribution" ON)
 option(CHAOS_SANITIZER "sanitize the specified project" "")
+option(GPUFIT "Fast Fitting libraries (needs CUDA toolkit)" OFF)
 
 IF(NOT CHAOS_VERSION_MAJOR)
 	 SET(CHAOS_VERSION_MAJOR "1")
