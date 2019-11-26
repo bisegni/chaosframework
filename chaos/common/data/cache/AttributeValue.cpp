@@ -121,6 +121,7 @@ bool AttributeValue::setStringValue(const std::string& value,
 bool AttributeValue::setValue(CDataWrapper& attribute_value,
                               bool tag_has_changed) {
 	attribute_value.copyAllTo(cdvalue);
+    setStringValue(attribute_value.getCompliantJSONString(),tag_has_changed,true);
 	//set the relative field for set has changed
 	if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
 	 return true;
@@ -167,6 +168,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             break;
         }
         case DataType::TYPE_CLUSTER:
+
         case DataType::TYPE_STRING: {
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size())) return false;

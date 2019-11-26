@@ -68,6 +68,8 @@ namespace chaos {
     namespace common {
         namespace data {
             class CDataWrapper;
+            typedef ChaosUniquePtr<chaos::common::data::CDataWrapper> CDWUniquePtr;
+
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(bool);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(int32_t);
             CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint32_t);
@@ -113,7 +115,8 @@ namespace chaos {
                 //! take the ownership of the object
                 explicit CDataVariant(CDBufferUniquePtr buffer_value);
                 explicit CDataVariant(CDataWrapper *buffer_value);
-                
+                explicit CDataVariant(CDWUniquePtr buffer_value);
+
                 CDataVariant(const CDataVariant& to_copy);
                 
                 CDataVariant();

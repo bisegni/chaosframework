@@ -789,9 +789,17 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
         case  chaos::DataType::TYPE_DOUBLE:
             return CDataVariant(getDoubleValue(key));
             break;
-        case  chaos::DataType::TYPE_STRING:
-            return CDataVariant(getStringValue(key));
-            break;
+        case chaos::DataType::TYPE_STRING:
+            return  CDataVariant(getStringValue(key));
+        case chaos::DataType::TYPE_CLUSTER:
+            if(isStringValue(key)){
+                return CDataVariant(getValueType(key),(const void *)getStringValue(key).c_str(),(uint32_t)getStringValue(key).size());
+            } else {
+                return CDataVariant(MOVE(getCSDataValue(key)));
+
+            }
+          
+       
         case  chaos::DataType::TYPE_BYTEARRAY:
             return CDataVariant(getBinaryValueAsCDataBuffer(key));
             break;
