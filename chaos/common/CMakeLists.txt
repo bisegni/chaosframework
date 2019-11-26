@@ -50,22 +50,46 @@ MESG("Configure libBoost as CMake")
 	ExternalProject_Add(
 	 boost
 	 GIT_REPOSITORY https://github.com/boostorg/boost.git
-	 PREFIX "c:/local/boost"
+	 PREFIX ${CMAKE_CURRENT_BINARY_DIR}/boost
 	 	 
 	GIT_TAG boost-1.70.0
     GIT_PROGRESS 1
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND bootstrap.bat
-    BUILD_COMMAND b2 
-    INSTALL_COMMAND ""
+    BUILD_COMMAND b2 link=static install --prefix=${CMAKE_CURRENT_BINARY_DIR}/boostinstall
+    INSTALL_COMMAND b2 install --prefix=${CMAKE_CURRENT_BINARY_DIR}/boostinstall
     LOG_DOWNLOAD 1
     LOG_UPDATE 1
     LOG_CONFIGURE 1
     LOG_BUILD 1
     LOG_INSTALL 1
 	)
+MESSAGE("Configure JsonCpp as CMake External Project")
+ExternalProject_Add(
+	 jsonCpp
+	 GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
+	 
+	 GIT_TAG 1.9.2
+     GIT_PROGRESS 1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
+	 
+     CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	 
+	 LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+
+
+
 ENDIF(WIN32)
+
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
@@ -388,6 +412,9 @@ SET(common_lib_src ${common_lib_src}
 #compile lua chaos vm and core files
 if (WIN32)
 INCLUDE_DIRECTORIES( ../../ script/lua/core ${ALL_WINDOWS_INCLUDE_DIR})
+MESSAGE("ALEDEBUG CMAKE CURRENT BINARY DIR" ${CMAKE_CURRENT_BINARY_DIR} )
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/boost/src/boost)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
 else(WIN32)
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 endif(WIN32)
@@ -424,6 +451,7 @@ endif()
 
 add_dependencies(${PROJECT_NAME} libzmq)
 #ENDIF(NOT WIN32)
+add_dependencies(${PROJECT_NAME} boost)
 
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)

@@ -29,6 +29,12 @@ option(CHAOS_DATA_EXPORT "Chaos Data Export" OFF)
 option(CHAOS_EXAMPLES "Chaos Examples" OFF)
 #warning possibile perdita di dati spento.
 add_definitions(-wd"4267")
+
+
+SET (ALL_WINDOWS_LIBPATH "DbgHelp.lib Netapi32.lib Iphlpapi.lib")
+
+
+
 else (WIN32)
 option(CHAOS_MDS "Chaos Data Service" ON)
 option(CHAOS_AGENT "Chaos Agent Service" ON)
