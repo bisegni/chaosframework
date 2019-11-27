@@ -5,8 +5,10 @@
 //  Created by Claudio Bisegni on 7/8/13.
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
-#include <string>
+#include <string>ù
+#if defined(__linux__) || defined(__APPLE__)
 #include <sched.h>
+#endif
 #include <exception>
 
 #include <chaos/common/global.h>
