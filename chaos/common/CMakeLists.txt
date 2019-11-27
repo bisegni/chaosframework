@@ -215,23 +215,16 @@ SET(common_lib_src ${common_lib_src}
                     data/entity/Entity.cpp data/broker/DataBroker.cpp
                     data/broker/publisher/PublisherDataService.cpp
                     data/broker/reader/ReaderDataService.cpp
-                    data/cache/FastHash.cpp
-                    data/cache/DataCache.cpp
-                    data/cache/LFDataCache.cpp)
+                    data/cache/FastHash.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     debug/tracey.cpp)
 
 SET(common_lib_src ${common_lib_src}
-                    data/cache/ChannelValueAccessor.cpp
-                    data/cache/KeyGroupCache.cpp
                     data/cache/AttributeValue.cpp
                     data/cache/AttributeCache.cpp
                     data/cache/AbstractSharedDomainCache.cpp
                     data/cache/AttributeValueSharedCache.cpp)
-
-SET(common_lib_src ${common_lib_src}
-                    memory/ManagedMemory.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     dispatcher/DefaultEventDispatcher.cpp
