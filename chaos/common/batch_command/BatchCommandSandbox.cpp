@@ -5,7 +5,7 @@
 //  Created by Claudio Bisegni on 7/8/13.
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
-#include <string>ù
+#include <string>
 #if defined(__linux__) || defined(__APPLE__)
 #include <sched.h>
 #endif
