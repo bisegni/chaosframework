@@ -4,6 +4,11 @@ project(chaos_micro_unit_toolkit)
 
 if(WIN32)
 include_directories(${ALL_WINDOWS_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
+
+SET(BUILD_FORCE_STATIC 1)
+
 else()
 include_directories(../)
 endif(WIN32)
