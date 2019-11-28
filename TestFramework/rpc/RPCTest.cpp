@@ -24,6 +24,7 @@
 #include<chaos/common/global.h>
 #include<chaos/common/chaos_constants.h>
 #include<chaos/common/message/NodeMessageChannel.h>
+#include <chaos/cu_toolkit/windowsCompliant.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
