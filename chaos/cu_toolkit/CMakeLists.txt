@@ -75,6 +75,10 @@ SET(cu_lib_src ${cu_lib_src}
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)
 
+IF (WIN32)
+SET(BUILD_FORCE_STATIC 1)
+ENDIF(WIN32)
+
 IF (BUILD_FORCE_STATIC)
      ADD_LIBRARY(${PROJECT_NAME} STATIC ${cu_lib_src})
  ELSE ()
@@ -89,10 +93,10 @@ IF (BUILD_FORCE_STATIC)
 SET(chaos_cutoolkit_lib ${CMAKE_INSTALL_PREFIX}/lib)
 MESSAGE("ALEDEBUG chaos_cutoolkit_lib :" ${chaos_cutoolkit_lib})
 set (BOOST_LIBPATH  ${CMAKE_INSTALL_PREFIX}/boostinstall/lib )
-set (BUILD_LIB "-LIBPATH:${chaos_cutoolkit_lib}" chaos_common)
 
+SET (ALL_WINDOWS_LIBS "DbgHelp.lib Netapi32.lib Iphlpapi.lib -LIBPATH:${BOOST_LIBPATH}  chaos_common")
 separate_arguments(chaos_cutoolkit_lib)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${BUILD_LIB})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${ALL_WINDOWS_LIBS})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
