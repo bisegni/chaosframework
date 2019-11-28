@@ -13,7 +13,15 @@ ENDIF()
 
 #example plugin
 SET(plugin_src plugin/ExamplePlugin.cpp )
+if(WIN32)
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
+#SET(BUILD_FORCE_STATIC 1)
+ADD_LIBRARY(ExamplePlugin STATIC ${plugin_src})
+else (WIN32)
 ADD_LIBRARY(ExamplePlugin SHARED ${plugin_src})
+endif(WIN32)
+
+
 set_target_properties(ExamplePlugin PROPERTIES PREFIX "" SUFFIX ".chaos_extension")
 
 TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common ${PluginTestLib})
