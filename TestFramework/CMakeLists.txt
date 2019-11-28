@@ -18,8 +18,10 @@ set_target_properties(ExamplePlugin PROPERTIES PREFIX "" SUFFIX ".chaos_extensio
 
 TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common ${PluginTestLib})
 
-INSTALL_TARGETS(/lib ExamplePlugin)
 
+INSTALL(TARGETS ExamplePlugin 
+        DESTINATION "lib"
+        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
 #tests EXECUTABLE
 SET(TestFrameworkSource main.cpp
@@ -100,4 +102,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(TestFramework ${LinkedLibrary})
 
-INSTALL_TARGETS(/bin TestFramework)
+
+INSTALL(TARGETS ${PROJECT_NAME}
+        DESTINATION "bin"
+        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
