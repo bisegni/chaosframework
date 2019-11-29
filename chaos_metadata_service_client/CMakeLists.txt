@@ -146,7 +146,7 @@ ENDIF ()
 
 
 IF (WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}      ${ALL_WINDOWS_LIBPATH}   "-LIBPATH:C:/Users/aduffizi/source/repos/chaos_bundle/INSTALLPATH/lib/" chaos_common.lib )
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common    ${ALL_WINDOWS_LIBPATH}   )
 ELSE()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common ${FrameworkLib})
 ENDIF()

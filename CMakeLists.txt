@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 MESSAGE("framework CMakeLists")
 IF(WIN32)
+add_definitions(-D_WIN32_WINNT=0x601)
 #include(config/CMakeChaosWin.txt)
 macro (MESG parm)
   SET(WHERE ${CMAKE_CURRENT_LIST_DIR})
