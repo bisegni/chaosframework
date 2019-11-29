@@ -26,7 +26,7 @@
 #include <boost/random.hpp>
 #include <boost/generator_iterator.hpp>
 #include <boost/random/random_device.hpp>
-
+#include <chaos/cu_toolkit/windowsCompliant.h>
 #include "TimerTest.h"
 
 using namespace chaos::common::async_central;

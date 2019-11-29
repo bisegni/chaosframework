@@ -21,6 +21,7 @@
 
 #include "MDSChannelTest.h"
 #include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/cu_toolkit/windowsCompliant.h>
 
 #define DEBUG_PRINTER(x) std::cout << "[          ] " << x <<std::endl;
 
