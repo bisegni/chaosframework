@@ -445,13 +445,11 @@ add_dependencies(${PROJECT_NAME} prometheus)
 endif()
 
 IF (WIN32)
-#add dependency to libzmq
-
 add_dependencies(${PROJECT_NAME} libzmq)
-
 add_dependencies(${PROJECT_NAME} boost)
 add_dependencies(${PROJECT_NAME} jsonCpp)
-ENDIF(NOT WIN32)
+ENDIF()
+
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)
 ENDIF()
