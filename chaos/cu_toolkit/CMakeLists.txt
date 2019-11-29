@@ -1,7 +1,11 @@
 project(chaos_cutoolkit)
 if(WIN32)
+
 set(CMAKE_SUPPRESS_REGENERATION true)
 INCLUDE_DIRECTORIES( ../../ ${ALL_WINDOWS_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/include/boost-1_70)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
 ELSE()
 INCLUDE_DIRECTORIES(chaos/cu ../../)
 ENDIF(WIN32)
@@ -73,6 +77,13 @@ SET(cu_lib_src ${cu_lib_src}
 SET(cu_lib_src ${cu_lib_src}
         control_manager/execution_pool/ExecutionPool.cpp)
 
+IF (WIN32)
+SET(BUILD_FORCE_STATIC 1)
+SET (ALL_WINDOWS_LIBS "DbgHelp.lib Netapi32.lib Iphlpapi.lib -LIBPATH:${BOOST_LIBPATH}  chaos_common")
+ELSE()
+SET (ALL_WINDOWS_LIBS )
+ENDIF(WIN32)
+
 IF (BUILD_FORCE_STATIC)
      ADD_LIBRARY(${PROJECT_NAME} STATIC ${cu_lib_src})
  ELSE ()
@@ -86,8 +97,11 @@ IF (BUILD_FORCE_STATIC)
 
 SET(chaos_cutoolkit_lib ${CMAKE_INSTALL_PREFIX}/lib)
 MESSAGE("ALEDEBUG chaos_cutoolkit_lib :" ${chaos_cutoolkit_lib})
+set (BOOST_LIBPATH  ${CMAKE_INSTALL_PREFIX}/boostinstall/lib )
+
+
 separate_arguments(chaos_cutoolkit_lib)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}  "-LIBPATH:${chaos_cutoolkit_lib}" chaos_common)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${ALL_WINDOWS_LIBS})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)

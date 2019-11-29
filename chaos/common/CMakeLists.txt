@@ -428,25 +428,29 @@ ENDIF()
 IF (NOT DEFINED BUILD_FORCE_STATIC)
 
 ENDIF ()
+IF (WIN32)
+SET(BUILD_FORCE_STATIC 1)
+ENDIF(WIN32)
 
 IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
-ELSE ()
+ELSE (BUILD_FORCE_STATIC)
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
-ENDIF ()
+ENDIF (BUILD_FORCE_STATIC)
+
+
+
 
 IF (CHAOS_PROMETHEUS)
 add_dependencies(${PROJECT_NAME} prometheus)
 endif()
 
-#IF (NOT WIN32)
-#add dependency to libzmq
-
+IF (WIN32)
 add_dependencies(${PROJECT_NAME} libzmq)
-#ENDIF(NOT WIN32)
 add_dependencies(${PROJECT_NAME} boost)
 add_dependencies(${PROJECT_NAME} jsonCpp)
+ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)

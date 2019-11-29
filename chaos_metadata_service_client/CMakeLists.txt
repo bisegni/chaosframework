@@ -4,7 +4,9 @@ project(chaos_metadata_service_client)
 
 
 IF (WIN32)
-include_directories(../../ ${ALL_WINDOWS_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
+
 ELSE()
 INCLUDE_DIRECTORIES(../)
 ENDIF()
@@ -131,6 +133,10 @@ SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/AbstractQuantumKeyAttributeHandler.cpp
                             monitor_system/QuantumTSTaggedAttributeHandler.cpp)
 
+IF (WIN32)
+SET(BUILD_FORCE_STATIC 1)
+ENDIF(WIN32)
+
 IF (BUILD_FORCE_STATIC)
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${mcl_src})
 ELSE ()
@@ -140,7 +146,7 @@ ENDIF ()
 
 
 IF (WIN32)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}      ${ALL_WINDOWS_LIBPATH}   "-LIBPATH:C:/Users/aduffizi/source/repos/chaos_bundle/INSTALLPATH/lib/" chaos_common.lib )
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common    ${ALL_WINDOWS_LIBPATH}   )
 ELSE()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common ${FrameworkLib})
 ENDIF()
