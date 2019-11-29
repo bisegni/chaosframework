@@ -56,8 +56,9 @@ namespace chaos {
         private:
             ChaosAgent();
             ~ChaosAgent();
-            static void signalHanlder(int signal_number);
         public:
+                    static void signalHanlder(int signal_number);
+
             ChaosAgentSettings settings;
             void init(int argc, const char* argv[]);
             void init(istringstream &initStringStream);

@@ -381,6 +381,8 @@ SET(common_lib_src ${common_lib_src}
                     trigger/AbstractSubject.cpp
                     trigger/TriggerExecutionEnviroment.cpp
                     trigger/trigger_types.cpp)
+SET(common_lib_src ${common_lib_src}
+                    thread/WaitSemaphore.cpp)
 
 IF(CHAOS_PROMETHEUS)
 MESG("Add source code for metrics: ${CHAOS_PROMETHEUS}")  

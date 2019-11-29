@@ -26,6 +26,22 @@ using namespace chaos::agent;
 
 int main(int argc, const char * argv[]) {
     try {
+
+         if (signal((int) SIGINT, ChaosAgent::signalHanlder) == SIG_ERR) {
+        return -1;
+    }
+    
+    if (signal((int) SIGQUIT, ChaosAgent::signalHanlder) == SIG_ERR) {
+        return -1;
+    }
+    
+    if (signal((int) SIGTERM, ChaosAgent::signalHanlder) == SIG_ERR) {
+        return -1;
+
+    }
+         ChaosAgent::getInstance()->settings.agent_uid =CHAOS_FORMAT("ChaosAgent_%1%",%chaos::GlobalConfiguration::getInstance()->getHostname());
+
+
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< int >(OPT_REST_PORT,
                                                                                               "Port to query process management",
                                                                                               8071,
@@ -35,10 +51,14 @@ int main(int argc, const char * argv[]) {
                                                                                               "script_dir",
                                                                                               &ChaosAgent::getInstance()->settings.script_dir);
         //data worker
-        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_NODE_UID,
+                                                                                              "Node Unique Name",
+                                                                                              ChaosAgent::getInstance()->settings.agent_uid,
+                                                                                              &ChaosAgent::getInstance()->settings.agent_uid);
+         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_WORKING_DIR,
                                                                                               "Working directory for agent",
                                                                                               "",
-                                                                                              &ChaosAgent::getInstance()->settings.working_directory);
+                                                                                              &ChaosAgent::getInstance()->settings.working_directory);                                                                                      
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_ENABLE_EXT_CMD,
                                                                                               "Enable the external command via pipe",
                                                                                               false,

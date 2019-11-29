@@ -60,7 +60,7 @@ CDWUniquePtr SaveNodeAssociation::execute(CDWUniquePtr api_data) {
             LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error finding the agent for the node %1% with error %2%", %assoc_sd_wrapper().associated_node_uid%err));
         } else if(current_agent.size() > 0 &&
                   current_agent.compare(agent_uid) != 0) {
-            LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be assocaited to %3%", %assoc_sd_wrapper().associated_node_uid%current_agent%agent_uid));
+            LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be associated to %3%", %assoc_sd_wrapper().associated_node_uid%current_agent%agent_uid));
         }
             
         if((err = a_da->saveNodeAssociationForAgent(agent_uid, assoc_sd_wrapper()))) {
@@ -80,7 +80,7 @@ CDWUniquePtr SaveNodeAssociation::execute(CDWUniquePtr api_data) {
                 LOG_AND_TROW(ERR, -7, CHAOS_FORMAT("Error finding the agent for the node %1% with error %2%", %it->associated_node_uid%err));
             } else if(current_agent.size() > 0 &&
                       current_agent.compare(agent_uid) != 0) {
-                LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be assocaited to %3%", %it->associated_node_uid%current_agent%agent_uid));
+                LOG_AND_TROW(ERR, -8, CHAOS_FORMAT("The node %1% is associated to the agent %2% and can't be associated to %3%", %it->associated_node_uid%current_agent%agent_uid));
             }
             if((err = a_da->saveNodeAssociationForAgent(agent_uid, *it))) {
                 LOG_AND_TROW(ERR, -9, CHAOS_FORMAT("Error saving association for node %1% into agent %2% with error %3%", %it->associated_node_uid%agent_uid%err));

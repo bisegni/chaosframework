@@ -117,6 +117,9 @@ namespace chaos {
         //! config file parameter
         static const char * const   OPT_METRIC_WEB_SERVER_PORT           = "metrics-http-port";
 #endif
+        //! optional description of the node
+        static const char * const   OPT_NODE_DESC						= "node-desc";
+
         
     }
     /** @} */ // end of ParamOption

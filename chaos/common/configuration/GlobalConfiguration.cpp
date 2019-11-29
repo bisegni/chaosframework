@@ -54,7 +54,8 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_HELP, "Produce help message");
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
         addOption(InitOption::OPT_VERSION, "Printout version");
-        
+        addOption(InitOption::OPT_NODE_DESC, po::value< std::string >()->default_value(""), "A string containing a brief description of the node");
+
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_SYSLOG, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on syslog server");
         addOption(InitOption::OPT_LOG_SYSLOG_SERVER, po::value< string >()->default_value("localhost"), "Specify the logsrv hostname");
@@ -238,6 +239,9 @@ void GlobalConfiguration::checkDefaultOption()  {
     CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE);
     configuration->addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
     
+    CHECK_AND_DEFINE_OPTION(string, nodeDesc, InitOption::OPT_NODE_DESC);
+    configuration->addStringValue(InitOption::OPT_NODE_DESC, nodeDesc);
+
     CHECK_AND_DEFINE_OPTION(string, logLevel, InitOption::OPT_LOG_LEVEL)
     configuration->addInt32Value(InitOption::OPT_LOG_LEVEL, filterLogLevel(logLevel));
     
@@ -505,6 +509,11 @@ VectorNetworkAddress GlobalConfiguration::getMetadataServerAddressList() {
  */
 string GlobalConfiguration::getLocalServerAddress() {
     return configuration->getStringValue("local_ip");
+}
+
+std::string GlobalConfiguration::getDesc(){
+    return configuration->getStringValue(chaos::InitOption::OPT_NODE_DESC);
+
 }
 
 /*

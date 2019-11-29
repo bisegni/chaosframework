@@ -24,6 +24,8 @@
 
 namespace chaos {
     namespace agent {
+#define OPT_NODE_UID             "node-uid"
+
 #define OPT_WORKING_DIR             "working-dir"
 #define OPT_ENABLE_SEPARATE_US_LOG  "enable-separate-us-logging"
 #define OPT_ENABLE_MERGE_US_LOG     "enable-merge-us-log"

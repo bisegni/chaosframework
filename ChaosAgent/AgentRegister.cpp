@@ -155,6 +155,13 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> AgentRegister::getAgentRegistr
                            chaos::NodeType::NODE_TYPE_AGENT);
     result->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR,
                            chaos::GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
+    result->addStringValue(NodeDefinitionKey::NODE_HOST_NAME,
+                           chaos::GlobalConfiguration::getInstance()->getHostname());
+    if(chaos::GlobalConfiguration::getInstance()->getDesc()!=""){
+        result->addStringValue(NodeDefinitionKey::NODE_DESC,
+                           chaos::GlobalConfiguration::getInstance()->getDesc());
+    }
+    result->addStringValue("instance_name",ChaosAgent::getInstance()->settings.agent_uid);
     result->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN,
                            rpc_domain);
     result->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,

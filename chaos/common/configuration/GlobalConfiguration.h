@@ -295,6 +295,9 @@ x = hasOption(y);
         
         //!return the hostname of the host that run chaos node
         std::string getHostname();
+
+        //!return the optional description of the node
+        std::string getDesc();
         
         /*
          return the address of metadataserver

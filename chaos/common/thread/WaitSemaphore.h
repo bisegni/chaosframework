@@ -68,15 +68,8 @@ namespace chaos {
          or a unlock event
          \return the object that someone has associated at this semaphore
          */
-        void wait() {
-            boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-            if(inWait) return;
-            inWait = true;
-            while(!answered){wait_answer_condition.wait(lock);};
-            inWait = false;
-            answered = false;
-        }
-        
+        void wait();
+        void waitRaw();
         //!wait
         /*! 
          the thread that call this method will wait or an ammount of millisecond
@@ -85,14 +78,7 @@ namespace chaos {
          if no one unlock it first
          \return the object that someone has associated at this semaphore
          */
-        void wait(unsigned long millisecToWait) {
-            boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-            if(inWait) return;
-            inWait = true;
-            do {} while(wait_answer_condition.timed_wait(lock, posix_time::milliseconds(millisecToWait)) && !answered);
-            inWait = false;
-            answered = false;
-        }
+        void wait(unsigned long millisecToWait);
         
 		//!wait
         /*!
@@ -102,14 +88,7 @@ namespace chaos {
          if no one unlock it first
          \return the object that someone has associated at this semaphore
          */
-        void waitUSec(uint64_t microsecondsToWait) {
-            boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-            if(inWait) return;
-            inWait = true;
-            do {} while(wait_answer_condition.timed_wait(lock, posix_time::microseconds(microsecondsToWait)) && !answered);
-            inWait = false;
-            answered = false;
-        }
+        void waitUSec(uint64_t microsecondsToWait);
 		
         //!unlock
         /*! 
