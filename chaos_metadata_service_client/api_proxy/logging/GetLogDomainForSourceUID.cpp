@@ -20,6 +20,7 @@
  */
 
 #include <chaos_metadata_service_client/api_proxy/logging/GetLogDomainForSourceUID.h>
+#include <chaos/common/message/MultiAddressMessageRequestFuture.h>
 
 using namespace chaos;
 using namespace chaos::common::data;

@@ -21,14 +21,13 @@
 #ifndef __CHAOSFramework__ApiProxyManager__
 #define __CHAOSFramework__ApiProxyManager__
 
-//#include <chaos_metadata_service_client/ChaosMetadataServiceClient.h>
+//#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
-
-#include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/utility/ObjectInstancer.h>
+//#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
 #include <string>
 #include <vector>
 #include <iostream>
@@ -36,6 +35,12 @@
 chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
 
 namespace chaos {
+    namespace common{
+        namespace message{
+            class MultiAddressMessageChannel;
+        }
+    }
+    
     namespace metadata_service_client {
         //! forward declaration
         class ChaosMetadataServiceClient;
@@ -67,7 +72,7 @@ namespace chaos {
             public:
                 template<typename P>
                 ChaosUniquePtr<P> getApiProxy(int32_t timeout_in_milliseconds = RpcConfigurationKey::GlobalRPCTimeoutinMSec) {
-                    static ChaosUniquePtr<INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
+                    static ChaosUniquePtr< INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
                     //! there was a type for every template expantion
                     return ChaosUniquePtr<P>((P*)i->getInstance(mn_message_channel, timeout_in_milliseconds));
                 };

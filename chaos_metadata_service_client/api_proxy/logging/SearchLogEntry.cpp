@@ -20,7 +20,7 @@
  */
 
 #include <chaos_metadata_service_client/api_proxy/logging/SearchLogEntry.h>
-
+#include <chaos/common/message/MultiAddressMessageRequestFuture.h>
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;

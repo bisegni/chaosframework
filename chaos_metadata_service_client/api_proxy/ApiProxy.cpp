@@ -19,6 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos_metadata_service_client/api_proxy/ApiProxy.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 using namespace chaos::metadata_service_client::api_proxy;
 
 

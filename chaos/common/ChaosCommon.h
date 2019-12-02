@@ -29,7 +29,6 @@
 #include <chaos/common/utility/InetUtility.h>
 
 #include <chaos/common/plugin/PluginManager.h>
-#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/action/DeclareAction.h>
 
 #include <chaos/common/utility/StartableService.h>

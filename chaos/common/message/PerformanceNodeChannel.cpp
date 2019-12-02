@@ -21,6 +21,8 @@
 
 #include <chaos/common/chaos_errors.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
+#include <chaos/common/direct_io/DirectIO.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;

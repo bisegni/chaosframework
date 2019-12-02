@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos_metadata_service_client/monitor_system/QuantumSlotScheduler.h>
 
 #include <chaos/common/io/IODirectIODriver.h>

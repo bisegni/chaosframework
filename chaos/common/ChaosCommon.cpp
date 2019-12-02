@@ -19,6 +19,8 @@
  * permissions and limitations under the Licence.
  */
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/chaos_errors.h>
+#include <chaos/common/network/NetworkBroker.h>
 
 #if CHAOS_PROMETHEUS
 #include <chaos/common/metric/MetricManager.h>

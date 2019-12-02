@@ -22,7 +22,7 @@
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/network/PerformanceManagment.h>
 #include <chaos/common/direct_io/DirectIOPerformanceSession.h>
-
+#include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #define PM_LOG_HEAD "[PerformanceManagment] - "
 
 #define PMLAPP_ LAPP_ << PM_LOG_HEAD

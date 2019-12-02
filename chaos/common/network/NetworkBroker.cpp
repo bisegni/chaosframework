@@ -27,11 +27,14 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/MessageRequestDomain.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/rpc/ChaosRpc.h>
+#include <chaos/common/direct_io/DirectIO.h>
+
 //-----------for metric collection---------
 #if (CHAOS_PROMETHEUS)
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
