@@ -82,21 +82,20 @@ endif()
 IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
-  MESG("Add google Test as external project")
-  ExternalProject_Add(
+   MESG("Add google Test as external project")
+  IF(WIN32)
+   ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
-     GIT_TAG release-1.8.0
+	 GIT_TAG release-1.10.0
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
      SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
      CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
-
-
      # Specify include dir
      ExternalProject_Get_Property(googletest source_dir)
      set(GTEST_INCLUDE_DIR ${source_dir}/include)
@@ -111,6 +110,36 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY_DIR}")
      MESG("${GTEST_LIBRARY_PATH}")
      MESG("${GTEST_LIBRARY}")
+  ELSE(WIN32)
+ 
+  ExternalProject_Add(
+     googletest
+     GIT_REPOSITORY https://github.com/google/googletest.git
+	 GIT_TAG release-1.8.0
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
+     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
+     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
+     CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+     LOG_DOWNLOAD ON
+     LOG_CONFIGURE ON
+     LOG_BUILD ON)
+     # Specify include dir
+     ExternalProject_Get_Property(googletest source_dir)
+     set(GTEST_INCLUDE_DIR ${source_dir}/include)
+
+     # Library
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_DIR ${binary_dir})
+     ExternalProject_Get_Property(googletest binary_dir)
+     set(GTEST_LIBRARY_PATH ${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
+
+     MESG("${GTEST_INCLUDE_DIR}")
+     MESG("${GTEST_LIBRARY_DIR}")
+     MESG("${GTEST_LIBRARY_PATH}")
+     MESG("${GTEST_LIBRARY}")
+
+   ENDIF(WIN32)
 ENDIF()
 
 IF (USE_GPT)
