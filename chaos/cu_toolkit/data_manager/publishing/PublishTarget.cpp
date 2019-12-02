@@ -227,17 +227,17 @@ void *PublishTarget::serviceForURL(const URL &url, uint32_t service_index) {
     return endpoint_connection.release();
 }
 
-void PublishTarget::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
-                                chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
+void PublishTarget::handleEvent(chaos::common::direct_io::DirectIOClientConnection *client_connection,
+                                chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
     //if the channel has bee disconnected turn the relative index offline, if onli reput it online
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
     switch (event) {
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", % service_index% client_connection->getURL());)
+        case chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", % service_index% client_connection->getURL());)
             connection_feeder.setURLOnline(service_index);
             break;
             
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",% service_index% client_connection->getURL());)
+        case chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",% service_index% client_connection->getURL());)
             connection_feeder.setURLOffline(service_index);
             break;
     }
