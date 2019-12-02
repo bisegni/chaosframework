@@ -49,7 +49,6 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
-
         if(checkProcessAlive(node_association_info) == true) return;
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));

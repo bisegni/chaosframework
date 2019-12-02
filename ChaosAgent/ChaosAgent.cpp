@@ -113,7 +113,7 @@ void ChaosAgent::start() {
         throw CException(-3, "Error registering SIGTERM signal", __PRETTY_FUNCTION__);
     }
     wait_close_semaphore.waitRaw();
-
+    
     #ifndef OLD_PROCESS_MANAGEMENT
     LAPP_<<"Stop process";
 
@@ -131,7 +131,7 @@ ChaosSharedPtr <chaos::agent::utility::ProcRestUtil> ChaosAgent::getProcessManag
 }
 
 void ChaosAgent::stop() {
-        LAPP_<<"STOP";
+    LAPP_<<"STOP";
 
     CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
     agent_register.stop(__PRETTY_FUNCTION__);
