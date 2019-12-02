@@ -3,6 +3,8 @@ project(chaos_common)
 #### required libraries
 MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-check")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-check")
 if(WIN32)
 set(CMAKE_SUPPRESS_REGENERATION true)
 ELSE(WIN32)
