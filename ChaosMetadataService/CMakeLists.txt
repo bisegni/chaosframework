@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-check -fno-stack-protector")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-check -fno-stack-protector")
 #add module path for permi to find lirary
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MACOSX_RPATH ON)
@@ -48,10 +50,11 @@ MESG("Install c mongodb driver")
 ExternalProject_Add(
  mongo-c-driver
  GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
- GIT_TAG 1.12.0
+ GIT_TAG 1.15.2
  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
+ BUILD_COMMAND make CFLAGS=${CMAKE_C_FLAGS} CXXFLAGS=${CMAKE_CXX_FLAGS}
  CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_BSON=ONLY
  LOG_DOWNLOAD ON
@@ -63,10 +66,11 @@ ExternalProject_Add(
  mongo-cxx-driver
  DEPENDS mongo-c-driver
  GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
- GIT_TAG r3.3.0
+ GIT_TAG r3.3.1
  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-prefix"
  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-src"
  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-cxx-driver-build"
+ BUILD_COMMAND make CFLAGS=${CMAKE_C_FLAGS} CXXFLAGS=${CMAKE_CXX_FLAGS}
  CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
  LOG_DOWNLOAD ON
@@ -81,36 +85,36 @@ ExternalProject_Add(
  include_directories("${CMAKE_INSTALL_PREFIX}/include/libbson-1.0")
  include_directories("${CMAKE_INSTALL_PREFIX}/lib")
 
-MESG("Install libuv driver for cassandra dependecy")
-ExternalProject_Add(
- libuv-driver
- GIT_REPOSITORY https://github.com/libuv/libuv.git
- GIT_TAG v1.24.0
- PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-prefix"
- SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-src"
- BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-build"
- CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
- LOG_DOWNLOAD ON
- LOG_CONFIGURE ON
- LOG_BUILD ON)
+# MESG("Install libuv driver for cassandra dependecy")
+# ExternalProject_Add(
+#  libuv-driver
+#  GIT_REPOSITORY https://github.com/libuv/libuv.git
+#  GIT_TAG v1.24.0
+#  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-prefix"
+#  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-src"
+#  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libuv-driver-build"
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+#  LOG_DOWNLOAD ON
+#  LOG_CONFIGURE ON
+#  LOG_BUILD ON)
 
-MESG("Install Cassandra driver")
-ExternalProject_Add(
- cassandra-driver
- DEPENDS libuv-driver
- GIT_REPOSITORY https://github.com/datastax/cpp-driver.git
- GIT_TAG 2.10.0
- PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-prefix"
- SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-src"
- BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-build"
- CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-  -DLIBUV_ROOT_DIR=${CMAKE_INSTALL_PREFIX}
-  -DCASS_USE_OPENSSL=OFF
- LOG_DOWNLOAD ON
- LOG_CONFIGURE ON
- LOG_BUILD ON)
+# MESG("Install Cassandra driver")
+# ExternalProject_Add(
+#  cassandra-driver
+#  DEPENDS libuv-driver
+#  GIT_REPOSITORY https://github.com/datastax/cpp-driver.git
+#  GIT_TAG 2.10.0
+#  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-prefix"
+#  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-src"
+#  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cassandra-driver-build"
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+#   -DLIBUV_ROOT_DIR=${CMAKE_INSTALL_PREFIX}
+#   -DCASS_USE_OPENSSL=OFF
+#  LOG_DOWNLOAD ON
+#  LOG_CONFIGURE ON
+#  LOG_BUILD ON)
 
  include_directories(${LIBMONGOCXX_INCLUDE_DIR})
  include_directories(${LIBBSONCXX_INCLUDE_DIR})
@@ -307,8 +311,8 @@ SET(cnd_src  ${cnd_src} object_storage/hybdriver/ShardKeyManagement.cpp
                         object_storage/hybdriver/HybBaseDataAccess.cpp)
 
 #hybrid cassasndra storage driver
-SET(cnd_src  ${cnd_src} object_storage/hybdriver/cassandra/CassHybObjectStorageDriver.cpp
-                        object_storage/hybdriver/cassandra/CassHybDataAccess.cpp)
+# SET(cnd_src  ${cnd_src} object_storage/hybdriver/cassandra/CassHybObjectStorageDriver.cpp
+#                         object_storage/hybdriver/cassandra/CassHybDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -345,7 +349,8 @@ ENDIF(CHAOS_PROMETHEUS)
 ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
 
 #add dependency
-add_dependencies(${PROJECT_NAME} mongo-cxx-driver cassandra-driver)
+add_dependencies(${PROJECT_NAME} mongo-cxx-driver)
+# add_dependencies(${PROJECT_NAME} cassandra-driver)
 
 FILE(GLOB files "../chaos_service_common/data/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/node/)
@@ -367,10 +372,10 @@ SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
 target_compile_definitions(${PROJECT_NAME} PRIVATE USE_MONGODB3_DRIVER=1)
 
-MESG("Enable link to cassandra and bsoncxx library")
-SET(BUILD_LIBRARY ${BUILD_LIBRARY} uv)
-SET(BUILD_LIBRARY ${BUILD_LIBRARY} cassandra)
-target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CASSANDRA_DRIVER=1)
+# MESG("Enable link to cassandra and bsoncxx library")
+# SET(BUILD_LIBRARY ${BUILD_LIBRARY} uv)
+# SET(BUILD_LIBRARY ${BUILD_LIBRARY} cassandra)
+# target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CASSANDRA_DRIVER=1)
 
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
