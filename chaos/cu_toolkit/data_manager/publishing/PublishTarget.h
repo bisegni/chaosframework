@@ -26,7 +26,6 @@
 #include <chaos/common/network/URLServiceFeeder.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/data/cache/AttributeCache.h>
-#include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 

@@ -26,13 +26,11 @@
 #include <boost/thread/mutex.hpp>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>
-#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/event/event.h>
-#include <chaos/common/network/NetworkForwardInfo.h>
-#include <chaos/common/network/PerformanceManagment.h>
-#include <chaos/common/network/CNodeNetworkAddress.h>
+//#include <chaos/common/network/NetworkForwardInfo.h>
+//#include <chaos/common/network/PerformanceManagment.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 namespace chaos {
 	
