@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 MESSAGE("framework CMakeLists")
+
+# workaround for issues with MacOS 10.15 Catalina and stack_not_16_byte_aligned_error issues
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-check -fno-stack-protector")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-check -fno-stack-protector")
+
+
 IF(WIN32)
 add_definitions(-D_WIN32_WINNT=0x601)
 #include(config/CMakeChaosWin.txt)
@@ -175,7 +181,7 @@ IF (CHAOS_PROMETHEUS)
   ExternalProject_Add(
   prometheus
   GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
-  GIT_TAG master
+  GIT_TAG v0.8.0
   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/prometheus-prefix"
   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
@@ -213,7 +219,7 @@ if(NOT CHAOS_ONLY_DEPENDECY)
 
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
-  
+
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
