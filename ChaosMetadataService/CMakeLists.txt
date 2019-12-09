@@ -49,7 +49,7 @@ MESG("Install c mongodb driver")
 ExternalProject_Add(
  mongo-c-driver
  GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
- GIT_TAG 1.15.2
+ GIT_TAG 1.12.0
  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-prefix"
  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-src"
  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-c-driver-build"
