@@ -1,7 +1,5 @@
 project(chaos_cutoolkit)
 if(WIN32)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-check")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-check")
 set(CMAKE_SUPPRESS_REGENERATION true)
 INCLUDE_DIRECTORIES( ../../ ${ALL_WINDOWS_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)

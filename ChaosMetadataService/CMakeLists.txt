@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosMetadataService)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-check -fno-stack-protector")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-check -fno-stack-protector")
+
 #add module path for permi to find lirary
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MACOSX_RPATH ON)
