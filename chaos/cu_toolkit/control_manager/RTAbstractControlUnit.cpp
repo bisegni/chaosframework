@@ -298,7 +298,7 @@ void RTAbstractControlUnit::executeOnThread() {
         time_to_sleep = schedule_delay - duration;
         if(time_to_sleep>0){
             //next_predicted_run = time_to_sleep;
-            RTCULDBG_<<" schedule:"<<schedule_delay<<" us wait "<<time_to_sleep<<" us cycle duration:"<<duration<<" us";
+           // RTCULDBG_<<" schedule:"<<schedule_delay<<" us wait "<<time_to_sleep<<" us cycle duration:"<<duration<<" us";
             boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
         } else {
             next_predicted_run = 0;

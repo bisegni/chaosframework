@@ -746,7 +746,9 @@ namespace chaos {
         
         //!key representing the default value
         static const char * const CONTROL_UNIT_DATASET_DEFAULT_VALUE                = "cudk_default_value";
-        
+        //!key representing the initialization of the dataset
+
+        static const char * const CONTROL_UNIT_DATASET_INITIALIZATION               = "cudk_ds_init";
         //!key representing the default value
         static const char * const CONTROL_UNIT_DATASET_MAX_RANGE                    = "cudk_ds_max_range";
         

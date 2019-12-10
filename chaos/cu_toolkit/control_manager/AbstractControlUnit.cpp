@@ -330,7 +330,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         action_description = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                               &AbstractControlUnit::_setDatasetAttribute,
                                                                               ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                                                              "method for set the input element for the dataset");
+                                                                              "method for setting the input element for the dataset");
         
         //expose updateConfiguration Methdo to rpc
         action_description = addActionDescritionInstance<AbstractControlUnit>(this,
@@ -509,7 +509,6 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION) {
                 //call update param function
                 updateConfiguration(MOVE(init_configuration->clone()));
-                
                 //check if we need to do a restore on first start
                 PropertyGroupShrdPtr cug = PropertyCollector::getGroup(chaos::ControlUnitPropertyKey::P_GROUP_NAME);
                 if (cug.get()) {
@@ -537,8 +536,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             //attribute name
                             
                             if(!elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) ||
-                               !elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) ||
-                               !elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) ) {
+                               !elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE) ||
+                               !elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE) ) {
                                 continue;
                             }
                             string attrName = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
@@ -571,6 +570,12 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                                     break;
                             }
                         }
+                        getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, cdw_unique_ptr->getBSONRawSize(),
+                                                            chaos::DataType::TYPE_CLUSTER);
+                        getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cdw_unique_ptr.get()));
+                        ACULDBG_ << "INIT ATTRIBUTES:"<<cdw_unique_ptr->getJSONString();
+
+                
                         CDWUniquePtr res = setDatasetAttribute(MOVE(cdw_unique_ptr));
                     }
                 }

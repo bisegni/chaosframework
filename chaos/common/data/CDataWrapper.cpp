@@ -305,6 +305,8 @@ int32_t CDataWrapper::getInt32Value(const std::string& key) const{
     INIT_ITERATOR(key);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+    GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
+
     CW_CAST_EXCEPTION(int32);
 }
 //add a integer value
