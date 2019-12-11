@@ -525,6 +525,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_object(init_configuration->getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
                     if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
                         CDWUniquePtr cdw_unique_ptr(new CDataWrapper());
+                        CDWUniquePtr cdw_unique_init_ptr(new CDataWrapper());
+
                         cdw_unique_ptr->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, getCUID());
                         //get the entity for device
                         CMultiTypeDataArrayWrapperSPtr elementsDescriptions = dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
@@ -543,6 +545,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             string attrName = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
                             int32_t attrType = elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
                             string attrValue = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE);
+                            cdw_unique_init_ptr->addCSDataValue(attrName,*elementDescription);
+
                             switch(attrType) {
                                 case DataType::TYPE_BOOLEAN:
                                     cdw_unique_ptr->addBoolValue(attrName, CDataVariant(attrValue).asBool());
@@ -570,12 +574,16 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                                     break;
                             }
                         }
-                        getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, cdw_unique_ptr->getBSONRawSize(),
+                       
+                         getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, cdw_unique_init_ptr->getBSONRawSize(),
                                                             chaos::DataType::TYPE_CLUSTER);
-                        getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cdw_unique_ptr.get()));
-                        ACULDBG_ << "INIT ATTRIBUTES:"<<cdw_unique_ptr->getJSONString();
-
+                        getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cdw_unique_init_ptr.get()));
+                        ACULDBG_ << "INIT ATTRIBUTES:"<<cdw_unique_init_ptr->getJSONString();
+                        //attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
                 
+                        if ((pushCustomDataset()) != 0) {
+                            throw CException(-4, "cannot initialize custom dataset (check live services)", __PRETTY_FUNCTION__);
+                        }
                         CDWUniquePtr res = setDatasetAttribute(MOVE(cdw_unique_ptr));
                     }
                 }
@@ -1576,7 +1584,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         result->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(SWEService::getServiceState()));
         return result;
     }
-    
+     chaos::CUStateKey::ControlUnitState AbstractControlUnit::getState(){
+     return  static_cast<CUStateKey::ControlUnitState>(SWEService::getServiceState());   
+    }
+
     CDWUniquePtr AbstractControlUnit::_submitStorageBurst(CDWUniquePtr data) {
         common::data::structured::DatasetBurstSDWrapper db_sdw;
         db_sdw.deserialize(data.get());

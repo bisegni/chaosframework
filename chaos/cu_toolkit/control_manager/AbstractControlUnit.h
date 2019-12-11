@@ -721,7 +721,7 @@ namespace chaos{
                                                                                          attribute_name,
                                                                                          handler_ptr);
                 }
-                
+                CUStateKey::ControlUnitState getState();
                 bool removeHandlerOnAttributeName(const std::string& attribute_name) {
                     return dataset_attribute_manager.removeHandlerOnAttributeName(attribute_name);
                 }

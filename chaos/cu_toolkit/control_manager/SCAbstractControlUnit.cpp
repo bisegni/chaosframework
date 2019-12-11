@@ -322,6 +322,9 @@ void SCAbstractControlUnit::installCommand(ChaosSharedPtr<BatchCommandDescriptio
   command_description->getCustomAttributeRef().insert(BCInstantiationAttributeMapPair("auto_busy", CDataVariant(loc_auto_busy)));
 }
 bool SCAbstractControlUnit::waitOnCommandID(uint64_t& cmd_id) {
+  if(getState()!=chaos::CUStateKey::START){
+		return true;
+	}
   ChaosUniquePtr<CommandState> cmd_state;
   do {
     cmd_state = getStateForCommandID(cmd_id);
