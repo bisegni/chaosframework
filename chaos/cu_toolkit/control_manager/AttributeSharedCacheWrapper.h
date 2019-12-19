@@ -192,7 +192,9 @@ namespace chaos{
 				void addCustomAttribute(const std::string&  name,
 										uint32_t max_size,
 										chaos::DataType::DataType type);
-				
+				//! Add a new variable
+				void addCustomAttribute(const std::string&  name,
+										 const chaos::common::data::CDataWrapper& value);
 				//! Set the value for a determinated variable in a determinate domain
 				void setCustomAttributeValue(const std::string& attribute_name,
 											 void * value,

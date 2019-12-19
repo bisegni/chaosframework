@@ -60,6 +60,10 @@ namespace chaos {
                 string minRange;
                 //!defaultValue
                 string defaultValue;
+                //! valid minimum increment if applicable 0 otherwise
+                string increment;
+                //! units info
+                string unit;
                 //!Type of the value
                 DataType::DataType valueType;
                 //!Type of binary

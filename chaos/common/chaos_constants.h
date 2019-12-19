@@ -111,6 +111,9 @@ namespace chaos {
         static const char * const   OPT_SCRIPT_VM_KV_PARAM              = "script-vm-kvp";
         //!rest poll time us
         static const char * const   OPT_REST_POLL_TIME_US               = "rest-poll-us";
+        //!data directory for storage and checkpoint of nodes
+        static const char * const   OPT_DATA_DIR                        = "data-dir";
+
 #if CHAOS_PROMETHEUS
         //! config file parameter
         static const char * const   OPT_METRIC_ENABLE                   = "enable_metric";
@@ -672,7 +675,11 @@ namespace chaos {
             //!the datapack is publish in live shared memory
             DSStorageTypeLive = 2,
             //!datapack is published and stored in live and history
-            DSStorageTypeLiveHistory = 3
+            DSStorageTypeLiveHistory = 3,
+            //!datapack into file (shared FS)
+            DSStorageTypeFile = 4,
+            //!datapack into Remote Queue (i.e Kafka)
+            DSStorageTypeRQ = 8     
         } DSStorageType;
     }
     /** @} */ // end of DataServiceNodeDefinitionType
@@ -707,6 +714,9 @@ namespace chaos {
         
         //! The version of the driver to use[strig]
         static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER	= "cudk_driver_description_init_parameter";
+
+        //! The information coming from the driver
+        static const char * const CONTROL_UNIT_DRIVER_INFO	                        = "cudk_driver_info";
         
         //!key for dataset description (array of per-attribute document)
         static const char * const CONTROL_UNIT_DATASET_DESCRIPTION                  = "cudk_ds_desc";
@@ -732,7 +742,7 @@ namespace chaos {
         //!key representing the type of parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE               = "cudk_ds_attr_type";
         
-        //!key for the units ofr the attrbiute (ampere, volts)
+        //!key for the units ofr the attribute (ampere, volts)
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT               = "cudk_ds_attr_unit";
         
         //!key representing the name of the parameter
@@ -740,6 +750,9 @@ namespace chaos {
         
         //!key representig the information for the parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION          = "cudk_ds_attr_dir";
+
+         //!key representig the information of the eventual increment/error on attribute
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT          = "cudk_ds_attr_inc";
         
         //!key representing the value max size where need (type different from raw data type ex: int32)
         static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
@@ -1449,10 +1462,12 @@ namespace chaos {
         static const char * const VALUE_MAX_SIZE                    = "ds_max_size";
         //!key representing the default value
         static const char * const DEFAULT_VALUE                     = "ds_default_value";
-        //!key representing the default value
+        //!key representing the maximum value
         static const char * const MAX_RANGE                         = "ds_max_range";
-        //!key representing the default value
+        //!key representing the minimum value
         static const char * const MIN_RANGE                         = "ds_min_range";
+        //!key representing the significant increment (0 means digital or NA)
+        static const char * const DEFAULT_INC                       = "ds_value_inc";
     }
     /** @} */ // end of DatasetDefinitionkey
     

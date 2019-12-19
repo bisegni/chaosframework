@@ -196,6 +196,9 @@ int initialize_from_old_mds(std::string conf){
 					GET_CONFIG_STRING(attr_w,ds_default_value);
 					GET_CONFIG_STRING(attr_w,ds_max_range);
 					GET_CONFIG_STRING(attr_w,ds_min_range);
+					GET_CONFIG_STRING(attr_w,cudk_ds_attr_inc);
+					GET_CONFIG_STRING(attr_w,cudk_ds_attr_unit);
+
 
 					cud.addAttributeConfig(ds_attr_name,ds_default_value,ds_max_range,ds_min_range);
 				}

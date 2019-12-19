@@ -55,6 +55,7 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
         addOption(InitOption::OPT_VERSION, "Printout version");
         addOption(InitOption::OPT_NODE_DESC, po::value< std::string >()->default_value(""), "A string containing a brief description of the node");
+        addOption(InitOption::OPT_DATA_DIR, po::value< std::string >()->default_value("."), "A data directory where the node can dump data and check points");
 
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_SYSLOG, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on syslog server");

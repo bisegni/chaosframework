@@ -35,6 +35,8 @@ namespace chaos {
                                       MapKVP);
             
 #define OPT_OBJ_STORAGE_DRIVER                      "obj-storage-driver"
+#define OPT_OBJ_FSSTORAGE_DRIVER                    "obj-fs-storage-driver"
+
 #define OPT_OBJ_STORAGE_SERVER_URL                  "obj-storage-driver-server_url"
 #define OPT_OBJ_STORAGE_LOG_METRIC                  "obj-storage-driver-log-metric"
 #define OPT_OBJ_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "obj-storage-driver-log-metric-update-interval"

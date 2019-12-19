@@ -138,7 +138,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
     }
     
     if(!err &&
-       (storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory)) {
+       (storage_type & (DataServiceNodeDefinitionType::DSStorageTypeHistory|DataServiceNodeDefinitionType::DSStorageTypeFile))) {
         //compute the index to use for the data worker
         uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
         CHAOS_ASSERT(device_data_worker[index_to_use].get())
@@ -153,6 +153,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
             DEBUG_CODE(DBG << "Error pushing data into worker queue");
         }
     }
+    
     return err;
 }
 

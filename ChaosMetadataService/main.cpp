@@ -76,6 +76,12 @@ int main(int argc, const char * argv[]) {
                                                                                                         "Object storage driver implementation",
                                                                                                         "MongoDB",
                                                                                                         &ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl);
+        
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_OBJ_FSSTORAGE_DRIVER,
+                                                                                                        "Object Filesystem storage driver implementation",
+                                                                                                        "PosixFile",
+                                                                                                        &ChaosMetadataService::getInstance()->setting.object_fsstorage_setting.driver_impl);
+        
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_OBJ_STORAGE_SERVER_URL,
                                                                                                                      "The list of the obj storage servers",
                                                                                                                      &ChaosMetadataService::getInstance()->setting.object_storage_setting.url_list);

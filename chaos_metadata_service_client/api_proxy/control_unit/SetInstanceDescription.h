@@ -114,7 +114,10 @@ namespace chaos {
                     void addAttributeConfig(const std::string& attribute_name,
                                             const std::string& attribute_default_value,
                                             const std::string& attribute_max_range = std::string(),
-                                            const std::string& attribute_min_range = std::string());
+                                            const std::string& attribute_min_range = std::string(),
+                                            const std::string& increment = std::string("0"),
+                                            const std::string& unit = std::string("NA")
+                                            );
                     //! remove all previously added attribute range value description
                     void clearAllAttributeConfig();
                 };

@@ -290,7 +290,14 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                     dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE <<
                     dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE);
                 }
-                
+                 if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT <<
+                    dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT);
+                }
+                if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT <<
+                    dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT);
+                }
                 dataset_bson_array << dataset_element_builder.obj();
             }
         }

@@ -39,6 +39,8 @@ namespace chaos {
                     std::string                                     min_value;
                     std::string                                     max_value;
                     std::string                                     default_value;
+                    std::string                                     increment;
+                    std::string                                     unit;
                     uint32_t                                        max_size;
                     chaos::DataType::DataSetAttributeIOAttribute    direction;
                     chaos::DataType::DataType                       type;
@@ -49,6 +51,16 @@ namespace chaos {
                     DatasetAttribute(const std::string& attr_name,
                                      const std::string& attr_description,
                                      const chaos::DataType::DataType& attr_type);
+                    DatasetAttribute(const std::string& attr_name,
+                                     const std::string& attr_description,
+                                     const chaos::DataType::DataType& attr_type,
+                                     const chaos::DataType::DataSetAttributeIOAttribute io,
+                                     const std::string& min,
+                                     const std::string& max,
+                                     const std::string& def,
+                                     const std::string& inc,
+                                     const std::string& unit);
+
                     DatasetAttribute(const DatasetAttribute& copy_src);
                     DatasetAttribute& operator=(DatasetAttribute const &rhs);
                 };
@@ -65,6 +77,9 @@ namespace chaos {
                         Subclass::dataWrapped().type = static_cast<chaos::DataType::DataType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_UNDEFINED));
                         Subclass::dataWrapped().min_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, "");
                         Subclass::dataWrapped().max_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, "");
+                        Subclass::dataWrapped().increment = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT, "");
+                        Subclass::dataWrapped().unit = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT, "NA");
+
                         Subclass::dataWrapped().default_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, "");
                         Subclass::dataWrapped().max_size = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, 0);
                         Subclass::dataWrapped().binary_cardinality = CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, 0);
@@ -95,6 +110,9 @@ namespace chaos {
                         data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, Subclass::dataWrapped().type);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, Subclass::dataWrapped().min_value);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, Subclass::dataWrapped().max_value);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT, Subclass::dataWrapped().increment);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT, Subclass::dataWrapped().unit);
+
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, Subclass::dataWrapped().default_value);
                         data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, Subclass::dataWrapped().max_size);
                         data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, Subclass::dataWrapped().binary_cardinality);
@@ -126,8 +144,12 @@ namespace chaos {
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::structured::DatasetAttribute,
                                              DatasetAttributeList);
             }
+            
+
         }
     }
 }
+chaos::common::data::CDataWrapper& operator<<(chaos::common::data::CDataWrapper& dst,const chaos::common::data::structured::DatasetAttribute&src);
+chaos::common::data::structured::DatasetAttribute&  operator>>(chaos::common::data::structured::DatasetAttribute& dst,const chaos::common::data::CDataWrapper& src );
 
 #endif /* __CHAOSFramework_DD3CE2CE_DFAD_42AA_8C8E_8AC82B03C5FD_DatasetAttribute_h */

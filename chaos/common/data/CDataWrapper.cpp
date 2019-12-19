@@ -61,6 +61,9 @@ keyfound=bson_iter_find_case(&element_found, key.c_str());
 #define GET_VALUE(t,c) \
 if(keyfound&& (c(&element_found))){return bson_iter_##t (&element_found);}
 
+#define GET_VALUE_AS_STRING(t,c) \
+if(keyfound&& (c(&element_found))){std::stringstream ss;ss<<bson_iter_##t (&element_found);return ss.str();}
+
 static void bsonDeallocator(bson_t* bson) {if(bson){bson_destroy(bson);}}
 
 static void bsonValueDestroy(bson_value_t* bson_values) {if(bson_values){bson_value_destroy(bson_values);}}
@@ -289,9 +292,20 @@ std::string CDataWrapper::getJsonValue(const std::string& key) const{
 
 //get string value
 string  CDataWrapper::getStringValue(const std::string& key) const{
-    FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
+    {
+        FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
         return std::string(bson_iter_utf8(&element_found, NULL));
     }
+    }
+    INIT_ITERATOR(key);
+
+    GET_VALUE_AS_STRING(int32,BSON_ITER_HOLDS_INT32);
+    GET_VALUE_AS_STRING(double,BSON_ITER_HOLDS_DOUBLE);
+    GET_VALUE_AS_STRING(int64,BSON_ITER_HOLDS_INT64);
+    GET_VALUE_AS_STRING(bool,BSON_ITER_HOLDS_BOOL);
+    GET_VALUE_AS_STRING(date_time,BSON_ITER_HOLDS_DATE_TIME);
+
+
     return std::string();
 }
 
@@ -795,7 +809,7 @@ CDataVariant CDataWrapper::getVariantValue(const std::string& key) const{
             return  CDataVariant(getStringValue(key));
         case chaos::DataType::TYPE_CLUSTER:
             if(isStringValue(key)){
-                return CDataVariant(getValueType(key),(const void *)getStringValue(key).c_str(),(uint32_t)getStringValue(key).size());
+                return CDataVariant(getValueType(key),(const void *)getStringValue(key).c_str(),(uint32_t)getStringValue(key).size()+1);
             } else {
                 return CDataVariant(MOVE(getCSDataValue(key)));
 

@@ -72,6 +72,9 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     //check what kind of push we have
     //read lock on mantainance mutex
     switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
+        case DataServiceNodeDefinitionType::DSStorageTypeFile:{
+            break;
+        }
         case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
             //write data on object storage

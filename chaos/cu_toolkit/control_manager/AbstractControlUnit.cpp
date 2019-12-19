@@ -473,17 +473,25 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 std::string cu_load_param=getCUParam();
                 
                 if(isCUParamInJson()){
-                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size(),
+                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size()+1,
                                                             chaos::DataType::TYPE_CLUSTER);
                 } else {
-                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size(),
+                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, cu_load_param.size()+1,
                                                             chaos::DataType::TYPE_STRING);
                 }
                 getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, (void *)cu_load_param.c_str(),
-                                                             cu_load_param.size());
+                                                             cu_load_param.size()+1);
                 
+               
                 //define the implementations custom variable
                 unitDefineCustomAttribute();
+                if(drv_info.get()){
+                    ACULDBG_<<" Adding driver info to custom dataset "<<chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO<<":"<<drv_info->getJSONString();
+                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, *drv_info.get());
+                    getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, *drv_info.get());
+
+                }
+        
                 break;
             }
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR) {
@@ -525,7 +533,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_object(init_configuration->getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
                     if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
                         CDWUniquePtr cdw_unique_ptr(new CDataWrapper());
-                        CDWUniquePtr cdw_unique_init_ptr(new CDataWrapper());
+                        cu_ds_init.reset(new CDataWrapper());
 
                         cdw_unique_ptr->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, getCUID());
                         //get the entity for device
@@ -545,7 +553,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             string attrName = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
                             int32_t attrType = elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
                             string attrValue = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE);
-                            cdw_unique_init_ptr->addCSDataValue(attrName,*elementDescription);
+                            cu_ds_init->addCSDataValue(attrName,*elementDescription);
 
                             switch(attrType) {
                                 case DataType::TYPE_BOOLEAN:
@@ -575,14 +583,13 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             }
                         }
                        
-                         getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, cdw_unique_init_ptr->getBSONRawSize(),
-                                                            chaos::DataType::TYPE_CLUSTER);
-                        getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cdw_unique_init_ptr.get()));
-                        ACULDBG_ << "INIT ATTRIBUTES:"<<cdw_unique_init_ptr->getJSONString();
-                        //attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
-                
-                        if ((pushCustomDataset()) != 0) {
-                            throw CException(-4, "cannot initialize custom dataset (check live services)", __PRETTY_FUNCTION__);
+                        ACULDBG_ << "INIT ATTRIBUTES:"<<cu_ds_init->getJSONString();
+                         if(cu_ds_init.get()){
+                            getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION,*(cu_ds_init.get()));
+                            getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cu_ds_init.get()));
+                             
+                             fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM),
+                                      cache_custom_attribute_vector);
                         }
                         CDWUniquePtr res = setDatasetAttribute(MOVE(cdw_unique_ptr));
                     }
@@ -710,7 +717,11 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         }
         CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
     }
-    
+    void AbstractControlUnit::setDriverInfo(const chaos::common::data::CDataWrapper& info){
+        drv_info.reset(new CDataWrapper);
+        info.copyAllTo(*drv_info.get());
+    }
+
     void AbstractControlUnit::doStartSMCheckList() {
         CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start") {
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER) {
@@ -1428,6 +1439,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     
     void AbstractControlUnit::fillCachedValueVector(AttributeCache&               attribute_cache,
                                                     std::vector<AttributeValue*>& cached_value) {
+        cached_value.clear();                                                        
         for (int idx = 0;
              idx < attribute_cache.getNumberOfAttributes();
              idx++) {
@@ -1461,37 +1473,38 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     case DataType::TYPE_BOOLEAN: {
                         bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << "Init TYPE_BOOLEAN attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_DOUBLE: {
                         double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << "Init TYPE_DOUBLE attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_INT32: {
                         int32_t val = strtoul(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << "Init TYPE_INT32 attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_INT64: {
                         int64_t val = strtoll(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << "Init TYPE_INT64 attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_CLUSTER: {
                         CDataWrapper tmp;
                         tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
                         attribute_setting.setValueForAttribute(idx, tmp);
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<attributeInfo.defaultValue.c_str();
+                        ACULDBG_ << "Init  TYPE_CLUSTER attribute:" << attribute_names[idx]<<" to:"<<attributeInfo.defaultValue.c_str();
+                        break;
                     }
                     case DataType::TYPE_STRING: {
                         const char* val = attributeInfo.defaultValue.c_str();
                         attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
-                        ACULDBG_ << "Init attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << "Init  TYPE_STRING attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_BYTEARRAY: {
@@ -1811,7 +1824,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                         //check if attribute has been accepted
                         if (dataset_attribute_manager.getHandlerResult(*iter) == false) continue;
                         
-                        AttributeValue* attribute_cache_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iter->c_str());
+                        AttributeValue* attribute_cache_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, attr_name);
                         
                         //get attribute info
                         getAttributeRangeValueInfo(*iter, attributeInfo);
@@ -1844,6 +1857,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                                 
                             case DataType::TYPE_CLUSTER: {
                                 ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
+                                ACULDBG_<<" BEFORE SET ATTR:"<<attr_name<<" value:"<<str->getJSONString();
                                 try {
                                     if (str.get()) {
                                         attribute_cache_value->setValue(*(str.get()));
@@ -1856,7 +1870,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                             case DataType::TYPE_STRING: {
                                 std::string str = dataset_attribute_values->getStringValue(attr_name);
                                 CHECK_FOR_STRING_RANGE_VALUE(str, attr_name)
-                                attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
+                                attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size()+1);
                                 break;
                             }
                             case DataType::TYPE_BYTEARRAY: {
