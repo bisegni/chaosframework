@@ -728,6 +728,34 @@ namespace chaos{
                                                                                          attribute_name,
                                                                                          handler_ptr);
                 }
+
+                template<typename O>
+                bool addCDWHandlerOnInputAttributeName(O* object_reference,
+                                                           typename handler::DatasetAttributeCDWHandlerDescription<O>::HandlerDescriptionActionPtr handler_ptr,
+                                                           const std::string& attribute_name) {
+                    return dataset_attribute_manager.addCDWHandlerOnAttributeName<O>(object_reference,
+                                                                                        std::string(chaos::DataPackID::INPUT_DATASET_ID)+"/"+ attribute_name,
+                                                                                        handler_ptr);
+                }
+                template<typename O>
+                bool addHandlerOnCustomDriverAttributes(O* object_reference,
+                                                           typename handler::DatasetAttributeCDWHandlerDescription<O>::HandlerDescriptionActionPtr handler_ptr) {
+
+                      if(drv_info.get()){
+                        std::vector<std::string> keys;
+
+                        drv_info->getAllKey(keys);
+                        for(std::vector<std::string>::iterator i=keys.begin();i!=keys.end();i++){
+                            dataset_attribute_manager.addCDWHandlerOnAttributeName<O>(object_reference,
+                                                                                        std::string(chaos::DataPackID::CUSTOM_DATASET_ID)+"/"+*i,
+                                                                                        handler_ptr);
+                        }
+                        return true;
+                      }
+                                                       
+                                                               
+                    return false;
+                }
                  template<typename O>
                 bool addInputAndHandlerOnEachKeyOf(O* object_reference,
                                                     typename handler::DatasetAttributeVariantHandlerDescription<O>::HandlerDescriptionActionPtr handler_ptr,

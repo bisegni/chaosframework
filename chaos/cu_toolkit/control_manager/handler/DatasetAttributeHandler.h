@@ -133,6 +133,36 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     O* object_reference;
                     HandlerDescriptionActionPtr handler_pointer;
                 };
+
+                template<typename O>
+                class DatasetAttributeCDWHandlerDescription:
+                public AbstractHandlerDescription {
+                public:
+                    typedef bool (O::*HandlerDescriptionActionPtr)(const std::string& attribute_name,
+                                                                   const chaos::common::data::CDataWrapper& value);
+                    
+                    DatasetAttributeCDWHandlerDescription(O* _object_reference,
+                                                              HandlerDescriptionActionPtr _handler_pointer,
+                                                              const std::string& _attribute_name):
+                    AbstractHandlerDescription(_attribute_name),
+                    object_reference(_object_reference),
+                    handler_pointer(_handler_pointer){}
+                    
+                protected:
+                    
+                    
+                    bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) {
+                        if(attribute_changes_set == NULL ||
+                           attribute_changes_set->hasKey(attribute_name) == false) return false;
+                        //broadcast the attribute value
+                        return ((*object_reference).*handler_pointer)(attribute_name,
+                                                                      *attribute_changes_set);
+                    }
+                    
+                private:
+                    O* object_reference;
+                    HandlerDescriptionActionPtr handler_pointer;
+                };
                 
                 struct HandlerSetElement {
                     HandlerDescriptionPtr handler_ptr;
@@ -177,7 +207,21 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                                                                                                                                                            attribute_name))));
                         return true;
                     }
-                    
+                     template<typename O>
+                    bool addCDWHandlerOnAttributeName(O *object_reference,
+                                                          const std::string& attribute_name,
+                                                          typename DatasetAttributeCDWHandlerDescription<O>::HandlerDescriptionActionPtr handler_ptr) {
+                        
+                        
+                        if(map_handlers_for_attribute.count(attribute_name) != 0 ||
+                           handler_ptr == NULL) return false;
+                        
+                        //register the handler
+                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerDescriptionPtr(new DatasetAttributeCDWHandlerDescription<O>(object_reference,
+                                                                                                                                                           handler_ptr,
+                                                                                                                                                           attribute_name))));
+                        return true;
+                    }
                     bool removeHandlerOnAttributeName(const std::string& attribute_name);
                     
                     void clearAllAttributeHandler();

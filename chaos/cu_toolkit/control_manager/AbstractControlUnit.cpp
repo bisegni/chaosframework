@@ -1857,7 +1857,6 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                                 
                             case DataType::TYPE_CLUSTER: {
                                 ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
-                                ACULDBG_<<" BEFORE SET ATTR:"<<attr_name<<" value:"<<str->getJSONString();
                                 try {
                                     if (str.get()) {
                                         attribute_cache_value->setValue(*(str.get()));

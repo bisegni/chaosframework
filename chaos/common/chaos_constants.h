@@ -1486,6 +1486,15 @@ namespace chaos {
         static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
+      namespace DataPackID {
+        static const char * const OUTPUT_DATASET_ID   = "output";
+        static const char * const INPUT_DATASET_ID     = "input";
+        static const char * const CUSTOM_DATASET_ID    = "custom";
+        static const char * const SYSTEM_DATASETID    = "system";
+        static const char * const DEV_ALARM_DATASET_ID = "device_alarms";
+        static const char * const CU_ALARM_DATASET_ID  = "cu_alarms";
+        static const char * const HEALTH_DATASET_ID    = "healt";
+    }
     /** @} */ // end of DataPackPrefixID
 #define DPCK_LAST_DATASET_INDEX	 6
     /** @} */ // end of DataPackCommonKey
@@ -1533,37 +1542,37 @@ namespace chaos {
     static inline const char* datasetTypeToHuman(unsigned int domain) {
         switch (domain) {
             case DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-                return "output";
+                return DataPackID::OUTPUT_DATASET_ID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-                return "input";
+                return DataPackID::INPUT_DATASET_ID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-                return "custom";
+                return DataPackID::CUSTOM_DATASET_ID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-                return "system";
+                return DataPackID::SYSTEM_DATASETID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
-                return "health";
+                return DataPackID::HEALTH_DATASET_ID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM:
-                return "device_alarms";
+                return DataPackID::DEV_ALARM_DATASET_ID;
             case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
-                return "cu_alarms";
+                return DataPackID::CU_ALARM_DATASET_ID;
             default:
                 return "unknown";
         }
     }
     static inline unsigned int HumanTodatasetType(const std::string& domain) {
-        if(domain == "output")
+        if(domain == DataPackID::OUTPUT_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
-        if(domain=="input")
+        if(domain==DataPackID::INPUT_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
-        if(domain=="custom")
+        if(domain==DataPackID::CUSTOM_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM;
-        if(domain=="system")
+        if(domain==DataPackID::SYSTEM_DATASETID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM;
-        if(domain=="health")
+        if(domain==DataPackID::HEALTH_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;
-        if(domain=="device_alarms")
+        if(domain==DataPackID::DEV_ALARM_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;
-        if(domain=="cu_alarms")
+        if(domain==DataPackID::CU_ALARM_DATASET_ID)
             return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;
         return DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT;
         
