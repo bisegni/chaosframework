@@ -1493,7 +1493,7 @@ namespace chaos {
         static const char * const SYSTEM_DATASETID    = "system";
         static const char * const DEV_ALARM_DATASET_ID = "device_alarms";
         static const char * const CU_ALARM_DATASET_ID  = "cu_alarms";
-        static const char * const HEALTH_DATASET_ID    = "healt";
+        static const char * const HEALTH_DATASET_ID    = "health";
     }
     /** @} */ // end of DataPackPrefixID
 #define DPCK_LAST_DATASET_INDEX	 6
