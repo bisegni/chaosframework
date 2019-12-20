@@ -140,7 +140,7 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     healt_metric->fire_slot = (last_fire_counter_set++ % HEALT_FIRE_SLOTS);
     
     //print log info for newly created set
-    HM_INFO << "Added new healt set for node :" << node_uid << " with push counter of " << healt_metric->fire_slot;
+    HM_INFO << "Added new health dataset for node :'" << node_uid << "' with push counter of " << healt_metric->fire_slot;
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {

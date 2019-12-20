@@ -751,9 +751,13 @@ namespace chaos {
         //!key representig the information for the parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION          = "cudk_ds_attr_dir";
 
-         //!key representig the information of the eventual increment/error on attribute
+         //!key representing the information of the eventual increment/error on attribute
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT          = "cudk_ds_attr_inc";
-        
+
+         //!key representing the conversion factor for the attribute the unit of the given CU
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT          = "cudk_ds_attr_convfact";
+         //!key representing the offset the attribute
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET             = "cudk_ds_attr_offset";
         //!key representing the value max size where need (type different from raw data type ex: int32)
         static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
         

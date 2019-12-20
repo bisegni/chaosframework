@@ -112,7 +112,7 @@ bool AttributeValue::setStringValue(const std::string& value,
     std::strncpy(static_cast<char*>(value_buffer),
                  value.c_str(),
                  size);
-    AVLDBG_<<" SET STRING VALUE:"<<static_cast<char*>(value_buffer)<<" size:"<<size<< " original size:"<<value.size();
+   // AVLDBG_<<" SET STRING VALUE:"<<static_cast<char*>(value_buffer)<<" size:"<<size<< " original size:"<<value.size();
     return true;
 }
 
@@ -121,7 +121,7 @@ bool AttributeValue::setStringValue(const std::string& value,
  ---------------------------------------------------------------------------------*/
 bool AttributeValue::setValue(CDataWrapper& attribute_value,
                               bool tag_has_changed) {
-    AVLDBG_<<" SET VALUE:"<<attribute_value.getJSONString();
+  //  AVLDBG_<<" SET VALUE:"<<attribute_value.getJSONString();
 	attribute_value.copyAllTo(cdvalue);
     setStringValue(attribute_value.getCompliantJSONString(),tag_has_changed,true);
 	//set the relative field for set has changed

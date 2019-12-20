@@ -154,7 +154,7 @@ void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribu
                                                       const std::string& attribute_default_value,
                                                       const std::string& attribute_max_range,
                                                       const std::string& attribute_min_range,const std::string& increment,
-                                            const std::string& unit ) {
+                                            const std::string& unit,const std::string& conv,const std::string& off ) {
     CDWUniquePtr attr(new CDataWrapper());
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attribute_name);
     attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, attribute_default_value);
@@ -162,6 +162,10 @@ void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribu
     if(attribute_min_range.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, attribute_min_range);
     if(increment.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT, increment);
     if(unit.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT, unit);
+    if(conv.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT, conv);
+    if(off.size()>0)attr->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET, off);
+
+   
 
     attribute_value_descriptions.push_back(attr.release());
     
