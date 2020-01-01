@@ -53,7 +53,7 @@ using namespace chaos::common::async_central;
 #ifndef _WIN32
 //http://stackoverflow.com/questions/11465148/using-sigaction-c-cpp
 void crit_err_hdlr(int sig_num, siginfo_t *info, void *ucontext) {
-    std::cerr << "signal " << sig_num
+    std::cerr << "SIGNAL " << sig_num
     << " (" << strsignal(sig_num) << "), address is "
     << info->si_addr << std::endl
     << std::endl;
@@ -119,7 +119,7 @@ void crit_err_hdlr(int sig_num, siginfo_t *info, void *ucontext) {
 #else
 
 void crit_err_hdlr(int sig_num) {
-    std::cerr << "signal " << sig_num << " (" << strsignal(sig_num) << ")";
+    std::cerr << "SIGNAL " << sig_num << " (" << strsignal(sig_num) << ")";
     
     void *       array[50];
     SYMBOL_INFO *symbol;

@@ -45,6 +45,7 @@ using namespace chaos::common::metadata_logging;
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 chaos::WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
+void crit_err_hdlr(int sig_num, siginfo_t *info, void *ucontext);
 
 ChaosCUToolkit::ChaosCUToolkit() {
   GlobalConfiguration::getInstance()->addOption<bool>(CU_OPT_IN_MEMORY_DATABASE,
@@ -116,10 +117,19 @@ void ChaosCUToolkit::init(void* init_data) {
     if (signal((int)SIGTERM, ChaosCUToolkit::signalHanlder) == SIG_ERR) {
       LERR_ << "SIGTERM Signal handler registration error";
     }
+#ifndef _WIN32
+    struct sigaction sigact;
+    std::memset(&sigact, 0, sizeof(struct sigaction));
+    sigact.sa_sigaction = crit_err_hdlr;
+    sigact.sa_flags     = SA_RESTART | SA_SIGINFO;
+        if (sigaction(SIGABRT, &sigact, (struct sigaction *)NULL) != 0) {
+            LERR_ << "error setting signal handler for SIGSEGV";
+        }
+        if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
+            LERR_ << "error setting signal handler for SIGSEGV";
+        }
 
-    if (signal((int)SIGABRT, ChaosCUToolkit::signalHanlder) == SIG_ERR) {
-      LERR_ << "SIGABRT Signal handler registration error";
-    }
+#endif
 
     InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
 

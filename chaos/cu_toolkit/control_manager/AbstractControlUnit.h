@@ -787,6 +787,7 @@ namespace chaos{
                                                             }
                                                             
                                                         }
+                                                        return true;
                                                     }
                 CUStateKey::ControlUnitState getState();
                 bool removeHandlerOnAttributeName(const std::string& attribute_name) {
