@@ -583,8 +583,9 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             }
                         }
                        
-                        ACULDBG_ << "INIT ATTRIBUTES:"<<cu_ds_init->getJSONString();
                          if(cu_ds_init.get()){
+                            ACULDBG_ << "INIT ATTRIBUTES:"<<cu_ds_init->getJSONString();
+
                             getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION,*(cu_ds_init.get()));
                             getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_INITIALIZATION, *(cu_ds_init.get()));
                              
@@ -1473,45 +1474,47 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     case DataType::TYPE_BOOLEAN: {
                         bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
-                        ACULDBG_ << "Init TYPE_BOOLEAN attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << domain<<" Init TYPE_BOOLEAN attribute:'" << attribute_names[idx]<<"' to:"<<val;
                         break;
                     }
                     case DataType::TYPE_DOUBLE: {
                         double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
-                        ACULDBG_ << "Init TYPE_DOUBLE attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << domain<< " Init TYPE_DOUBLE attribute:'" << attribute_names[idx]<<"' to:"<<val;
                         break;
                     }
                     case DataType::TYPE_INT32: {
                         int32_t val = strtoul(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
-                        ACULDBG_ << "Init TYPE_INT32 attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << domain<< " Init TYPE_INT32 attribute:'" << attribute_names[idx]<<"' to:"<<val;
                         break;
                     }
                     case DataType::TYPE_INT64: {
                         int64_t val = strtoll(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
-                        ACULDBG_ << "Init TYPE_INT64 attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << domain<< " Init TYPE_INT64 attribute:'" << attribute_names[idx]<<"' to:"<<val;
                         break;
                     }
                     case DataType::TYPE_CLUSTER: {
                         CDataWrapper tmp;
                         tmp.setSerializedJsonData(attributeInfo.defaultValue.c_str());
                         attribute_setting.setValueForAttribute(idx, tmp);
-                        ACULDBG_ << "Init  TYPE_CLUSTER attribute:" << attribute_names[idx]<<" to:"<<attributeInfo.defaultValue.c_str();
+                        ACULDBG_ << domain<< " Init  TYPE_CLUSTER attribute:'" << attribute_names[idx]<<"' to:"<<attributeInfo.defaultValue.c_str();
                         break;
                     }
                     case DataType::TYPE_STRING: {
                         const char* val = attributeInfo.defaultValue.c_str();
                         attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
-                        ACULDBG_ << "Init  TYPE_STRING attribute:" << attribute_names[idx]<<" to:"<<val;
+                        ACULDBG_ << domain<< " Init  TYPE_STRING attribute:" << attribute_names[idx]<<" to:"<<val;
                         break;
                     }
                     case DataType::TYPE_BYTEARRAY: {
-                        ACULDBG_ << "Binary default setting has not been yet managed";
+                        ACULDBG_ << domain<< " Binary default setting attribute:'"<< attribute_names[idx]<<"' size:"<<(uint32_t)attributeInfo.defaultValue.size()<<" has not been yet managed";
                         break;
                     }
                     default:
+                        ACULERR_ << domain << " Uknown attribute type, attribute:'"<< attribute_names[idx]<<"' size:"<<(uint32_t)attributeInfo.defaultValue.size()<<" has not been yet managed";
+
                         break;
                 }
             } catch (boost::bad_lexical_cast const& e) {
