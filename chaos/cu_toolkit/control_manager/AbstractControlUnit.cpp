@@ -575,10 +575,13 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                                     cdw_unique_ptr->addStringValue(attrName, attrValue);
                                     break;
                                 case DataType::TYPE_BYTEARRAY:
-                                    CDataVariant v(attrValue);
+                                    ACULERR_ << "Cannot Init Bytearray attribute :"<<attrName;
+
+                                 /*   CDataVariant v(attrValue);
                                     cdw_unique_ptr->addBinaryValue(attrName,
                                                                    v.asCDataBuffer()->getBuffer(),
                                                                    (uint32_t)v.asCDataBuffer()->getBufferSize());
+                                                                   */
                                     break;
                             }
                         }
