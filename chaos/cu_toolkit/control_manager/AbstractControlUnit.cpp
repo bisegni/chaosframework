@@ -281,9 +281,11 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     
     int AbstractControlUnit::getCUParam(chaos::common::data::CDataWrapper&p){
          try{
-            p.reset();
-            p.setSerializedJsonData(control_unit_param.c_str());
-            return 0;
+            if(control_unit_param!=""){
+                p.reset();
+                p.setSerializedJsonData(control_unit_param.c_str());
+                return 0;
+            }
     } catch(...){
 
     }
