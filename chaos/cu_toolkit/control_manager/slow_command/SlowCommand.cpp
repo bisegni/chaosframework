@@ -103,6 +103,15 @@ bool SlowCommand::getStateVariableSeverity(StateVariableType variable_type,
 void SlowCommand::setBusyFlag(bool state) {
     if(isAutoBusy()) {return;}
     return abstract_control_unit->setBusyFlag(state);
+
+}
+const string & SlowCommand::getDeviceLoadParams(){
+    return abstract_control_unit->getCUParam();
+}
+
+int SlowCommand::getDeviceLoadParams(chaos::common::data::CDataWrapper&parm){
+    return abstract_control_unit->getCUParam(parm);
+    
 }
 
 bool SlowCommand::getBusyFlag() {

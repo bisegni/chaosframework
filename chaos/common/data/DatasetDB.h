@@ -167,6 +167,15 @@ namespace chaos {
 				int getAttributeDirection(const string& attributesName,
 										  DataType::DataSetAttributeIOAttribute& directionType);
 				
+				//! Performs a limit check, if val is between max and min
+				// return true if valid
+				bool isValid(const string& attributesName,double val);
+			
+				//! Performs a compare check, if attrval is equal to val
+				// return 0 if val is equal to attrval  within an error of +- increment, return a positive difference if greater, return a negative difference if smaller
+
+				double compareTo(const string& attributesName,double attrval,double val);
+				
 			};
 		}
     }

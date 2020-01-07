@@ -273,6 +273,13 @@ CDWUniquePtr CDataWrapper::getCSDataValue(const std::string& key) const{
         return CDWUniquePtr(new CDataWrapper());
     }
 }
+void CDataWrapper::getCSDataValue(const std::string& key,chaos::common::data::CDataWrapper&cd) const{
+   CDWUniquePtr res=getCSDataValue(key);
+   if(res.get()){
+       res->copyAllTo(cd);
+   }
+}
+
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CDataWrapper::getCSProjection(const std::vector<std::string>&keys) const{
     CDWUniquePtr ret(new CDataWrapper());
     for(std::vector<std::string>::const_iterator i=keys.begin();i!=keys.end();i++){
@@ -544,6 +551,12 @@ void CDataWrapper::getAllKey(ChaosStringSet& contained_key) const{
     while(bson_iter_next(&it)) {
         contained_key.insert(bson_iter_key(&it));
     }
+}
+ChaosStringVector CDataWrapper::getAllKey() const{
+    ChaosStringVector ret;
+    getAllKey(ret);
+    return ret;
+
 }
 
 //return all key contained into the object

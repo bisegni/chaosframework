@@ -149,3 +149,32 @@ int DatasetDB::getAttributeDirection(const string& attributesName,
                                      DataType::DataSetAttributeIOAttribute& directionType) {
     return CUSchemaDB::getDeviceAttributeDirection(device_id, attributesName, directionType);
 }
+
+bool DatasetDB::isValid(const string& attributesName,double val){
+    bool ret=true;
+    RangeValueInfo ri;
+    getAttributeRangeValueInfo(attributesName,ri);
+
+	if (ri.maxRange.size()) {
+        if(val>atof(ri.maxRange.c_str())){
+            ret=false;
+        }
+    }
+    if (ri.minRange.size()) {
+        if(val<atof(ri.minRange.c_str())){
+            ret=false;
+        }
+    }
+    return ret;
+}
+
+double  DatasetDB::compareTo(const string& attributesName,double attrval,double val){
+    double ret=0;
+    RangeValueInfo ri;
+    getAttributeRangeValueInfo(attributesName,ri);
+    if((attrval>=(val-atof(ri.increment.c_str())))&&(attrval<=(val+atof(ri.increment.c_str())))){
+        return 0;
+    }
+    return attrval-val;
+}
+

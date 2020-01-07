@@ -187,6 +187,9 @@ namespace chaos{
                 
                 //! get control unit load parameter
                 const std::string& getCUParam();
+                 //! get control unit load parameter as CDataWrapper
+                 // return 0 if success
+                int getCUParam(chaos::common::data::CDataWrapper&p);
                 
                 //!return true if the cu load paramete are in json format
                 const bool isCUParamInJson();

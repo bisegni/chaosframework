@@ -34,6 +34,7 @@
 #include <chaos/common/data/entity_db/EntityDB.h>
 
 #define CUSCHEMA_DEFAULT_STRING_LENGHT 4096
+
 namespace chaos {
     namespace common {
         namespace data {

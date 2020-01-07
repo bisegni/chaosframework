@@ -160,6 +160,13 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     //! return the identification of the device
                     const string & getDeviceID();
                     
+                     //! return the load parameters of the device
+                    const string & getDeviceLoadParams();
+
+                    //!  return the load parameters of the device
+                    //! @param parm 
+                    //! return 0 if success
+                    int getDeviceLoadParams(chaos::common::data::CDataWrapper&parm);
                     //! se the auto busy behaviour
                     /*!
                      Auto busy, let the control unit to manage the busy flag in automatic mode

@@ -120,6 +120,9 @@ namespace chaos {
                 void addCSDataValue(const std::string&, const CDataWrapper&);
                 //get a csdata value
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSDataValue(const std::string&) const;
+                void getCSDataValue(const std::string&,chaos::common::data::CDataWrapper&) const;
+
+
                 //get a projection of a vector of keys
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSProjection(const std::vector<std::string>&) const;
 
@@ -307,6 +310,8 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 void getAllKey(ChaosStringVector& contained_key) const;
                 //return all key contained into the object
                 void getAllKey(ChaosStringSet& contained_key) const;
+                ChaosStringVector getAllKey() const;
+
                 //return all key contained into the object
                 uint32_t getValueSize(const std::string& key) const;
                 //! get raw value ptr address
