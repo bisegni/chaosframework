@@ -172,7 +172,8 @@ double  DatasetDB::compareTo(const string& attributesName,double attrval,double 
     double ret=0;
     RangeValueInfo ri;
     getAttributeRangeValueInfo(attributesName,ri);
-    if((attrval>=(val-atof(ri.increment.c_str())))&&(attrval<=(val+atof(ri.increment.c_str())))){
+    double increment=atof(ri.increment.c_str());
+    if((attrval>=(val-increment))&&(attrval<=(val+increment))){
         return 0;
     }
     return attrval-val;

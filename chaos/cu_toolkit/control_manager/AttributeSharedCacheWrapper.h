@@ -152,6 +152,10 @@ namespace chaos{
 												 setOutputAttributeValue(attribute_name,&value,sizeof(T));
 											 }
 
+				void setOutputAttributeValue(const std::string& attribute_name,
+											 const std::string& value){
+												 setOutputAttributeValue(attribute_name,(void*)value.c_str(),value.size()+1);
+											 }
 				//! Set the value for a determinated variable in a determinate domain
 				void setOutputAttributeValue(const std::string& attribute_name,
 											 void * value,

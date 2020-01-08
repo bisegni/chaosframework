@@ -28,7 +28,6 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/StartableService.h>
 
-#include <boost/atomic.hpp>
 
 namespace chaos {
     namespace common {

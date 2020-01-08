@@ -19,19 +19,19 @@
  * permissions and limitations under the Licence.
  */
 
-#ifndef AbstractRpcAdapter_H
-#define AbstractRpcAdapter_H
+#ifndef RpcServer_H
+#define RpcServer_H
 
 #include <boost/shared_ptr.hpp>
 #include <string>
-
-#include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/rpc/RpcServerHandler.h>
-#include <chaos/common/exception/exception.h>
-#include <chaos/common/event/EventHandler.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>
+/*
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/exception/exception.h>
+#include <chaos/common/event/EventHandler.h>
 
+*/
 namespace chaos {
     using namespace std;
 	
@@ -41,6 +41,9 @@ namespace chaos {
 			class NetworkBroker;
 
 		}
+        namespace rpc{
+            class RpcServerHandler;
+        }
 	}
     /*
      Abstract class for standard adapter method for permit, to CommandManager
@@ -54,7 +57,7 @@ namespace chaos {
         //! port where server has been published
         int port_number;
         
-        RpcServerHandler *command_handler;
+        chaos::common::rpc::RpcServerHandler *command_handler;
         
         /*
          init the rpc adapter
@@ -84,7 +87,7 @@ namespace chaos {
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        virtual void setCommandDispatcher(RpcServerHandler *new_command_handler);
+        virtual void setCommandDispatcher(chaos::common::rpc::RpcServerHandler *new_command_handler);
         
         
         //! return the numebr of message that are waiting to be sent

@@ -105,7 +105,7 @@ void SlowCommand::setBusyFlag(bool state) {
     return abstract_control_unit->setBusyFlag(state);
 
 }
-const string & SlowCommand::getDeviceLoadParams(){
+const string SlowCommand::getDeviceLoadParams(){
      if(abstract_control_unit==NULL)
         return std::string();
    

@@ -20,6 +20,6 @@
  */
 #ifndef ChaosFramework_ChaosRpc_h
 #define ChaosFramework_ChaosRpc_h
-#include <chaos/common/rpc/zmq/ZMQClient.h>
-#include <chaos/common/rpc/zmq/ZMQServer.h>
+#define RPC_SYNC_KEY "sync"
+#define RPC_SEQ_KEY "seq_id"
 #endif

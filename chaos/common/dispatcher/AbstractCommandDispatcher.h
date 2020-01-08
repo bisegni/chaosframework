@@ -77,7 +77,7 @@ namespace chaos{
      by this base class
      */
     class AbstractCommandDispatcher :
-    public RpcServerHandler,
+    public chaos::common::rpc::RpcServerHandler,
     public Configurable,
     public common::utility::StartableService,
     public common::utility::NamedService {

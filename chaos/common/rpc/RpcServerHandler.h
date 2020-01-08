@@ -28,6 +28,8 @@
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
+    namespace common{
+        namespace rpc{
         //!Handle the rpc pack receivement event
     /*!
      Abstract handler class for standard comunication between rpc client and server and other classes
@@ -53,5 +55,5 @@ namespace chaos {
 		 */
 		virtual chaos::common::data::CDWUniquePtr executeCommandSync(chaos::common::data::CDWUniquePtr action_pack) = 0;
     };
-}
+}}}
 #endif

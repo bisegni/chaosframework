@@ -20,8 +20,10 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/rpc/ChaosRpc.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
+#include <chaos/common/rpc/RpcServerHandler.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/exception.h>
 
@@ -218,7 +220,7 @@ void ZMQServer::worker() {
             
             //read message
             err = zmq_msg_init(&request);
-            ZMQS_LDBG << "Wait for message";
+           // ZMQS_LDBG << "Wait for message";
             err = zmq_msg_recv(&request, receiver, 0);
             if(run_server==0){
                 // no error should be issued on normal exit
@@ -236,14 +238,14 @@ void ZMQServer::worker() {
                     CDWShrdPtr result_data_pack;
                     message_data.reset(new CDataWrapper((const char*)zmq_msg_data(&request)));
                     //dispatch the command
-                    if(message_data->hasKey("seq_id")){
-                        seq_id=message_data->getInt64Value("seq_id");
+                    if(message_data->hasKey(RPC_SEQ_KEY)){
+                        seq_id=message_data->getInt64Value(RPC_SEQ_KEY);
                     }
-                    const std::string msg_desc = message_data->getCompliantJSONString();
-                    ZMQS_LDBG << "Message Received seq_id:"<<seq_id << "desc:"<<msg_desc;
+                    const std::string msg_desc = message_data->getJSONString();
+                     DEBUG_CODE(ZMQS_LDBG << "Message Received seq_id:"<<seq_id << " desc:"<<msg_desc;);
 
-                    if(message_data->hasKey("syncrhonous_call") &&
-                       message_data->getBoolValue("syncrhonous_call")) {
+                    if(message_data->hasKey(RPC_SYNC_KEY) &&
+                       message_data->getBoolValue(RPC_SYNC_KEY)) {
                         result_data_pack = command_handler->executeCommandSync(MOVE(message_data));
                     } else {
                         result_data_pack = command_handler->dispatchCommand(MOVE(message_data));
@@ -256,7 +258,7 @@ void ZMQServer::worker() {
                         ZMQS_LERR << "ERROR:"<<msg_desc;
                         
                     }
-                    result_data_pack->addInt64Value("seq_id",seq_id);
+                    result_data_pack->addInt64Value(RPC_SEQ_KEY,seq_id);
                     err = zmq_msg_init_data(&response,
                                             (void*)result_data_pack->getBSONRawData(),
                                             result_data_pack->getBSONRawSize(),

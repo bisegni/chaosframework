@@ -21,6 +21,8 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
+#include <chaos/common/rpc/ChaosRpc.h>
+
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -320,8 +322,8 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
     //get remote ip
     //serialize the call packet
     ZMQSocketPool::ResourceSlot *socket_info = NULL;
-    messageInfo->message->addBoolValue("syncrhonous_call", RpcClient::syncrhonous_call);
-    messageInfo->message->addInt64Value("seq_id", (loc_seq_id = ++seq_id));
+    messageInfo->message->addBoolValue(RPC_SYNC_KEY, RpcClient::syncrhonous_call);
+    messageInfo->message->addInt64Value(RPC_SEQ_KEY, (loc_seq_id = ++seq_id));
     CDWShrdPtr message_data = CDWShrdPtr(messageInfo->message.release());
     try{
         socket_info = getSocketForNFI(messageInfo.get());
@@ -364,7 +366,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                             __PRETTY_FUNCTION__);
             }
         } else {
-            ZMQC_LDBG << "Try to send message seq_id:"<<loc_seq_id;
+           // ZMQC_LDBG << "Try to send message seq_id:"<<loc_seq_id;
             err = zmq_msg_send(&message,
                                socket_info->resource_pooled->socket,
                                ZMQ_DONTWAIT);
@@ -384,7 +386,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                 deleteSocket(socket_info);
                 socket_info = NULL;
             }else{
-                ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent now wait for ack";
+                ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent :"<<message_data->getJSONString();
                 //ok get the answer
                 err = zmq_msg_recv(&reply,
                                    socket_info->resource_pooled->socket,
@@ -409,8 +411,8 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                     //decode result of the posting message operation
                     if(zmq_msg_size(&reply)>0){
                         tmp.reset(new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
-                        if(tmp->hasKey("seq_id")){
-                            rid_ack=tmp->getInt64Value("seq_id");
+                        if(tmp->hasKey(RPC_SEQ_KEY)){
+                            rid_ack=tmp->getInt64Value(RPC_SEQ_KEY);
                             if(rid_ack!=loc_seq_id){
                                 ZMQC_LERR<<"MISMATCH request id:"<<loc_seq_id<<" to:@"<<messageInfo->destinationAddr<<" ack id:"<<rid_ack <<" from @"<<messageInfo->sender_node_id;
 

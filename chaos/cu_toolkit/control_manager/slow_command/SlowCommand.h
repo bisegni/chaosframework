@@ -161,7 +161,7 @@ new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager
                     const string & getDeviceID();
                     
                      //! return the load parameters of the device
-                    const string & getDeviceLoadParams();
+                    const string getDeviceLoadParams();
 
                     //!  return the load parameters of the device
                     //! @param parm 

@@ -322,9 +322,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
         if(numerbOfserverAddressConfigured>0){
             ret=newConfigration;
         }
-    } else {
+    } /*else {
         IODirectIODriver_LERR_<<"DS list not present:"<<newConfigration->getJSONString();
-    }
+    }*/
     return ret;
 }
 

@@ -24,12 +24,11 @@
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/property/property.h>
 #include <chaos/common/utility/UUIDUtil.h>
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
-#include <chaos/cu_toolkit/driver_manager/DriverManager.h>
-
+#include <chaos/cu_toolkit/driver_manager/DriverManager.h> 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp>             // uuid class

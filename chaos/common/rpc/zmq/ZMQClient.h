@@ -12,15 +12,10 @@
 //#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/rpc/RpcClient.h>
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
-#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/utility/LockableObject.h>
-#include <chaos/common/async_central/async_central.h>
 #include <chaos/common/pool/ResourcePool.h>
-#include <chaos/common/chaos_types.h>
 
 #if CHAOS_PROMETHEUS
 #include <chaos/common/metric/metric.h>
@@ -59,7 +54,7 @@ namespace chaos {
     public CObjectProcessingQueue<NetworkForwardInfo>,
     public chaos::common::async_central::TimerHandler {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
-        ZMQClient(const string& alias);
+        ZMQClient(const std::string& alias);
         virtual ~ZMQClient();
         uint32_t zmq_timeout;
         boost::shared_mutex map_socket_mutex;

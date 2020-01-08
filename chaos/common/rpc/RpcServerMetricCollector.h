@@ -23,8 +23,8 @@
 #define __CHAOSFramework__RpcServerMetricCollector__
 
 #include <chaos/common/metric/metric.h>
-#include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcServerHandler.h>
+#include <chaos/common/rpc/RpcServer.h>
 
 
 #include <boost/atomic.hpp>

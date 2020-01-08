@@ -22,7 +22,8 @@
 #include "RpcClient.h"
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
+#include <chaos/common/rpc/RpcServer.h>
+#include <chaos/common/rpc/RpcServerHandler.h>
 #define RPCC_LAPP INFO_LOG(RpcClient)
 #define RPCC_LDBG DBG_LOG(RpcClient)
 #define RPCC_LERR ERR_LOG(RpcClient)
@@ -137,7 +138,7 @@ void RpcClient::forwadSubmissionResultError(NFISharedPtr message_info,
 }
 
 
-void RpcClient::setServerHandler(RpcServerHandler *_server_handler) {
+void RpcClient::setServerHandler(chaos::common::rpc::RpcServerHandler *_server_handler) {
     server_handler = _server_handler;
 }
 

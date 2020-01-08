@@ -55,13 +55,15 @@ namespace chaos {
                     direction(chaos::DataType::Bidirectional),
                     type(chaos::DataType::TYPE_UNDEFINED),
                     binary_subtype_list(),
-                    binary_cardinality(0){}
+                    binary_cardinality(0),inc("0"){}
                     
                     DatasetAttribute(const DatasetAttribute& copy_src):
                     name(copy_src.name),
                     description(copy_src.description),
                     direction(copy_src.direction),
                     type(copy_src.type),
+                    inc(copy_src.inc),
+                    unit(copy_src.unit),
                     binary_subtype_list(copy_src.binary_subtype_list),
                     binary_cardinality(copy_src.binary_cardinality){}
                     
@@ -70,6 +72,8 @@ namespace chaos {
                         description = rhs.description;
                         direction = rhs.direction;
                         type = rhs.type;
+                        inc=rhs.inc;
+                        unit=rhs.unit;
                         binary_subtype_list = rhs.binary_subtype_list;
                         binary_cardinality = rhs.binary_cardinality;
                         return *this;
