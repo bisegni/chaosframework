@@ -32,7 +32,9 @@
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
-#include <chaos/common/rpc/ChaosRpc.h>
+#include <chaos/common/rpc/RpcServer.h>
+#include <chaos/common/rpc/RpcClient.h>
+
 #include <chaos/common/direct_io/DirectIO.h>
 
 
