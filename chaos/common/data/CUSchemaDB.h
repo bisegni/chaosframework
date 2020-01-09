@@ -65,6 +65,11 @@ namespace chaos {
                 string increment;
                 //! units info
                 string unit;
+                 //! conversion factor
+                string convf;
+                //! conversion offset
+                string offset;
+               
                 //!Type of the value
                 DataType::DataType valueType;
                 //!Type of binary

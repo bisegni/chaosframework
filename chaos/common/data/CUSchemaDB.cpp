@@ -50,6 +50,8 @@ void RangeValueInfo::reset() {
     minRange.clear();
     increment.clear();
     unit="NA"; 
+    convf="1";
+    offset="0";
     maxSize = 0;
     valueType = (DataType::DataType)0;
     cardinality=0;
@@ -95,6 +97,12 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, keyTmp);
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, keyTmp);
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET, keyTmp);
+
+
     //new key for subbinary data
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE, keyTmp);
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, keyTmp);
@@ -605,6 +613,12 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT)){
                     addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT));
                 }
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT));
+                }
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET));
+                }
             }
         }
     }
@@ -796,6 +810,10 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,
             dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT, curKIV->value.strValue);
         }else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT]){
             dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT, curKIV->value.strValue);
+        }else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT]){
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT, curKIV->value.strValue);
+        }else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET]){
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET, curKIV->value.strValue);
         }
     }
 }
@@ -911,6 +929,8 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
 
     uint32_t keyIdAttrInc =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT];
     uint32_t keyIdAttrUnit =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT];
+    uint32_t keyIdAttrConv =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT];
+    uint32_t keyIdAttrOff =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET];
 
     keyToGot.push_back(keyIdAttrMaxRng);
     keyToGot.push_back(keyIdAttrMinRng);
@@ -922,7 +942,9 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     keyToGot.push_back(keyIdAttrDir);
     keyToGot.push_back(keyIdAttrInc);
     keyToGot.push_back(keyIdAttrUnit);
-    
+    keyToGot.push_back(keyIdAttrConv);
+    keyToGot.push_back(keyIdAttrOff);
+
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
     rangeInfo.name=attributesName;
@@ -1014,7 +1036,9 @@ void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
     uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE];
     uint32_t keyIdAttrInc =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_INCREMENT];
     uint32_t keyIdAttrUnit =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT];
- 
+    uint32_t keyIdAttrConv =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT];
+    uint32_t keyIdAttrOff =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET];
+
 
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMaxRng, rangeInfo.maxRange);
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMinRng, rangeInfo.minRange);
@@ -1022,6 +1046,9 @@ void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrInc, rangeInfo.increment);
 
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrUnit, rangeInfo.unit);
+    addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrUnit, rangeInfo.convf);
+    addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrUnit, rangeInfo.offset);
+
 
 }
 
