@@ -26,6 +26,7 @@
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
+#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
