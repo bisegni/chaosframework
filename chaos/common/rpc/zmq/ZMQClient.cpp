@@ -22,7 +22,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/rpc/ChaosRpc.h>
-
+#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/rpc/zmq/ZmqMemoryManagement.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
