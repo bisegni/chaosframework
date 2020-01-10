@@ -566,7 +566,12 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                             int32_t attrType = elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
                             string attrValue = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE);
                             cu_ds_init->addCSDataValue(attrName,*elementDescription);
+                            if((attrValue=="" ||attrValue=="NA")&&(attrType!=DataType::TYPE_STRING)){
+                                // not valid value not initialize 
+                                    ACULDBG_ << "skipped initialization of:"<<attrName<<" to:'"<<attrValue<<"' not valid for not string type";
 
+                                    continue;
+                            }
                             switch(attrType) {
                                 case DataType::TYPE_BOOLEAN:
                                     cdw_unique_ptr->addBoolValue(attrName, CDataVariant(attrValue).asBool());

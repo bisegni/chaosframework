@@ -758,6 +758,24 @@ namespace chaos {
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_CONVFACT          = "cudk_ds_attr_convfact";
          //!key representing the offset the attribute
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_OFFSET             = "cudk_ds_attr_offset";
+        /// TO ADD
+        //!key representing the minimum working value    
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_MIN_WORK_VALUE     = "cudk_ds_attr_min_work";
+        //!key representing the maximum working value
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_MAX_WORK_VALUE     = "cudk_ds_attr_max_work";
+        
+        //!key representing the interval of time in us in which the set is still compliant with min and max working
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_THR_TIME_US     = "cudk_ds_attr_thr_time_us";
+
+        //!key representing the timeout time in us for a set of the attribute
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_SET_TIMEO_TIME_US     = "cudk_ds_attr_set_timeout_us";
+        //!key representing the timeout time in us for a get of the attribute
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_GET_TIMEO_TIME_US     = "cudk_ds_attr_get_timeout_us";
+
+        //!key representing the scale of the attribute 
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_SCALE     = "cudk_ds_attr_scale";
+        
+        //////
         //!key representing the value max size where need (type different from raw data type ex: int32)
         static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
         
