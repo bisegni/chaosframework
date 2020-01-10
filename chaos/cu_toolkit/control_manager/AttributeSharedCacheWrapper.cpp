@@ -64,7 +64,15 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(VariableIndexType attr
 												   value,
 												   size);
 }
-
+void AttributeSharedCacheWrapper::setInputAttributeValue(const std::string& attribute_name,
+																void * value,
+																uint32_t size) {
+	CHAOS_ASSERT(attribute_value_shared_cache)
+	attribute_value_shared_cache->setAttributeValue(DOMAIN_INPUT,
+												   attribute_name,
+												   value,
+												   size);
+}
 bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(const std::string& attribute_name,
 															uint32_t new_size,
                                                             bool clear_mem) {

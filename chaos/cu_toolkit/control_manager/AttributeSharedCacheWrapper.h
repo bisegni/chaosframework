@@ -151,13 +151,26 @@ namespace chaos{
 											 T value){
 												 setOutputAttributeValue(attribute_name,&value,sizeof(T));
 											 }
-
+				template <typename T>
+				void setInputAttributeValue(const std::string& attribute_name,
+											 T value){
+												 setInputAttributeValue(attribute_name,&value,sizeof(T));
+											 }
 				void setOutputAttributeValue(const std::string& attribute_name,
 											 const std::string& value){
 												 setOutputAttributeValue(attribute_name,(void*)value.c_str(),value.size()+1);
 											 }
+				void setInputAttributeValue(const std::string& attribute_name,
+											 const std::string& value){
+												 setInputAttributeValue(attribute_name,(void*)value.c_str(),value.size()+1);
+											 }
 				//! Set the value for a determinated variable in a determinate domain
 				void setOutputAttributeValue(const std::string& attribute_name,
+											 void * value,
+											 uint32_t size);
+
+				//! Set the value for a determinated variable in a determinate domain
+				void setInputAttributeValue(const std::string& attribute_name,
 											 void * value,
 											 uint32_t size);
 				//! Set the value for a determinated variable in a determinate domain

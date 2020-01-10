@@ -775,8 +775,7 @@ namespace chaos {
         //!key representing the scale of the attribute 
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_SCALE     = "cudk_ds_attr_scale";
         
-        //////
-        //!key representing the value max size where need (type different from raw data type ex: int32)
+        // !key representing the value max size where need (type different from raw data type ex: int32)
         static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
         
         //!key representing the default value

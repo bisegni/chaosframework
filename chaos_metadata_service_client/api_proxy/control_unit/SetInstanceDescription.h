@@ -121,6 +121,8 @@ namespace chaos {
                                             const std::string& off = std::string("0")
 
                                             );
+
+                    void addAttributeConfig(const chaos::common::data::CDataWrapper&attrs);
                     //! remove all previously added attribute range value description
                     void clearAllAttributeConfig();
                 };

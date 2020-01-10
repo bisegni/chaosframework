@@ -148,6 +148,11 @@ void SetInstanceDescriptionHelper::addDriverDescription(const std::string& drive
 void SetInstanceDescriptionHelper::clearAllDriverDescriptions() {
     driver_descriptions.clear();
 }
+void SetInstanceDescriptionHelper::addAttributeConfig(const chaos::common::data::CDataWrapper&attrs){
+        CDWUniquePtr attr(new CDataWrapper());
+        attrs.copyAllTo(*attr.get());
+        attribute_value_descriptions.push_back(attr.release());
+}
 
 //! add an attribute range value description for the default value and range
 void SetInstanceDescriptionHelper::addAttributeConfig(const std::string& attribute_name,
