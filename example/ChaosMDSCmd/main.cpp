@@ -199,8 +199,9 @@ int initialize_from_old_mds(std::string conf){
 					GET_CONFIG_STRING(attr_w,cudk_ds_attr_inc);
 					GET_CONFIG_STRING(attr_w,cudk_ds_attr_unit);
 					*/
-
+					//std::cout<<"adding attribute:"<<attr_w->getJSONString()<<std::endl;
 					cud.addAttributeConfig(*attr_w.get());
+
 				}
 
 				EXECUTE_CHAOS_API(api_proxy::control_unit::SetInstanceDescription,3000,cud);

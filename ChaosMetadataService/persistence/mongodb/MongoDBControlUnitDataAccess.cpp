@@ -594,6 +594,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
                 idx < drv_array->size();
                 idx++) {
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
+
                 if(driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME) &&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION)&&
                    driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER)) {
@@ -619,6 +620,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
                 idx < attr_array->size();
                 idx++) {
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
+
                 if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
                    attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
                     int size;
