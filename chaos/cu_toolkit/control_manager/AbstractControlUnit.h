@@ -771,12 +771,17 @@ namespace chaos{
                                                             int typ=chaos::DataType::TYPE_UNDEFINED;
                                                             if(attribute_name.isCDataWrapperValue(*i)){
                                                                  ChaosUniquePtr<chaos::common::data::CDataWrapper> ret=attribute_name.getCSDataValue(name);
-                                                                 if(ret->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)){
+                                                                if(ret->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)){
                                                                      //assume attribute described in chaos format
                                                                      typ=ret->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
+                                                                 } else if(ret->hasKey("datatype")){ // TO REMOVE SOON 
+                                                                     typ=ret->getInt32Value("datatype");
                                                                  }
                                                                  if(ret->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)){
                                                                      desc=ret->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION);
+                                                                 } else if(ret->hasKey("description")){ // TO REMOVE SOON 
+                                                                     desc=ret->getStringValue("description");
+
                                                                  }
                                                             } else {
                                                                 typ=attribute_name.getValueType(name);
