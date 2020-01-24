@@ -343,9 +343,16 @@ namespace chaos {
             //!search cds
             node_type_cds = 4,
             //!search wan
-            node_type_wan = 5
+            node_type_wan = 5,
+            //!search variable for compatibility and reuse  here all the search 
+            node_type_variable = 6,
+            //!search tags
+            node_type_tag = 7,
+            
             
         } NodeSearchType;
+
+        static const char* NODE_SEARCH_LIST_KEY="node_search_result_page";
     }
     /** @} */ // end of NodeType
     
@@ -462,6 +469,15 @@ namespace chaos {
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
+    /** @defgroup Variable Keys !CHAOS variables
+     *  @{
+     */
+    namespace VariableDefinitionKey {
+        static const char * const VARIABLE_NAME_KEY                           = "variable_name";
+        static const char * const VARIABLE_VALUE_KEY                           = "variable_value";
+
+
+    }
     /** @defgroup HealtProcessDefinitionKey !CHAOS healt process key description
      *  @{
      */

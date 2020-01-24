@@ -35,16 +35,16 @@ CHAOS_MDS_DEFINE_API_CLASS_CD(SetVariable, "setVariable")
 
 CDWUniquePtr SetVariable::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
-    CHECK_KEY_THROW_AND_LOG(api_data, "variable_name", ERR, -2, "The variable_name key is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("variable_name"), ERR, -3, "The variable_name needs to be an object");
-    CHECK_KEY_THROW_AND_LOG(api_data, "variable_value", ERR, -4, "The variable_value key is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG(api_data->isCDataWrapperValue("variable_value"), ERR, -5, "The variable_value key needs to be an object");
+    CHECK_KEY_THROW_AND_LOG(api_data, VariableDefinitionKey::VARIABLE_NAME_KEY, ERR, -2, "The variable_name key is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY), ERR, -3, "The variable_name needs to be an object");
+    CHECK_KEY_THROW_AND_LOG(api_data, VariableDefinitionKey::VARIABLE_VALUE_KEY, ERR, -4, "The variable_value key is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(api_data->isCDataWrapperValue(VariableDefinitionKey::VARIABLE_VALUE_KEY), ERR, -5, "The variable_value key needs to be an object");
     
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -6);
     
     int err = 0;
-    const std::string variable_name = api_data->getStringValue("variable_name");
-    CDWUniquePtr variable_value = api_data->getCSDataValue("variable_value");
+    const std::string variable_name = api_data->getStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY);
+    CDWUniquePtr variable_value = api_data->getCSDataValue(VariableDefinitionKey::VARIABLE_VALUE_KEY);
     if((err = u_da->setVariable(variable_name,
                                 *variable_value))){
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error setting variable %1% with error %2%", %variable_name%err));

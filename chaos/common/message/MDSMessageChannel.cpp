@@ -603,9 +603,9 @@ int MDSMessageChannel::setVariable(const std::string& variable_name,
                                    uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("variable_name",
+    message->addStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY,
                             variable_name);
-    message->addCSDataValue("variable_value",
+    message->addCSDataValue(VariableDefinitionKey::VARIABLE_VALUE_KEY,
                             variable_value);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "setVariable",
@@ -624,7 +624,7 @@ int MDSMessageChannel::searchVariable(const std::string& variable_name,ChaosStri
                                       uint32_t millisec_to_wait){
     int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("variable_name",
+    message->addStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY,
                             variable_name);
     
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
@@ -661,7 +661,7 @@ int MDSMessageChannel::getVariable(const std::string& variable_name,
                                    uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("variable_name",
+    message->addStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY,
                             variable_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "getVariable",
@@ -681,7 +681,7 @@ int MDSMessageChannel::removeVariable(const std::string& variable_name,
                                       uint32_t millisec_to_wait) {
     int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
-    message->addStringValue("variable_name",
+    message->addStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY,
                             variable_name);
     ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("service",
                                                                                             "removeVariable",
@@ -718,10 +718,10 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
         DECODE_ERROR(request_future)
         if((err = request_future->getError()) == ErrorCode::EC_NO_ERROR) {
             if(request_future->getResult() &&
-               request_future->getResult()->hasKey("node_search_result_page") &&
-               request_future->getResult()->isVectorValue("node_search_result_page")) {
+               request_future->getResult()->hasKey(chaos::NodeType::NODE_SEARCH_LIST_KEY) &&
+               request_future->getResult()->isVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY)) {
                 //we have result
-                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue("node_search_result_page");
+                CMultiTypeDataArrayWrapperSPtr snapshot_desc_list = request_future->getResult()->getVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY);
                 for(int idx = 0;
                     idx < snapshot_desc_list->size();
                     idx++) {

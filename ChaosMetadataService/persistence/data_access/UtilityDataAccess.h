@@ -84,6 +84,18 @@ namespace chaos {
                      the reset is done without check (for now)
                      */
                     virtual int resetAllData() = 0;
+
+
+                    //!Search variable by name
+                    /*!
+                    \param res a CDatawrapper result vector reference where the result is passed
+                      \param name the name of the variable to search
+                      \return 0 on success
+                     */
+                    virtual int searchVariable(chaos::common::data::CDataWrapper **res,
+                                      const std::string& name,
+                                      uint32_t last_unique_id,
+                                      uint32_t page_length)=0;
                 };
                 
             }

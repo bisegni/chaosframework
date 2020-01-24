@@ -118,10 +118,10 @@ void SearchNodeListModel::onApiDone(const QString& tag,
     result_found.clear();
 
     if(!api_result.isNull() &&
-            api_result->hasKey("node_search_result_page") &&
-            api_result->isVectorValue("node_search_result_page")) {
+            api_result->hasKey(chaos::NodeType::NODE_SEARCH_LIST_KEY) &&
+            api_result->isVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY)) {
         //we have result
-        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue("node_search_result_page");
+        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY);
         if(arr->size()) {
             //get first element seq
             for(int i = 0;

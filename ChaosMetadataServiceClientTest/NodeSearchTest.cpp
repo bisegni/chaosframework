@@ -59,10 +59,10 @@ void NodeSearchTest::testSearch(const std::string& search_string){
             } else {
                 if(search_result->getResult()) {
                     //result found
-                    if(search_result->getResult()->hasKey("node_search_result_page")&&
-                       search_result->getResult()->isVectorValue("node_search_result_page")){
+                    if(search_result->getResult()->hasKey(chaos::NodeType::NODE_SEARCH_LIST_KEY)&&
+                       search_result->getResult()->isVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY)){
                         //we have result
-                        CMultiTypeDataArrayWrapperSPtr node_found_vec(search_result->getResult()->getVectorValue("node_search_result_page"));
+                        CMultiTypeDataArrayWrapperSPtr node_found_vec(search_result->getResult()->getVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY));
                         if(node_found_vec->size() == 0) {
                             end=true;
                         } else{

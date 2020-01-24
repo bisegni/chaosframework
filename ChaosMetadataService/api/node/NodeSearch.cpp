@@ -58,14 +58,24 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
         NS_DBG << "Search only item that are with alive state:" << alive_only;
     }
     //get node data access
-    GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
-    if (n_da->searchNode(&result,
-                         api_data->getStringValue("unique_id_filter"),
-                         (chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter"),
-                         alive_only,
-                         last_sequence_id,
-                         page_length)){
-        LOG_AND_TROW(NS_ERR, -5, "Loading search page")
+    chaos::NodeType::NodeSearchType search_type=(chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter");
+    std::string search_filter=api_data->getStringValue("unique_id_filter");
+    if(search_type == chaos::NodeType::node_type_variable){
+        GET_DATA_ACCESS(UtilityDataAccess, u_da, -4);
+        if(u_da->searchVariable(&result,search_filter,last_sequence_id,page_length)){
+                        LOG_AND_TROW(NS_ERR, -5, "Searching variable: "+search_filter)
+
+        }
+    } else {
+        GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
+        if (n_da->searchNode(&result,
+                            search_filter,
+                            search_type,
+                            alive_only,
+                            last_sequence_id,
+                            page_length)){
+            LOG_AND_TROW(NS_ERR, -5, "Loading Searching: "+search_filter)
+        }
     }
     return CDWUniquePtr(result);
 }

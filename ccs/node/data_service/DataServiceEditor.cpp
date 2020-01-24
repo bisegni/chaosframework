@@ -292,8 +292,8 @@ void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
     ui->labelSelectedDataServiceForAssociationTable->setText(data_service);
     ui->pushButtonUpdateAssociationList->setEnabled(data_service.size()>0);
     if(!api_result.isNull() &&
-            api_result->hasKey("node_search_result_page")) {
-        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue("node_search_result_page");
+            api_result->hasKey(chaos::NodeType::NODE_SEARCH_LIST_KEY)) {
+        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY);
         for(int i = 0;
             i < arr->size();
             i++) {
@@ -322,8 +322,8 @@ void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
 void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
     table_model_ds->setRowCount(0);
     if(!api_result.isNull() &&
-            api_result->hasKey("node_search_result_page")) {
-        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue("node_search_result_page");
+            api_result->hasKey(chaos::NodeType::NODE_SEARCH_LIST_KEY)) {
+        CMultiTypeDataArrayWrapperSPtr arr = api_result->getVectorValue(chaos::NodeType::NODE_SEARCH_LIST_KEY);
         for(int i = 0;
             i < arr->size();
             i++) {

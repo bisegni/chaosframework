@@ -47,7 +47,7 @@ CDWUniquePtr GetAllDataService::execute(CDWUniquePtr api_data) {
             it++) {
             result->appendCDataWrapperToArray(*it->get());
         }
-        result->finalizeArrayForKey("node_search_result_page");
+        result->finalizeArrayForKey(chaos::NodeType::NODE_SEARCH_LIST_KEY);
     }
     return result;
 }

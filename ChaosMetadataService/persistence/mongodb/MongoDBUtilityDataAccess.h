@@ -58,6 +58,11 @@ namespace chaos {
                     
                     //inherited method
                     int deleteVariable(const std::string& variable_name);
+
+                    int searchVariable(chaos::common::data::CDataWrapper **res,
+                                      const std::string& name,
+                                      uint32_t last_unique_id,
+                                      uint32_t page_length);
                 };
                 
                 

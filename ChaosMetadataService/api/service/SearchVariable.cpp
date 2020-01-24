@@ -19,21 +19,21 @@
  * permissions and limitations under the Licence.
  */
 
-#include "RemoveVariable.h"
+#include "SearchVariable.h"
 
 #include <chaos/common/chaos_types.h>
 
-#define INFO INFO_LOG(RemoveVariable)
-#define DBG  DBG_LOG(RemoveVariable)
-#define ERR  ERR_LOG(RemoveVariable)
+#define INFO INFO_LOG(SearchVariable)
+#define DBG  DBG_LOG(SearchVariable)
+#define ERR  ERR_LOG(SearchVariable)
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(RemoveVariable, "removeVariable");
+CHAOS_MDS_DEFINE_API_CLASS_CD(SearchVariable, "getVariable")
 
-CDWUniquePtr RemoveVariable::execute(CDWUniquePtr api_data) {
+CDWUniquePtr SearchVariable::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, VariableDefinitionKey::VARIABLE_NAME_KEY, ERR, -2, "The variable_name key is mandatory");
     CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY), ERR, -3, "The variable_name needs to be an object");
@@ -43,8 +43,9 @@ CDWUniquePtr RemoveVariable::execute(CDWUniquePtr api_data) {
     int err = 0;
     const std::string variable_name = api_data->getStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY);
     
-    if((err = u_da->deleteVariable(variable_name))){
-        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error removing variable %1% with error %2%", %variable_name%err));
+    CDataWrapper *result = NULL;
+    if((err = u_da->getVariable(variable_name, &result))){
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error retrieving the variable %1% with error %2%", %variable_name%err));
     }
-    return CDWUniquePtr();
+    return CDWUniquePtr(result);
 }

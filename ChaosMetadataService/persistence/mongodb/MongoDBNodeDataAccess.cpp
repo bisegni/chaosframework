@@ -491,7 +491,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                     MDBNDA_ERR << "Exception during scan of found node:" << node_uid_found;
                 }
             }
-            (*result)->finalizeArrayForKey("node_search_result_page");
+            (*result)->finalizeArrayForKey(chaos::NodeType::NODE_SEARCH_LIST_KEY);
         }
     }
     return err;

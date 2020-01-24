@@ -35,13 +35,13 @@ CHAOS_MDS_DEFINE_API_CLASS_CD(GetVariable, "getVariable")
 
 CDWUniquePtr GetVariable::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
-    CHECK_KEY_THROW_AND_LOG(api_data, "variable_name", ERR, -2, "The variable_name key is mandatory");
-    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue("variable_name"), ERR, -3, "The variable_name needs to be an object");
+    CHECK_KEY_THROW_AND_LOG(api_data, VariableDefinitionKey::VARIABLE_NAME_KEY, ERR, -2, "The variable_name key is mandatory");
+    CHECK_ASSERTION_THROW_AND_LOG(api_data->isStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY), ERR, -3, "The variable_name needs to be an object");
     
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -4);
     
     int err = 0;
-    const std::string variable_name = api_data->getStringValue("variable_name");
+    const std::string variable_name = api_data->getStringValue(VariableDefinitionKey::VARIABLE_NAME_KEY);
     
     CDataWrapper *result = NULL;
     if((err = u_da->getVariable(variable_name, &result))){
