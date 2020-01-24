@@ -251,7 +251,7 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
         case DataType::TYPE_CLUSTER:
         case DataType::TYPE_STRING:
             if(maxDimension == 0){
-                CUSCHEMALDBG<<"WARNING: not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
+                CUSCHEMALDBG<<"WARNING:"<<node_uid<<"/"<<attributeName<<" not json/string max length given setting to:"<<CUSCHEMA_DEFAULT_STRING_LENGHT;
                 maxDimension = CUSCHEMA_DEFAULT_STRING_LENGHT;
             }
             
@@ -263,7 +263,7 @@ void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
             typeMaxDimension = maxDimension;
             break;
         default:
-            throw CException(2, "unmanaged type", "CUSchemaDB::addAttributeToDataSet");
+            throw CException(attributeType, "unmanaged type:"+node_uid +std::string("/")+attributeName, "CUSchemaDB::addAttributeToDataSet");
             break;
     }
     
