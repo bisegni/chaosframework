@@ -654,9 +654,13 @@ class AbstractControlUnit : public DeclareAction,
 
   //---------------alarm api-------------
   //!create a new alarm into the catalog
+  // \param variable_type type of alarms
+  // \param state_variable_name variable name
+  // \param state_variable_description description
+  // \param logmaxfreq_ms max frequence of logging error on DB (0 always, <0 never, >0 log frequency in ms)
   void addStateVariable(chaos::cu::control_manager::StateVariableType variable_type,
                         const std::string&                            state_variable_name,
-                        const std::string&                            state_variable_description);
+                        const std::string&                            state_variable_description,int32_t logmaxfreq_ms=5000);
 
   //!set the severity on all state_variable
   void setStateVariableSeverity(chaos::cu::control_manager::StateVariableType variable_type,

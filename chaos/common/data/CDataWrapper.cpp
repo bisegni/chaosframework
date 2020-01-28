@@ -728,7 +728,7 @@ void CDataWrapper::setSerializedJsonData(const char* json_data) {
                                              &err));
     if (bson == NULL) {
       std::stringstream ss;
-      ss << "cannot serialize json:'" << json_data << "'";
+      ss << "Error serializing json into bson: '"<<err.message<<"' json:'"<< json_data << "' ";
       throw CException(1, ss.str(), __PRETTY_FUNCTION__);
     }
   }

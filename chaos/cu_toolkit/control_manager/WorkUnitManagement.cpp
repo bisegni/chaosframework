@@ -186,7 +186,7 @@ void WorkUnitManagement::scheduleSM()  {
                                                            ex.errorDomain);
                 chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), logged_exception, "Setup phase", __PRETTY_FUNCTION__);
                 DECODE_CHAOS_EXCEPTION(ex)
-                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+              //  SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }catch(...) {
                 MetadataLoggingCException logged_exception(work_unit_instance->getCUID(),
                                                            -10000,
@@ -194,7 +194,7 @@ void WorkUnitManagement::scheduleSM()  {
                                                            __PRETTY_FUNCTION__);
                 chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), logged_exception, "Setup phase", __PRETTY_FUNCTION__);
                 WUMERR_ << "Unexpected error during control unit definition";
-                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+            //    SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublishing())
             break;

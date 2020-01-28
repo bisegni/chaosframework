@@ -22,7 +22,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/state_flag/StateFlag.h>
-
+#include <chaos/common/utility/TimingUtil.h>
 using namespace chaos::common::utility;
 using namespace chaos::common::state_flag;
 
@@ -118,7 +118,7 @@ current_level(0){}
 StateFlag::StateFlag(const std::string& _name,
                      const std::string& _description):
 flag_description(_name,
-                 _description),
+                 _description),lastUpdateTimestamp_ms(0),
 current_level(0){}
 
 StateFlag::StateFlag(const StateFlag& src):
@@ -210,6 +210,7 @@ void StateFlag::fireToListener(unsigned int fire_code,
         state_flag_listener_instance->stateFlagUpdated(flag_description,
                                                        level.getTag(),
                                                        level.getSeverity());
+        lastUpdateTimestamp_ms=chaos::common::utility::TimingUtil::getTimeStamp();
     }
 }
 

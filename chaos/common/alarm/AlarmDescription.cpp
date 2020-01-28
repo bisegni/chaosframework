@@ -71,6 +71,9 @@ const int8_t AlarmDescription::getCurrentSeverityCode() const {
 const std::string& AlarmDescription::getCurrentSeverityTag() const {
     return StateFlag::getCurrentStateLevel().getTag();
 }
+uint64_t AlarmDescription::getLastUpdateTimestamp(){
+    return StateFlag::getLastUpdateTimestamp();
+}
 
 const std::string& AlarmDescription::getCurrentSeverityDescription() const {
     return StateFlag::getCurrentStateLevel().getDescription();

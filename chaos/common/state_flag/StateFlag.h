@@ -175,6 +175,7 @@ namespace chaos {
                 
                 void fireToListener(unsigned int fire_code,
                                     chaos::common::utility::AbstractListener *listener_to_fire);
+                uint64_t lastUpdateTimestamp_ms;
             public:
                 StateFlag();
                 StateFlag(const std::string& _name,
@@ -182,7 +183,7 @@ namespace chaos {
                 StateFlag(const StateFlag& src);
                 
                 StateFlag& operator=(StateFlag const &rhs);
-                
+                uint64_t getLastUpdateTimestamp() const {return lastUpdateTimestamp_ms;}
                 const std::string& getName() const;
                 const std::string& getDescription() const;
                 const std::string& getFlagUUID() const;

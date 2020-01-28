@@ -27,7 +27,7 @@ using namespace chaos::common::state_flag;
 #pragma MultiSeverityAlarmHandler
 void MultiSeverityAlarmHandler::alarmChanged(const std::string& alarm_tag,
                                              const std::string& alarm_name,
-                                             const int8_t alarm_severity) {
+                                             const int8_t alarm_severity){
     alarmChanged(alarm_tag,
                  alarm_name,
                  static_cast<MultiSeverityAlarmLevel>(alarm_severity));
@@ -37,7 +37,7 @@ void MultiSeverityAlarmHandler::alarmChanged(const std::string& alarm_tag,
 #pragma MultiSeverityAlarm
 MultiSeverityAlarm::MultiSeverityAlarm(const std::string& alarm_tag,
                                        const std::string& alarm_name,
-                                       const std::string& alarm_description):
+                                       const std::string& alarm_description,int32_t max_freq):max_freq_log_ms(max_freq),last_log_ms(0),
 
 AlarmDescription(alarm_tag,
                  alarm_name,

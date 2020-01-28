@@ -50,16 +50,20 @@ namespace chaos{
             
             class MultiSeverityAlarm:
             public AlarmDescription {
-                
+
             public:
                 MultiSeverityAlarm(const std::string& alarm_tag,
                                    const std::string& alarm_name,
-                                   const std::string& alarm_description);
+                                   const std::string& alarm_description,
+                                   int32_t max_freq_log_ms=0);
                 ~MultiSeverityAlarm();
                 
                 void setNewSeverity(const MultiSeverityAlarmLevel new_severity);
                 
                 const MultiSeverityAlarmLevel getCurrentSeverityLevel();
+                const int32_t max_freq_log_ms;
+                uint64_t last_log_ms;
+                
             };
             
         }

@@ -51,6 +51,8 @@ namespace chaos{
             class AlarmDescription:
             protected state_flag::StateFlag {
                 friend class AlarmCatalog;
+                uint64_t lastAlarmChanged_ms;
+            
             public:
                 AlarmDescription(const std::string& alarm_tag,
                                  const std::string& alarm_name,
@@ -65,6 +67,7 @@ namespace chaos{
                 const int8_t getCurrentSeverityCode() const;
                 const std::string& getCurrentSeverityTag() const;
                 const std::string& getCurrentSeverityDescription() const;
+                uint64_t getLastUpdateTimestamp();
                 bool addState(int8_t severity_code,
                               const std::string& severity_tag,
                               const std::string& severity_description,

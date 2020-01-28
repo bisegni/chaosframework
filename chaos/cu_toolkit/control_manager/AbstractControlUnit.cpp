@@ -1891,7 +1891,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                             }
                             case DataType::TYPE_STRING: {
                                 std::string str = dataset_attribute_values->getStringValue(attr_name);
-                                CHECK_FOR_STRING_RANGE_VALUE(str, attr_name)
+                                //CHECK_FOR_STRING_RANGE_VALUE(str, attr_name)
                                 attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size()+1);
                                 break;
                             }
@@ -2260,7 +2260,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
 #pragma mark Abstract Control Unit API
     void         AbstractControlUnit::addStateVariable(StateVariableType  variable_type,
                                                        const std::string& state_variable_name,
-                                                       const std::string& state_variable_description) {
+                                                       const std::string& state_variable_description,int32_t max_freq_ms) {
         if (map_variable_catalog.count(variable_type) == 0) {
             //add new catalog
             map_variable_catalog.insert(MapStateVariablePair(variable_type, AlarmCatalog(stateVariableEnumToName(variable_type))));
@@ -2268,7 +2268,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         AlarmCatalog& catalog = map_variable_catalog[variable_type];
         catalog.addAlarm(new MultiSeverityAlarm(stateVariableEnumToName(variable_type),
                                                 state_variable_name,
-                                                state_variable_description));
+                                                state_variable_description,max_freq_ms));
         //add this instance as
         catalog.addAlarmHandler(state_variable_name,
                                 this);
@@ -2351,12 +2351,19 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         
         GET_CAT_OR_EXIT((StateVariableType)variable_type, )
         AlarmDescription* alarm = catalog.getAlarmByName(state_variable_name);
+        MultiSeverityAlarm*alarm_ms=(MultiSeverityAlarm*)alarm;
         CHAOS_ASSERT(alarm);
         
         //update alarm log
-        alarm_logging_channel->logAlarm(getCUID(),
+        if((alarm_ms->max_freq_log_ms==0)||
+        ((alarm_ms->max_freq_log_ms>0)&&((alarm->getLastUpdateTimestamp()-alarm_ms->last_log_ms)>alarm_ms->max_freq_log_ms))){
+           // ACULDBG_ << "State "<<state_variable_name<<" last modified:"<<( alarm->getLastUpdateTimestamp() -alarm_ms->last_log_ms)<<" ms freq:"<<alarm_ms->max_freq_log_ms;
+
+            alarm_logging_channel->logAlarm(getCUID(),
                                         "AbstractControlUnit",
                                         *alarm);
+            alarm_ms->last_log_ms=alarm->getLastUpdateTimestamp();
+        }
         
         switch ((StateVariableType)variable_type) {
             case StateVariableTypeAlarmCU:

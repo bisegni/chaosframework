@@ -3,7 +3,9 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/chaosframework/",
+                "${workspaceFolder}/"
+
             ],
             "defines": [],
             "macFrameworkPath": [
