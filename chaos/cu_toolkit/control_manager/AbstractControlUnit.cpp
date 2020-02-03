@@ -577,10 +577,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                                     cdw_unique_ptr->addBoolValue(attrName, CDataVariant(attrValue).asBool());
                                     break;
                                 case DataType::TYPE_INT32:
-                                    cdw_unique_ptr->addInt32Value(attrName, CDataVariant(attrValue).asInt32());
+                                    cdw_unique_ptr->addInt32Value(attrName, (int32_t)strtoul(attrValue.c_str(),0,0));
                                     break;
                                 case DataType::TYPE_INT64:
-                                    cdw_unique_ptr->addInt64Value(attrName, CDataVariant(attrValue).asInt64());
+                                    cdw_unique_ptr->addInt64Value(attrName, (int64_t)strtoll(attrValue.c_str(),0,0));
                                     break;
                                 case DataType::TYPE_DOUBLE:
                                     cdw_unique_ptr->addDoubleValue(attrName, CDataVariant(attrValue).asDouble());
@@ -1506,13 +1506,13 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     case DataType::TYPE_INT32: {
                         int32_t val = strtoul(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
-                        ACULDBG_ << domain<< " Init TYPE_INT32 attribute:'" << attribute_names[idx]<<"' to:"<<val;
+                        ACULDBG_ << domain<< " Init TYPE_INT32 attribute:'" << attribute_names[idx]<<"' to:"<<val<<" 0x"<<std::hex<<val<<std::dec;
                         break;
                     }
                     case DataType::TYPE_INT64: {
                         int64_t val = strtoll(attributeInfo.defaultValue.c_str(), 0, 0);  //boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                         attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
-                        ACULDBG_ << domain<< " Init TYPE_INT64 attribute:'" << attribute_names[idx]<<"' to:"<<val;
+                        ACULDBG_ << domain<< " Init TYPE_INT64 attribute:'" << attribute_names[idx]<<"' to:"<<val<<" 0x"<<std::hex<<val<<std::dec;
                         break;
                     }
                     case DataType::TYPE_CLUSTER: {
@@ -1797,17 +1797,9 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)                                                                            \
 t max, min;                                                                                                             \
-if (attributeInfo.maxRange.compare(0, 2, "0x") == 0) {                                                                  \
 max = strtoll(attributeInfo.maxRange.c_str(), 0, 0);                                                                  \
-} else {                                                                                                                \
-max = attributeInfo.maxRange.size() ? boost::lexical_cast<t>(attributeInfo.maxRange) : std::numeric_limits<t>::max(); \
-}                                                                                                                       \
-if (attributeInfo.minRange.compare(0, 2, "0x") == 0) {                                                                  \
-min = strtoll(attributeInfo.minRange.c_str(), 0, 0);                                                                  \
-} else {                                                                                                                \
-min = attributeInfo.minRange.size() ? boost::lexical_cast<t>(attributeInfo.minRange) : std::numeric_limits<t>::min(); \
-}                                                                                                                       \
-if (v < min || v > max) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [Min:%2% Max:%3%] for attribute %4%") % v % attributeInfo.minRange % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
+min = strtoll(attributeInfo.minRange.c_str(), 0, 0);\
+if (v < min || v > max) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
     
 #define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)                                                                                                                                                                                                                                                      \
 if (attributeInfo.minRange.size() && v < attributeInfo.minRange) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__); \
