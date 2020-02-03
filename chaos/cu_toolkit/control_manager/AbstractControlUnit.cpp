@@ -1799,7 +1799,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
 t max, min;                                                                                                             \
 max = strtoll(attributeInfo.maxRange.c_str(), 0, 0);                                                                  \
 min = strtoll(attributeInfo.minRange.c_str(), 0, 0);\
-if (v < min || v > max) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
+if (((attributeInfo.minRange.size()>0)&&(v < min)) || ((attributeInfo.maxRange.size()>0)&&(v > max))) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
     
 #define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)                                                                                                                                                                                                                                                      \
 if (attributeInfo.minRange.size() && v < attributeInfo.minRange) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__); \
