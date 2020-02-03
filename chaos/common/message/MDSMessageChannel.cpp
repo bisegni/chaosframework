@@ -702,7 +702,8 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                                unsigned int page_length,
                                unsigned int& num_of_page,
                                ChaosStringVector& node_found,
-                               uint32_t millisec_to_wait){
+                               uint32_t millisec_to_wait,
+                               const std::string& impl){
         uint64_t lastid=0;
         int ret;
         num_of_page=0;
@@ -710,7 +711,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
         int size;
         do{
             size=tmp.size();
-            ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,page_length,lastid,tmp,millisec_to_wait);
+            ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,page_length,lastid,tmp,millisec_to_wait,impl);
             MSG_DBG<<"searchNode start page:"<<start_page<<" page len:"<<page_length<<" lastid:"<<lastid<<"size:"<<tmp.size()<<" sizebefore:"<<size<<" ret:"<<ret;
 
             
@@ -730,10 +731,13 @@ int MDSMessageChannel::searchNodeInt(const std::string& unique_id_filter,
                                uint64_t& lastid,
 
                                ChaosStringVector& node_found,
-                               uint32_t millisec_to_wait){
+                               uint32_t millisec_to_wait,const std::string& impl){
 int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue("unique_id_filter", unique_id_filter);
+    if(impl.size()>0)
+        message->addStringValue("impl", impl);
+
     message->addInt32Value("node_type_filter", (int32_t)node_type_filter);
     message->addInt32Value("last_node_sequence_id", last_node_sequence_id);
     message->addBoolValue("alive_only", alive_only);
@@ -773,11 +777,11 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                                   unsigned int last_node_sequence_id,
                                   unsigned int page_length,
                                   ChaosStringVector& node_found,
-                                  uint32_t millisec_to_wait) {
+                                  uint32_t millisec_to_wait,const std::string&impl) {
 
                                uint64_t lastid=0;
 
-return searchNodeInt(unique_id_filter,node_type_filter,alive_only,last_node_sequence_id,page_length,lastid,node_found,millisec_to_wait);
+return searchNodeInt(unique_id_filter,node_type_filter,alive_only,last_node_sequence_id,page_length,lastid,node_found,millisec_to_wait,impl);
     
 }
 

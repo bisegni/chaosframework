@@ -145,7 +145,8 @@ namespace chaos {
                                            chaos::NodeType::NodeSearchType search_type,
                                            bool alive_only,
                                            uint32_t last_unique_id,
-                                           uint32_t page_length = 100) = 0;
+                                           uint32_t page_length = 100,
+                                           const std::string& impl="") = 0;
                     
                     //!set the wole node property list
                     virtual int setProperty(const std::string& node_uid,

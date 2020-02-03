@@ -75,7 +75,8 @@ namespace chaos {
                                    chaos::NodeType::NodeSearchType search_type,
                                    bool alive_only,
                                    uint32_t last_unique_id,
-                                   uint32_t page_length);
+                                   uint32_t page_length,
+                                           const std::string& impl="");
                     //! inherited method
                     int setProperty(const std::string& node_uid,
                                     const chaos::common::property::PropertyGroupVector& property_group_vector);

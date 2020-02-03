@@ -60,6 +60,10 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
     //get node data access
     chaos::NodeType::NodeSearchType search_type=(chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter");
     std::string search_filter=api_data->getStringValue("unique_id_filter");
+    std::string impl;
+    if(api_data->hasKey("impl")){
+        impl=api_data->getStringValue("impl");
+    }
     if(search_type == chaos::NodeType::node_type_variable){
         GET_DATA_ACCESS(UtilityDataAccess, u_da, -4);
         if(u_da->searchVariable(&result,search_filter,last_sequence_id,page_length)){
@@ -73,7 +77,7 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
                             search_type,
                             alive_only,
                             last_sequence_id,
-                            page_length)){
+                            page_length,impl)){
             LOG_AND_TROW(NS_ERR, -5, "Loading Searching: "+search_filter)
         }
     }
