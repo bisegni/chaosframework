@@ -695,15 +695,43 @@ int MDSMessageChannel::removeVariable(const std::string& variable_name,
     }
     return err;
 }
-
 int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
-                                  chaos::NodeType::NodeSearchType node_type_filter,
-                                  bool alive_only,
-                                  unsigned int last_node_sequence_id,
-                                  unsigned int page_length,
-                                  ChaosStringVector& node_found,
-                                  uint32_t millisec_to_wait) {
-    int err = ErrorCode::EC_NO_ERROR;
+                               chaos::NodeType::NodeSearchType node_type_filter,
+                               bool alive_only,
+                               unsigned int start_page,
+                               unsigned int page_length,
+                               unsigned int& num_of_page,
+                               ChaosStringVector& node_found,
+                               uint32_t millisec_to_wait){
+        uint64_t lastid=0;
+        int ret;
+        num_of_page=0;
+        ChaosStringVector tmp;
+        int size;
+        do{
+            size=tmp.size();
+            ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,page_length,lastid,tmp,millisec_to_wait);
+            MSG_DBG<<"searchNode start page:"<<start_page<<" page len:"<<page_length<<" lastid:"<<lastid<<"size:"<<tmp.size()<<" sizebefore:"<<size<<" ret:"<<ret;
+
+            
+        } while((size<tmp.size())&&(ret==ErrorCode::EC_NO_ERROR));
+        num_of_page=(tmp.size())?(tmp.size()/page_length)+((tmp.size()%page_length==0)?0:1):0;
+        for(int cnt=start_page*page_length;(cnt<tmp.size())&&(cnt<((start_page+1)*page_length));cnt++){
+            node_found.push_back(tmp[cnt]);
+        }
+        return ErrorCode::EC_NO_ERROR;
+}
+
+int MDSMessageChannel::searchNodeInt(const std::string& unique_id_filter,
+                               chaos::NodeType::NodeSearchType node_type_filter,
+                               bool alive_only,
+                               unsigned int last_node_sequence_id,
+                               unsigned int page_length,
+                               uint64_t& lastid,
+
+                               ChaosStringVector& node_found,
+                               uint32_t millisec_to_wait){
+int err = ErrorCode::EC_NO_ERROR;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> message(new CDataWrapper());
     message->addStringValue("unique_id_filter", unique_id_filter);
     message->addInt32Value("node_type_filter", (int32_t)node_type_filter);
@@ -729,6 +757,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
                     if(element.get() &&
                        element->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
                         node_found.push_back(element->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+                        lastid=element->getInt64Value("seq");
                     }
                 }
             }
@@ -737,6 +766,19 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
         err = -1;
     }
     return err;
+                               }
+int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
+                                  chaos::NodeType::NodeSearchType node_type_filter,
+                                  bool alive_only,
+                                  unsigned int last_node_sequence_id,
+                                  unsigned int page_length,
+                                  ChaosStringVector& node_found,
+                                  uint32_t millisec_to_wait) {
+
+                               uint64_t lastid=0;
+
+return searchNodeInt(unique_id_filter,node_type_filter,alive_only,last_node_sequence_id,page_length,lastid,node_found,millisec_to_wait);
+    
 }
 
 ChaosUniquePtr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
