@@ -404,7 +404,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     //compose query
     
     //filter on sequence
-    bson_find_and << BSON( "seq" << BSON("$gt"<<last_unique_id));
+    if(search_type!=chaos::NodeType::NodeSearchType::node_type_cds){
+        bson_find_and << BSON( "seq" << BSON("$gt"<<last_unique_id));
+    }
     
     //filter on type
     if(search_type>0) {
@@ -427,7 +429,13 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             default:
                 break;
         }
-        bson_find_and << BSON( chaos::NodeDefinitionKey::NODE_TYPE << type_of_node);
+        if(search_type!=chaos::NodeType::NodeSearchType::node_type_all_server){
+
+            bson_find_and << BSON( chaos::NodeDefinitionKey::NODE_TYPE << type_of_node);
+        } else {
+                MDBNDA_DBG << "QUERY EVERITHING";
+
+        }
     }
     
     if(alive_only){bson_find_and << getAliveOption(6);}
@@ -476,8 +484,12 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                     if(cd.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
                         cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
                     }
-                    cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
-                    
+                    if(it->hasField("seq")){
+                        cd.addInt64Value("seq", (int64_t)it->getField("seq").Long());
+                    } /*else {
+                        cd.addInt64Value("seq", (int64_t)0);
+                    }*/
+                   
                     if(it->hasField("health_stat")) {
                         mongo::BSONElement health_stat_element = it->getField("health_stat");
                         if(health_stat_element.type() == mongo::Object) {

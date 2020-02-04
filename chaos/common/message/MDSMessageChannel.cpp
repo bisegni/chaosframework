@@ -714,7 +714,9 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
             ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,page_length,lastid,tmp,millisec_to_wait,impl);
             MSG_DBG<<"searchNode start page:"<<start_page<<" page len:"<<page_length<<" lastid:"<<lastid<<"size:"<<tmp.size()<<" sizebefore:"<<size<<" ret:"<<ret;
 
-            
+            if(tmp.size()<page_length){
+                break;
+            }
         } while((size<tmp.size())&&(ret==ErrorCode::EC_NO_ERROR));
         num_of_page=(tmp.size())?(tmp.size()/page_length)+((tmp.size()%page_length==0)?0:1):0;
         for(int cnt=start_page*page_length;(cnt<tmp.size())&&(cnt<((start_page+1)*page_length));cnt++){
@@ -761,7 +763,9 @@ int err = ErrorCode::EC_NO_ERROR;
                     if(element.get() &&
                        element->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
                         node_found.push_back(element->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
-                        lastid=element->getInt64Value("seq");
+                        if(element->hasKey("seq")){
+                         lastid=element->getInt64Value("seq");
+                        }
                     }
                 }
             }

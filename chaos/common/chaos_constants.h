@@ -348,6 +348,8 @@ namespace chaos {
             node_type_variable = 6,
             //!search tags
             node_type_tag = 7,
+            //! all server_nodes
+            node_type_all_server=8
             
             
         } NodeSearchType;
