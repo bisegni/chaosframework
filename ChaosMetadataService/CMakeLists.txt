@@ -304,6 +304,10 @@ SET(cnd_src  ${cnd_src} object_storage/mongodb_3/MongoDBObjectStorageDataAccess.
                         object_storage/mongodb_3/ShardKeyManagement.cpp)
 
 
+                        #POSIX FILE
+SET(cnd_src  ${cnd_src} object_storage/posixFile/PosixFile.cpp
+object_storage/posixFile/PosixFileObjectStorageDriver.cpp)
+
 #hybrid base driver
 SET(cnd_src  ${cnd_src} object_storage/hybdriver/ShardKeyManagement.cpp
                         object_storage/hybdriver/HybBaseDriver.cpp

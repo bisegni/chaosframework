@@ -23,6 +23,9 @@
 #define __CHAOSFramework_C9E19CC7_5691_4873_9DBC_39596C17E8C2_PosixFile_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/ObjectInstancer.h>
+#include <chaos/common/utility/LockableObject.h>
+#include <chaos/common/async_central/async_central.h>
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
@@ -32,33 +35,22 @@
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
-           
+           class PosixStorageDriver;
                 
-              DECLARE_CLASS_FACTORY(PosixFile,
-                                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver),
-                public metadata_service::object_storage::abstraction::ObjectStorageDataAccess  {
+            class PosixFile:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess{
 
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(PosixFile)
 
                     std::string basedatapath;
-                    bool denied;
+                    
+                    friend class PosixStorageDriver;
+                    void calcFileDir(const std::string& prefix, const std::string& cu, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname);
+
                 public:
-                    DECLARE_DA_NAME
-                    //! default constructor
-                    PosixFile();
                       //! Construct the driver
                     PosixFile(const std::string& name);
                     //! defautl destructor
                     ~PosixFile();
-                       //!dispose the driver
-\                    
-                    //!inherited by AbstractPersistenceDriver
-                    void deleteDataAccess(void *instance);
-                       //! Initialize the driver
-                    void init(void *init_data) throw (chaos::CException);
-                    
-                    //!deinitialize the driver
-                    void deinit() throw (chaos::CException);
+                       //!dispose the driver                   
                     //!Put an object within the object persistence layer
                     virtual int pushObject(const std::string& key,
                                            const ChaosStringSetConstSPtr meta_tags,
@@ -76,7 +68,7 @@ namespace chaos {
                     //!delete objects that are contained between intervall (exstreme included)
                     virtual int deleteObject(const std::string& key,
                                              uint64_t start_timestamp,
-                                             uint64_t end_timestamp) = 0;
+                                             uint64_t end_timestamp);
                     
                     //!search object into object persistence layer
                     virtual int findObject(const std::string& key,
@@ -85,7 +77,7 @@ namespace chaos {
                                            const uint64_t timestamp_from,
                                            const uint64_t timestamp_to,
                                            const uint32_t page_len,
-                                           VectorObject& found_object_page,
+                                           abstraction::VectorObject& found_object_page,
                                            chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
                     
                     //!fast search object into object persistence layer
@@ -93,8 +85,8 @@ namespace chaos {
                      Fast search return only data index to the client, in this csae client ned to use api to return the single
                      or grouped data
                      */
-                    virtual int findObjectIndex(const DataSearch& search,
-                                                VectorObject& found_object_page,
+                    virtual int findObjectIndex(const abstraction::DataSearch& search,
+                                                abstraction::VectorObject& found_object_page,
                                                 chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
                     
                     //! return the object asosciated with the index array
