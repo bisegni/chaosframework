@@ -51,7 +51,7 @@ void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,con
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo->tm_year + 1900, tinfo->tm_mon+1, tinfo->tm_mday, tinfo->tm_hour);
   }
   // timestamp_runid_seq_ssss
-  snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%llu", t, runid, seq);
+  snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", t, runid, seq);
 }
 
 int PosixFile::pushObject(const std::string&                       key,
