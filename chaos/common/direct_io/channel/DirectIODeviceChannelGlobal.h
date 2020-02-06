@@ -33,7 +33,9 @@ namespace chaos {
                         DeviceChannelOpcodePutHeathData				= 16,	/**< send the health dataset */
                         DeviceChannelOpcodeMultiGetLastOutput       = 32,	/**< request the last output dataset from live cache for a set of key*/
                         DeviceChannelOpcodeQueryDataCloudIndex      = 64,    /**< query the chaos data associated to a key and return only the index of the data*/
-                        DeviceChannelOpcodeGetDataByIndex           = 128    /**< get the data asssociated to the index*/
+                        DeviceChannelOpcodeGetDataByIndex           = 128,    /**< get the data asssociated to the index*/
+                        DeviceChannelOpcodeQueryCount               = 256   /**< count the number of data associated to a key*/
+
                     } DeviceChannelOpcode;
                     
                     /*!

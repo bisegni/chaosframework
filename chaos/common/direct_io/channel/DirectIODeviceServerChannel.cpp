@@ -320,6 +320,30 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             } catch (...) {}
             break;
         }
+
+        case opcode::DeviceChannelOpcodeQueryCount: {
+            try {
+                if (data_pack &&
+                    data_pack->channel_data) {
+                    chaos_data::CDataWrapper query(data_pack->channel_data->data());
+                    uint64_t count;
+                    //decode the endianes off the data
+                    std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
+                    uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
+                    uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
+                    //call server api if we have at least the key
+                    if((key.compare("") != 0)) {
+                        err = handler->countDataCloud(key,
+                                                              start_ts,
+                                                              end_ts,count);
+                        // TODO: find the appropriate way to send back result
+                        ///synchronous_answer->
+                    }
+                }
+            } catch (...) {}
+            break;
+        }
+  
         default:
             break;
     }

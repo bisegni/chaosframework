@@ -112,6 +112,12 @@ namespace chaos{
             int consumeDataCloudDelete(const std::string& search_key,
                                        uint64_t start_ts,
                                        uint64_t end_ts);
+
+            int countDataCloud(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts,
+                                       uint64_t& count);
+            
             
             //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
             int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,

@@ -329,7 +329,21 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     }
     return err;
 }
+int QueryDataConsumer::countDataCloud(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts,
+                                       uint64_t& count){
+    int err = 0;
+    ObjectStorageDataAccess *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
+    if((err = obj_storage_da->countObject(search_key,
+                                           start_ts,
+                                           end_ts,count))) {
+        ERR << CHAOS_FORMAT("Error performing count cloud query with code %1%", %err);
+    }
+    return err;
 
+}
+            
 #pragma mark DirectIOSystemAPIServerChannelHandler
 // Return the dataset for a producerkey ona specific snapshot
 int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,

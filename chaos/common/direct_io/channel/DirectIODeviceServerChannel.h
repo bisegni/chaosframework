@@ -163,6 +163,19 @@ namespace chaos {
                                                            uint64_t start_ts,
                                                            uint64_t end_ts)
                         {return -1;};
+
+                           //! Counts the data for a key delimited into a time intervall
+                        /*!
+                         \param search_key the key for wich we need to delete data
+                         \param start_ts the timestamp that limit >= the time after wich to delete data (0 means no limit)
+                         \param end_ts the timestamp that limit =< the time before wich wich to delete data (0 means no limit)
+                        \param count result count
+
+                         */
+                        virtual int countDataCloud(const std::string& search_key,
+                                                           uint64_t start_ts,
+                                                           uint64_t end_ts,uint64_t& count)
+                        {return -1;};
                     } DirectIODeviceServerChannelHandler;
                     
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);
