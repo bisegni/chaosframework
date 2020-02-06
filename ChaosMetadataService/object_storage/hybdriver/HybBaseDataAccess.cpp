@@ -421,7 +421,7 @@ int HybBaseDataAccess::getObjectByIndex(const CDWShrdPtr& index,
 int HybBaseDataAccess::countObject(const std::string& key,
                                    const uint64_t timestamp_from,
                                    const uint64_t timestamp_to,
-                                   const uint64_t& object_count) {
+                                uint64_t& object_count) {
     int err = 0;
     auto client  = pool_ref->acquire();
     

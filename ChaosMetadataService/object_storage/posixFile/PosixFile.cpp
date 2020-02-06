@@ -21,6 +21,7 @@
 
 #include "PosixFile.h"
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 #define INFO INFO_LOG(PosixFile)
 #define DBG DBG_LOG(PosixFile)
@@ -38,12 +39,17 @@ PosixFile::PosixFile(const std::string& name)
 
 PosixFile::~PosixFile() {}
 
-void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
+void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
   time_t     t     = (ts_ms / 1000);
   struct tm* tinfo = localtime(&t);
   // CU PATH NAME/<yyyy>/<mm>/<dd>/<hour>
-  snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo->tm_year + 1900, tinfo->tm_mon+1, tinfo->tm_mday, tinfo->tm_hour);
+  if(tag.size()>0){
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%s", prefix.c_str(), cu.c_str(), tag.c_str());
+
+  } else {
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo->tm_year + 1900, tinfo->tm_mon+1, tinfo->tm_mday, tinfo->tm_hour);
+  }
   // timestamp_runid_seq_ssss
   snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%llu", t, runid, seq);
 }
@@ -61,9 +67,15 @@ int PosixFile::pushObject(const std::string&                       key,
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   int64_t seq,runid;
+  std::string tag;
+  if(meta_tags->size()>0){
+    //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
+    tag = boost::algorithm::join(*meta_tags.get(),"_");
+
+  }
   seq=stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid=stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-  calcFileDir(basedatapath, stored_object.getStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID), ts,seq , runid, dir, f);
+  calcFileDir(basedatapath, key,tag, ts,seq , runid, dir, f);
   if ((boost::filesystem::exists(dir) == false) &&
       (boost::filesystem::create_directories(dir) == false)) {
     ERR << "cannot create directory:" << dir;
@@ -72,12 +84,8 @@ int PosixFile::pushObject(const std::string&                       key,
   }
 
   char fname[MAX_PATH_LEN*2];
-  if(meta_tags->size()>0){
-      std::string a=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
-      snprintf(fname,sizeof(fname),"%s/%s_%s",dir,f,a.c_str());
-  } else {
-      snprintf(fname,sizeof(fname),"%s/%s",dir,f);
-  }
+  snprintf(fname,sizeof(fname),"%s/%s",dir,f);
+
   ofstream fil(fname, std::ofstream::binary);
   //DBG << "["<<ts<<"] WRITE \"" << dir << "\" seq:" << seq << " runid:" << runid << " data size:" << stored_object.getBSONRawSize();
   if(fil.is_open()){
@@ -110,10 +118,96 @@ int PosixFile::getLastObject(const std::string&               key,
 int PosixFile::deleteObject(const std::string& key,
                             uint64_t           start_timestamp,
                             uint64_t           end_timestamp) {
-  ERR << " NOT IMPLEMENTED";
+  uint64_t start_aligned=start_timestamp - (start_timestamp%(3600*1000));
+  char     dir[MAX_PATH_LEN];
+  char     f[MAX_PATH_LEN];
+  
+  for (uint64_t start = start_aligned; start < end_timestamp; start += (3600*1000)) {
+        calcFileDir(basedatapath, key,"", start, 0, 0, dir, f);
+        boost::filesystem::path p(dir);
+        if (boost::filesystem::exists(p) && is_directory(p)) {
+          INFO<<"REMOVING "<<p;
+          remove_all(p);
+
+        }
+  }
+    
   return -1;
 }
+struct path_leaf_string
+{
+    std::string operator()(const boost::filesystem::directory_entry& entry) const
+    {
+        return entry.path().leaf().string();
+    }
+};
+uint32_t PosixFile::countFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
+                          const uint64_t timestamp_to){
+    uint32_t elements=0;
+    if (boost::filesystem::exists(p) && is_directory(p)) {
+      std::vector<path> v;
+      std::transform(directory_iterator(p), directory_iterator(), std::back_inserter(v), path_leaf_string());
+      uint64_t iseq, irunid, tim;
 
+      for (std::vector<path>::iterator it = v.begin(); it != v.end(); it++) {
+        sscanf(it->c_str(), "%Lu_%llu_%llu", &tim, &irunid, &iseq);
+        tim *= 1000;
+        if ((tim < timestamp_to) && (tim >= timestamp_from)) {
+          elements++;
+      }
+
+    }
+    }
+    return elements;
+}
+
+int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
+                          const uint64_t timestamp_to,
+                          const uint32_t page_len,
+                          abstraction::VectorObject& found_object_page,
+                          chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq){
+  uint64_t seqid    = last_record_found_seq.datapack_counter;
+  uint64_t runid    = last_record_found_seq.run_id;
+  int elements=0;
+  
+       if (boost::filesystem::exists(p) && is_directory(p)) {
+          std::vector<path> v;
+           std::transform(directory_iterator(p), directory_iterator(), std::back_inserter(v), path_leaf_string());
+
+         // std::copy(directory_iterator(cdir), directory_iterator(), std::back_inserter(v));
+          std::sort(v.begin(), v.end());
+          for (std::vector<path>::iterator it = v.begin(); it != v.end(); it++) {
+            uint64_t iseq, irunid, tim;
+          
+            sscanf(it->c_str(), "%Lu_%llu_%llu", &tim, &irunid, &iseq);
+            tim *= 1000;
+            if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && iseq >= seqid) {
+              char tmpbuf[MAX_PATH_LEN];
+              snprintf(tmpbuf,sizeof(tmpbuf),"%s/%s",p.c_str(),it->c_str());
+              ifstream infile(tmpbuf, std::ofstream::binary);
+              infile.seekg(0, infile.end);
+              long size = infile.tellg();
+              infile.seekg(0);
+              char* buffer = new char[size];
+              infile.read(buffer, size);
+              DBG << "retriving \"" << *it << "\" seq:" << iseq << " runid:" << irunid << " data size:" << size;
+              chaos::common::data::CDWShrdPtr new_obj(new chaos::common::data::CDataWrapper((const char*)buffer, size));
+
+              found_object_page.push_back(new_obj);
+              delete buffer;
+              infile.close();
+              last_record_found_seq.run_id           = irunid;
+              last_record_found_seq.datapack_counter = iseq;
+              elements++;
+              if(page_len>0 && (elements>=page_len)){
+                return elements;
+              }
+            }
+          }
+        }
+        return elements;
+ 
+}
 //!search object into object persistence layer
 int PosixFile::findObject(const std::string&                                                 key,
                           const ChaosStringSet&                                              meta_tags,
@@ -131,38 +225,49 @@ int PosixFile::findObject(const std::string&                                    
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   dir[0] = 0;
+  int elements=0;
   try {
-    for (uint64_t start = timestamp_from; start < timestamp_to; start += 1000) {
-      time_t     t     = (start / 1000);
-      struct tm* tinfo = localtime(&t);
-      if (tinfo->tm_hour != old_hour) {
-        calcFileDir(basedatapath, key, start, seqid, runid, dir, f);
+     std::string tag;
+     {
+      if(meta_tags.size()>0){
+
+        //tag=std::accumulate(meta_tags.begin(),meta_tags.end(),std::string("_"));
+        tag = boost::algorithm::join(meta_tags,"_");
+      }
+      std::string st=chaos::common::utility::TimingUtil::toString(timestamp_from);
+      std::string sto=chaos::common::utility::TimingUtil::toString(timestamp_to);
+      DBG << "Search "<<key.c_str()<<" from:"<<st<<" to:"<< sto<< " seq:" << seqid << " runid:" << runid << " TAGS:"<<tag;
+
+     }
+
+      if(meta_tags.size()>0){
+        calcFileDir(basedatapath, key, tag, timestamp_from, seqid, runid, dir, f);
+
         boost::filesystem::path p(dir);
         if (boost::filesystem::exists(p) && is_directory(p)) {
-          std::vector<path> v;
-          std::copy(directory_iterator(p), directory_iterator(), std::back_inserter(v));
-          std::sort(v.begin(), v.end());
-          for (std::vector<path>::iterator it = v.begin(); it != v.end(); it++) {
-            uint64_t iseq, irunid, tim;
-            sscanf(it->c_str(), "%lu_%llu_%llu", &tim, &irunid, &iseq);
-            tim *= 1000;
-            if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && iseq >= seqid) {
-              ifstream infile(it->c_str(), std::ofstream::binary);
-              infile.seekg(0, infile.end);
-              long size = infile.tellg();
-              infile.seekg(0);
-              char* buffer = new char[size];
-              infile.read(buffer, size);
-              DBG << "retriving \"" << *it << "\" seq:" << iseq << " runid:" << irunid << " data size:" << size;
-              chaos::common::data::CDWShrdPtr new_obj(new chaos::common::data::CDataWrapper((const char*)buffer, size));
+            elements+=getFromPath(p,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
+        } else {
+          ERR<<"DIR TAG NOT FOUND:"<<dir;
+          return -1;
+        }
+        return 0;
 
-              found_object_page.push_back(new_obj);
-              delete buffer;
-              infile.close();
-              last_record_found_seq.run_id           = irunid;
-              last_record_found_seq.datapack_counter = iseq;
-            }
-          }
+    }
+    // align to hour
+    uint64_t start_aligned=timestamp_from - (timestamp_from%(3600*1000));
+    for (uint64_t start = start_aligned; start < timestamp_to; start += (3600*1000)) {
+      time_t     t     = (start / 1000);
+      struct tm* tinfo = localtime(&t);
+      if (tinfo &&(tinfo->tm_hour != old_hour)) {
+        calcFileDir(basedatapath, key,tag, start, seqid, runid, dir, f);
+        boost::filesystem::path p(dir);
+        DBG << "["<<ctime(&t)<<"] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
+
+        elements+=getFromPath(p,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
+        if(elements>=page_len){
+          DBG <<"["<< p<<"] Found "<<elements<<" page:"<<page_len<< " last runid:"<<last_record_found_seq.run_id<<" last seq:"<<last_record_found_seq.datapack_counter;
+
+          return 0;
         }
         old_hour = tinfo->tm_hour;
       }
@@ -203,9 +308,29 @@ int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
 int PosixFile::countObject(const std::string& key,
                            const uint64_t     timestamp_from,
                            const uint64_t     timestamp_to,
-                           const uint64_t&    object_count) {
-  ERR << " NOT IMPLEMENTED";
+                          uint64_t&    object_count) {
 
+  int      old_hour = -1;
+  char     dir[MAX_PATH_LEN];
+  char     f[MAX_PATH_LEN];
+  dir[0] = 0;
+    object_count=0;
+    chaos::common::direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
+    last_record_found_seq.datapack_counter=0;
+    last_record_found_seq.run_id=0;
+    
+    uint64_t start_aligned=timestamp_from - (timestamp_from%(3600*1000));
+    for (uint64_t start = start_aligned; start < timestamp_to; start += (3600*1000)) {
+      time_t     t     = (start / 1000);
+      struct tm* tinfo = localtime(&t);
+      if (tinfo &&(tinfo->tm_hour != old_hour)) {
+        calcFileDir(basedatapath, key,"", start, 0, 0, dir, f);
+        boost::filesystem::path p(dir);
+        
+        object_count+=countFromPath(p,timestamp_from,timestamp_to);
+        old_hour = tinfo->tm_hour;
+      }
+    }
   return 0;
 }
 

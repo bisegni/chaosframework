@@ -96,7 +96,7 @@ public:
     int countObject(const std::string& key,
                     const uint64_t timestamp_from,
                     const uint64_t timestamp_to,
-                    const uint64_t& object_count);
+                 uint64_t& object_count);
 };
 }
 }
