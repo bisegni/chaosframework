@@ -55,7 +55,7 @@ PosixFile::~PosixFile() {}
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
-  time_t     t     = (ts_ms / 1000);
+  time_t     t     = (ts_ms==0)?time(NULL):(ts_ms / 1000);
   struct tm* tinfo = localtime(&t);
   // CU PATH NAME/<yyyy>/<mm>/<dd>/<hour>
   if(tag.size()>0){
@@ -89,13 +89,16 @@ int PosixFile::pushObject(const std::string&                       key,
   }
   seq=stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid=stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-  calcFileDir(basedatapath, key,tag, ts,seq , runid, dir, f);
-  if ((boost::filesystem::exists(dir) == false) &&
-      (boost::filesystem::create_directories(dir) == false)) {
-    ERR << "cannot create directory:" << dir;
-   // throw chaos::CException(-1, __PRETTY_FUNCTION__, "cannot create directory:" + std::string(dir));
-   return -1;
+  calcFileDir(basedatapath, key,tag, 0,seq , runid, dir, f);
+  if ((boost::filesystem::exists(dir) == false)){
+      if((boost::filesystem::create_directories(dir) == false)){
+        ERR << "cannot create directory:" << dir;
+        return -1;
+      } else {
+          DBG<<" CREATED DIR:"<<dir;
+      }
   }
+   
 
   char fname[MAX_PATH_LEN*2];
   snprintf(fname,sizeof(fname),"%s/%s",dir,f);
