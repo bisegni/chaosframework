@@ -30,12 +30,26 @@
 using namespace chaos::metadata_service::object_storage;
 using namespace boost::filesystem;
 #define MAX_PATH_LEN 512
+#if CHAOS_PROMETHEUS
+using namespace chaos::common::metric;
+#endif
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
 
 PosixFile::PosixFile(const std::string& name)
-    : basedatapath(name) {}
+    : basedatapath(name) {
+
+        #if CHAOS_PROMETHEUS
+    MetricManager::getInstance()->createCounterFamily("mds_object_storage_io_data", "Measure the data rate for the data sent and read from object storage [byte]");
+    counter_write_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_mongodb_io_data", {{"type","write_byte"}});
+    counter_read_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_mongodb_io_data", {{"type","read_byte"}});
+    
+    MetricManager::getInstance()->createGaugeFamily("mds_storage_op_time", "Measure the time spent by object storageto complete operation [milliseconds]");
+    gauge_insert_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_operation_time", {{"type","insert_time"}});
+    gauge_query_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_operation_time", {{"type","query_time"}});
+#endif
+    }
 
 PosixFile::~PosixFile() {}
 
@@ -63,7 +77,7 @@ int PosixFile::pushObject(const std::string&                       key,
     ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", % stored_object.getJSONString());
     return -1;
   }
-  uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+  const uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   int64_t seq,runid;
@@ -90,11 +104,19 @@ int PosixFile::pushObject(const std::string&                       key,
   //DBG << "["<<ts<<"] WRITE \"" << dir << "\" seq:" << seq << " runid:" << runid << " data size:" << stored_object.getBSONRawSize();
   if(fil.is_open()){
     fil.write((const char*)stored_object.getBSONRawData(), stored_object.getBSONRawSize());
+#if CHAOS_PROMETHEUS
+   
+        (*counter_write_data_uptr) += stored_object.getBSONRawSize();
+#endif
     fil.close();
   } else {
       ERR<<" CANNOT WRITE:"<<fname;
       return -2;
       }
+#if CHAOS_PROMETHEUS
+
+  *gauge_insert_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+#endif
   return 0;
 }
 
@@ -191,6 +213,11 @@ int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_f
               infile.seekg(0);
               char* buffer = new char[size];
               infile.read(buffer, size);
+#if CHAOS_PROMETHEUS
+   
+        (*counter_read_data_uptr) += size;
+#endif
+
             //  DBG << "retriving \"" << *it << "\" seq:" << iseq << " runid:" << irunid << " data size:" << size;
               chaos::common::data::CDWShrdPtr new_obj(new chaos::common::data::CDataWrapper((const char*)buffer, size));
 
@@ -226,6 +253,8 @@ int PosixFile::findObject(const std::string&                                    
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   dir[0] = 0;
+    const uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+
   int elements=0;
   try {
      std::string tag;
@@ -267,7 +296,10 @@ int PosixFile::findObject(const std::string&                                    
         elements+=getFromPath(p,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
         if(elements>=page_len){
           DBG <<"["<< p<<"] Found "<<elements<<" page:"<<page_len<< " last runid:"<<last_record_found_seq.run_id<<" last seq:"<<last_record_found_seq.datapack_counter;
+#if CHAOS_PROMETHEUS
 
+  *gauge_query_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+#endif
           return 0;
         }
         old_hour = tinfo->tm_hour;
@@ -276,6 +308,12 @@ int PosixFile::findObject(const std::string&                                    
 
   } catch (const std::exception e) {
     ERR << e.what();
+  }
+  if(err==0 && elements>0){
+#if CHAOS_PROMETHEUS
+
+    *gauge_query_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+#endif
   }
   return err;
 }

@@ -31,7 +31,9 @@
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
 #include "../abstraction/ObjectStorageDataAccess.h"
-
+#if CHAOS_PROMETHEUS
+#include <chaos/common/metric/metric.h>
+#endif //CHAOS_PROMETHEUS
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
@@ -54,6 +56,12 @@ namespace chaos {
                           abstraction::VectorObject& found_object_page,
                           chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq);
 
+#if CHAOS_PROMETHEUS
+    chaos::common::metric::CounterUniquePtr counter_write_data_uptr;
+    chaos::common::metric::CounterUniquePtr counter_read_data_uptr;
+    chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
+    chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
+#endif
                 public:
                       //! Construct the driver
                     PosixFile(const std::string& name);
