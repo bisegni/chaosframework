@@ -122,6 +122,7 @@ int PosixFile::deleteObject(const std::string& key,
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   
+  DBG<<"Searching from: "<<chaos::common::utility::TimingUtil::toString(start_timestamp)<<" to:"<<chaos::common::utility::TimingUtil::toString(end_timestamp);
   for (uint64_t start = start_aligned; start < end_timestamp; start += (3600*1000)) {
         calcFileDir(basedatapath, key,"", start, 0, 0, dir, f);
         boost::filesystem::path p(dir);
@@ -132,7 +133,7 @@ int PosixFile::deleteObject(const std::string& key,
         }
   }
     
-  return -1;
+  return 0;
 }
 struct path_leaf_string
 {
@@ -190,7 +191,7 @@ int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_f
               infile.seekg(0);
               char* buffer = new char[size];
               infile.read(buffer, size);
-              DBG << "retriving \"" << *it << "\" seq:" << iseq << " runid:" << irunid << " data size:" << size;
+            //  DBG << "retriving \"" << *it << "\" seq:" << iseq << " runid:" << irunid << " data size:" << size;
               chaos::common::data::CDWShrdPtr new_obj(new chaos::common::data::CDataWrapper((const char*)buffer, size));
 
               found_object_page.push_back(new_obj);
