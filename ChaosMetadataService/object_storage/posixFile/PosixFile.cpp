@@ -41,14 +41,18 @@ PosixFile::PosixFile(const std::string& name)
     : basedatapath(name) {
 
         #if CHAOS_PROMETHEUS
-    MetricManager::getInstance()->createCounterFamily("mds_object_storage_io_data", "Measure the data rate for the data sent and read from object storage [byte]");
-    counter_write_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_mongodb_io_data", {{"type","write_byte"}});
-    counter_read_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_mongodb_io_data", {{"type","read_byte"}});
+    MetricManager::getInstance()->createCounterFamily("mds_storage_io_data", "Measure the data rate for the data sent and read from object storage [byte]");
+    counter_write_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_storage_io_data", {{"type","write_byte"}});
+    counter_read_data_uptr = MetricManager::getInstance()->getNewCounterFromFamily("mds_storage_io_data", {{"type","read_byte"}});
     
     MetricManager::getInstance()->createGaugeFamily("mds_storage_op_time", "Measure the time spent by object storageto complete operation [milliseconds]");
-    gauge_insert_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_operation_time", {{"type","insert_time"}});
-    gauge_query_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_operation_time", {{"type","query_time"}});
+    gauge_insert_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_op_time", {{"type","insert_time"}});
+    gauge_query_time_uptr = MetricManager::getInstance()->getNewGaugeFromFamily("mds_storage_op_time", {{"type","query_time"}});
+    DBG<<" CREATED METRICS";
+
 #endif
+    DBG<<" BASED DIR:"<<name;
+
     }
 
 PosixFile::~PosixFile() {}
@@ -118,7 +122,7 @@ int PosixFile::pushObject(const std::string&                       key,
       }
 #if CHAOS_PROMETHEUS
 
-  *gauge_insert_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+  (*gauge_insert_time_uptr)=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
 #endif
   return 0;
 }
@@ -301,7 +305,7 @@ int PosixFile::findObject(const std::string&                                    
           DBG <<"["<< p<<"] Found "<<elements<<" page:"<<page_len<< " last runid:"<<last_record_found_seq.run_id<<" last seq:"<<last_record_found_seq.datapack_counter;
 #if CHAOS_PROMETHEUS
 
-  *gauge_query_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+  (*gauge_query_time_uptr)=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
 #endif
           return 0;
         }
@@ -315,7 +319,7 @@ int PosixFile::findObject(const std::string&                                    
   if(err==0 && elements>0){
 #if CHAOS_PROMETHEUS
 
-    *gauge_query_time_uptr=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
+    (*gauge_query_time_uptr)=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
 #endif
   }
   return err;
