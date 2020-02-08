@@ -647,6 +647,8 @@
 		328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78071A7AAA070008C070 /* NodeDataAccess.cpp */; };
 		328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */; };
 		328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */; };
+		328F23B523EF0F63008F42EA /* PosixFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328F23B123EF0F63008F42EA /* PosixFile.cpp */; };
+		328F23B623EF0F63008F42EA /* PosixFileObjectStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328F23B323EF0F63008F42EA /* PosixFileObjectStorageDriver.cpp */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		329065E41F34763F00356572 /* connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 329065E21F34763F00356572 /* connection.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
@@ -2058,6 +2060,10 @@
 		328E780B1A7AAB640008C070 /* MongoDBNodeDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBNodeDataAccess.h; sourceTree = "<group>"; };
 		328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearchTest.cpp; sourceTree = "<group>"; };
 		328EFD601BA724A8009A832D /* NodeSearchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearchTest.h; sourceTree = "<group>"; };
+		328F23B123EF0F63008F42EA /* PosixFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixFile.cpp; sourceTree = "<group>"; };
+		328F23B223EF0F63008F42EA /* PosixFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PosixFile.h; sourceTree = "<group>"; };
+		328F23B323EF0F63008F42EA /* PosixFileObjectStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixFileObjectStorageDriver.cpp; sourceTree = "<group>"; };
+		328F23B423EF0F63008F42EA /* PosixFileObjectStorageDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PosixFileObjectStorageDriver.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		329065E21F34763F00356572 /* connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = connection.h; sourceTree = "<group>"; };
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -4119,6 +4125,7 @@
 		326ACF741E01525D00AD011E /* object_storage */ = {
 			isa = PBXGroup;
 			children = (
+				328F23B023EF0F63008F42EA /* posixFile */,
 				326ACF751E01525D00AD011E /* abstraction */,
 				327B55D822324B73008E4896 /* hybdriver */,
 				326ACF781E01525D00AD011E /* mongodb */,
@@ -4756,6 +4763,17 @@
 				32DA776F1F8FC4BF00497349 /* RemoteIODriverProtocol.h */,
 			);
 			path = driver;
+			sourceTree = "<group>";
+		};
+		328F23B023EF0F63008F42EA /* posixFile */ = {
+			isa = PBXGroup;
+			children = (
+				328F23B123EF0F63008F42EA /* PosixFile.cpp */,
+				328F23B223EF0F63008F42EA /* PosixFile.h */,
+				328F23B323EF0F63008F42EA /* PosixFileObjectStorageDriver.cpp */,
+				328F23B423EF0F63008F42EA /* PosixFileObjectStorageDriver.h */,
+			);
+			path = posixFile;
 			sourceTree = "<group>";
 		};
 		32954969176B90A800B5A064 /* driver_manager */ = {
@@ -6819,6 +6837,7 @@
 				325F0248213EE20400270077 /* DeleteUS.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				32A626C7213FBC6800D63009 /* RecoverError.cpp in Sources */,
+				328F23B623EF0F63008F42EA /* PosixFileObjectStorageDriver.cpp in Sources */,
 				3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */,
 				32B6B799213EA6DD00D7ECF8 /* SaveScript.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
@@ -6826,6 +6845,7 @@
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				325F022D213ED99C00270077 /* SetSnapshotDatasetsForNode.cpp in Sources */,
 				32B6B771213E8C7600D7ECF8 /* UpdateProperty.cpp in Sources */,
+				328F23B523EF0F63008F42EA /* PosixFile.cpp in Sources */,
 				326ACFA91E0159C600AD011E /* DeviceSharedDataWorker.cpp in Sources */,
 				32B6B773213E8C7600D7ECF8 /* CommandTemplateSet.cpp in Sources */,
 				32B6B79F213EA6DD00D7ECF8 /* UpdateScriptOnNode.cpp in Sources */,
