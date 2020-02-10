@@ -39,7 +39,8 @@ namespace chaos {
         namespace object_storage {
            class PosixStorageDriver;
                 
-            class PosixFile:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess{
+            class PosixFile:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,public chaos::common::async_central::TimerHandler {
+
 
 
                     std::string basedatapath;
@@ -50,7 +51,7 @@ namespace chaos {
                     uint32_t countFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
                           const uint64_t timestamp_to);
 
-                    int getFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
+                    int getFromPath(const std::string& p,const uint64_t timestamp_from,
                           const uint64_t timestamp_to,
                           const uint32_t page_len,
                           abstraction::VectorObject& found_object_page,
@@ -62,6 +63,14 @@ namespace chaos {
     chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
     chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
 #endif
+                static std::map<std::string,uint64_t> s_lastDirs;
+                typedef struct __{ std::vector<std::string> sorted_path;uint64_t ts;ChaosSharedMutex devio_mutex;} read_path_t;
+                typedef std::map<std::string,read_path_t> cacheRead_t; 
+                static cacheRead_t s_lastAccessedDir;
+                
+
+                void timeout();
+
                 public:
                       //! Construct the driver
                     PosixFile(const std::string& name);

@@ -33,6 +33,8 @@ using namespace boost::filesystem;
 #if CHAOS_PROMETHEUS
 using namespace chaos::common::metric;
 #endif
+using namespace chaos::common::async_central;
+
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
@@ -52,10 +54,14 @@ PosixFile::PosixFile(const std::string& name)
 
 #endif
     DBG<<" BASED DIR:"<<name;
+    AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
 
     }
 
 PosixFile::~PosixFile() {}
+std::map<std::string,uint64_t> PosixFile::s_lastDirs;
+PosixFile::cacheRead_t PosixFile::s_lastAccessedDir;
+//ChaosSharedMutex PosixFile::devio_mutex;
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
@@ -97,14 +103,18 @@ int PosixFile::pushObject(const std::string&                       key,
   seq=stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid=stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
   calcFileDir(basedatapath, key,tag, ts,seq , runid, dir, f);
-  boost::filesystem::path p(dir);
-  if ((boost::filesystem::exists(p) == false)){
-      if((boost::filesystem::create_directories(p) == false)){
-        ERR << "cannot create directory:" << p;
-        return -1;
-      } else {
-          DBG<<" CREATED DIR:"<<p;
+  std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
+  if((id==s_lastDirs.end())||(ts-id->second)>1000){
+    boost::filesystem::path p(dir);
+      if ((boost::filesystem::exists(p) == false)){
+          if((boost::filesystem::create_directories(p) == false)){
+            ERR << "cannot create directory:" << p;
+            return -1;
+          } else {
+              DBG<<" CREATED DIR:"<<p;
+          }
       }
+    s_lastDirs[dir]=ts;
   }
    
 
@@ -162,6 +172,10 @@ int PosixFile::deleteObject(const std::string& key,
         if (boost::filesystem::exists(p) && is_directory(p)) {
           INFO<<"REMOVING "<<p;
           remove_all(p);
+          std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
+          if(id!=s_lastDirs.end()){
+            s_lastDirs.erase(id);
+          }
 
         }
   }
@@ -195,7 +209,7 @@ uint32_t PosixFile::countFromPath(boost::filesystem::path& p,const uint64_t time
     return elements;
 }
 
-int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
+int PosixFile::getFromPath(const std::string& dir,const uint64_t timestamp_from,
                           const uint64_t timestamp_to,
                           const uint32_t page_len,
                           abstraction::VectorObject& found_object_page,
@@ -203,21 +217,28 @@ int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_f
   uint64_t seqid    = last_record_found_seq.datapack_counter;
   uint64_t runid    = last_record_found_seq.run_id;
   int elements=0;
-  
+      cacheRead_t::iterator di=s_lastAccessedDir.find(dir);
+      if(di==s_lastAccessedDir.end()){
+        boost::filesystem::path p(dir);
+
        if (boost::filesystem::exists(p) && is_directory(p)) {
-          std::vector<path> v;
-           std::transform(directory_iterator(p), directory_iterator(), std::back_inserter(v), path_leaf_string());
+           ChaosWriteLock ll(s_lastAccessedDir[dir].devio_mutex);
+
+           std::transform(directory_iterator(p), directory_iterator(), std::back_inserter(s_lastAccessedDir[dir].sorted_path), path_leaf_string());
 
          // std::copy(directory_iterator(cdir), directory_iterator(), std::back_inserter(v));
-          std::sort(v.begin(), v.end());
-          for (std::vector<path>::iterator it = v.begin(); it != v.end(); it++) {
+          std::sort(s_lastAccessedDir[dir].sorted_path.begin(), s_lastAccessedDir[dir].sorted_path.end());
+          s_lastAccessedDir[dir].ts=chaos::common::utility::TimingUtil::getTimeStamp();
+       }
+       }
+        for (std::vector<std::string>::iterator it = s_lastAccessedDir[dir].sorted_path.begin(); it != s_lastAccessedDir[dir].sorted_path.end(); it++) {
             uint64_t iseq, irunid, tim;
           
             sscanf(it->c_str(), "%Lu_%llu_%llu", &tim, &irunid, &iseq);
             tim *= 1000;
             if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && iseq >= seqid) {
               char tmpbuf[MAX_PATH_LEN];
-              snprintf(tmpbuf,sizeof(tmpbuf),"%s/%s",p.c_str(),it->c_str());
+              snprintf(tmpbuf,sizeof(tmpbuf),"%s/%s",dir.c_str(),it->c_str());
               ifstream infile(tmpbuf, std::ofstream::binary);
               infile.seekg(0, infile.end);
               long size = infile.tellg();
@@ -243,7 +264,7 @@ int PosixFile::getFromPath(boost::filesystem::path& p,const uint64_t timestamp_f
               }
             }
           }
-        }
+        
         return elements;
  
 }
@@ -284,13 +305,8 @@ int PosixFile::findObject(const std::string&                                    
       if(meta_tags.size()>0){
         calcFileDir(basedatapath, key, tag, timestamp_from, seqid, runid, dir, f);
 
-        boost::filesystem::path p(dir);
-        if (boost::filesystem::exists(p) && is_directory(p)) {
-            elements+=getFromPath(p,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
-        } else {
-          ERR<<"DIR TAG NOT FOUND:"<<dir;
-          return -1;
-        }
+        elements+=getFromPath(dir,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
+        
         return 0;
 
     }
@@ -303,12 +319,12 @@ int PosixFile::findObject(const std::string&                                    
        localtime_r(&t,&tinfo);
       if ((tinfo.tm_hour != old_hour)) {
         calcFileDir(basedatapath, key,tag, start, seqid, runid, dir, f);
-        boost::filesystem::path p(dir);
+       // boost::filesystem::path p(dir);
         DBG << "["<<ctime(&t)<<"] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
 
-        elements+=getFromPath(p,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
+        elements+=getFromPath(dir,timestamp_from,timestamp_to,page_len,found_object_page,last_record_found_seq);
         if(elements>=page_len){
-          DBG <<"["<< p<<"] Found "<<elements<<" page:"<<page_len<< " last runid:"<<last_record_found_seq.run_id<<" last seq:"<<last_record_found_seq.datapack_counter;
+          DBG <<"["<< dir<<"] Found "<<elements<<" page:"<<page_len<< " last runid:"<<last_record_found_seq.run_id<<" last seq:"<<last_record_found_seq.datapack_counter;
 #if CHAOS_PROMETHEUS
 
   (*gauge_query_time_uptr)=(chaos::common::utility::TimingUtil::getTimeStamp()-ts);
@@ -354,6 +370,30 @@ int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
   ERR << " NOT IMPLEMENTED";
 
   return 0;
+}
+void PosixFile::timeout() {
+    uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+
+    // remove directory write cache
+    for(std::map<std::string,uint64_t>::iterator id=s_lastDirs.begin();id!=s_lastDirs.end();id){
+      if((ts-id->second)>3600000){
+        //not anymore used
+        s_lastDirs.erase(id++);
+      } else {
+        id++;
+      }
+    }
+    for(cacheRead_t::iterator id=s_lastAccessedDir.begin();id!=s_lastAccessedDir.end();id){
+      if((ts-id->second.ts)>5000){
+        //not anymore used
+        if(id->second.devio_mutex.try_lock()){
+          s_lastAccessedDir.erase(id++);
+        }
+      } else {
+        id++;
+      }
+    }
+
 }
 
 //!return the number of object for a determinated key that are store for a time range
