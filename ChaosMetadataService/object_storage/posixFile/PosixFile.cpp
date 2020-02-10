@@ -59,14 +59,17 @@ PosixFile::~PosixFile() {}
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
-  time_t     t     = (ts_ms==0)?time(NULL):(ts_ms / 1000);
-  struct tm* tinfo = localtime(&t);
+  //time_t     t     = (ts_ms==0)?time(NULL):(ts_ms / 1000);
+  time_t     t     = (ts_ms / 1000);
+  struct tm tinfo;
+  localtime_r(&t,&tinfo);
+  
   // CU PATH NAME/<yyyy>/<mm>/<dd>/<hour>
   if(tag.size()>0){
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%s", prefix.c_str(), cu.c_str(), tag.c_str());
 
   } else {
-    snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo->tm_year + 1900, tinfo->tm_mon+1, tinfo->tm_mday, tinfo->tm_hour);
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon+1, tinfo.tm_mday, tinfo.tm_hour);
   }
   // timestamp_runid_seq_ssss
   snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", t, runid, seq);
@@ -93,13 +96,14 @@ int PosixFile::pushObject(const std::string&                       key,
   }
   seq=stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid=stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-  calcFileDir(basedatapath, key,tag, 0,seq , runid, dir, f);
-  if ((boost::filesystem::exists(dir) == false)){
-      if((boost::filesystem::create_directories(dir) == false)){
-        ERR << "cannot create directory:" << dir;
+  calcFileDir(basedatapath, key,tag, ts,seq , runid, dir, f);
+  boost::filesystem::path p(dir);
+  if ((boost::filesystem::exists(p) == false)){
+      if((boost::filesystem::create_directories(p) == false)){
+        ERR << "cannot create directory:" << p;
         return -1;
       } else {
-          DBG<<" CREATED DIR:"<<dir;
+          DBG<<" CREATED DIR:"<<p;
       }
   }
    
@@ -151,7 +155,7 @@ int PosixFile::deleteObject(const std::string& key,
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   
-  DBG<<"Searching from: "<<chaos::common::utility::TimingUtil::toString(start_timestamp)<<" to:"<<chaos::common::utility::TimingUtil::toString(end_timestamp);
+  DBG<<"Searching \""<<key<<"\" from: "<<chaos::common::utility::TimingUtil::toString(start_timestamp)<<" to:"<<chaos::common::utility::TimingUtil::toString(end_timestamp);
   for (uint64_t start = start_aligned; start < end_timestamp; start += (3600*1000)) {
         calcFileDir(basedatapath, key,"", start, 0, 0, dir, f);
         boost::filesystem::path p(dir);
@@ -294,8 +298,10 @@ int PosixFile::findObject(const std::string&                                    
     uint64_t start_aligned=timestamp_from - (timestamp_from%(3600*1000));
     for (uint64_t start = start_aligned; start < timestamp_to; start += (3600*1000)) {
       time_t     t     = (start / 1000);
-      struct tm* tinfo = localtime(&t);
-      if (tinfo &&(tinfo->tm_hour != old_hour)) {
+      //struct tm* tinfo = localtime(&t);
+      struct tm tinfo;
+       localtime_r(&t,&tinfo);
+      if ((tinfo.tm_hour != old_hour)) {
         calcFileDir(basedatapath, key,tag, start, seqid, runid, dir, f);
         boost::filesystem::path p(dir);
         DBG << "["<<ctime(&t)<<"] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
@@ -309,7 +315,7 @@ int PosixFile::findObject(const std::string&                                    
 #endif
           return 0;
         }
-        old_hour = tinfo->tm_hour;
+        old_hour = tinfo.tm_hour;
       }
     }
 
@@ -368,13 +374,14 @@ int PosixFile::countObject(const std::string& key,
     uint64_t start_aligned=timestamp_from - (timestamp_from%(3600*1000));
     for (uint64_t start = start_aligned; start < timestamp_to; start += (3600*1000)) {
       time_t     t     = (start / 1000);
-      struct tm* tinfo = localtime(&t);
-      if (tinfo &&(tinfo->tm_hour != old_hour)) {
+      struct tm tinfo;
+       localtime_r(&t,&tinfo);
+      if ((tinfo.tm_hour != old_hour)) {
         calcFileDir(basedatapath, key,"", start, 0, 0, dir, f);
         boost::filesystem::path p(dir);
         
         object_count+=countFromPath(p,timestamp_from,timestamp_to);
-        old_hour = tinfo->tm_hour;
+        old_hour = tinfo.tm_hour;
       }
     }
   return 0;
