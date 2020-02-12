@@ -66,6 +66,7 @@ namespace chaos {
                 static std::map<std::string,uint64_t> s_lastDirs;
                 typedef struct __{ std::vector<std::string> sorted_path;uint64_t ts;ChaosSharedMutex devio_mutex;} read_path_t;
                 typedef std::map<std::string,read_path_t> cacheRead_t; 
+                static ChaosSharedMutex last_access_mutex;
                 static cacheRead_t s_lastAccessedDir;
                 
 

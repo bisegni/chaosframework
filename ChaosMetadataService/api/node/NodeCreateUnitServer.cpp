@@ -34,7 +34,7 @@ CDWUniquePtr NodeCreateUnitServer::execute(CDWUniquePtr api_data) {
     bool presence = false;
     CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        LOG_AND_TROW(USRA_ERR, -1, "Node unique id not found")
+        LOG_AND_TROW(USRA_ERR, -1, "Node unique id not found: "+api_data->getJSONString())
     }
     
     if(!api_data->hasKey(NodeDefinitionKey::NODE_TYPE)) {

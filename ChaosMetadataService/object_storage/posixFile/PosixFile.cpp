@@ -62,6 +62,7 @@ PosixFile::~PosixFile() {}
 std::map<std::string,uint64_t> PosixFile::s_lastDirs;
 PosixFile::cacheRead_t PosixFile::s_lastAccessedDir;
 //ChaosSharedMutex PosixFile::devio_mutex;
+ChaosSharedMutex PosixFile::last_access_mutex;
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
@@ -103,7 +104,7 @@ int PosixFile::pushObject(const std::string&                       key,
   seq=stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid=stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
   calcFileDir(basedatapath, key,tag, ts,seq , runid, dir, f);
-  std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
+  const std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
   if((id==s_lastDirs.end())||(ts-id->second)>1000){
     boost::filesystem::path p(dir);
       if ((boost::filesystem::exists(p) == false)){
@@ -217,11 +218,16 @@ int PosixFile::getFromPath(const std::string& dir,const uint64_t timestamp_from,
   uint64_t seqid    = last_record_found_seq.datapack_counter;
   uint64_t runid    = last_record_found_seq.run_id;
   int elements=0;
-      cacheRead_t::iterator di=s_lastAccessedDir.find(dir);
+      const cacheRead_t::iterator di=s_lastAccessedDir.find(dir);
       if(di==s_lastAccessedDir.end()){
         boost::filesystem::path p(dir);
 
        if (boost::filesystem::exists(p) && is_directory(p)) {
+         
+         {
+           ChaosWriteLock ll(last_access_mutex);
+           s_lastAccessedDir[dir].ts=chaos::common::utility::TimingUtil::getTimeStamp(); // create the element also
+         }
            ChaosWriteLock ll(s_lastAccessedDir[dir].devio_mutex);
 
            std::transform(directory_iterator(p), directory_iterator(), std::back_inserter(s_lastAccessedDir[dir].sorted_path), path_leaf_string());
@@ -231,6 +237,8 @@ int PosixFile::getFromPath(const std::string& dir,const uint64_t timestamp_from,
           s_lastAccessedDir[dir].ts=chaos::common::utility::TimingUtil::getTimeStamp();
        }
        }
+        ChaosReadLock ll(s_lastAccessedDir[dir].devio_mutex);
+
         for (std::vector<std::string>::iterator it = s_lastAccessedDir[dir].sorted_path.begin(); it != s_lastAccessedDir[dir].sorted_path.end(); it++) {
             uint64_t iseq, irunid, tim;
           
@@ -387,7 +395,14 @@ void PosixFile::timeout() {
       if((ts-id->second.ts)>5000){
         //not anymore used
         if(id->second.devio_mutex.try_lock()){
-          s_lastAccessedDir.erase(id++);
+          {
+            DBG <<"cleanup "<< id->first;
+           ChaosWriteLock ll(last_access_mutex);
+           id->second.devio_mutex.unlock();
+           s_lastAccessedDir.erase(id++);
+            DBG <<"end cleanup ";
+
+         }
         }
       } else {
         id++;
