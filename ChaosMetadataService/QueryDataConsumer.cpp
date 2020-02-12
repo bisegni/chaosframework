@@ -125,7 +125,10 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
                                        BufferSPtr channel_data) {
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    
+    CDataWrapper data_pack((char *)channel_data->data());
+    data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp());
+    BufferSPtr channel_data_injected(data_pack.getBSONDataBuffer().release());
+
     DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);
     //! if tag is == 1 the datapack is in liveonly
     
@@ -133,7 +136,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         //protected access to cached driver
         CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
         err = cache_slot.putData(key,
-                                 channel_data);
+                                 channel_data_injected);
         
     }
     
@@ -146,7 +149,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         auto job = ChaosMakeSharedPtr<DeviceSharedWorkerJob>();
         job->key = key;
         job->key_tag = hst_tag;
-        job->data_pack = channel_data;
+        job->data_pack = channel_data_injected;
         job->meta_tag = MOVE(meta_tag_set);
         if((err = device_data_worker[index_to_use]->submitJobInfo(job,
                                                                   storage_queue_push_timeout))) {
