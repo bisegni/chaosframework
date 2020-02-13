@@ -711,7 +711,7 @@ int MDSMessageChannel::searchNode(const std::string& unique_id_filter,
         int size;
         do{
             size=tmp.size();
-            ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,page_length,lastid,tmp,millisec_to_wait,impl);
+            ret=searchNodeInt(unique_id_filter,node_type_filter,alive_only,lastid,100000/*page_length*/,lastid,tmp,millisec_to_wait,impl);
             MSG_DBG<<"searchNode start page:"<<start_page<<" page len:"<<page_length<<" lastid:"<<lastid<<"size:"<<tmp.size()<<" sizebefore:"<<size<<" ret:"<<ret;
 
             if(tmp.size()<page_length){

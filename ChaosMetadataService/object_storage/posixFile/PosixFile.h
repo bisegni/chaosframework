@@ -46,7 +46,7 @@ namespace chaos {
                     std::string basedatapath;
                     
                     friend class PosixStorageDriver;
-
+                    int removeRecursevelyUp(const boost::filesystem::path& p );
                     void calcFileDir(const std::string& prefix, const std::string&tag,const std::string& cu, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname);
                     uint32_t countFromPath(boost::filesystem::path& p,const uint64_t timestamp_from,
                           const uint64_t timestamp_to);

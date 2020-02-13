@@ -126,7 +126,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
     CHAOS_ASSERT(channel_data)
     int err = 0;
     CDataWrapper data_pack((char *)channel_data->data());
-    data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp());
+    data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp()&ChaosMetadataService::timePrecisionMask);
     BufferSPtr channel_data_injected(data_pack.getBSONDataBuffer().release());
 
     DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);

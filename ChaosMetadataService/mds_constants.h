@@ -16,7 +16,8 @@ namespace chaos {
 #define OPT_PERSITENCE_IMPL				"persistence-impl"
 #define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence-servers"
 #define OPT_PERSITENCE_KV_PARAMTER		"persistence-kv-param"
-        
+#define OPT_SYNCTIME_ERROR		        "timesync-max-error"
+       
 #define OPT_CRON_JOB_CHECK              "cron-job-check-repeat-time"
 #define OPT_CRON_JOB_AGEING_MANAGEMENT	"cron-job-ageing-management-repeat-time"
         

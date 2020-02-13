@@ -79,7 +79,7 @@ void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu,con
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon+1, tinfo.tm_mday, tinfo.tm_hour);
   }
   // timestamp_runid_seq_ssss
-  snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", t, runid, seq);
+  snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", ts_ms, runid, seq);
 }
 
 int PosixFile::pushObject(const std::string&                       key,
@@ -91,7 +91,7 @@ int PosixFile::pushObject(const std::string&                       key,
     ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", % stored_object.getJSONString());
     return -1;
   }
-  const uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+  const uint64_t ts = stored_object.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
   int64_t seq,runid;
@@ -157,6 +157,20 @@ int PosixFile::getLastObject(const std::string&               key,
 
                                  return -1;
 }
+int PosixFile::removeRecursevelyUp(const boost::filesystem::path& p ){
+  if(p==basedatapath){
+    return 0;
+  }
+  
+  if(boost::filesystem::is_empty(p.parent_path())){
+    if(remove_all(p.parent_path())){
+      INFO<<"REMOVING "<<p.parent_path();
+
+      return removeRecursevelyUp(p.parent_path());
+    }
+  }
+  return 0;
+}
 
 //!delete objects that are contained between intervall (exstreme included)
 int PosixFile::deleteObject(const std::string& key,
@@ -172,7 +186,11 @@ int PosixFile::deleteObject(const std::string& key,
         boost::filesystem::path p(dir);
         if (boost::filesystem::exists(p) && is_directory(p)) {
           INFO<<"REMOVING "<<p;
-          remove_all(p);
+          if(remove_all(p)>0){
+            removeRecursevelyUp(p);
+            
+          }
+
           std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
           if(id!=s_lastDirs.end()){
             s_lastDirs.erase(id);
@@ -242,8 +260,7 @@ int PosixFile::getFromPath(const std::string& dir,const uint64_t timestamp_from,
         for (std::vector<std::string>::iterator it = s_lastAccessedDir[dir].sorted_path.begin(); it != s_lastAccessedDir[dir].sorted_path.end(); it++) {
             uint64_t iseq, irunid, tim;
           
-            sscanf(it->c_str(), "%Lu_%llu_%llu", &tim, &irunid, &iseq);
-            tim *= 1000;
+            sscanf(it->c_str(), "%llu_%llu_%llu", &tim, &irunid, &iseq);
             if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && iseq >= seqid) {
               char tmpbuf[MAX_PATH_LEN];
               snprintf(tmpbuf,sizeof(tmpbuf),"%s/%s",dir.c_str(),it->c_str());

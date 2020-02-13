@@ -46,7 +46,7 @@ namespace chaos {
         public chaos::common::async_central::TimerHandler,
         public ServerDelegator {
             friend class chaos::common::utility::Singleton<ChaosMetadataService>;
-            
+             
             static WaitSemaphore waitCloseSemaphore;
             
             //!persistence driver instance
@@ -67,8 +67,10 @@ namespace chaos {
             //inherited by chaos::common::async_central::TimerHandler
             void timeout();
         public:
+            static uint64_t timePrecisionMask;
+
             struct setting	setting;
-            
+            uint32_t timeError_opt;
             typedef boost::mutex::scoped_lock lock;
             //! C and C++ attribute parser
             /*!

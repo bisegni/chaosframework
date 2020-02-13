@@ -298,14 +298,15 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string&             ke
     if(!stored_object.hasKey(chaos::DataPackCommonKey::DPCK_DEVICE_ID)||
        !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||
        !stored_object.hasKey(chaos::ControlUnitDatapackCommonKey::RUN_ID) ||
-       !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)) {
+       !stored_object.hasKey(chaos::DataPackCommonKey::DPCK_SEQ_ID)||
+       !stored_object.hasKey(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP)) {
         ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", %stored_object.getJSONString());
         return -1;
     }
     
     bsoncxx::oid new_data_oid;
     BlobShrdPtr current_data = ChaosMakeSharedPtr<bsoncxx::builder::basic::document>();
-    const int64_t now_in_ms = TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
+    const int64_t now_in_ms = stored_object.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);//TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
     
     auto now_in_ms_bson = b_date(std::chrono::milliseconds(now_in_ms));
     
