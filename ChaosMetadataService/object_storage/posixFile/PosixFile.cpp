@@ -279,7 +279,7 @@ int PosixFile::getFromPath(const std::string& dir,const uint64_t timestamp_from,
               chaos::common::data::CDWShrdPtr new_obj(new chaos::common::data::CDataWrapper((const char*)buffer, size));
 
               found_object_page.push_back(new_obj);
-              delete buffer;
+              delete []buffer;
               infile.close();
               last_record_found_seq.run_id           = irunid;
               last_record_found_seq.datapack_counter = iseq;

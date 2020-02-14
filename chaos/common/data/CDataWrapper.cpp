@@ -94,7 +94,10 @@ array_index(0){
     } else {
         bson = ALLOCATE_BSONT(bson_new());
     }
-    CHAOS_ASSERT(bson);
+    if(bson==NULL){
+              throw CException(-51, "Invalid BSON", __PRETTY_FUNCTION__);
+
+    }
 }
 
 CDataWrapper::CDataWrapper(const char* mem_ser):
