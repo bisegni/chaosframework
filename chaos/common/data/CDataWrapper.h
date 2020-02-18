@@ -95,7 +95,6 @@ namespace chaos {
                 ChaosBsonShrdPtr bson;
                 int array_index;
                 ChaosBsonShrdPtr bson_tmp_array;
-                CDataWrapper(const bson_t *copy_bson);
                 explicit CDataWrapper(const std::string& json_document);
                 int setBson(const bson_iter_t * ,const uint64_t& val);
                 int setBson(const bson_iter_t * ,const int64_t& val);
@@ -110,10 +109,15 @@ namespace chaos {
 
             public:
                 CDataWrapper();
+                CDataWrapper(const bson_t *copy_bson);
+
                 explicit CDataWrapper(const char* mem_ser,
                                       uint32_t mem_size);
                 explicit CDataWrapper(const char* mem_ser);
                 ~CDataWrapper();
+                
+                const bson_t*getBSON() const;
+
                 static ChaosUniquePtr<CDataWrapper> instanceFromJson(const std::string& json_serialization);
                 ChaosUniquePtr<CDataWrapper>clone();
                 //add a csdata value

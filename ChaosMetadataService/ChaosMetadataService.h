@@ -48,7 +48,6 @@ namespace chaos {
             friend class chaos::common::utility::Singleton<ChaosMetadataService>;
              
             static WaitSemaphore waitCloseSemaphore;
-            
             //!persistence driver instance
             chaos::common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
             //! CDS data consumer that respond to data api
@@ -68,6 +67,7 @@ namespace chaos {
             void timeout();
         public:
             static uint64_t timePrecisionMask;
+            static  std::string mdsName;
 
             struct setting	setting;
             uint32_t timeError_opt;

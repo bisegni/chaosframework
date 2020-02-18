@@ -166,7 +166,7 @@ CDWShrdPtr KeyDataStorage::getNewDataPackForDomain(const KeyDataStorageDomain do
             break;
     }
     if(result.get()==NULL){
-        throw chaos::CException(-1, "CANNOT allocate memorry for data pack ", __PRETTY_FUNCTION__);
+        throw chaos::CException(-1, "CANNOT allocate memory for data pack ", __PRETTY_FUNCTION__);
 
     }
     //add the unique key

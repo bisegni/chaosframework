@@ -675,6 +675,9 @@ const char* CDataWrapper::getBSONRawData(int& size) const{
 const char* CDataWrapper::getBSONRawData() const{
     return reinterpret_cast<const char*>(bson_get_data(ACCESS_BSON(bson)));
 }
+const bson_t*CDataWrapper::getBSON() const {
+    return reinterpret_cast<const bson_t*>((ACCESS_BSON(bson)));
+    }
 
 const int CDataWrapper::getBSONRawSize() const{
     return bson->len;

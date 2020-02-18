@@ -2402,19 +2402,19 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                                              message);
         switch (log_level) {
             case StandardLoggingChannel::LogLevelInfo:
-                ACULAPP_ << log_level;
+                ACULAPP_ << "LOGINFO" <<" subj:"<<subject<< " msg:"<<message;
                 break;
             case StandardLoggingChannel::LogLevelDebug:
-                ACULDBG_ << log_level;
+                ACULDBG_ << "LOGDEBUG"<<" subj:"<<subject<< " msg:"<<message;
                 break;
             case StandardLoggingChannel::LogLevelWarning:
-                ACULWRN_ << log_level;
+                ACULWRN_ << "LOGWARN"<<" subj:"<<subject<< " msg:"<<message;
                 break;
             case StandardLoggingChannel::LogLevelError:
-                ACULERR_ << log_level;
+                ACULERR_ << "LOGERR"<<" subj:"<<subject<< " msg:"<<message;
                 break;
             case StandardLoggingChannel::LogLevelFatal:
-                ACULNOTE_ << log_level;
+                ACULNOTE_ << "LOGFATAL" <<" subj:"<<subject<< " msg:"<<message;
                 break;
         }
     }

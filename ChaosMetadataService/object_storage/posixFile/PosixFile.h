@@ -26,6 +26,7 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/async_central/async_central.h>
+#include <boost/iostreams/device/mapped_file.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
@@ -34,6 +35,8 @@
 #if CHAOS_PROMETHEUS
 #include <chaos/common/metric/metric.h>
 #endif //CHAOS_PROMETHEUS
+// 3Khz
+#define MAX_NUM_OF_FILE_PER_MINUTE 60*3000
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
@@ -44,7 +47,7 @@ namespace chaos {
 
 
                     std::string basedatapath;
-                    
+                    static std::string serverName;
                     friend class PosixStorageDriver;
                     int removeRecursevelyUp(const boost::filesystem::path& p );
                     void calcFileDir(const std::string& prefix, const std::string&tag,const std::string& cu, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname);
@@ -63,12 +66,20 @@ namespace chaos {
     chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
     chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
 #endif
-                static std::map<std::string,uint64_t> s_lastDirs;
+public:
+                typedef struct {ChaosSharedMutex devio_mutex;std::vector<std::string> keys;uint64_t ts;boost::iostreams::mapped_file mf;std::string fname;uint32_t size;uint32_t max_size; uint32_t nobj;uint64_t last_seq;uint64_t last_runid;  bson_writer_t *writer;
+} fdw_t;
+                typedef struct {ChaosSharedMutex devio_mutex;uint64_t ts;uint64_t obj;} ordered_info_t;
+                typedef std::map<std::string,fdw_t> write_path_t;
+                typedef std::map<std::string,ordered_info_t> ordered_t;
+                static ordered_t s_ordered;
+                static  write_path_t s_lastWriteDir;
                 typedef struct __{ std::vector<std::string> sorted_path;uint64_t ts;ChaosSharedMutex devio_mutex;} read_path_t;
                 typedef std::map<std::string,read_path_t> cacheRead_t; 
                 static ChaosSharedMutex last_access_mutex;
                 static cacheRead_t s_lastAccessedDir;
-                
+                // return number of items, or negative if error
+                int reorderData(const std::string& dstpath,const std::vector<std::string>&ordered_keys,int size,const std::string& srcpath);
 
                 void timeout();
 

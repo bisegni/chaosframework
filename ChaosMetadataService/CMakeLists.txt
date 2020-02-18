@@ -364,7 +364,7 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY ${FrameworkLib} boost_iostreams)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} chaos_common)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)

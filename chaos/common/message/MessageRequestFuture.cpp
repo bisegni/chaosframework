@@ -48,7 +48,7 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
         } else{
             //! whait for result
             if (timeout_in_milliseconds >= 0){
-                MRF_DBG<<CHAOS_FORMAT("Future wait for %1% milliseconds",%timeout_in_milliseconds);
+              //  MRF_DBG<<CHAOS_FORMAT("Future wait for %1% milliseconds",%timeout_in_milliseconds); // was duplicated by caller
                 fret=message_future.wait_for(ChaosCronoMilliseconds(timeout_in_milliseconds));
             } else {
                 message_future.wait();
@@ -62,7 +62,7 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     } catch (boost::broken_promise &e) {
         MRF_ERR << CHAOS_FORMAT("Broken promises error:%1%",%e.what());
     } catch (...) {
-        MRF_ERR << "Broken promises unrecognied error";
+        MRF_ERR << "Broken promises unrecognised error";
     }
     return result;
 }

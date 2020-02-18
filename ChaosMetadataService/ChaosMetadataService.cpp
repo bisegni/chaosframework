@@ -53,7 +53,8 @@ uint64_t ChaosMetadataService::timePrecisionMask=0xFFFFFFFFFFFFFFF0ULL;
 #define LCND_LDBG   DBG_LOG(ChaosMetadataService)
 #define LCND_LERR   ERR_LOG(ChaosMetadataService)
 
-ChaosMetadataService::ChaosMetadataService(){ingore_unreg_po = true;};
+ChaosMetadataService::ChaosMetadataService(){ingore_unreg_po = true;
+};
 ChaosMetadataService::~ChaosMetadataService(){}
 
 //! C and C++ attribute parser
