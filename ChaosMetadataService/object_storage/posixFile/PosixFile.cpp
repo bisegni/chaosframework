@@ -23,6 +23,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/regex.hpp>
 #define INFO INFO_LOG(PosixFile)
 #define DBG DBG_LOG(PosixFile)
@@ -39,7 +40,332 @@ using namespace chaos::common::async_central;
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
+class FileLock {
+  std::ofstream     f;
+  const std::string name;
+  ChaosSharedMutex  devio_mutex;  // to lock also process thread
+  int               locked;
 
+ public:
+  FileLock(const std::string& _name)
+      : name(_name) {
+    locked = 0;
+    f.open(name, std::ios_base::app);
+  }
+  ~FileLock() {
+    if (locked) {
+      unlock();
+    }
+    boost::filesystem::remove(name);
+  }
+  void lock() {
+    if (locked == 0) {
+      locked++;
+      devio_mutex.lock();
+      boost::interprocess::file_lock f(name.c_str());
+      f.lock();
+    }
+  }
+  void unlock() {
+    if (locked) {
+      locked--;
+      boost::interprocess::file_lock f(name.c_str());
+      devio_mutex.unlock();
+      f.unlock();
+    }
+  }
+  bool trylock() {
+    if (devio_mutex.try_lock()) {
+      locked++;
+      boost::interprocess::file_lock f(name.c_str());
+
+      return f.try_lock();
+    }
+    return false;
+  }
+};
+std::vector<std::string> searchFile(const std::string& p, const boost::regex& my_filter) {
+  std::vector<std::string> all_matching_files;
+
+  boost::filesystem::directory_iterator end_itr;  // Default ctor yields past-the-end
+  for (boost::filesystem::directory_iterator i(p); i != end_itr; ++i) {
+    // Skip if not a file
+    if (!boost::filesystem::is_regular_file(i->status())) continue;
+
+    boost::smatch what;
+
+    // Skip if no match for V2:
+    if (!boost::regex_match(i->path().filename().string(), what, my_filter)) continue;
+    // For V3:
+    //if( !boost::regex_match( i->path().filename().string(), what, my_filter ) ) continue;
+
+    // File matches, store it
+    all_matching_files.push_back(i->path().string());
+  }
+  return all_matching_files;
+}
+
+std::vector<std::string> searchFileExt(const std::string& pa, const std::string& ext) {
+  std::vector<std::string>              all_matching_files;
+  boost::filesystem::path               p(pa);
+  boost::filesystem::directory_iterator end_itr;  // Default ctor yields past-the-end
+  for (boost::filesystem::directory_iterator i(p); i != end_itr; ++i) {
+    // Skip if not a file
+
+    if (!boost::filesystem::is_regular_file(i->status())) continue;
+    // DBG<<" comparing:"<<i->path().filename() <<" ext:"<<i->path().filename().extension()<<" with:"<<ext;
+    if (i->path().filename().extension() == ext) {
+      all_matching_files.push_back(i->path().string());
+    }
+  }
+  return all_matching_files;
+}
+static void*
+test_bson_writer_custom_realloc_helper(void* mem, size_t num_bytes, void* ctx) {
+  boost::iostreams::mapped_file* mf = (boost::iostreams::mapped_file*)ctx;
+  mf->resize(num_bytes);
+
+  return mf->data();
+}
+int reorderMulti(const std::string& dstpath, const std::vector<std::string>& srcs) {
+  int            err = 0;
+  bson_error_t   src_err;
+  int            numsrc       = srcs.size();
+  int            tot_exp_size = 0;
+  bson_reader_t* src[numsrc];
+  int            ritems[numsrc];
+
+  for (int cnt = 0; cnt < numsrc; cnt++) {
+    src[cnt] = bson_reader_new_from_file(srcs[cnt].c_str(), &src_err);
+    if (src[cnt] == NULL) {
+      ERR << " cannot open for read or not valid:" << srcs[cnt];
+
+      return -1;
+    }
+    {
+      std::ifstream ifp(srcs[cnt].c_str(), std::ifstream::ate | std::ifstream::binary);
+      tot_exp_size += ifp.tellg();
+    }
+    ritems[cnt] = 0;
+  }
+  tot_exp_size = tot_exp_size + (tot_exp_size / 10);  // add 10%
+  boost::iostreams::mapped_file_params params;
+  params.path          = dstpath;
+  params.new_file_size = tot_exp_size;
+  params.flags         = boost::iostreams::mapped_file::mapmode::readwrite;
+  boost::iostreams::mapped_file mf(params);
+  if (mf.is_open() == false) {
+    ERR << " cannot map/open for write:" << dstpath;
+    return -2;
+  }
+  uint8_t* buf    = (uint8_t*)mf.data();
+  size_t   buflen = tot_exp_size;
+
+  bson_writer_t* dst = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, &mf);
+  bool           eof;
+  const bson_t*  b[numsrc];
+  int            witems = 0, len;
+  bson_iter_t*   iter   = new bson_iter_t[numsrc];
+
+  do {
+    std::vector<std::string>   keys_to_reorder;
+    std::map<std::string, int> obj;
+
+    for (int cnt = 0; cnt < numsrc; cnt++) {
+      // leggi bson e keys
+      if (((b[cnt] = bson_reader_read(src[cnt], &eof)) != NULL) && (eof == false)) {
+        bson_iter_init(&iter[cnt], b[cnt]);
+        bson_iter_next(&iter[cnt]);
+        const char* pkey = bson_iter_key(&iter[cnt]);
+        keys_to_reorder.push_back(pkey);
+        obj[pkey] = cnt;
+        ritems[cnt]++;
+      }
+    }
+    //riordina chiavi
+    std::sort(keys_to_reorder.begin(), keys_to_reorder.end());
+    // scrivi chiavi riordinate
+    for (std::vector<std::string>::const_iterator i = keys_to_reorder.begin(); i != keys_to_reorder.end(); i++) {
+      bson_t* wb;
+      // trovata ordinata
+      bson_writer_begin(dst, &wb);
+      bson_append_value(wb, i->c_str(), -1, bson_iter_value(&iter[obj[*i]]));
+      bson_writer_end(dst);
+      witems++;
+    }
+    len = keys_to_reorder.size();
+  } while (len > 0);
+  delete[] iter;
+  mf.resize(bson_writer_get_length(dst));
+  bson_writer_destroy(dst);
+  for (int cnt = 0; cnt < numsrc; cnt++) {
+    bson_reader_destroy(src[cnt]);
+  }
+  mf.close();
+  for (int cnt = 0; cnt < numsrc; cnt++) {
+    DBG << srcs[cnt] << "] READ ITEMS:" << ritems[cnt] << " " << dstpath << "] WRITTEN:" << witems;
+  }
+
+  return witems;
+}
+int reorderData(const std::string& dstpath, const std::vector<std::string>& keys, int size, const std::string& srcpath) {
+  int            err = 0;
+  bson_error_t   src_err;
+  bson_reader_t* src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
+  if (src == NULL) {
+    ERR << " cannot open for read or not valid:" << srcpath;
+    return -1;
+  }
+  if (size <= 0) {
+    // calc size;
+    std::ifstream ifp(srcpath, std::ifstream::ate | std::ifstream::binary);
+    size = ifp.tellg();
+  }
+  boost::iostreams::mapped_file_params params;
+  params.path          = dstpath;
+  params.new_file_size = size;
+  params.flags         = boost::iostreams::mapped_file::mapmode::readwrite;
+  boost::iostreams::mapped_file mf(params);
+  if (mf.is_open() == false) {
+    ERR << " cannot map/open for write:" << dstpath;
+    return -2;
+  }
+  uint8_t* buf    = (uint8_t*)mf.data();
+  size_t   buflen = size;
+
+  bson_writer_t*                           dst = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, &mf);
+  std::map<std::string, bson_value_t>      toreorder;
+  bool                                     eof;
+  std::vector<std::string>::const_iterator i = keys.begin();
+  const bson_t*                            b;
+  int                                      ritems = 0, witems = 0;
+
+  while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
+    bson_iter_t iter;
+    bson_iter_init(&iter, b);
+    bson_iter_next(&iter);
+    const char* pkey = bson_iter_key(&iter);
+    ritems++;
+
+    if (pkey == NULL) {
+      ERR << ritems << "," << witems << "] NULL KEY";
+      continue;
+    }
+
+    std::string         key(pkey);
+    const bson_value_t* val = bson_iter_value(&iter);
+    if (*i == key) {
+      bson_t* wb;
+      // trovata ordinata
+      bson_writer_begin(dst, &wb);
+      bson_append_value(wb, key.c_str(), -1, val);
+      bson_writer_end(dst);
+      witems++;
+      // DBG << ritems<<","<<witems<<"] found ordered " << *i<< " size:"<<toreorder.size();
+      i++;
+
+    } else {
+      // guarda tra quelle disordinate accumulate
+      std::map<std::string, bson_value_t>::iterator f;
+      while (((f = toreorder.find(*i)) != toreorder.end()) && (i != keys.end())) {
+        bson_t* wb;
+        bson_writer_begin(dst, &wb);
+        bson_append_value(wb, i->c_str(), -1, &f->second);
+        bson_writer_end(dst);
+        bson_value_destroy(&f->second);
+        toreorder.erase(f);
+        witems++;
+        //  DBG << ritems<<","<<witems<<"] found into reordered " << *i<< " size:"<<toreorder.size();
+
+        i++;
+      }
+      if ((i != keys.end()) && (*i == key)) {
+        bson_t* wb;
+        // trovata ordinata
+        bson_writer_begin(dst, &wb);
+        bson_append_value(wb, key.c_str(), -1, val);
+        bson_writer_end(dst);
+        witems++;
+        // DBG << ritems<<","<<witems<<"] re-found ordered " << *i<< " size:"<<toreorder.size();
+        i++;
+      } else {
+        bson_value_t& copy = toreorder[key];
+        //    DBG << ritems<<","<<witems<<"] searching " << *i << " found :" << key << " item to reorder:" << toreorder.size();
+
+        bson_value_copy(val, &copy);
+      }
+    }
+  }
+  DBG << srcpath << "] READ ITEMS:" << ritems << " " << dstpath << "] WRITTEN:" << witems;
+  if (ritems != witems) {
+    ERR << " W/R ITEMS mismatch:";
+  }
+
+  bson_writer_destroy(dst);
+  bson_reader_destroy(src);
+  mf.close();
+
+  return witems;
+}
+
+static int makeOrdered(PosixFile::fdw_t& second) {
+  std::string             dstpath = second.fname + POSIX_ORDERED_EXT;
+  boost::filesystem::path p(dstpath);
+  FileLock                fl(p.string() + ".lock");
+  fl.lock();
+  uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+  if ((!boost::filesystem::exists(p)) || (second.ordered_ts < second.unordered_ts)) {
+    int retw = 0;
+
+    if ((now - second.ts) > POSIX_MSEC_QUANTUM) {
+      // no copy because non update any more
+      std::sort(second.keys.begin(), second.keys.end());
+      retw = reorderData(dstpath + ".tmp", second.keys, second.size, second.fname);
+    } else {
+      std::vector<std::string> ordered_keys = second.keys;
+      std::sort(ordered_keys.begin(), ordered_keys.end());
+      retw = reorderData(dstpath + ".tmp", ordered_keys, second.size, second.fname);
+    }
+
+    if (retw > 0) {
+      boost::filesystem::rename(dstpath + ".tmp", dstpath);
+      second.ordered_ts = now;
+      return retw;
+    } else {
+      ERR << " NOT REORDERED:" << second.fname << " size:" << second.size << " file :" << dstpath << " not created";
+      return -1;
+    }
+  }
+  fl.unlock();
+  return 0;  // not neet
+}
+
+static int createFinal(const std::string& dstdir, const std::string& name) {
+  std::string             dstpath = dstdir + "/" + name;
+  boost::filesystem::path p(dstpath);
+  FileLock                fl(p.string() + ".lock");
+  fl.lock();
+  if (!boost::filesystem::exists(p)) {
+    std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
+    std::vector<std::string> ordered   = searchFileExt(dstdir, ".ordered");
+    if (unordered.size() == ordered.size()) {
+      // all ordered file were created
+      int retw = reorderMulti(dstpath + ".tmp", ordered);
+      if (retw > 0) {
+        boost::filesystem::rename(dstpath + ".tmp", dstpath);
+        // we can remove all resources bounded to this directory
+        DBG << " Create final:" << dstpath << " numobj:" << retw;
+        return retw;
+      }
+    }
+  } else {
+    DBG << " Final:" << dstpath << ", Exist Freeing";
+    return 0;
+  }
+  fl.unlock();
+  // cannot be still created
+  return -1;
+}
 PosixFile::PosixFile(const std::string& name)
     : basedatapath(name) {
   serverName = "cds_" + chaos::GlobalConfiguration::getInstance()->getHostname();
@@ -58,15 +384,257 @@ PosixFile::PosixFile(const std::string& name)
   DBG << " BASED DIR:" << name;
   AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
 }
-
+#define MAX_QUEUE_LEN 20000
 PosixFile::~PosixFile() {}
 PosixFile::write_path_t PosixFile::s_lastWriteDir;
 std::string             PosixFile::serverName;
 PosixFile::cacheRead_t  PosixFile::s_lastAccessedDir;
-PosixFile::ordered_t PosixFile::s_ordered;
-
+//PosixFile::ordered_t         PosixFile::s_ordered;
+PosixFile::searchWorkerMap_t PosixFile::searchWorkers;
 //ChaosSharedMutex PosixFile::devio_mutex;
 ChaosSharedMutex PosixFile::last_access_mutex;
+
+void SearchWorker::pathToCache(const std::string& final_file) {
+  try {
+    bson_reader_t* reader;
+    bson_error_t   src_err;
+
+    bson_iter_t   it;
+    const bson_t* bson;
+    bson_iter_t   iter;
+    bool          end;
+    reader = bson_reader_new_from_file(final_file.c_str(), &src_err);
+    if (reader == NULL) {
+      ERR << " CANNOT OPEN " << final_file;
+      wait_data.notify_one();
+      elements = 0;
+      return;
+    }
+    int count = 0;
+    while ((bson = bson_reader_read(reader, &end))) {
+      bson_iter_t iter;
+      bson_iter_init(&iter, bson);
+      uint32_t       document_len = 0;
+      const uint8_t* document     = NULL;
+      bson_iter_next(&iter);
+      bson_iter_document(&iter,
+                         &document_len,
+                         &document);
+      chaos::common::data::CDWShrdPtr d(new chaos::common::data::CDataWrapper((const char*)document, document_len));
+      uint64_t                        iseq, irunid, tim;
+      iseq   = d->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+      irunid = d->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+      tim    = d->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+      if (first_seq < 0) {
+        first_seq = iseq;
+      }
+      if (first_runid < 0) {
+        first_runid = irunid;
+      }
+      /* if((count++%1000)==0){
+            DBG << count<<"]"<<(((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && (iseq >= seqid))?"OK":"NOK")<<" KEY: " << bson_iter_key(&iter) << " seq:" << iseq << "("<<(iseq >= seqid)<<") run:"<<irunid<< "("<<(irunid >= runid)<<"} ts:"<<tim<<"("<<(tim < timestamp_to)<<","<<(tim >= timestamp_from)<<")";
+          }*/
+      //  bson_destroy(bsona);
+      if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= start_runid) && (iseq >= start_seq)) {
+        last_runid = irunid;
+        last_seq   = iseq;
+        boost::mutex::scoped_lock l(mutex_ele);
+        if (elements >= max_elements) {
+          ERR << " TO MANY objects waiting ";
+
+          tomany.wait(l);
+        }
+        cache_data.push_back(d);
+        elements++;
+        if ((elements % page_len) == 0) {
+          wait_data.notify_one();
+        }
+      }
+    }
+    bson_reader_destroy(reader);
+
+  } catch (std::exception& e) {
+    ERR << "Exception occur:" << e.what();
+  }
+  wait_data.notify_one();
+}
+std::string SearchWorker::prepareDirectory() {
+  boost::filesystem::path final_file(path + "/" + POSIX_FINAL_DATA_NAME);
+  if (boost::filesystem::exists(final_file)) {
+    return final_file.string();
+
+  } else {
+    PosixFile::write_path_t::iterator id = PosixFile::s_lastWriteDir.find(path);
+    if (id != PosixFile::s_lastWriteDir.end()) {
+      boost::filesystem::path  final_file(path + "/" + POSIX_FINAL_DATA_NAME);
+      std::string              local_ordered = id->second.fname + POSIX_UNORDERED_EXT;
+      std::vector<std::string> ordered;
+      ;
+
+      if (makeOrdered(id->second) >= 0) {
+        int                      retry            = 3;
+        int                      incwait          = 1;
+        int                      previous_ordered = 0;
+        std::vector<std::string> unordered;
+        ;
+        //creato o gia' creato, check if there are all the ordered
+        do {
+          previous_ordered = ordered.size();
+          unordered        = searchFileExt(id->first, ".unordered");
+          ordered          = searchFileExt(id->first, ".ordered");
+          if (unordered.size() == 0) {
+            ERR << " NO DATA PRESENT in:" << id->first;
+            return std::string();
+          }
+          if (ordered.size() < unordered.size()) {
+            DBG << " Not all Ordered created:" << ordered.size() << "/" << unordered.size() << " retry:" << retry;
+            usleep(10000 * incwait);
+            incwait++;
+          }
+        } while ((ordered.size() < unordered.size()) && (retry-- > 0));
+        if (retry < 0) {
+          ERR << " NOT ALL ORDERED PRESENT in:" << id->first << " " << ordered.size() << "/" << unordered.size();
+          return std::string();
+        }
+        if (createFinal(path, POSIX_TEMPFINAL_DATA_NAME) >= 0) {
+          return (path + "/" + POSIX_TEMPFINAL_DATA_NAME);
+          ;
+
+        } else {
+          return std::string();
+        }
+
+      } else {
+        ERR << " cannot create local ordered in:" << path;
+        return std::string();
+      }
+    }
+  }
+  ERR << " cannot find directory info for:" << path;
+  return std::string();
+}
+
+void SearchWorker::searchJob(const std::string& dir) {
+  done  = false;
+  error = 0;
+  DBG << "START Search searching on:" << dir;
+  pathToCache(dir);
+  DBG << "END Search Job cache size:" << cache_data.size();
+
+  // now find all the other files generated by other servers
+}
+
+SearchWorker::SearchWorker()
+    : max_elements(MAX_QUEUE_LEN) {
+  last_seq = last_runid = elements = 0;
+  done                             = false;
+}
+int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, const uint64_t _timestamp_to, uint64_t seq, uint64_t runid, uint32_t maxele) {
+  path           = p;
+  timestamp_from = _timestamp_from;
+  timestamp_to   = _timestamp_to;
+  start_seq      = seq;
+  start_runid    = runid;
+  page_len       = maxele;
+  elements       = 0;
+  done           = false;
+  first_seq = first_runid = -1;
+  std::string dir         = prepareDirectory();
+  if (dir.size()) {
+    DBG << "Starting search thread on path:" << path;
+
+    search_th = boost::thread(&SearchWorker::searchJob, this, dir);
+  } else {
+    return -1;
+  }
+  return 0;
+}
+// return number of data or negative if error or timeout
+bool SearchWorker::waitData(int timeo) {
+  boost::mutex::scoped_lock lock(mutex_io);
+  boost::system_time const  timeout = boost::get_system_time() + boost::posix_time::milliseconds(timeo);
+
+  //   boost::chrono::system_clock::time_point wakeUpTime =
+  //   boost::chrono::system_clock::now() + period;
+  DBG << "waiting for data available.."<<cache_data.size();
+  bool ret=wait_data.timed_wait(lock, timeout);
+  return ret;
+}
+
+int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& runid, int64_t& seq, int tim) {
+  if (maxData <= 0) {
+    ERR << " you should specify a valid data size";
+    return 0;
+  }
+  if (seq < first_seq) {
+    ERR << "Error seqid " << seq << " smaller that first seq:" << first_seq;
+    return 0;
+  }
+  int index = (seq == 0) ? 0 : (seq - first_seq);
+  int len   = cache_data.size();
+
+  if (done) {
+    if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
+      DBG << "] EMPTY  first_seq:" << first_seq << " first_runid:" << first_runid << " elements:" << elements << " done:" << done;
+
+      return 0;
+    }
+    if (index >= len) {
+      ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + len;
+      return 0;
+    }
+    int cntt = 0;
+
+    for (int cnt = index; (cnt < (index + maxData)) && (cnt < len); cnt++) {
+      dst.push_back(cache_data[cnt]);
+      cntt++;
+    }
+    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << len << " done:" << done;
+
+    if (cntt > 0) {
+      seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+      runid = cache_data[index+cntt - 1]->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    }
+    return cntt;
+  } else {
+    if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
+      bool ret = waitData(tim);
+      if ((first_seq < 0) || (first_runid < 0) || (elements == 0) || (ret == false)) {
+        ERR << "TIMEOUT NO DATA ARRIVED";
+
+        return 0;
+      }
+    }
+    if (index >= len) {
+      bool ret = waitData(tim);
+      if (index > len) {
+        ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + len;
+        return 0;
+      }
+    }
+    waitData(tim);
+
+    int cntt = 0;
+    for (int cnt = index; (cnt < (index + maxData)) && (cnt < len); cnt++) {
+      dst.push_back(cache_data[cnt]);
+      cntt++;
+    }
+    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << len << " done:" << done;
+
+    if (cntt > 0) {
+      seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+      runid = cache_data[index+cntt - 1]->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    }
+    return cntt;
+  }
+
+  return 0;
+}
+SearchWorker::~SearchWorker() {
+  wait_data.notify_all();
+  search_th.join();
+  cache_data.clear();
+}
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
   // std::size_t found = cu.find_last_of("/");
@@ -85,13 +653,7 @@ void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, co
   // timestamp_runid_seq_ssss
   snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", ts_ms, runid, seq);
 }
-static void*
-test_bson_writer_custom_realloc_helper(void* mem, size_t num_bytes, void* ctx) {
-  boost::iostreams::mapped_file* mf = (boost::iostreams::mapped_file*)ctx;
-  mf->resize(num_bytes);
 
-  return mf->data();
-}
 int PosixFile::pushObject(const std::string&                       key,
                           const ChaosStringSetConstSPtr            meta_tags,
                           const chaos::common::data::CDataWrapper& stored_object) {
@@ -101,6 +663,8 @@ int PosixFile::pushObject(const std::string&                       key,
     ERR << CHAOS_FORMAT("Object to store doesn't has the default key!\n %1%", % stored_object.getJSONString());
     return -1;
   }
+  const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+
   const uint64_t ts = stored_object.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
   char           dir[MAX_PATH_LEN];
   char           f[MAX_PATH_LEN];
@@ -125,13 +689,9 @@ int PosixFile::pushObject(const std::string&                       key,
       } else {
         ChaosWriteLock                       ll(s_lastWriteDir[dir].devio_mutex);
         boost::iostreams::mapped_file_params params;
-        params.path                    = std::string(dir) + "/" + serverName;
-        params.new_file_size           = stored_object.getBSONRawSize() * 100;
-        params.flags                   = boost::iostreams::mapped_file::mapmode::readwrite;
-        s_lastWriteDir[dir].size       = 0;
-        s_lastWriteDir[dir].nobj       = 0;
-        s_lastWriteDir[dir].last_seq   = 0;
-        s_lastWriteDir[dir].last_runid = 0;
+        params.path          = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
+        params.new_file_size = stored_object.getBSONRawSize() * 100;
+        params.flags         = boost::iostreams::mapped_file::mapmode::readwrite;
 
         s_lastWriteDir[dir].max_size = params.new_file_size;
 
@@ -150,39 +710,40 @@ int PosixFile::pushObject(const std::string&                       key,
         s_lastWriteDir[dir].writer = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, &s_lastWriteDir[dir].mf);
       }
     }
-    s_lastWriteDir[dir].ts = ts;
+    s_lastWriteDir[dir].ts = now;
   }
   ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
-
+  bson_writer_t* writer = s_lastWriteDir[dir].writer;
   if (s_lastWriteDir[dir].mf.is_open()) {
     /*if(s_lastWriteDir[dir].size*2>s_lastWriteDir[dir].max_size){
                 s_lastWriteDir[dir].mf.resize(s_lastWriteDir[dir].max_size*2);
                 s_lastWriteDir[dir].max_size*=2;
               }*/
     bson_t* b;
-    if(bson_writer_begin(s_lastWriteDir[dir].writer, &b)){
-
-    char key[24];
-    sprintf(key, "%llu_%.10llu", runid, seq);
-    bson_append_document(b, key, -1, stored_object.getBSON());
-    /*  if(s_lastWriteDir[dir].last_seq>0 && (seq!=(s_lastWriteDir[dir].last_seq+1))){
+    if (bson_writer_begin(writer, &b)) {
+      char key[24];
+      sprintf(key, "%llu_%.10llu", runid, seq);
+      bson_append_document(b, key, -1, stored_object.getBSON());
+      /*  if(s_lastWriteDir[dir].last_seq>0 && (seq!=(s_lastWriteDir[dir].last_seq+1))){
                   DBG<<"MISSING seq:"<<seq<<" last_seq:"<<s_lastWriteDir[dir].last_seq<<" diff:"<<(seq-s_lastWriteDir[dir].last_seq);
                 }*/
-    
-    //                char* str = bson_as_canonical_extended_json (b, NULL);
-    //                DBG<<":"<<str;
-    //                bson_free(str);
-    bson_writer_end(s_lastWriteDir[dir].writer);
-    s_lastWriteDir[dir].last_seq   = seq;
-    s_lastWriteDir[dir].last_runid = runid;
-    s_lastWriteDir[dir].nobj++;
 
-    s_lastWriteDir[dir].keys.push_back(key);
+      //                char* str = bson_as_canonical_extended_json (b, NULL);
+      //                DBG<<":"<<str;
+      //                bson_free(str);
+      bson_writer_end(writer);
+      s_lastWriteDir[dir].last_seq   = seq;
+      s_lastWriteDir[dir].last_runid = runid;
+      s_lastWriteDir[dir].nobj++;
+      s_lastWriteDir[dir].size = bson_writer_get_length(writer);
+      s_lastWriteDir[dir].keys.push_back(key);
 
 #if CHAOS_PROMETHEUS
 
-    (*counter_write_data_uptr) += stored_object.getBSONRawSize();
+      (*counter_write_data_uptr) += stored_object.getBSONRawSize();
+
 #endif
+      s_lastWriteDir[dir].unordered_ts = now;
     }
   } else {
     ERR << " CANNOT WRITE:" << dir;
@@ -275,152 +836,29 @@ uint32_t PosixFile::countFromPath(boost::filesystem::path& p, const uint64_t tim
   }
   return elements;
 }
-std::vector<boost::filesystem::path> searchFile(boost::filesystem::path& p,const boost::regex& my_filter){
-  std::vector< boost::filesystem::path> all_matching_files;
-
-boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
-for( boost::filesystem::directory_iterator i( p ); i != end_itr; ++i )
-{
-    // Skip if not a file
-    if( !boost::filesystem::is_regular_file( i->status() ) ) continue;
-
-    boost::smatch what;
-
-    // Skip if no match for V2:
-    if( !boost::regex_match( i->path().filename().string(), what, my_filter ) ) continue;
-    // For V3:
-    //if( !boost::regex_match( i->path().filename().string(), what, my_filter ) ) continue;
-
-    // File matches, store it
-    all_matching_files.push_back( *i );
-}
-  return all_matching_files;
-}
-
-std::vector<std::string> searchFileExt(const std::string& pa,const std::string& ext){
-  std::vector< std::string> all_matching_files;
-boost::filesystem::path p(pa);
-boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
-for( boost::filesystem::directory_iterator i( p ); i != end_itr; ++i )
-{
-    // Skip if not a file
-  
-    if( !boost::filesystem::is_regular_file( i->status() ) ) continue;
-    if(i->path().filename().extension()==ext){
-          all_matching_files.push_back( i->path().string() );
-
-    }
-}
-  return all_matching_files;
-}
 
 int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from, const uint64_t timestamp_to, const uint32_t page_len, abstraction::VectorObject& found_object_page, chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
-  uint64_t seqid    = last_record_found_seq.datapack_counter;
-  uint64_t runid    = last_record_found_seq.run_id;
-  int      elements = 0;
   //   const cacheRead_t::iterator di=s_lastAccessedDir.find(dir);
   //  if(di==s_lastAccessedDir.end()){
-  boost::filesystem::path p(dir+"/"+ serverName+".ordered");
-  if (!boost::filesystem::exists(p)||(s_ordered.find(p.string())!=s_ordered.end())) {
-    // se non esiste oppure e' stato gia' fatto un ordinamento temporaneo
-    ChaosWriteLock(s_ordered[p.string()].devio_mutex);
+  searchWorkerMap_t::iterator i = searchWorkers.find(dir);
 
-    write_path_t::iterator id=s_lastWriteDir.find(dir);
-    if(id!=s_lastWriteDir.end()){
-        id->second.devio_mutex.lock();
-        int len = bson_writer_get_length(id->second.writer);
-        DBG << " FORCE LOCAL ORDERING OF:" << p<<" objects:"<<id->second.nobj;
+  if (i == searchWorkers.end()) {
+    if (searchWorkers[dir].search(dir, timestamp_from, timestamp_to, 0, 0) == 0) {
+      int ret = searchWorkers[dir].getData(found_object_page, page_len, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+      DBG << "1- RETURNED:" << ret << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 
-        std::sort(id->second.keys.begin(), id->second.keys.end());
-        int retw=reorderData(p.string(),id->second.keys,len,id->second.fname);
-        DBG << " REORDERED:" << retw;
-        s_ordered[p.string()].obj=retw;
-        id->second.devio_mutex.unlock();
-
+      return ret;
+    } else {
+      searchWorkers.erase(dir);
+      return -1;
     }
+  } else {
+    int ret = i->second.getData(found_object_page, page_len, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+    DBG << "RETURNED:" << ret << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+    return ret;
   }
-  std::vector<std::string> fr=searchFileExt(dir,".ordered");
-
- for(std::vector<std::string>::iterator po=fr.begin();po!=fr.end();po++){
-   ordered_t::iterator oi=s_ordered.find(*po);
-   if(oi!=s_ordered.end()){
-     oi->second.devio_mutex.lock();
-   }
-    //boost::iostreams::mapped_file_params params;
-    // params.path=path;
-    //params.flags =boost::iostreams::mapped_file::mapmode::readonly;
-    try {
-      boost::iostreams::mapped_file_source mf;
-      mf.open(*po);
-      if (mf.is_open()) {
-        bson_reader_t*    reader;
-        bson_iter_t       it;
-        const bson_t*     bson;
-        bson_iter_t       iter;
-        bool              end;
-        reader = bson_reader_new_from_data((const uint8_t*)mf.data(), (uint32_t)mf.size());
-        /*  while((bson=bson_reader_read(reader,&end))){
-                            char* str = bson_as_canonical_extended_json (bson, NULL);
-                DBG<<":"<<str;
-                bson_free(str);
-
-            }*/
-        //  const bson_t* bson= bson_new_from_data ((const uint8_t*)mf.data(), (uint32_t) mf.size());
-        //  chaos::common::data::CDataWrapper data(bson);
-
-   //     DBG << "Found path " << *po << " len:" << mf.size() << " looking keys runid>="<<runid<<" seq>="<<seqid<<" ts<"<<timestamp_to<<" ts>="<<timestamp_from;
-        int count=0;
-        while ((bson = bson_reader_read(reader, &end))) {
-          bson_iter_t iter;
-          bson_iter_init(&iter, bson);
-          uint32_t       document_len = 0;
-          const uint8_t* document     = NULL;
-          bson_iter_next(&iter);
-          bson_iter_document(&iter,
-                             &document_len,
-                             &document);
-          chaos::common::data::CDWShrdPtr d(new chaos::common::data::CDataWrapper((const char*)document, document_len));
-          uint64_t                        iseq, irunid, tim;
-          iseq   = d->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-          irunid = d->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-          tim    = d->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-   /*       if((count++%1000)==0){
-            DBG << count<<"]"<<(((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && (iseq >= seqid))?"OK":"NOK")<<" KEY: " << bson_iter_key(&iter) << " seq:" << iseq << "("<<(iseq >= seqid)<<") run:"<<irunid<< "("<<(irunid >= runid)<<"} ts:"<<tim<<"("<<(tim < timestamp_to)<<","<<(tim >= timestamp_from)<<")";
-          }*/
-          if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && (iseq >= seqid)) {
-            found_object_page.push_back(d);
-            last_record_found_seq.run_id           = irunid;
-            last_record_found_seq.datapack_counter = iseq;
-            elements++;
-#if CHAOS_PROMETHEUS
-
-            (*counter_read_data_uptr) += d->getBSONRawSize();
-#endif
-
-            if (page_len > 0 && (elements >= page_len)) {
-              mf.close();
-              if(oi!=s_ordered.end()){
-                  oi->second.devio_mutex.unlock();
-                }
-              return elements;
-            }
-          } else {
-            
-          }
-        }
-      } else {
-        ERR<<"cannot open "<<*po;
-      }
-    } catch (std::exception& e) {
-      ERR << "Exception occur:" << e.what();
-    }
-  if(oi!=s_ordered.end()){
-      oi->second.devio_mutex.unlock();
-  } 
- }
- 
-  return elements;
 }
+
 //!search object into object persistence layer
 int PosixFile::findObject(const std::string&                                                 key,
                           const ChaosStringSet&                                              meta_tags,
@@ -470,9 +908,9 @@ int PosixFile::findObject(const std::string&                                    
       if ((tinfo.tm_min != old_hour)) {
         calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
         // boost::filesystem::path p(dir);
-        DBG << "[" <<chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
+        DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
 
-        elements += getFromPath(dir, timestamp_from, timestamp_to, page_len, found_object_page, last_record_found_seq);
+        elements = getFromPath(dir, timestamp_from, timestamp_to, page_len, found_object_page, last_record_found_seq);
         if (elements >= page_len) {
           DBG << "[" << dir << "] Found " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 #if CHAOS_PROMETHEUS
@@ -480,9 +918,8 @@ int PosixFile::findObject(const std::string&                                    
           (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
           return 0;
-        } else if(elements==0){
+        } else if (elements == 0) {
           DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
-
         }
         old_hour = tinfo.tm_min;
       }
@@ -524,106 +961,7 @@ int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
 
   return 0;
 }
-int PosixFile::reorderData(const std::string& dstpath, const std::vector<std::string>& keys, int size, const std::string& srcpath) {
-  int            err = 0;
-  bson_error_t   src_err;
-  bson_reader_t* src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
-  if (src == NULL) {
-    ERR << " cannot open for read or not valid:" << srcpath;
-    return -1;
-  }
-  if (size <= 0) {
-    // calc size;
-    std::ifstream ifp(srcpath, std::ifstream::ate | std::ifstream::binary);
-    size = ifp.tellg();
-  }
-  boost::iostreams::mapped_file_params params;
-  params.path          = dstpath;
-  params.new_file_size = size;
-  params.flags         = boost::iostreams::mapped_file::mapmode::readwrite;
-  boost::iostreams::mapped_file mf(params);
-  if (mf.is_open() == false) {
-    ERR << " cannot map/open for write:" << dstpath;
-    return -2;
-  }
-  uint8_t* buf    = (uint8_t*)mf.data();
-  size_t   buflen = size;
 
-  bson_writer_t*                           dst = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, &mf);
-  std::map<std::string, bson_value_t>      toreorder;
-  bool                                     eof;
-  std::vector<std::string>::const_iterator i = keys.begin();
-  const bson_t*                            b;
-  int                                      ritems = 0, witems = 0;
-  
-  while (((b = bson_reader_read(src, &eof)) != NULL)&&(eof==false)) {
-    bson_iter_t iter;
-    bson_iter_init(&iter, b);
-    bson_iter_next(&iter);
-    const char* pkey=bson_iter_key(&iter);
-        ritems++;
-
-    if(pkey==NULL){
-      ERR<< ritems<<","<<witems<<"] NULL KEY";
-      continue;
-    }
-
-    std::string key(pkey) ;
-    const bson_value_t* val = bson_iter_value(&iter);
-    if (*i == key) {
-      bson_t* wb;
-      // trovata ordinata
-      bson_writer_begin(dst, &wb);
-      bson_append_value(wb, key.c_str(), -1, val);
-      bson_writer_end(dst);
-      witems++;
-     // DBG << ritems<<","<<witems<<"] found ordered " << *i<< " size:"<<toreorder.size();
-      i++;
-
-    } else {
-      // guarda tra quelle disordinate accumulate
-      std::map<std::string, bson_value_t>::iterator f;
-      while(((f = toreorder.find(*i))!=toreorder.end())&&(i!=keys.end())){
-        bson_t* wb;
-        bson_writer_begin(dst, &wb);
-        bson_append_value(wb, i->c_str(), -1, &f->second);
-        bson_writer_end(dst);
-        bson_value_destroy(&f->second);
-        toreorder.erase(f);
-        witems++;
-      //  DBG << ritems<<","<<witems<<"] found into reordered " << *i<< " size:"<<toreorder.size();
-
-        i++;
-      }
-        if((i!=keys.end() )&&(*i==key)){
-          bson_t* wb;
-      // trovata ordinata
-          bson_writer_begin(dst, &wb);
-          bson_append_value(wb, key.c_str(), -1, val);
-          bson_writer_end(dst);
-          witems++;
-          DBG << ritems<<","<<witems<<"] re-found ordered " << *i<< " size:"<<toreorder.size();
-          i++;
-        } else {
-          bson_value_t& copy = toreorder[key];
-      //    DBG << ritems<<","<<witems<<"] searching " << *i << " found :" << key << " item to reorder:" << toreorder.size();
-        
-          bson_value_copy(val, &copy);
-        }
-      }
-  }
-  DBG << srcpath<<"] READ ITEMS:" << ritems << " " <<dstpath<<"] WRITTEN:" << witems;
-  if (ritems != witems) {
-    ERR << " W/R ITEMS mismatch:";
-  }
-
-  bson_writer_destroy(dst);
-  bson_reader_destroy(src);
-  mf.close();
-
-  
-  return witems;
-}
 void PosixFile::timeout() {
   uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
@@ -631,63 +969,29 @@ void PosixFile::timeout() {
   for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
     if ((ts - id->second.ts) > 60000) {
       //not anymore used
-      id->second.devio_mutex.lock();
+      ChaosWriteLock(id->second.devio_mutex);
+      int unordered_len = 0;
       if (id->second.mf.is_open()) {
-        int len = bson_writer_get_length(id->second.writer);
-        DBG << "Closing and resing " << id->second.fname << " with nobj:" << id->second.nobj << " from:" << id->second.mf.size() << " resizing to:" << len;
-        id->second.mf.resize((boost::iostreams::mapped_file::size_type)len);
+        unordered_len = bson_writer_get_length(id->second.writer);
+        DBG << "Closing and resing " << id->second.fname << " with nobj:" << id->second.nobj << " from:" << id->second.mf.size() << " resizing to:" << unordered_len;
+        id->second.mf.resize((boost::iostreams::mapped_file::size_type)unordered_len);
         bson_writer_destroy(id->second.writer);
         id->second.mf.close();
         // sort keys
         id->second.writer = NULL;  //mark closed.
-        
-
-        std::string dstpath=id->second.fname+".ordered";
-        ordered_t::iterator oi=s_ordered.find(dstpath);
-        if(oi!=s_ordered.end()){
-          oi->second.devio_mutex.lock();
-          if(oi->second.obj==id->second.nobj){
-             DBG << " Already ordered... skipping";
-            if(boost::filesystem::remove(boost::filesystem::path(id->second.fname))){
-                  DBG << " REMOVED:" << id->second.fname;
-
-              } else {
-                ERR<<" cannot remove:"<<id->second.fname;
-              }
-              id->second.devio_mutex.unlock();
-              s_lastWriteDir.erase(id++);
-              s_ordered.erase(oi);
-              continue;
-          }
-        }
-        std::sort(id->second.keys.begin(), id->second.keys.end());
-
-        /// reorder data
-        int retw=reorderData(dstpath,id->second.keys,len,id->second.fname);
-        if(retw==id->second.nobj )
-          if(boost::filesystem::remove(boost::filesystem::path(id->second.fname))){
-            DBG << " REMOVED:" << id->second.fname;
-
-         } else {
-          ERR<<" cannot remove:"<<id->second.fname;
-        }
-        if(oi!=s_ordered.end()){
-          oi->second.devio_mutex.unlock();
-
       }
-      } else {
-        ERR << "Not closed because waw not open " << id->second.fname << " with nobj:" << id->second.nobj << " from:" << id->second.mf.size();
+      if (makeOrdered(id->second) >= 0) {
+        if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
+          DBG << " final data exists, remove resources";
+          s_lastWriteDir.erase(id++);
+          continue;
+        }
       }
-      id->second.devio_mutex.unlock();
-
-      s_lastWriteDir.erase(id++);
-      
-
-    } else {
-      id++;
     }
+    id++;
   }
-  for (cacheRead_t::iterator id = s_lastAccessedDir.begin(); id != s_lastAccessedDir.end(); id) {
+
+  /* for (cacheRead_t::iterator id = s_lastAccessedDir.begin(); id != s_lastAccessedDir.end(); id) {
     if ((ts - id->second.ts) > 5000) {
       //not anymore used
       if (id->second.devio_mutex.try_lock()) {
@@ -702,7 +1006,7 @@ void PosixFile::timeout() {
     } else {
       id++;
     }
-  }
+  }*/
 }
 
 //!return the number of object for a determinated key that are store for a time range

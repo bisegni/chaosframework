@@ -100,6 +100,7 @@ namespace chaos {
                 static void queryDns(std::string hostname, std::vector<std::string>& resolved_endpoints);
                 
                 static std::string getHostname();
+                
 #define		STRIP_TO_UI64(x)  boost::asio::ip::address_v4::from_string(x)
 #define		UI64_TO_STRIP(i)  boost::asio::ip::address_v4(i).to_string()
             };
