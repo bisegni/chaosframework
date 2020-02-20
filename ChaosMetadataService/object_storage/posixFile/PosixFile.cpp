@@ -456,6 +456,7 @@ void SearchWorker::pathToCache(const std::string& final_file) {
   } catch (std::exception& e) {
     ERR << "Exception occur:" << e.what();
   }
+  done=true;
   wait_data.notify_one();
 }
 std::string SearchWorker::prepareDirectory() {
@@ -551,6 +552,9 @@ int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, c
 }
 // return number of data or negative if error or timeout
 bool SearchWorker::waitData(int timeo) {
+  if(done){
+    return false;
+  }
   boost::mutex::scoped_lock lock(mutex_io);
   boost::system_time const  timeout = boost::get_system_time() + boost::posix_time::milliseconds(timeo);
 
@@ -579,17 +583,17 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& 
 
       return 0;
     }
-    if (index >= len) {
-      ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + len;
+    if (index >= cache_data.size()) {
+      ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + cache_data.size();
       return 0;
     }
     int cntt = 0;
 
-    for (int cnt = index; (cnt < (index + maxData)) && (cnt < len); cnt++) {
+    for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
       dst.push_back(cache_data[cnt]);
       cntt++;
     }
-    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << len << " done:" << done;
+    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " cache_data.size():" << cache_data.size() << " done:" << done;
 
     if (cntt > 0) {
       seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
@@ -605,21 +609,21 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& 
         return 0;
       }
     }
-    if (index >= len) {
+    if (index >= cache_data.size()) {
       bool ret = waitData(tim);
-      if (index > len) {
-        ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + len;
+      if (index > cache_data.size()) {
+        ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + cache_data.size();
         return 0;
       }
     }
     waitData(tim);
 
     int cntt = 0;
-    for (int cnt = index; (cnt < (index + maxData)) && (cnt < len); cnt++) {
+    for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
       dst.push_back(cache_data[cnt]);
       cntt++;
     }
-    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << len << " done:" << done;
+    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << cache_data.size() << " done:" << done;
 
     if (cntt > 0) {
       seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
