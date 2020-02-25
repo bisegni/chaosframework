@@ -175,11 +175,12 @@ int reorderMulti(const std::string& dstpath, const std::vector<std::string>& src
       // leggi bson e keys
       if (((b[cnt] = bson_reader_read(src[cnt], &eof)) != NULL) && (eof == false)) {
         bson_iter_init(&iter[cnt], b[cnt]);
-        bson_iter_next(&iter[cnt]);
-        const char* pkey = bson_iter_key(&iter[cnt]);
-        keys_to_reorder.push_back(pkey);
-        obj[pkey] = cnt;
-        ritems[cnt]++;
+        if(bson_iter_next(&iter[cnt])){
+          const char* pkey = bson_iter_key(&iter[cnt]);
+          keys_to_reorder.push_back(pkey);
+          obj[pkey] = cnt;
+          ritems[cnt]++;
+        }
       }
     }
     //riordina chiavi
@@ -243,7 +244,8 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
   while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
     bson_iter_t iter;
     bson_iter_init(&iter, b);
-    bson_iter_next(&iter);
+    if(bson_iter_next(&iter)==false)
+      continue;
     const char* pkey = bson_iter_key(&iter);
     ritems++;
 
@@ -340,11 +342,16 @@ static int makeOrdered(PosixFile::fdw_t& second) {
   return 0;  // not neet
 }
 
-static int createFinal(const std::string& dstdir, const std::string& name) {
+static int createFinal(const std::string& dstdir, const std::string& name, bool overwrite = false) {
   std::string             dstpath = dstdir + "/" + name;
   boost::filesystem::path p(dstpath);
   FileLock                fl(p.string() + ".lock");
   fl.lock();
+  if (overwrite) {
+    DBG << " Overwrite:" + p.string();
+
+    boost::filesystem::remove(p);
+  }
   if (!boost::filesystem::exists(p)) {
     std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
     std::vector<std::string> ordered   = searchFileExt(dstdir, ".ordered");
@@ -359,7 +366,7 @@ static int createFinal(const std::string& dstdir, const std::string& name) {
       }
     }
   } else {
-    DBG << " Final:" << dstpath << ", Exist Freeing";
+    DBG << " Final:" << dstpath << ", Exist";
     return 0;
   }
   fl.unlock();
@@ -392,8 +399,17 @@ PosixFile::cacheRead_t  PosixFile::s_lastAccessedDir;
 //PosixFile::ordered_t         PosixFile::s_ordered;
 PosixFile::searchWorkerMap_t PosixFile::searchWorkers;
 //ChaosSharedMutex PosixFile::devio_mutex;
-ChaosSharedMutex PosixFile::last_access_mutex;
+ChaosSharedMutex PosixFile::last_access_mutex,PosixFile::cache_mutex;
 
+bool SearchWorker::isExpired(){
+  if(done==false) return false;
+  const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+  if((now-lru_ts)>CACHE_EXPIRE_TIME){
+    return true;
+  }
+  
+  return false;
+}
 void SearchWorker::pathToCache(const std::string& final_file) {
   try {
     bson_reader_t* reader;
@@ -411,57 +427,82 @@ void SearchWorker::pathToCache(const std::string& final_file) {
       return;
     }
     int count = 0;
-    while ((bson = bson_reader_read(reader, &end))) {
+//elements  = 0;
+    //mutex_ele.lock();
+    //cache_data.clear();
+   // mutex_ele.unlock();
+     first_seq = first_runid = -1;
+    uint32_t elements_stored=elements;
+
+    while ((bson = bson_reader_read(reader, &end))&&(end==false)) {
       bson_iter_t iter;
       bson_iter_init(&iter, bson);
       uint32_t       document_len = 0;
       const uint8_t* document     = NULL;
-      bson_iter_next(&iter);
+      if(bson_iter_next(&iter)==false)
+        continue;
+
       bson_iter_document(&iter,
                          &document_len,
                          &document);
-      chaos::common::data::CDWShrdPtr d(new chaos::common::data::CDataWrapper((const char*)document, document_len));
-      uint64_t                        iseq, irunid, tim;
-      iseq   = d->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-      irunid = d->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-      tim    = d->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-      if (first_seq < 0) {
-        first_seq = iseq;
-      }
-      if (first_runid < 0) {
-        first_runid = irunid;
-      }
-      /* if((count++%1000)==0){
-            DBG << count<<"]"<<(((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= runid) && (iseq >= seqid))?"OK":"NOK")<<" KEY: " << bson_iter_key(&iter) << " seq:" << iseq << "("<<(iseq >= seqid)<<") run:"<<irunid<< "("<<(irunid >= runid)<<"} ts:"<<tim<<"("<<(tim < timestamp_to)<<","<<(tim >= timestamp_from)<<")";
-          }*/
-      //  bson_destroy(bsona);
-      if ((tim < timestamp_to) && (tim >= timestamp_from) && (irunid >= start_runid) && (iseq >= start_seq)) {
-        last_runid = irunid;
-        last_seq   = iseq;
-        boost::mutex::scoped_lock l(mutex_ele);
-        if (elements >= max_elements) {
-          ERR << " TO MANY objects waiting ";
+       chaos::common::data::CDataWrapper*pd=new chaos::common::data::CDataWrapper((const char*)document, document_len);
+       if(pd==NULL){
+         ERR<<" invalid bson data, lem:"<<document_len<<" ptr:0x"<<std::hex<<document;
+         continue;
+       }
+      // chaos::common::data::CDataWrapper*d=new chaos::common::data::CDataWrapper((const char*)document, document_len);
+       uint64_t                        iseq, irunid, ts;
+      iseq   = pd->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+      irunid = pd->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+      ts    = pd->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+      chaos::common::data::CDWShrdPtr d = chaos::common::data::CDWShrdPtr(pd);
 
-          tomany.wait(l);
+       
+      dataObj_t dob;
+      dob.runid = irunid;
+      dob.ts    = ts;
+      dob.seq   = iseq;
+      dob.obj   = d;
+      last_ts=ts;
+      last_seq=iseq;
+      last_runid=irunid;
+
+       if (first_seq < 0) {
+          first_seq = iseq;
+          first_ts=ts;
         }
-        cache_data.push_back(d);
+        if (first_runid < 0) {
+          first_runid = irunid;
+        }
+      //dont push until we are at the end;
+      if(elements_stored==0){
+        
+        cache_data.push_back(dob);
         elements++;
         if ((elements % page_len) == 0) {
+
           wait_data.notify_one();
         }
       }
+      if(elements_stored>0){
+        elements_stored--;
+      }
+      
+      
+      
     }
     bson_reader_destroy(reader);
 
   } catch (std::exception& e) {
     ERR << "Exception occur:" << e.what();
   }
-  done=true;
+  done = true;
   wait_data.notify_one();
 }
 std::string SearchWorker::prepareDirectory() {
   boost::filesystem::path final_file(path + "/" + POSIX_FINAL_DATA_NAME);
   if (boost::filesystem::exists(final_file)) {
+    istemp = false;
     return final_file.string();
 
   } else {
@@ -497,9 +538,10 @@ std::string SearchWorker::prepareDirectory() {
           ERR << " NOT ALL ORDERED PRESENT in:" << id->first << " " << ordered.size() << "/" << unordered.size();
           return std::string();
         }
-        if (createFinal(path, POSIX_TEMPFINAL_DATA_NAME) >= 0) {
-          return (path + "/" + POSIX_TEMPFINAL_DATA_NAME);
-          ;
+        bool recreate=(id->second.ordered_ts>id->second.final_ts);
+        if (createFinal(path, PosixFile::serverName + "_" + POSIX_TEMPFINAL_DATA_NAME, recreate) > 0) {
+          id->second.final_ts=chaos::common::utility::TimingUtil::getTimeStamp();
+          return (path + "/" + PosixFile::serverName + "_" + POSIX_TEMPFINAL_DATA_NAME);
 
         } else {
           return std::string();
@@ -518,17 +560,26 @@ std::string SearchWorker::prepareDirectory() {
 void SearchWorker::searchJob(const std::string& dir) {
   done  = false;
   error = 0;
+  mutex_job.lock();
   DBG << "START Search searching on:" << dir;
   pathToCache(dir);
-  DBG << "END Search Job cache size:" << cache_data.size();
+  DBG << "END Search Job cache size:" << dir<<" size:"<<elements;
+  mutex_job.unlock();
+
 
   // now find all the other files generated by other servers
 }
 
 SearchWorker::SearchWorker()
-    : max_elements(MAX_QUEUE_LEN) {
+    : max_elements(MAX_QUEUE_LEN)/*,cache_data(MAX_QUEUE_LEN)*/,elements(0) {
   last_seq = last_runid = elements = 0;
   done                             = false;
+  istemp                           = true;
+  const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+  lru_ts=now;
+  
+  DBG << "CREATED SEARCH WORKER " << std::hex << this;
+
 }
 int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, const uint64_t _timestamp_to, uint64_t seq, uint64_t runid, uint32_t maxele) {
   path           = p;
@@ -537,22 +588,20 @@ int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, c
   start_seq      = seq;
   start_runid    = runid;
   page_len       = maxele;
-  elements       = 0;
-  done           = false;
-  first_seq = first_runid = -1;
+  last_index     =0;
+  const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+  lru_ts=now;
   std::string dir         = prepareDirectory();
   if (dir.size()) {
     DBG << "Starting search thread on path:" << path;
 
     search_th = boost::thread(&SearchWorker::searchJob, this, dir);
-  } else {
-    return -1;
-  }
+  } 
   return 0;
 }
 // return number of data or negative if error or timeout
 bool SearchWorker::waitData(int timeo) {
-  if(done){
+  if (done) {
     return false;
   }
   boost::mutex::scoped_lock lock(mutex_io);
@@ -560,25 +609,85 @@ bool SearchWorker::waitData(int timeo) {
 
   //   boost::chrono::system_clock::time_point wakeUpTime =
   //   boost::chrono::system_clock::now() + period;
-  DBG << "waiting for data available.."<<cache_data.size();
-  bool ret=wait_data.timed_wait(lock, timeout);
+  DBG << "waiting for data available.." << elements;
+  bool ret = wait_data.timed_wait(lock, timeout);
+  DBG << "data available:" << elements;
+
   return ret;
 }
+//SearchWorker::dataObj::~dataObj(){DBG<<" count :"<<obj.use_count();}
 
-int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& runid, int64_t& seq, int tim) {
+int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uint64_t timestamp_from, const uint64_t timestamp_to, int64_t& runid, int64_t& seq, int tim) {
   if (maxData <= 0) {
     ERR << " you should specify a valid data size";
     return 0;
   }
-  if (seq < first_seq) {
-    ERR << "Error seqid " << seq << " smaller that first seq:" << first_seq;
-    return 0;
-  }
-  int index = (seq == 0) ? 0 : (seq - first_seq);
-  int len   = cache_data.size();
 
-  if (done) {
-    if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
+
+
+    int cntt = 0;
+
+  #if 1
+  DBG << "from:" << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " runid:" << runid << " seq:" << seq;
+  uint64_t lseq = 0, lrunid = 0, cntd = 0;
+  uint64_t irunid, ts;
+  int64_t iseq=0;
+  int index;
+ //for (SafeVector< chaos::common::data::CDataWrapper*>::iterator i = cache_data.begin(); (i != cache_data.end()) && (cntt < maxData); i++) {
+  /* for(index=start_index;(index<cache_data.size())&& (index<(start_index+maxData));index++){
+        dst.push_back(cache_data[index]);
+        cntt++;    
+    }*/
+    last_index=0;
+    bool again;
+    do{
+      const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+      lru_ts=now;
+
+     again=waitData(tim);
+     DBG  <<" ts from:"<< chaos::common::utility::TimingUtil::toString(first_ts)<<" seq:"<<first_seq<<" runid:"<<first_runid<<"  to:"<<chaos::common::utility::TimingUtil::toString(last_ts)<<" seq:"<<last_seq<<" runid:"<<last_runid;
+    for(index=last_index;(index<cache_data.size())&& (cntt<maxData);index++){
+      irunid=cache_data[index].runid;
+      iseq=cache_data[index].seq;
+      ts=cache_data[index].ts;
+      if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= runid) && (iseq >= seq)) {
+         dst.push_back(cache_data[index].obj);
+        lrunid=irunid;
+        lseq=iseq;
+          cntt++;
+      }
+    }
+    
+    last_index=index;
+    } while(again && (cntt<maxData )&& (index< cache_data.size()));
+    if(cntt>0){
+      runid=lrunid;
+      seq=lseq;
+    }  
+  
+  #else
+  //chaos::common::data::CDWShrdPtr p;
+  chaos::common::data::CDataWrapper* p=NULL;
+  uint64_t iseq, irunid, ts;
+  cntt=0;
+  while((cntt<maxData) &&(cache_data.pop(p))){
+    chaos::common::data::CDWShrdPtr pw(p);
+     dst.push_back(pw);
+      cntt++;
+       elements--;
+  }
+  if(p!=NULL){
+    iseq   = p->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+    irunid = p->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    ts     = p->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+
+    seq   = iseq;
+    runid = irunid;
+  }
+  #endif 
+  return cntt;
+  /*if (done) {
+   if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
       DBG << "] EMPTY  first_seq:" << first_seq << " first_runid:" << first_runid << " elements:" << elements << " done:" << done;
 
       return 0;
@@ -587,9 +696,9 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& 
       ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + cache_data.size();
       return 0;
     }
-    int cntt = 0;
-
-    for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
+    
+   
+    /*for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
       dst.push_back(cache_data[cnt]);
       cntt++;
     }
@@ -599,7 +708,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& 
       seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
       runid = cache_data[index+cntt - 1]->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
     }
-    return cntt;
+    
   } else {
     if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
       bool ret = waitData(tim);
@@ -632,12 +741,23 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, int64_t& 
     return cntt;
   }
 
-  return 0;
+  return 0;*/
 }
 SearchWorker::~SearchWorker() {
+  DBG << "DESTROYING elements:" << elements<<" path:"<<path << " this:" << std::hex << this;
+
   wait_data.notify_all();
   search_th.join();
-  cache_data.clear();
+  /*cache_data.consume_all([this](chaos::common::data::CDataWrapper* i) {
+    delete (i);
+    elements--;
+  });*/
+   /*for (SafeVector<chaos::common::data::CDataWrapper*>::iterator i = cache_data.begin(); (i != cache_data.end()); i++) {
+     if(*i){
+       delete *i;
+     }
+   }*/
+
 }
 
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
@@ -683,12 +803,16 @@ int PosixFile::pushObject(const std::string&                       key,
   seq   = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid = stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
   calcFileDir(basedatapath, key, tag, ts, seq, runid, dir, f);
+//  last_access_mutex.lock();
   const write_path_t::iterator id = s_lastWriteDir.find(dir);
+  //ChaosWriteLock ll(id->second.devio_mutex);
   if ((id == s_lastWriteDir.end()) || (ts - (id->second).ts) > 1000) {
     boost::filesystem::path p(dir);
     if ((boost::filesystem::exists(p) == false)) {
       if ((boost::filesystem::create_directories(p) == false)) {
         ERR << "cannot create directory:" << p;
+          last_access_mutex.unlock();
+
         return -1;
       } else {
         ChaosWriteLock                       ll(s_lastWriteDir[dir].devio_mutex);
@@ -707,6 +831,8 @@ int PosixFile::pushObject(const std::string&                       key,
         } else {
           ERR << "cannot open "
               << " mapped file:" << params.path << " max size:" << params.new_file_size;
+          last_access_mutex.unlock();
+
           return -2;
         }
         buf                        = (uint8_t*)s_lastWriteDir[dir].mf.data();
@@ -717,16 +843,19 @@ int PosixFile::pushObject(const std::string&                       key,
     s_lastWriteDir[dir].ts = now;
   }
   ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+//  last_access_mutex.unlock();
+
   bson_writer_t* writer = s_lastWriteDir[dir].writer;
-  if (s_lastWriteDir[dir].mf.is_open()) {
+
+  if (writer&&s_lastWriteDir[dir].mf.is_open()) {
     /*if(s_lastWriteDir[dir].size*2>s_lastWriteDir[dir].max_size){
                 s_lastWriteDir[dir].mf.resize(s_lastWriteDir[dir].max_size*2);
                 s_lastWriteDir[dir].max_size*=2;
               }*/
-    bson_t* b;
+    bson_t* b = NULL;
     if (bson_writer_begin(writer, &b)) {
-      char key[24];
-      sprintf(key, "%llu_%.10llu", runid, seq);
+      char key[32];
+      snprintf(key, sizeof(key), "%llu_%.10llu", runid, seq);
       bson_append_document(b, key, -1, stored_object.getBSON());
       /*  if(s_lastWriteDir[dir].last_seq>0 && (seq!=(s_lastWriteDir[dir].last_seq+1))){
                   DBG<<"MISSING seq:"<<seq<<" last_seq:"<<s_lastWriteDir[dir].last_seq<<" diff:"<<(seq-s_lastWriteDir[dir].last_seq);
@@ -844,23 +973,41 @@ uint32_t PosixFile::countFromPath(boost::filesystem::path& p, const uint64_t tim
 int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from, const uint64_t timestamp_to, const uint32_t page_len, abstraction::VectorObject& found_object_page, chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
   //   const cacheRead_t::iterator di=s_lastAccessedDir.find(dir);
   //  if(di==s_lastAccessedDir.end()){
+  cache_mutex.lock();
   searchWorkerMap_t::iterator i = searchWorkers.find(dir);
-
+  cache_mutex.unlock();
   if (i == searchWorkers.end()) {
     if (searchWorkers[dir].search(dir, timestamp_from, timestamp_to, 0, 0) == 0) {
-      int ret = searchWorkers[dir].getData(found_object_page, page_len, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
-      DBG << "1- RETURNED:" << ret << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+      int ret = searchWorkers[dir].getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+      DBG << "1- RETURNED:" << ret <<"/"<<i->second.elements << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 
       return ret;
     } else {
+      ERR<<" Something wrong in search.. removing";
       searchWorkers.erase(dir);
       return -1;
     }
   } else {
-    int ret = i->second.getData(found_object_page, page_len, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
-    DBG << "RETURNED:" << ret << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+    // recalculate if not final
+    if (i->second.isTemp()) {
+      if(i->second.search(dir, timestamp_from, timestamp_to, 0, 0) == 0) {
+        int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+        DBG << "RETURNED:" << ret  <<"/"<<i->second.elements << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+        return ret;
+      } else {
+        ERR<<" Something wrong in search again.. removing";
+        searchWorkers.erase(dir);
+        return -1;
+    }
+      
+    } 
+    int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+    DBG << "RETURNED2:" << ret <<"/"<<i->second.elements<< " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
     return ret;
+    
+    // int ret = i->second.getData(found_object_page, page_len, timestamp_from,timestamp_to,last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
   }
+  return 0;
 }
 
 //!search object into object persistence layer
@@ -971,8 +1118,15 @@ void PosixFile::timeout() {
 
   // remove directory write cache
   for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
-    if ((ts - id->second.ts) > 60000) {
+    if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM +1000)) {
       //not anymore used
+      /*if(last_access_mutex.try_lock()==false){
+        continue;
+      }*/
+      
+    //  last_access_mutex.unlock();
+  
+  
       ChaosWriteLock(id->second.devio_mutex);
       int unordered_len = 0;
       if (id->second.mf.is_open()) {
@@ -993,6 +1147,20 @@ void PosixFile::timeout() {
       }
     }
     id++;
+  }
+
+  for(searchWorkerMap_t::iterator i=searchWorkers.begin();i!=searchWorkers.end();){
+      if(i->second.isExpired()){
+      if(cache_mutex.try_lock()){
+        DBG << "removing cache data:"<<i->first;
+
+        searchWorkers.erase(i++);
+        cache_mutex.unlock();
+        continue;
+      }
+
+    }
+    i++;
   }
 
   /* for (cacheRead_t::iterator id = s_lastAccessedDir.begin(); id != s_lastAccessedDir.end(); id) {

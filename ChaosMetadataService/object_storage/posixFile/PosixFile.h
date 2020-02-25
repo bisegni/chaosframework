@@ -48,22 +48,84 @@ namespace chaos {
             static const char * POSIX_ORDERED_EXT=".ordered";
             static const char * POSIX_FINAL_DATA_NAME="data.bson.final";
             static const char * POSIX_TEMPFINAL_DATA_NAME="data.bson.final.temp";
-
+            static const int CACHE_EXPIRE_TIME=60000;
             static const int POSIX_MSEC_QUANTUM=60000;
-            class SearchWorker {
-                abstraction::VectorObject cache_data;
+            template< typename T>
+            class SafeVector {
+                public:
+                using iterator=typename std::vector<T>::iterator;
+                using const_iterator=typename std::vector<T >::const_iterator;
+                SafeVector() : vec(), mut() {}
+                SafeVector(const SafeVector& orig) : vec(orig.vec), mut() {}
+                ~SafeVector() {}
+
+                void insert(T in, const int index){
+                    std::lock_guard<std::mutex> lock(mut);
+                    vec[index] = std::move(in);
+                }
+                void push_back(T in){
+                    std::lock_guard<std::mutex> lock(mut);
+                    vec.push_back(std::move(in));
+                }
+
+                 size_t size(){
+                    std::lock_guard<std::mutex> lock(mut);
+                    return vec.size();
+                }
+                T& operator[](const int index){
+                    std::lock_guard<std::mutex> lock(mut);
+
+                    return vec[index];
+                }
+                typename std::vector<T>::iterator begin(){
+                  std::lock_guard<std::mutex> lock(mut);
+
+                    return vec.begin();
+                }
+                typename std::vector<T>::iterator end(){
+                    std::lock_guard<std::mutex> lock(mut);
+
+                    return vec.end();
+                }
+
+                void clear(){
+                    std::lock_guard<std::mutex> lock(mut);
+
+                    vec.clear();
+                
+                }
+                std::vector<T> toVector(){
+                    return vec;
+                }   
+
+                private:
+                std::vector<T> vec;
+                std::mutex mut;
+            };
+                class SearchWorker {
+                typedef struct dataObj{
+                chaos::common::data::CDWShrdPtr obj;
+                uint64_t seq;
+                uint64_t runid;
+                uint64_t ts;
+              //  ~dataObj();
+                } dataObj_t;
+               // std::vector<dataObj_t> cache_data;
+              // std::vector<chaos::common::data::CDWShrdPtr> cache_data;
+                //boost::lockfree::queue<chaos::common::data::CDataWrapper*, boost::lockfree::fixed_sized<true> > cache_data;
+              //  SafeVector< chaos::common::data::CDWShrdPtr> cache_data;
+                SafeVector< dataObj_t> cache_data;
                 uint64_t timestamp_from,timestamp_to,start_seq,start_runid;
-                uint64_t last_seq, last_runid;
-                int64_t first_seq,first_runid;
+                uint64_t lru_ts;
                 std::string path;
                 boost::thread search_th;
+                bool istemp;
       //  std::vector<unsigned char> encbuf[CAMERA_FRAME_BUFFERING];//encode stage
         
                 boost::condition_variable wait_data,tomany;
-                uint32_t elements;
                 uint32_t max_elements;
                 uint32_t page_len;
-                boost::mutex mutex_io,mutex_many,mutex_ele;
+                boost::mutex mutex_io,mutex_many,mutex_ele,mutex_job;
                 bool done;
                 int error;
                 void pathToCache(const std::string& final);
@@ -72,10 +134,15 @@ namespace chaos {
 
                 bool waitData(int timeo);
                 public:
+                uint64_t last_seq, last_runid,last_ts,last_index;
+                int64_t first_seq,first_runid,first_ts;
+                    std::atomic<uint32_t> elements;
+                    bool isExpired(); // the cache is expired?
+                    bool isTemp(){return istemp;}
                     SearchWorker();
                     int search(const std::string& p,const uint64_t timestamp_from,const uint64_t timestamp_to,uint64_t seq, uint64_t runid,uint32_t max_ele=1000);
                     // return number of data or negative if error or timeout
-                    int getData(abstraction::VectorObject& data,int maxData,int64_t& runid,int64_t& seq,int timeout=5000);
+                    int getData(abstraction::VectorObject& data,int maxData,const uint64_t timestamp_from,const uint64_t timestamp_to,int64_t& runid,int64_t& seq,int timeout=5000);
                     ~SearchWorker();
             };
             class PosixFile:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,public chaos::common::async_central::TimerHandler {
@@ -148,7 +215,7 @@ public:
                 typedef std::map<std::string,SearchWorker> searchWorkerMap_t;
                 static searchWorkerMap_t searchWorkers;
                 typedef std::map<std::string,read_path_t> cacheRead_t; 
-                static ChaosSharedMutex last_access_mutex;
+                static ChaosSharedMutex last_access_mutex,cache_mutex;
                 static cacheRead_t s_lastAccessedDir;
                 // return number of items, or negative if error
                 void timeout();

@@ -339,7 +339,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
     try{
         mongo::Query query = BSON(DataServiceNodeDefinitionKey::DS_HA_ZONE << ds_zone <<
                                   NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE <<
-                                  CHAOS_FORMAT("health_stat.%1%", %NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-3600000)));
+                                  CHAOS_FORMAT("health_stat.%1%", %NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP) << BSON("$gte" << mongo::Date_t(TimingUtil::getTimeStamp()-10000)));
         //filter on sequence
         mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
                                          NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
@@ -359,7 +359,8 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
         connection->findN(paged_result,
                           MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                           query.sort(BSON(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME << 1 <<
-                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << 1)),
+                                          NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME << 1<<
+                                          NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP<<1)),
                           number_of_result);
         //fill reuslt
         if(paged_result.size()>0) {
