@@ -239,13 +239,16 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
   bool                                     eof;
   std::vector<std::string>::const_iterator i = keys.begin();
   const bson_t*                            b;
-  int                                      ritems = 0, witems = 0;
+  int                                      ritems = 0, witems = 0 ,rline=0;
 
   while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
     bson_iter_t iter;
     bson_iter_init(&iter, b);
-    if(bson_iter_next(&iter)==false)
+    rline++;
+    if(bson_iter_next(&iter)==false){
+      ERR<<"skipping "<<rline;
       continue;
+    }
     const char* pkey = bson_iter_key(&iter);
     ritems++;
 
@@ -298,9 +301,9 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
       }
     }
   }
-  DBG << srcpath << "] READ ITEMS:" << ritems << " " << dstpath << "] WRITTEN:" << witems;
-  if (ritems != witems) {
-    ERR << " W/R ITEMS mismatch:";
+  DBG << srcpath << "] READ ITEMS:" << ritems << " ("<<rline<<") " << dstpath << "] WRITTEN:" << witems;
+  if (ritems != witems || (ritems==0)) {
+    ERR << " W/R ITEMS mismatch OR ZERO READ";
   }
 
   bson_writer_destroy(dst);
@@ -626,26 +629,30 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
 
     int cntt = 0;
 
-  #if 1
   DBG << "from:" << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " runid:" << runid << " seq:" << seq;
   uint64_t lseq = 0, lrunid = 0, cntd = 0;
-  uint64_t irunid, ts;
+  uint64_t irunid=0, ts;
   int64_t iseq=0;
-  int index;
+  int index=0;
  //for (SafeVector< chaos::common::data::CDataWrapper*>::iterator i = cache_data.begin(); (i != cache_data.end()) && (cntt < maxData); i++) {
   /* for(index=start_index;(index<cache_data.size())&& (index<(start_index+maxData));index++){
         dst.push_back(cache_data[index]);
         cntt++;    
     }*/
-    int last_index=0;
     bool again;
     do{
       const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
       lru_ts=now;
 
      again=waitData(tim);
-     DBG  <<" ts from:"<< chaos::common::utility::TimingUtil::toString(first_ts)<<" seq:"<<first_seq<<" runid:"<<first_runid<<"  to:"<<chaos::common::utility::TimingUtil::toString(last_ts)<<" seq:"<<last_seq<<" runid:"<<last_runid;
-    for(index=last_index;(index<cache_data.size())&& (cntt<maxData);index++){
+      
+     DBG  <<path<<" again:"<<again<<" index:"<<index<<" size:"<<cache_data.size()<<" elements:"<<elements<<" ts from:"<< chaos::common::utility::TimingUtil::toString(first_ts)<<" seq:"<<first_seq<<" runid:"<<first_runid<<"  to:"<<chaos::common::utility::TimingUtil::toString(last_ts)<<" seq:"<<last_seq<<" runid:"<<last_runid;
+     if((again==false)&&(((last_seq>0) && (seq> 0) && (last_seq<seq))||((last_ts>0) && (timestamp_from> last_ts)))){
+       DBG<<" skipping here data not present";
+        return 0;
+     }
+    
+    for(;(index<cache_data.size())&& (cntt<maxData);index++){
       irunid=cache_data[index].runid;
       iseq=cache_data[index].seq;
       ts=cache_data[index].ts;
@@ -653,94 +660,17 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
          dst.push_back(cache_data[index].obj);
         lrunid=irunid;
         lseq=iseq;
-          cntt++;
+        cntt++;
       }
     }
-    
-    last_index=index;
     } while(again && (cntt<maxData )&& (index< cache_data.size()));
     if(cntt>0){
       runid=lrunid;
       seq=lseq;
     }  
   
-  #else
-  //chaos::common::data::CDWShrdPtr p;
-  chaos::common::data::CDataWrapper* p=NULL;
-  uint64_t iseq, irunid, ts;
-  cntt=0;
-  while((cntt<maxData) &&(cache_data.pop(p))){
-    chaos::common::data::CDWShrdPtr pw(p);
-     dst.push_back(pw);
-      cntt++;
-       elements--;
-  }
-  if(p!=NULL){
-    iseq   = p->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-    irunid = p->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-    ts     = p->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-
-    seq   = iseq;
-    runid = irunid;
-  }
-  #endif 
   return cntt;
-  /*if (done) {
-   if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
-      DBG << "] EMPTY  first_seq:" << first_seq << " first_runid:" << first_runid << " elements:" << elements << " done:" << done;
-
-      return 0;
-    }
-    if (index >= cache_data.size()) {
-      ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + cache_data.size();
-      return 0;
-    }
-    
-   
-    /*for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
-      dst.push_back(cache_data[cnt]);
-      cntt++;
-    }
-    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " cache_data.size():" << cache_data.size() << " done:" << done;
-
-    if (cntt > 0) {
-      seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-      runid = cache_data[index+cntt - 1]->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-    }
-    
-  } else {
-    if ((first_seq < 0) || (first_runid < 0) || (elements == 0)) {
-      bool ret = waitData(tim);
-      if ((first_seq < 0) || (first_runid < 0) || (elements == 0) || (ret == false)) {
-        ERR << "TIMEOUT NO DATA ARRIVED";
-
-        return 0;
-      }
-    }
-    if (index >= cache_data.size()) {
-      bool ret = waitData(tim);
-      if (index > cache_data.size()) {
-        ERR << "Error seqid " << seq << " out of bounds last seq:" << first_seq + cache_data.size();
-        return 0;
-      }
-    }
-    waitData(tim);
-
-    int cntt = 0;
-    for (int cnt = index; (cnt < (index + maxData)) && (cnt < cache_data.size()); cnt++) {
-      dst.push_back(cache_data[cnt]);
-      cntt++;
-    }
-    DBG << cntt << "] index:" << index << " end:" << (index + maxData) << " len:" << cache_data.size() << " done:" << done;
-
-    if (cntt > 0) {
-      seq   = cache_data[index+cntt - 1]->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-      runid = cache_data[index+cntt - 1]->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-    }
-    return cntt;
-  }
-
-  return 0;*/
+  
 }
 SearchWorker::~SearchWorker() {
   DBG << "DESTROYING elements:" << elements<<" path:"<<path << " this:" << std::hex << this;
