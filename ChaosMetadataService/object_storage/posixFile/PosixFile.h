@@ -28,7 +28,7 @@
 #include <chaos/common/async_central/async_central.h>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include  <boost/lockfree/queue.hpp> 
-
+#include "BsonFStream.h"
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
@@ -176,15 +176,11 @@ public:
                     ChaosSharedMutex devio_mutex;
                     std::vector<std::string> keys;
                     uint64_t ts;
-                    boost::iostreams::mapped_file mf;
                     std::string fname;
-                    uint32_t size;
-                    uint32_t max_size; 
-                    uint32_t nobj;//unordered
                     uint64_t unordered_ts; //last_unordered
                     uint64_t last_seq;
                     uint64_t last_runid;  
-                    bson_writer_t *writer;
+                    BsonFStream writer;
                     uint32_t nobj_ordered;//ordered
                     uint64_t ordered_ts;
 
@@ -193,12 +189,9 @@ public:
 
 
                     fdw(){
-                          size       = 0;
-                          nobj       = 0;
                           last_seq   = 0;
                           last_runid = 0;
                           nobj_ordered=0;
-                          writer=0;
                           ts=0;
                           nobj_final=0;
                           ordered_ts=0;

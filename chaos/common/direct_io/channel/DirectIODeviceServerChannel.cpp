@@ -232,9 +232,17 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                 it != end;
                                 it++) {
                                 //write result into mresults memory
-                                BufferUPtr buf = (*it)->getBSONDataBuffer();
-                                result_data->append(*buf);
-                                result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=buf->size();
+                                if(it->get()){
+                                    BufferUPtr buf = (*it)->getBSONDataBuffer();
+                                    if(buf!=NULL){
+                                        result_data->append(*buf);
+                                        result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=buf->size();
+                                    } else {
+                                        ERR <<" bad bson packet";
+                                    }
+                                } else {
+                                    ERR<<" bad shared buffer";
+                                }
                             }
                         }
                         
