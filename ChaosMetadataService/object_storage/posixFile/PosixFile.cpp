@@ -588,7 +588,6 @@ int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, c
   start_seq      = seq;
   start_runid    = runid;
   page_len       = maxele;
-  last_index     =0;
   const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
   lru_ts=now;
   std::string dir         = prepareDirectory();
@@ -638,7 +637,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
         dst.push_back(cache_data[index]);
         cntt++;    
     }*/
-    last_index=0;
+    int last_index=0;
     bool again;
     do{
       const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();

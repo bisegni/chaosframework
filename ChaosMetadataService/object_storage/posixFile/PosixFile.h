@@ -134,7 +134,7 @@ namespace chaos {
 
                 bool waitData(int timeo);
                 public:
-                uint64_t last_seq, last_runid,last_ts,last_index;
+                uint64_t last_seq, last_runid,last_ts;
                 int64_t first_seq,first_runid,first_ts;
                     std::atomic<uint32_t> elements;
                     bool isExpired(); // the cache is expired?
