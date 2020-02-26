@@ -234,7 +234,7 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                                 //write result into mresults memory
                                 if(it->get()){
                                     BufferUPtr buf = (*it)->getBSONDataBuffer();
-                                    if(buf!=NULL){
+                                    if(buf.get()!=NULL){
                                         result_data->append(*buf);
                                         result_header->data<DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult>()->result_data_size +=buf->size();
                                     } else {
