@@ -1061,7 +1061,7 @@ int PosixFile::findObject(const std::string&                                    
 
         if (makeOrdered(id->second) >= 0) {
           if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
-            DBG << " final data exists, remove resources";
+            DBG << " final data exists, remove resources:"<<id->first;
             s_lastWriteDir.erase(id++);
             continue;
           }

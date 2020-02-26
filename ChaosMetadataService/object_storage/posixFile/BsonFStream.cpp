@@ -1,8 +1,13 @@
 #include "BsonFStream.h"
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#define INFO INFO_LOG(BsonFStream)
+#define DBG DBG_LOG(BsonFStream)
+#define ERR ERR_LOG(BsonFStream)
 static void*
 test_bson_writer_custom_realloc_helper(void* mem, size_t num_bytes, void* ctx) {
   boost::iostreams::mapped_file* mf = (boost::iostreams::mapped_file*)ctx;
-  mf->resize(2 * num_bytes);
+  mf->resize(num_bytes);
 
   return mf->data();
 }
@@ -16,6 +21,7 @@ BsonFStream::BsonFStream(const std::string&fname,int inital_size):writer(NULL),o
   }
 }
 BsonFStream::~BsonFStream(){
+  DBG<<" DESTROY:"<<name;
   close();
 }
 int BsonFStream::open(const std::string&fname,int size){
@@ -51,6 +57,8 @@ int BsonFStream::open(const std::string&fname,int size){
     }
 
     int BsonFStream::close(){
+        DBG<<" Closing:"<<name;
+
       if(writer){
         fsize=bson_writer_get_length(writer);
         mf.resize(fsize);
@@ -62,6 +70,10 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const chaos::common::data::CDataWrapper&ptr){
           bson_t* b = NULL;
+          if(writer==NULL){
+            ERR<<"attempt to write after close:"<<name;
+            return 0;
+          }
           if (bson_writer_begin(writer, &b)) {
              bson_append_document(b, key.c_str(), -1, ptr.getBSON());
              objs++;
@@ -72,6 +84,10 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const bson_value_t*ptr){
         bson_t* b = NULL;
+           if(writer==NULL){
+            ERR<<"attempt to write after close:"<<name;
+            return 0;
+          }
           if (bson_writer_begin(writer, &b)) {
              bson_append_value(b, key.c_str(), -1, ptr);
              objs++;
