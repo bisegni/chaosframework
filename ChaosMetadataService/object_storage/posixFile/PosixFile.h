@@ -50,6 +50,14 @@ namespace chaos {
             static const char * POSIX_TEMPFINAL_DATA_NAME="data.bson.final.temp";
             static const int CACHE_EXPIRE_TIME=60000;
             static const int POSIX_MSEC_QUANTUM=60000;
+
+            static const uint64_t POSIX_MINUTES_MS=60*1000;
+            static const uint64_t POSIX_HOURS_MS=60*(60*1000);
+            static const uint64_t POSIX_DAY_MS=24*60*(60*1000);
+            static const uint64_t POSIX_YEAR_MS=365*24*60*(60*1000ULL);
+            static const uint64_t POSIX_YEARB_MS=366*24*60*(60*1000ULL);
+
+
             template< typename T>
             class SafeVector {
                 public:

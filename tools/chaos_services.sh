@@ -56,7 +56,7 @@ mds_checks(){
 
 
 usage(){
-    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui|start devel | stop webui|stop mds}"
+    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui| start us |start devel | stop webui|stop mds| stop us}"
 }
 start_mds(){
     if [ -n "$CHAOS_MDS" ];then
@@ -172,6 +172,13 @@ agent_stop()
 }
 
 
+us_stop(){
+    info_mesg "stopping... " "$US_EXEC"
+    if [ -n "$(get_pid $CHAOS_PREFIX/bin/$US_EXEC)" ];then
+        stop_proc "$CHAOS_PREFIX/bin/$US_EXEC"
+    fi
+}
+
 mds_stop()
 {
     info_mesg "stopping... " "$MDS_EXEC"
@@ -208,10 +215,8 @@ stop_all(){
     #    status=$((status + $?))
     agent_stop
     status=$((status + $?))
-    if [ -n "$(get_pid $CHAOS_PREFIX/bin/$US_EXEC)" ];then
-        stop_proc "$CHAOS_PREFIX/bin/$US_EXEC"
-        status=$((status + $?))
-    fi
+    us_stop
+    status=$((status + $?))
     exit $status
 }
 
@@ -265,6 +270,11 @@ case "$cmd" in
                     start_agent
                     exit 0
                 ;;
+
+                us)
+                    start_us
+                    exit 0
+                ;;
                 
                 devel)
                     start_mds
@@ -291,10 +301,10 @@ case "$cmd" in
                     mds_stop
                     exit 0
                 ;;
-                # cds)
-                #     cds_stop
-                #     exit 0
-                #     ;;
+                us)
+                    us_stop
+                    exit 0
+                ;;
                 agent)
                     agent_stop
                     exit 0
