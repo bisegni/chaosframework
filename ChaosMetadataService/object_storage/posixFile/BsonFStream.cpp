@@ -35,7 +35,7 @@ int BsonFStream::open(const std::string&fname,int size){
           ERR<<" already open:"<<name;
           return 0;
         }
-        DBG<<"opening:"<<name<<" x"<<std::hex<<this;
+      //  DBG<<"opening:"<<name<<" x"<<std::hex<<this;
         mf.open(params);
         if(mf.is_open()){
           
