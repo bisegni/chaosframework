@@ -230,14 +230,15 @@ int KeyDataStorage::pushDataSet(KeyDataStorageDomain domain,
             //input channel need to be push ever either in live and in history
             err=io_data_driver->storeData(input_key,
                                           MOVE(dataset),
-                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          storage_type,
                                           current_tags());
             break;
         case KeyDataStorageDomainSystem:
             //system channel need to be push ever either in live and in history
             err=io_data_driver->storeData(system_key,
                                           MOVE(dataset),
-                                          DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          //DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                                          storage_type,
                                           current_tags());
             break;
         case KeyDataStorageDomainCUAlarm:

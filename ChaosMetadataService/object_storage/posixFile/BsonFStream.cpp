@@ -21,7 +21,7 @@ BsonFStream::BsonFStream(const std::string&fname,int inital_size):writer(NULL),o
   }
 }
 BsonFStream::~BsonFStream(){
-  DBG<<" DESTROY:"<<name;
+  //DBG<<" DESTROY:"<<name;
   close();
 }
 int BsonFStream::open(const std::string&fname,int size){
@@ -57,7 +57,7 @@ int BsonFStream::open(const std::string&fname,int size){
     }
 
     int BsonFStream::close(){
-        DBG<<" Closing:"<<name;
+       // DBG<<" Closing:"<<name;
 
       if(writer){
         fsize=bson_writer_get_length(writer);
