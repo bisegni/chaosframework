@@ -142,8 +142,10 @@ int reorderMulti(const std::string& dstpath, const std::vector<std::string>& src
   for (int cnt = 0; cnt < numsrc; cnt++) {
     src[cnt] = bson_reader_new_from_file(srcs[cnt].c_str(), &src_err);
     if (src[cnt] == NULL) {
-      ERR << " cannot open for read or not valid:" << srcs[cnt];
-
+      ERR << " creating "<<dstpath<<" cannot open for read or not valid src ["<<cnt<<"]:" << srcs[cnt];
+      while(cnt--){
+        bson_reader_destroy(src[cnt]);
+      }
       return -1;
     }
     {
@@ -284,7 +286,7 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
 static int makeOrdered(PosixFile::fdw_t& second) {
   std::string             dstpath = second.fname + POSIX_ORDERED_EXT;
   boost::filesystem::path p(dstpath);
-  FileLock                fl(p.string() + ".lock");
+  FileLock                fl(dstpath + ".lock");
   fl.lock();
   uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
   if ((!boost::filesystem::exists(p)) || (second.ordered_ts < second.unordered_ts)) {
@@ -316,7 +318,7 @@ static int makeOrdered(PosixFile::fdw_t& second) {
 static int createFinal(const std::string& dstdir, const std::string& name, bool overwrite = false) {
   std::string             dstpath = dstdir + "/" + name;
   boost::filesystem::path p(dstpath);
-  FileLock                fl(p.string() + ".lock");
+  FileLock                fl(dstpath + ".lock");
   fl.lock();
   if (overwrite) {
     DBG << " Overwrite:" + p.string();
@@ -744,10 +746,15 @@ int PosixFile::pushObject(const std::string&                       key,
   seq   = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid = stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
   calcFileDir(basedatapath, key, tag, ts, seq, runid, dir, f);
-  //  last_access_mutex.lock();
-  const write_path_t::iterator id = s_lastWriteDir.find(dir);
+  bool notexist;
+  write_path_t::iterator id;
+  {
+   // ChaosWriteLock  lk(last_access_mutex);
+   id= s_lastWriteDir.find(dir);
+  notexist=(id == s_lastWriteDir.end());
+  //last_access_mutex.unlock();
   //ChaosWriteLock ll(id->second.devio_mutex);
-  if ((id == s_lastWriteDir.end()) || (ts - (id->second).ts) > 1000) {
+  if ( notexist /*|| (ts - (id->second).ts) > 1000*/) {
     boost::filesystem::path p(dir);
     if ((boost::filesystem::exists(p) == false)) {
       if ((boost::filesystem::create_directories(p) == false)) {
@@ -756,43 +763,45 @@ int PosixFile::pushObject(const std::string&                       key,
 
         return -1;
       } else {
-        ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+          DBG << " CREATED DIR:" << p;
+      }
+       // ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+      
+      }
         std::string    path = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
-        if (s_lastWriteDir[dir].writer.open(path) == 0) {
-          s_lastWriteDir[dir].fname = path;
-
-          DBG << " CREATED DIR:" << p << " mapped file:" << path;
-        } else {
+        s_lastWriteDir[dir].fname = path;
+        s_lastWriteDir[dir].ts=now;
+        if (s_lastWriteDir[dir].writer.open(path) != 0) {
           ERR << "cannot open "
               << " mapped file:" << path;
           // last_access_mutex.unlock();
-
+          s_lastWriteDir.erase(dir);
           return -2;
         }
-      }
+        id=s_lastWriteDir.find(dir);
     }
-    s_lastWriteDir[dir].ts = now;
+  
   }
-  ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+  ChaosWriteLock ll(id->second.devio_mutex);
 
-  BsonFStream& writer = s_lastWriteDir[dir].writer;
+  //BsonFStream& writer = s_lastWriteDir[dir].writer;
   bool         ok;
-  int          retry = 3;
+  int          retry = 0;
   do {
     char key[32];
     snprintf(key, sizeof(key), "%llu_%.10llu", runid, seq);
 
-    if ((ok = (writer.write(key, stored_object) > 0))) {
-      s_lastWriteDir[dir].last_seq   = seq;
-      s_lastWriteDir[dir].last_runid = runid;
-      s_lastWriteDir[dir].keys.push_back(key);
+    if ((ok = (id->second.writer.write(key, stored_object) > 0))) {
+      id->second.last_seq   = seq;
+      id->second.last_runid = runid;
+      id->second.keys.push_back(key);
 
 #if CHAOS_PROMETHEUS
 
       (*counter_write_data_uptr) += stored_object.getBSONRawSize();
 
 #endif
-      s_lastWriteDir[dir].unordered_ts = now;
+      id->second.unordered_ts = now;
     } else {
       ERR << " CANNOT WRITE:" << dir << " retry:" << retry;
     }
@@ -1061,8 +1070,13 @@ int PosixFile::findObject(const std::string&                                    
 
         if (makeOrdered(id->second) >= 0) {
           if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
-            DBG << " final data exists, remove resources:"<<id->first;
-            s_lastWriteDir.erase(id++);
+            DBG << " final data exists:"<<id->first;
+            if(last_access_mutex.try_lock()){
+              DBG << "remove resource:"<<id->first;
+
+              s_lastWriteDir.erase(id++);
+              last_access_mutex.unlock();
+            }
             continue;
           }
         }

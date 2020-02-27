@@ -10,7 +10,7 @@ class BsonFStream{
     uint32_t objs;
     uint8_t*       buf;
     size_t         buflen,fsize;
-
+    uint64_t       open_ts,close_ts;
     public:
     BsonFStream(const std::string&fname,int inital_size=1024*1024);
     BsonFStream();
