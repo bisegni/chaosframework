@@ -32,6 +32,13 @@
 using namespace chaos::metadata_service::object_storage;
 using namespace boost::filesystem;
 #define MAX_PATH_LEN 512
+
+#ifdef CERN_ROOT
+#include <driver/misc/models/cernRoot/rootUtil.h>
+#include "TFile.h"
+#include "TList.h"
+#endif
+
 #if CHAOS_PROMETHEUS
 using namespace chaos::common::metric;
 #endif
@@ -40,11 +47,16 @@ using namespace chaos::common::async_central;
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
+/*static global*/
+chaos::common::metric::CounterUniquePtr PosixFile::counter_write_data_uptr;
+chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
+chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
+chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
 
-   chaos::common::metric::CounterUniquePtr PosixFile::counter_write_data_uptr;
-     chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
-     chaos::common::metric::GaugeUniquePtr PosixFile::gauge_insert_time_uptr;
-     chaos::common::metric::GaugeUniquePtr PosixFile::gauge_query_time_uptr;
+bool PosixFile::removeTemp   = false;
+bool PosixFile::generateRoot = false;
+
+/**************/
 class FileLock {
   std::ofstream     f;
   const std::string name;
@@ -147,8 +159,8 @@ int reorderMulti(const std::string& dstpath, const std::vector<std::string>& src
   for (int cnt = 0; cnt < numsrc; cnt++) {
     src[cnt] = bson_reader_new_from_file(srcs[cnt].c_str(), &src_err);
     if (src[cnt] == NULL) {
-      ERR << " creating "<<dstpath<<" cannot open for read or not valid src ["<<cnt<<"]:" << srcs[cnt];
-      while(cnt--){
+      ERR << " creating " << dstpath << " cannot open for read or not valid src [" << cnt << "]:" << srcs[cnt];
+      while (cnt--) {
         bson_reader_destroy(src[cnt]);
       }
       return -1;
@@ -173,14 +185,14 @@ int reorderMulti(const std::string& dstpath, const std::vector<std::string>& src
     for (int cnt = 0; cnt < numsrc; cnt++) {
       // leggi bson e keys
       if (((b[cnt] = bson_reader_read(src[cnt], &eof)) != NULL) && (eof == false)) {
-        if(bson_iter_init(&iter[cnt], b[cnt])){
-        if (bson_iter_next(&iter[cnt])) {
-          const char* pkey = bson_iter_key(&iter[cnt]);
-          keys_to_reorder.push_back(pkey);
-          obj[pkey] = cnt;
-          ritems[cnt]++;
+        if (bson_iter_init(&iter[cnt], b[cnt])) {
+          if (bson_iter_next(&iter[cnt])) {
+            const char* pkey = bson_iter_key(&iter[cnt]);
+            keys_to_reorder.push_back(pkey);
+            obj[pkey] = cnt;
+            ritems[cnt]++;
+          }
         }
-      }
       }
     }
     //riordina chiavi
@@ -230,12 +242,12 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
 
   while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
     bson_iter_t iter;
-   
+
     rline++;
-    if( bson_iter_init(&iter, b)==false){
+    if (bson_iter_init(&iter, b) == false) {
       ERR << " iter init false skipping " << rline;
       continue;
-   }
+    }
     if (bson_iter_next(&iter) == false) {
       ERR << " iter next false skipping " << rline;
       continue;
@@ -324,7 +336,107 @@ static int makeOrdered(PosixFile::fdw_t& second) {
   fl.unlock();
   return 0;  // not neet
 }
+#ifdef CERN_ROOT
+static int createRoot(const std::string& dstdir, const std::string& name) {
+  std::string             srcpath = dstdir + "/" + name;
+  std::string             dstpath = dstdir + "/" + name + ".root";
+  boost::filesystem::path p(dstpath);
+  int ret=0;
+  FileLock                fl(dstpath + ".lock");
+  fl.lock();
+  if (!boost::filesystem::exists(p)) {
+    if (boost::filesystem::is_regular_file(srcpath)) {
+      bson_error_t src_err;
 
+      bson_reader_t* src = bson_reader_new_from_file(p.string().c_str(), &src_err);
+      const bson_t*  b;
+      bool           eof;
+      uint32_t       countele = 0;
+      uint64_t       ts       = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds();
+      TFile*         fout     = new TFile(dstpath.c_str(), "RECREATE");
+      int64_t        oldseq   = -1;
+      int64_t        oldrunid = -1;
+      int64_t        oldtime  = -1;
+      ChaosToTree    ti(name);
+      uint32_t       document_len = 0;
+      const uint8_t* document     = NULL;
+      while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
+        bson_iter_t iter;
+
+        if (bson_iter_init(&iter, b) == false) {
+          ERR << countele << " invalid iterator";
+          countele++;
+          continue;
+        }
+        if (bson_iter_next(&iter) == false) {
+          ERR << countele << " invalid next iterator";
+          countele++;
+          continue;
+        }
+
+        bson_iter_document(&iter,
+                           &document_len,
+                           &document);
+        chaos::common::data::CDataWrapper cd((const char*)document, document_len);
+        uint64_t                          iseq, irunid;
+        int64_t                           tim;
+
+        iseq   = cd.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+        irunid = cd.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+        tim    = cd.getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+
+        if (oldrunid < 0) {
+          oldrunid = irunid;
+        }
+
+        if (oldseq < 0) {
+          oldseq = iseq;
+        } else {
+          if ((oldrunid == irunid) && (oldseq + 1) != iseq) {
+            ERR << countele << ",s:" << iseq << ",t:" << tim << "] seq discontinuity old:" << oldseq << " new:" << iseq;
+            ret++;
+          }
+        }
+        if (oldrunid != irunid) {
+          DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
+          oldrunid = irunid;
+        }
+
+        if (oldrunid != irunid) {
+          if (oldrunid > irunid) {
+            ERR << countele << ",s:" << iseq << ",t:" << tim << "] RUN ID INVERSION!! id, old:" << oldrunid << " new:" << irunid;
+            ret++;
+
+          } else {
+            DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
+          }
+          oldrunid = irunid;
+        }
+        if (oldtime > tim) {
+          ERR << countele << ",s:" << iseq << ",t:" << tim << "] TIME INVERSION!! id, old:" << oldtime << " new:" << tim;
+          oldrunid = irunid;
+            ret++;
+
+        }
+        oldtime = tim;
+        oldseq  = iseq;
+        ti.addData(cd);
+        countele++;
+      }
+      fout->Write();
+
+      if (countele > 0) {
+        uint64_t tt = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds() - ts;
+
+        DBG << "converted:" << countele << " items in " << 1.0 * tt / 1000 << " ms " << (1.0 * countele * 1000000 / tt) << " item/s into:" << name;
+      }
+      fout->Close();
+    }
+  }
+  fl.unlock();
+  return ret;
+}
+#endif
 static int createFinal(const std::string& dstdir, const std::string& name, bool overwrite = false) {
   std::string             dstpath = dstdir + "/" + name;
   boost::filesystem::path p(dstpath);
@@ -414,19 +526,19 @@ void SearchWorker::pathToCache(const std::string& final_file) {
     //mutex_ele.lock();
     //cache_data.clear();
     // mutex_ele.unlock();
-    first_seq = first_runid  = -1;
-    uint32_t elements_stored = elements;
-    uint32_t       document_len = 0;
-    const uint8_t* document     = NULL;
+    first_seq = first_runid        = -1;
+    uint32_t       elements_stored = elements;
+    uint32_t       document_len    = 0;
+    const uint8_t* document        = NULL;
     while ((bson = bson_reader_read(reader, &end)) && (end == false)) {
       bson_iter_t iter;
-      if(bson_iter_init(&iter, bson)==false){
-        ERR<<" iter init false";
+      if (bson_iter_init(&iter, bson) == false) {
+        ERR << " iter init false";
         continue;
       }
-      
-      if (bson_iter_next(&iter) == false){
-        ERR<<" iter next false";
+
+      if (bson_iter_next(&iter) == false) {
+        ERR << " iter next false";
         continue;
       }
 
@@ -635,7 +747,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
         dst.push_back(cache_data[index].obj);
 #if CHAOS_PROMETHEUS
 
-      (*PosixFile::counter_read_data_uptr) += cache_data[index].obj->getBSONRawSize();
+        (*PosixFile::counter_read_data_uptr) += cache_data[index].obj->getBSONRawSize();
 
 #endif
 
@@ -674,32 +786,32 @@ bool existYear(const std::string& prefix, const std::string& cu, const std::stri
   time_t    t = (ts_ms / 1000);
   struct tm tinfo;
   localtime_r(&t, &tinfo);
-   if(tag.size()){
-         snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d", prefix.c_str(), cu.c_str(), tag.c_str(),tinfo.tm_year + 1900);
+  if (tag.size()) {
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d", prefix.c_str(), cu.c_str(), tag.c_str(), tinfo.tm_year + 1900);
 
-   } else {
+  } else {
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900);
-   }
-
-  bool exist=boost::filesystem::exists(dir);
-  if(exist){
-    DBG<<" Looking year:"<< tinfo.tm_year + 1900;
   }
+
+  bool exist = boost::filesystem::exists(dir);
+  /*if(exist){
+    DBG<<" Looking year:"<< tinfo.tm_year + 1900;
+  }*/
   return exist;
 }
 
-bool existYearMonth(const std::string& prefix, const std::string& cu, const std::string& tag,uint64_t ts_ms) {
+bool existYearMonth(const std::string& prefix, const std::string& cu, const std::string& tag, uint64_t ts_ms) {
   char dir[MAX_PATH_LEN];
 
   time_t    t = (ts_ms / 1000);
   struct tm tinfo;
   localtime_r(&t, &tinfo);
-   if(tag.size()){
-     snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d/%.2d/", prefix.c_str(), cu.c_str(),  tag.c_str(),tinfo.tm_year + 1900, tinfo.tm_mon + 1);
+  if (tag.size()) {
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d/%.2d/", prefix.c_str(), cu.c_str(), tag.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1);
 
-   } else {
+  } else {
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1);
-   }
+  }
 
   return boost::filesystem::exists(dir);
 }
@@ -709,19 +821,19 @@ bool existYearMonthDay(const std::string& prefix, const std::string& cu, const s
   time_t    t = (ts_ms / 1000);
   struct tm tinfo;
   localtime_r(&t, &tinfo);
-  if(tag.size()){
-    snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d/%.2d/%.2d", prefix.c_str(), cu.c_str(),tag.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1, tinfo.tm_mday);  
+  if (tag.size()) {
+    snprintf(dir, MAX_PATH_LEN, "%s/%s/%s/%.4d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tag.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1, tinfo.tm_mday);
   } else {
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1, tinfo.tm_mday);
   }
 
   //DBG<<" Looking existYearMonthDay checking:"<< dir << " date:"<<chaos::common::utility::TimingUtil::toString(ts_ms);
 
-  bool exist=boost::filesystem::exists(dir);
+  bool exist = boost::filesystem::exists(dir);
 
-  if(exist){
+  /* if(exist){
     DBG<<" Looking in:"<<dir;
-  }
+  }*/
   return exist;
 }
 void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, const std::string& tag, uint64_t ts_ms, uint64_t seq, uint64_t runid, char* dir, char* fname) {
@@ -767,47 +879,45 @@ int PosixFile::pushObject(const std::string&                       key,
   seq   = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
   runid = stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
   calcFileDir(basedatapath, key, tag, ts, seq, runid, dir, f);
-  bool notexist;
+  bool                   notexist;
   write_path_t::iterator id;
   {
-  // ChaosWriteLock  lk(last_access_mutex);
-   id= s_lastWriteDir.find(dir);
-  notexist=(id == s_lastWriteDir.end());
-  //last_access_mutex.unlock();
-  //ChaosWriteLock ll(id->second.devio_mutex);
-  if ( notexist /*|| (ts - (id->second).ts) > 1000*/) {
-    boost::filesystem::path p(dir);
-    if ((boost::filesystem::exists(p) == false)) {
-      if ((boost::filesystem::create_directories(p) == false)) {
-        ERR << "cannot create directory:" << p;
-        // last_access_mutex.unlock();
-
-        return -1;
-      } else {
-          DBG << " CREATED DIR:" << p;
-      }
-       // ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
-      
-      }
-        std::string    path = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
-        s_lastWriteDir[dir].fname = path;
-        s_lastWriteDir[dir].ts=now;
-        if (s_lastWriteDir[dir].writer.open(path) != 0) {
-          ERR << "cannot open "
-              << " mapped file:" << path;
+    // ChaosWriteLock  lk(last_access_mutex);
+    id       = s_lastWriteDir.find(dir);
+    notexist = (id == s_lastWriteDir.end());
+    //last_access_mutex.unlock();
+    //ChaosWriteLock ll(id->second.devio_mutex);
+    if (notexist /*|| (ts - (id->second).ts) > 1000*/) {
+      boost::filesystem::path p(dir);
+      if ((boost::filesystem::exists(p) == false)) {
+        if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
+          ERR << "cannot create directory:" << p << " runid:" << runid << " seq:" << seq;
           // last_access_mutex.unlock();
-          s_lastWriteDir.erase(dir);
-          return -2;
+
+          //  return -1;
+        } else {
+          DBG << " CREATED DIR:" << p;
         }
-        id=s_lastWriteDir.find(dir);
+        // ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+      }
+      std::string path          = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
+      s_lastWriteDir[dir].fname = path;
+      s_lastWriteDir[dir].ts    = now;
+      if (s_lastWriteDir[dir].writer.open(path) != 0) {
+        ERR << "cannot open "
+            << " mapped file:" << path;
+        // last_access_mutex.unlock();
+        s_lastWriteDir.erase(dir);
+        return -2;
+      }
+      id = s_lastWriteDir.find(dir);
     }
-  
   }
   ChaosWriteLock ll(id->second.devio_mutex);
 
   //BsonFStream& writer = s_lastWriteDir[dir].writer;
-  bool         ok;
-  int          retry = 0;
+  bool ok;
+  int  retry = 0;
   do {
     char key[32];
     snprintf(key, sizeof(key), "%llu_%.10llu", runid, seq);
@@ -983,24 +1093,25 @@ int PosixFile::findObject(const std::string&                                    
     }
     DBG << "Search " << key << " from: " << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " tags:" << tag << " seqid:" << seqid << " runid:" << runid;
 
-    // align to hour
-    uint64_t start_aligned = timestamp_from - (timestamp_from % (60 * 1000));
+    // align to minute
+    uint64_t start_aligned = timestamp_from - 1000;//(timestamp_from % (60 * 1000));
     // loop years
     // loop months
     // loop days
     // loop houes
-    time_t    start_s = (timestamp_from / 1000);
-    time_t    end_s = (timestamp_to / 1000);
+    time_t start_s = (timestamp_from / 1000);
+    time_t end_s   = (timestamp_to / 1000);
 
-    for (uint64_t years_timestamp = start_aligned; years_timestamp < timestamp_to; ) {
+    for (uint64_t years_timestamp = start_aligned; years_timestamp < timestamp_to;) {
       struct tm info;
-      time_t start_s= years_timestamp/1000;
+      time_t    start_s = years_timestamp / 1000;
       localtime_r(&start_s, &info);
-     
-      if (existYear(basedatapath, key, tag,years_timestamp)) {
+
+      if (existYear(basedatapath, key, tag, years_timestamp)) {
         for (uint64_t day_timestamp = years_timestamp; day_timestamp < timestamp_to; day_timestamp += POSIX_DAY_MS) {
-          if (existYearMonthDay(basedatapath, key, tag,day_timestamp)) {
-            for (uint64_t start = day_timestamp; start < timestamp_to; start += POSIX_MINUTES_MS) {
+          if (existYearMonthDay(basedatapath, key, tag, day_timestamp)) {
+            // Since I cut precision to 1 sec I've to look 1 sec more,
+            for (uint64_t start = day_timestamp; start < (timestamp_to+1000); start += POSIX_MINUTES_MS) {
               time_t t = (start / 1000);
               //struct tm* tinfo = localtime(&t);
               struct tm tinfo;
@@ -1029,96 +1140,115 @@ int PosixFile::findObject(const std::string&                                    
           }
         }
       }
-       if(((info.tm_year+1900)%4)==0){
-        years_timestamp+=POSIX_YEARB_MS; 
+      if (((info.tm_year + 1900) % 4) == 0) {
+        years_timestamp += POSIX_YEARB_MS;
       } else {
         years_timestamp += POSIX_YEAR_MS;
       }
     }
-    }catch (const std::exception e) {
-      ERR << e.what();
-    }
-    if (err == 0 && elements > 0) {
+  } catch (const std::exception e) {
+    ERR << e.what();
+  }
+  if (err == 0 && elements > 0) {
 #if CHAOS_PROMETHEUS
 
-      (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
+    (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
-    }
-    return err;
   }
+  return err;
+}
 
-  //!fast search object into object persistence layer
-  /*!
+//!fast search object into object persistence layer
+/*!
                      Fast search return only data index to the client, in this csae client ned to use api to return the single
                      or grouped data
                      */
-  int PosixFile::findObjectIndex(const abstraction::DataSearch&                                     search,
-                                 abstraction::VectorObject&                                         found_object_page,
-                                 chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
-    ERR << " NOT IMPLEMENTED";
+int PosixFile::findObjectIndex(const abstraction::DataSearch&                                     search,
+                               abstraction::VectorObject&                                         found_object_page,
+                               chaos::common::direct_io::channel::opcode_headers::SearchSequence& last_record_found_seq) {
+  ERR << " NOT IMPLEMENTED";
 
-    return 0;
-  }
+  return 0;
+}
 
-  //! return the object asosciated with the index array
-  /*!
+//! return the object asosciated with the index array
+/*!
                      For every index object witl be returned the associated data object, if no data is received will be
                      insert an empty object
                      */
-  int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
-                                  chaos::common::data::CDWShrdPtr&       found_object) {
-    ERR << " NOT IMPLEMENTED";
+int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
+                                chaos::common::data::CDWShrdPtr&       found_object) {
+  ERR << " NOT IMPLEMENTED";
 
-    return 0;
-  }
+  return 0;
+}
 
-  void PosixFile::timeout() {
-    uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+void PosixFile::timeout() {
+  uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
-    // remove directory write cache
-    for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
-      if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM + 1000)) {
-        //not anymore used
-        /*if(last_access_mutex.try_lock()==false){
+  // remove directory write cache
+  for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
+    if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM)) {
+      //not anymore used
+      /*if(last_access_mutex.try_lock()==false){
         continue;
       }*/
 
-        //  last_access_mutex.unlock();
+      //  last_access_mutex.unlock();
 
-        ChaosWriteLock(id->second.devio_mutex);
-        int unordered_len = 0;
-        id->second.writer.close();
+      ChaosWriteLock(id->second.devio_mutex);
+      int unordered_len = 0;
+      id->second.writer.close();
 
-        if (makeOrdered(id->second) >= 0) {
-          if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
-            DBG << " final data exists:"<<id->first;
-            if(last_access_mutex.try_lock()){
-              DBG << "remove resource:"<<id->first;
+      if (makeOrdered(id->second) >= 0) {
+        if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
+          DBG << " final data exists:" << id->first;
+          if (last_access_mutex.try_lock()) {
+            std::string dstdir = id->first;
+            DBG << "remove resource:" << dstdir;
 
-              s_lastWriteDir.erase(id++);
-              last_access_mutex.unlock();
+            s_lastWriteDir.erase(id++);
+            if (PosixFile::removeTemp) {
+              std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
+              for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
+                boost::filesystem::remove(*rd);
+                DBG << "remove unordered :" << *rd;
+              }
+              std::vector<std::string> ordered = searchFileExt(dstdir, ".ordered");
+
+              for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
+                boost::filesystem::remove(*rd);
+                DBG << "remove ordered:" << *rd;
+              }
             }
-            continue;
+#ifdef CERN_ROOT
+            if (PosixFile::generateRoot) {
+              createRoot(dstdir, POSIX_FINAL_DATA_NAME);
+            }
+#endif
+            last_access_mutex.unlock();
           }
-        }
-      }
-      id++;
-    }
-
-    for (searchWorkerMap_t::iterator i = searchWorkers.begin(); i != searchWorkers.end();) {
-      if (i->second.isExpired()) {
-        if (cache_mutex.try_lock()) {
-          DBG << "removing cache data:" << i->first;
-
-          searchWorkers.erase(i++);
-          cache_mutex.unlock();
           continue;
         }
       }
-      i++;
     }
+    id++;
+  }
 
-    /* for (cacheRead_t::iterator id = s_lastAccessedDir.begin(); id != s_lastAccessedDir.end(); id) {
+  for (searchWorkerMap_t::iterator i = searchWorkers.begin(); i != searchWorkers.end();) {
+    if (i->second.isExpired()) {
+      if (cache_mutex.try_lock()) {
+        DBG << "removing cache data:" << i->first;
+
+        searchWorkers.erase(i++);
+        cache_mutex.unlock();
+        continue;
+      }
+    }
+    i++;
+  }
+
+  /* for (cacheRead_t::iterator id = s_lastAccessedDir.begin(); id != s_lastAccessedDir.end(); id) {
     if ((ts - id->second.ts) > 5000) {
       //not anymore used
       if (id->second.devio_mutex.try_lock()) {
@@ -1134,38 +1264,38 @@ int PosixFile::findObject(const std::string&                                    
       id++;
     }
   }*/
-  }
+}
 
-  //!return the number of object for a determinated key that are store for a time range
-  int PosixFile::countObject(const std::string& key,
-                             const uint64_t     timestamp_from,
-                             const uint64_t     timestamp_to,
-                             uint64_t&          object_count) {
-    int  old_hour = -1;
-    char dir[MAX_PATH_LEN];
-    char f[MAX_PATH_LEN];
-    dir[0]       = 0;
-    object_count = 0;
-    chaos::common::direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
-    last_record_found_seq.datapack_counter = 0;
-    last_record_found_seq.run_id           = 0;
+//!return the number of object for a determinated key that are store for a time range
+int PosixFile::countObject(const std::string& key,
+                           const uint64_t     timestamp_from,
+                           const uint64_t     timestamp_to,
+                           uint64_t&          object_count) {
+  int  old_hour = -1;
+  char dir[MAX_PATH_LEN];
+  char f[MAX_PATH_LEN];
+  dir[0]       = 0;
+  object_count = 0;
+  chaos::common::direct_io::channel::opcode_headers::SearchSequence last_record_found_seq;
+  last_record_found_seq.datapack_counter = 0;
+  last_record_found_seq.run_id           = 0;
 
-    uint64_t start_aligned = timestamp_from - (timestamp_from % (3600 * 1000));
-    for (uint64_t start = start_aligned; start < timestamp_to; start += (3600 * 1000)) {
-      time_t    t = (start / 1000);
-      struct tm tinfo;
-      localtime_r(&t, &tinfo);
-      if ((tinfo.tm_hour != old_hour)) {
-        calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
-        boost::filesystem::path p(dir);
+  uint64_t start_aligned = timestamp_from - (timestamp_from % (3600 * 1000));
+  for (uint64_t start = start_aligned; start < timestamp_to; start += (3600 * 1000)) {
+    time_t    t = (start / 1000);
+    struct tm tinfo;
+    localtime_r(&t, &tinfo);
+    if ((tinfo.tm_hour != old_hour)) {
+      calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
+      boost::filesystem::path p(dir);
 
-        object_count += countFromPath(p, timestamp_from, timestamp_to);
-        old_hour = tinfo.tm_hour;
-      }
+      object_count += countFromPath(p, timestamp_from, timestamp_to);
+      old_hour = tinfo.tm_hour;
     }
-    return 0;
   }
+  return 0;
+}
 
-}  // namespace object_storage
 }  // namespace object_storage
 }  // namespace metadata_service
+}  // namespace chaos

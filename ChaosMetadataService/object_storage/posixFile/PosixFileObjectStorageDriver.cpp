@@ -49,7 +49,26 @@ PosixFileObjectStorageDriver::~PosixFileObjectStorageDriver() {}
 
 void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CException) {
     AbstractPersistenceDriver::init(init_data);
-    std::string dir = ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param["data"];
+    std::string dir;
+    bool removeTemp =false;
+    bool genroot=false;
+    MapKVP& obj_storage_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
+    if(obj_storage_kvp.count("data")) {
+        dir=obj_storage_kvp["data"]; 
+    }
+    if(obj_storage_kvp.count("notemp")){
+        removeTemp=(strtoul(obj_storage_kvp["notemp"].c_str(),0,0))==1?true:false;
+        if(removeTemp){
+            INFO<<"remove temp data";
+        }
+    }
+    if(obj_storage_kvp.count("genroot")){
+        genroot=(strtoul(obj_storage_kvp["genroot"].c_str(),0,0))==1?true:false;
+        if(genroot){
+            INFO<<"root file are generate as well";
+        }
+    }
+
     std::string basedatapath;
     if(dir.size()){
         basedatapath=dir;
@@ -71,7 +90,8 @@ void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CExceptio
         throw chaos::CException(-1,__PRETTY_FUNCTION__,"cannot create directory:"+basedatapath);
 
   }
- 
+    PosixFile::removeTemp=removeTemp;
+    PosixFile::generateRoot=genroot;
     //register the data access implementations
     registerDataAccess<ObjectStorageDataAccess>(new PosixFile(basedatapath));
 }
