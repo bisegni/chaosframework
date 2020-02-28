@@ -1095,12 +1095,14 @@ int PosixFile::findObject(const std::string&                                    
 
     // align to minute
     uint64_t start_aligned = timestamp_from - 1000;//(timestamp_from % (60 * 1000));
+    uint64_t stop_aligned = timestamp_to  + ( (60 * 1000));
+
     // loop years
     // loop months
     // loop days
     // loop houes
-    time_t start_s = (timestamp_from / 1000);
-    time_t end_s   = (timestamp_to / 1000);
+    //time_t start_s = (timestamp_from / 1000);
+    //time_t end_s   = (timestamp_to / 1000);
 
     for (uint64_t years_timestamp = start_aligned; years_timestamp < timestamp_to;) {
       struct tm info;
@@ -1111,19 +1113,21 @@ int PosixFile::findObject(const std::string&                                    
         for (uint64_t day_timestamp = years_timestamp; day_timestamp < timestamp_to; day_timestamp += POSIX_DAY_MS) {
           if (existYearMonthDay(basedatapath, key, tag, day_timestamp)) {
             // Since I cut precision to 1 sec I've to look 1 sec more,
-            for (uint64_t start = day_timestamp; start < (timestamp_to+1000); start += POSIX_MINUTES_MS) {
-              time_t t = (start / 1000);
+            for (uint64_t start = day_timestamp; start < (stop_aligned); start += POSIX_MINUTES_MS) {
+          //    time_t t = (start / 1000);
               //struct tm* tinfo = localtime(&t);
-              struct tm tinfo;
-              localtime_r(&t, &tinfo);
-              if ((tinfo.tm_min != old_hour)) {
+        //      struct tm tinfo;
+       //       localtime_r(&t, &tinfo);
+          //    if ((tinfo.tm_min != old_hour)) {
                 calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
                 // boost::filesystem::path p(dir);
-                DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
                 if (!boost::filesystem::exists(dir)) {
+                  ERR << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid <<" NOT EXISTS";
                   continue;
                 }
-                elements = getFromPath(dir, timestamp_from, timestamp_to, page_len, found_object_page, last_record_found_seq);
+                  DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "-" <<chaos::common::utility::TimingUtil::toString(timestamp_to) << "->" <<chaos::common::utility::TimingUtil::toString(stop_aligned) <<" ] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
+
+                elements += getFromPath(dir, timestamp_from, timestamp_to, (page_len-elements), found_object_page, last_record_found_seq);
                 if (elements >= page_len) {
                   DBG << "[" << dir << "] Found " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 #if CHAOS_PROMETHEUS
@@ -1134,8 +1138,8 @@ int PosixFile::findObject(const std::string&                                    
                 } else if (elements == 0) {
                   DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
                 }
-                old_hour = tinfo.tm_min;
-              }
+             //   old_hour = tinfo.tm_min;
+           //   }
             }
           }
         }

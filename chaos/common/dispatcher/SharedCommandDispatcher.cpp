@@ -265,14 +265,14 @@ void SharedCommandDispatcher::processBufferElement(CDWShrdPtr action_description
                 remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {
-            LAPP_ << "Error during action execution:"<<ex.what();
+            LERR_ << "Error during action execution:"<<ex.what();
             DECODE_CHAOS_EXCEPTION(ex)
             //set error in response is it's needed
             if(needAnswer && remote_action_result.get()) {
                 DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(remote_action_result, ex)
             }
         } catch(...){
-            LAPP_ << "General error during action execution";
+            LERR_ << "General error during action execution";
             //set error in response is it's needed
             if(needAnswer) remote_action_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
         }
@@ -352,9 +352,9 @@ CDWUniquePtr SharedCommandDispatcher::dispatchCommand(CDWUniquePtr rpc_call_data
         //set error to general exception error
         result_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
-    DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-----------------------START";)
-    DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << result_pack->getJSONString();)
-    DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-------------------------END";)
+ //   DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-----------------------START";)
+  //  DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << result_pack->getJSONString();)
+  //  DEBUG_CODE(DBG_LOG(SharedCommandDispatcher) << "Send the message ack:-------------------------END";)
     return result_pack;
 }
 
