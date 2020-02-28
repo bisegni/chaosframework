@@ -5,6 +5,7 @@
 class BsonFStream{
 
     boost::iostreams::mapped_file mf;
+    std::mutex wmutex;
     bson_writer_t *writer;
     std::string name;
     uint32_t objs;

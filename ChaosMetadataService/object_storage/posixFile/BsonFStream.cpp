@@ -26,6 +26,8 @@ BsonFStream::~BsonFStream(){
   close();
 }
 int BsonFStream::open(const std::string&fname,int size){
+        std::lock_guard<std::mutex> lock(wmutex);
+
         boost::iostreams::mapped_file_params params;
         params.path          = fname;
         params.new_file_size = size;
@@ -53,6 +55,8 @@ int BsonFStream::open(const std::string&fname,int size){
         return -1;
 }
     size_t BsonFStream::size(){
+        std::lock_guard<std::mutex> lock(wmutex);
+
         if(writer)
           return bson_writer_get_length(writer);
         return fsize;
@@ -64,7 +68,7 @@ int BsonFStream::open(const std::string&fname,int size){
 
     int BsonFStream::close(){
        // DBG<<" Closing:"<<name;
-
+      std::lock_guard<std::mutex> lock(wmutex);
       if(writer){
         fsize=bson_writer_get_length(writer);
         mf.resize(fsize);
@@ -78,6 +82,8 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const chaos::common::data::CDataWrapper&ptr){
           bson_t* b = NULL;
+        std::lock_guard<std::mutex> lock(wmutex);
+
           if(writer==NULL){
             ERR<<"attempt to write not open or closes:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms"<< std::hex<<" x"<<this;
             return 0;
@@ -92,11 +98,14 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const bson_value_t*ptr){
         bson_t* b = NULL;
+          std::lock_guard<std::mutex> lock(wmutex);
+
            if(writer==NULL){
             ERR<<"attempt to write after close:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms";
             ;
             return 0;
           }
+
           if (bson_writer_begin(writer, &b)) {
              bson_append_value(b, key.c_str(), -1, ptr);
              objs++;

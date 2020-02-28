@@ -40,6 +40,11 @@ using namespace chaos::common::async_central;
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
+
+   chaos::common::metric::CounterUniquePtr PosixFile::counter_write_data_uptr;
+     chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
+     chaos::common::metric::GaugeUniquePtr PosixFile::gauge_insert_time_uptr;
+     chaos::common::metric::GaugeUniquePtr PosixFile::gauge_query_time_uptr;
 class FileLock {
   std::ofstream     f;
   const std::string name;
@@ -168,13 +173,14 @@ int reorderMulti(const std::string& dstpath, const std::vector<std::string>& src
     for (int cnt = 0; cnt < numsrc; cnt++) {
       // leggi bson e keys
       if (((b[cnt] = bson_reader_read(src[cnt], &eof)) != NULL) && (eof == false)) {
-        bson_iter_init(&iter[cnt], b[cnt]);
+        if(bson_iter_init(&iter[cnt], b[cnt])){
         if (bson_iter_next(&iter[cnt])) {
           const char* pkey = bson_iter_key(&iter[cnt]);
           keys_to_reorder.push_back(pkey);
           obj[pkey] = cnt;
           ritems[cnt]++;
         }
+      }
       }
     }
     //riordina chiavi
@@ -224,10 +230,14 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
 
   while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
     bson_iter_t iter;
-    bson_iter_init(&iter, b);
+   
     rline++;
+    if( bson_iter_init(&iter, b)==false){
+      ERR << " iter init false skipping " << rline;
+      continue;
+   }
     if (bson_iter_next(&iter) == false) {
-      ERR << "skipping " << rline;
+      ERR << " iter next false skipping " << rline;
       continue;
     }
     const char* pkey = bson_iter_key(&iter);
@@ -406,14 +416,19 @@ void SearchWorker::pathToCache(const std::string& final_file) {
     // mutex_ele.unlock();
     first_seq = first_runid  = -1;
     uint32_t elements_stored = elements;
-
+    uint32_t       document_len = 0;
+    const uint8_t* document     = NULL;
     while ((bson = bson_reader_read(reader, &end)) && (end == false)) {
       bson_iter_t iter;
-      bson_iter_init(&iter, bson);
-      uint32_t       document_len = 0;
-      const uint8_t* document     = NULL;
-      if (bson_iter_next(&iter) == false)
+      if(bson_iter_init(&iter, bson)==false){
+        ERR<<" iter init false";
         continue;
+      }
+      
+      if (bson_iter_next(&iter) == false){
+        ERR<<" iter next false";
+        continue;
+      }
 
       bson_iter_document(&iter,
                          &document_len,
@@ -618,6 +633,12 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
       ts     = cache_data[index].ts;
       if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= runid) && (iseq >= seq)) {
         dst.push_back(cache_data[index].obj);
+#if CHAOS_PROMETHEUS
+
+      (*PosixFile::counter_read_data_uptr) += cache_data[index].obj->getBSONRawSize();
+
+#endif
+
         lrunid = irunid;
         lseq   = iseq;
         cntt++;
@@ -749,7 +770,7 @@ int PosixFile::pushObject(const std::string&                       key,
   bool notexist;
   write_path_t::iterator id;
   {
-   // ChaosWriteLock  lk(last_access_mutex);
+  // ChaosWriteLock  lk(last_access_mutex);
    id= s_lastWriteDir.find(dir);
   notexist=(id == s_lastWriteDir.end());
   //last_access_mutex.unlock();
