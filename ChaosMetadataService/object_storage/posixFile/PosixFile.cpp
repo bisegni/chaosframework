@@ -47,11 +47,14 @@ using namespace chaos::common::async_central;
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
+  #if CHAOS_PROMETHEUS
+
 /*static global*/
 chaos::common::metric::CounterUniquePtr PosixFile::counter_write_data_uptr;
 chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
+#endif
 
 bool PosixFile::removeTemp   = false;
 bool PosixFile::generateRoot = false;
@@ -760,7 +763,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
   if (cntt > 0) {
     runid = lrunid;
     seq   = lseq;
-  }
+  }metr
 
   return cntt;
 }
