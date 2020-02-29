@@ -763,7 +763,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
   if (cntt > 0) {
     runid = lrunid;
     seq   = lseq;
-  }metr
+  }
 
   return cntt;
 }
