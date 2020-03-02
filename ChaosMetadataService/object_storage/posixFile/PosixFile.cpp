@@ -1209,23 +1209,26 @@ void PosixFile::timeout() {
 
       if (makeOrdered(id->second) >= 0) {
         if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
-          DBG << " final data exists:" << id->first;
+          std::string dstdir = id->first;
+
+          DBG << " final data exists:" <<dstdir;
           if (last_access_mutex.try_lock()) {
-            std::string dstdir = id->first;
             DBG << "remove resource:" << dstdir;
 
             s_lastWriteDir.erase(id++);
             if (PosixFile::removeTemp) {
               std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
               for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                boost::filesystem::remove(*rd);
                 DBG << "remove unordered :" << *rd;
+
+                boost::filesystem::remove(*rd);
               }
               std::vector<std::string> ordered = searchFileExt(dstdir, ".ordered");
 
               for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                boost::filesystem::remove(*rd);
                 DBG << "remove ordered:" << *rd;
+
+                boost::filesystem::remove(*rd);
               }
             }
 #ifdef CERN_ROOT
