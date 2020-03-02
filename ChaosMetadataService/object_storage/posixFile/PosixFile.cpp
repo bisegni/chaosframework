@@ -347,11 +347,11 @@ static int createRoot(const std::string& dstdir, const std::string& name) {
   int ret=0;
   FileLock                fl(dstpath + ".lock");
   fl.lock();
-  if (!boost::filesystem::exists(p)) {
-    if (boost::filesystem::is_regular_file(srcpath)) {
+  DBG<<" creating "<<dstpath<< " from "<<srcpath;
+  if (boost::filesystem::is_regular_file(srcpath)) {
       bson_error_t src_err;
 
-      bson_reader_t* src = bson_reader_new_from_file(p.string().c_str(), &src_err);
+      bson_reader_t* src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
       const bson_t*  b;
       bool           eof;
       uint32_t       countele = 0;
@@ -363,6 +363,11 @@ static int createRoot(const std::string& dstdir, const std::string& name) {
       ChaosToTree    ti(name);
       uint32_t       document_len = 0;
       const uint8_t* document     = NULL;
+      if(src==NULL){
+        ERR<<"cannot open bson for read:"<<srcpath;
+        fl.unlock();
+        return -1;
+      }
       while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
         bson_iter_t iter;
 
@@ -435,7 +440,7 @@ static int createRoot(const std::string& dstdir, const std::string& name) {
       }
       fout->Close();
     }
-  }
+  
   fl.unlock();
   return ret;
 }
@@ -1204,19 +1209,16 @@ void PosixFile::timeout() {
       //  last_access_mutex.unlock();
 
       ChaosWriteLock(id->second.devio_mutex);
+      std::string dstdir = id->first;
+
       int unordered_len = 0;
       id->second.writer.close();
+      if(boost::filesystem::exists(dstdir +"/"+ POSIX_FINAL_DATA_NAME)){
+        // someone else created and cleaned
+          DBG << "remove resource:" << dstdir;
 
-      if (makeOrdered(id->second) >= 0) {
-        if (createFinal(id->first, POSIX_FINAL_DATA_NAME) >= 0) {
-          std::string dstdir = id->first;
-
-          DBG << " final data exists:" <<dstdir;
-          if (last_access_mutex.try_lock()) {
-            DBG << "remove resource:" << dstdir;
-
-            s_lastWriteDir.erase(id++);
-            if (PosixFile::removeTemp) {
+          s_lastWriteDir.erase(id++);
+           if (PosixFile::removeTemp) {
               std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
               for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
                 DBG << "remove unordered :" << *rd;
@@ -1230,15 +1232,20 @@ void PosixFile::timeout() {
 
                 boost::filesystem::remove(*rd);
               }
-            }
-#ifdef CERN_ROOT
+          }
+          #ifdef CERN_ROOT
             if (PosixFile::generateRoot) {
               createRoot(dstdir, POSIX_FINAL_DATA_NAME);
             }
-#endif
-            last_access_mutex.unlock();
-          }
-          continue;
+        #endif
+        id++;
+        continue;
+      }
+      if (makeOrdered(id->second) >= 0) {
+        if (createFinal(dstdir, POSIX_FINAL_DATA_NAME) >= 0) {
+
+          DBG << " CREATE FINAL: " <<dstdir + "/"+POSIX_FINAL_DATA_NAME;
+          
         }
       }
     }
