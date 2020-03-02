@@ -74,6 +74,18 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
     
     //constructs the result
     result.reset(new CDataWrapper());
+    if(data_services.size()==0){
+        /// something wrong returning my self
+        result->appendStringToArray(boost::str(boost::format("%1%|0")%NetworkBroker::getInstance()->getDirectIOUrl()));
+          result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+                                                        
+         result->appendStringToArray(NetworkBroker::getInstance()->getRPCUrl());
+          result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+            GBE_ERR<< " no dataservice from DB, returning myself.:"<<result->getJSONString();
+
+          return result;
+      
+    }
     if(data_services.size()>0) {
         GBE_INFO << CHAOS_FORMAT("Found %1% data services available", %data_services.size());
         BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
@@ -95,6 +107,9 @@ CDWUniquePtr GetBestEndpoints::execute(CDWUniquePtr api_data) {
         }
         result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
     } else {
+        // something is going wrong returning myself
+       
+
         LOG_AND_TROW(GBE_ERR, -1, "No best endpoint found");
     }
     return result;
