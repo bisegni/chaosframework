@@ -23,7 +23,6 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/regex.hpp>
 #define INFO INFO_LOG(PosixFile)
 #define DBG DBG_LOG(PosixFile)
@@ -55,65 +54,14 @@ chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
 #endif
+boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(1000); 
+
 
 bool PosixFile::removeTemp   = false;
 bool PosixFile::generateRoot = false;
 
 /**************/
-class FileLock {
-  std::ofstream     f;
-  const std::string name;
-  ChaosSharedMutex  devio_mutex;  // to lock also process thread
-  int               locked;
 
- public:
-  FileLock(const std::string& _name)
-      : name(_name) {
-    locked = 0;
-    f.open(name, std::ios_base::app);
-  }
-  ~FileLock() {
-    if (locked) {
-      unlock();
-    }
-    boost::filesystem::remove(name);
-  }
-  void lock() {
-    if (locked == 0) {
-      devio_mutex.lock();
-      try {
-        boost::interprocess::file_lock f(name.c_str());
-        locked++;
-
-        f.lock();
-      } catch (boost::interprocess::interprocess_exception& e) {
-        ERR << " cannot create lock:" << name.c_str() << " error:" << e.what();
-      }
-    }
-  }
-  void unlock() {
-    if (locked) {
-      try {
-        boost::interprocess::file_lock f(name.c_str());
-        f.unlock();
-        locked--;
-
-      } catch (boost::interprocess::interprocess_exception& e) {
-        ERR << " cannot unlock:" << name.c_str() << " error:" << e.what();
-      }
-      devio_mutex.unlock();
-    }
-  }
-  bool trylock() {
-    if (devio_mutex.try_lock()) {
-      boost::interprocess::file_lock f(name.c_str());
-      locked++;
-
-      return f.try_lock();
-    }
-    return false;
-  }
-};
 std::vector<std::string> searchFile(const std::string& p, const boost::regex& my_filter) {
   std::vector<std::string> all_matching_files;
 
@@ -492,10 +440,48 @@ PosixFile::PosixFile(const std::string& name)
 
 #endif
   DBG << " BASED DIR:" << name;
-  AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+  AsyncCentralManager::getInstance()->addTimer(this, 2000, 2000);
+  finalize_th = boost::thread(&PosixFile::finalizeJob, this);
+
+}
+void PosixFile::finalizeJob(){
+  DBG << "FINALIZE JOB CREATED";
+
+  exitFinalizeJob=false;
+    do{
+      boost::mutex::scoped_lock lock(mutex_io);
+
+      wait_data.wait(lock);
+      dirpath_t*  ele;
+    
+      while(file_to_finalize.pop(ele)){
+        DBG << "processing dir :" << ele->dir <<" name:"<<ele->name;
+        if (createFinal(ele->dir, ele->name) >= 0) {
+          DBG << " CREATE FINAL: " <<ele->dir + "/"+ele->name;
+           #ifdef CERN_ROOT
+            if (PosixFile::generateRoot) {
+              createRoot(ele->dir, ele->name);
+            }
+           #endif
+           delete ele;
+        }
+
+      }
+      
+    } while(!exitFinalizeJob);
+   DBG << "FINALIZE JOB EXIT";
+
+
 }
 #define MAX_QUEUE_LEN 20000
-PosixFile::~PosixFile() {}
+PosixFile::~PosixFile() {
+    exitFinalizeJob=true;
+
+      AsyncCentralManager::getInstance()->removeTimer(this);
+      wait_data.notify_all();
+
+
+}
 PosixFile::write_path_t PosixFile::s_lastWriteDir;
 std::string             PosixFile::serverName;
 PosixFile::cacheRead_t  PosixFile::s_lastAccessedDir;
@@ -1233,20 +1219,22 @@ void PosixFile::timeout() {
                 boost::filesystem::remove(*rd);
               }
           }
-          #ifdef CERN_ROOT
-            if (PosixFile::generateRoot) {
-              createRoot(dstdir, POSIX_FINAL_DATA_NAME);
-            }
-        #endif
+         
         id++;
         continue;
       }
       if (makeOrdered(id->second) >= 0) {
-        if (createFinal(dstdir, POSIX_FINAL_DATA_NAME) >= 0) {
+        dirpath_t* ele=new dirpath_t();
+        ele->dir=dstdir;
+        ele->name=POSIX_FINAL_DATA_NAME;
+        file_to_finalize.push(ele);
+        wait_data.notify_all();
+
+        /*if (createFinal(dstdir, POSIX_FINAL_DATA_NAME) >= 0) {
 
           DBG << " CREATE FINAL: " <<dstdir + "/"+POSIX_FINAL_DATA_NAME;
           
-        }
+        }*/
       }
     }
     id++;

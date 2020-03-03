@@ -38,6 +38,8 @@
 #endif //CHAOS_PROMETHEUS
 // 3Khz
 #define MAX_NUM_OF_FILE_PER_MINUTE 60*3000
+#include "FileLock.h"
+
 namespace chaos {
     namespace metadata_service {
         namespace object_storage {
@@ -127,6 +129,7 @@ namespace chaos {
                 uint64_t lru_ts;
                 std::string path;
                 boost::thread search_th;
+                
                 bool istemp;
       //  std::vector<unsigned char> encbuf[CAMERA_FRAME_BUFFERING];//encode stage
         
@@ -223,8 +226,28 @@ public:
                 static cacheRead_t s_lastAccessedDir;
                 // return number of items, or negative if error
                 void timeout();
+                
+                void finalizeJob( );
+                boost::thread finalize_th;
+                boost::condition_variable wait_data;
+                boost::mutex mutex_io;
+                public:
+                class dirpath_t{
+                    public:
+                    std::string dir;
+                    std::string name;
+                    dirpath_t(){}
+                    dirpath_t(const dirpath_t&p){dir=p.dir;name=p.name;}
+                    dirpath_t& operator=(const dirpath_t&p){dir=p.dir;name=p.name;return *this;}
+                    ~dirpath_t(){}
+                };
+                
+                static boost::lockfree::queue<dirpath_t*, boost::lockfree::fixed_sized<true> > file_to_finalize; 
+
+                bool exitFinalizeJob;
 
                 public:
+
                       //! Construct the driver
                     PosixFile(const std::string& name);
                     //! defautl destructor
