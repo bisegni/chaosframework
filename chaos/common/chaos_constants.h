@@ -1367,6 +1367,9 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
         //!define tags associated to the dataset[array of string]
         static const char * const DPCK_DATASET_TAG                    = "dpck_ds_tag";
+
+        //!define optional to specify the destination storage of the dataset
+        static const char * const DPCK_DATASET_DESTINATION_STORAGE     = "dpck_ds_dst";
     }
     
     
