@@ -52,6 +52,7 @@ void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CExceptio
     std::string dir;
     bool removeTemp =false;
     bool genroot=false;
+    bool compressed=false;
     MapKVP& obj_storage_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
     if(obj_storage_kvp.count("data")) {
         dir=obj_storage_kvp["data"]; 
@@ -68,7 +69,12 @@ void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CExceptio
             INFO<<"root file are generate as well";
         }
     }
-
+    if(obj_storage_kvp.count("compressed")){
+        compressed=(strtoul(obj_storage_kvp["compressed"].c_str(),0,0))==1?true:false;
+        if(compressed){
+            INFO<<"data files are compressed";
+        }
+    }
     std::string basedatapath;
     if(dir.size()){
         basedatapath=dir;
@@ -92,6 +98,7 @@ void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CExceptio
   }
     PosixFile::removeTemp=removeTemp;
     PosixFile::generateRoot=genroot;
+    PosixFile::compress=compressed;
     //register the data access implementations
     registerDataAccess<ObjectStorageDataAccess>(new PosixFile(basedatapath));
 }

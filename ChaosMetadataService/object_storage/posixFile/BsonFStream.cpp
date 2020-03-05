@@ -69,10 +69,17 @@ int BsonFStream::open(const std::string&fname,int size){
     int BsonFStream::close(){
        // DBG<<" Closing:"<<name;
       std::lock_guard<std::mutex> lock(wmutex);
+      try{
       if(writer){
         fsize=bson_writer_get_length(writer);
         mf.resize(fsize);
         bson_writer_destroy(writer);
+      }
+      }  catch(boost::exception& e){
+          ERR<<"error closing";
+      } catch(...){
+          ERR<<"error closing";
+
       }
       close_ts=chaos::common::utility::TimingUtil::getTimeStamp();
 

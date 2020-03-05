@@ -46,7 +46,7 @@ using namespace chaos::common::async_central;
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
-  #if CHAOS_PROMETHEUS
+#if CHAOS_PROMETHEUS
 
 /*static global*/
 chaos::common::metric::CounterUniquePtr PosixFile::counter_write_data_uptr;
@@ -54,12 +54,11 @@ chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
 #endif
-boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(1000); 
-
+boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(1000);
 
 bool PosixFile::removeTemp   = false;
 bool PosixFile::generateRoot = false;
-
+bool PosixFile::compress     = false;
 /**************/
 
 std::vector<std::string> searchFile(const std::string& p, const boost::regex& my_filter) {
@@ -292,103 +291,102 @@ static int createRoot(const std::string& dstdir, const std::string& name) {
   std::string             srcpath = dstdir + "/" + name;
   std::string             dstpath = dstdir + "/" + name + ".root";
   boost::filesystem::path p(dstpath);
-  int ret=0;
+  int                     ret = 0;
   FileLock                fl(dstpath + ".lock");
   fl.lock();
-  DBG<<" creating "<<dstpath<< " from "<<srcpath;
+  DBG << " creating " << dstpath << " from " << srcpath;
   if (boost::filesystem::is_regular_file(srcpath)) {
-      bson_error_t src_err;
+    bson_error_t src_err;
 
-      bson_reader_t* src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
-      const bson_t*  b;
-      bool           eof;
-      uint32_t       countele = 0;
-      uint64_t       ts       = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds();
-      TFile*         fout     = new TFile(dstpath.c_str(), "RECREATE");
-      int64_t        oldseq   = -1;
-      int64_t        oldrunid = -1;
-      int64_t        oldtime  = -1;
-      ChaosToTree    ti(name);
-      uint32_t       document_len = 0;
-      const uint8_t* document     = NULL;
-      if(src==NULL){
-        ERR<<"cannot open bson for read:"<<srcpath;
-        fl.unlock();
-        return -1;
-      }
-      while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
-        bson_iter_t iter;
-
-        if (bson_iter_init(&iter, b) == false) {
-          ERR << countele << " invalid iterator";
-          countele++;
-          continue;
-        }
-        if (bson_iter_next(&iter) == false) {
-          ERR << countele << " invalid next iterator";
-          countele++;
-          continue;
-        }
-
-        bson_iter_document(&iter,
-                           &document_len,
-                           &document);
-        chaos::common::data::CDataWrapper cd((const char*)document, document_len);
-        uint64_t                          iseq, irunid;
-        int64_t                           tim;
-
-        iseq   = cd.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-        irunid = cd.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-        tim    = cd.getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-
-        if (oldrunid < 0) {
-          oldrunid = irunid;
-        }
-
-        if (oldseq < 0) {
-          oldseq = iseq;
-        } else {
-          if ((oldrunid == irunid) && (oldseq + 1) != iseq) {
-            ERR << countele << ",s:" << iseq << ",t:" << tim << "] seq discontinuity old:" << oldseq << " new:" << iseq;
-            ret++;
-          }
-        }
-        if (oldrunid != irunid) {
-          DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
-          oldrunid = irunid;
-        }
-
-        if (oldrunid != irunid) {
-          if (oldrunid > irunid) {
-            ERR << countele << ",s:" << iseq << ",t:" << tim << "] RUN ID INVERSION!! id, old:" << oldrunid << " new:" << irunid;
-            ret++;
-
-          } else {
-            DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
-          }
-          oldrunid = irunid;
-        }
-        if (oldtime > tim) {
-          ERR << countele << ",s:" << iseq << ",t:" << tim << "] TIME INVERSION!! id, old:" << oldtime << " new:" << tim;
-          oldrunid = irunid;
-            ret++;
-
-        }
-        oldtime = tim;
-        oldseq  = iseq;
-        ti.addData(cd);
-        countele++;
-      }
-      fout->Write();
-
-      if (countele > 0) {
-        uint64_t tt = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds() - ts;
-
-        DBG << "converted:" << countele << " items in " << 1.0 * tt / 1000 << " ms " << (1.0 * countele * 1000000 / tt) << " item/s into:" << name;
-      }
-      fout->Close();
+    bson_reader_t* src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
+    const bson_t*  b;
+    bool           eof;
+    uint32_t       countele = 0;
+    uint64_t       ts       = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds();
+    TFile*         fout     = new TFile(dstpath.c_str(), "RECREATE");
+    int64_t        oldseq   = -1;
+    int64_t        oldrunid = -1;
+    int64_t        oldtime  = -1;
+    ChaosToTree    ti(name);
+    uint32_t       document_len = 0;
+    const uint8_t* document     = NULL;
+    if (src == NULL) {
+      ERR << "cannot open bson for read:" << srcpath;
+      fl.unlock();
+      return -1;
     }
-  
+    while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
+      bson_iter_t iter;
+
+      if (bson_iter_init(&iter, b) == false) {
+        ERR << countele << " invalid iterator";
+        countele++;
+        continue;
+      }
+      if (bson_iter_next(&iter) == false) {
+        ERR << countele << " invalid next iterator";
+        countele++;
+        continue;
+      }
+
+      bson_iter_document(&iter,
+                         &document_len,
+                         &document);
+      chaos::common::data::CDataWrapper cd((const char*)document, document_len);
+      uint64_t                          iseq, irunid;
+      int64_t                           tim;
+
+      iseq   = cd.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+      irunid = cd.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+      tim    = cd.getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+
+      if (oldrunid < 0) {
+        oldrunid = irunid;
+      }
+
+      if (oldseq < 0) {
+        oldseq = iseq;
+      } else {
+        if ((oldrunid == irunid) && (oldseq + 1) != iseq) {
+          ERR << countele << ",s:" << iseq << ",t:" << tim << "] seq discontinuity old:" << oldseq << " new:" << iseq;
+          ret++;
+        }
+      }
+      if (oldrunid != irunid) {
+        DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
+        oldrunid = irunid;
+      }
+
+      if (oldrunid != irunid) {
+        if (oldrunid > irunid) {
+          ERR << countele << ",s:" << iseq << ",t:" << tim << "] RUN ID INVERSION!! id, old:" << oldrunid << " new:" << irunid;
+          ret++;
+
+        } else {
+          DBG << countele << ",s:" << iseq << ",t:" << tim << "] change in run id, old:" << oldrunid << " new:" << irunid;
+        }
+        oldrunid = irunid;
+      }
+      if (oldtime > tim) {
+        ERR << countele << ",s:" << iseq << ",t:" << tim << "] TIME INVERSION!! id, old:" << oldtime << " new:" << tim;
+        oldrunid = irunid;
+        ret++;
+      }
+      oldtime = tim;
+      oldseq  = iseq;
+      ti.addData(cd);
+      countele++;
+    }
+    fout->Write();
+
+    if (countele > 0) {
+      uint64_t tt = chaos::common::utility::TimingUtil::getTimeStampInMicroseconds() - ts;
+
+      DBG << "converted:" << countele << " items in " << 1.0 * tt / 1000 << " ms " << (1.0 * countele * 1000000 / tt) << " item/s into:" << name;
+    }
+    fout->Close();
+  }
+
   fl.unlock();
   return ret;
 }
@@ -442,58 +440,68 @@ PosixFile::PosixFile(const std::string& name)
   DBG << " BASED DIR:" << name;
   AsyncCentralManager::getInstance()->addTimer(this, 2000, 2000);
   finalize_th = boost::thread(&PosixFile::finalizeJob, this);
-
 }
-void PosixFile::finalizeJob(){
+void PosixFile::finalizeJob() {
   DBG << "FINALIZE JOB CREATED";
 
-  exitFinalizeJob=false;
-    do{
-      boost::mutex::scoped_lock lock(mutex_io);
+  exitFinalizeJob = false;
+  do {
+    boost::mutex::scoped_lock lock(mutex_io);
 
-      wait_data.wait(lock);
-      dirpath_t*  ele;
-    
-      while(file_to_finalize.pop(ele)){
-        std::string fpath=ele->dir + "/"+ele->name;
-        DBG << "processing dir :" << ele->dir <<" name:"<<ele->name;
-        if (createFinal(ele->dir, ele->name) >= 0) {
-          DBG << " CREATE FINAL: " <<fpath;
-          // lz4compression
-          std::ifstream in_file(fpath);
-          std::ofstream out_file(fpath+".lz4");
-          try{
+    wait_data.wait(lock);
+    dirpath_t* ele;
+
+    while (file_to_finalize.pop(ele)) {
+      std::string fpath = ele->dir + "/" + ele->name;
+      DBG << "processing dir :" << ele->dir << " name:" << ele->name;
+      if (createFinal(ele->dir, ele->name) >= 0) {
+        DBG << " CREATE FINAL: " << fpath;
+        // lz4compression
+        std::ifstream in_file(fpath);
+        std::ofstream out_file(fpath + ".lz4");
+        try {
           lz4_stream::ostream lz4_stream(out_file);
 
           std::copy(std::istreambuf_iterator<char>(in_file),
-            std::istreambuf_iterator<char>(),
-            std::ostreambuf_iterator<char>(lz4_stream));
-          } catch(std::exception e){
-            ERR<<" error compressing "+fpath + " into "+fpath+".lz4";
+                    std::istreambuf_iterator<char>(),
+                    std::ostreambuf_iterator<char>(lz4_stream));
+        } catch (std::exception e) {
+          ERR << " error compressing " + fpath + " into " + fpath + ".lz4";
+        }
+#ifdef CERN_ROOT
+        if (PosixFile::generateRoot) {
+          createRoot(ele->dir, ele->name);
+        }
+#endif
+        if (PosixFile::removeTemp) {
+          std::vector<std::string> unordered = searchFileExt(ele->dir, ".unordered");
+          for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
+            DBG << "remove unordered :" << *rd;
+
+            boost::filesystem::remove(*rd);
           }
-           #ifdef CERN_ROOT
-            if (PosixFile::generateRoot) {
-              createRoot(ele->dir, ele->name);
-            }
-           #endif
-           delete ele;
+          std::vector<std::string> ordered = searchFileExt(ele->dir, ".ordered");
+
+          for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
+            DBG << "remove ordered:" << *rd;
+
+            boost::filesystem::remove(*rd);
+          }
         }
 
+        delete ele;
       }
-      
-    } while(!exitFinalizeJob);
-   DBG << "FINALIZE JOB EXIT";
+    }
 
-
+  } while (!exitFinalizeJob);
+  DBG << "FINALIZE JOB EXIT";
 }
 #define MAX_QUEUE_LEN 20000
 PosixFile::~PosixFile() {
-    exitFinalizeJob=true;
+  exitFinalizeJob = true;
 
-      AsyncCentralManager::getInstance()->removeTimer(this);
-      wait_data.notify_all();
-
-
+  AsyncCentralManager::getInstance()->removeTimer(this);
+  wait_data.notify_all();
 }
 PosixFile::write_path_t PosixFile::s_lastWriteDir;
 std::string             PosixFile::serverName;
@@ -501,7 +509,7 @@ PosixFile::cacheRead_t  PosixFile::s_lastAccessedDir;
 //PosixFile::ordered_t         PosixFile::s_ordered;
 PosixFile::searchWorkerMap_t PosixFile::searchWorkers;
 //ChaosSharedMutex PosixFile::devio_mutex;
-ChaosSharedMutex PosixFile::last_access_mutex, PosixFile::cache_mutex;
+boost::mutex PosixFile::last_access_mutex, PosixFile::cache_mutex;
 
 bool SearchWorker::isExpired() {
   if (done == false) return false;
@@ -521,7 +529,7 @@ void SearchWorker::pathToCache(const std::string& final_file) {
     const bson_t* bson;
     bson_iter_t   iter;
     bool          end;
-    
+
     reader = bson_reader_new_from_file(final_file.c_str(), &src_err);
     if (reader == NULL) {
       ERR << " CANNOT OPEN " << final_file;
@@ -553,38 +561,39 @@ void SearchWorker::pathToCache(const std::string& final_file) {
       bson_iter_document(&iter,
                          &document_len,
                          &document);
-      chaos::common::data::CDataWrapper* pd = new chaos::common::data::CDataWrapper((const char*)document, document_len);
-      if (pd == NULL) {
-        ERR << " invalid bson data, lem:" << document_len << " ptr:0x" << std::hex << document;
-        continue;
-      }
-      // chaos::common::data::CDataWrapper*d=new chaos::common::data::CDataWrapper((const char*)document, document_len);
-      uint64_t iseq, irunid, ts;
-      iseq                              = pd->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-      irunid                            = pd->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-      ts                                = pd->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-      chaos::common::data::CDWShrdPtr d = chaos::common::data::CDWShrdPtr(pd);
-
-      dataObj_t dob;
-      dob.runid  = irunid;
-      dob.ts     = ts;
-      dob.seq    = iseq;
-      dob.obj    = d;
-      last_ts    = ts;
-      last_seq   = iseq;
-      last_runid = irunid;
-
-      if (first_seq < 0) {
-        first_seq = iseq;
-        first_ts  = ts;
-      }
-      if (first_runid < 0) {
-        first_runid = irunid;
-      }
-      //dont push until we are at the end;
       if (elements_stored == 0) {
+        chaos::common::data::CDataWrapper* pd = new chaos::common::data::CDataWrapper((const char*)document, document_len);
+        if (pd == NULL) {
+          ERR << " invalid bson data, lem:" << document_len << " ptr:0x" << std::hex << document;
+          continue;
+        }
+        // chaos::common::data::CDataWrapper*d=new chaos::common::data::CDataWrapper((const char*)document, document_len);
+        uint64_t iseq, irunid, ts;
+        iseq                              = pd->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+        irunid                            = pd->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+        ts                                = pd->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+        chaos::common::data::CDWShrdPtr d = chaos::common::data::CDWShrdPtr(pd);
+
+        if (first_seq < 0) {
+          first_seq = iseq;
+          first_ts  = ts;
+        }
+        if (first_runid < 0) {
+          first_runid = irunid;
+        }
+        //dont push until we are at the end;
+        dataObj_t dob;
+        dob.runid = irunid;
+        dob.ts    = ts;
+        dob.seq   = iseq;
+        dob.obj   = d;
+
         cache_data.push_back(dob);
         elements++;
+        last_ts    = ts;
+        last_seq   = iseq;
+        last_runid = irunid;
+
         if ((elements % page_len) == 0) {
           wait_data.notify_one();
         }
@@ -602,37 +611,36 @@ void SearchWorker::pathToCache(const std::string& final_file) {
   wait_data.notify_one();
 }
 std::string SearchWorker::prepareDirectory() {
-  std::string fpath=path + "/" + POSIX_FINAL_DATA_NAME;
+  std::string             fpath = path + "/" + POSIX_FINAL_DATA_NAME;
   boost::filesystem::path final_file(fpath);
   // check if exists uncompressed
   if (boost::filesystem::exists(final_file)) {
-
     istemp = false;
     return final_file.string();
 
-  } else if(boost::filesystem::exists(fpath+".lz4")){
-    FileLock fl(fpath+".lz4.uncomp.lock");
+  } else if (boost::filesystem::exists(fpath + ".lz4")) {
+    FileLock fl(fpath + ".lz4.uncomp.lock");
     fl.lock();
-    if(boost::filesystem::exists(fpath+".lz4.uncomp")){
+    if (boost::filesystem::exists(fpath + ".lz4.uncomp")) {
       fl.unlock();
-      return fpath+".lz4.uncomp";
+      return fpath + ".lz4.uncomp";
     }
-  try{
-    std::ifstream in_file(fpath+".lz4");
-    std::ofstream out_file(fpath+".lz4.uncomp.tmp");
-    lz4_stream::istream lz4_stream(in_file);
+    try {
+      std::ifstream       in_file(fpath + ".lz4");
+      std::ofstream       out_file(fpath + ".lz4.uncomp.tmp");
+      lz4_stream::istream lz4_stream(in_file);
 
-    std::copy(std::istreambuf_iterator<char>(lz4_stream),
-            std::istreambuf_iterator<char>(),
-            std::ostreambuf_iterator<char>(out_file));
-    boost::filesystem::rename(fpath+".lz4.uncomp.tmp",fpath+".lz4.uncomp");
+      std::copy(std::istreambuf_iterator<char>(lz4_stream),
+                std::istreambuf_iterator<char>(),
+                std::ostreambuf_iterator<char>(out_file));
+      boost::filesystem::rename(fpath + ".lz4.uncomp.tmp", fpath + ".lz4.uncomp");
 
-  } catch(std::exception&e){
-    ERR<<"decompressing file "<<fpath+".lz4";
-  }
+    } catch (std::exception& e) {
+      ERR << "decompressing file " << fpath + ".lz4";
+    }
     fl.unlock();
 
-    return fpath+".lz4.uncomp";
+    return fpath + ".lz4.uncomp";
 
   } else {
     PosixFile::write_path_t::iterator id = PosixFile::s_lastWriteDir.find(path);
@@ -692,7 +700,7 @@ void SearchWorker::searchJob(const std::string& dir) {
   mutex_job.lock();
   DBG << "START Search searching on:" << dir;
   pathToCache(dir);
-  DBG << "END Search Job cache size:" << dir << " size:" << elements;
+  DBG << "END Search Job cache :" << dir << " size:" << cache_data.size() << " elements:" << elements << " ts from:" << chaos::common::utility::TimingUtil::toString(first_ts) << " seq:" << first_seq << " runid:" << first_runid << "  to:" << chaos::common::utility::TimingUtil::toString(last_ts) << " seq:" << last_seq << " runid:" << last_runid;
   mutex_job.unlock();
 
   // now find all the other files generated by other servers
@@ -917,7 +925,7 @@ int PosixFile::pushObject(const std::string&                       key,
   bool                   notexist;
   write_path_t::iterator id;
   {
-    // ChaosWriteLock  lk(last_access_mutex);
+    boost::mutex::scoped_lock lk(last_access_mutex);
     id       = s_lastWriteDir.find(dir);
     notexist = (id == s_lastWriteDir.end());
     //last_access_mutex.unlock();
@@ -1129,8 +1137,8 @@ int PosixFile::findObject(const std::string&                                    
     DBG << "Search " << key << " from: " << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " tags:" << tag << " seqid:" << seqid << " runid:" << runid;
 
     // align to minute
-    uint64_t start_aligned = timestamp_from - 1000;//(timestamp_from % (60 * 1000));
-    uint64_t stop_aligned = timestamp_to  + ( (60 * 1000));
+    uint64_t start_aligned = timestamp_from - 1000;  //(timestamp_from % (60 * 1000));
+    uint64_t stop_aligned  = timestamp_to + ((60 * 1000));
 
     // loop years
     // loop months
@@ -1149,32 +1157,32 @@ int PosixFile::findObject(const std::string&                                    
           if (existYearMonthDay(basedatapath, key, tag, day_timestamp)) {
             // Since I cut precision to 1 sec I've to look 1 sec more,
             for (uint64_t start = day_timestamp; start < (stop_aligned); start += POSIX_MINUTES_MS) {
-          //    time_t t = (start / 1000);
+              //    time_t t = (start / 1000);
               //struct tm* tinfo = localtime(&t);
-        //      struct tm tinfo;
-       //       localtime_r(&t, &tinfo);
-          //    if ((tinfo.tm_min != old_hour)) {
-                calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
-                // boost::filesystem::path p(dir);
-                if (!boost::filesystem::exists(dir)) {
-                  ERR << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid <<" NOT EXISTS";
-                  continue;
-                }
-                  DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "-" <<chaos::common::utility::TimingUtil::toString(timestamp_to) << "->" <<chaos::common::utility::TimingUtil::toString(stop_aligned) <<" ] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
+              //      struct tm tinfo;
+              //       localtime_r(&t, &tinfo);
+              //    if ((tinfo.tm_min != old_hour)) {
+              calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
+              // boost::filesystem::path p(dir);
+              if (!boost::filesystem::exists(dir)) {
+                ERR << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid << " NOT EXISTS";
+                continue;
+              }
+              DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "-" << chaos::common::utility::TimingUtil::toString(timestamp_to) << "->" << chaos::common::utility::TimingUtil::toString(stop_aligned) << " ] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
 
-                elements += getFromPath(dir, timestamp_from, timestamp_to, (page_len-elements), found_object_page, last_record_found_seq);
-                if (elements >= page_len) {
-                  DBG << "[" << dir << "] Found " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+              elements += getFromPath(dir, timestamp_from, timestamp_to, (page_len - elements), found_object_page, last_record_found_seq);
+              if (elements >= page_len) {
+                DBG << "[" << dir << "] Found " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 #if CHAOS_PROMETHEUS
 
-                  (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
+                (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
-                  return 0;
-                } else if (elements == 0) {
-                  DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
-                }
-             //   old_hour = tinfo.tm_min;
-           //   }
+                return 0;
+              } else if (elements == 0) {
+                DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+              }
+              //   old_hour = tinfo.tm_min;
+              //   }
             }
           }
         }
@@ -1229,45 +1237,31 @@ void PosixFile::timeout() {
   for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
     if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM)) {
       //not anymore used
-      /*if(last_access_mutex.try_lock()==false){
+      if (last_access_mutex.try_lock() == false) {
         continue;
-      }*/
-
-      //  last_access_mutex.unlock();
-
+      }
       ChaosWriteLock(id->second.devio_mutex);
+
+      last_access_mutex.unlock();
+
       std::string dstdir = id->first;
-
-      int unordered_len = 0;
       id->second.writer.close();
-      if(boost::filesystem::exists(dstdir +"/"+ POSIX_FINAL_DATA_NAME)){
+
+      if (boost::filesystem::exists(dstdir + "/" + POSIX_FINAL_DATA_NAME)) {
         // someone else created and cleaned
-          DBG << "remove resource:" << dstdir;
+        DBG << "remove resource:" << dstdir;
 
-          s_lastWriteDir.erase(id++);
-           if (PosixFile::removeTemp) {
-              std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
-              for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                DBG << "remove unordered :" << *rd;
+        s_lastWriteDir.erase(id++);
 
-                boost::filesystem::remove(*rd);
-              }
-              std::vector<std::string> ordered = searchFileExt(dstdir, ".ordered");
-
-              for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                DBG << "remove ordered:" << *rd;
-
-                boost::filesystem::remove(*rd);
-              }
-          }
-         
         id++;
         continue;
       }
-      if (makeOrdered(id->second) >= 0) {
-        dirpath_t* ele=new dirpath_t();
-        ele->dir=dstdir;
-        ele->name=POSIX_FINAL_DATA_NAME;
+      if (makeOrdered(id->second) > 0) {
+        dirpath_t* ele = new dirpath_t();
+        ele->dir       = dstdir;
+        ele->name      = POSIX_FINAL_DATA_NAME;
+        DBG << "TO Process" << dstdir;
+
         file_to_finalize.push(ele);
         wait_data.notify_all();
 

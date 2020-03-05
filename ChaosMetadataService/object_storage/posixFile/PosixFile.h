@@ -182,7 +182,7 @@ public:
     static chaos::common::metric::GaugeUniquePtr gauge_insert_time_uptr;
     static chaos::common::metric::GaugeUniquePtr gauge_query_time_uptr;
 #endif
-                    static bool removeTemp,generateRoot;
+                    static bool removeTemp,generateRoot,compress;
 
                     static std::string serverName;
 
@@ -222,7 +222,7 @@ public:
                 typedef std::map<std::string,SearchWorker> searchWorkerMap_t;
                 static searchWorkerMap_t searchWorkers;
                 typedef std::map<std::string,read_path_t> cacheRead_t; 
-                static ChaosSharedMutex last_access_mutex,cache_mutex;
+                static boost::mutex last_access_mutex,cache_mutex;
                 static cacheRead_t s_lastAccessedDir;
                 // return number of items, or negative if error
                 void timeout();
