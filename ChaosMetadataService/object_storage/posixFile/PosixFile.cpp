@@ -31,7 +31,7 @@
 using namespace chaos::metadata_service::object_storage;
 using namespace boost::filesystem;
 #define MAX_PATH_LEN 512
-
+#include "lz4_stream.h"
 #ifdef CERN_ROOT
 #include <driver/misc/models/cernRoot/rootUtil.h>
 #include "TFile.h"
@@ -455,9 +455,22 @@ void PosixFile::finalizeJob(){
       dirpath_t*  ele;
     
       while(file_to_finalize.pop(ele)){
+        std::string fpath=ele->dir + "/"+ele->name;
         DBG << "processing dir :" << ele->dir <<" name:"<<ele->name;
         if (createFinal(ele->dir, ele->name) >= 0) {
-          DBG << " CREATE FINAL: " <<ele->dir + "/"+ele->name;
+          DBG << " CREATE FINAL: " <<fpath;
+          // lz4compression
+          std::ifstream in_file(fpath);
+          std::ofstream out_file(fpath+".lz4");
+          try{
+          lz4_stream::ostream lz4_stream(out_file);
+
+          std::copy(std::istreambuf_iterator<char>(in_file),
+            std::istreambuf_iterator<char>(),
+            std::ostreambuf_iterator<char>(lz4_stream));
+          } catch(std::exception e){
+            ERR<<" error compressing "+fpath + " into "+fpath+".lz4";
+          }
            #ifdef CERN_ROOT
             if (PosixFile::generateRoot) {
               createRoot(ele->dir, ele->name);
@@ -508,6 +521,7 @@ void SearchWorker::pathToCache(const std::string& final_file) {
     const bson_t* bson;
     bson_iter_t   iter;
     bool          end;
+    
     reader = bson_reader_new_from_file(final_file.c_str(), &src_err);
     if (reader == NULL) {
       ERR << " CANNOT OPEN " << final_file;
@@ -588,10 +602,37 @@ void SearchWorker::pathToCache(const std::string& final_file) {
   wait_data.notify_one();
 }
 std::string SearchWorker::prepareDirectory() {
-  boost::filesystem::path final_file(path + "/" + POSIX_FINAL_DATA_NAME);
+  std::string fpath=path + "/" + POSIX_FINAL_DATA_NAME;
+  boost::filesystem::path final_file(fpath);
+  // check if exists uncompressed
   if (boost::filesystem::exists(final_file)) {
+
     istemp = false;
     return final_file.string();
+
+  } else if(boost::filesystem::exists(fpath+".lz4")){
+    FileLock fl(fpath+".lz4.uncomp.lock");
+    fl.lock();
+    if(boost::filesystem::exists(fpath+".lz4.uncomp")){
+      fl.unlock();
+      return fpath+".lz4.uncomp";
+    }
+  try{
+    std::ifstream in_file(fpath+".lz4");
+    std::ofstream out_file(fpath+".lz4.uncomp.tmp");
+    lz4_stream::istream lz4_stream(in_file);
+
+    std::copy(std::istreambuf_iterator<char>(lz4_stream),
+            std::istreambuf_iterator<char>(),
+            std::ostreambuf_iterator<char>(out_file));
+    boost::filesystem::rename(fpath+".lz4.uncomp.tmp",fpath+".lz4.uncomp");
+
+  } catch(std::exception&e){
+    ERR<<"decompressing file "<<fpath+".lz4";
+  }
+    fl.unlock();
+
+    return fpath+".lz4.uncomp";
 
   } else {
     PosixFile::write_path_t::iterator id = PosixFile::s_lastWriteDir.find(path);

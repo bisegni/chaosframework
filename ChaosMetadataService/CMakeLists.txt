@@ -13,7 +13,7 @@ IF (DEFINED ENV{CHAOS_BUNDLE} )
 ENDIF()
 MESG("Install lz4 compression library")
   ExternalProject_Add(
-     lz4
+     liblz4
      GIT_REPOSITORY https://github.com/lz4/lz4.git
      GIT_TAG v1.9.2
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/lz4-prefix"
@@ -23,6 +23,8 @@ MESG("Install lz4 compression library")
      CMAKE_ARGS 
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
       -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_STATIC_LIBS=ON
+      -DBUILD_SHARED_LIBS=OFF
  #   BUILD_COMMAND make -C ${CMAKE_BINARY_DIR}/ext_dep/lz4-src/contrib/cmake_unofficial
  #   INSTALL_COMMAND make -C ${CMAKE_BINARY_DIR}/ext_dep/lz4-src/contrib/cmake_unofficial install
      LOG_DOWNLOAD ON
@@ -383,6 +385,8 @@ IF(BUILD_FORCE_STATIC)
 ENDIF()
 
 SET(BUILD_LIBRARY ${FrameworkLib} boost_iostreams)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} lz4)
+
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} chaos_common)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} boost_random)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} couchbaseS)
@@ -393,13 +397,13 @@ ENDIF()
 MESG("Enable link to mongocxx and bsoncxx library")
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} mongocxx)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} bsoncxx)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE USE_MONGODB3_DRIVER=1)
 
 # MESG("Enable link to cassandra and bsoncxx library")
 # SET(BUILD_LIBRARY ${BUILD_LIBRARY} uv)
 # SET(BUILD_LIBRARY ${BUILD_LIBRARY} cassandra)
 # target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CASSANDRA_DRIVER=1)
-
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 INSTALL_TARGETS(/bin ${PROJECT_NAME})
