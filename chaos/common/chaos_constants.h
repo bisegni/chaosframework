@@ -697,7 +697,9 @@ namespace chaos {
             //!datapack into file (shared FS)
             DSStorageTypeFile = 4,
             //!datapack into Remote Queue (i.e Kafka)
-            DSStorageTypeRQ = 8     
+            DSStorageTypeRQ = 8,
+            //!datapack into a logging system (i.e. influxdb)
+            DSStorageLogHisto = 16          
         } DSStorageType;
     }
     /** @} */ // end of DataServiceNodeDefinitionType

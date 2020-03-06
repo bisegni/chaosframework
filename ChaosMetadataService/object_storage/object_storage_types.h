@@ -41,6 +41,8 @@ namespace chaos {
 #define OPT_OBJ_STORAGE_LOG_METRIC                  "obj-storage-driver-log-metric"
 #define OPT_OBJ_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "obj-storage-driver-log-metric-update-interval"
 #define OPT_OBJ_STORAGE_DRIVER_KVP                  "obj-storage-kvp"
+#define OPT_LOG_STORAGE_DRIVER_KVP                  "log-storage-kvp"
+
             
             //!
             struct ObjStorageSetting {

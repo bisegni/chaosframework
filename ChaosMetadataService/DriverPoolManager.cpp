@@ -71,12 +71,25 @@ void DriverPoolManager::init(void *init_data)  {
                          storage_impl_name);
     if(storage_driver.get() == NULL) throw chaos::CException(-1, CHAOS_FORMAT("No %1% Object Storage Driver found", %storage_impl_name), __PRETTY_FUNCTION__);
     storage_driver.init(NULL, __PRETTY_FUNCTION__);
+
+    const std::string log_impl_name = ChaosMetadataService::getInstance()->setting.log_storage_setting.driver_impl + "LogStorageDriver";
+    log_driver.reset(ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(log_impl_name),
+                         log_impl_name);
+    if(log_driver.get() == NULL) {
+        DP_LOG_INFO<< " Log driver not defined";
+    } else {
+        log_driver.init(NULL, __PRETTY_FUNCTION__);
+    }
+    
 }
 
 void DriverPoolManager::deinit()  {
     storage_driver.deinit(__PRETTY_FUNCTION__);
     persistence_driver.deinit(__PRETTY_FUNCTION__);
     cache_driver.deinit(__PRETTY_FUNCTION__);
+    if(log_driver.get()){
+        log_driver.deinit(__PRETTY_FUNCTION__);
+    }
 }
 
 //--------------cach driver pool method--------------
@@ -90,4 +103,7 @@ AbstractPersistenceDriver& DriverPoolManager::getPersistenceDrv() {
 
 AbstractPersistenceDriver& DriverPoolManager::getObjectStorageDrv() {
     return *storage_driver;
+}
+AbstractPersistenceDriver& DriverPoolManager::getLogDrv() {
+    return *log_driver;
 }

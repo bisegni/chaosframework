@@ -139,7 +139,12 @@ void ChaosMetadataService::init(void *init_data)  {
 //            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
 //                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
         }
-        
+         if(getGlobalConfigurationInstance()->hasOption(OPT_LOG_STORAGE_DRIVER_KVP)) {
+            GlobalConfiguration::getInstance()->fillKVParameter(setting.log_storage_setting.key_value_custom_param,
+                                                                getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_LOG_STORAGE_DRIVER_KVP), "");
+//            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+//                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
+        }
         //initilize driver pool manager
         InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
         

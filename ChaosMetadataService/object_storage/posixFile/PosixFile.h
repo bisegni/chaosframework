@@ -31,7 +31,7 @@
 #include "BsonFStream.h"
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
-
+#include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include "../abstraction/ObjectStorageDataAccess.h"
 #if CHAOS_PROMETHEUS
 #include <chaos/common/metric/metric.h>
@@ -60,6 +60,13 @@ namespace chaos {
             static const uint64_t POSIX_YEARB_MS=366*24*60*(60*1000ULL);
 
 
+
+            class GenerateRootJob:public chaos::CObjectProcessingQueue<std::string>{
+
+                protected:
+                void processBufferElement(QueueElementShrdPtr element);
+                public:
+            };
             template< typename T>
             class SafeVector {
                 public:
@@ -227,10 +234,8 @@ public:
                 // return number of items, or negative if error
                 void timeout();
                 
-                void finalizeJob( );
-                boost::thread finalize_th;
-                boost::condition_variable wait_data;
-                boost::mutex mutex_io;
+                
+                static GenerateRootJob rootGenJob;
                 public:
                 class dirpath_t{
                     public:
@@ -241,10 +246,15 @@ public:
                     dirpath_t& operator=(const dirpath_t&p){dir=p.dir;name=p.name;return *this;}
                     ~dirpath_t(){}
                 };
-                
+                void finalizeJob( );
+                boost::thread finalize_th;
+                boost::condition_variable wait_data;
+                boost::mutex mutex_io;
                 static boost::lockfree::queue<dirpath_t*, boost::lockfree::fixed_sized<true> > file_to_finalize; 
 
                 bool exitFinalizeJob;
+
+              
 
                 public:
 

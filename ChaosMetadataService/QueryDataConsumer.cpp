@@ -139,7 +139,20 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
                                  channel_data_injected);
         
     }
-    
+   if(storage_type &DataServiceNodeDefinitionType::DSStorageLogHisto) {
+        //protected access to cached driver
+        ObjectStorageDataAccess *log_slot  = DriverPoolManager::getInstance()->getLogDrv().getDataAccess<ObjectStorageDataAccess>();
+
+          CDataWrapper data_pack((char *)channel_data->data());
+            //push received datapack into object storage
+            if((err = log_slot->pushObject(key,
+                                                 MOVE(meta_tag_set),
+                                                 data_pack))) {
+                ERR << "Error pushing datapack into logstorage driver";
+            }
+      
+        
+    } 
     if(!err &&
        (storage_type & (DataServiceNodeDefinitionType::DSStorageTypeHistory|DataServiceNodeDefinitionType::DSStorageTypeFile))) {
         //compute the index to use for the data worker
