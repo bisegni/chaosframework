@@ -63,6 +63,10 @@ int main(int argc, const char * argv[]) {
                                                                                                      &ChaosMetadataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number);
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP,
                                                                                                                      "The key value parameter for cache implementation driver (ex k:v-k1:v1)");
+        
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_LOG_STORAGE_DRIVER_KVP,
+                                                                                                                     "The key value parameter for log driver (ex k:v-k1:v1)");
+        
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_LOG_METRIC,
                                                                                                  "Enable log metric for cache driver",
                                                                                                  false,
@@ -77,6 +81,15 @@ int main(int argc, const char * argv[]) {
                                                                                                         "Object storage driver implementation",
                                                                                                         "MongoDB",
                                                                                                         &ChaosMetadataService::getInstance()->setting.object_storage_setting.driver_impl);
+        
+        //log object storage
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_LOG_STORAGE_DRIVER,
+                                                                                                        "Logs storage driver implementation",
+                                                                                                        "localhost:8086",
+                                                                                                        &ChaosMetadataService::getInstance()->setting.log_storage_setting.driver_impl);
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_LOG_STORAGE_SERVER_URL,
+                                                                                                                     "The list of the log storage servers",
+                                                                                                                     &ChaosMetadataService::getInstance()->setting.log_storage_setting.url_list);
         
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_OBJ_FSSTORAGE_DRIVER,
                                                                                                         "Object Filesystem storage driver implementation",

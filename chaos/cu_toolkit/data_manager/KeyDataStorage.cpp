@@ -203,8 +203,8 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeHistory;
         }
     }
-    
     if(effective_storage_type) {
+        effective_storage_type|=(storage_type&DataServiceNodeDefinitionType::DSStorageLogHisto);
         err=io_data_driver->storeData(key,
                                       MOVE(dataset),
                                       static_cast<DataServiceNodeDefinitionType::DSStorageType>(effective_storage_type),

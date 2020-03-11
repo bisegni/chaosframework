@@ -143,7 +143,7 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
         //protected access to cached driver
         ObjectStorageDataAccess *log_slot  = DriverPoolManager::getInstance()->getLogDrv().getDataAccess<ObjectStorageDataAccess>();
 
-          CDataWrapper data_pack((char *)channel_data->data());
+         // CDataWrapper data_pack((char *)channel_data->data());
             //push received datapack into object storage
             if((err = log_slot->pushObject(key,
                                                  MOVE(meta_tag_set),

@@ -8,6 +8,56 @@ MESG("Configure Metadata Service")
 option(COMPILE_HAZELCAST_LIVE_DRIVER "Compile hazelcast live data driver" OFF)
 
 
+#
+
+# ExternalProject_Add(
+# cpprestsdk
+#  GIT_REPOSITORY https://github.com/microsoft/cpprestsdk.git
+#  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/cpprest-prefix"
+#  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/cpprest-src"
+#  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/cpprest-build"
+#  # BUILD_COMMAND make CFLAGS=${CMAKE_C_FLAGS} CXXFLAGS=${CMAKE_CXX_FLAGS}
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+#   -DBUILD_STATIC_LIBS=ON
+#   -DBUILD_SHARED_LIBS=OFF
+#  LOG_DOWNLOAD ON
+#  LOG_CONFIGURE ON
+#  LOG_BUILD ON)
+
+# ExternalProject_Add(
+# fmtlib
+#  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+#  GIT_TAG 6.1.2
+#  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/fmtlib-prefix"
+#  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/fmtlib-src"
+#  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/fmtlib-build"
+#  # BUILD_COMMAND make CFLAGS=${CMAKE_C_FLAGS} CXXFLAGS=${CMAKE_CXX_FLAGS}
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+#   -DBUILD_STATIC_LIBS=ON
+#   -DBUILD_SHARED_LIBS=OFF
+
+#  LOG_DOWNLOAD ON
+#  LOG_CONFIGURE ON
+#  LOG_BUILD ON)
+
+#  ExternalProject_Add(
+# rxcpp
+#  GIT_REPOSITORY  https://github.com/ReactiveX/RxCpp.git
+#  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/rxcpp-prefix"
+#  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/rxcpp-src"
+#  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/rxcpp-build"
+#  # BUILD_COMMAND make CFLAGS=${CMAKE_C_FLAGS} CXXFLAGS=${CMAKE_CXX_FLAGS}
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release
+#   -DBUILD_STATIC_LIBS=ON
+#   -DBUILD_SHARED_LIBS=OFF
+#  LOG_DOWNLOAD ON
+#  LOG_CONFIGURE ON
+#  LOG_BUILD ON)
+
+  
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ENDIF()
@@ -30,6 +80,26 @@ MESG("Install lz4 compression library")
      LOG_DOWNLOAD ON
      LOG_CONFIGURE ON
      LOG_BUILD ON)
+  
+    #  MESG("Influxdb client")
+  
+    #  ExternalProject_Add(
+    #     influxdb-cpp
+    #     GIT_REPOSITORY https://github.com/orca-zhang/influxdb-cpp.git
+    #     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/influxdb-cpp-prefix"
+    #     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/influxdb-cpp-src"
+    #     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/influxdb-cpp-build"
+    #     CMAKE_ARGS 
+    #      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+    #      -DCMAKE_BUILD_TYPE=Release
+    #      -DBUILD_STATIC_LIBS=ON
+    #      -DBUILD_SHARED_LIBS=OFF
+    #     LOG_DOWNLOAD ON
+    #     LOG_CONFIGURE ON
+    #     LOG_BUILD ON)
+
+     # 
+
 
 IF (COMPILE_HAZELCAST_LIVE_DRIVER)
   MESG("Install hazelcast c++ client")
@@ -62,6 +132,8 @@ IF (COMPILE_HAZELCAST_LIVE_DRIVER)
      MESG("${HAZELCAST_LIBRARY_DIR}")
      MESG("${HAZELCAST_LIBRARY}")
 ENDIF()
+
+set (CMAKE_CXX_STANDARD 14)
 
 
 MESG("Install c mongodb driver")
@@ -327,6 +399,14 @@ SET(cnd_src  ${cnd_src} object_storage/mongodb_3/MongoDBObjectStorageDataAccess.
 SET(cnd_src  ${cnd_src} object_storage/posixFile/PosixFile.cpp
 object_storage/posixFile/PosixFileObjectStorageDriver.cpp
 object_storage/posixFile/BsonFStream.cpp object_storage/posixFile/FileLock.cpp)
+
+
+SET(cnd_src  ${cnd_src} object_storage/influxDB/InfluxDB.cpp
+object_storage/influxDB/InfluxDBLogStorageDriver.cpp 
+#object_storage/influxDB/influxdb-cpp-rest/influxdb_simple_async_api.cpp 
+#object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db.cpp
+# object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db_utf8.cpp
+)
 
 #hybrid base driver
 SET(cnd_src  ${cnd_src} object_storage/hybdriver/ShardKeyManagement.cpp
