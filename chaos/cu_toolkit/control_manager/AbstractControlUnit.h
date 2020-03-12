@@ -151,6 +151,8 @@ class AbstractControlUnit : public DeclareAction,
   friend class slow_command::SlowCommand;
   friend class slow_command::SlowCommandExecutor;
 
+  void setCUClass(const std::string&cl);
+
  public:
   CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::cu::driver_manager::driver::DrvRequestInfo, ControlUnitDriverList);
   //! Default Contructor
@@ -177,7 +179,8 @@ class AbstractControlUnit : public DeclareAction,
 
   //! default destructor
   virtual ~AbstractControlUnit();
-
+  // get the actual C++ class
+  const std::string& getCUClass(){return control_unit_class;}
   //! Return the control unit instance
   const std::string& getCUInstance();
 
@@ -257,6 +260,10 @@ class AbstractControlUnit : public DeclareAction,
   //! contains the description of the type of the control unit
   std::string control_unit_type;
 
+  //! contains the class of the type of the control unit
+  std::string control_unit_class;
+
+  
   //! is the unique identification code associated to the control unit instance(rand benerated by contructor)
   std::string control_unit_id;
 

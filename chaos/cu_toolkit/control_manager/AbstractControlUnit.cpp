@@ -161,6 +161,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     ,
 #endif
     control_unit_type(_control_unit_type)
+    ,control_unit_class("AbstractControlUnit")
     , control_unit_id(_control_unit_id)
     , control_unit_param(_control_unit_param)
     , run_id(0)
@@ -204,7 +205,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
             accessor_instances.push_back(accessor_instance);
         }
     }
-    
+    void AbstractControlUnit::setCUClass(const std::string&cl){
+        control_unit_class=cl;
+    }
+
     void AbstractControlUnit::_initChecklist() {
         //init checklists
         check_list_sub_service.addCheckList("_init");
@@ -1605,10 +1609,22 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         
         //add history time
         domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, 0, DataType::TYPE_INT64);
+
+        // add hostname
+        std::string hn=chaos::GlobalConfiguration::getInstance()->getHostname();
+        domain_attribute_setting.addAttribute(chaos::ControlUnitDatapackSystemKey::CU_SOURCE_HOSTNAME, (uint32_t)hn.size(), DataType::TYPE_STRING);
+        char* str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(chaos::ControlUnitDatapackSystemKey::CU_SOURCE_HOSTNAME))->getValuePtr<char>();
+        strncpy(str_ptr, hn.c_str(), hn.size());
+        // add class name
+        hn=getCUClass();
+
+        domain_attribute_setting.addAttribute(chaos::ControlUnitDatapackSystemKey::CU_CLASS_TYPE, (uint32_t)hn.size(), DataType::TYPE_STRING);
+        str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(chaos::ControlUnitDatapackSystemKey::CU_CLASS_TYPE))->getValuePtr<char>();
+        strncpy(str_ptr, hn.c_str(), hn.size());
         
         //add unit type
         domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
-        char* str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackSystemKey::DP_SYS_UNIT_TYPE))->getValuePtr<char>();
+        str_ptr = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackSystemKey::DP_SYS_UNIT_TYPE))->getValuePtr<char>();
         strncpy(str_ptr, control_unit_type.c_str(), control_unit_type.size());
     }
     

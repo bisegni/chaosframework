@@ -951,6 +951,11 @@ namespace chaos {
         //! is the tag associated to the current running command alias(in the case of slow contro unit)
         static const char * const RUNNING_COMMAND_ALIAS     = "running_cmd_alias";
         
+        //! is CU class
+        static const char * const CU_CLASS_TYPE     = "cudk_cu_class";
+
+        //!  hostname
+        static const char * const CU_SOURCE_HOSTNAME     = "cudk_hostname";
         
     }
     

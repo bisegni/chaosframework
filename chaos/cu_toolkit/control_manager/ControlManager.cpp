@@ -526,8 +526,8 @@ CDWUniquePtr ControlManager::loadControlUnit(CDWUniquePtr message_data) {
     
     //submit new instance of the requested control unit
     ChaosSharedPtr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
-    CHECK_ASSERTION_THROW_AND_LOG(instance.get() != NULL, LCMERR_, -7, "Error creating work unit instance");
-    
+    CHECK_ASSERTION_THROW_AND_LOG(instance.get() != NULL, LCMERR_, -7, "Error creating work unit instance of type:"+work_unit_type);
+    instance->setCUClass(work_unit_type);
     //check if is a proxy control unit
     if(instance->getCUType().compare(NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT) == 0){
         //chec if someoune has attach the handler
