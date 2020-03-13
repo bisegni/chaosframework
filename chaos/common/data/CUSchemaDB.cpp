@@ -41,7 +41,7 @@ using namespace chaos::common::data;
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
 mapDatasetKeyForID.insert(make_pair(key, tmp));
 
-#define CUSCHEMALDBG LDBG_ << "[CUSchemaDB] - "<<__PRETTY_FUNCTION__<<":"
+#define CUSCHEMALDBG LDBG_ << "[CUSchemaDB - "<<__FUNCTION__<<"] :"
 #define CUSCHEMALERR LERR_ << "[CUSchemaDB] - ## Error "<<__PRETTY_FUNCTION__<<":"
 
 void RangeValueInfo::reset() {
@@ -901,7 +901,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     ptr_vector<entity::Entity> attrEntityVec;
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     rangeInfo.reset();
-    CUSCHEMALDBG<<" DEVICE:"<<deviceID<<" attr:"<<attributesName;
+    //CUSCHEMALDBG<<" DEVICE:"<<deviceID<<" attr:"<<attributesName;
     //clear all information
     kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = edb::KEY_STR_VALUE;

@@ -1827,14 +1827,22 @@ inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& 
     } else {
         mins=attributeInfo.minRange;
     }
+    
+    
     try{
-    max=boost::lexical_cast<t>(maxs);
-    min=boost::lexical_cast<t>(mins);
-    if (((mins.size()>0)&&(v < min)) || ((maxs.size()>0)&&(v > max))) 
-        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % mins % max % maxs % attr_name).c_str(), __PRETTY_FUNCTION__);
-    } catch (std::exception& e){
-        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Cannot cast %1% Invalid value (%2%) [Min:%3%-%4% Max:%5%-%6%] for attribute %6%") % e.what() % v % min  % mins % max % maxs % attr_name).c_str(), __PRETTY_FUNCTION__);
+        min=boost::lexical_cast<t>(mins);
+    }catch(std::exception &e){
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid casting MIN value (%1%) for attribute %2% value %3%" ) % mins % attr_name % v).c_str(), __PRETTY_FUNCTION__);
+    }
+    try{
 
+    max=boost::lexical_cast<t>(maxs);
+    } catch(std::exception &e){
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid casting MAX value (%1%) for attribute %2% value %3%" ) % maxs % attr_name % v).c_str(), __PRETTY_FUNCTION__);
+    }
+    
+    if (((mins.size()>0)&&(v < min)) || ((maxs.size()>0)&&(v > max))) {
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % mins % max % maxs % attr_name).c_str(), __PRETTY_FUNCTION__);
     }
 }
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)   \
