@@ -99,3 +99,14 @@ ccs/qt_build*
 vendor
 composer.lock
 config/localhost/#cu.cfg#
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db_utf8.h
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_line.h
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db_utf8.cpp
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db.cpp
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_raw_db.h
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_simple_api.cpp
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_simple_api.h
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_simple_async_api.cpp
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/influxdb_simple_async_api.h
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/input_sanitizer.cpp
+ChaosMetadataService/object_storage/influxDB/influxdb-cpp-rest/input_sanitizer.h
