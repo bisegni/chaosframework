@@ -37,6 +37,13 @@ namespace chaos_utility		= chaos::common::utility;
 namespace chaos_direct_io	= chaos::common::direct_io;
 
 namespace chaos{
+    namespace service_common{
+        namespace persistence {
+            namespace data_access{
+                class AbstractPersistenceDriver;
+            }
+        }
+    }
     namespace metadata_service {
         namespace worker {
             //forward declaration
