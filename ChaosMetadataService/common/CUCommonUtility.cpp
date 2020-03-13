@@ -26,6 +26,7 @@
 #include <chaos/common/global.h>
 
 #include <boost/foreach.hpp>
+#include "../object_storage/object_storage.h"
 
 using namespace chaos::common::data;
 using namespace chaos::common::property;

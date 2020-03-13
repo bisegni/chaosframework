@@ -112,7 +112,7 @@ int InfluxDB::pushObject(const std::string&                       key,
       char c=(first==0)?' ':',';
       switch (stored_object.getValueType(*i)) {
         case DataType::TYPE_BOOLEAN:
-          measurements << c << *i << "=" << (stored_object.getBoolValue(*i)) ? 't' : 'f';
+          measurements << c << *i << "=" << ((stored_object.getBoolValue(*i)) ? 't' : 'f');
           nmeas++;
           first++;
           break;
@@ -134,7 +134,10 @@ int InfluxDB::pushObject(const std::string&                       key,
           first++;
 
          nmeas++;
+        default:
+        break;
 
+          // not handled
           //   l(meas,influxdb::api::key_value_pairs(*i,stored_object.getStringValue(*i)));
        //   break;
       }

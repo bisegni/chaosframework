@@ -60,7 +60,7 @@ void EventDispatchManager::deinit()  {
 void EventDispatchManager::registerEventHandler(AbstractEventHandler *handler) {
     if(handler == NULL) return;
     //write lock the map
-    boost::unique_lock<boost::shared_mutex>(map_mutex);
+    boost::unique_lock<boost::shared_mutex>l(map_mutex);
     
     //generate the key
     HandlerMapKeys key(handler->getType(), handler->getSubType());
@@ -76,7 +76,7 @@ void EventDispatchManager::deregisterEventHandler(AbstractEventHandler *handler)
     if(handler == NULL) return;
     
     //write lock the map
-    boost::unique_lock<boost::shared_mutex>(map_mutex);
+    boost::unique_lock<boost::shared_mutex> l(map_mutex);
     
     //generate the key
     HandlerMapKeys key(handler->getType(), handler->getSubType());
@@ -91,7 +91,7 @@ void EventDispatchManager::deregisterEventHandler(AbstractEventHandler *handler)
 
 void EventDispatchManager::handleEvent(const chaos::common::event::EventDescriptor * const event) {
     //read lock the map
-    boost::shared_lock<boost::shared_mutex>(map_mutex);
+    boost::shared_lock<boost::shared_mutex> l(map_mutex);
     DEBUG_CODE(EDM_LDBG << "Event received type:"<< event->getEventType() << " with code:" << event->getSubCode(););
     
     //generate the key

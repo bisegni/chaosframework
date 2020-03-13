@@ -88,6 +88,9 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
             break;
         }
         case DataServiceNodeDefinitionType::DSStorageTypeLive:
+        case DataServiceNodeDefinitionType::DSStorageLogHisto:
+        case DataServiceNodeDefinitionType::DSStorageTypeRQ:
+
         case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }

@@ -21,9 +21,9 @@
 
 #include "MDSHistoryAgeingManagement.h"
 #include "../../DriverPoolManager.h"
+#include "../../object_storage/object_storage.h"
 
 #include <chaos/common/utility/TimingUtil.h>
-
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::cron_job;
 using namespace chaos::metadata_service::persistence::data_access;

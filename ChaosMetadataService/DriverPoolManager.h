@@ -24,7 +24,6 @@
 
 #include "cache_system/cache_system.h"
 #include "persistence/persistence.h"
-#include "object_storage/object_storage.h"
 
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>

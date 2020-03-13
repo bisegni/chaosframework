@@ -465,6 +465,8 @@ int CUController::setAttributeToValue(const char *attributeName, DataType::DataT
             attributeValuePack->addBinaryValue(attributeName, byteArrayValuePtr, bufferValuedDim);
             break;
         }
+        default:
+        LERR_<<"attribute:"<<attributeName<<" type not handled";
     }
     return deviceChannel->setAttributeValue(MOVE(attributeValuePack), noWait, millisecToWait);
 }
@@ -811,6 +813,8 @@ void CUController::allocateNewLiveBufferForAttributeAndType(string& attributeNam
                 pointerAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
             }
                 break;
+             default:
+        LERR_<<"attribute:"<<attributeName<<" type not handled";
         }
     } else if(attributeDirection == DataType::Input ||
               attributeDirection == DataType::Bidirectional ){
@@ -839,6 +843,8 @@ UIDataBuffer *CUController::getBufferForAttribute(string& attributeName) {
         case DataType::TYPE_DOUBLE:
             result = doubleAttributeLiveBuffer[attributeName];
             break;
+     default:
+        LERR_<<"attribute:"<<attributeName<<" type not handled";
     }
     return result;
 }

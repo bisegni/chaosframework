@@ -971,7 +971,7 @@ void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, co
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1, tinfo.tm_mday, tinfo.tm_hour, tinfo.tm_min);
   }
   // timestamp_runid_seq_ssss
-  snprintf(fname, MAX_PATH_LEN, "%llu_%llu_%.10llu", ts_ms, runid, seq);
+  snprintf(fname, MAX_PATH_LEN, "%lu_%lu_%.10lu", ts_ms, runid, seq);
 }
 
 int PosixFile::pushObject(const std::string&                       key,
@@ -1041,7 +1041,7 @@ int PosixFile::pushObject(const std::string&                       key,
   int  retry = 0;
   do {
     char key[32];
-    snprintf(key, sizeof(key), "%llu_%.10llu", runid, seq);
+    snprintf(key, sizeof(key), "%lu_%.10lu", runid, seq);
 
     if ((ok = (id->second.writer.write(key, stored_object) > 0))) {
       id->second.last_seq   = seq;
@@ -1136,7 +1136,7 @@ uint32_t PosixFile::countFromPath(boost::filesystem::path& p, const uint64_t tim
     uint64_t iseq, irunid, tim;
 
     for (std::vector<path>::iterator it = v.begin(); it != v.end(); it++) {
-      sscanf(it->c_str(), "%Lu_%llu_%llu", &tim, &irunid, &iseq);
+      sscanf(it->c_str(), "%lu_%lu_%lu", &tim, &irunid, &iseq);
       tim *= 1000;
       if ((tim < timestamp_to) && (tim >= timestamp_from)) {
         elements++;

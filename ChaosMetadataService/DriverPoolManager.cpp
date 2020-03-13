@@ -28,6 +28,7 @@
 
 #include <limits>
 #include <chaos/common/global.h>
+#include "object_storage/object_storage.h"
 
 #define DP_LOG_INFO INFO_LOG(DriverPoolManager)
 #define DP_LOG_DBG  DBG_LOG(DriverPoolManager)

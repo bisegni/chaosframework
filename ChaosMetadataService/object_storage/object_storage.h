@@ -24,8 +24,8 @@
 
 #include "object_storage_types.h"
 
-#include "mongodb/MongoDBObjectStorageDriver.h"
-#include "mongodb/MongoDBObjectStorageDataAccess.h"
+//#include "mongodb/MongoDBObjectStorageDriver.h"
+//#include "mongodb/MongoDBObjectStorageDataAccess.h"
 
 #include "abstraction/ObjectStorageDataAccess.h"
 

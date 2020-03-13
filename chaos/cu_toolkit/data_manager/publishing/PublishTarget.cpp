@@ -230,7 +230,7 @@ void *PublishTarget::serviceForURL(const URL &url, uint32_t service_index) {
 void PublishTarget::handleEvent(chaos::common::direct_io::DirectIOClientConnection *client_connection,
                                 chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
     //if the channel has bee disconnected turn the relative index offline, if onli reput it online
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    boost::shared_lock<boost::shared_mutex> ll(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
     switch (event) {
         case chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", % service_index% client_connection->getURL());)
