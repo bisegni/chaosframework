@@ -1810,13 +1810,35 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
      by the rpc request for attribute change.
      */
     void AbstractControlUnit::unitInputAttributeChangedHandler() {}
-    
+
+template<typename t>
+inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& attr_name,const std::string&id ){
+    t max,min;
+    std::size_t mini=attributeInfo.minRange.find("0x");
+    std::size_t maxi=attributeInfo.maxRange.find("0x");
+
+    if(maxi!=std::string::npos){
+        attributeInfo.maxRange.substr(maxi);
+    }
+    if(mini!=std::string::npos){
+        attributeInfo.minRange.substr(mini);
+    }
+    max=boost::lexical_cast<t>(attributeInfo.maxRange);
+    min=boost::lexical_cast<t>(attributeInfo.minRange);
+    if (((attributeInfo.minRange.size()>0)&&(v < min)) || ((attributeInfo.maxRange.size()>0)&&(v > max))) 
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
+   
+}
+#define CHECK_FOR_RANGE_VALUE(t, v, attr_name)   \
+checkForRange<t>(v,attributeInfo,attr_name,getCUID());                                                         
+
+/*
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)                                                                            \
 t max, min;                                                                                                             \
 max = strtoll(attributeInfo.maxRange.c_str(), 0, 0);                                                                  \
 min = strtoll(attributeInfo.minRange.c_str(), 0, 0);\
 if (((attributeInfo.minRange.size()>0)&&(v < min)) || ((attributeInfo.maxRange.size()>0)&&(v > max))) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
-    
+  */  
 #define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)                                                                                                                                                                                                                                                      \
 if (attributeInfo.minRange.size() && v < attributeInfo.minRange) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__); \
 if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);
