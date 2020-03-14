@@ -53,6 +53,14 @@ else
     CHAOS_MDS_OPT="$CHAOS_MDS_OPT --cache-servers localhost"
 fi
 
+if [ -n "$CHAOS_LOG_SERVERS" ];then
+    for i in $CHAOS_LOG_SERVERS;do
+	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --log-storage-driver-server_url $i"
+    done
+else
+    CHAOS_MDS_OPT="$CHAOS_MDS_OPT --log-storage-driver-server_url localhost:8086"
+fi
+
 if [ -n "$CHAOS_DB_SERVERS" ];then
     for i in $CHAOS_DB_SERVERS;do
 	CHAOS_MDS_OPT="$CHAOS_MDS_OPT --persistence-servers $i"
