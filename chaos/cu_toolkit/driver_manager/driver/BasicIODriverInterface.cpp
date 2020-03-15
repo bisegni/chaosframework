@@ -57,7 +57,7 @@ int BasicIODriverInterface::iop(int operation,void*data,int sizeb){
 
     ret2=accessor->send(&message);
     ret=message.ret;
-    BasicIODriverLDBG_<<"iop op:"<<operation<<", size:"<<sizeb<<",func ret:"<<ret<<",accessor ret "<<ret2;
+    //BasicIODriverLDBG_<<"iop op:"<<operation<<", size:"<<sizeb<<",func ret:"<<ret<<",accessor ret "<<ret2;
     return ret;
 
 }
