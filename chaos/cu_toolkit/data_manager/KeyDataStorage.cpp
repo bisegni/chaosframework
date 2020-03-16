@@ -183,16 +183,15 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
     uint64_t now = TimingUtil::getTimeStampInMicroseconds();
     int effective_storage_type = DataServiceNodeDefinitionType::DSStorageTypeUndefined;
     int err=0;
-    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive ||
-       override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeLive) {
+    
+    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive ) {
         if((now - storage_live_time_last_push) >= storage_live_time) {
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeLive;
             storage_live_time_last_push = now;
         }
     }
     
-    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory ||
-       override_storage_everride & DataServiceNodeDefinitionType::DSStorageTypeHistory) {
+    if((storage_type & DataServiceNodeDefinitionType::DSStorageTypeHistory) ) {
         //history is enabled
         if(use_timing_info) {
             if((now - storage_history_time_last_push) >= storage_history_time) {
@@ -202,6 +201,9 @@ int KeyDataStorage::pushDataWithControlOnHistoryTime(const std::string& key,
         } else {
             effective_storage_type |= DataServiceNodeDefinitionType::DSStorageTypeHistory;
         }
+    }
+    if(override_storage_everride!=DataServiceNodeDefinitionType::DSStorageTypeUndefined){
+        effective_storage_type|=override_storage_everride;
     }
     if(effective_storage_type) {
         effective_storage_type|=(storage_type&DataServiceNodeDefinitionType::DSStorageLogHisto);
