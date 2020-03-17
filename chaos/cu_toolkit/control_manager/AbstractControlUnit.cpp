@@ -2165,6 +2165,9 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         if (!system_attribute_cache.hasChanged()) return err;
         //get the cdatawrapper for the pack
         int64_t    cur_us                   = TimingUtil::getTimeStampInMicroseconds();
+         if(key_data_storage.get()==NULL){
+            return err;
+        }
         CDWShrdPtr system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
         if (system_attribute_dataset) {
             system_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
@@ -2183,6 +2186,9 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
     
     CDWShrdPtr AbstractControlUnit::writeCatalogOnCDataWrapper(AlarmCatalog& catalog,
                                                                int32_t       dataset_type) {
+        if(key_data_storage.get()==NULL){
+            return CDWShrdPtr();
+        }
         CDWShrdPtr attribute_dataset = key_data_storage->getNewDataPackForDomain((KeyDataStorageDomain)dataset_type);
         if (attribute_dataset) {
             //fill datapack with
@@ -2208,7 +2214,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         
         CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                   DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM);
-        if (attribute_dataset) {
+        if (attribute_dataset&& key_data_storage.get()) {
             //push out the system dataset
             err = key_data_storage->pushDataSet(KeyDataStorageDomainDevAlarm, MOVE(attribute_dataset));
         }
@@ -2220,7 +2226,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         int        err               = 0;
         CDWShrdPtr attribute_dataset = writeCatalogOnCDataWrapper(catalog,
                                                                   DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM);
-        if (attribute_dataset) {
+        if (attribute_dataset&&key_data_storage.get()) {
             //push out the system dataset
             err = key_data_storage->pushDataSet(KeyDataStorageDomainCUAlarm, MOVE(attribute_dataset));
         }
@@ -2402,7 +2408,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         
         //update alarm log
         if((alarm_ms->max_freq_log_ms==0)||
-        ((alarm_ms->max_freq_log_ms>0)&&((alarm->getLastUpdateTimestamp()-alarm_ms->last_log_ms)>alarm_ms->max_freq_log_ms))){
+        (alarm_logging_channel && (alarm_ms->max_freq_log_ms>0)&&((alarm->getLastUpdateTimestamp()-alarm_ms->last_log_ms)>alarm_ms->max_freq_log_ms))){
            // ACULDBG_ << "State "<<state_variable_name<<" last modified:"<<( alarm->getLastUpdateTimestamp() -alarm_ms->last_log_ms)<<" ms freq:"<<alarm_ms->max_freq_log_ms;
 
             alarm_logging_channel->logAlarm(getCUID(),
