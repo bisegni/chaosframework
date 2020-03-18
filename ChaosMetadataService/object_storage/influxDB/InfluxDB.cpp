@@ -68,11 +68,14 @@ InfluxDB::InfluxDB(const influxdb_cpp::server_info& serverinfo)
   DBG << " CREATED METRICS";
 
 #endif
-  AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
+  //AsyncCentralManager::getInstance()->addTimer(this, 1000, 1000);
+  push_th = boost::thread(&InfluxDB::push_process, this);
 
 }
 
 InfluxDB::~InfluxDB() {
+  push_end=true;
+  push_th.join();
 }
 
 int InfluxDB::pushObject(const std::string&                       key,
@@ -238,10 +241,12 @@ int InfluxDB::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
   return 0;
 }
 
-void InfluxDB::timeout() {
-boost::mutex::scoped_lock ll(iolock);
-
+void InfluxDB::push_process() {
+push_end=false;
+while(push_end==false){
 if (nmeas >0) {
+  boost::mutex::scoped_lock ll(iolock);
+
   DBG<<" sending "<<nmeas<< " measurements";
     nmeas = 0;
     std::string ret;
@@ -253,6 +258,8 @@ if (nmeas >0) {
     measurements.str("");
    
   }
+  sleep(1);
+}
   
 }
 

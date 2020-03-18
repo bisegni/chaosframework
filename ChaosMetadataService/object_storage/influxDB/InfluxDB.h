@@ -58,7 +58,7 @@ namespace chaos {
 
         //   typedef ChaosSharedPtr<influxdb::async_api::simple_db> influxdb_t;
             
-            class InfluxDB:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,public chaos::common::async_central::TimerHandler {
+            class InfluxDB:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess {
 
 
                     protected:
@@ -81,9 +81,10 @@ public:
                
            
                 // return number of items, or negative if error
-                void timeout();
+                void push_process();
                              
-
+                boost::thread push_th;
+                bool push_end;
                 public:
 
                       //! Construct the driver

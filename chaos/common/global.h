@@ -97,8 +97,8 @@ return_code\
 #define DBG_LOG(x)          LDBG_   << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
 #define DBG_LOG_1_P(x,y)    LDBG_   << DEFINE_LOG_HEADER_1_P(x,y) << __FUNCTION__ << " - "
 
-#define ERR_LOG(x)          LERR_   << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
-#define ERR_LOG_1_P(x,y)    LERR_   << DEFINE_LOG_HEADER_1_P(x,y) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define ERR_LOG(x)          LERR_   << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") ##  "
+#define ERR_LOG_1_P(x,y)    LERR_   << DEFINE_LOG_HEADER_1_P(x,y) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") ## "
 
 #define LOG_AND_TROW(log, num, msg)\
 log << "("<<num<<") " << msg;\

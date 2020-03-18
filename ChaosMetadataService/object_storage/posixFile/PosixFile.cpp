@@ -971,7 +971,7 @@ void PosixFile::calcFileDir(const std::string& prefix, const std::string& cu, co
     snprintf(dir, MAX_PATH_LEN, "%s/%s/%.4d/%.2d/%.2d/%.2d/%.2d", prefix.c_str(), cu.c_str(), tinfo.tm_year + 1900, tinfo.tm_mon + 1, tinfo.tm_mday, tinfo.tm_hour, tinfo.tm_min);
   }
   // timestamp_runid_seq_ssss
-  snprintf(fname, MAX_PATH_LEN, "%lu_%lu_%.10lu", ts_ms, runid, seq);
+  snprintf(fname, MAX_PATH_LEN, "%lu_%010lu_%010lu", ts_ms, runid, seq);
 }
 
 int PosixFile::pushObject(const std::string&                       key,
@@ -1041,7 +1041,7 @@ int PosixFile::pushObject(const std::string&                       key,
   int  retry = 0;
   do {
     char key[32];
-    snprintf(key, sizeof(key), "%lu_%.10lu", runid, seq);
+    snprintf(key, sizeof(key), "%010lu_%010lu", runid, seq);
 
     if ((ok = (id->second.writer.write(key, stored_object) > 0))) {
       id->second.last_seq   = seq;
