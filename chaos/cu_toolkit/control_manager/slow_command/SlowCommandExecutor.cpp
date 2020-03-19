@@ -38,7 +38,7 @@ using namespace chaos::common::batch_command;
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CDataWrapperKeyList);
 
 #define SCELAPP_ INFO_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
-#define SCELDBG_ ERR_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
+#define SCELDBG_ DBG_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
 #define SCELERR_ DBG_LOG_1_P(SlowCommandExecutor, control_unit_instance->getDeviceID())
 using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
