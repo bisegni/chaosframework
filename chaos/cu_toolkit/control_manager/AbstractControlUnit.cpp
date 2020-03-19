@@ -51,12 +51,14 @@ using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::driver_manager::driver;
+#define DBG DBG_LOG(AbstractControlUnit)
+#define ERR ERR_LOG(AbstractControlUnit)
 
 #define ACULAPP_ LAPP_ << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "] -"
 #define ACULNOTE_ LNOTE_ << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "] -"
 #define ACULWRN_ LWRN_ << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "] -"
-#define ACULDBG_ LDBG_ << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "] -" << __FUNCTION__ << "-"
-#define ACULERR_ LERR_ << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "](-" << __FUNCTION__ << "-" << __LINE__ << ") - "
+#define ACULDBG_ DBG << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "] -" << __FUNCTION__ << "-"
+#define ACULERR_ ERR << "[Control Unit:" << control_unit_instance << "-" << control_unit_id << "](-" << __FUNCTION__ << "-" << __LINE__ << ") - "
 
 #define S(x) #x
 #define S_(x) S(x)
