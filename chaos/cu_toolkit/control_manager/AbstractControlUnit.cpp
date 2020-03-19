@@ -2168,10 +2168,12 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         //get the cdatawrapper for the pack
         int64_t    cur_us                   = TimingUtil::getTimeStampInMicroseconds();
          if(key_data_storage.get()==NULL){
-            return err;
+            ACULERR_ << " key data storage not allocated";
+
+            return -2;
         }
         CDWShrdPtr system_attribute_dataset = key_data_storage->getNewDataPackForDomain(KeyDataStorageDomainSystem);
-        if (system_attribute_dataset) {
+        if (system_attribute_dataset.get()) {
             system_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
             //input dataset timestamp is added only when pushed on cache
             system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
