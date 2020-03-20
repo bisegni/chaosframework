@@ -172,7 +172,7 @@ int IODirectIODriver::storeData(const std::string& key,
             
         }
     } else {
-        DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
+        DEBUG_CODE(IODirectIODriver_LERR_ << "No available socket->loose packet, key '"<<key<<"' storage_type:"<<storage_type<<" buffer len:"<<serialization->getBufferLen());
         err++;
     }
     return err;
@@ -392,24 +392,31 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
                                    chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
-    if(shutting_down) return;
+    if(shutting_down || (client_connection==NULL)) {
+        DEBUG_CODE(IODirectIODriver_DLDBG_ << "Shutting down " << " and url" << (client_connection)?client_connection->getURL():"CONNECTION REMOVED";)
+
+        return;
+    }
     try {
         uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
         switch(event) {
             case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
-                DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Connected event to service with index " << service_index << " and url" << client_connection->getURL();)
+                DEBUG_CODE(IODirectIODriver_DLDBG_ << "Manage Connected event to service with index " << service_index << " and url" << client_connection->getURL();)
                 connectionFeeder.setURLOnline(service_index);
                 break;
                 
             case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
                 if(connectionFeeder.isOnline(service_index)){
-                    DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
+                    DEBUG_CODE(IODirectIODriver_DLDBG_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
                     connectionFeeder.setURLOffline(service_index);
                 }
                 break;
         }
+    } catch(bad_lexical_cast &e){
+        IODirectIODriver_LERR_ << "cast exception handling event identification:" << event << " identification string to cast:"<< client_connection->getCustomStringIdentification()<<" and url:" << client_connection->getURL();
+
     } catch(...){
-        IODirectIODriver_LERR_ << "exception handling event identification:" << client_connection->getCustomStringIdentification() << " and url:" << client_connection->getURL();
+        IODirectIODriver_LERR_ << "Undefined exception handling event identification:" << event << " identification string:"<< client_connection->getCustomStringIdentification()<<" and url:" << client_connection->getURL();
     }
 }
 
