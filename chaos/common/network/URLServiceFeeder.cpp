@@ -192,6 +192,10 @@ void* URLServiceFeeder::getService() {
         case URLServiceFeeder::URLServiceFeedModeFailOver:
             current_service = getNextFromSetByPriority();
             break;
+        default:
+            current_service = getNextFromSetByRoundRobin();
+            break;
+
     }
 
     return (current_service?current_service->service:NULL);

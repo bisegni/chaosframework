@@ -37,9 +37,9 @@ using namespace chaos::common::data::cache;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 
-#define SCACU_LAPP_ LAPP_ << "[SCAbstractControlUnit:" << getCUInstance() << "] - "
-#define SCACU_LDBG_ LDBG_ << "[SCAbstractControlUnit:" << getCUInstance() << "] - "
-#define SCACU_LERR_ LERR_ << "[SCAbstractControlUnit:" << getCUInstance() << " (" << __LINE__ << ")] - "
+#define SCACU_LAPP_	INFO_LOG(SCAbstractControlUnit)
+#define SCACU_LDBG_	DBG_LOG(SCAbstractControlUnit)
+#define SCACU_LERR_	ERR_LOG(SCAbstractControlUnit)
 
 SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id,
                                              const std::string& _control_unit_param)
@@ -94,7 +94,7 @@ void SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const DeclareA
 //! called whr the infrastructure need to know how is composed the control unit
 void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration) {
   //add the batch command description to the configuration
-  SCACU_LAPP_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
+  SCACU_LDBG_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
   installCommand(BATCH_COMMAND_GET_DESCRIPTION(SCWaitCommand), false);
 
   //call superclass method
@@ -135,10 +135,10 @@ void SCAbstractControlUnit::init(void* initData) {
   //init executor
   StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
 
-  SCACU_LAPP_ << "Initializing slow command sandbox for node id " << DatasetDB::getDeviceID();
+  SCACU_LDBG_ << "Initializing slow command sandbox for node id " << DatasetDB::getDeviceID();
 
   //now we can call funciton for custom definition of the shared variable
-  SCACU_LAPP_ << "Setting up custom shared variable for node id " << DatasetDB::getDeviceID();
+  SCACU_LDBG_ << "Setting up custom shared variable for node id " << DatasetDB::getDeviceID();
 }
 
 /*
@@ -148,12 +148,12 @@ void SCAbstractControlUnit::deinit() {
   //call parent impl
 
   if (slow_command_executor) {
-    SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
+    SCACU_LDBG_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
     StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
     //deassociate the data storage
     slow_command_executor->control_unit_instance = NULL;
   } else {
-    SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
+    SCACU_LDBG_ << "No command executor allocated for " << DatasetDB::getDeviceID();
   }
   AbstractControlUnit::deinit();
 }
@@ -165,7 +165,7 @@ void SCAbstractControlUnit::start() {
   //call parent impl
   AbstractControlUnit::start();
 
-  SCACU_LAPP_ << "Start sandbox for node id:" << DatasetDB::getDeviceID();
+  SCACU_LDBG_ << "Start sandbox for node id:" << DatasetDB::getDeviceID();
   StartableService::startImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 
@@ -176,7 +176,7 @@ void SCAbstractControlUnit::stop() {
   //call parent impl
   AbstractControlUnit::stop();
 
-  SCACU_LAPP_ << "Stop slow command executor for node id:" << DatasetDB::getDeviceID();
+  SCACU_LDBG_ << "Stop slow command executor for node id:" << DatasetDB::getDeviceID();
   StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 
@@ -200,7 +200,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
   //add slow control system prorperty
   AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
   //add heart beat attribute
-  SCACU_LAPP_ << "Adding addiodiotnal system attribute for control unit numbers";
+  SCACU_LDBG_ << "Adding additional system attribute for control unit numbers";
   domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_AVAILABLE, 0, DataType::TYPE_INT32);
 
   uint32_t run_unit = slow_command_executor->getNumberOfSandboxInstance();

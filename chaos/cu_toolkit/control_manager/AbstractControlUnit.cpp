@@ -701,7 +701,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "init") {
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_INIT_DB) {
                 //cast to the CDatawrapper instance
-                ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
+                ACULDBG_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
                 run_id = CDW_GET_INT64_WITH_DEFAULT(init_configuration, ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID, 0);
                 DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
                 break;
@@ -710,10 +710,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 //call init sequence
                 //call update param function
                 //initialize key data storage for device id
-                ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
+                //ACULDBG_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
                 key_data_storage.reset(DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID()));
                 
-                ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
+                ACULDBG_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID()<< " init:"<< ((init_configuration.get())?init_configuration->getJSONString():"NULL CONFIG");
                 key_data_storage->init(init_configuration.get());
                 break;
             }
@@ -770,7 +770,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 break;
             }
             CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SHARED_CACHE) {
-                ACULAPP_ << "Deallocate the user cache wrapper for:" + DatasetDB::getDeviceID();
+                ACULDBG_ << "Deallocate the user cache wrapper for:" << DatasetDB::getDeviceID();
                 if (attribute_shared_cache_wrapper) {
                     delete (attribute_shared_cache_wrapper);
                     attribute_shared_cache_wrapper = NULL;

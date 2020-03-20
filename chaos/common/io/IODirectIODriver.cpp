@@ -34,7 +34,6 @@
 
 #include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
 
-#define IODirectIODriver_LOG_HEAD "[IODirectIODriver] - "
 
 #define IODirectIODriver_LINFO_ INFO_LOG(IODirectIODriver)
 #define IODirectIODriver_DLDBG_ DBG_LOG(IODirectIODriver)
@@ -85,8 +84,6 @@ void IODirectIODriver::init(void *_init_parameter) {
     shutting_down = false;
     IODataDriver::init(_init_parameter);
     
-    IODirectIODriver_LINFO_ << "Check init parameter";
-    
     init_parameter.client_instance = NetworkBroker::getInstance()->getSharedDirectIOClientInstance();
     //if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
     
@@ -97,7 +94,7 @@ void IODirectIODriver::init(void *_init_parameter) {
     //InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
     
     //get the client and server channel
-    IODirectIODriver_LINFO_ << "Allocate the default device server channel";
+    IODirectIODriver_DLDBG_ << "Allocate the default device server channel";
     device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
     device_server_channel->setHandler(this);
     
@@ -105,17 +102,17 @@ void IODirectIODriver::init(void *_init_parameter) {
     current_endpoint_p_port = init_parameter.endpoint_instance->getPublicServerInterface()->getPriorityPort();
     current_endpoint_s_port = init_parameter.endpoint_instance->getPublicServerInterface()->getServicePort();
     current_endpoint_index = init_parameter.endpoint_instance->getRouteIndex();
-    IODirectIODriver_LINFO_ << "Our receiving priority port is " << current_endpoint_p_port << " and enpoint is " <<current_endpoint_index;
+    IODirectIODriver_DLDBG_ << "Our receiving priority port is " << current_endpoint_p_port << " and enpoint is " <<current_endpoint_index;
     
 }
 
 void IODirectIODriver::deinit() {
     if(shutting_down){
-        IODirectIODriver_LINFO_ << "Already deinitialized";
+        IODirectIODriver_DLDBG_ << "Already deinitialized";
         return;
     }
     shutting_down = true;
-    IODirectIODriver_LINFO_ << "Remove active query";
+    IODirectIODriver_DLDBG_ << "Remove active query";
     //lock all  internal resource that can be effetted by
     ChaosReadLock wmap_loc(map_query_future_mutex);
     
@@ -129,7 +126,7 @@ void IODirectIODriver::deinit() {
     map_query_future.clear();
     
     //remove all url and service
-    IODirectIODriver_LINFO_ << "Remove all urls";
+    IODirectIODriver_DLDBG_ << "Remove all urls";
     connectionFeeder.clear();
     
     //deinitialize server channel
@@ -274,7 +271,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
             //we have the dataaset
             try {
                 cdw_shrd_ptr = snapshot_result.channel_data;
-                IODirectIODriver_LINFO_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+                IODirectIODriver_DLDBG_ << "Got dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
             } catch (std::exception& ex) {
                 IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
             } catch (...) {
@@ -291,7 +288,7 @@ void IODirectIODriver::addServerURL(const std::string& url) {
         IODirectIODriver_LERR_ << "Url " << url << " non well formed";
         return;
     }
-    IODirectIODriver_LINFO_ << "Adding url" << url;
+    IODirectIODriver_DLDBG_ << "Adding url" << url;
     //add new url to connection feeder
     connectionFeeder.addURL(chaos::common::network::URL(url));
 }
@@ -314,7 +311,7 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
                 // IODirectIODriver_LERR_ << "Data proxy server description " << serverDesc << " is already installed in driver";
                 continue;
             }
-            IODirectIODriver_LINFO_ << CHAOS_FORMAT("Add server %1% to IODirectIODriver", %serverDesc);
+            IODirectIODriver_DLDBG_ << CHAOS_FORMAT("Add server %1% to IODirectIODriver", %serverDesc);
             
             //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
@@ -344,7 +341,7 @@ void IODirectIODriver::disposeService(void *service_ptr) {
 }
 
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
-    IODirectIODriver_LINFO_ << "Try to create service for " << url.getURL();
+    IODirectIODriver_DLDBG_ << "Try to create service for " << url.getURL();
     IODirectIODriverClientChannels * clients_channel = NULL;
     chaos_direct_io::DirectIOClientConnection *tmp_connection = init_parameter.client_instance->getNewConnection(url.getURL());
     if(tmp_connection) {
@@ -382,7 +379,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
         //set this driver instance as event handler for connection
         clients_channel->connection->setEventHandler(this);
         clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));
-        IODirectIODriver_LINFO_ << "Connection for " << url.getURL() << " added succesfully";
+        IODirectIODriver_DLDBG_ << "Connection for " << url.getURL() << " added succesfully";
         return clients_channel;
     } else {
         IODirectIODriver_LERR_ << "Error creating client connection for " << url.getURL();

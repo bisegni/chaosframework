@@ -372,7 +372,13 @@ ChaosSharedPtr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePo
 
 void KeyDataStorage::updateConfiguration(CDataWrapper *configuration) {
     //update the driver configration
-    if(io_data_driver.get()) io_data_driver->updateConfiguration(configuration);
+    if(io_data_driver.get()) {
+        KeyDataStorageLDBG <<" configuration to update:"<<((configuration)?configuration->getJSONString():"NULL CONFIGURATION");
+        io_data_driver->updateConfiguration(configuration);
+    } else {
+        KeyDataStorageLERR <<" NULL IODRIVER configuration to update:"<<(configuration)?configuration->getJSONString():"NULL CONFIGURATION";
+
+    }
     
 }
 
