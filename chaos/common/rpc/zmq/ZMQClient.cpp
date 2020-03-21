@@ -387,7 +387,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                 deleteSocket(socket_info);
                 socket_info = NULL;
             }else{
-                ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent :"<<message_data->getJSONString();
+               // ZMQC_LDBG << "Message seq_id:"<<loc_seq_id<<" sent :"<<message_data->getJSONString();
                 //ok get the answer
                 err = zmq_msg_recv(&reply,
                                    socket_info->resource_pooled->socket,
@@ -426,7 +426,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                             if(RpcClient::syncrhonous_call) {
                                 forwadSubmissionResult(MOVE(messageInfo),MOVE(tmp));
                             } else {
-                                ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for request:"<<loc_seq_id;
+                               // ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for request:"<<loc_seq_id;
                                 //there is a reply so we need to check if all ok or in case answer to request
                                 forwadSubmissionResultError(messageInfo->sender_node_id,
                                                             messageInfo->sender_request_id,
@@ -440,7 +440,7 @@ void ZMQClient::processBufferElement(NFISharedPtr messageInfo) {
                                                         __PRETTY_FUNCTION__);
                         }
                     } else {
-                        ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for message:"<<loc_seq_id;
+                      //  ZMQC_LDBG << "ACK id:"<<rid_ack<<" Received for message:"<<loc_seq_id;
                     }
                 }
             }

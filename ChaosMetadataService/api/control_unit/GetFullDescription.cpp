@@ -152,7 +152,7 @@ CDWUniquePtr GetFullDescription::execute(CDWUniquePtr api_data) {
     
     //check if we have found some
     if(associated_ds.size() == 0) {
-        CU_GCD_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best tree of them";
+        CU_GCD_DBG << "No dataservice has been found for control unit:" << cu_uid <<" m";
         //no we need to get tbest tree available cds to retun publishable address
         if((err = ds_da->getBestNDataService(ha_zone,
                                              associated_ds,

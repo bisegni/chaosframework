@@ -373,7 +373,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(const std::string& ds_zone
                 best_available_data_service.push_back(ChaosSharedPtr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
             }
         } else {
-            MDBDSDA_ERR << "No data service has been selected";
+            MDBDSDA_ERR << "No data service has been selected query:"<<query.toString()<<" prj:"<<projection.toString();
         }
         
     } catch (const mongo::DBException &e) {

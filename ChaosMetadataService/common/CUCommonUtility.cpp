@@ -315,7 +315,7 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     
     //check if we have found some
     if(associated_ds.size() == 0) {
-        CUCU_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best tree of them";
+        CUCU_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best list them";
         //no we need to get tbest tree available cds to retun publishable address
         if((err = ds_da->getBestNDataService(ha_zone_name,
                                              associated_ds, 3))) {
