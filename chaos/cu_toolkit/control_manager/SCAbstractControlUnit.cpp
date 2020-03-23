@@ -212,10 +212,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
   //add sand box identifier for the last system event
   domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
 
-  //command status
-  domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_QUEUED_CMD, 0, DataType::TYPE_INT32);
-  domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_STACK_CMD, 0, DataType::TYPE_INT32);
-  domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS, 0, DataType::TYPE_STRING);
+  
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {

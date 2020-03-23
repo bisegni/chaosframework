@@ -1612,6 +1612,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         //add history time
         domain_attribute_setting.addAttribute(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, 0, DataType::TYPE_INT64);
 
+        //command status
+        domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_QUEUED_CMD, 0, DataType::TYPE_INT32);
+        domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_STACK_CMD, 0, DataType::TYPE_INT32);
+        domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS, 0, DataType::TYPE_STRING);
         // add hostname
         std::string hn=chaos::GlobalConfiguration::getInstance()->getHostname();
         domain_attribute_setting.addAttribute(chaos::ControlUnitDatapackSystemKey::CU_SOURCE_HOSTNAME, (uint32_t)hn.size(), DataType::TYPE_STRING);
