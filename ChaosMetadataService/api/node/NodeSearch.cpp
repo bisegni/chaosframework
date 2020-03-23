@@ -44,18 +44,18 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
     if (api_data->hasKey("last_node_sequence_id") &&
         api_data->isInt32Value("last_node_sequence_id") ){
         last_sequence_id=(uint32_t) api_data->getInt32Value("last_node_sequence_id");
-        NS_DBG << "Need to load a new page starting from id:" << last_sequence_id;
+     //   NS_DBG << "Need to load a new page starting from id:" << last_sequence_id;
     }
     
     if (api_data->hasKey("result_page_length") &&
         api_data->isInt32Value("result_page_length")){
         page_length=(uint32_t) api_data->getInt32Value("result_page_length");
-        NS_DBG << "The length of the page has been set to:" << page_length;
+   //     NS_DBG << "The length of the page has been set to:" << page_length;
     }
     if (api_data->hasKey("alive_only") &&
         api_data->isBoolValue("alive_only")){
         alive_only=api_data->getBoolValue("alive_only");
-        NS_DBG << "Search only item that are with alive state:" << alive_only;
+        NS_DBG << "Search only item that are with alive state:" << alive_only <<" last seq:"<<last_sequence_id<<" page:"<<page_length;
     }
     //get node data access
     chaos::NodeType::NodeSearchType search_type=(chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter");
