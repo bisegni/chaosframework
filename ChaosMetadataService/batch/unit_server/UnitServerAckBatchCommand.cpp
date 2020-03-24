@@ -219,7 +219,9 @@ int UnitServerAckCommand::prepareInstance() {
     
     //prepare load data pack to sento to control unit
     autoload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(last_worked_cu.node_uid,
-                                                                          getDataAccess<mds_data_access::ControlUnitDataAccess>());
+                                                                          getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                  getDataAccess<mds_data_access::DataServiceDataAccess>());
     if(autoload_pack.get() == NULL){
         err = -1;
         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;

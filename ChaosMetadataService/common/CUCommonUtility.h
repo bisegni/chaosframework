@@ -43,13 +43,18 @@ namespace chaos {
                 
             public:
                 static ChaosUniquePtr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,
-                                                                                                              chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
+                                                                                                              chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                                         chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                                         chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da);
                 
                 static void prepareAutoInitAndStartInAutoLoadControlUnit(const std::string& cu_uid,
                                                                          chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                          chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
                                                                          chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da,
                                                                          chaos::common::data::CDataWrapper *auto_load_pack);
+                
+                static void addDataServicePack(ChaosUniquePtr<chaos::common::data::CDataWrapper>& data_pack,
+                                                                                      chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da, unsigned results=3);
                 
                 static ChaosUniquePtr<chaos::common::data::CDataWrapper> initDataPack(const std::string& cu_uid,
                                                                                       chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,

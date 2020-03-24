@@ -23,8 +23,11 @@
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
+#include "../../common/CUCommonUtility.h"
 
 using namespace chaos::common::data;
+using namespace chaos::metadata_service::common;
+
 using namespace chaos::metadata_service::api::control_unit;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -63,12 +66,21 @@ CDWUniquePtr InitDeinit::execute(CDWUniquePtr api_data) {
     
     if(init) {
         //set the aciton type
+            
+        
         data_pack->addInt32Value("action", (int32_t)0);
+                                                                            /*getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                          getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                          getDataAccess<mds_data_access::DataServiceDataAccess>(),*/
+
     } else {
         //set the aciton type
         data_pack->addInt32Value("action", (int32_t)3);
     }
-    
+    //GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -1)
+    //GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -1)
+    //CUCommonUtility::addDataServicePack(cu_uid,data_pack,cu_da,ds_da);
+
     //launch initilization in background
     command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand)),
                                                    data_pack.release());

@@ -109,10 +109,25 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
     }
     //prepare load data pack to sento to control unit
     if(load){
+        load_unload_pack.reset(new CDataWrapper());
+
         //in case ho script instance copy the script information
         prepareInstanceScriptForLoad(cu_id);
-        load_unload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(cu_id,
-                                                                                 getDataAccess<mds_data_access::ControlUnitDataAccess>());
+        /*
+        CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(cu_id,
+                                                                  getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                  getDataAccess<mds_data_access::DataServiceDataAccess>(),
+                                                                  load_unload_pack.get());
+        */
+        //// TOCHECK: THIS FUNCTION DOES NOT INITIALIZE THE DATASERVER FOR THE CU
+        // IT SEEMS THE THE LOAD AND INITIALIZAITON OF PARAMETERS IS PERFORMED JUST ONCE
+  
+       load_unload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(cu_id,
+                                                                                 getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                  getDataAccess<mds_data_access::DataServiceDataAccess>());
+
     } else {
         load_unload_pack.reset(new CDataWrapper());
         load_unload_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);

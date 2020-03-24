@@ -239,7 +239,9 @@ bool LoadInstanceOnUnitServer::prepareScriptInstance(const chaos::service_common
     
     //script is ever considered that it is in autoload
     load_datapack = CUCommonUtility::prepareRequestPackForLoadControlUnit(current_instance_name,
-                                                                          getDataAccess<mds_data_access::ControlUnitDataAccess>());
+                                                                          getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                  getDataAccess<mds_data_access::DataServiceDataAccess>());
     if(load_datapack.get() == NULL){
         ERR << "Error creating autoload datapack for:"<<current_instance_name;
         return false;

@@ -40,7 +40,9 @@ using namespace chaos::service_common::persistence::data_access;
 #define CUCU_ERR  ERR_LOG(CUCommonUtility)
 
 
-ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, ControlUnitDataAccess *cu_da) {
+ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUnit(const std::string& cu_uid, chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                                         chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                                         chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da) {
     CUCU_DBG << "Prepare autoload request for:" << cu_uid;
     int err = 0;
     CDataWrapper * tmp_ptr = NULL;
@@ -59,6 +61,8 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::prepareReques
         } else {
             CUCU_DBG << "Create the autoload datapack for:" << cu_uid;
             result_pack.reset(new CDataWrapper());
+
+                
             //add cu id
             result_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
             //add cu type
@@ -66,6 +70,8 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::prepareReques
             //add driver description
             instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION, *result_pack);
             instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, *result_pack);
+            addDataServicePack(result_pack,ds_da);
+
         }
     } else {
         CUCU_ERR << "No instance found";
@@ -178,7 +184,123 @@ CDWShrdPtr CUCommonUtility::getConfigurationToUse(const std::string& cu_uid,
     }
     return element_configuration;
 }
+static int64_t nu_cache_ts = 0;
+static std::vector< ChaosSharedPtr<CDataWrapper> > data_services;
+void CUCommonUtility::addDataServicePack(ChaosUniquePtr<chaos::common::data::CDataWrapper>& result,chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da,unsigned numner_or_result){
+      int err = 0;
+    int64_t now = TimingUtil::getTimeStamp();
+    
+    const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
+    
+    
+    if(now >= nu_cache_ts ||
+       data_services.size() == 0) {
+        data_services.clear();
+        
+        if((err = ds_da->getBestNDataService(ha_zone_name,
+                                             data_services,
+                                             numner_or_result))) {
+            throw CException( err, "Error fetching best available data service",__PRETTY_FUNCTION__);
+        }
+        //update cache on first call after ten seconds
+        nu_cache_ts = now + 10000;
+    }
+    
+    //constructs the result
+    //result.reset(new CDataWrapper());
+    if(data_services.size()==0){
+        /// something wrong returning my self
+        result->appendStringToArray(boost::str(boost::format("%1%|0")%NetworkBroker::getInstance()->getDirectIOUrl()));
+          result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+                                                        
+         result->appendStringToArray(NetworkBroker::getInstance()->getRPCUrl());
+          result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+            CUCU_ERR<< " no dataservice from DB, returning myself.:"<<result->getJSONString();
 
+          return ;
+      
+    }
+    if(data_services.size()>0) {
+        CUCU_DBG << CHAOS_FORMAT("Found %1% data services available", %data_services.size());
+        BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
+            if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
+               ds_element->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)){
+                result->appendStringToArray(boost::str(boost::format("%1%|%2%")%
+                                                       ds_element->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)%
+                                                       ds_element->getInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)));
+            }
+            
+        }
+        result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+        
+        //add rpc information for found nodes
+        BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
+            if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)){
+                result->appendStringToArray(ds_element->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+            }
+        }
+        result->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+    } else {
+        // something is going wrong returning myself
+       
+
+        throw CException( err, "No best endpoint found",__PRETTY_FUNCTION__);
+    }
+}
+#if 0
+void CUCommonUtility::addDataServicePack(const std::string& cu_uid,ChaosUniquePtr<chaos::common::data::CDataWrapper>& init_datapack,
+                                                                                      chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                                                      chaos::metadata_service::persistence::data_access::DataServiceDataAccess *ds_da,unsigned results){
+
+ std::vector<std::string> associated_ds;
+ int err;
+     const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
+
+    //load the asosciated dataservice
+    if((err = cu_da->getDataServiceAssociated(cu_uid,
+                                              associated_ds))){
+        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the associated data service for the control unit %1%") % cu_uid));
+    }
+    
+    //check if we have found some
+    if(associated_ds.size() == 0) {
+        CUCU_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best list them";
+        //no we need to get tbest tree available cds to retun publishable address
+        if((err = ds_da->getBestNDataService(ha_zone_name,
+                                             associated_ds, 3))) {
+            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching %2% best available data service for inititializing the control unit:%1%") % cu_uid % 3));
+        }
+    }
+    
+    
+    //add endpoint(data service) where the control unit need to publish his dataset
+    if(associated_ds.size()) {
+        //add data service where published data
+        BOOST_FOREACH(std::string ds_unique_id, associated_ds) {
+            CDataWrapper *ds_description = NULL;
+            if((err = ds_da->getDescription(ds_unique_id, &ds_description))) {
+                LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetchin description for data service %1%") % ds_unique_id));
+            } else if(ds_description == NULL) {
+                CUCU_DBG << "No description foudn for data service:" << ds_unique_id;
+            } else {
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_object(ds_description);
+                if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
+                   ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
+                    //we can create the address
+                    std::string direct_io_addr = boost::str(boost::format("%1%|%2%") %
+                                                            ds_object->getStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) %
+                                                            ds_object->getInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+                    init_datapack->appendStringToArray(direct_io_addr);
+                }
+                
+            }
+            
+        }
+        init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+    }
+   
+}
+#endif          
 ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_uid,
                                                                                 NodeDataAccess *n_da,
                                                                                 ControlUnitDataAccess *cu_da,
@@ -187,7 +309,6 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     int64_t run_id = 0;
     CDataWrapper *result = NULL;
     PropertyGroup control_unit_property_group;
-    const std::string& ha_zone_name = ChaosMetadataService::getInstance()->setting.ha_zone_name;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> cu_base_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_description;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> init_datapack(new CDataWrapper());
@@ -305,50 +426,9 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
         }
     }
     
+
+   addDataServicePack( init_datapack,ds_da);
     
-    std::vector<std::string> associated_ds;
-    //load the asosciated dataservice
-    if((err = cu_da->getDataServiceAssociated(cu_uid,
-                                              associated_ds))){
-        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the associated data service for the control unit %1%") % cu_uid));
-    }
-    
-    //check if we have found some
-    if(associated_ds.size() == 0) {
-        CUCU_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best list them";
-        //no we need to get tbest tree available cds to retun publishable address
-        if((err = ds_da->getBestNDataService(ha_zone_name,
-                                             associated_ds, 3))) {
-            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching %2% best available data service for inititializing the control unit:%1%") % cu_uid % 3));
-        }
-    }
-    
-    
-    //add endpoint(data service) where the control unit need to publish his dataset
-    if(associated_ds.size()) {
-        //add data service where published data
-        BOOST_FOREACH(std::string ds_unique_id, associated_ds) {
-            CDataWrapper *ds_description = NULL;
-            if((err = ds_da->getDescription(ds_unique_id, &ds_description))) {
-                LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetchin description for data service %1%") % ds_unique_id));
-            } else if(ds_description == NULL) {
-                CUCU_DBG << "No description foudn for data service:" << ds_unique_id;
-            } else {
-                ChaosUniquePtr<chaos::common::data::CDataWrapper> ds_object(ds_description);
-                if(ds_object->hasKey(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
-                   ds_object->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
-                    //we can create the address
-                    std::string direct_io_addr = boost::str(boost::format("%1%|%2%") %
-                                                            ds_object->getStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR) %
-                                                            ds_object->getInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
-                    init_datapack->appendStringToArray(direct_io_addr);
-                }
-                
-            }
-            
-        }
-        init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
-    }
     
     PropertyGroupVectorSDWrapper pgu_default;
     if((err = n_da->getProperty(PropertyTypeDefaultValues, cu_uid, pgu_default()))){
