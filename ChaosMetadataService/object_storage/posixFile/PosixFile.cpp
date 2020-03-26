@@ -1010,6 +1010,7 @@ int PosixFile::pushObject(const std::string&                       key,
     if (notexist /*|| (ts - (id->second).ts) > 1000*/) {
       boost::filesystem::path p(dir);
       if ((boost::filesystem::exists(p) == false)) {
+        try {
         if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
           ERR << "cannot create directory:" << p << " runid:" << runid << " seq:" << seq;
           // last_access_mutex.unlock();
@@ -1018,8 +1019,12 @@ int PosixFile::pushObject(const std::string&                       key,
         } else {
           DBG << " CREATED DIR:" << p;
         }
+        } catch(boost::filesystem::filesystem_error& e){
+        ERR<< " Exception creating directory:"<< e.what();
+      }
         // 
       }
+      
       std::string path          = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
       ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
       s_lastWriteDir[dir].fname = path;
