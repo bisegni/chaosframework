@@ -395,18 +395,35 @@ CDWUniquePtr ChaosAbstractCommon::getProcessInfo(CHAOS_UNUSED CDWUniquePtr data)
     return GlobalConfiguration::getInstance()->getProcessInfoRef().fullStat();
     
 }
+
+static void clean_exit_th(int32_t sleeps,ChaosAbstractCommon*t){
+   LAPP_ << "STOPPING";
+
+    t->stop();
+    LAPP_ << "DEINIT";
+
+    t->deinit();
+    sleep(sleeps);
+    LAPP_ << "CLEAN EXIT!!!";
+    exit(0);
+
+}
+
+static void exit_th(int32_t sleeps){
+    sleep(sleeps);
+    LAPP_ << "FORCE EXIT!!!";
+    exit(0);
+
+}
 CDWUniquePtr ChaosAbstractCommon::nodeShutDown(CHAOS_UNUSED CDWUniquePtr data) {
     if(data->hasKey("kill") &&
        data->isBoolValue("kill") &&
        data->getBoolValue("kill")) {
         int32_t timeout = CDW_GET_INT32_WITH_DEFAULT(data, "timeout", 5);
         LAPP_ << "SHUTDOWN COMMAND:"<<data->getCompliantJSONString()<<" ABOUT TO EXIT IN:"<<timeout<< " seconds";
-
-        stop();
-        deinit();
-        
-        sleep(timeout);
-        exit(0);
+        // in case something blocks the thread will kill the process.
+        boost::thread th0(clean_exit_th,timeout,this);
+        boost::thread th1(exit_th,timeout);
     }
     return CDWUniquePtr();   
 }
