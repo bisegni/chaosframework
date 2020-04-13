@@ -721,6 +721,10 @@ namespace chaos {
     namespace ControlUnitNodeDefinitionKey {
         //! param to pass to the control unit during load operation[ string]
         static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
+
+        //! param control unit description
+        static const char * const CONTROL_UNIT_DESC                                = "cudk_desc";
+        
         //! param to pass to the control unit during init operation[ int64]
         static const char * const CONTROL_UNIT_RUN_ID                               = "cudk_run_id";
         //! Description for the control unit dirvers [vector[string, string, string]*]

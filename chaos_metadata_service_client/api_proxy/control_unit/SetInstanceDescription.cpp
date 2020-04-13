@@ -56,6 +56,8 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addStringValue("desc", api_data.desc);
     // set the load parameter
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
+    instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DESC, api_data.desc);
+
     //add the deafult scheduler delay
     instance_description.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, api_data.default_schedule_delay);
     if(legacy_support) {

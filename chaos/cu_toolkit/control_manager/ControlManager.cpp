@@ -485,7 +485,7 @@ CDWUniquePtr ControlManager::loadControlUnit(CDWUniquePtr message_data) {
     CHECK_KEY_THROW_AND_LOG(message_data, NodeDefinitionKey::NODE_UNIQUE_ID, LCMERR_, -3, "No id for the work unit instance found");
     
     std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE);
-    LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
+    LCMAPP_ << "Load operation get new request for instance the work unit with alias:" << work_unit_type;
     
     WriteLock write_instancer_lock(mutex_map_cu_instancer);
     CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, CHAOS_FORMAT("No work unit instancer's found for type %1%",%work_unit_type));

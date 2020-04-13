@@ -558,7 +558,9 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM)) {
             updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM << instance_description.getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
         }
-        
+        if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DESC)) {
+            updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DESC<< instance_description.getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DESC);
+        }
         if(instance_description.hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
             updated_field << ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY << (long long)instance_description.getInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
         }
