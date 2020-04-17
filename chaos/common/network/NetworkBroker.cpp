@@ -494,8 +494,11 @@ void NetworkBroker::registerAction(DeclareAction* declare_action_class) {
  Deregister actions for a determianted domain
  */
 void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
-    CHAOS_ASSERT(declare_action_class)
-    rpc_dispatcher->deregisterAction(declare_action_class);
+    if(rpc_dispatcher&&declare_action_class){
+        rpc_dispatcher->deregisterAction(declare_action_class);
+    } else {
+        LERR_<<"declare_action_class null";
+    }
 }
 
 #pragma mark Message Submission

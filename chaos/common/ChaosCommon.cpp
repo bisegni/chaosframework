@@ -397,7 +397,7 @@ CDWUniquePtr ChaosAbstractCommon::getProcessInfo(CHAOS_UNUSED CDWUniquePtr data)
 }
 
 static void clean_exit_th(int32_t sleeps,ChaosAbstractCommon*t){
-   LAPP_ << "STOPPING";
+   LAPP_ << "STOPPING after:"<<sleeps;
 
     t->stop();
     LAPP_ << "DEINIT";
@@ -420,10 +420,11 @@ CDWUniquePtr ChaosAbstractCommon::nodeShutDown(CHAOS_UNUSED CDWUniquePtr data) {
        data->isBoolValue("kill") &&
        data->getBoolValue("kill")) {
         int32_t timeout = CDW_GET_INT32_WITH_DEFAULT(data, "timeout", 5);
-        LAPP_ << "SHUTDOWN COMMAND:"<<data->getCompliantJSONString()<<" ABOUT TO EXIT IN:"<<timeout<< " seconds";
-        // in case something blocks the thread will kill the process.
         boost::thread th0(clean_exit_th,timeout,this);
         boost::thread th1(exit_th,timeout);
+        LAPP_ << "SHUTDOWN COMMAND:"<<data->getCompliantJSONString()<<" ABOUT TO EXIT IN:"<<timeout<< " seconds";
+        // in case something blocks the thread will kill the process.
+       
     }
     return CDWUniquePtr();   
 }

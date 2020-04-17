@@ -432,7 +432,7 @@ int MongoDBControlUnitDataAccess::getFullDescription(const std::string& cu_uniqu
                                       query))) {
             MDBCUDA_ERR << "Error fetching dataset";
         } else if(result.isEmpty()) {
-            MDBCUDA_ERR << "No element found";
+            MDBCUDA_ERR << "No element found:"<<cu_unique_id;
         } else {
             //we have dataset so set it directly within the cdsta wrapper
             *dataset_description = new CDataWrapper(result.objdata());
@@ -471,7 +471,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                       &prj))) {
             MDBCUDA_ERR << "Error fetching dataset";
         } else if(result.isEmpty()) {
-            MDBCUDA_ERR << "No element found";
+            MDBCUDA_ERR << "No element found:"<<cu_unique_id;
         } else {
             //we have dataset so set it directly within the cdsta wrapper
             *dataset_description = new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata());
@@ -512,7 +512,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                       &prj))) {
             MDBCUDA_ERR << "Error fetching dataset";
         } else if(result.isEmpty()) {
-            MDBCUDA_ERR << "No element found";
+            MDBCUDA_ERR << "No element found:"<<cu_unique_id;
         } else {
             //we have dataset so set it directly within the cdsta wrapper
             CDWUniquePtr ds_in_cdw(new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata()));

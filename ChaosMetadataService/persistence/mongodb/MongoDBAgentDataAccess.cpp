@@ -35,8 +35,8 @@ using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::data_access;
 
 #define INFO    INFO_LOG(MongoDBScriptDataAccess)
-#define ERR     DBG_LOG(MongoDBScriptDataAccess)
-#define DBG     ERR_LOG(MongoDBScriptDataAccess)
+#define ERR     ERR_LOG(MongoDBScriptDataAccess)
+#define DBG     DBG_LOG(MongoDBScriptDataAccess)
 
 MongoDBAgentDataAccess::MongoDBAgentDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),

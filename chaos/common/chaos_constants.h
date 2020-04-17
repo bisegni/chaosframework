@@ -136,7 +136,7 @@ namespace chaos {
         //! the regular expression for check the wel format key/valuparameter list for CS_CMDM_OPT_RPC_IMPL_KV_PARAM
         static const char * const OPT_RPC_IMPL_KV_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+):([a-zA-Z0-9/_,.]+))*";
         //! define the default time for rpc operation
-        static const unsigned int GlobalRPCTimeoutinMSec                = 5000;
+        static const unsigned int GlobalRPCTimeoutinMSec                = 20000;
     }
     /** @} */ // end of RpcConfigurationKey
     

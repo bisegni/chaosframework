@@ -186,8 +186,8 @@ void ChaosCUToolkit::start() {
     LAPP_ << "-----------------------------------------";
     //at this point i must with for end signal
     waitCloseSemaphore.wait();
-    LAPP_ << "------ ORDERED EXIT";
-
+    LAPP_ << "------ ORDERED EXIT---";
+    sleep(1);
   } catch (CException& ex) {
     DECODE_CHAOS_EXCEPTION(ex);
   } catch (...) {
@@ -273,6 +273,13 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
 }
 
 CDWUniquePtr ChaosCUToolkit::nodeShutDown(chaos::common::data::CDWUniquePtr data) {
+    CDWUniquePtr ret=ChaosCommon<ChaosCUToolkit>::nodeShutDown(MOVE(data));
+
+    signal(SIGABRT,SIG_DFL);
+    signal(SIGSEGV,SIG_DFL);
+    signal(SIGTERM,SIG_DFL);
+    signal(SIGINT,SIG_DFL);
+
     waitCloseSemaphore.unlock();
-    return ChaosCommon<ChaosCUToolkit>::nodeShutDown(MOVE(data));
+    return ret;
 }
