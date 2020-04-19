@@ -147,15 +147,26 @@ start_us(){
             warn_mesg "localhost configuration file not found in \"$CHAOS_PREFIX/etc/localhost/MDSConfig.json\" " "start skipped"
             return
         fi
-        info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
-        if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.json $CHAOS_OVERALL_OPT -r 1 --log-on-file --log-file $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.log > $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.std.out 2>&1 " "ChaosMDSCmd";then
+        # info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
+        # if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.json $CHAOS_OVERALL_OPT -r 1 --log-on-file --log-file $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.log > $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.std.out 2>&1 " "ChaosMDSCmd";then
+        #     error_mesg "failed initialization of " "MDS"
+        #     exit 1
+        # fi
+ 
+       info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
+        if ! jchaosctl --server localhost:8081 --upload $CHAOS_PREFIX/etc/localhost/chaosDashboard.json > $CHAOS_PREFIX/log/jchaosctl.transfer.std.out 2>&1;then
             error_mesg "failed initialization of " "MDS"
             exit 1
         fi
         info_mesg "wait 5s ..."
         sleep 5
-        info_mesg "starting " "$US_EXEC"
-        run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$US_EXEC.$MYPID.std.out 2>&1 &" "$US_EXEC"
+        info_mesg "starting US " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
+        if ! jchaosctl --server localhost:8081 --op start --uid TEST >& $CHAOS_PREFIX/log/jchaosctl.start.std.out;then
+            error_mesg "failed starting of " "TEST"
+            exit 1
+        fi
+#        info_mesg "starting " "$US_EXEC"
+#        run_proc "$CHAOS_PREFIX/bin/$US_EXEC --conf-file $CHAOS_PREFIX/etc/cu.cfg $CHAOS_OVERALL_OPT --log-on-file 1 --log-file $CHAOS_PREFIX/log/$US_EXEC.$MYPID.log > $CHAOS_PREFIX/log/$US_EXEC.$MYPID.std.out 2>&1 &" "$US_EXEC"
     fi
 }
 
@@ -173,10 +184,12 @@ agent_stop()
 
 
 us_stop(){
-    info_mesg "stopping... " "$US_EXEC"
-    if [ -n "$(get_pid $CHAOS_PREFIX/bin/$US_EXEC)" ];then
-        stop_proc "$CHAOS_PREFIX/bin/$US_EXEC"
+    info_mesg "stopping... " "TEST"
+    if ! jchaosctl --server localhost:8081 --op stop --uid TEST >& $CHAOS_PREFIX/log/jchaosctl.std.out ;then
+            error_mesg "failed stopping of " "TEST"
+            exit 1
     fi
+    
 }
 
 mds_stop()
@@ -198,6 +211,9 @@ start_all(){
     start_mds
     status=$((status + $?))
     
+    start_agent
+    status=$((status + $?))
+    
     start_ui
     status=$((status + $?))
     
@@ -206,6 +222,8 @@ start_all(){
 stop_all(){
     local status=0
     info_mesg "stopping all chaos services..."
+    us_stop
+    status=$((status + $?))
     
     ui_stop
     status=$((status + $?))
@@ -214,8 +232,6 @@ stop_all(){
     #    cds_stop
     #    status=$((status + $?))
     agent_stop
-    status=$((status + $?))
-    us_stop
     status=$((status + $?))
     exit $status
 }
@@ -253,7 +269,6 @@ case "$cmd" in
     start)
         if [ -z "$2" ]; then
             start_all
-            start_agent
             
             
         else
@@ -278,9 +293,11 @@ case "$cmd" in
                 
                 devel)
                     start_mds
-                    start_us
                     start_agent
-		    start_ui
+        		    start_ui
+                    sleep 1
+                    start_us
+                    
                     exit 0
                 ;;
                 *)

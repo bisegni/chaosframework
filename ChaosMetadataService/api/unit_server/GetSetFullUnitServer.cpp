@@ -59,7 +59,10 @@ CDWUniquePtr GetSetFullUnitServer::execute(CDWUniquePtr api_data) {
     
     //UnitServer is not there in a get operation
     if(!presence && !setop) {
-        LOG_AND_TROW_FORMATTED(US_ACT_ERR, -7, "The unit server '%1%' has not been found", % us_uid);
+        US_ACT_DBG<<"The unit server '"<<us_uid<<" has not been found";
+        return CDWUniquePtr();
+
+       // LOG_AND_TROW_FORMATTED(US_ACT_ERR, -7, "The unit server '%1%' has not been found", % us_uid);
     }
     if(setop){
         if(presence){
