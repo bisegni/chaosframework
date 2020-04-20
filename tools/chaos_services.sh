@@ -13,8 +13,10 @@ source $scriptdir/common_util.sh
 #CDS_CONF=cds.cfg
 MDS_EXEC=mds
 UI_EXEC=webui
-US_EXEC=cu
+US_EXEC=UnitServer
 AGENT_EXEC=agent
+MDS_CONFIG=$CHAOS_PREFIX/etc/localhost/chaosDashboard.json
+
 if [ -z "$CHAOS_PREFIX" ]; then
     error_mesg "CHAOS_PREFIX environment variables not set"
     exit 1
@@ -56,7 +58,7 @@ mds_checks(){
 
 
 usage(){
-    info_mesg "Usage :$0 {start|stop|status| start agent| start mds | start webui| start us |start devel | stop webui|stop mds| stop us}"
+    info_mesg "Usage :$0 {start|stop|status| config| start agent| start mds | start webui| start us |start devel | stop webui|stop mds| stop us}"
 }
 start_mds(){
     if [ -n "$CHAOS_MDS" ];then
@@ -133,6 +135,17 @@ start_agent(){
     fi
 }
 
+load_config(){
+if [ ! -e "$MDS_CONFIG" ]; then
+            error_mesg "localhost configuration file not found in \"$MDS_CONFIG\" " "start skipped"
+            exit 1
+fi
+info_mesg "transferring configuration to MDS " "$MDS_CONFIG"
+if ! jchaosctl --server localhost:8081 --upload $MDS_CONFIG >^ $CHAOS_PREFIX/log/jchaosctl.transfer.std.out 2>&1;then
+            error_mesg "failed initialization of " "MDS with $MDS_CONFIG"
+            exit 1
+fi
+}
 
 start_us(){
     if check_proc  "$CHAOS_PREFIX/bin/$US_EXEC";then
@@ -143,24 +156,16 @@ start_us(){
             warn_mesg "UnitServer configuration file not found in \"$CHAOS_PREFIX/etc/cu.cfg\" " "start skipped"
             return
         fi
-        if [ ! -e "$CHAOS_PREFIX/etc/localhost/MDSConfig.json" ]; then
-            warn_mesg "localhost configuration file not found in \"$CHAOS_PREFIX/etc/localhost/MDSConfig.json\" " "start skipped"
-            return
-        fi
+       
         # info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
         # if ! run_proc "$CHAOS_PREFIX/bin/ChaosMDSCmd --mds-conf $CHAOS_PREFIX/etc/localhost/MDSConfig.json $CHAOS_OVERALL_OPT -r 1 --log-on-file --log-file $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.log > $CHAOS_PREFIX/log/ChaosMDSCmd.$MYPID.std.out 2>&1 " "ChaosMDSCmd";then
         #     error_mesg "failed initialization of " "MDS"
         #     exit 1
         # fi
  
-       info_mesg "transferring configuration to MDS " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
-        if ! jchaosctl --server localhost:8081 --upload $CHAOS_PREFIX/etc/localhost/chaosDashboard.json > $CHAOS_PREFIX/log/jchaosctl.transfer.std.out 2>&1;then
-            error_mesg "failed initialization of " "MDS"
-            exit 1
-        fi
-        info_mesg "wait 5s ..."
+       
         sleep 5
-        info_mesg "starting US " "$CHAOS_PREFIX/etc/localhost/MDSConfig.json"
+        info_mesg "starting US through agent " "TEST"
         if ! jchaosctl --server localhost:8081 --op start --uid TEST >& $CHAOS_PREFIX/log/jchaosctl.start.std.out;then
             error_mesg "failed starting of " "TEST"
             exit 1
@@ -185,9 +190,8 @@ agent_stop()
 
 us_stop(){
     info_mesg "stopping... " "TEST"
-    if ! jchaosctl --server localhost:8081 --op stop --uid TEST >& $CHAOS_PREFIX/log/jchaosctl.std.out ;then
+    if ! jchaosctl --server localhost:8081 --op stop --uid TEST > $CHAOS_PREFIX/log/jchaosctl.stop.std.out ;then
             error_mesg "failed stopping of " "TEST"
-            exit 1
     fi
     
 }
@@ -211,11 +215,12 @@ start_all(){
     start_mds
     status=$((status + $?))
     
+    start_ui
+    status=$((status + $?))
+    
     start_agent
     status=$((status + $?))
     
-    start_ui
-    status=$((status + $?))
     
     
 }
@@ -290,11 +295,16 @@ case "$cmd" in
                     start_us
                     exit 0
                 ;;
-                
+                config)
+                    load_config
+                    exit 0
+                ;;
                 devel)
                     start_mds
+                    start_ui
+                    load_config
                     start_agent
-        		    start_ui
+        		    
                     sleep 1
                     start_us
                     
