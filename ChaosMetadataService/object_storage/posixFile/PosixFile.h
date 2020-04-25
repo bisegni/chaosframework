@@ -60,6 +60,7 @@ namespace chaos {
             static const uint64_t POSIX_YEARB_MS=366*24*60*(60*1000ULL);
 
 
+#ifdef CERN_ROOT
 
             class GenerateRootJob:public chaos::CObjectProcessingQueue<std::string>{
 
@@ -67,6 +68,7 @@ namespace chaos {
                 void processBufferElement(QueueElementShrdPtr element);
                 public:
             };
+#endif
             template< typename T>
             class SafeVector {
                 public:

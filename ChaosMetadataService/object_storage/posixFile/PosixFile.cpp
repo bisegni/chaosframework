@@ -55,7 +55,9 @@ chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
 #endif
 boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(1000);
+#ifdef CERN_ROOT
 GenerateRootJob PosixFile::rootGenJob;
+#endif
 bool PosixFile::removeTemp   = false;
 bool PosixFile::generateRoot = false;
 bool PosixFile::compress     = false;

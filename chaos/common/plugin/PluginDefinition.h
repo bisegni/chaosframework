@@ -41,7 +41,7 @@ namespace chaos {
              */
 #define DEFINE_PLUGIN_ALLOCATOR(a,v,t,n,r) extern "C" \
 r* a ## _allocator() {\
-return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
+return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t );\
 }
 
 			//! retunr the plugin definition instance lcass for the driver alias in input
