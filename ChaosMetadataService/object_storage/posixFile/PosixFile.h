@@ -235,9 +235,11 @@ public:
                 static cacheRead_t s_lastAccessedDir;
                 // return number of items, or negative if error
                 void timeout();
-                
+           #ifdef CERN_ROOT
+     
                 
                 static GenerateRootJob rootGenJob;
+#endif
                 public:
                 class dirpath_t{
                     public:
