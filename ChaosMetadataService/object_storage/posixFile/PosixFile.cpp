@@ -994,6 +994,7 @@ int PosixFile::pushObject(const std::string&                       key,
   size_t         buflen;
   int64_t        seq, runid;
   std::string    tag;
+  try {
   if (meta_tags->size() > 0) {
     //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
     tag = boost::algorithm::join(*meta_tags.get(), "_");
@@ -1071,6 +1072,20 @@ int PosixFile::pushObject(const std::string&                       key,
   (*gauge_insert_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
   return (ok == false) ? -2 : 0;
+  } catch (const boost::exception& e){
+
+    ERR<< "boost exception :"<<diagnostic_information(e);
+    return -400;
+            // display your error message here, then do whatever you need to, e.g.        
+    } catch(std::exception const&  ex){
+      ERR<< "std exception :"<<ex.what();
+    return -401;
+
+    } catch(...){
+      ERR << "uknown exception";
+      return -402;
+
+  }
 }
 
 //!Retrieve an object from the object persistence layer
