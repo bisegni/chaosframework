@@ -58,6 +58,9 @@ namespace chaos{
 						OP_DEINIT,
 						OP_SET_BYPASS,
 						OP_CLEAR_BYPASS,
+                         OP_GET_PROPERTIES, // return a CDataWrapper with all driver properties (optional)
+                        OP_SET_PROPERTY, // set a property (key, value) optional
+						
 						OP_UKNOWN= 0xDEADDEAD
 					} Opcode;
 				}
@@ -133,7 +136,7 @@ namespace chaos{
                     }
                     ~DrvMsg(){}
                 } *DrvMsgPtr;
-                
+                typedef struct  {const char* key;const char* value;} keyval_t;
                 //!define a class that can execute driver opcode
                 class OpcodeExecutor {
                 public:

@@ -146,6 +146,23 @@ namespace chaos{
 					
                     //! Equals operator overloading
                     bool operator== (const DriverAccessor &a);
+
+                    /**
+                     * @brief return a CDataWrapper (JSON) with the optional properties of a driver
+                     * 
+                     * @return properties
+                     */
+
+                    chaos::common::data::CDWUniquePtr getDrvProperties();
+                    /**
+                     * @brief Set the Drv property 
+                     * 
+                     * @param key name of the property
+                     * @param value its value
+                     * @return 0 if success
+                     */
+                    int setDrvProperty(const std::string& key, const std::string& value);
+
                 };
             }
         }

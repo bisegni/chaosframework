@@ -90,3 +90,32 @@ bool DriverAccessor::getLastAsyncMsg(ResponseMessageType& message_id) {
 bool DriverAccessor::operator==(const DriverAccessor& a) {
     return this->accessor_index = a.accessor_index;
 }
+namespace chaos_driver=::chaos::cu::driver_manager::driver;
+using namespace chaos::cu::driver_manager::driver;
+
+chaos::common::data::CDWUniquePtr DriverAccessor::getDrvProperties(){
+    chaos_driver::DrvMsg message;
+    message.opcode=OpcodeType::OP_GET_PROPERTIES;
+    send(&message);
+    chaos::common::data::CDWUniquePtr ptr(new chaos::common::data::CDataWrapper());
+
+    if(message.resultData && message.resultDataLength){
+        ptr->setSerializedJsonData((const char*)message.resultData);
+        free(message.resultData);
+    }
+    return ptr;
+}
+int DriverAccessor::setDrvProperty(const std::string& key, const std::string& value){
+    chaos_driver::DrvMsg message;
+
+    keyval_t args;
+    args.key=(key.c_str());
+    args.value=(value.c_str());
+    message.opcode=OpcodeType::OP_SET_PROPERTY;
+    message.inputData=&args;
+    message.inputDataLength=sizeof(keyval_t);
+    send(&message);
+    return message.ret;
+
+}
+
