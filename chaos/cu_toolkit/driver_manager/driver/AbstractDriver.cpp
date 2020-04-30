@@ -137,6 +137,8 @@ bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
   if (result) {
     //set the parent uuid
     result->driver_uuid   = driver_uuid;
+    result->driverName   = driverName;
+    
     result->command_queue = command_queue.get();
     boost::unique_lock<boost::shared_mutex> lock(accesso_list_shr_mux);
     accessors.push_back(result);

@@ -166,6 +166,7 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
     // i can create the instance
     AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
     //associate the driver identification string
+    driverInstance->driverName=request_info.alias;
     driverInstance->identification_string = stringForMap;
     //initialize the newly create instance
     DMLAPP_ << "Initializing device driver " << driverInfo << ", initialization parameters:\"" << request_info.init_parameter << "\" with uuid = " << driverInstance->driver_uuid;

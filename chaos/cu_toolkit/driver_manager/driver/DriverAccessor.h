@@ -55,8 +55,9 @@ namespace chaos{
                     //make driver friendly
                     friend class AbstractDriver;
                     friend class chaos::cu::driver_manager::DriverManager;
-					
-                    //! idnetificaiton of the driver that has created the accessor
+					//! driver name
+                    std::string driverName;
+                    //! identificaiton of the driver that has created the accessor
 					std::string driver_uuid;
 					
                     //specified isntance driver parameter
@@ -162,6 +163,9 @@ namespace chaos{
                      * @return 0 if success
                      */
                     int setDrvProperty(const std::string& key, const std::string& value);
+
+                    std::string getUID() const;
+                    std::string getDriverName() const;
 
                 };
             }

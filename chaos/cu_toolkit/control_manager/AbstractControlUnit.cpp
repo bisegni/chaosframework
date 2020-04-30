@@ -428,6 +428,34 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     }
     
     void AbstractControlUnit::unitDefineCustomAttribute() {
+        DrvMsg cmd;
+
+        cmd.opcode = OpcodeType::OP_GET_PROPERTIES;
+        int cnt=0;
+        chaos::common::data::CDataWrapper drv;
+
+        for (VInstantitedDriverIterator it  = accessor_instances.begin(),
+             end = accessor_instances.end();
+             it != end;
+             it++) {
+            chaos::common::data::CDWUniquePtr res=(*it)->getDrvProperties();
+            drv.addCSDataValue((*it)->getDriverName(),*(res.get()));
+            cnt++;
+        }
+       
+        if(cnt){
+//        drv.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO);
+            ACULDBG_<<" Adding driver info to custom dataset "<<chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO<<":"<<drv.getJSONString();
+
+            getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, drv);
+            getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, drv);
+        }
+         if(drv_info.get()){
+            ACULDBG_<<" Adding driver info to custom dataset "<<chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_CU_INFO<<":"<<drv_info->getJSONString();
+            getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_CU_INFO, *drv_info.get());
+            getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_CU_INFO, *drv_info.get());
+        }
+
     }
     
     void AbstractControlUnit::_undefineActionAndDataset() {
@@ -502,13 +530,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 
                
                 //define the implementations custom variable
+                AbstractControlUnit::unitDefineCustomAttribute();
                 unitDefineCustomAttribute();
-                if(drv_info.get()){
-                    ACULDBG_<<" Adding driver info to custom dataset "<<chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO<<":"<<drv_info->getJSONString();
-                    getAttributeCache()->addCustomAttribute(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, *drv_info.get());
-                    getAttributeCache()->setCustomAttributeValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_INFO, *drv_info.get());
-
-                }
         
                 break;
             }

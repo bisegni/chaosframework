@@ -81,6 +81,9 @@ namespace chaos{
 					//! unique uuid for the instance
                     std::string driver_uuid;
 					
+                    //! driver Name
+                    std::string driverName;
+					
 					//! used by driver manager to identity the instance by the hashing
 					std::string identification_string;
 					

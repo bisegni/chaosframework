@@ -93,6 +93,13 @@ bool DriverAccessor::operator==(const DriverAccessor& a) {
 namespace chaos_driver=::chaos::cu::driver_manager::driver;
 using namespace chaos::cu::driver_manager::driver;
 
+std::string DriverAccessor::getUID() const {
+    return driver_uuid;
+}
+std::string DriverAccessor::getDriverName() const{
+    return driverName;
+}
+
 chaos::common::data::CDWUniquePtr DriverAccessor::getDrvProperties(){
     chaos_driver::DrvMsg message;
     message.opcode=OpcodeType::OP_GET_PROPERTIES;
