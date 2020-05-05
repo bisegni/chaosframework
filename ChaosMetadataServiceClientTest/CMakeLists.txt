@@ -11,4 +11,7 @@ IF(BUILD_FORCE_STATIC)
 SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 TARGET_LINK_LIBRARIES(ChaosMetadataServiceClientTest chaos_common chaos_metadata_service_client ${FrameworkLib})
-INSTALL_TARGETS(/bin ChaosMetadataServiceClientTest)
+#INSTALL_TARGETS(/bin ChaosMetadataServiceClientTest)
+INSTALL(TARGETS ChaosMetadataServiceClientTest
+        DESTINATION "bin"
+        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
