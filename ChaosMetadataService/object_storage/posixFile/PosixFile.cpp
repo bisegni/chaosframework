@@ -81,6 +81,10 @@ static int lz4decomp(const std::string& src,const std::string&dst){
                 std::ostreambuf_iterator<char>(out_file));
       boost::filesystem::rename(dst + ".tmp", dst);
 
+    } catch (boost::filesystem::filesystem_error&e) {
+      ERR << "filesystem error  " << e.what();
+      return -2;
+
     } catch (std::exception& e) {
       ERR << "decompressing file " << src;
       return -1;
@@ -313,6 +317,7 @@ static int makeOrdered(PosixFile::fdw_t& second) {
   FileLock                fl(dstpath + ".lock");
   fl.lock();
   uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
+  try{
   if ((!boost::filesystem::exists(p)) || (second.ordered_ts < second.unordered_ts)) {
     int retw = 0;
 
@@ -326,14 +331,23 @@ static int makeOrdered(PosixFile::fdw_t& second) {
       retw = reorderData(dstpath + ".tmp", ordered_keys, second.writer.size(), second.fname);
     }
 
+  
     if (retw > 0) {
       boost::filesystem::rename(dstpath + ".tmp", dstpath);
       second.ordered_ts = now;
       return retw;
     } else {
+      fl.unlock();
       ERR << " NOT REORDERED:" << second.fname << " size:" << second.writer.size() << " file :" << dstpath << " not created";
       return -1;
     }
+  }
+  } catch (boost::filesystem::filesystem_error&err){
+    fl.unlock();
+    ERR << " filesystem error: "<<err.what();
+    return -10;
+    
+
   }
   fl.unlock();
   return 0;  // not neet
@@ -462,6 +476,7 @@ static int createFinal(const std::string& dstdir, const std::string& name, bool 
   std::string             dstpath = dstdir + "/" + name;
   boost::filesystem::path p(dstpath);
   FileLock                fl(dstpath + ".lock");
+  try{
   fl.lock();
   if (overwrite) {
     DBG << " Overwrite:" + p.string();
@@ -537,6 +552,10 @@ static int createFinal(const std::string& dstdir, const std::string& name, bool 
   } else {
     DBG << " Final:" << dstpath << ", Exist";
     return 0;
+  }
+  } catch (boost::filesystem::filesystem_error&err){
+        ERR << " FS Error:" << err.what();
+
   }
   fl.unlock();
   // cannot be still created

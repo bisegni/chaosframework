@@ -221,7 +221,7 @@ void CUCommonUtility::addDataServicePack(ChaosUniquePtr<chaos::common::data::CDa
       
     }
     if(data_services.size()>0) {
-        CUCU_DBG << CHAOS_FORMAT("Found %1% data services available", %data_services.size());
+      //  CUCU_DBG << CHAOS_FORMAT("Found %1% data services available", %data_services.size());
         BOOST_FOREACH(ChaosSharedPtr<CDataWrapper> ds_element, data_services) {
             if(ds_element->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) &&
                ds_element->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)){
