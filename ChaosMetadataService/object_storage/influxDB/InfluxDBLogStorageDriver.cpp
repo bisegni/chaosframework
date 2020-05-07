@@ -54,7 +54,8 @@ void InfluxDBLogStorageDriver::init(void *init_data) throw (chaos::CException) {
     const std::string user = ChaosMetadataService::getInstance()->setting.log_storage_setting.key_value_custom_param["user"];
     const std::string password = ChaosMetadataService::getInstance()->setting.log_storage_setting.key_value_custom_param["pwd"];
     const std::string database = ChaosMetadataService::getInstance()->setting.log_storage_setting.key_value_custom_param["db"];
-   
+    const std::string retention = ChaosMetadataService::getInstance()->setting.log_storage_setting.key_value_custom_param["retention"];
+
     std::string dir;
    
     MapKVP& obj_storage_kvp = metadata_service::ChaosMetadataService::getInstance()->setting.object_storage_setting.key_value_custom_param;
@@ -69,25 +70,40 @@ void InfluxDBLogStorageDriver::init(void *init_data) throw (chaos::CException) {
         basedatapath=boost::filesystem::current_path().string();
     }
     std::string servername="localhost";
+    std::string funcpath="";
+    std::string exptime="365d";
     int port=8086;
     if(url_list.size()>0){
         std::vector<std::string> ele;
-        boost::split(ele,url_list[0],boost::is_any_of(":"));
+        boost::regex expr{"(.+):(\\d+)/*(.*)"};
+        boost::smatch what;
+        if (boost::regex_search(url_list[0], what, expr)){
+            
+            servername=what[1];
+            port=atoi(what[2].str().c_str());
+            if(what.length()>=3){
+                funcpath=what[3];
+            }
+        }
+    /*    boost::split(ele,url_list[0],boost::is_any_of(":"));
         if(ele.size()>0){
             servername=ele[0];
         }
         if(ele.size()>1){
             port=atoi(ele[1].c_str());
-        }
+        }*/
     }
     if(database.size()==0){
         ERR<<"You must specify a valid database name";
         throw chaos::CException(-1,"You must specify a valid database name",__FUNCTION__);
     }
+    if(retention.size()){
+        exptime=retention;
+    }
     //influxdb_t  asyncdb = influxdb_t( new influxdb::async_api::simple_db(url_list[0], database));
    // asyncdb->with_authentication(user,password);
-    DBG<<"server:"<<servername<<"\nport:"<<port<<"\ndatabase:"<<database<<"\nuser:"<<user<<"\npassw:"<<password;
-    influxdb_cpp::server_info si(servername,port,database,user,password,"ms","365d");
+    DBG<<"server:"<<servername<<"\nport:"<<port<<"\ndatabase:"<<database<<"\nuser:"<<user<<"\npassw:"<<password<<" retention:"<<exptime<<" path:"<<funcpath;
+    influxdb_cpp::server_info si(servername,port,database,user,password,"ms",exptime,funcpath);
     //register the data access implementations
     std::string resp;
     int ret;
