@@ -139,7 +139,7 @@ uint32_t MDSBatchExecutor::getNextSandboxToUse() {
 chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
                                                                                    uint32_t submission_rule,
                                                                                    uint32_t submission_retry_delay,
-                                                                                   uint64_t scheduler_step_delay) {
+                                                                                   int64_t scheduler_step_delay) {
     //install command into the batch command executor root class
     MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
                                                                                            submission_rule,

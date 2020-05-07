@@ -33,7 +33,7 @@ namespace chaos {
             typedef ChaosSharedPtr<PropertyGroup> PropertyGroupShrdPtr;
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, ChaosSharedPtr<PropertyGroup>, PropertyGroupMap);
             
-            //!host one or more group of porperty
+            //!host one or more group of property
             class PropertyCollector {
                 mutable PropertyGroupMap map_property;
                 PropertyValueChangeFunction     value_change_f;

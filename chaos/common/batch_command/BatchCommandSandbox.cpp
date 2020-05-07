@@ -853,13 +853,17 @@ void BatchCommandSandbox::setCurrentCommandFeatures(features::Features& features
     uint64_t thread_step_delay = 0;
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(mutext_access_current_command);
+    if(default_sticky_command.get()){
+        default_sticky_command->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
+        default_sticky_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = (thread_step_delay = features.defaultSchedulerStepsDelay);
+    }
     
     //recheck current command
-    if (!current_executing_command) return;
+    if (current_executing_command.get()) {
     
-    current_executing_command->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
-    current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = (thread_step_delay = features.featureSchedulerStepsDelay);
-    
+        current_executing_command->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
+        current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = (thread_step_delay = features.featureSchedulerStepsDelay);
+    }
     thread_scheduler_pause_condition.unlock();
     
     if (event_handler) {

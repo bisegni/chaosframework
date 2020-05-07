@@ -88,7 +88,23 @@ void ChaosAgent::init(void *init_data)  {
     if(GlobalConfiguration::getInstance()->hasOption(OPT_REST_PORT)) {
            restport=getGlobalConfigurationInstance()->getOption< int >(OPT_REST_PORT);
     }
-    procRestUtil=ChaosMakeSharedPtr<utility::ProcRestUtil>(restport,getGlobalConfigurationInstance()->getOption< std::string >(OPT_SCRIPT_DIR));
+
+    std::string script_path=getGlobalConfigurationInstance()->getOption< std::string >(OPT_SCRIPT_DIR) +"/"+ ChaosAgent::getInstance()->settings.agent_uid;
+    boost::filesystem::path p(script_path);
+    if ((boost::filesystem::exists(p) == false)) {
+        try {
+        if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
+          ERROR << "cannot create directory:" << p;
+          exit(1);
+        } else {
+          DBG << " CREATED DIR:" << p;
+        }
+        } catch(boost::filesystem::filesystem_error& e){
+            ERROR<< " Exception creating directory:"<<p<<" error:"<< e.what();
+      }
+        // 
+    }
+    procRestUtil=ChaosMakeSharedPtr<utility::ProcRestUtil>(restport,script_path);
 #endif
 }
 

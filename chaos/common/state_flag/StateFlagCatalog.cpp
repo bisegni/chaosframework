@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-
+#undef DEBUG
 #include <chaos/common/global.h>
 #include <chaos/common/state_flag/StateFlagCatalog.h>
 

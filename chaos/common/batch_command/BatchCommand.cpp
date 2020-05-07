@@ -43,7 +43,7 @@ submissionRule(SubmissionRuleType::SUBMIT_NORMAL){
 	//setup feautere fields
 	std::memset(&commandFeatures, 0,sizeof(features::Features));
 	commandFeatures.featuresFlag = 0;
-	
+	commandFeatures.defaultSchedulerStepsDelay=BC_DEFAULT_SCHEDULE_DELAY; 
 	//reset the timing flags
 	std::memset(&timing_stats,0,sizeof(CommandTimingStats));
 }
