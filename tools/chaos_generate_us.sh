@@ -338,7 +338,9 @@ echo -e "IF(BUILD_FORCE_STATIC)\nSET(CMAKE_EXE_LINKER_FLAGS \"-static -Wl,--whol
 echo "ADD_EXECUTABLE($pname \${src})" >>  $project_dir/CMakeLists.txt
 
 echo "TARGET_LINK_LIBRARIES($pname $lista_lib $lista_unica $lista_lib common_debug \${FrameworkLib})" >>  $project_dir/CMakeLists.txt
-echo "INSTALL_TARGETS(/bin $pname)" >>  $project_dir/CMakeLists.txt
+echo "INSTALL(TARGETS $pname" >>  $project_dir/CMakeLists.txt
+echo "DESTINATION \"bin\"" >>  $project_dir/CMakeLists.txt
+echo "PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)" >>  $project_dir/CMakeLists.txt
 
 popd > /dev/null
 echo "* Generated $project_dir"
