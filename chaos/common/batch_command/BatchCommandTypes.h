@@ -152,6 +152,9 @@ namespace chaos {
                     //! If true the user modification to the features are denied
                     //bool lockedOnUserModification;
                     
+                     //! if nothing has been specified this is the default scheduler delay
+                    uint64_t defaultSchedulerStepsDelay;
+                   
                     //! Command specific delay beetween two sequence of the commadn step (acquire->correlation) in milliseconds
                     uint64_t featureSchedulerStepsDelay;
                     

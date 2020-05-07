@@ -128,7 +128,7 @@ void SlowCommandExecutor::installCommand(ChaosSharedPtr<BatchCommandDescription>
 BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias,
                                                        uint32_t submission_rule,
                                                        uint32_t submission_retry_delay,
-                                                       uint64_t scheduler_step_delay) {
+                                                       int64_t scheduler_step_delay) {
     //install command into the batch command executor root class
     SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
                                                                                    submission_rule,

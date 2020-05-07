@@ -935,6 +935,7 @@ namespace chaos {
         //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
         static const char * const THREAD_SCHEDULE_DELAY                   = "cudk_thr_sch_delay";
         //!represent the bypass state of the control unit
+        
         /*!
          in this state all driver reject the command that are sent by control unit implementation
          and no action are take on the hardware

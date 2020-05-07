@@ -287,7 +287,8 @@ void SCAbstractControlUnit::propertyUpdatedHandler(const std::string&  group_nam
     if (property_name.compare(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) == 0) {
       chaos_batch::features::Features features;
       std::memset(&features, 0, sizeof(chaos_batch::features::Features));
-      features.featureSchedulerStepsDelay = new_value.asUInt64();
+      features.defaultSchedulerStepsDelay=features.featureSchedulerStepsDelay = new_value.asUInt64();
+
       slow_command_executor->setCommandFeatures(features);
       _updateRunScheduleDelay(new_value.asUInt64());
       //pushSystemDataset();

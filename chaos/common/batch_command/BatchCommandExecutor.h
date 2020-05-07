@@ -137,7 +137,7 @@ namespace chaos {
                 //! Global cache shared across the sandbox it can be alsog given
                 chaos::common::data::cache::AttributeValueSharedCache  global_attribute_cache;
                 
-                //! instanziate a command by CDataWrapper description
+                //! instantiate a command by CDataWrapper description
                 /*!
                  Perform the instantiation of the command instace assocaite
                  to the alias contained into the submissionInfo param.
@@ -146,7 +146,7 @@ namespace chaos {
                 virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
                                                           chaos_data::CDataWrapper *submissionInfo);
                 
-                //! instanziate a command by alias and submission parameter
+                //! instantiate a command by alias and submission parameter
                 /*!
                  Perform the instantiation of the command instace assocaite
                  to the alias contained into the submissionInfo param.
@@ -155,7 +155,7 @@ namespace chaos {
                 virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
                                                           uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
                                                           uint32_t submission_retry_delay = 1000,
-                                                          uint64_t scheduler_step_delay = 1000000);
+                                                          int64_t scheduler_step_delay = 1000000);
                 
                 //! Get the statistic for the current running command rpc action
                 /*!

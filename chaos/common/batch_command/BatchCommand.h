@@ -55,7 +55,7 @@ namespace chaos{
 #define BC_CHECK_END_RUNNING_PROPERTY   (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_END)
 #define BC_CHECK_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FAULT)
 #define BC_CHECK_FATAL_FAULT_RUNNING_PROPERTY (getRunningProperty() == chaos::common::batch_command::RunningPropertyType::RP_FATAL_FAULT)
-            
+#define BC_DEFAULT_SCHEDULE_DELAY 1000000   
             
             //! Collect the command timing stats
             typedef struct CommandTimingStats {
@@ -210,6 +210,7 @@ namespace chaos{
                         case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
                             commandFeatures.featuresFlag |= features;
                             commandFeatures.featureSchedulerStepsDelay = features_value;
+                            commandFeatures.defaultSchedulerStepsDelay = features_value;
                             break;
                             
                         case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
@@ -242,6 +243,7 @@ namespace chaos{
                         case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
                             commandFeatures.featuresFlag |= features;
                             commandFeatures.featureSchedulerStepsDelay = features_value;
+                            commandFeatures.defaultSchedulerStepsDelay = features_value;
                             break;
                             
                         case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
@@ -265,6 +267,8 @@ namespace chaos{
                     switch (features) {
                         case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
                             commandFeatures.featureSchedulerStepsDelay = 0;
+                            commandFeatures.defaultSchedulerStepsDelay = 0;
+
                             break;
                             
                         case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:

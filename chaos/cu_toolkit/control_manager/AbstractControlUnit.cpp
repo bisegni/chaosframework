@@ -2002,14 +2002,14 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         //check to see if the device can ben initialized
         if (SWEService::getServiceState() != chaos::CUStateKey::INIT &&
             SWEService::getServiceState() != chaos::CUStateKey::START) {
-            ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
+            ACULERR_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
             throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
         }
         
         PropertyGroupVectorSDWrapper pg_sdw;
         pg_sdw.serialization_key = "property";
         pg_sdw.deserialize(update_pack.get());
-        
+        ACULDBG_<<"properties "<< DatasetDB::getDeviceID()<<" :"<<pg_sdw.serialize()->getJSONString();
         //update the property
         PropertyCollector::applyValue(pg_sdw());
         key_data_storage->updateConfiguration(update_pack.get());

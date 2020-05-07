@@ -111,7 +111,7 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                     chaos_batch::BatchCommand *instanceCommandInfo(const std::string& command_alias,
                                                                    uint32_t submission_rule,
                                                                    uint32_t submission_retry_delay,
-                                                                   uint64_t scheduler_step_delay);
+                                                                   int64_t scheduler_step_delay);
 
 					//overlodaed command event handler
 					void handleCommandEvent(const std::string& command_alias,

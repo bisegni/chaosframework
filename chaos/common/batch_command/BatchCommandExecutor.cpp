@@ -475,7 +475,7 @@ void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& command_alias, CDataWrapper *submissionInfo) {
     uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL;
     uint32_t submission_retry_delay = 1000000;
-    uint64_t scheduler_step_delay = 1000000;
+    int64_t scheduler_step_delay = -1; // don't set use the default one
     
     if(submissionInfo) {
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
@@ -501,7 +501,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& command_alias,
                                                         uint32_t submission_rule,
                                                         uint32_t submission_retry_delay,
-                                                        uint64_t scheduler_step_delay) {
+                                                        int64_t scheduler_step_delay) {
     BatchCommand *instance = NULL;
     if(map_command_description.count(command_alias)) {
         ChaosSharedPtr<BatchCommandDescription> description = map_command_description[command_alias];
@@ -518,11 +518,15 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
             
             instance->submissionRule = submission_rule;
             DEBUG_CODE(BCELDBG_ << "Submission rule for command \"" << command_alias << "\" is: " << ((uint16_t)instance->submissionRule);)
-            
             instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
-            instance->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
-            DEBUG_CODE(BCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
-            
+
+            if(scheduler_step_delay>=0){
+                instance->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
+                DEBUG_CODE(BCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVAL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
+            } else {
+                instance->commandFeatures.featureSchedulerStepsDelay = instance->commandFeatures.defaultSchedulerStepsDelay;
+                DEBUG_CODE(BCELDBG_ << "Set default  SCHEDULER_STEP_TIME_INTERVAL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
+            }
             instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY;
             instance->commandFeatures.featureSubmissionRetryDelay = submission_retry_delay;
             DEBUG_CODE(BCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)

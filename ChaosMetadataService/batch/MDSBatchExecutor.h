@@ -63,7 +63,7 @@ namespace chaos{
                 chaos::common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
                                                                                   uint32_t submission_rule = chaos::common::batch_command::SubmissionRuleType::SUBMIT_NORMAL,
                                                                                   uint32_t submission_retry_delay = 1000,
-                                                                                  uint64_t scheduler_step_delay = 1000000);
+                                                                                  int64_t scheduler_step_delay = 1000000);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(const std::string& command_alias,
