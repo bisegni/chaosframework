@@ -318,6 +318,12 @@ namespace chaos {
          manage chaos process whitin that host (start stop uni t server and perform deploy)
          */
         static const char * const NODE_TYPE_AGENT       = "nt_agent";
+
+        //! identify a ROOT node process
+        /*!
+         Identifies ROOT processes
+         */
+        static const char * const NODE_TYPE_ROOT       = "nt_root";
         
         //! identify an execution unit of type script
         /*!
@@ -349,7 +355,10 @@ namespace chaos {
             //!search tags
             node_type_tag = 7,
             //! all server_nodes
-            node_type_all_server=8
+            node_type_all_server=8,
+            //!search root processes
+            node_type_root = 9
+            
             
             
         } NodeSearchType;

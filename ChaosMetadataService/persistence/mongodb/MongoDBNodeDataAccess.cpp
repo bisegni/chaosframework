@@ -426,6 +426,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                 break;
             case chaos::NodeType::NodeSearchType::node_type_wan:
                 type_of_node = chaos::NodeType::NODE_TYPE_WAN_PROXY;
+                break;
+             case chaos::NodeType::NodeSearchType::node_type_root:
+                type_of_node = chaos::NodeType::NODE_TYPE_ROOT;
                 break;    
             default:
                 break;
