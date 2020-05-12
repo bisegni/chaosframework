@@ -220,7 +220,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             
             ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
             if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
-               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
+               /*dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&*/
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)) {
                 
@@ -229,7 +229,9 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
                 
                 dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION <<
-                dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION);
+                ((dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION))?dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION):dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+
+            
                 
                 dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION <<
                 dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
@@ -886,7 +888,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
                                        &prj))){
             
         }else if(result_bson.isEmpty()){
-            MDBCUDA_ERR << "No attribute has bee foundt";
+            MDBCUDA_ERR << "No attribute has been found:"<<attribute_name<<" in "<<control_unit_uid;
         } else {
             std::vector<mongo::BSONElement> result_array = result_bson.getFieldDotted(dotted_dataset_path).Array();
             if(result_array.size()!=0) {

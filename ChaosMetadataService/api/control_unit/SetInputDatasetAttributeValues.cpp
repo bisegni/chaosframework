@@ -112,8 +112,9 @@ CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr api_data) {
             if(element_description.get()==NULL ||
                !element_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
                 //we have no description so we don't have a type for the attribute so we need to step forward
-                continue;
-            }
+                batch_message_per_cu->addStringValue(attribute_name,change->getStringValue("change_value"));
+
+            } else {
             
             //add attribute name with the value in his real type
             try{
@@ -155,6 +156,7 @@ CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr api_data) {
                 }
             }catch(...) {
                 LOG_AND_TROW(CU_SIDAV_ERR, -5, boost::str(boost::format("Error decoding attribute %1% for control unit %2%") % attribute_name % cu_uid));
+            }
             }
         }
         CU_SIDAV_INFO << batch_message_per_cu->getJSONString();
