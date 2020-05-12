@@ -20,7 +20,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
-
+#include <chaos/common/utility/Base64Util.h>
 #include <boost/lexical_cast.hpp>
 
 #include <json/json.h>
@@ -28,7 +28,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
-
+using namespace chaos::common::utility;
 #pragma mark Utility
 #define ADD_VECTOR(v,ctype,bsontype){\
 for( std::vector<ctype>::const_iterator i=v.begin();i!=v.end();i++){\
@@ -987,6 +987,57 @@ chaos::DataType::DataType CDataWrapper::getValueType(const std::string& key) con
 bool CDataWrapper::isEmpty() const {
     return (bson_count_keys(ACCESS_BSON(bson)) == 0);
 }
+
+int CDataWrapper::setAsString(const std::string& key,const std::string& sval){
+     bson_iter_t it;
+    bson_iter_init(&it, static_cast<bson_t*>(bson.get()));
+    if(bson_iter_find_case(&it, key.c_str()) == false)
+        return -1;
+    switch(ITER_TYPE(&it)){
+        case BSON_TYPE_INT64:{
+            CDataVariant val(sval);
+
+            int64_t tmp=val.asInt64();
+            setBson(&it,tmp);
+        }
+        break;
+         case BSON_TYPE_DOUBLE:{
+            CDataVariant val(sval);
+
+            double tmp=val.asDouble();
+            setBson(&it,tmp);
+        }
+        case BSON_TYPE_INT32:{
+            CDataVariant val(sval);
+
+            int32_t tmp=val.asInt32();
+            setBson(&it,tmp);
+        }
+        break;
+         case BSON_TYPE_BOOL:{
+            CDataVariant val(sval);
+
+            bool tmp=val.asBool();
+            setBson(&it,tmp);
+        }
+        case BSON_TYPE_UTF8:
+            setBson(&it,sval);
+            break;
+        case BSON_TYPE_BINARY:{
+
+            chaos::common::data::CDBufferUniquePtr ptr=Base64Util::decode(sval);
+
+            setBson(&it,ptr->getBuffer(),ptr->getBufferSize());
+            break;
+        }
+        default:
+        return -2;
+        
+
+    }
+    return 0;
+}
+
 int CDataWrapper::setBson( const bson_iter_t *v ,const uint64_t& val){
     if(ITER_TYPE(v)==BSON_TYPE_INT64){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(uint64_t));
@@ -994,6 +1045,7 @@ int CDataWrapper::setBson( const bson_iter_t *v ,const uint64_t& val){
     }
     return -1;
 }
+
 int CDataWrapper::setBson( const bson_iter_t *v ,const int64_t& val){
     if(ITER_TYPE(v)==BSON_TYPE_INT64){
         memcpy((void*)(v->raw + v->d1), (void*)&val,sizeof(int64_t));

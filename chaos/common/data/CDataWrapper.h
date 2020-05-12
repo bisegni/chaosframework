@@ -214,6 +214,15 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                     //const bson_value_t *v = bson_iter_value(&it);
                     return setBson(&it,val);
                 }
+                /**
+                 * @brief Set the As String in place use a string as container of data
+                 * 
+                 * @param key 
+                 * @param val string value
+                 * @return 0 if success
+                 */
+                int setAsString(const std::string& key,const std::string& val);
+
                 template<typename T>
                 int setValue(const std::string& key,std::vector<T>& val){
                     bson_iter_t it;
