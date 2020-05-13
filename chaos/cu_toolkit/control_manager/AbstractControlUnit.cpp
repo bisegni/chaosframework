@@ -1930,35 +1930,39 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                         //call handler
                         switch (attribute_cache_value->type) {
                             case DataType::TYPE_BOOLEAN: {
-                                bool bv = dataset_attribute_values->getBoolValue(attr_name);
+                                bool bv = dataset_attribute_values->getValue<bool>(attr_name);//dataset_attribute_values->getBoolValue(attr_name);
                                 attribute_cache_value->setValue(&bv, sizeof(bool));
                                 break;
                             }
                             case DataType::TYPE_INT32: {
-                                int32_t i32v = dataset_attribute_values->getInt32Value(attr_name);
+                                int32_t i32v = dataset_attribute_values->getValue<int32_t>(attr_name);//dataset_attribute_values->getInt32Value(attr_name);
                                 CHECK_FOR_RANGE_VALUE(int32_t, i32v, attr_name)
                                 attribute_cache_value->setValue(&i32v, sizeof(int32_t));
                                 break;
                             }
                             case DataType::TYPE_INT64: {
-                                int64_t i64v = dataset_attribute_values->getInt64Value(attr_name);
+                                int64_t i64v = dataset_attribute_values->getValue<int64_t>(attr_name);//dataset_attribute_values->getInt64Value(attr_name);
                                 CHECK_FOR_RANGE_VALUE(int64_t, i64v, attr_name)
                                 attribute_cache_value->setValue(&i64v, sizeof(int64_t));
                                 break;
                             }
                             case DataType::TYPE_DOUBLE: {
-                                double dv = dataset_attribute_values->getDoubleValue(attr_name);
+                                double dv = dataset_attribute_values->getValue<double>(attr_name);//dataset_attribute_values->getDoubleValue(attr_name);
                                 CHECK_FOR_RANGE_VALUE(double, dv, attr_name)
                                 attribute_cache_value->setValue(&dv, sizeof(double));
                                 break;
                             }
                                 
                             case DataType::TYPE_CLUSTER: {
-                                ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
+                               // ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
+                               CDataWrapper cw;
                                 try {
-                                    if (str.get()) {
+                                   /* if (str.get()) {
                                         attribute_cache_value->setValue(*(str.get()));
-                                    }
+                                    }*/
+                                    cw.setSerializedJsonData(dataset_attribute_values->getStringValue(attr_name).c_str());
+                                    attribute_cache_value->setValue(cw);
+
                                 } catch (...) {
                                     throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format ")).c_str(), __PRETTY_FUNCTION__);
                                 }
@@ -1971,8 +1975,9 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                                 break;
                             }
                             case DataType::TYPE_BYTEARRAY: {
-                                uint32_t    bin_size = 0;
-                                const char* binv     = dataset_attribute_values->getBinaryValue(attr_name, bin_size);
+                                chaos::common::data::CDBufferUniquePtr bin=dataset_attribute_values->getBinaryValueAsCDataBuffer(attr_name);
+                                uint32_t    bin_size = bin->getBufferSize();
+                                const char* binv     = bin->getBuffer();//dataset_attribute_values->getBinaryValue(attr_name, bin_size);
                                 attribute_cache_value->setValue(binv, bin_size);
                                 break;
                             }

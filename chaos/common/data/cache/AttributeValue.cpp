@@ -175,8 +175,10 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
             const std::string value = attribute_value.asString();
             if(!grow((uint32_t)value.size()+1)) return false;
             //copy string to buffer
-            std::strncpy((char*)value_buffer,
-                        value.c_str(),value.size()+1);
+            char*ptr=(char*)value_buffer;
+            memcpy((void*)ptr,value.c_str(),value.size());
+            *(ptr+value.size())=0;
+            
             break;
         }
             

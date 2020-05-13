@@ -165,7 +165,7 @@ int IODirectIODriver::storeData(const std::string& key,
                                                                                           (uint32_t)serialization->getBufferLen(),
                                                                                           storage_type,
                                                                                           tag_set))) {
-            IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%, data packet size:%3%",%next_client->connection->getServerDescription()%err%serialization->getBufferLen());
+            IODirectIODriver_LERR_ << CHAOS_FORMAT("Error storing data into data service %1% with code %2%, data packet size:%3% for key: %4% val:%5%",%next_client->connection->getServerDescription()%err%serialization->getBufferLen()%key%data_to_store->getJSONString());
             
         }
     } else {

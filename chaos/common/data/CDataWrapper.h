@@ -131,9 +131,17 @@ namespace chaos {
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> getCSProjection(const std::vector<std::string>&) const;
 
                 //add a string value
-                //void addStringValue(const char *, const char *);
-                //add a string value
-                void addStringValue(const std::string&, const string&);
+                //void addStringValue(const char *, const char *); 
+                /**
+                 * @brief Add a string value to the Wrapper
+                 * 
+                 * @param key the associated key
+                 * @param val the value
+                 * @param max_size the max allocated size (if 0 the allocated size will be same as the string)
+                 */
+                void addStringValue(const std::string& key, const string& val, const int max_size=0);
+
+                
                 //add a json value
                 void addJsonValue(const std::string&, const string&);
                 //add a json value
@@ -263,43 +271,31 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                     T v;
                     if(hasKey(key) == false) {throw chaos::CException(-1, "Key not present", __PRETTY_FUNCTION__);}
                     v=(T)getVariantValue(key);
-                   /* switch(getValueType(key)){
-                        case chaos::DataType::TYPE_BOOLEAN:{
-                            v = getVariantValue(key).asBool();
-                            break;
-                        }
-                        case chaos::DataType::TYPE_INT32:{
-                            v = getVariantValue(key).asInt32();
-                            break;
-                        }
-                        case chaos::DataType::TYPE_INT64:{
-                            v = getVariantValue(key).asInt64();
-                            break;
-                        }
-                        case chaos::DataType::TYPE_DOUBLE:{
-                            v = getVariantValue(key).asDouble();
-                            break;
-                        }
-                        case chaos::DataType::TYPE_STRING:{
-                            v = getVariantValue(key).asString();
-                            break;
-                        }
-                        default:{
-                            std::stringstream ss;
-                            ss<<"cannot get key\""<<key<<"\" to type:"<<getValueType(key);
-                            throw chaos::CException(-2,ss.str(),__PRETTY_FUNCTION__);
-                        }
-                    }*/
+                   
                     return v;
                 }
-                //return the binary data value
-                const char* getBinaryValue(const std::string&, uint32_t&) const;
+               /**
+                * @brief Get the Binary Value corresponding to a key
+                * 
+                * @param key key of the binary
+                * @param size returned size
+                * @return NULL if errot
+                */
+                const char* getBinaryValue(const std::string&key , uint32_t& size) const;
+                /**
+                 * @brief Get the Binary corresponding to a key, but search also for base64 strings
+                 * 
+                 * @param key key of the binary
+                 * @return CDBufferUniquePtr object
+                 */
+                
+                CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
+
                 chaos::DataType::BinarySubtype getBinarySubtype(const std::string& key) const;
                 void addBinaryValue(const std::string& key,
                                     chaos::DataType::BinarySubtype sub_type,
                                     const char *buff,
                                     int bufLen);
-                CDBufferUniquePtr getBinaryValueAsCDataBuffer(const std::string &key) const;
                 //return the bson data
                 SerializationBufferUPtr getBSONData() const;
                 BufferUPtr getBSONDataBuffer() const;

@@ -144,12 +144,14 @@ void CDataWrapper::addCSDataValue(const std::string& key,
 }
 
 //add a string value
-void CDataWrapper::addStringValue(const std::string& key, const string& value) {
-    bson_append_utf8(ACCESS_BSON(bson),
-                     key.c_str(),
-                     (int)key.size(),
-                     value.c_str(),
-                     (int)value.size());
+void CDataWrapper::addStringValue(const std::string& key, const string& value,const int max_size) {
+    
+        bson_append_utf8(ACCESS_BSON(bson),
+                        key.c_str(),
+                        (int)key.size(),
+                        value.c_str(),
+                        (int)((value.size()>max_size)?value.size():max_size));
+    
 }
 
 //append a strin gto an open array
@@ -514,13 +516,21 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, uint32_t& bufLe
                          &sub,
                          &bufLen,
                          &ret);
+        return (const char*)ret;
     }
-    return (const char*)ret;
+    return NULL;
 }
 
 CDBufferUniquePtr CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) const{
     uint32_t buf_len = 0;
     const char* buffer = getBinaryValue(key, buf_len);
+    if(buffer==NULL){
+     // if not a pure binary probably is a string with a base64
+        FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
+            std::string strb(bson_iter_utf8(&element_found, NULL));
+            return Base64Util::decode(strb);
+        }   
+    }
     return CDBufferUniquePtr(new CDataBuffer(buffer,
                                              buf_len));
 }
@@ -688,6 +698,10 @@ string CDataWrapper::getJSONString()  const{
     size_t str_size = 0;
     char * str_c = bson_as_canonical_extended_json(ACCESS_BSON(bson),
                                                    &str_size);
+    if(str_c==NULL){
+        return std::string("{}");
+
+    }                                             
     std::string result(str_c);
     bson_free(str_c);
     return result;
@@ -1007,6 +1021,7 @@ int CDataWrapper::setAsString(const std::string& key,const std::string& sval){
             double tmp=val.asDouble();
             setBson(&it,tmp);
         }
+        break;
         case BSON_TYPE_INT32:{
             CDataVariant val(sval);
 
@@ -1020,6 +1035,7 @@ int CDataWrapper::setAsString(const std::string& key,const std::string& sval){
             bool tmp=val.asBool();
             setBson(&it,tmp);
         }
+        break;
         case BSON_TYPE_UTF8:
             setBson(&it,sval);
             break;
@@ -1081,7 +1097,11 @@ int CDataWrapper::setBson(const bson_iter_t *v ,const bool& val){
 int CDataWrapper::setBson(const bson_iter_t *v ,const std::string& val){
     if(ITER_TYPE(v)== BSON_TYPE_UTF8){
         const bson_value_t *vv = bson_iter_value((bson_iter_t *)v);
-        memcpy((void*)(v->raw + v->d1), (void*)val.c_str(),vv->value.v_utf8.len);
+        int siz=(vv->value.v_utf8.len<(val.size()+1))?vv->value.v_utf8.len:(val.size());
+        char * ptr=(char*)(vv->value.v_utf8.str);
+        memset(ptr,0,vv->value.v_utf8.len);
+        memcpy(ptr, val.c_str(),siz);
+
         return vv->value.v_utf8.len;
     }
     return -1;

@@ -108,16 +108,20 @@ CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr api_data) {
                                                                     element_description))) {
                 LOG_AND_TROW(CU_SIDAV_ERR, err, boost::str(boost::format("Error loading the description for the the dataset's attribute: %1% for control unit: %2%") % attribute_name % cu_uid));
             }
-            
+            /* 
+            let's use string to avoid aproximation errors
+            */
             if(element_description.get()==NULL ||
                !element_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
                 //we have no description so we don't have a type for the attribute so we need to step forward
                 batch_message_per_cu->addStringValue(attribute_name,change->getStringValue("change_value"));
 
             } else {
-            
+
+                batch_message_per_cu->addStringValue(attribute_name,change->getStringValue("change_value"));
+
             //add attribute name with the value in his real type
-            try{
+            /* try{
                 switch(element_description->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)){
                     case chaos::DataType::TYPE_BOOLEAN:
                         batch_message_per_cu->addBoolValue(attribute_name,
@@ -156,7 +160,7 @@ CDWUniquePtr SetInputDatasetAttributeValues::execute(CDWUniquePtr api_data) {
                 }
             }catch(...) {
                 LOG_AND_TROW(CU_SIDAV_ERR, -5, boost::str(boost::format("Error decoding attribute %1% for control unit %2%") % attribute_name % cu_uid));
-            }
+            } */
             }
         }
         CU_SIDAV_INFO << batch_message_per_cu->getJSONString();
