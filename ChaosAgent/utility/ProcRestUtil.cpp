@@ -25,6 +25,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <boost/algorithm/string/replace.hpp>
 #define READ   0
+
 #define WRITE  1
 #include <stdlib.h>
 #include <unistd.h>
