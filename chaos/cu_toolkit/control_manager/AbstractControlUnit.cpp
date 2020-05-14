@@ -1841,23 +1841,27 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     void AbstractControlUnit::unitInputAttributeChangedHandler() {}
 
 template<typename t>
-inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& attr_name,const std::string&id ){
+ void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& attr_name,const std::string&id ){
     t max,min;
     std::size_t mini=attributeInfo.minRange.find("0x");
     std::size_t maxi=attributeInfo.maxRange.find("0x");
-    std::string maxs,mins;
+    std::stringstream maxs,mins;
+
     if(maxi!=std::string::npos){
-        maxs=attributeInfo.maxRange.substr(maxi);
+        maxs<<std::hex<<attributeInfo.maxRange;
     } else {
-        maxs=attributeInfo.maxRange;
+        maxs<<attributeInfo.maxRange;
     }
     if(mini!=std::string::npos){
-        mins=attributeInfo.minRange.substr(mini);
+        mins<<std::hex<<attributeInfo.minRange;
+
     } else {
-        mins=attributeInfo.minRange;
+        mins<<attributeInfo.minRange;
     }
     
-    
+    maxs>>max;
+    mins>>min;
+ /*
     try{
         min=boost::lexical_cast<t>(mins);
     }catch(std::exception &e){
@@ -1869,9 +1873,9 @@ inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& 
     } catch(std::exception &e){
         throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid casting MAX value (%1%) for attribute %2% value %3%" ) % maxs % attr_name % v).c_str(), __PRETTY_FUNCTION__);
     }
-    
-    if (((mins.size()>0)&&(v < min)) || ((maxs.size()>0)&&(v > max))) {
-        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % mins % max % maxs % attr_name).c_str(), __PRETTY_FUNCTION__);
+  */  
+    if (((attributeInfo.minRange.size()>0)&&(v < min)) || ((attributeInfo.maxRange.size()>0)&&(v > max))) {
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
     }
 }
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)   \

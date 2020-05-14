@@ -18,6 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
+#undef DEBUG
 #include <chaos/cu_toolkit/driver_manager/driver/BasicIODriver.h>
 #include <stdlib.h>
 #include <string>
