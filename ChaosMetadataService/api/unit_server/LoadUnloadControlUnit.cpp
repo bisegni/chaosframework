@@ -90,23 +90,29 @@ CDWUniquePtr LoadUnloadControlUnit::execute(CDWUniquePtr api_data) {
             if(!cu_instance->hasKey("control_unit_implementation")) {
                 LOG_AND_TROW(CU_LOUNLO_ERR, -10, "No implementation found into control unit instances");
             }
-            
+            std::string rpc_addr;
+
             if((err = n_da->getNodeDescription(cu_instance->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT), &us_base_description)) ||
                us_base_description == NULL){
-                LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information");
-            }
-            
-            ChaosUniquePtr<chaos::common::data::CDataWrapper> us_instance(us_base_description);
-            std::string rpc_addr;
-            if(!us_instance->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+               // LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information of:"+cu_instance->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT));
+                // a CU without parent.
+                CU_LOUNLO_INFO<< "handling CU \""<<cu_uid<< "\" ithout parent info";
                 if(cu_base_description->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)){
                     rpc_addr=cu_base_description->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
                 } 
+
             } else {
-               rpc_addr= us_instance->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+            
+                ChaosUniquePtr<chaos::common::data::CDataWrapper> us_instance(us_base_description);
+                if(!us_instance->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+                    if(cu_base_description->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)){
+                        rpc_addr=cu_base_description->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+                    } 
+                } else {
+                rpc_addr= us_instance->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+                }
             }
             if(rpc_addr.size()==0){
-                CU_LOUNLO_ERR<<"US instance:"<<us_instance->getJSONString();
                 CU_LOUNLO_ERR<<"CU instance:"<<cu_instance->getJSONString();
                 CU_LOUNLO_ERR<<"CU base:"<<cu_base_description->getJSONString();
                 LOG_AND_TROW(CU_LOUNLO_ERR, -11, "No rpc address for unit server found");
