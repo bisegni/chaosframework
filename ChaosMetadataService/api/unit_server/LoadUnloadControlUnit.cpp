@@ -96,7 +96,7 @@ CDWUniquePtr LoadUnloadControlUnit::execute(CDWUniquePtr api_data) {
                us_base_description == NULL){
                // LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information of:"+cu_instance->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT));
                 // a CU without parent.
-                CU_LOUNLO_INFO<< "handling CU \""<<cu_uid<< "\" ithout parent info";
+                CU_LOUNLO_INFO<< "handling CU \""<<cu_uid<< "\" without parent info";
                 if(cu_base_description->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)){
                     rpc_addr=cu_base_description->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
                 } 
