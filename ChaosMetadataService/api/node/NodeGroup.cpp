@@ -39,6 +39,8 @@
 #include "ForwardNodeRpcMessage.h"
 #include "KillCurrentCommand.h"
 #include "ClearCommandQueue.h"
+#include "NodeDelete.h"
+
 #include "GetCommandAndTemplateDescription.h"
 
 using namespace chaos::metadata_service::api::node;
@@ -68,6 +70,8 @@ AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<GetPropertyDefaultValues>();
     addApi<UpdatePropertyDefaultValues>();
     addApi<GetCommandAndTemplateDescription>();
+    addApi<NodeDelete>();
+
 }
 
 NodeGroup::~NodeGroup() {}

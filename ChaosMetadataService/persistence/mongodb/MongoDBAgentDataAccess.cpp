@@ -140,9 +140,10 @@ int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       query))){
             ERR << CHAOS_FORMAT("Error finding agent %1% with error %2%", %agent_uid%err);
-        } else if(result.isEmpty() == false &&
-                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
+        } else if(result.isEmpty() == false /*&&
+                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)*/) {
             ChaosUniquePtr<chaos::common::data::CDataWrapper> full_ser(new CDataWrapper(result.objdata()));
+            DBG<<"AGENT found:"<<full_ser->getJSONString();
             AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_description));
             agent_instance_sd_wrapper.deserialize(full_ser.get());
         }

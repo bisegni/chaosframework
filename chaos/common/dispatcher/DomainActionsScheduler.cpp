@@ -51,7 +51,7 @@ void DomainActionsScheduler::deinit() {
 
 bool DomainActionsScheduler::push(CDWUniquePtr rpc_action_call) {
     if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
-    if(!domainActionsContainer->hasActionName(rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
+    if(!domainActionsContainer->hasActionName(rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action \""+rpc_action_call->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)+"\" is not present in the domain:"+domainActionsContainer->getDomainName(), __PRETTY_FUNCTION__);
     return CObjectProcessingQueue<CDataWrapper>::push(MOVE(CDWShrdPtr(rpc_action_call.release())));
 }
 

@@ -48,18 +48,24 @@ CDWUniquePtr GetSetFullUnitServer::execute(CDWUniquePtr api_data) {
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -5)
     //get the parameter
     const std::string us_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    
-    
+    std::string node_type=NodeType::NODE_TYPE_UNIT_SERVER;
+    if(api_data->hasKey(NodeDefinitionKey::NODE_TYPE)){
+        node_type=api_data->getStringValue(NodeDefinitionKey::NODE_TYPE);
+    }
     
     bool setop=api_data->hasKey("reset");
     
-    if((err = us_da->checkPresence(us_uid, presence))) {
+    if((err =n_da->checkNodePresence(presence,us_uid,node_type))){
         LOG_AND_TROW_FORMATTED(US_ACT_ERR, -6, "Error fetch the presence for the uid:%1%", % us_uid);
+
     }
+    /*if((err = us_da->checkPresence(us_uid, presence))) {
+        LOG_AND_TROW_FORMATTED(US_ACT_ERR, -6, "Error fetch the presence for the uid:%1%", % us_uid);
+    }*/
     
     //UnitServer is not there in a get operation
     if(!presence && !setop) {
-        US_ACT_DBG<<"The unit server '"<<us_uid<<" has not been found";
+        US_ACT_DBG<<"The unit server '"<<us_uid<<"' has not been found";
         return CDWUniquePtr();
 
        // LOG_AND_TROW_FORMATTED(US_ACT_ERR, -7, "The unit server '%1%' has not been found", % us_uid);
@@ -76,7 +82,7 @@ CDWUniquePtr GetSetFullUnitServer::execute(CDWUniquePtr api_data) {
 
         	ChaosUniquePtr<chaos::common::data::CDataWrapper> data_pack(new CDataWrapper());
         	data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, us_uid);
-        	data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
+        	data_pack->addStringValue(NodeDefinitionKey::NODE_TYPE, node_type);
         	//data_pack->addStringValue(NodeDefinitionKey::NODE_DESC, desc);
         	  /*  if(custom.get()){
         	        data_pack->addCSDataValue(chaos::NodeDefinitionKey::NODE_CUSTOM_PARAM,*custom);

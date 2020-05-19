@@ -305,6 +305,8 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeHealthStatus.cpp
                         api/node/NodeLoadCompletion.cpp
                         api/node/NodeSearch.cpp
+                        api/node/NodeDelete.cpp
+
                         api/node/UpdateProperty.cpp
                         api/node/UpdatePropertyDefaultValues.cpp
                         api/node/GetPropertyDefaultValues.cpp

@@ -324,7 +324,11 @@ namespace chaos {
          Identifies ROOT processes
          */
         static const char * const NODE_TYPE_ROOT       = "nt_root";
-        
+
+        static const char * const NODE_TYPE_VARIABLE       = "nt_variable";
+
+        static const char * const NODE_TYPE_TAG       = "nt_tag";
+
         //! identify an execution unit of type script
         /*!
          A scriptable execution unit consinst of a framework implementaion of the an
@@ -339,6 +343,8 @@ namespace chaos {
          A DAQ unit node is a tipical !CHAOS node that acquires data without any command
          */
         static const char * const NODE_SUBTYPE_DAQ_CONTROL_UNIT    = "nt_daq_unit";
+
+       
         typedef enum  {
             //!Search us
             node_type_us = 1,
@@ -362,6 +368,28 @@ namespace chaos {
             
             
         } NodeSearchType;
+        static inline const char* nodeTypeToString(unsigned int nt) {
+            switch (nt){
+                case (node_type_us):
+                    return NODE_TYPE_UNIT_SERVER;
+                case (node_type_cu):
+                    return NODE_TYPE_CONTROL_UNIT;
+                case (node_type_agent):
+                    return NODE_TYPE_AGENT;
+                case (node_type_cds):
+                    return NODE_TYPE_DATA_SERVICE;
+                case (node_type_wan):
+                    return NODE_TYPE_WAN_PROXY;
+                case (node_type_variable):
+                    return NODE_TYPE_VARIABLE;
+                case (node_type_tag):
+                    return NODE_TYPE_TAG;
+                case (node_type_root):
+                    return NODE_TYPE_ROOT;
+                default:
+                    return "ALL";
+            }
+        }
 
         static const char* NODE_SEARCH_LIST_KEY="node_search_result_page";
     }
@@ -615,6 +643,9 @@ namespace chaos {
             static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             static const char * const ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE     = "node_keep_alive";
             static const char * const ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS     = "node_log_on_mds";
+            static const char * const ACTION_LAUNCH_SCRIPT     = "node_script_id";
+            static const char * const ACTION_LAUNCH_WORKDIR     = "node_workdir";
+
             
             static const char * const ACTION_STOP_NODE                      = "stopNode";
             static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
