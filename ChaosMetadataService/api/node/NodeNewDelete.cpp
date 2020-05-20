@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include "NodeDelete.h"
+#include "NodeNewDelete.h"
 
 #define NS_INFO INFO_LOG(NodeDelete)
 #define NS_DBG  DBG_LOG(NodeDelete)
@@ -28,12 +28,15 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(NodeDelete, "nodeDelete");
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeNewDelete, "nodeNewDelete");
 
-CDWUniquePtr NodeDelete::execute(CDWUniquePtr api_data) {
+CDWUniquePtr NodeNewDelete::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, NS_ERR, -1, "No parameter found")
-    
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -4);
+
     chaos::common::data::CDataWrapper *result=NULL;
+    bool remove=api_data->hasKey("reset");
+
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         LOG_AND_TROW(NS_ERR, -1, "Node unique id not found: "+api_data->getJSONString())
     }
@@ -43,12 +46,18 @@ CDWUniquePtr NodeDelete::execute(CDWUniquePtr api_data) {
     }
     std::string node_uid=api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     std::string node_type=api_data->getStringValue(NodeDefinitionKey::NODE_TYPE);
-    
-    NS_DBG<<" delete "<<node_uid<<"("<<node_type<<")";
-    GET_DATA_ACCESS(NodeDataAccess, n_da, -4);
+    if(remove){
+        NS_DBG<<" delete "<<node_uid<<"("<<node_type<<")";
 
-    if (n_da->deleteNode(node_uid,node_type)){
-            LOG_AND_TROW(NS_ERR, -5, "Cannot delete node: "+node_uid+" ["+node_type+"]");
+        if (n_da->deleteNode(node_uid,node_type)){
+              LOG_AND_TROW(NS_ERR, -5, "Cannot delete node: "+node_uid+" ["+node_type+"]");
+     }
+    } else {
+        if(n_da->insertNewNode(*api_data.get())){
+            LOG_AND_TROW(NS_ERR, -6, "Cannot insert node: "+node_uid+" ["+node_type+"] :"+api_data->getJSONString());
+
+        }
+
     }
 
       

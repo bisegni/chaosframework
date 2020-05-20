@@ -339,7 +339,9 @@ namespace chaos {
                                                                                        const std::string& action_name,
                                                                                        chaos::common::data::CDWUniquePtr request_pack = chaos::common::data::CDWUniquePtr(),
                                                                                        int32_t request_timeout = 1000);
-                
+
+               int getScriptDesc(const std::string& scriptID,chaos::common::data::CDWUniquePtr& res,
+                               uint32_t millisec_to_wait=5000); 
             };
         }
     }

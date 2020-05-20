@@ -75,6 +75,10 @@ namespace chaos {
              receive the ack package for agent registration on the MDS
              */
             chaos::common::data::CDWUniquePtr registrationACK(chaos::common::data::CDWUniquePtr  message_data);
+
+            std::string scriptWorkingDir(std::string name,std::string content);
+            std::string writeScript(const std::string& working_dir,const std::string& name,const std::string&content);
+
         public:
             AgentRegister();
             ~AgentRegister();

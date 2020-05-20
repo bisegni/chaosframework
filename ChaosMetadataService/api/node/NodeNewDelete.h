@@ -18,8 +18,8 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#ifndef __CHAOSFramework__NodeDelete__
-#define __CHAOSFramework__NodeDelete__
+#ifndef __CHAOSFramework__NodeNewDelete__
+#define __CHAOSFramework__NodeNewDelete__
 
 #include "../AbstractApi.h"
 
@@ -27,7 +27,7 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                CHAOS_MDS_DEFINE_API_CLASS(NodeDelete);
+                CHAOS_MDS_DEFINE_API_CLASS(NodeNewDelete);
             }
         }
     }

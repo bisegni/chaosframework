@@ -91,6 +91,7 @@ void ChaosAgent::init(void *init_data)  {
 
     std::string script_path=getGlobalConfigurationInstance()->getOption< std::string >(OPT_SCRIPT_DIR) +"/"+ ChaosAgent::getInstance()->settings.agent_uid;
     boost::filesystem::path p(script_path);
+    ChaosAgent::getInstance()->settings.script_dir=script_path;
     if ((boost::filesystem::exists(p) == false)) {
         try {
         if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {

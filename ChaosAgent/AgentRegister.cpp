@@ -32,6 +32,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/Base64Util.h>
 
 
 #define SM_EXECTION_STEP_MS 1000
@@ -49,6 +50,50 @@ using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 using namespace chaos::common::network;
 using namespace chaos::service_common::data::agent;
+
+
+
+std::string AgentRegister::scriptWorkingDir(std::string scriptname,std::string uid){
+ std::string destdir;
+    size_t res=scriptname.find_first_of(".",0);
+    std::string base_dir=ChaosAgent::getInstance()->settings.script_dir;
+    if(res==std::string::npos){
+      destdir=base_dir+"/"+uid+std::string("/")+scriptname;
+    } else {
+      destdir=base_dir+"/"+uid+std::string("/")+scriptname.substr(0,res);
+    }
+    return destdir;
+}
+ std::string AgentRegister::writeScript(const std::string& working_dir,const std::string& name,const std::string&content){
+  try{
+    DBG<<"creating directory \""<<working_dir<<"\"";
+   if ((boost::filesystem::exists(working_dir) == false) &&
+            (boost::filesystem::create_directories(working_dir) == false)) {
+         ERROR<<"cannot create directory:\""<<working_dir<<"\"";
+         return std::string();
+  }
+  } catch(...){
+         ERROR<<"Exception cannot create directory:\""<<working_dir<<"\"";
+         return std::string();
+
+  }
+  CDBufferUniquePtr towrite=Base64Util::decode(content);
+  std::string fname=boost::filesystem::current_path().string()+"/"+working_dir+"/"+name;
+  DBG<<"creating file \""<<fname<<"\"";
+
+  std::ofstream fs(fname);
+  if(fs.is_open()){
+    fs<<towrite->getBuffer();
+    fs.close();
+    DBG<<"written \""<<fname<<"\""<<towrite->getBufferSize()<<" bytes written";
+    boost::filesystem::permissions(fname,boost::filesystem::owner_all);
+    return fname;
+  } else {
+    ERROR<<"cannot write file \""<<fname<<"\"";
+  }
+
+  return std::string("");
+}
 
 AgentRegister::AgentRegister():
 rpc_domain("agent"),
@@ -240,9 +285,27 @@ void AgentRegister::timeout() {
                     end = agent_instance_sd_wrapper().node_associated.end();
                     it != end;
                     it++) {
+                        bool toexec=true;
+                        CDWUniquePtr param;
+                    if(it->scriptID!=""){
+                        // probably is a script get the description.
+                        std::string path,wd;
+                        toexec=false;
+                        if(mds_message_channel->getScriptDesc(it->scriptID,param)==0){
+                            INFO <<" AGENT HAS TO START:"<<param->getJSONString();
+                            wd=scriptWorkingDir(it->scriptID,it->associated_node_uid);
+                            if(wd.size()){
+                                path=writeScript(wd,it->scriptID,param->getStringValue("eudk_script_content"));
+                                if(path.size()>0){
+                                    toexec=true;
+                                    it->working_dir=wd;
+                                }
+                            }
+                        }                     
+                    }
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
-                        LAUNCH_PROCESS(*it);
+                        LAUNCH_PROCESS(*it,param);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }

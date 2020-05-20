@@ -39,7 +39,7 @@
 #include "ForwardNodeRpcMessage.h"
 #include "KillCurrentCommand.h"
 #include "ClearCommandQueue.h"
-#include "NodeDelete.h"
+#include "NodeNewDelete.h"
 
 #include "GetCommandAndTemplateDescription.h"
 
@@ -70,7 +70,7 @@ AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<GetPropertyDefaultValues>();
     addApi<UpdatePropertyDefaultValues>();
     addApi<GetCommandAndTemplateDescription>();
-    addApi<NodeDelete>();
+    addApi<NodeNewDelete>();
 
 }
 

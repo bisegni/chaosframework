@@ -43,13 +43,15 @@ std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     return result;
 }
 
-void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) {
+void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,const chaos::common::data::CDWUniquePtr& param){
+
     int pid = 0;
     std::string exec_command;
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
         if(checkProcessAlive(node_association_info) == true) return;
+        
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
@@ -101,7 +103,7 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         init_file_stream.close();
         //create the named pipe
         //ProcRestUtil::createNamedPipe(queue_file.string());
-        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".","nt_unit_server",node_association_info.associated_node_uid);
+        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,node_association_info.working_dir,"nt_unit_server",node_association_info.associated_node_uid);
         if(ret==0){
             LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
         } else {

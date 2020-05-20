@@ -78,7 +78,7 @@ CHAOS_FORMAT("%1%/bin/%2% --%3% %4%%5%", %ChaosAgent::getInstance()->settings.wo
                 
                 static int removeNamedPipe(const std::string& named_pipe_path);
                 
-                static void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
+                static void launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,const chaos::common::data:CDWUniquePtr& param=chaos::common::data:CDWUniquePtr());
                 
                 static bool checkProcessAlive(const chaos::service_common::data::agent::AgentAssociation& node_association_info);
                 

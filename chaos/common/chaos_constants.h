@@ -935,6 +935,9 @@ namespace chaos {
      */
     //! Name space for grupping key for the execution unit node type
     namespace ExecutionUnitNodeDefinitionKey {
+        static const char * CHAOS_SBD_NAME  ="script_name";
+        static const char * CHAOS_SBD_DESCRIPTION ="script_description";
+
         //! array of object that describe the input variable [string]
         static const char * const EXECUTION_UNIT_DESCRIPTION            = "eudk_description";
         //!the list of the pool managed by a unit server
@@ -1033,6 +1036,7 @@ namespace chaos {
         static const char * const PROXY_CU	= NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT;
     }
     /** @} */ // end of CUType
+    
     
     /** @defgroup ChaosDataType Chaos Basic datatype
      *  This is the collection of the definition of the chaos basic datatype

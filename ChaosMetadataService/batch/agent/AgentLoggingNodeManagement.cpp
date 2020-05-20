@@ -59,14 +59,14 @@ void AgentLoggingNodeManagement::setHandler(CDataWrapper *data) {
     managed_node = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     NodeAssociationLoggingOperation logging_action = (NodeAssociationLoggingOperation)data->getInt32Value("NodeAssociationLoggingOperation");
     if((err = getDataAccess<mds_data_access::AgentDataAccess>()->getAgentForNode(managed_node, agent_uid))) {
-        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching agent uid for node decription for %1%", %managed_node))
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching agent uid for node decription for %1% : %2%", %managed_node %data->getJSONString()))
     }
     
     //! fetch the agent information
     CDataWrapper *tmp_ptr;
     ChaosUniquePtr<chaos::common::data::CDataWrapper> agent_node_information;
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(agent_uid, &tmp_ptr))) {
-        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching agent decription for %1%", %agent_uid))
+        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error fetching agent decription for %1% : %2%", %agent_uid %data->getJSONString()))
     }
     agent_node_information.reset(tmp_ptr);
     
