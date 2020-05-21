@@ -443,9 +443,9 @@ chaos::common::data::CDWUniquePtr data(new CDataWrapper());
                 }
             }
         }
-    MSG_ERR<<" Timeoit cannot retrieve  load script: for "<<scriptID;
+    MSG_ERR<<" Timeout cannot retrieve  load script: for "<<scriptID;
 
-        
+    return -100;
 }
 
 int MDSMessageChannel::getDataDriverBestConfiguration(CDWUniquePtr& device_definition,

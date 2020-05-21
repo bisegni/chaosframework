@@ -19,22 +19,21 @@
  * permissions and limitations under the Licence.
  */
 
-#include "NodeGetDescription.h"
+#include "NodeSetDescription.h"
 
-#define USRA_INFO INFO_LOG(NodeGetDescription)
-#define USRA_DBG  DBG_LOG(NodeGetDescription)
-#define USRA_ERR  ERR_LOG(NodeGetDescription)
+#define USRA_INFO INFO_LOG(NodeSetDescription)
+#define USRA_DBG  DBG_LOG(NodeSetDescription)
+#define USRA_ERR  ERR_LOG(NodeSetDescription)
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-CHAOS_MDS_DEFINE_API_CLASS_CD(NodeGetDescription, "getNodeDescription")
+CHAOS_MDS_DEFINE_API_CLASS_CD(NodeSetDescription, "setNodeDescription")
 
-CDWUniquePtr NodeGetDescription::execute(CDWUniquePtr api_data) {
+CDWUniquePtr NodeSetDescription::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
-    chaos::common::data::CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         LOG_AND_TROW(USRA_ERR, -1, "Node unique id not set as parameter")
     }
@@ -45,11 +44,11 @@ CDWUniquePtr NodeGetDescription::execute(CDWUniquePtr api_data) {
                                       api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)))) {
         LOG_AND_TROW(USRA_ERR, err, "Error checking node presence")
     } else if(presence){
-        if((err = n_da->getNodeDescription(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), &result))) {
-            LOG_AND_TROW(USRA_ERR, err, "Error fetching node  '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' decription")
+        if((err = n_da->setNodeDescription(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), api_data))) {
+            LOG_AND_TROW(USRA_ERR, err, "Error Setting node  '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' decription")
         }
     } else {
         LOG_AND_TROW(USRA_ERR, -3, "Node '"+   api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)+"' not found")
     }
-    return CDWUniquePtr(result);
+    return CDWUniquePtr();
 }

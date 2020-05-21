@@ -52,6 +52,16 @@ namespace chaos {
                     //! defautl destructor
                     ~NodeDataAccess();
                     
+                    /**
+                      * @brief Set the Node to the specified value
+                      * 
+                      * @param node_unique_id node id
+                      * @param node_description object
+                      * @return int 0 if success
+                      */
+                    virtual int setNodeDescription(const std::string& node_unique_id,
+                                           chaos::common::data::CDWUniquePtr &node_description)=0;
+                    
                     virtual int getNodeDescription(const std::string& node_unique_id,
                                                    chaos::common::data::CDWUniquePtr &node_description) = 0;
                     

@@ -26,6 +26,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #define READ   0
 #define WRITE  1
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -42,7 +43,6 @@ std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     boost::replace_all(result,"/","_");
     return result;
 }
-
 void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,const chaos::common::data::CDWUniquePtr& param){
 
     int pid = 0;

@@ -45,8 +45,25 @@ namespace chaos {
                     
                     mongo::BSONObj getAliveOption(unsigned int timeout_sec);
                 public:
+                    /**
+                     * @brief Get the Node object
+                     * 
+                     * @param node_unique_id node id
+                     * @param node_description returned object
+                     * @return int 0 if success
+                     */
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDWUniquePtr &node_description);
+                     /**
+                      * @brief Set the Node to the specified value
+                      * 
+                      * @param node_unique_id node id
+                      * @param node_description object
+                      * @return int 0 if success
+                      */
+                    int setNodeDescription(const std::string& node_unique_id,
+                                           chaos::common::data::CDWUniquePtr &node_description);
+                    
                     //inherited method
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDataWrapper **node_description);

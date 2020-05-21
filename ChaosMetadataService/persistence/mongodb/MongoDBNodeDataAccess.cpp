@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#undef DEBUG
+//#undef DEBUG
 
 #include <mongo/client/dbclient.h>
 #include "MongoDBNodeDataAccess.h"
@@ -63,7 +63,37 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
     }
     return err;
 }
+ int MongoDBNodeDataAccess::setNodeDescription(const std::string& node_unique_id,
+                                           chaos::common::data::CDWUniquePtr &node_description){
 
+ int err = 0;
+    mongo::BSONObj result;
+    mongo::BSONObjBuilder query_builder;
+    try {
+        int size;
+        if(node_unique_id.size() == 0) return -1; //invalid unique id
+        query_builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
+        
+        mongo::BSONObj q = query_builder.obj();
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(node_description->getBSONRawData(size)));
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setNodeDescription",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+
+        // want to have the full information
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q,u))){
+            MDBNDA_ERR << "Error setting/update node description";
+        } 
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+                   
 int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                               chaos::common::data::CDataWrapper **node_description) {
     int err = 0;
@@ -74,24 +104,30 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
         query_builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
         
         mongo::BSONObj q = query_builder.obj();
-        mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
+      /*  mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_SUB_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
                                 chaos::NodeDefinitionKey::NODE_HOST_NAME << 1 <<
                                 chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
-                                chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
+                                chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);*/
         
-        DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
+        /*DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
                                            "findOne",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                    "Projection",
                                                                    q.jsonString(),
                                                                    p.jsonString()));)
-        
+        */
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()
+                                                                   ));)
+        // want to have the full information
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, &p))){
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q/*, &p*/))){
             MDBNDA_ERR << "Error fetching node description";
         } else if(result.isEmpty()) {
             MDBNDA_ERR << "No node description has been found";
@@ -172,6 +208,9 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
             updated_field << chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
+        }
+         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_PARENT << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));

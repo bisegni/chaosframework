@@ -178,6 +178,15 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_uni
 
 int MongoDBControlUnitDataAccess::updateControlUnit(CDataWrapper& control_unit_description) {
     int err = 0;
+     if(!control_unit_description.hasKey(NodeDefinitionKey::NODE_TYPE)) {
+        //set the type of control unit
+        control_unit_description.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    }
+    chaos::common::data::CDWUniquePtr ptr=control_unit_description.clone();
+    MDBCUDA_DBG<<" update:"<<control_unit_description.getJSONString();
+    if((err = node_data_access->setNodeDescription(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID),ptr))) {
+        MDBCUDA_ERR << "Error:" << err << " updating new node for control unit:"<<control_unit_description.getJSONString();
+    } 
     return err;
 }
 
@@ -779,7 +788,9 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             mongo::BSONObj instance_description = q_result.getObjectField("instance_description");
             *result = new CDataWrapper();
             (*result)->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
-            
+            if(q_result.hasField(NodeDefinitionKey::NODE_TYPE))(*result)->addStringValue(NodeDefinitionKey::NODE_TYPE, q_result.getStringField(NodeDefinitionKey::NODE_TYPE));
+            if(q_result.hasField(NodeDefinitionKey::NODE_SUB_TYPE))(*result)->addStringValue(NodeDefinitionKey::NODE_SUB_TYPE, q_result.getStringField(NodeDefinitionKey::NODE_SUB_TYPE));
+
             
             (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
             if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
