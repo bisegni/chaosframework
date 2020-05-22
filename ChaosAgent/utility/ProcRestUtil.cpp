@@ -38,6 +38,11 @@ using namespace chaos::common;
 using namespace chaos::agent::utility;
 using namespace chaos::common::network;
 using namespace chaos::service_common::data::agent;
+
+#define USRA_INFO INFO_LOG(ProcRestUtil)
+#define USRA_DBG  DBG_LOG(ProcRestUtil)
+#define USRA_ERR  ERR_LOG(ProcRestUtil)
+
 std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;
     boost::replace_all(result,"/","_");
@@ -97,7 +102,7 @@ void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::Agent
             mds_it++) {
             init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
         }
-    
+
         //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
@@ -105,10 +110,10 @@ void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::Agent
         //ProcRestUtil::createNamedPipe(queue_file.string());
         int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,node_association_info.working_dir,"nt_unit_server",node_association_info.associated_node_uid);
         if(ret==0){
-            LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
+            USRA_DBG<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
         } else {
       //   throw chaos::CException(-1, CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id), __PRETTY_FUNCTION__);
-        LERR_<< CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id);
+        USRA_ERR<< CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id);
         }
 
     } catch(std::exception& ex) {
@@ -120,11 +125,11 @@ bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_in
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
     alive=(proc==::restConsole::RestProcessManager::PROCESS_STARTED);
-    LDBG_<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive;
+    USRA_DBG<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive;
     return alive;
 }
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
-     LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
+     USRA_DBG<<"Quitting process \""<<node_association_info.association_unique_id;
     return (killProcess(node_association_info.association_unique_id) == 0);
 }

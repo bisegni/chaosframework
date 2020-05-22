@@ -435,8 +435,8 @@ chaos::common::data::CDWUniquePtr data(new CDataWrapper());
                         return request_future->getError();
                     }
                      if(request_future->getResult()){
-                                    res= request_future->detachResult();
-                                    return 0;
+                        res= request_future->detachResult();
+                        return 0;
                     }
                     }
   
