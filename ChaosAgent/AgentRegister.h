@@ -89,6 +89,7 @@ namespace chaos {
             
             //!add a new agent
             void addWorker(WorkerSharedPtr new_worker);
+
         };
         
     }

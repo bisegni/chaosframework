@@ -151,16 +151,19 @@ CDWUniquePtr ProcessWorker::launchNode(CDWUniquePtr data) {
                                       ERROR, -3,
                                       CHAOS_FORMAT("[%1%] %2% key need to be a string", %getName()%AgentNodeDomainAndActionRPC::ProcessWorker::ACTION_LAUNCH_NODE_PAR_CFG));
     }
+
     AgentAssociationSDWrapper assoc_sd_wrapper;
     assoc_sd_wrapper.deserialize(data.get());
+    chaos::service_common::data::agent::AgentAssociation ass=assoc_sd_wrapper();
+    chaos::common::data::CDWUniquePtr param=ChaosAgent::getInstance()->checkAndPrepareScript(ass);
 
-    if(CHECK_PROCESS(assoc_sd_wrapper()) == false) {
-        LAUNCH_PROCESS(assoc_sd_wrapper());
+    if(CHECK_PROCESS(ass) == false) {
+        LAUNCH_PROCESS(ass);
     }
 
 
     if(assoc_sd_wrapper().keep_alive) {
-        addToRespawn(assoc_sd_wrapper());
+        addToRespawn(ass)   ;
     }
     return CDWUniquePtr();
 }

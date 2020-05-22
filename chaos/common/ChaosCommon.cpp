@@ -328,8 +328,13 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         
         NetworkBroker::getInstance()->registerAction(this);
+    } catch (std::exception& e){
+        LERR_<< "Unexpected std exception received: "<<e.what();
+        exit(1);
+
     } catch (...) {
-        throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
+        LERR_<< "Unexpected exception received ";
+        exit(1);
     }
 }
 chaos::common::data::CDWUniquePtr ChaosAbstractCommon::_registrationAck(chaos::common::data::CDWUniquePtr ack_pack){

@@ -26,6 +26,8 @@
 #include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include "utility/ProcRestUtil.h"
+#include <chaos/common/utility/Base64Util.h>
+
 #define INFO    INFO_LOG(ChaosAgent)
 #define ERROR   ERR_LOG(ChaosAgent)
 #define DBG     DBG_LOG(ChaosAgent)
@@ -176,4 +178,66 @@ void ChaosAgent::signalHanlder(int signal_number) {
    // procRestUtil->stop();
     wait_close_semaphore.notifyAll();
 
+}
+
+
+std::string ChaosAgent::scriptWorkingDir(std::string scriptname,std::string uid){
+ std::string destdir;
+    size_t res=scriptname.find_first_of(".",0);
+    std::string base_dir=ChaosAgent::getInstance()->settings.script_dir;
+    if(res==std::string::npos){
+      destdir=base_dir+"/"+uid+std::string("/")+scriptname;
+    } else {
+      destdir=base_dir+"/"+uid+std::string("/")+scriptname.substr(0,res);
+    }
+    return destdir;
+}
+ std::string ChaosAgent::writeScript(const std::string& working_dir,const std::string& name,const std::string&content){
+  try{
+    DBG<<"creating directory \""<<working_dir<<"\"";
+   if ((boost::filesystem::exists(working_dir) == false) &&
+            (boost::filesystem::create_directories(working_dir) == false)) {
+         ERROR<<"cannot create directory:\""<<working_dir<<"\"";
+         return std::string();
+  }
+  } catch(...){
+         ERROR<<"Exception cannot create directory:\""<<working_dir<<"\"";
+         return std::string();
+
+  }
+  chaos::common::data::CDBufferUniquePtr towrite=Base64Util::decode(content);
+  std::string fname=boost::filesystem::current_path().string()+"/"+working_dir+"/"+name;
+  DBG<<"creating file \""<<fname<<"\"";
+
+  std::ofstream fs(fname);
+  if(fs.is_open()){
+    fs<<towrite->getBuffer();
+    fs.close();
+    DBG<<"written \""<<fname<<"\""<<towrite->getBufferSize()<<" bytes written";
+    boost::filesystem::permissions(fname,boost::filesystem::owner_all);
+    return fname;
+  } else {
+    ERROR<<"cannot write file \""<<fname<<"\"";
+  }
+
+  return std::string("");
+}
+chaos::common::data::CDWUniquePtr ChaosAgent::checkAndPrepareScript(chaos::service_common::data::agent::AgentAssociation& it){
+    chaos::common::data::CDWUniquePtr param;
+    if(it.scriptID!=""){
+        // probably is a script get the description.
+        std::string path,wd;
+        if(chaos::common::network::NetworkBroker::getInstance()->getMetadataserverMessageChannel()->getScriptDesc(it.scriptID,param)==0){
+            INFO <<" AGENT HAS TO START:"<<param->getJSONString();
+            wd=scriptWorkingDir(it.scriptID,it.associated_node_uid);
+            if(wd.size()){
+                path=writeScript(wd,it.scriptID,param->getStringValue("eudk_script_content"));
+                if(path.size()>0){
+                    it.working_dir=wd;
+                    return param;
+                }
+            }
+        }                     
+    }
+    return param;
 }
