@@ -76,8 +76,13 @@ CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
   }
 #endif
     if ((err = s_da->insertNewScript(api_data))) {
-        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id));
-      }
+        // try to update
+        DBG<<CHAOS_FORMAT("Error creating new script %1%[%2%] try to update", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id);
+//        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id));
+        if ((err = s_da->updateScript(api_data))) {
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id));
+        }
+    }
   //return the script base description
   script_bs_result_dw.dataWrapped() = script_dw.dataWrapped().script_description;
   return script_bs_result_dw.serialize();
