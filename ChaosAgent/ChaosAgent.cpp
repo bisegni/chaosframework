@@ -211,7 +211,7 @@ std::string ChaosAgent::scriptWorkingDir(std::string scriptname,std::string uid)
 
   std::ofstream fs(fname);
   if(fs.is_open()){
-    fs<<towrite->getBuffer();
+    fs.write(towrite->getBuffer(),towrite->getBufferSize());
     fs.close();
     DBG<<"written \""<<fname<<"\""<<towrite->getBufferSize()<<" bytes written";
     boost::filesystem::permissions(fname,boost::filesystem::owner_all);
