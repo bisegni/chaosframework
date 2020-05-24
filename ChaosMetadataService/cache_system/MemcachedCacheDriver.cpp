@@ -42,6 +42,11 @@ int MemcachedCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 	return err != MEMCACHED_SUCCESS;
 }
 
+int MemcachedCacheDriver::deleteData(const std::string& key){
+	return 0;
+}
+
+
 int MemcachedCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	uint32_t flags = 0;
 	size_t len;

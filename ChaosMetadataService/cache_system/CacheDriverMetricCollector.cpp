@@ -81,6 +81,10 @@ int CacheDriverMetricCollector::getData(const std::string& key,
     }
     return err;
 }
+int CacheDriverMetricCollector::deleteData(const std::string& server_desc){
+    return 0;
+}
+
 int CacheDriverMetricCollector::getData(const ChaosStringVector&    keys,
                                         MultiCacheData&             multi_data) {
     CHAOS_ASSERT(wrapped_cache_driver)

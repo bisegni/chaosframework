@@ -135,6 +135,8 @@ namespace chaos {
             public:
                 ~CouchbaseCacheDriver();
                 
+                int deleteData(const std::string& key);
+
                 int putData(const std::string& key,
                             CacheData data);
                 

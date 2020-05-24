@@ -76,8 +76,10 @@ void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::Agent
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-        //enable log on console that will be redirected on named pipe
-        init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        if((node_association_info.scriptID=="")||node_association_info.log_on_mds){
+            //enable log on console that will be redirected on named pipe
+         init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        }
         //check for syslog setting of the agent that will be reflect on managed us
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
@@ -88,9 +90,9 @@ void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::Agent
 
         }
         
-        if(node_association_info.log_on_mds){
-            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
-        }
+       // if(node_association_info.log_on_mds){
+            //init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
+       // }
         
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         

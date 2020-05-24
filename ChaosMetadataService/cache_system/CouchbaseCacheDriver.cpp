@@ -173,6 +173,11 @@ int CouchbaseCacheDriver::putData(const std::string& key,
     return err;
 }
 
+int CouchbaseCacheDriver::deleteData(const std::string& key){
+return 0;
+}
+
+
 int CouchbaseCacheDriver::getData(const std::string& key,
                                   CacheData& cached_data) {
     CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)

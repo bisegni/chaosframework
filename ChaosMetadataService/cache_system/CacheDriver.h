@@ -59,6 +59,9 @@ namespace chaos {
 				
                 virtual int putData(const std::string& key,
 									CacheData data_to_store) = 0;
+
+                virtual int deleteData(const std::string& key) = 0;
+
                 
                 virtual int getData(const std::string& key,
 									CacheData& cached_data) = 0;
