@@ -128,9 +128,9 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
         // want to have the full information
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q/*, &p*/))){
-            MDBNDA_ERR << "Error fetching node description";
+            MDBNDA_ERR << "Error fetching node description for:"<<node_unique_id;
         } else if(result.isEmpty()) {
-            MDBNDA_ERR << "No node description has been found";
+            MDBNDA_ERR << "No node description has been found for:"<<node_unique_id;
             err = -2;
         } else {
             *node_description = new CDataWrapper(result.objdata());
