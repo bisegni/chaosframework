@@ -79,7 +79,40 @@ void TimingUtil::enableTimestampCalibration() {
 void TimingUtil::disableTimestampCalibration() {
     AsyncCentralManager::getInstance()->removeTimer(this);
 }
+ 
+ uint64_t TimingUtil::getTimestampFromString(const std::string& timestamp,const std::string& format,bool isutc) {
+                    boost::posix_time::ptime timep;
+                    size_t i=0;
+                    std::istringstream is(timestamp);
+                    boost::posix_time::time_input_facet *f=new boost::posix_time::time_input_facet(format);
+                    std::locale loc=std::locale(std::locale::classic(), f);
+                    is.imbue(loc);
+                    is >> timep;
 
+                    if(isutc){
+                        return (timep-EPOCH).total_milliseconds();
+                    }
+                    return ((timep-getUTCOffset())-EPOCH).total_milliseconds();
+                    
+}
+
+ std::string TimingUtil::toString(uint64_t since_epoc_ms,
+                                                   const std::string& format) {
+                    boost::posix_time::time_facet* facet=new boost::posix_time::time_facet(format.c_str());
+                    std::ostringstream stream;
+                    stream.imbue(std::locale(stream.getloc(), facet));
+                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::milliseconds(since_epoc_ms));
+                    return stream.str();
+}
+
+  std::string TimingUtil::toStringFromMicroseconds(uint64_t since_epoc_us,
+                                                   const std::string& format) {
+                    boost::posix_time::time_facet* f=new boost::posix_time::time_facet (format.c_str());
+                    std::ostringstream stream;
+                    stream.imbue(std::locale(stream.getloc(), f));
+                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::microseconds(since_epoc_us));
+                    return stream.str();
+}
 void TimingUtil::timeout() {
     uint64_t ntp_rx_ts = 0;
     uint64_t ntp_tx_ts = 0;

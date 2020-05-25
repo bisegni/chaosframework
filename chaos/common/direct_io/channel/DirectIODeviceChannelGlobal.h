@@ -66,19 +66,21 @@ namespace chaos {
                  */
                 namespace DeviceChannelOpcodeQueryDataCloudParam {
                     //!is the timestamp for wich we want to search our key
-                    static const char * const QUERY_PARAM_META_TAGS                     = "qp_data_cloud_meta_tags";
+                    static const char * const QUERY_PARAM_META_TAGS                     = "qpdc_meta_tags";
                     //!is the timestamp for wich we want to search our key
-                    static const char * const QUERY_PARAM_STAR_TS_I64                   = "qp_data_cloud_start_ts";
+                    static const char * const QUERY_PARAM_STAR_TS_I64                   = "qpdc_start_ts";
                     //!is the timestamp that close the time offset of the search [packet that are <= are included into the result]
-                    static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
+                    static const char * const QUERY_PARAM_END_TS_I64                    = "qpdc_end_ts";
                     //!is the node unique id for wich we whant the results
-                    static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
+                    static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qpdc_key";
                     //!identify the last run id found
-                    static const char * const QUERY_PARAM_SEARCH_LAST_RUN_ID            = "qp_data_cloud_last_run_id";
-                    //!if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
-                    static const char * const QUERY_PARAM_SEARCH_LAST_DP_COUNTER		= "qp_data_cloud_last_dp_counter";
+                    static const char * const QUERY_PARAM_SEARCH_LAST_RUN_ID            = "qpdc_last_run_id";
+                    static const char * const QUERY_PARAM_SEARCH_LAST_TS                = "qpdc_last_ts";
+
+                    //!if true the data pack will be '>=' otherwhise '>' in timestamp respect to qpdc_start_ts key
+                    static const char * const QUERY_PARAM_SEARCH_LAST_DP_COUNTER		= "qpdc_last_dp_counter";
                     //!is the key for query projection (the other keys in datapack are removed)
-                    static const char * const QUERY_PARAM_PROJECTION_KEYS               = "qp_data_cloud_projection_keys";
+                    static const char * const QUERY_PARAM_PROJECTION_KEYS               = "qpdc_projection_keys";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
@@ -194,6 +196,8 @@ namespace chaos {
                     typedef struct SearchSequence {
                         int64_t run_id;
                         int64_t datapack_counter;
+                        uint64_t ts;
+
                     }SearchSequence;
                     
                     //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result

@@ -162,7 +162,7 @@ namespace chaos {
                     SearchWorker();
                     int search(const std::string& p,const uint64_t timestamp_from,const uint64_t timestamp_to,uint64_t seq, uint64_t runid,uint32_t max_ele=1000);
                     // return number of data or negative if error or timeout
-                    int getData(abstraction::VectorObject& data,int maxData,const uint64_t timestamp_from,const uint64_t timestamp_to,int64_t& runid,int64_t& seq,int timeout=5000);
+                    int getData(abstraction::VectorObject& data,int maxData,const uint64_t timestamp_from,const uint64_t timestamp_to,chaos::common::direct_io::channel::opcode_headers::SearchSequence&,int timeout=5000);
                     ~SearchWorker();
             };
             class PosixFile:public metadata_service::object_storage::abstraction::ObjectStorageDataAccess,public chaos::common::async_central::TimerHandler {

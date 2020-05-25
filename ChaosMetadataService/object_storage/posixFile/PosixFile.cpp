@@ -788,7 +788,7 @@ std::string SearchWorker::prepareDirectory() {
       }
     }
   }
-  ERR << " cannot find directory info for:" << path;
+  ERR << " cannot find directory info "<<fpath<<" for:" << path;
   return std::string();
 }
 
@@ -849,7 +849,7 @@ bool SearchWorker::waitData(int timeo) {
 }
 //SearchWorker::dataObj::~dataObj(){DBG<<" count :"<<obj.use_count();}
 
-int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uint64_t timestamp_from, const uint64_t timestamp_to, int64_t& runid, int64_t& seq, int tim) {
+int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uint64_t timestamp_from, const uint64_t timestamp_to, chaos::common::direct_io::channel::opcode_headers::SearchSequence& seq, int tim) {
   if (maxData <= 0) {
     ERR << " you should specify a valid data size";
     return 0;
@@ -857,8 +857,8 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
 
   int cntt = 0;
 
-  DBG << "from:" << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " runid:" << runid << " seq:" << seq;
-  uint64_t lseq = 0, lrunid = 0, cntd = 0;
+  DBG << "from:" << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " runid:" << seq.run_id << " seq:" << seq.datapack_counter;
+  uint64_t lseq = 0, lrunid = 0,lts=0, cntd = 0;
   uint64_t irunid = 0, ts;
   int64_t  iseq   = 0;
   int      index  = 0;
@@ -875,7 +875,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
     again = waitData(tim);
 
     DBG << path << " again:" << again << " index:" << index << " size:" << cache_data.size() << " elements:" << elements << " ts from:" << chaos::common::utility::TimingUtil::toString(first_ts) << " seq:" << first_seq << " runid:" << first_runid << "  to:" << chaos::common::utility::TimingUtil::toString(last_ts) << " seq:" << last_seq << " runid:" << last_runid;
-    if ((again == false) && (((last_seq > 0) && (seq > 0) && (last_seq < seq)) || ((last_ts > 0) && (timestamp_from > last_ts)))) {
+    if ((again == false) && (((last_seq > 0) && (seq.datapack_counter > 0) && (last_seq < seq.datapack_counter)) || ((last_ts > 0) && (timestamp_from > last_ts)))) {
       DBG << " skipping here data not present";
       return 0;
     }
@@ -884,7 +884,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
       irunid = cache_data[index].runid;
       iseq   = cache_data[index].seq;
       ts     = cache_data[index].ts;
-      if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= runid) && (iseq >= seq)) {
+      if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= seq.run_id) && (iseq >= seq.datapack_counter)) {
         dst.push_back(cache_data[index].obj);
 #if CHAOS_PROMETHEUS
 
@@ -894,13 +894,15 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
 
         lrunid = irunid;
         lseq   = iseq;
+        lts=ts;
         cntt++;
       }
     }
   } while (again && (cntt < maxData) && (index < cache_data.size()));
   if (cntt > 0) {
-    runid = lrunid;
-    seq   = lseq;
+    seq.run_id = lrunid;
+    seq.datapack_counter   = lseq;
+    seq.ts=lts;
   }
 
   return cntt;
@@ -1195,7 +1197,7 @@ int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from
   cache_mutex.unlock();
   if (i == searchWorkers.end()) {
     if (searchWorkers[dir].search(dir, timestamp_from, timestamp_to, 0, 0) == 0) {
-      int ret = searchWorkers[dir].getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+      int ret = searchWorkers[dir].getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq);
       DBG << "1- RETURNED:" << ret << "/" << i->second.elements << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
 
       return ret;
@@ -1208,7 +1210,7 @@ int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from
     // recalculate if not final
     if (i->second.isTemp()) {
       if (i->second.search(dir, timestamp_from, timestamp_to, 0, 0) == 0) {
-        int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+        int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq);
         DBG << "RETURNED:" << ret << "/" << i->second.elements << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
         return ret;
       } else {
@@ -1217,7 +1219,7 @@ int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from
         return -1;
       }
     }
-    int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq.run_id, last_record_found_seq.datapack_counter);
+    int ret = i->second.getData(found_object_page, page_len, timestamp_from, timestamp_to, last_record_found_seq);
     DBG << "RETURNED2:" << ret << "/" << i->second.elements << " buf size:" << found_object_page.size() << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
     return ret;
 
@@ -1253,11 +1255,11 @@ int PosixFile::findObject(const std::string&                                    
       //tag=std::accumulate(meta_tags.begin(),meta_tags.end(),std::string("_"));
       tag = boost::algorithm::join(meta_tags, "_");
     }
-    DBG << "Search " << key << " from: " << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " tags:" << tag << " seqid:" << seqid << " runid:" << runid;
+    DBG << "Search " << key << " from: "<<timestamp_from <<"["<< chaos::common::utility::TimingUtil::toString(timestamp_from) << "] to:" <<timestamp_to<<"["<< chaos::common::utility::TimingUtil::toString(timestamp_to) << "] tags:" << tag << " seqid:" << seqid << " runid:" << runid;
 
     // align to minute
-    uint64_t start_aligned = timestamp_from - 1000;  //(timestamp_from % (60 * 1000));
-    uint64_t stop_aligned  = timestamp_to + ((60 * 1000));
+    uint64_t start_aligned = timestamp_from - (timestamp_from % (60 * 1000));
+    uint64_t stop_aligned  = timestamp_to;// + ((60 * 1000));
 
     // loop years
     // loop months
@@ -1312,8 +1314,10 @@ int PosixFile::findObject(const std::string&                                    
         years_timestamp += POSIX_YEAR_MS;
       }
     }
-  } catch (const std::exception e) {
-    ERR << e.what();
+  } catch (const chaos::CException& e) {
+    ERR << "Chaos Exception :" <<e.errorMessage;
+  }catch (const std::exception& e) {
+    ERR << " StdException :" <<e.what();
   }
   if (err == 0 && elements > 0) {
 #if CHAOS_PROMETHEUS

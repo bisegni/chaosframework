@@ -307,6 +307,8 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
             uint32_t numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
             last_sequence_id.run_id = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.run_id);
             last_sequence_id.datapack_counter = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.datapack_counter);
+            last_sequence_id.ts = FROM_LITTLE_ENDNS_NUM(uint64_t, result_header->last_found_sequence.ts);
+
             if(numer_of_record_found &&
                result_data_size) {
                 //scan all result
@@ -319,6 +321,9 @@ int DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
                     current_data_prt += last_record->getBSONRawSize();
                 }
             }
+        } else {
+            DIODCCLERR_ << "No valid Answer.";
+            err=-100;
         }
     }
     return err;

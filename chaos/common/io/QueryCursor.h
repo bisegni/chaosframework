@@ -62,6 +62,7 @@ namespace chaos {
                 const std::string node_id;
                 uint64_t start_ts;
                 uint64_t end_ts;
+                uint64_t last_end_ts;
                 uint64_t start_seq;
                 uint64_t runid_seq;
                 const ChaosStringSet meta_tags;
