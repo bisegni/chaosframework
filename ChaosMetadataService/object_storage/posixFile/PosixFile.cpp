@@ -879,9 +879,12 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
       DBG << " skipping here data not present";
       return 0;
     }
-
     for (; (index < cache_data.size()) && (cntt < maxData); index++) {
       irunid = cache_data[index].runid;
+      if(irunid>seq.run_id){
+        seq.run_id=irunid;
+        seq.datapack_counter=iseq;
+      }
       iseq   = cache_data[index].seq;
       ts     = cache_data[index].ts;
       if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= seq.run_id) && (iseq >= seq.datapack_counter)) {
@@ -1286,21 +1289,21 @@ int PosixFile::findObject(const std::string&                                    
               calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
               // boost::filesystem::path p(dir);
               if (!boost::filesystem::exists(dir)) {
-                ERR << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid << " NOT EXISTS";
+             //   DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid << " NOT EXISTS";
                 continue;
               }
               DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "-" << chaos::common::utility::TimingUtil::toString(timestamp_to) << "->" << chaos::common::utility::TimingUtil::toString(stop_aligned) << " ] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
 
               elements += getFromPath(dir, timestamp_from, timestamp_to, (page_len - elements), found_object_page, last_record_found_seq);
               if (elements >= page_len) {
-                DBG << "[" << dir << "] Found " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+                DBG << "[" << dir << "] FOUND " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter<< " last ts:" << last_record_found_seq.ts;
 #if CHAOS_PROMETHEUS
 
                 (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
                 return 0;
               } else if (elements == 0) {
-                DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter;
+                DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter<< " last ts:" << last_record_found_seq.ts;
               }
               //   old_hour = tinfo.tm_min;
               //   }
