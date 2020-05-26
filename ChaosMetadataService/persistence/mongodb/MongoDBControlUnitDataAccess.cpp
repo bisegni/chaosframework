@@ -1232,6 +1232,7 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
 int MongoDBControlUnitDataAccess::getNextRunID(const std::string& control_unit_id,
                                                int64_t& run_id) {
     int err = 0;
+
     try {
         const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %"run_description"%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
         

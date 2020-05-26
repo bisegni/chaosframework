@@ -44,7 +44,7 @@ CDWUniquePtr NodeRegister::execute(CDWUniquePtr api_data){
     CHECK_CDW_THROW_AND_LOG(api_data, USRA_ERR, -1, "No parameter found")
     CDWUniquePtr result;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        throw CException(-1, "Node unique id not found", __PRETTY_FUNCTION__);
+        throw CException(-1, "Node unique id not found:"+api_data->getJSONString(), __PRETTY_FUNCTION__);
     }
     
     if(!api_data->hasKey(NodeDefinitionKey::NODE_TYPE)) {

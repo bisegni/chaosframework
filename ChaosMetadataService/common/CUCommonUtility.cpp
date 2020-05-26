@@ -345,11 +345,14 @@ ChaosUniquePtr<chaos::common::data::CDataWrapper> CUCommonUtility::initDataPack(
     
     //update run id
     //update the cotnrol unit id
-    if((err = cu_da->getNextRunID(cu_uid,
+
+    // better to return the timestamp is always growing, has a more information and faster
+  /*  if((err = cu_da->getNextRunID(cu_uid,
                                   run_id))) {
         LOG_AND_TROW(CUCU_ERR, err, CHAOS_FORMAT("Error incrementig run id for control unit %1%", %cu_uid));
     }
-    
+    */
+   run_id=chaos::common::utility::TimingUtil::getTimeStamp();
     //get the dataset of the control unit
     if((err = cu_da->getDataset(cu_uid,
                                 &result))) {

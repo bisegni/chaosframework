@@ -449,7 +449,7 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress)  {
     bool isIpAndPort  = InetUtility::checkWellFormedHostIpPort(mdsAddress);
     if(!isHostnameAndPort && !isIpAndPort){
         std::stringstream ss;
-        ss<< "Bad server address: '"<<mdsAddress<<"' expected ip:port or hostaddress:port";
+        ss<< "Bad server address: '"<<mdsAddress<<"' expected ip:port or hostaddress:port, check address and port!";
         throw CException(1, ss.str(), "GlobalConfiguration::addMetadataServerAddress");
     }
     //address can be added

@@ -442,7 +442,10 @@ namespace chaos {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_SIZE  = "cuh_dso_size";
-        
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_ERROR  = "cuh_dso_prerr";
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_LOST   = "cuh_dso_plost";
+        static const char * const CU_HEALT_OUTPUT_TOT_PUSH_KSIZE   = "cuh_dso_tksize";
+
         
     }
     /** @} */ // end of NodeHealtDefinitionValue

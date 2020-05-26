@@ -63,49 +63,49 @@ bool PosixFile::generateRoot = false;
 bool PosixFile::compress     = false;
 /**************/
 
-static int lz4decomp(const std::string& src,const std::string&dst){
+static int lz4decomp(const std::string& src, const std::string& dst) {
   FileLock fl(dst + ".lock");
   fl.lock();
   if (boost::filesystem::exists(dst)) {
-      fl.unlock();
-      return 0;
+    fl.unlock();
+    return 0;
   }
 
   try {
-      std::ifstream       in_file(src);
-      std::ofstream       out_file(dst + ".tmp");
-      lz4_stream::istream lz4_stream(in_file);
+    std::ifstream       in_file(src);
+    std::ofstream       out_file(dst + ".tmp");
+    lz4_stream::istream lz4_stream(in_file);
 
-      std::copy(std::istreambuf_iterator<char>(lz4_stream),
-                std::istreambuf_iterator<char>(),
-                std::ostreambuf_iterator<char>(out_file));
-      boost::filesystem::rename(dst + ".tmp", dst);
+    std::copy(std::istreambuf_iterator<char>(lz4_stream),
+              std::istreambuf_iterator<char>(),
+              std::ostreambuf_iterator<char>(out_file));
+    boost::filesystem::rename(dst + ".tmp", dst);
 
-    } catch (boost::filesystem::filesystem_error&e) {
-      ERR << "filesystem error  " << e.what();
-      return -2;
+  } catch (boost::filesystem::filesystem_error& e) {
+    ERR << "filesystem error  " << e.what();
+    return -2;
 
-    } catch (std::exception& e) {
-      ERR << "decompressing file " << src;
-      return -1;
-    }
-    fl.unlock();
-    return 0;
+  } catch (std::exception& e) {
+    ERR << "decompressing file " << src;
+    return -1;
+  }
+  fl.unlock();
+  return 0;
 }
-static int lz4compress(const std::string& src,const std::string&dst){
-   std::ifstream in_file(src);
+static int lz4compress(const std::string& src, const std::string& dst) {
+  std::ifstream in_file(src);
   std::ofstream out_file(dst);
-            try {
-              lz4_stream::ostream lz4_stream(out_file);
+  try {
+    lz4_stream::ostream lz4_stream(out_file);
 
-              std::copy(std::istreambuf_iterator<char>(in_file),
-                        std::istreambuf_iterator<char>(),
-                        std::ostreambuf_iterator<char>(lz4_stream));
-            } catch (std::exception e) {
-              ERR << " error compressing " + src + " into " + dst;
-              return -1;
-            }
-            return 0;
+    std::copy(std::istreambuf_iterator<char>(in_file),
+              std::istreambuf_iterator<char>(),
+              std::ostreambuf_iterator<char>(lz4_stream));
+  } catch (std::exception e) {
+    ERR << " error compressing " + src + " into " + dst;
+    return -1;
+  }
+  return 0;
 }
 std::vector<std::string> searchFile(const std::string& p, const boost::regex& my_filter) {
   std::vector<std::string> all_matching_files;
@@ -216,12 +216,12 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
   int            err = 0;
   bson_error_t   src_err;
   bson_reader_t* src;
-  
-  if(keys.size()==0){
+
+  if (keys.size() == 0) {
     ERR << "no keys to reorder..";
     return 0;
   }
-  src= bson_reader_new_from_file(srcpath.c_str(), &src_err);
+  src = bson_reader_new_from_file(srcpath.c_str(), &src_err);
   if (src == NULL) {
     ERR << " cannot open for read or not valid:" << srcpath;
     return -1;
@@ -241,7 +241,7 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
   std::vector<std::string>::const_iterator i = keys.begin();
   const bson_t*                            b;
   int                                      ritems = 0, witems = 0, rline = 0;
-  
+
   while (((b = bson_reader_read(src, &eof)) != NULL) && (eof == false)) {
     bson_iter_t iter;
 
@@ -264,7 +264,7 @@ int reorderData(const std::string& dstpath, const std::vector<std::string>& keys
 
     std::string         key(pkey);
     const bson_value_t* val = bson_iter_value(&iter);
-    if(val==NULL){
+    if (val == NULL) {
       ERR << srcpath << "] no goot value found " << rline;
       continue;
     }
@@ -317,37 +317,34 @@ static int makeOrdered(PosixFile::fdw_t& second) {
   FileLock                fl(dstpath + ".lock");
   fl.lock();
   uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
-  try{
-  if ((!boost::filesystem::exists(p)) || (second.ordered_ts < second.unordered_ts)) {
-    int retw = 0;
+  try {
+    if ((!boost::filesystem::exists(p)) || (second.ordered_ts < second.unordered_ts)) {
+      int retw = 0;
 
-    if ((now - second.ts) > POSIX_MSEC_QUANTUM) {
-      // no copy because non update any more
-      std::sort(second.keys.begin(), second.keys.end());
-      retw = reorderData(dstpath + ".tmp", second.keys, second.writer.size(), second.fname);
-    } else {
-      std::vector<std::string> ordered_keys = second.keys;
-      std::sort(ordered_keys.begin(), ordered_keys.end());
-      retw = reorderData(dstpath + ".tmp", ordered_keys, second.writer.size(), second.fname);
-    }
+      if ((now - second.ts) > POSIX_MSEC_QUANTUM) {
+        // no copy because non update any more
+        std::sort(second.keys.begin(), second.keys.end());
+        retw = reorderData(dstpath + ".tmp", second.keys, second.writer.size(), second.fname);
+      } else {
+        std::vector<std::string> ordered_keys = second.keys;
+        std::sort(ordered_keys.begin(), ordered_keys.end());
+        retw = reorderData(dstpath + ".tmp", ordered_keys, second.writer.size(), second.fname);
+      }
 
-  
-    if (retw > 0) {
-      boost::filesystem::rename(dstpath + ".tmp", dstpath);
-      second.ordered_ts = now;
-      return retw;
-    } else {
-      fl.unlock();
-      ERR << " NOT REORDERED:" << second.fname << " size:" << second.writer.size() << " file :" << dstpath << " not created";
-      return -1;
+      if (retw > 0) {
+        boost::filesystem::rename(dstpath + ".tmp", dstpath);
+        second.ordered_ts = now;
+        return retw;
+      } else {
+        fl.unlock();
+        ERR << " NOT REORDERED:" << second.fname << " size:" << second.writer.size() << " file :" << dstpath << " not created";
+        return -1;
+      }
     }
-  }
-  } catch (boost::filesystem::filesystem_error&err){
+  } catch (boost::filesystem::filesystem_error& err) {
     fl.unlock();
-    ERR << " filesystem error: "<<err.what();
+    ERR << " filesystem error: " << err.what();
     return -10;
-    
-
   }
   fl.unlock();
   return 0;  // not neet
@@ -455,107 +452,104 @@ static int createRoot(const std::string& srcpath, const std::string& dstpath) {
   return ret;
 }
 
-
- void GenerateRootJob::processBufferElement(QueueElementShrdPtr element){
-   boost::filesystem::path p(element->c_str());
-   std::string srcpath;
-   if(p.extension()==".lz4"){
-     std::string decomp=(*element.get())+".uncomp.rootemp";
-     if(lz4decomp(*element,decomp)>=0){
-        createRoot(decomp,*element+".root");
-        boost::filesystem::remove(decomp);
-     }   
-   } else {
-      createRoot(*element,*element+".root");
-   }
-
- }
- #endif
+void GenerateRootJob::processBufferElement(QueueElementShrdPtr element) {
+  boost::filesystem::path p(element->c_str());
+  std::string             srcpath;
+  if (p.extension() == ".lz4") {
+    std::string decomp = (*element.get()) + ".uncomp.rootemp";
+    if (lz4decomp(*element, decomp) >= 0) {
+      createRoot(decomp, *element + ".root");
+      boost::filesystem::remove(decomp);
+    }
+  } else {
+    createRoot(*element, *element + ".root");
+  }
+}
+#endif
 
 static int createFinal(const std::string& dstdir, const std::string& name, bool finalize, bool overwrite = false) {
   std::string             dstpath = dstdir + "/" + name;
   boost::filesystem::path p(dstpath);
   FileLock                fl(dstpath + ".lock");
-  try{
-  fl.lock();
-  if (overwrite) {
-    DBG << " Overwrite:" + p.string();
+  try {
+    fl.lock();
+    if (overwrite) {
+      DBG << " Overwrite:" + p.string();
 
-    boost::filesystem::remove(p);
-  }
-  if (!boost::filesystem::exists(p)) {
-    std::string              fpath     = dstpath + ".tmp";
-    std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
-    std::vector<std::string> ordered   = searchFileExt(dstdir, ".ordered");
-    if (unordered.size() == ordered.size()) {
-      // all ordered file were created
-      int retw = reorderMulti(fpath, ordered);
-      if (retw > 0) {
-        if (finalize) {
-          if (PosixFile::compress) {
-            // lz4compression
-            lz4compress(fpath,fpath+".lz4");
-           
-            if (boost::filesystem::exists(dstpath + ".lz4")) {
-              // remove the uncompressed copy
-              boost::filesystem::remove(fpath);
-              DBG << " Create compressed final:" << dstpath + ".lz4"
-                  << " numobj:" << retw;
+      boost::filesystem::remove(p);
+    }
+    if (!boost::filesystem::exists(p)) {
+      std::string              fpath     = dstpath + ".tmp";
+      std::vector<std::string> unordered = searchFileExt(dstdir, ".unordered");
+      std::vector<std::string> ordered   = searchFileExt(dstdir, ".ordered");
+      if (unordered.size() == ordered.size()) {
+        // all ordered file were created
+        int retw = reorderMulti(fpath, ordered);
+        if (retw > 0) {
+          if (finalize) {
+            if (PosixFile::compress) {
+              // lz4compression
+              lz4compress(fpath, fpath + ".lz4");
+
+              if (boost::filesystem::exists(dstpath + ".lz4")) {
+                // remove the uncompressed copy
+                boost::filesystem::remove(fpath);
+                DBG << " Create compressed final:" << dstpath + ".lz4"
+                    << " numobj:" << retw;
+              } else {
+                boost::filesystem::rename(dstpath + ".tmp", dstpath);
+              }
+              if (PosixFile::removeTemp) {
+                for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
+                  DBG << "remove unordered :" << *rd;
+
+                  boost::filesystem::remove(*rd);
+                }
+
+                for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
+                  DBG << "remove ordered:" << *rd;
+
+                  boost::filesystem::remove(*rd);
+                }
+              }
+
             } else {
               boost::filesystem::rename(dstpath + ".tmp", dstpath);
-            }
-            if (PosixFile::removeTemp) {
-              for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                DBG << "remove unordered :" << *rd;
+              if (PosixFile::removeTemp) {
+                for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
+                  DBG << "remove unordered :" << *rd;
 
-                boost::filesystem::remove(*rd);
+                  boost::filesystem::remove(*rd);
+                }
+
+                for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
+                  DBG << "remove ordered:" << *rd;
+
+                  boost::filesystem::remove(*rd);
+                }
               }
-
-              for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                DBG << "remove ordered:" << *rd;
-
-                boost::filesystem::remove(*rd);
+#ifdef CERN_ROOT
+              if (PosixFile::generateRoot) {
+                createRoot(dstdir, fpath);
               }
+#endif
             }
 
           } else {
             boost::filesystem::rename(dstpath + ".tmp", dstpath);
-            if (PosixFile::removeTemp) {
-              for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                DBG << "remove unordered :" << *rd;
-
-                boost::filesystem::remove(*rd);
-              }
-
-              for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                DBG << "remove ordered:" << *rd;
-
-                boost::filesystem::remove(*rd);
-              }
-            }
-#ifdef CERN_ROOT
-            if (PosixFile::generateRoot) {
-              createRoot(dstdir, fpath);
-            }
-#endif
+            DBG << " Create final:" << dstpath << " numobj:" << retw;
           }
+          // we can remove all resources bounded to this directory
 
-        } else {
-          boost::filesystem::rename(dstpath + ".tmp", dstpath);
-          DBG << " Create final:" << dstpath << " numobj:" << retw;
+          return retw;
         }
-        // we can remove all resources bounded to this directory
-
-        return retw;
       }
+    } else {
+      DBG << " Final:" << dstpath << ", Exist";
+      return 0;
     }
-  } else {
-    DBG << " Final:" << dstpath << ", Exist";
-    return 0;
-  }
-  } catch (boost::filesystem::filesystem_error&err){
-        ERR << " FS Error:" << err.what();
-
+  } catch (boost::filesystem::filesystem_error& err) {
+    ERR << " FS Error:" << err.what();
   }
   fl.unlock();
   // cannot be still created
@@ -596,14 +590,13 @@ void PosixFile::finalizeJob() {
     while (file_to_finalize.pop(ele)) {
       DBG << "processing dir :" << ele->dir << " name:" << ele->name;
       if (createFinal(ele->dir, ele->name, true) >= 0) {
-        // DBG << " CREATE FINAL: " << fpath;
+      // DBG << " CREATE FINAL: " << fpath;
 #ifdef CERN_ROOT
-            if (PosixFile::generateRoot) {
-
-              std::string fpath=ele->dir+"/"+ele->name +((PosixFile::compress)?".lz4":"");
-              chaos::CObjectProcessingQueue<std::string>::QueueElementShrdPtr a(new std::string(fpath));
-              rootGenJob.push(a);
-            }
+        if (PosixFile::generateRoot) {
+          std::string                                                     fpath = ele->dir + "/" + ele->name + ((PosixFile::compress) ? ".lz4" : "");
+          chaos::CObjectProcessingQueue<std::string>::QueueElementShrdPtr a(new std::string(fpath));
+          rootGenJob.push(a);
+        }
 #endif
 
         delete ele;
@@ -738,9 +731,9 @@ std::string SearchWorker::prepareDirectory() {
     istemp = false;
     return final_file.string();
 
-  } else if (boost::filesystem::exists(fpath + ".lz4.uncomp") ||  ((boost::filesystem::exists(fpath + ".lz4") &&(lz4decomp((fpath + ".lz4"),(fpath + ".lz4.uncomp"))>=0)))) {
+  } else if (boost::filesystem::exists(fpath + ".lz4.uncomp") || ((boost::filesystem::exists(fpath + ".lz4") && (lz4decomp((fpath + ".lz4"), (fpath + ".lz4.uncomp")) >= 0)))) {
     return fpath + ".lz4.uncomp";
-  
+
   } else {
     PosixFile::write_path_t::iterator id = PosixFile::s_lastWriteDir.find(path);
     if (id != PosixFile::s_lastWriteDir.end()) {
@@ -788,7 +781,7 @@ std::string SearchWorker::prepareDirectory() {
       }
     }
   }
-  ERR << " cannot find directory info "<<fpath<<" for:" << path;
+  ERR << " cannot find directory info " << fpath << " for:" << path;
   return std::string();
 }
 
@@ -858,7 +851,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
   int cntt = 0;
 
   DBG << "from:" << chaos::common::utility::TimingUtil::toString(timestamp_from) << " to:" << chaos::common::utility::TimingUtil::toString(timestamp_to) << " runid:" << seq.run_id << " seq:" << seq.datapack_counter;
-  uint64_t lseq = 0, lrunid = 0,lts=0, cntd = 0;
+  uint64_t lseq = 0, lrunid = 0, lts = 0, cntd = 0;
   uint64_t irunid = 0, ts;
   int64_t  iseq   = 0;
   int      index  = 0;
@@ -881,12 +874,12 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
     }
     for (; (index < cache_data.size()) && (cntt < maxData); index++) {
       irunid = cache_data[index].runid;
-      if(irunid>seq.run_id){
-        seq.run_id=irunid;
-        seq.datapack_counter=iseq;
+      if (irunid > seq.run_id) {
+        seq.run_id           = irunid;
+        seq.datapack_counter = iseq;
       }
-      iseq   = cache_data[index].seq;
-      ts     = cache_data[index].ts;
+      iseq = cache_data[index].seq;
+      ts   = cache_data[index].ts;
       if ((ts < timestamp_to) && (ts >= timestamp_from) && (irunid >= seq.run_id) && (iseq >= seq.datapack_counter)) {
         dst.push_back(cache_data[index].obj);
 #if CHAOS_PROMETHEUS
@@ -897,15 +890,15 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
 
         lrunid = irunid;
         lseq   = iseq;
-        lts=ts;
+        lts    = ts;
         cntt++;
       }
     }
   } while (again && (cntt < maxData) && (index < cache_data.size()));
   if (cntt > 0) {
-    seq.run_id = lrunid;
-    seq.datapack_counter   = lseq;
-    seq.ts=lts;
+    seq.run_id           = lrunid;
+    seq.datapack_counter = lseq;
+    seq.ts               = lts;
   }
 
   return cntt;
@@ -1019,96 +1012,111 @@ int PosixFile::pushObject(const std::string&                       key,
   int64_t        seq, runid;
   std::string    tag;
   try {
-  if (meta_tags->size() > 0) {
-    //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
-    tag = boost::algorithm::join(*meta_tags.get(), "_");
-  }
-  seq   = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
-  runid = stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-  calcFileDir(basedatapath, key, tag, ts, seq, runid, dir, f);
-  bool                   notexist;
-  write_path_t::iterator id;
-  {
-    boost::mutex::scoped_lock lk(last_access_mutex);
-    id       = s_lastWriteDir.find(dir);
-    notexist = (id == s_lastWriteDir.end());
-    //last_access_mutex.unlock();
-    //ChaosWriteLock ll(id->second.devio_mutex);
-    if (notexist /*|| (ts - (id->second).ts) > 1000*/) {
-      boost::filesystem::path p(dir);
-      if ((boost::filesystem::exists(p) == false)) {
-        try {
-        if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
-          ERR << "cannot create directory:" << p << " runid:" << runid << " seq:" << seq;
-          // last_access_mutex.unlock();
+    if (meta_tags->size() > 0) {
+      //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
+      tag = boost::algorithm::join(*meta_tags.get(), "_");
+    }
+    seq   = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
+    runid = stored_object.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
+    calcFileDir(basedatapath, key, tag, ts, seq, runid, dir, f);
+    bool                   notexist;
+    write_path_t::iterator id;
+    {
+      boost::mutex::scoped_lock lk(last_access_mutex);
+      id       = s_lastWriteDir.find(dir);
+      notexist = (id == s_lastWriteDir.end());
+      //last_access_mutex.unlock();
+      //ChaosWriteLock ll(id->second.devio_mutex);
+      if (notexist /*|| (ts - (id->second).ts) > 1000*/) {
+        boost::filesystem::path p(dir);
+        if ((boost::filesystem::exists(p) == false)) {
+          try {
+            if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
+              ERR << "cannot create directory:" << p << " runid:" << runid << " seq:" << seq;
+              // last_access_mutex.unlock();
 
-          //  return -1;
-        } else {
-          DBG << " CREATED DIR:" << p;
+              //  return -1;
+            } else {
+              DBG << " CREATED DIR:" << p;
+            }
+          } catch (boost::filesystem::filesystem_error& e) {
+            ERR << " Exception creating directory:" << e.what();
+          }
+          //
         }
-        } catch(boost::filesystem::filesystem_error& e){
-        ERR<< " Exception creating directory:"<< e.what();
+
+        std::string    path = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
+        ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
+        s_lastWriteDir[dir].fname = path;
+        s_lastWriteDir[dir].ts    = now;
+        if (s_lastWriteDir[dir].writer.open(path) != 0) {
+          ERR << "cannot open "
+              << " mapped file:" << path;
+          // last_access_mutex.unlock();
+          s_lastWriteDir.erase(dir);
+          return -2;
+        }
+        id = s_lastWriteDir.find(dir);
       }
-        // 
-      }
-      
-      std::string path          = std::string(dir) + "/" + serverName + POSIX_UNORDERED_EXT;
-      ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
-      s_lastWriteDir[dir].fname = path;
-      s_lastWriteDir[dir].ts    = now;
-      if (s_lastWriteDir[dir].writer.open(path) != 0) {
-        ERR << "cannot open "
-            << " mapped file:" << path;
-        // last_access_mutex.unlock();
-        s_lastWriteDir.erase(dir);
-        return -2;
-      }
-      id = s_lastWriteDir.find(dir);
     }
-  }
-  ChaosWriteLock ll(id->second.devio_mutex);
+    ChaosWriteLock ll(id->second.devio_mutex);
 
-  //BsonFStream& writer = s_lastWriteDir[dir].writer;
-  bool ok;
-  int  retry = 0;
-  do {
-    char key[32];
-    snprintf(key, sizeof(key), "%010lu_%010lu", runid, seq);
+    //BsonFStream& writer = s_lastWriteDir[dir].writer;
+    bool ok;
+    int  retry = 3;
+    do {
+      char key[32];
+      snprintf(key, sizeof(key), "%010lu_%010lu", runid, seq);
 
-    if ((ok = (id->second.writer.write(key, stored_object) > 0))) {
-      id->second.last_seq   = seq;
-      id->second.last_runid = runid;
-      id->second.keys.push_back(key);
+      if ((ok = (id->second.writer.write(key, stored_object) > 0))) {
+        id->second.last_seq   = seq;
+        id->second.last_runid = runid;
+        id->second.keys.push_back(key);
 
 #if CHAOS_PROMETHEUS
 
-      (*counter_write_data_uptr) += stored_object.getBSONRawSize();
+        (*counter_write_data_uptr) += stored_object.getBSONRawSize();
 
 #endif
-      id->second.unordered_ts = now;
-    } else {
-      ERR << " CANNOT WRITE:" << dir << " retry:" << retry;
-    }
-  } while ((ok == false) && (retry--));
+        id->second.unordered_ts = now;
+      } else {
+        ERR << " CANNOT WRITE:" << dir << " seq:" << seq << " runid:" << runid << " retry:" << retry;
+
+        boost::filesystem::path p(dir);
+        if ((boost::filesystem::exists(p) == false)) {
+          try {
+            if ((boost::filesystem::create_directories(p) == false) && ((boost::filesystem::exists(p) == false))) {
+              ERR << "cannot create directory:" << p << " runid:" << runid << " seq:" << seq;
+              // last_access_mutex.unlock();
+
+              //  return -1;
+            } else {
+              DBG << " CREATED DIR:" << p;
+            }
+          } catch (boost::filesystem::filesystem_error& e) {
+            ERR << " Exception creating directory:" << e.what();
+          }
+        }
+        //
+      }
+    } while ((ok == false) && (retry--));
 
 #if CHAOS_PROMETHEUS
 
-  (*gauge_insert_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
+    (*gauge_insert_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
-  return (ok == false) ? -2 : 0;
-  } catch (const boost::exception& e){
-
-    ERR<< "boost exception :"<<diagnostic_information(e);
+    return (ok == false) ? -2 : 0;
+  } catch (const boost::exception& e) {
+    ERR << "boost exception :" << diagnostic_information(e);
     return -400;
-            // display your error message here, then do whatever you need to, e.g.        
-    } catch(std::exception const&  ex){
-      ERR<< "std exception :"<<ex.what();
+    // display your error message here, then do whatever you need to, e.g.
+  } catch (std::exception const& ex) {
+    ERR << "std exception :" << ex.what();
     return -401;
 
-    } catch(...){
-      ERR << "uknown exception";
-      return -402;
-
+  } catch (...) {
+    ERR << "uknown exception";
+    return -402;
   }
 }
 
@@ -1258,11 +1266,11 @@ int PosixFile::findObject(const std::string&                                    
       //tag=std::accumulate(meta_tags.begin(),meta_tags.end(),std::string("_"));
       tag = boost::algorithm::join(meta_tags, "_");
     }
-    DBG << "Search " << key << " from: "<<timestamp_from <<"["<< chaos::common::utility::TimingUtil::toString(timestamp_from) << "] to:" <<timestamp_to<<"["<< chaos::common::utility::TimingUtil::toString(timestamp_to) << "] tags:" << tag << " seqid:" << seqid << " runid:" << runid;
+    DBG << "Search " << key << " from: " << timestamp_from << "[" << chaos::common::utility::TimingUtil::toString(timestamp_from) << "] to:" << timestamp_to << "[" << chaos::common::utility::TimingUtil::toString(timestamp_to) << "] tags:" << tag << " seqid:" << seqid << " runid:" << runid;
 
     // align to minute
     uint64_t start_aligned = timestamp_from - (timestamp_from % (60 * 1000));
-    uint64_t stop_aligned  = timestamp_to;// + ((60 * 1000));
+    uint64_t stop_aligned  = timestamp_to;  // + ((60 * 1000));
 
     // loop years
     // loop months
@@ -1289,21 +1297,21 @@ int PosixFile::findObject(const std::string&                                    
               calcFileDir(basedatapath, key, tag, start, seqid, runid, dir, f);
               // boost::filesystem::path p(dir);
               if (!boost::filesystem::exists(dir)) {
-             //   DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid << " NOT EXISTS";
+                //   DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid << " NOT EXISTS";
                 continue;
               }
               DBG << "[" << chaos::common::utility::TimingUtil::toString(start) << "-" << chaos::common::utility::TimingUtil::toString(timestamp_to) << "->" << chaos::common::utility::TimingUtil::toString(stop_aligned) << " ] Looking in \"" << dir << "\" seq:" << seqid << " runid:" << runid;
 
               elements += getFromPath(dir, timestamp_from, timestamp_to, (page_len - elements), found_object_page, last_record_found_seq);
               if (elements >= page_len) {
-                DBG << "[" << dir << "] FOUND " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter<< " last ts:" << last_record_found_seq.ts;
+                DBG << "[" << dir << "] FOUND " << elements << " page:" << page_len << " last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter << " last ts:" << last_record_found_seq.ts;
 #if CHAOS_PROMETHEUS
 
                 (*gauge_query_time_uptr) = (chaos::common::utility::TimingUtil::getTimeStamp() - ts);
 #endif
                 return 0;
               } else if (elements == 0) {
-                DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter<< " last ts:" << last_record_found_seq.ts;
+                DBG << "[" << dir << "] NO ELEMENTS FOUND last runid:" << last_record_found_seq.run_id << " last seq:" << last_record_found_seq.datapack_counter << " last ts:" << last_record_found_seq.ts;
               }
               //   old_hour = tinfo.tm_min;
               //   }
@@ -1318,9 +1326,9 @@ int PosixFile::findObject(const std::string&                                    
       }
     }
   } catch (const chaos::CException& e) {
-    ERR << "Chaos Exception :" <<e.errorMessage;
-  }catch (const std::exception& e) {
-    ERR << " StdException :" <<e.what();
+    ERR << "Chaos Exception :" << e.errorMessage;
+  } catch (const std::exception& e) {
+    ERR << " StdException :" << e.what();
   }
   if (err == 0 && elements > 0) {
 #if CHAOS_PROMETHEUS

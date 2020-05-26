@@ -30,19 +30,21 @@ using namespace chaos::common::direct_io;
 
 
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const char * const DirectIOHostIPAndEndpoint = "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}";
+#define DirectIOHostIPAndEndpoint  "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}"
 //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const char * const DirectIOServerDescriptionHostAndEndpoint = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}";
+#define DirectIOServerDescriptionHostAndEndpoint  "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}"
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const char * const DirectIOHostName = "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}";
+#define  DirectIOHostName  "[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}"
 //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
-static const char * const DirectIOIPAndPort = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}";
+#define DirectIOIPAndPort  "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}"
 
 bool DirectIOURLManagment::checkURL(const std::string& url) {
+
     boost::regex DirectIOHostIPAndEndpointRegExp(DirectIOHostIPAndEndpoint);
     boost::regex DirectIOServerDescriptionHostAndEndpointRegExp(DirectIOServerDescriptionHostAndEndpoint);
-	return	boost::regex_match(url, DirectIOHostIPAndEndpointRegExp) ||
-	boost::regex_match(url, DirectIOServerDescriptionHostAndEndpointRegExp);
+	boost::smatch match0,match1;
+	return	boost::regex_match(url, match0,DirectIOHostIPAndEndpointRegExp) ||
+	boost::regex_match(url, match1,DirectIOServerDescriptionHostAndEndpointRegExp);
 }
 
 
