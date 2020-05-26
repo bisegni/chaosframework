@@ -34,6 +34,7 @@ namespace chaos {
 #define OPT_EXT_CMD_PIPE_NAME       "ext-cmd-pipe-name"
 #define OPT_REST_PORT               "restport"
 #define OPT_SCRIPT_DIR              "user-script"
+#define OPT_WAIT_START_CONSECUTIVE_PROCESSES "wait-restart"
 
     }
 }

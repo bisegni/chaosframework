@@ -250,6 +250,11 @@ void AgentRegister::timeout() {
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
                         }
+                        if((it+1)!=end){
+                            INFO<<"waiting "<<ChaosAgent::getInstance()->settings.wait_run<<"s before launching:"<<it->associated_node_uid;
+                            sleep(ChaosAgent::getInstance()->settings.wait_run);
+
+                        }
                     }
                 }
             }catch(chaos::CException& ex) {
