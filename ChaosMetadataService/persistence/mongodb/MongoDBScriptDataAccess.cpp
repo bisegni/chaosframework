@@ -112,7 +112,6 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
         }
         */
        // better have as unique name the timestamp that tracks also when the script was inserted
-        builder << "seq" <<(long long)TimingUtil::getTimeStamp();
        /* builder << CHAOS_SBD_NAME << script_entry.script_description.name
         << CHAOS_SBD_DESCRIPTION << script_entry.script_description.description
         <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<< script_entry.script_description.language;
@@ -121,7 +120,12 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
         s_dw.dataWrapped() = script_entry;
     
         ChaosUniquePtr<chaos::common::data::CDataWrapper> serialization = s_dw.serialize();
-        
+        if(serialization->hasKey("seq")){
+         builder << "seq" <<(long long)serialization->getInt64Value("seq");
+
+        } else {
+         builder << "seq" <<(long long)TimingUtil::getTimeStamp();
+        }
         mongo::BSONObj u(serialization->getBSONRawData(size));
         builder.appendElements(u);
         mongo::BSONObj i = builder.obj();
@@ -148,7 +152,7 @@ int MongoDBScriptDataAccess::updateScript(ChaosUniquePtr<chaos::common::data::CD
     int size = 0;
     mongo::BSONObjBuilder query_builder;
     CHAOS_ASSERT(utility_data_access);
-    std::string description_name=serialization->getStringValue(CHAOS_SBD_NAME);
+    std::string description_name=serialization->getStringValue(chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME);
     uint64_t uid=0;
     if(serialization->hasKey("seq")){
         uid =serialization->getInt64Value("seq");
@@ -156,7 +160,7 @@ int MongoDBScriptDataAccess::updateScript(ChaosUniquePtr<chaos::common::data::CD
 
     try {
         mongo::BSONObj q = BSON("seq"<< (long long)uid<<
-                                CHAOS_SBD_NAME << name);
+                                chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME << name);
         
         
         mongo::BSONObj u(serialization->getBSONRawData(size));
@@ -192,7 +196,7 @@ int MongoDBScriptDataAccess::searchScript(ChaosUniquePtr<chaos::common::data::CD
                                              uint32_t page_length){
 int err = 0;
     SearchResult paged_result;
-    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
+    mongo::BSONObj p = BSON("seq"<<1<<chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME<< 1<<chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::Query q = getNextPagedQuery(last_sequence_id,
@@ -238,7 +242,7 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
                                           uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
-    mongo::BSONObj p = BSON("seq"<<1<<CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
+    mongo::BSONObj p = BSON("seq"<<1<<chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME<< 1<<chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_DESCRIPTION<<1 <<chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE<<1);
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::Query q = getNextPagedQuery(last_sequence_id,
@@ -479,7 +483,7 @@ int err = 0;
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q = BSON("seq" << (long long)unique_id
-                                << CHAOS_SBD_NAME << name);
+                                << chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME << name);
         
         DEBUG_CODE(SDA_DBG<<log_message("loadScript",
                                         "findOne",
@@ -516,7 +520,7 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q = BSON("seq" << (long long)unique_id
-                                << CHAOS_SBD_NAME << name);
+                                << chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME << name);
         
         DEBUG_CODE(SDA_DBG<<log_message("loadScript",
                                         "findOne",
@@ -553,7 +557,7 @@ int MongoDBScriptDataAccess::deleteScript(const uint64_t unique_id,
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q_script = BSON("seq" << (long long)unique_id
-                                       << CHAOS_SBD_NAME << name);
+                                       << chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME << name);
         mongo::BSONObj q_instance = BSON("script_seq" << (long long)unique_id
                                          << chaos::NodeDefinitionKey::NODE_GROUP_SET << name);
         DEBUG_CODE(SDA_DBG<<log_message("deleteScript",
@@ -742,7 +746,7 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q = BSON("seq" << (long long)script.unique_id
-                                << CHAOS_SBD_NAME << script.name);
+                                << chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME << script.name);
         
         DEBUG_CODE(SDA_DBG<<log_message("copyScriptDatasetToInstance",
                                         "findOne[script]",
@@ -911,7 +915,7 @@ mongo::Query MongoDBScriptDataAccess::getNextPagedQuery(uint64_t last_sequence,
     mongo::BSONArrayBuilder bson_find_and;
     
     if(last_sequence){bson_find_and <<BSON("seq" << BSON("$lt"<<(long long)last_sequence));}
-    bson_find_and << BSON("$or" << getSearchTokenOnFiled(search_string, CHAOS_SBD_NAME));
+    bson_find_and << BSON("$or" << getSearchTokenOnFiled(search_string, chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME));
     bson_find.appendArray("$and", bson_find_and.obj());
     q = bson_find.obj();
     return q.sort(BSON("seq"<<(int)1));

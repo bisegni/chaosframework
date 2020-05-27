@@ -337,7 +337,6 @@ SET(common_lib_src ${common_lib_src}
                     utility/SWEService.cpp
                     utility/CheckList.cpp
                     utility/AggregatedCheckList.cpp
-                    utility/TimingUtil.cpp
                     utility/AbstractListener.cpp
                     utility/AbstractListenerContainer.cpp
                     utility/ProcStat.cpp
@@ -345,6 +344,7 @@ SET(common_lib_src ${common_lib_src}
                     utility/InetUtility.cpp
                     utility/FSUtility.cpp
                     utility/Base64Util.cpp
+                    utility/TimingUtil.cpp
                     utility/Random.cpp)
 
 SET(common_lib_src ${common_lib_src}

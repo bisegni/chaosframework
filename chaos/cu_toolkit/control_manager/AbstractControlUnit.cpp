@@ -134,6 +134,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     , alarm_logging_channel()
     , push_dataset_counter(0)
     , push_dataset_size(0)
+    , push_tot_size(0)
     , last_push_rate_grap_ts(0)
     , attribute_value_shared_cache()
     , attribute_shared_cache_wrapper()
@@ -170,6 +171,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     , standard_logging_channel()
     , alarm_logging_channel()
     , push_dataset_counter(0)
+    , push_errors(0)
+    , packet_lost(0)
     , last_push_rate_grap_ts(0)
     , attribute_value_shared_cache()
     , attribute_shared_cache_wrapper()
@@ -338,6 +341,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         //first call the setup abstract method used by the implementing CU to define action, dataset and other
         //usefull value
         unitDefineActionAndDataset();
+
+        addStateVariable(StateVariableTypeAlarmCU,"packet_send_error","Notify when a CU cannot push datasset");
+        addStateVariable(StateVariableTypeAlarmCU,"packet_lost","Notify when a packet is definitively lost");
+
         
         //call method to dinamically add other things to the dataset
         _completeDatasetAttribute();
@@ -416,6 +423,9 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         
         //add property description
         PropertyCollector::fillDescription("property", setup_configuration);
+
+       
+
     }
     
     void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
@@ -475,6 +485,10 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
 #pragma mark checklist method
     void         AbstractControlUnit::doInitRpCheckList() {
         std::vector<std::string> attribute_names;
+        push_errors=0;
+        packet_lost=0;
+        push_tot_size=0;
+       
         //rpc initialize service
         CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init") {
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE) {
@@ -553,9 +567,13 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_INIT) {
                 //initialize implementations
                 unitInit();
+                 setStateVariableSeverity(StateVariableTypeAlarmCU,"packet_lost", chaos::common::alarm::MultiSeverityAlarmLevelClear);
+                 setStateVariableSeverity(StateVariableTypeAlarmCU,"packet_send_error", chaos::common::alarm::MultiSeverityAlarmLevelClear);
+
                 break;
             }
             CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION) {
+
                 //call update param function
                 updateConfiguration(MOVE(init_configuration->clone()));
                 //check if we need to do a restore on first start
@@ -1773,7 +1791,19 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
                                                         output_size_rate);
-        
+
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_ERROR,
+                                                        (int32_t)push_errors);
+
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_LOST,
+                                                        (int32_t)packet_lost);
+
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_TOT_PUSH_KSIZE,
+                                                        (int32_t)(push_tot_size/1024));
+
         //keep track of acquire timestamp
         last_push_rate_grap_ts = rate_acq_ts;
         //reset pushe count
@@ -1797,6 +1827,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     }
     
     void AbstractControlUnit::_completeDatasetAttribute() {
+         // alarms
+        
         //add global alarm checn
         /*
          DatasetDB::addAttributeToDataSet(stateVariableEnumToName(StateVariableTypeAlarmCU),
@@ -1841,23 +1873,27 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     void AbstractControlUnit::unitInputAttributeChangedHandler() {}
 
 template<typename t>
-inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& attr_name,const std::string&id ){
+ void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& attr_name,const std::string&id ){
     t max,min;
     std::size_t mini=attributeInfo.minRange.find("0x");
     std::size_t maxi=attributeInfo.maxRange.find("0x");
-    std::string maxs,mins;
+    std::stringstream maxs,mins;
+
     if(maxi!=std::string::npos){
-        maxs=attributeInfo.maxRange.substr(maxi);
+        maxs<<std::hex<<attributeInfo.maxRange;
     } else {
-        maxs=attributeInfo.maxRange;
+        maxs<<attributeInfo.maxRange;
     }
     if(mini!=std::string::npos){
-        mins=attributeInfo.minRange.substr(mini);
+        mins<<std::hex<<attributeInfo.minRange;
+
     } else {
-        mins=attributeInfo.minRange;
+        mins<<attributeInfo.minRange;
     }
     
-    
+    maxs>>max;
+    mins>>min;
+ /*
     try{
         min=boost::lexical_cast<t>(mins);
     }catch(std::exception &e){
@@ -1869,9 +1905,9 @@ inline void checkForRange(t v,  RangeValueInfo&attributeInfo,const std::string& 
     } catch(std::exception &e){
         throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid casting MAX value (%1%) for attribute %2% value %3%" ) % maxs % attr_name % v).c_str(), __PRETTY_FUNCTION__);
     }
-    
-    if (((mins.size()>0)&&(v < min)) || ((maxs.size()>0)&&(v > max))) {
-        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % mins % max % maxs % attr_name).c_str(), __PRETTY_FUNCTION__);
+  */  
+    if (((attributeInfo.minRange.size()>0)&&(v < min)) || ((attributeInfo.maxRange.size()>0)&&(v > max))) {
+        throw MetadataLoggingCException(id, -1, boost::str(boost::format("Invalid value (%1%) [Min:%2%-%3% Max:%4%-%5%] for attribute %6%") % v % min  % attributeInfo.minRange % max % attributeInfo.maxRange % attr_name).c_str(), __PRETTY_FUNCTION__);
     }
 }
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)   \
@@ -1930,35 +1966,39 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                         //call handler
                         switch (attribute_cache_value->type) {
                             case DataType::TYPE_BOOLEAN: {
-                                bool bv = dataset_attribute_values->getBoolValue(attr_name);
+                                bool bv = dataset_attribute_values->getValue<bool>(attr_name);//dataset_attribute_values->getBoolValue(attr_name);
                                 attribute_cache_value->setValue(&bv, sizeof(bool));
                                 break;
                             }
                             case DataType::TYPE_INT32: {
-                                int32_t i32v = dataset_attribute_values->getInt32Value(attr_name);
+                                int32_t i32v = dataset_attribute_values->getValue<int32_t>(attr_name);//dataset_attribute_values->getInt32Value(attr_name);
                                 CHECK_FOR_RANGE_VALUE(int32_t, i32v, attr_name)
                                 attribute_cache_value->setValue(&i32v, sizeof(int32_t));
                                 break;
                             }
                             case DataType::TYPE_INT64: {
-                                int64_t i64v = dataset_attribute_values->getInt64Value(attr_name);
+                                int64_t i64v = dataset_attribute_values->getValue<int64_t>(attr_name);//dataset_attribute_values->getInt64Value(attr_name);
                                 CHECK_FOR_RANGE_VALUE(int64_t, i64v, attr_name)
                                 attribute_cache_value->setValue(&i64v, sizeof(int64_t));
                                 break;
                             }
                             case DataType::TYPE_DOUBLE: {
-                                double dv = dataset_attribute_values->getDoubleValue(attr_name);
+                                double dv = dataset_attribute_values->getValue<double>(attr_name);//dataset_attribute_values->getDoubleValue(attr_name);
                                 CHECK_FOR_RANGE_VALUE(double, dv, attr_name)
                                 attribute_cache_value->setValue(&dv, sizeof(double));
                                 break;
                             }
                                 
                             case DataType::TYPE_CLUSTER: {
-                                ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
+                               // ChaosUniquePtr<CDataWrapper> str = dataset_attribute_values->getCSDataValue(attr_name);
+                               CDataWrapper cw;
                                 try {
-                                    if (str.get()) {
+                                   /* if (str.get()) {
                                         attribute_cache_value->setValue(*(str.get()));
-                                    }
+                                    }*/
+                                    cw.setSerializedJsonData(dataset_attribute_values->getStringValue(attr_name).c_str());
+                                    attribute_cache_value->setValue(cw);
+
                                 } catch (...) {
                                     throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid Json format ")).c_str(), __PRETTY_FUNCTION__);
                                 }
@@ -1971,8 +2011,9 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                                 break;
                             }
                             case DataType::TYPE_BYTEARRAY: {
-                                uint32_t    bin_size = 0;
-                                const char* binv     = dataset_attribute_values->getBinaryValue(attr_name, bin_size);
+                                chaos::common::data::CDBufferUniquePtr bin=dataset_attribute_values->getBinaryValueAsCDataBuffer(attr_name);
+                                uint32_t    bin_size = bin->getBufferSize();
+                                const char* binv     = bin->getBuffer();//dataset_attribute_values->getBinaryValue(attr_name, bin_size);
                                 attribute_cache_value->setValue(binv, bin_size);
                                 break;
                             }
@@ -2124,9 +2165,29 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         //manage the burst information
         manageBurstQueue();
         //now we nede to push the outputdataset
-        push_dataset_size+=output_attribute_dataset->getBSONRawSize();
-        err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(output_attribute_dataset));
-        
+        int psiz=output_attribute_dataset->getBSONRawSize();
+        push_dataset_size+psiz;
+        push_tot_size+=psiz;
+        int retry=10;
+        do{
+            err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(output_attribute_dataset));
+            if(err!=0){
+                push_errors++;
+                ERR<<push_errors<<"] ERROR pushing runid:"<<run_id<<" seq:"<<output_attribute_dataset->getInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+                setStateVariableSeverity(StateVariableTypeAlarmCU,"packet_send_error", chaos::common::alarm::MultiSeverityAlarmLevelWarning);
+
+                usleep(10000);
+                
+            }
+        } while((err!=0) && (retry--));
+        if(retry<0){
+            packet_lost++;
+             setStateVariableSeverity(StateVariableTypeAlarmCU,"packet_lost",(common::alarm::MultiSeverityAlarmLevel) packet_lost);
+
+            // inform higher levels...
+
+
+        }
         //update counter
         push_dataset_counter++;
         

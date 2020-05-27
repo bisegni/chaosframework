@@ -54,6 +54,10 @@ namespace chaos {
 
 #endif
         private:
+                std::string scriptWorkingDir(std::string scriptname,std::string uid);
+                 std::string writeScript(const std::string& working_dir,const std::string& name,const std::string&content);
+
+
             ChaosAgent();
             ~ChaosAgent();
         public:
@@ -66,6 +70,14 @@ namespace chaos {
             void start();
             void stop();
             void deinit();
+            /**
+             * @brief if a script prepare directory and cmd line
+             * 
+             * @param ass 
+             * @return int 
+             */
+            chaos::common::data::CDWUniquePtr checkAndPrepareScript(chaos::service_common::data::agent::AgentAssociation& ass);
+
         };
         
     }

@@ -651,6 +651,7 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string&               
             }
             last_record_found_seq.run_id = document["data"]["cudk_run_id"].get_int64();
             last_record_found_seq.datapack_counter = document["data"]["dpck_seq_id"].get_int64();
+            last_record_found_seq.ts=document["data"]["dpck_mds_ats"].get_int64()-(1000); 
         }
     } catch (const mongocxx::exception &e) {
         ERR << e.what();

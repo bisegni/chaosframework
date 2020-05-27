@@ -318,7 +318,17 @@ namespace chaos {
          manage chaos process whitin that host (start stop uni t server and perform deploy)
          */
         static const char * const NODE_TYPE_AGENT       = "nt_agent";
-        
+
+        //! identify a ROOT node process
+        /*!
+         Identifies ROOT processes
+         */
+        static const char * const NODE_TYPE_ROOT       = "nt_root";
+
+        static const char * const NODE_TYPE_VARIABLE       = "nt_variable";
+
+        static const char * const NODE_TYPE_TAG       = "nt_tag";
+
         //! identify an execution unit of type script
         /*!
          A scriptable execution unit consinst of a framework implementaion of the an
@@ -333,6 +343,8 @@ namespace chaos {
          A DAQ unit node is a tipical !CHAOS node that acquires data without any command
          */
         static const char * const NODE_SUBTYPE_DAQ_CONTROL_UNIT    = "nt_daq_unit";
+
+       
         typedef enum  {
             //!Search us
             node_type_us = 1,
@@ -349,10 +361,35 @@ namespace chaos {
             //!search tags
             node_type_tag = 7,
             //! all server_nodes
-            node_type_all_server=8
+            node_type_all_server=8,
+            //!search root processes
+            node_type_root = 9
+            
             
             
         } NodeSearchType;
+        static inline const char* nodeTypeToString(unsigned int nt) {
+            switch (nt){
+                case (node_type_us):
+                    return NODE_TYPE_UNIT_SERVER;
+                case (node_type_cu):
+                    return NODE_TYPE_CONTROL_UNIT;
+                case (node_type_agent):
+                    return NODE_TYPE_AGENT;
+                case (node_type_cds):
+                    return NODE_TYPE_DATA_SERVICE;
+                case (node_type_wan):
+                    return NODE_TYPE_WAN_PROXY;
+                case (node_type_variable):
+                    return NODE_TYPE_VARIABLE;
+                case (node_type_tag):
+                    return NODE_TYPE_TAG;
+                case (node_type_root):
+                    return NODE_TYPE_ROOT;
+                default:
+                    return "ALL";
+            }
+        }
 
         static const char* NODE_SEARCH_LIST_KEY="node_search_result_page";
     }
@@ -405,7 +442,10 @@ namespace chaos {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_SIZE  = "cuh_dso_size";
-        
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_ERROR  = "cuh_dso_prerr";
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_LOST   = "cuh_dso_plost";
+        static const char * const CU_HEALT_OUTPUT_TOT_PUSH_KSIZE   = "cuh_dso_tksize";
+
         
     }
     /** @} */ // end of NodeHealtDefinitionValue
@@ -606,6 +646,9 @@ namespace chaos {
             static const char * const ACTION_LAUNCH_NODE_PAR_AUTO_START     = "node_auto_start";
             static const char * const ACTION_LAUNCH_NODE_PAR_KEEP_ALIVE     = "node_keep_alive";
             static const char * const ACTION_LAUNCH_NODE_PAR_LOG_ON_MDS     = "node_log_on_mds";
+            static const char * const ACTION_LAUNCH_SCRIPT     = "node_script_id";
+            static const char * const ACTION_LAUNCH_WORKDIR     = "node_workdir";
+
             
             static const char * const ACTION_STOP_NODE                      = "stopNode";
             static const char * const ACTION_STOP_NODE_PAR_NAME             = "node_name";
@@ -895,6 +938,9 @@ namespace chaos {
      */
     //! Name space for grupping key for the execution unit node type
     namespace ExecutionUnitNodeDefinitionKey {
+        static const char * CHAOS_SBD_NAME  ="script_name";
+        static const char * CHAOS_SBD_DESCRIPTION ="script_description";
+
         //! array of object that describe the input variable [string]
         static const char * const EXECUTION_UNIT_DESCRIPTION            = "eudk_description";
         //!the list of the pool managed by a unit server
@@ -993,6 +1039,7 @@ namespace chaos {
         static const char * const PROXY_CU	= NodeType::NODE_SUBTYPE_PROXY_CONTROL_UNIT;
     }
     /** @} */ // end of CUType
+    
     
     /** @defgroup ChaosDataType Chaos Basic datatype
      *  This is the collection of the definition of the chaos basic datatype

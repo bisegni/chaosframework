@@ -178,7 +178,8 @@ int ProcUtil::removeNamedPipe(const std::string& named_pipe_path) {
     return errno;
 }
 
-void ProcUtil::launchProcess(const AgentAssociation& node_association_info) {
+void ProcUtil::launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,const chaos::common::data:CDWUniquePtr& param)
+ {
     int pid = 0;
     std::string exec_command;
     boost::filesystem::path init_file;

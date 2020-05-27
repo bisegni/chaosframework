@@ -253,6 +253,8 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
                         result_header_t->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header_t->numer_of_record_found);
                         result_header_t->last_found_sequence.run_id = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.run_id);
                         result_header_t->last_found_sequence.datapack_counter = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.datapack_counter);
+                        result_header_t->last_found_sequence.ts = TO_LITTEL_ENDNS_NUM(uint64_t, last_sequence_info.ts);
+
                     }
                 }
             } catch (...) {

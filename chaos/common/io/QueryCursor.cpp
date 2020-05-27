@@ -45,6 +45,7 @@ QueryCursor::ResultPage::~ResultPage() {}
 
 
 const bool QueryCursor::ResultPage::hasNext() const {
+//    DBG<<"Fetched:"<<current_fetched<<" Page:"<<found_element_page.size();
     return current_fetched < found_element_page.size();
 }
 uint32_t QueryCursor::ResultPage::size() const {
@@ -200,7 +201,11 @@ int QueryCursor::fetchNewPage() {
         case QueryPhaseStarted:
             //increase data pack count of last recod found that will be used has next counter id to fetch
             result_page.last_record_found_seq.datapack_counter++;
-            DBG << "["<<node_id<<"] continue search  "<<start_ts<<"-"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
+
+            DBG << "["<<node_id<<"] continue search  "<<start_ts<<" ("<<last_end_ts<<") -"<<end_ts<<" page_len:"<<page_len<<" data pack counter:"<< result_page.last_record_found_seq.datapack_counter<<"run id:"<< result_page.last_record_found_seq.run_id ;
+            if(last_end_ts>start_ts){
+                start_ts=last_end_ts;
+            }
             break;
             
         case QueryPhaseEnded:
@@ -215,7 +220,14 @@ int QueryCursor::fetchNewPage() {
 
 int QueryCursor::fetchData() {
     IODirectIODriverClientChannels *next_client = NULL;
-    if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) return -1;
+    last_end_ts=0;
+    try{
+    if((next_client = static_cast<IODirectIODriverClientChannels*>(connection_feeder.getService())) == NULL) {
+            ERR << "missing connection";
+
+        return -1;
+
+    }
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
                                                                        meta_tags,
                                                                        projection_keys,
@@ -229,10 +241,19 @@ int QueryCursor::fetchData() {
         return api_error;
     } else {
         result_page.current_fetched = 0;
+        last_end_ts=result_page.last_record_found_seq.ts;
+        DBG<<"retrieved:"<<result_page.found_element_page.size() <<" Page:"<<page_len<< " last ts:"<<last_end_ts;
+
         if(result_page.found_element_page.size() < page_len) {
             phase = QueryPhaseEnded;
         }
     }
+    } catch (const chaos::CException& e) {
+    ERR << "Chaos Exception :" <<e.errorMessage;
+  }catch (const std::exception& e) {
+    ERR << " StdException :" <<e.what();
+  }
+
     return api_error;
 }
 

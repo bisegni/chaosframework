@@ -40,13 +40,20 @@ CDWUniquePtr DeleteUS::execute(CDWUniquePtr api_data) {
     int err = 0;
     bool presence = false;
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -3)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
+    std::string node_type=NodeType::NODE_TYPE_UNIT_SERVER;
+    if(api_data->hasKey(NodeDefinitionKey::NODE_TYPE)){
+        node_type=api_data->getStringValue(NodeDefinitionKey::NODE_TYPE);
+    }
+    
         //get the parameter
     const std::string new_us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    if((err = us_da->checkPresence(new_us_uid, presence))) {
-        LOG_AND_TROW(US_NEW_ERR, -4, boost::str(boost::format("Error fetchi the presence for the uid:%1%") % new_us_uid));
+    
+    
+    if((err =n_da->checkNodePresence(presence,new_us_uid,node_type))){
+        LOG_AND_TROW_FORMATTED(US_NEW_ERR, -6, "Error fetch the presence for the uid:%1%", % new_us_uid);
     }
-
-    if(presence) {
+       if(presence) {
         if((err = us_da->deleteUS(new_us_uid))){
             LOG_AND_TROW(US_NEW_ERR, -6, boost::str(boost::format("Error removing unit server of id:%1%") % new_us_uid));
         }   

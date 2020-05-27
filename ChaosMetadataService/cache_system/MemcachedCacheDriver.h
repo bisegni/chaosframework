@@ -48,7 +48,8 @@ namespace chaos {
 				bool validateString(std::string& server_description, std::vector<std::string>& tokens);
             public:
 				~MemcachedCacheDriver();
-				
+				int deleteData(const std::string& key);
+
                 int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len);
                 
                 int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len);

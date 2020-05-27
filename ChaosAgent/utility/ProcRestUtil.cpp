@@ -26,6 +26,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #define READ   0
 #define WRITE  1
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -37,19 +38,25 @@ using namespace chaos::common;
 using namespace chaos::agent::utility;
 using namespace chaos::common::network;
 using namespace chaos::service_common::data::agent;
+
+#define USRA_INFO INFO_LOG(ProcRestUtil)
+#define USRA_DBG  DBG_LOG(ProcRestUtil)
+#define USRA_ERR  ERR_LOG(ProcRestUtil)
+
 std::string ProcRestUtil::normalizeName(const std::string& node_name) {
     std::string result = node_name;
     boost::replace_all(result,"/","_");
     return result;
 }
+void ProcRestUtil::launchProcess(const chaos::service_common::data::agent::AgentAssociation& node_association_info,const chaos::common::data::CDWUniquePtr& param){
 
-void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) {
     int pid = 0;
     std::string exec_command;
     boost::filesystem::path init_file;
     boost::filesystem::path queue_file;
     try{
         if(checkProcessAlive(node_association_info) == true) return;
+        
         exec_command = COMPOSE_NODE_LAUNCH_CMD_LINE(node_association_info);
         init_file = CHAOS_FORMAT("%1%/%2%", %INIT_FILE_PATH()%INIT_FILE_NAME(node_association_info));
         queue_file = CHAOS_FORMAT("%1%/%2%", %QUEUE_FILE_PATH()%NPIPE_FILE_NAME(node_association_info));
@@ -69,8 +76,10 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         //write configuration file
         std::ofstream init_file_stream;
         init_file_stream.open(init_file.string().c_str(), std::ofstream::trunc | std::ofstream::out);
-        //enable log on console that will be redirected on named pipe
-        init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        if((node_association_info.scriptID=="")||node_association_info.log_on_mds){
+            //enable log on console that will be redirected on named pipe
+         init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_CONSOLE) << std::endl;
+        }
         //check for syslog setting of the agent that will be reflect on managed us
         if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_SYSLOG)) {
             init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_SYSLOG) << std::endl;
@@ -78,12 +87,11 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
         if(ChaosAgent::getInstance()->settings.enable_us_logging) {
             init_file_stream << CHAOS_FORMAT("%1%=true",%InitOption::OPT_LOG_ON_FILE) << std::endl;
             init_file_stream << CHAOS_FORMAT("%1%=%2%/%3%.log",%InitOption::OPT_LOG_FILE%INIT_FILE_PATH()%ProcRestUtil::normalizeName(node_association_info.associated_node_uid))<< std::endl;
-
         }
-        
-        if(node_association_info.log_on_mds){
-            init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
-        }
+    
+       // if(node_association_info.log_on_mds){
+            //init_file_stream << CHAOS_FORMAT("%1%=",%InitOption::OPT_LOG_ON_MDS) << std::endl;
+       // }
         
         init_file_stream << CHAOS_FORMAT("unit-server-alias=%1%",%node_association_info.associated_node_uid) << std::endl;
         
@@ -95,18 +103,18 @@ void ProcRestUtil::launchProcess(const AgentAssociation& node_association_info) 
             mds_it++) {
             init_file_stream << CHAOS_FORMAT("metadata-server=%1%",%mds_it->ip_port) << std::endl;
         }
-    
+
         //append user defined paramenter
         init_file_stream.write(node_association_info.configuration_file_content.c_str(), node_association_info.configuration_file_content.length());
         init_file_stream.close();
         //create the named pipe
         //ProcRestUtil::createNamedPipe(queue_file.string());
-        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,".","nt_unit_server",node_association_info.associated_node_uid);
+        int ret=execProcessWithUid(exec_command,node_association_info.association_unique_id,node_association_info.working_dir,"nt_unit_server",node_association_info.associated_node_uid);
         if(ret==0){
-            LDBG_<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
+            USRA_DBG<<"New process created \""<<node_association_info.association_unique_id<<"\" launch cmd:"<<exec_command;
         } else {
       //   throw chaos::CException(-1, CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id), __PRETTY_FUNCTION__);
-        LERR_<< CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id);
+        USRA_ERR<< CHAOS_FORMAT("Cannot create process %1% with uuid %2%",%exec_command%node_association_info.association_unique_id);
         }
 
     } catch(std::exception& ex) {
@@ -118,11 +126,11 @@ bool ProcRestUtil::checkProcessAlive(const AgentAssociation& node_association_in
     bool alive;
     ::restConsole::RestProcessManager::process_state_t proc=getState(node_association_info.association_unique_id);
     alive=(proc==::restConsole::RestProcessManager::PROCESS_STARTED);
-    LDBG_<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive;
+    USRA_DBG<<"Check alive \""<<node_association_info.association_unique_id<<"\" alive:"<<alive;
     return alive;
 }
 bool ProcRestUtil::quitProcess(const AgentAssociation& node_association_info,
                            bool kill) {
-     LDBG_<<"Quitting process \""<<node_association_info.association_unique_id;
+     USRA_DBG<<"Quitting process \""<<node_association_info.association_unique_id;
     return (killProcess(node_association_info.association_unique_id) == 0);
 }

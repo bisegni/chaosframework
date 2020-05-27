@@ -78,7 +78,7 @@ namespace chaos {
 				void consumeJob(void *cookie);
 				WorkerJobPtr getNextOrWait(boost::unique_lock<boost::mutex>& lock);
 				
-				virtual void executeJob(WorkerJobPtr job_info, void* cookie) = 0;
+				virtual int executeJob(WorkerJobPtr job_info, void* cookie) = 0;
 			public:
 				DataWorker();
 				virtual ~DataWorker();

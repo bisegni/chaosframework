@@ -78,7 +78,14 @@ int main(int argc, const char * argv[]) {
         ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_EXT_CMD_PIPE_NAME,
                                                                                               "The name of the pipe (name.in name.out) for listen for external command",
                                                                                               "chaos_agent_ext_cmd",
-                                                                                              &ChaosAgent::getInstance()->settings.ext_cmd_pipe_name);
+                                                                                            &ChaosAgent::getInstance()->settings.ext_cmd_pipe_name);
+          
+
+        ChaosAgent::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_WAIT_START_CONSECUTIVE_PROCESSES,
+                                                                                              "Waits between launch of different processes",
+                                                                                              3,
+                                                                                            &ChaosAgent::getInstance()->settings.wait_run);
+         
         ChaosAgent::getInstance()->init(argc, argv);
         
         ChaosAgent::getInstance()->start();

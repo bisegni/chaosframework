@@ -36,7 +36,7 @@ namespace driver{
             chaos::common::data::CDataWrapper wrapper2dataset(chaos::common::data::CDataWrapper& in,int dir=chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
         protected:
             
-            uint64_t runid;
+            uint64_t runid,push_errors;
             std::string datasetName; // cu name
             std::string groupName; // US name
             uint64_t ageing;

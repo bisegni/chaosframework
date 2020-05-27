@@ -178,6 +178,15 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_uni
 
 int MongoDBControlUnitDataAccess::updateControlUnit(CDataWrapper& control_unit_description) {
     int err = 0;
+     if(!control_unit_description.hasKey(NodeDefinitionKey::NODE_TYPE)) {
+        //set the type of control unit
+        control_unit_description.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    }
+    chaos::common::data::CDWUniquePtr ptr=control_unit_description.clone();
+    MDBCUDA_DBG<<" update:"<<control_unit_description.getJSONString();
+    if((err = node_data_access->setNodeDescription(control_unit_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID),ptr))) {
+        MDBCUDA_ERR << "Error:" << err << " updating new node for control unit:"<<control_unit_description.getJSONString();
+    } 
     return err;
 }
 
@@ -220,7 +229,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
             
             ChaosUniquePtr<chaos::common::data::CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
             if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
-               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
+               /*dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&*/
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
                dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)) {
                 
@@ -229,7 +238,9 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
                 
                 dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION <<
-                dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION);
+                ((dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION))?dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION):dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+
+            
                 
                 dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION <<
                 dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
@@ -777,7 +788,9 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             mongo::BSONObj instance_description = q_result.getObjectField("instance_description");
             *result = new CDataWrapper();
             (*result)->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
-            
+            if(q_result.hasField(NodeDefinitionKey::NODE_TYPE))(*result)->addStringValue(NodeDefinitionKey::NODE_TYPE, q_result.getStringField(NodeDefinitionKey::NODE_TYPE));
+            if(q_result.hasField(NodeDefinitionKey::NODE_SUB_TYPE))(*result)->addStringValue(NodeDefinitionKey::NODE_SUB_TYPE, q_result.getStringField(NodeDefinitionKey::NODE_SUB_TYPE));
+
             
             (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
             if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
@@ -886,7 +899,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
                                        &prj))){
             
         }else if(result_bson.isEmpty()){
-            MDBCUDA_ERR << "No attribute has bee foundt";
+            MDBCUDA_ERR << "No attribute has been found:"<<attribute_name<<" in "<<control_unit_uid;
         } else {
             std::vector<mongo::BSONElement> result_array = result_bson.getFieldDotted(dotted_dataset_path).Array();
             if(result_array.size()!=0) {
@@ -1219,6 +1232,7 @@ int MongoDBControlUnitDataAccess::releaseControlUnitForAgeingManagement(std::str
 int MongoDBControlUnitDataAccess::getNextRunID(const std::string& control_unit_id,
                                                int64_t& run_id) {
     int err = 0;
+
     try {
         const std::string run_id_key = CHAOS_FORMAT("%1%.%2%", %"run_description"%ControlUnitNodeDefinitionKey::CONTROL_UNIT_RUN_ID);
         

@@ -34,9 +34,9 @@ using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define INFO    INFO_LOG(MongoDBScriptDataAccess)
-#define ERR     ERR_LOG(MongoDBScriptDataAccess)
-#define DBG     DBG_LOG(MongoDBScriptDataAccess)
+#define INFO    INFO_LOG(MongoDBAgentDataAccess)
+#define ERR     ERR_LOG(MongoDBAgentDataAccess)
+#define DBG     DBG_LOG(MongoDBAgentDataAccess)
 
 MongoDBAgentDataAccess::MongoDBAgentDataAccess(const ChaosSharedPtr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
@@ -111,7 +111,7 @@ int MongoDBAgentDataAccess::insertUpdateAgentDescription(CDataWrapper& agent_des
                                      true,
                                      false))){
             ERR << "Error registering agent" << agent_uid << " with error:" << err;
-        }
+        } 
     } catch (const mongo::DBException &e) {
         ERR << e.what();
         err = -1;
@@ -140,9 +140,10 @@ int MongoDBAgentDataAccess::loadAgentDescription(const std::string& agent_uid,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       query))){
             ERR << CHAOS_FORMAT("Error finding agent %1% with error %2%", %agent_uid%err);
-        } else if(result.isEmpty() == false &&
-                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)) {
+        } else if(result.isEmpty() == false /*&&
+                  result.hasField(AgentNodeDefinitionKey::NODE_ASSOCIATED)*/) {
             ChaosUniquePtr<chaos::common::data::CDataWrapper> full_ser(new CDataWrapper(result.objdata()));
+            DBG<<"AGENT found:"<<full_ser->getJSONString();
             AgentInstanceSDWrapper agent_instance_sd_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AgentInstance, agent_description));
             agent_instance_sd_wrapper.deserialize(full_ser.get());
         }
@@ -238,6 +239,25 @@ int MongoDBAgentDataAccess::saveNodeAssociationForAgent(const std::string& agent
                                      push_update))){
             ERR << CHAOS_FORMAT("Error pushing association of %3% into the agent %1% with error %2%", %agent_uid%err%node_association.associated_node_uid);
         }
+        // update the parent of the node
+        mongo::BSONObj query_node = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << node_association.associated_node_uid);
+        mongo::BSONObj node_update = BSON("$set"<<BSON(NodeDefinitionKey::NODE_PARENT <<agent_uid));
+        DEBUG_CODE(DBG<<log_message("saveNodeAssociationForAgent",
+                                    "push",
+                                    DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                            "Push",
+                                                            query_node.toString(),
+                                                            node_update.toString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     query_node,
+                                     node_update))){
+            ERR << CHAOS_FORMAT("Error updating PARENT of %2% to %1%", %agent_uid%err%node_association.associated_node_uid);
+        }else {
+            DBG<<" updated "<<node_association.associated_node_uid<<" associated to:"<<agent_uid;
+        }
+       
+
     } catch (const mongo::DBException &e) {
         ERR << e.what();
         err = -1;

@@ -50,6 +50,8 @@ using namespace chaos::common::async_central;
 using namespace chaos::common::network;
 using namespace chaos::service_common::data::agent;
 
+
+
 AgentRegister::AgentRegister():
 rpc_domain("agent"),
 registration_state(AgentRegisterStateUnregistered),
@@ -240,11 +242,18 @@ void AgentRegister::timeout() {
                     end = agent_instance_sd_wrapper().node_associated.end();
                     it != end;
                     it++) {
+                       chaos::common::data::CDWUniquePtr param=ChaosAgent::getInstance()->checkAndPrepareScript(*it);
+                    ///
                     if(it->auto_start) {
                         INFO << CHAOS_FORMAT("Autostart node %1%", %it->associated_node_uid);
-                        LAUNCH_PROCESS(*it);
+                        LAUNCH_PROCESS(*it,param);
                         if(it->keep_alive) {
                              ((worker::ProcessWorker*)pw_ptr.get())->addToRespawn(*it);
+                        }
+                        if((it+1)!=end){
+                            INFO<<"waiting "<<ChaosAgent::getInstance()->settings.wait_run<<"s before launching:"<<it->associated_node_uid;
+                            sleep(ChaosAgent::getInstance()->settings.wait_run);
+
                         }
                     }
                 }

@@ -49,24 +49,32 @@ CDWUniquePtr SetInstanceDescription::execute(CDWUniquePtr api_data) {
                                       cu_uid))){
         LOG_AND_TROW(CUCUI_ERR, err, "Error checking node presence")
     }
-    if (!presence) {
-        ChaosUniquePtr<chaos::common::data::CDataWrapper> node_min_dec(new CDataWrapper());
+            //set the instance whiting the control unit node
+        //create the subobject for the instance that need to be insert within the global node
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_desc(api_data->getCSDataValue("instance_description"));
+     //insert the instance
+    if(!instance_desc->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
+        LOG_AND_TROW(CUCUI_ERR, -5, "The instance description need to have the unique id of the parent unit server.")
+    }
+    ChaosUniquePtr<chaos::common::data::CDataWrapper> node_min_dec(new CDataWrapper());
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
         node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, api_data->getStringValue(NodeDefinitionKey::NODE_TYPE));
+        node_min_dec->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_desc->getStringValue(NodeDefinitionKey::NODE_PARENT));
+        
+       
+    if (!presence) {
             //need to be create a new empty node
         if((err = cu_da->insertNewControlUnit(*node_min_dec.get()))) {
             LOG_AND_TROW(CUCUI_ERR, err, "Error during new node creation")
         }
+    } else {
+
+        if((err = cu_da->updateControlUnit(*node_min_dec.get()))) {
+            LOG_AND_TROW(CUCUI_ERR, err, "Error during new node creation")
+        }
     }
 
-        //set the instance whiting the control unit node
-        //create the subobject for the instance that need to be insert within the global node
-    ChaosUniquePtr<chaos::common::data::CDataWrapper> instance_desc(api_data->getCSDataValue("instance_description"));
-        //insert the instance
-    if(!instance_desc->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
-        LOG_AND_TROW(CUCUI_ERR, -5, "The instance description need to have the unique id of the parent unit server.")
-    }
-
+   
     if(!instance_desc->hasKey("control_unit_implementation")) {
         LOG_AND_TROW(CUCUI_ERR, -6, "The control unit implementaiton is mandatory within the instance description")
     }

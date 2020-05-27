@@ -299,8 +299,10 @@ class AbstractControlUnit : public DeclareAction,
 
   //! keep track of how many push has been done for every dataset
   //! 0 - output, 1-input, 2-custom
-  uint32_t push_dataset_counter;
-  uint64_t push_dataset_size;
+  uint32_t push_dataset_counter,push_errors,packet_lost;
+  uint32_t push_dataset_size;
+  uint64_t push_tot_size;
+
   //! identify last timestamp whene the push rate has been acquired;
   uint64_t last_push_rate_grap_ts;
 

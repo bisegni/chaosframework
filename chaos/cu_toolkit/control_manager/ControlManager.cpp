@@ -330,6 +330,18 @@ void ControlManager::submitControlUnit(ChaosSharedPtr<AbstractControlUnit> contr
                                                ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
                                                chaos::DataType::TYPE_INT32);
     
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_ERROR,
+                                                        chaos::DataType::TYPE_INT32);
+
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_LOST,
+                                                        chaos::DataType::TYPE_INT32);
+
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_TOT_PUSH_KSIZE,
+                                                        chaos::DataType::TYPE_INT32);
+
     queue_submitted_cu.push(control_unit_instance);
     
     //unlock thread

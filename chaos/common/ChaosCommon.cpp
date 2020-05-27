@@ -211,12 +211,6 @@ void ChaosAbstractCommon::init(std::istream &initStream) {
 void ChaosAbstractCommon::init(void *init_data) {
     int            err = 0;
     struct utsname u_name;
-#ifndef _WIN32
-    struct sigaction sigact;
-    std::memset(&sigact, 0, sizeof(struct sigaction));
-    sigact.sa_sigaction = crit_err_hdlr;
-    sigact.sa_flags     = SA_RESTART | SA_SIGINFO;
-#endif
     if (initialized)
         return;
     try {
@@ -241,15 +235,6 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         //print chaos library header
         PRINT_LIB_HEADER
-#ifndef _WIN32
-        if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
-            LERR_ << "error setting signal handler for SIGSEGV";
-        }
-#else
-        if (signal(SIGSEGV, crit_err_hdlr) == SIG_ERR) {
-            LERR_ << "error setting signal handler for SIGSEGV";
-        }
-#endif
 #if CHAOS_PROMETHEUS
         LAPP_ << "Metric HTTP port: " << GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_METRIC_WEB_SERVER_PORT);
 #endif
@@ -328,9 +313,30 @@ void ChaosAbstractCommon::init(void *init_data) {
         
         
         NetworkBroker::getInstance()->registerAction(this);
+    } catch (std::exception& e){
+        LERR_<< "Unexpected std exception received: "<<e.what();
+        exit(1);
+
     } catch (...) {
-        throw CException(-1, "NO chaos exception received", __PRETTY_FUNCTION__);
+        LERR_<< "Unexpected exception received ";
+        exit(1);
     }
+
+#ifndef _WIN32
+
+     struct sigaction sigact;
+    std::memset(&sigact, 0, sizeof(struct sigaction));
+    sigact.sa_sigaction = crit_err_hdlr;
+    sigact.sa_flags     = SA_RESTART | SA_SIGINFO;
+        if (sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL) != 0) {
+            LERR_ << "error setting signal handler for SIGSEGV";
+        }
+#else
+        if (signal(SIGSEGV, crit_err_hdlr) == SIG_ERR) {
+            LERR_ << "error setting signal handler for SIGSEGV";
+        }
+#endif
+
 }
 chaos::common::data::CDWUniquePtr ChaosAbstractCommon::_registrationAck(chaos::common::data::CDWUniquePtr ack_pack){
     CHECK_CDW_THROW_AND_LOG(ack_pack, LERR_, -1, "ACK message with no content for NODE");

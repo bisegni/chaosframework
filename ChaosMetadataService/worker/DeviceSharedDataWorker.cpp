@@ -61,7 +61,7 @@ void DeviceSharedDataWorker::deinit()  {
         global_object_storage_driver->deinit();
 }
 
-void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
+int DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     int err = 0;
     DeviceSharedWorkerJob &job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
     ObjectStorageDataAccess *obj_storage_da = reinterpret_cast<ObjectStorageDataAccess *>(cookie);
@@ -80,29 +80,7 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
                                                  data_pack))) {
                 ERR << "Error pushing datapack into object storage driver";
             }
+            
     }
-   /* switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
-        case DataServiceNodeDefinitionType::DSStorageTypeFile:{
-            break;
-        }
-        case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
-        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
-            //write data on object storage
-            CDataWrapper data_pack((char *)job.data_pack->data());
-            //push received datapack into object storage
-            if((err = obj_storage_da->pushObject(job.key,
-                                                 MOVE(job.meta_tag),
-                                                 data_pack))) {
-                ERR << "Error pushing datapack into object storage driver";
-            }
-            break;
-        }
-        case DataServiceNodeDefinitionType::DSStorageTypeLive:
-        case DataServiceNodeDefinitionType::DSStorageLogHisto:
-        case DataServiceNodeDefinitionType::DSStorageTypeRQ:
-
-        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
-            break;
-        }
-    }*/
+   return err;
 }

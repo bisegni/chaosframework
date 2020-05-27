@@ -50,6 +50,7 @@ CDWUniquePtr RemoveNodeAssociation::execute(CDWUniquePtr api_data) {
     //we can rpocessd
     GET_DATA_ACCESS(AgentDataAccess, a_da, -6);
 //    int err = 0;
+    
     uint64_t cmd_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::agent::AgentRemoveNodeSafety),
                                                         api_data.release(),
                                                         0,

@@ -47,8 +47,8 @@ namespace chaos {
             // default script directory
             std::string script_dir;
             //!port where the rest service answer
-
             int restport;
+            uint32_t wait_run;
         } ChaosAgentSettings;
         
     }

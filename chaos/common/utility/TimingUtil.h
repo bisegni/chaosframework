@@ -83,10 +83,10 @@ namespace chaos {
                     uint32_t txTm_s;         // 32 bits and the most important field the client cares about. Transmit time-stamp seconds.
                     uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
                 } ntp_packet;
-                
+                typedef boost::date_time::c_local_adjustor<boost::posix_time::ptime> local_adj;
+
                 static inline boost::posix_time::time_duration getUTCOffset() {
                     using namespace boost::posix_time;
-                    typedef boost::date_time::c_local_adjustor<ptime> local_adj;
                     const ptime utc_now = second_clock::universal_time();
                     const ptime now = local_adj::utc_to_local(utc_now);
                     return now - utc_now;
@@ -148,39 +148,22 @@ namespace chaos {
                 }
                 //!chack if a string is well format for date representation
                 static bool dateWellFormat(const std::string& timestamp) {
-                    boost::posix_time::ptime time;
+                    boost::posix_time::ptime timep;
                     size_t i=0;
                     for(; i<formats_n; ++i) {
                         std::istringstream is(timestamp);
                         std::locale loc=getLocale(i);
                         
                         is.imbue(loc);
-                        is >> time;
-                        if(time != boost::posix_time::ptime()) break;
+                        is >> timep;
+
+                        if(timep != boost::posix_time::ptime()) break;
                     }
                     return i != formats_n;
                 }
                 
                 //!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
-                static inline uint64_t getTimestampFromString(const std::string& timestamp,bool isutc=false) {
-                    boost::posix_time::ptime time;
-                    size_t i=0;
-                    for(; i<formats_n; ++i) {
-                        std::istringstream is(timestamp);
-                        std::locale loc=getLocale(i);
-                        is.imbue(loc);
-                        is >> time;
-                        if(time != boost::posix_time::ptime()) break;
-                    }
-                    if(i != formats_n) {
-                        if(isutc){
-                            return (time-EPOCH).total_milliseconds();
-                        }
-                        return ((time-getUTCOffset())-EPOCH).total_milliseconds();
-                    } else {
-                        return 0;
-                    }
-                }
+                static uint64_t getTimestampFromString(const std::string& timestamp,const std::string& format = std::string("%d-%m-%Y %H:%M:%S"),bool isutc=false);
                 
                 //! return the timestam from now to delay(milliseconds , in the past(false) or future(true)
                 static inline uint64_t getTimestampWithDelay(uint64_t delay,
@@ -195,23 +178,11 @@ namespace chaos {
                 }
                 
                 //! return the timestam from now to dealy , in the past(false) or future(true)
-                static inline std::string toString(uint64_t since_epoc_ms,
-                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S")) {
-                    boost::posix_time::time_facet * facet = new boost::posix_time::time_facet(format.c_str());
-                    std::ostringstream stream;
-                    stream.imbue(std::locale(stream.getloc(), facet));
-                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::milliseconds(since_epoc_ms));
-                    return stream.str();
-                }
+                static  std::string toString(uint64_t since_epoc_ms,
+                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"),bool isUtc=true);
                 //! return the timestam from now to dealy , in the past(false) or future(true)
-                static inline std::string toStringFromMicroseconds(uint64_t since_epoc_us,
-                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S")) {
-                    boost::posix_time::time_facet * facet = new boost::posix_time::time_facet(format.c_str());
-                    std::ostringstream stream;
-                    stream.imbue(std::locale(stream.getloc(), facet));
-                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::microseconds(since_epoc_us));
-                    return stream.str();
-                }
+                static  std::string toStringFromMicroseconds(uint64_t since_epoc_us,
+                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"),bool isUtc=true);
             };
         }
     }

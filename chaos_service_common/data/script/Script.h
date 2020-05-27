@@ -33,8 +33,6 @@ namespace chaos {
         namespace data {
             namespace script {
                 
-#define CHAOS_SBD_NAME          "script_name"
-#define CHAOS_SBD_DESCRIPTION   "script_description"
 
                 //! The description of a script
                 struct ScriptBaseDescription {
@@ -69,16 +67,16 @@ namespace chaos {
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
                     dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
-                    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
-                    dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
+                    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME, "");
+                    dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_DESCRIPTION, "");
                     dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
                 }
                 
                 ChaosUniquePtr<chaos::common::data::CDataWrapper> serialize() {
                     ChaosUniquePtr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                     data_serialized->addInt64Value("seq", dataWrapped().unique_id);
-                    data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
-                    data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
+                    data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME, dataWrapped().name);
+                    data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::CHAOS_SBD_DESCRIPTION, dataWrapped().description);
                     data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, dataWrapped().language);
                     return data_serialized;
                 }

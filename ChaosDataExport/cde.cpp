@@ -300,6 +300,8 @@ int main(int argc, const char* argv[]) {
         controller->getDeviceDatasetAttributesName(output_element_name,
                                                    DataType::Output);
         
+        std::cout << "Query fronm: " << chaos::common::utility::TimingUtil::toString(start_ts)<<" from:"<<chaos::common::utility::TimingUtil::toString(end_ts);
+
         //create header
         if(dest_type == 2) {
             //write header

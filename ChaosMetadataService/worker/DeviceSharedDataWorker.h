@@ -69,7 +69,7 @@ namespace chaos{
                 friend class DeviceSharedDataWorkerMetricCollector;
                 ChaosUniquePtr<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> global_object_storage_driver;
             protected:
-                void executeJob(WorkerJobPtr job_info,
+                int executeJob(WorkerJobPtr job_info,
                                 void* cookie);
             public:
                 DeviceSharedDataWorker();

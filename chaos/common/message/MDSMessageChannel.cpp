@@ -391,6 +391,62 @@ int MDSMessageChannel::getFullNodeDescription(const std::string& identification_
     }
     return last_error_code;
 }
+int MDSMessageChannel::getScriptDesc(const std::string& scriptID,chaos::common::data::CDWUniquePtr&res,uint32_t millisec_to_wait){
+int err=0;
+chaos::common::data::CDWUniquePtr data(new CDataWrapper());
+    data->addStringValue("search_string", scriptID);
+    // first load a list of scripts
+    ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("script",
+                                                                                            "searchScript",
+                                                                                            MOVE(data));
+    request_future->setTimeout(millisec_to_wait);
+    if(request_future->wait()) {
+        if((request_future->getError() != ErrorCode::EC_NO_ERROR)){
+            MSG_ERR<<" cannot retrieve script list:"<<request_future->getErrorMessage();
+            return request_future->getError();
+        }
+    
+        if(request_future->getResult() &&
+            request_future->getResult()->hasKey(chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST) &&
+            request_future->getResult()->isVectorValue(chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST)) {
+            CMultiTypeDataArrayWrapperSPtr  scripts=request_future->getResult()->getVectorValue(chaos::MetadataServerApiKey::script::search_script::FOUND_SCRIPT_LIST);
+            int64_t lastid=-1;
+            chaos::common::data::CDWUniquePtr last;
+            for(int cnt=0;cnt<scripts->size();cnt++){
+                chaos::common::data::CDWUniquePtr curr=scripts->getCDataWrapperElementAtIndex(cnt);
+                if(curr->getInt64Value("seq")>=lastid){
+                    lastid=curr->getInt64Value("seq");
+                    last.reset(curr.release());
+                }
+            }
+            if(lastid>0){
+                //
+                chaos::common::data::CDWUniquePtr data(new CDataWrapper());
+                data->addStringValue(ExecutionUnitNodeDefinitionKey::CHAOS_SBD_NAME, scriptID);
+                data->addInt64Value("seq", lastid);
+                ChaosUniquePtr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture("script",
+                                                                                        "loadFullScript",
+                                                                                        MOVE(data));
+                            
+                request_future->setTimeout(millisec_to_wait);
+                if(request_future->wait()) {
+                    if((request_future->getError() != ErrorCode::EC_NO_ERROR)){
+                        MSG_ERR<<" cannot retrieve  load script:"<<request_future->getErrorMessage();
+                        return request_future->getError();
+                    }
+                     if(request_future->getResult()){
+                        res= request_future->detachResult();
+                        return 0;
+                    }
+                    }
+  
+                }
+            }
+        }
+    MSG_ERR<<" Timeout cannot retrieve  load script: for "<<scriptID;
+
+    return -100;
+}
 
 int MDSMessageChannel::getDataDriverBestConfiguration(CDWUniquePtr& device_definition,
                                                       uint32_t millisec_to_wait) {
