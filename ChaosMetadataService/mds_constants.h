@@ -28,6 +28,8 @@ namespace chaos {
 #define OPT_CACHE_DRIVER                        "cache-driver"
 #define OPT_CACHE_DRIVER_KVP                    "cache-driver-kvp"
 #define OPT_CACHE_DRIVER_POOL_MIN_INSTANCE      "cache-driver-pool-min-instance"
+
+#define OPT_KAFKA_
         
 #define OPT_ARCHIVER_NUM                         "archiver-instances"
 #define OPT_ARCHIVER_THREAD                      "archiver-thread"
