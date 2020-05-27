@@ -4,6 +4,30 @@ project(chaos_common)
 MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
 
+
+IF(KAFKA_ENABLE)
+MESSAGE("ENABLING KAFKA")
+ExternalProject_Add(
+	 jsonCpp
+	 GIT_REPOSITORY https://github.com/edenhill/librdkafka.git
+	 
+     GIT_PROGRESS 1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-build"
+	  
+     CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	 
+	 LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+
+ENDIF(KAFKA_ENABLE)
+
 if(WIN32)
 set(CMAKE_SUPPRESS_REGENERATION true)
 ELSE(WIN32)
@@ -89,6 +113,7 @@ ExternalProject_Add(
 
 
 ENDIF(WIN32)
+
 
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
@@ -316,7 +341,9 @@ SET(common_lib_src ${common_lib_src}
                     message/MultiAddressMessageChannel.cpp
                     message/MultiAddressMessageRequestFuture.cpp
                     message/PerformanceNodeChannel.cpp
-                    message/MessageRequestDomain.cpp)
+                    message/MessageRequestDomain.cpp
+                    message/MessagePublishSubscribeBase.cpp
+                    message/MessagePSProducer.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     network/NetworkBroker.cpp
