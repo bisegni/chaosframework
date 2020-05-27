@@ -55,7 +55,7 @@ CDWUniquePtr NodeSearch::execute(CDWUniquePtr api_data) {
     if (api_data->hasKey("alive_only") &&
         api_data->isBoolValue("alive_only")){
         alive_only=api_data->getBoolValue("alive_only");
-        NS_DBG << "Search only item that are with alive state:" << alive_only <<" last seq:"<<last_sequence_id<<" page:"<<page_length;
+      //  NS_DBG << "Search only item that are with alive state:" << alive_only <<" last seq:"<<last_sequence_id<<" page:"<<page_length;
     }
     //get node data access
     chaos::NodeType::NodeSearchType search_type=(chaos::NodeType::NodeSearchType)api_data->getInt32Value("node_type_filter");

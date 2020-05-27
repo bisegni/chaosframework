@@ -38,6 +38,7 @@ int BsonFStream::open(const std::string&fname,int size){
           return 0;
         }
       //  DBG<<"opening:"<<name<<" x"<<std::hex<<this;
+        open_ts=0;
         mf.open(params);
         if(mf.is_open()){
           
@@ -74,17 +75,20 @@ int BsonFStream::open(const std::string&fname,int size){
         fsize=bson_writer_get_length(writer);
         mf.resize(fsize);
         bson_writer_destroy(writer);
+        mf.close();
+        close_ts=chaos::common::utility::TimingUtil::getTimeStamp();
+        writer=NULL;
+
       }
       }  catch(boost::exception& e){
-          ERR<<"error closing";
+          ERR<<"error closing boost exception:"<<boost::diagnostic_information(e);
+          return -1;
       } catch(...){
-          ERR<<"error closing";
+          ERR<<"error closing uknown execption";
+          return -2;
 
       }
-      close_ts=chaos::common::utility::TimingUtil::getTimeStamp();
 
-      writer=NULL;
-      mf.close();
       return 0;
     }
     int BsonFStream::write(const std::string&key,const chaos::common::data::CDataWrapper&ptr){
@@ -92,8 +96,8 @@ int BsonFStream::open(const std::string&fname,int size){
         std::lock_guard<std::mutex> lock(wmutex);
 
           if(writer==NULL){
-            ERR<<"attempt to write not open or closes:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms"<< std::hex<<" x"<<this;
-            return 0;
+            ERR<<"attempt to write not open or close:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms"<< std::hex<<" x"<<this;
+            return -1;
           }
           if (bson_writer_begin(writer, &b)) {
              bson_append_document(b, key.c_str(), -1, ptr.getBSON());

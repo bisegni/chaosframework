@@ -97,20 +97,24 @@ void TimingUtil::disableTimestampCalibration() {
 }
 
  std::string TimingUtil::toString(uint64_t since_epoc_ms,
-                                                   const std::string& format) {
+                                                   const std::string& format,bool isUtc) {
                     boost::posix_time::time_facet* facet=new boost::posix_time::time_facet(format.c_str());
                     std::ostringstream stream;
                     stream.imbue(std::locale(stream.getloc(), facet));
-                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::milliseconds(since_epoc_ms));
+                    boost::posix_time::ptime p(EPOCH + boost::posix_time::milliseconds(since_epoc_ms));
+                    stream << ((isUtc)?local_adj::utc_to_local(p):p);
                     return stream.str();
 }
 
   std::string TimingUtil::toStringFromMicroseconds(uint64_t since_epoc_us,
-                                                   const std::string& format) {
+                                                   const std::string& format,bool isUtc) {
                     boost::posix_time::time_facet* f=new boost::posix_time::time_facet (format.c_str());
                     std::ostringstream stream;
+
                     stream.imbue(std::locale(stream.getloc(), f));
-                    stream << boost::posix_time::ptime(EPOCH + boost::posix_time::microseconds(since_epoc_us));
+                    boost::posix_time::ptime p(EPOCH + boost::posix_time::microseconds(since_epoc_us));
+
+                    stream <<  ((isUtc)?local_adj::utc_to_local(p):p);
                     return stream.str();
 }
 void TimingUtil::timeout() {

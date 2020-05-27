@@ -83,10 +83,10 @@ namespace chaos {
                     uint32_t txTm_s;         // 32 bits and the most important field the client cares about. Transmit time-stamp seconds.
                     uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
                 } ntp_packet;
-                
+                typedef boost::date_time::c_local_adjustor<boost::posix_time::ptime> local_adj;
+
                 static inline boost::posix_time::time_duration getUTCOffset() {
                     using namespace boost::posix_time;
-                    typedef boost::date_time::c_local_adjustor<ptime> local_adj;
                     const ptime utc_now = second_clock::universal_time();
                     const ptime now = local_adj::utc_to_local(utc_now);
                     return now - utc_now;
@@ -179,10 +179,10 @@ namespace chaos {
                 
                 //! return the timestam from now to dealy , in the past(false) or future(true)
                 static  std::string toString(uint64_t since_epoc_ms,
-                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"));
+                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"),bool isUtc=true);
                 //! return the timestam from now to dealy , in the past(false) or future(true)
                 static  std::string toStringFromMicroseconds(uint64_t since_epoc_us,
-                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"));
+                                                   const std::string& format = std::string("%d-%m-%Y %H:%M:%S"),bool isUtc=true);
             };
         }
     }

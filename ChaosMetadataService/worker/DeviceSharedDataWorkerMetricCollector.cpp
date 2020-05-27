@@ -41,11 +41,12 @@ DeviceSharedDataWorker(){
 
 DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
 
-void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
+int DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
+                                                           int ret=0;
     DeviceSharedWorkerJob& job = *reinterpret_cast<DeviceSharedWorkerJob*>(job_info.get());
     uint32_t total_data = (uint32_t)job.data_pack->size() + (uint32_t)job.key.size();
-    DeviceSharedDataWorker::executeJob(job_info, cookie);
+    ret= DeviceSharedDataWorker::executeJob(job_info, cookie);
     switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job.key_tag)) {
         case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
         case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
@@ -58,6 +59,7 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
             break;
         }
     }
+    return ret;
 }
 
 int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info, int64_t milliseconds_to_wait) {

@@ -43,6 +43,7 @@ using namespace chaos::common::metric;
 #endif
 using namespace chaos::common::async_central;
 
+#define MAXDIROPENED 1000
 namespace chaos {
 namespace metadata_service {
 namespace object_storage {
@@ -54,7 +55,7 @@ chaos::common::metric::CounterUniquePtr PosixFile::counter_read_data_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_insert_time_uptr;
 chaos::common::metric::GaugeUniquePtr   PosixFile::gauge_query_time_uptr;
 #endif
-boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(1000);
+boost::lockfree::queue<PosixFile::dirpath_t*, boost::lockfree::fixed_sized<true> > PosixFile::file_to_finalize(MAXDIROPENED);
 #ifdef CERN_ROOT
 GenerateRootJob PosixFile::rootGenJob;
 #endif
@@ -894,7 +895,7 @@ int SearchWorker::getData(abstraction::VectorObject& dst, int maxData, const uin
         cntt++;
       }
     }
-  } while (again && (cntt < maxData) && (index < cache_data.size()));
+  } while (again && (cntt < maxData) /*(&& (index < cache_data.size())*/);
   if (cntt > 0) {
     seq.run_id           = lrunid;
     seq.datapack_counter = lseq;

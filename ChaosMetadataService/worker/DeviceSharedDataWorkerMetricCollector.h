@@ -39,7 +39,7 @@ namespace chaos{
                 chaos::common::metric::GaugeUniquePtr   gauge_queued_memory_uptr;
                 chaos::common::metric::CounterUniquePtr counter_rejeted_element_uptr;
             protected:
-                void executeJob(WorkerJobPtr job_info, void* cookie);
+                int executeJob(WorkerJobPtr job_info, void* cookie);
             public:
                 DeviceSharedDataWorkerMetricCollector();
                 ~DeviceSharedDataWorkerMetricCollector();
