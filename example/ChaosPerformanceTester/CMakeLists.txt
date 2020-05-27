@@ -17,4 +17,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(ChaosPerformanceTester chaos_uitoolkit chaos_common ${FrameworkLib})
 
-INSTALL_TARGETS(/bin ChaosPerformanceTester)
+
+INSTALL(TARGETS ChaosPerformanceTester
+        DESTINATION "bin"
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
