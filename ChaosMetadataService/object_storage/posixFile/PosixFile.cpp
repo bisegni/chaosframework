@@ -1064,7 +1064,7 @@ int PosixFile::pushObject(const std::string&                       key,
 
     //BsonFStream& writer = s_lastWriteDir[dir].writer;
     bool ok;
-    int  retry = 3;
+    int  retry = 2;
     do {
       char key[32];
       snprintf(key, sizeof(key), "%010lu_%010lu", runid, seq);
@@ -1366,10 +1366,11 @@ int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
 }
 
 void PosixFile::timeout() {
-  uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
   // remove directory write cache
   for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
+    uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
+
     if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM)) {
       //not anymore used
       /* if (last_access_mutex.try_lock() == false) {
