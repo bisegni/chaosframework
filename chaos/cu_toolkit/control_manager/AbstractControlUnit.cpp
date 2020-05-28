@@ -2166,7 +2166,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         manageBurstQueue();
         //now we nede to push the outputdataset
         int psiz=output_attribute_dataset->getBSONRawSize();
-        push_dataset_size+psiz;
+        push_dataset_size+=psiz;
         push_tot_size+=psiz;
         int retry=10;
         do{
