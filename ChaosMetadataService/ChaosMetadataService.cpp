@@ -28,21 +28,26 @@
 #include <chaos/common/exception/CException.h>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
+#include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/io/SharedManagedDirecIoDataDriver.h>
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::io;
 
 using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 using namespace chaos::common::data::structured;
+using namespace chaos::metadata_service::cache_system;
 
 using namespace chaos::metadata_service;
 
 using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
+using namespace chaos::common::healt_system;
 
 using namespace chaos::service_common::persistence::data_access;
 
@@ -164,6 +169,11 @@ void ChaosMetadataService::init(void *init_data)  {
                                                  NULL,
                                                  "MDSConousManager",
                                                  __PRETTY_FUNCTION__);
+
+        InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
+
+        StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealthManager", __PRETTY_FUNCTION__);
+
         
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -191,9 +201,9 @@ void ChaosMetadataService::start()  {
         
         //register this process on persistence database
         persistence::data_access::DataServiceDataAccess *ds_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::DataServiceDataAccess>();
-
+        std::string unique_uid=NetworkBroker::getInstance()->getRPCUrl();
         ds_da->registerNode(setting.ha_zone_name,
-                            NetworkBroker::getInstance()->getRPCUrl(),
+                            unique_uid,
                             NetworkBroker::getInstance()->getDirectIOUrl(),
                             0);
 
@@ -201,6 +211,14 @@ void ChaosMetadataService::start()  {
         chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
                                                                                    0,
                                                                                    chaos::common::constants::HBTimersTimeoutinMSec);
+
+
+        StartableService::startImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__);
+        HealtManager::getInstance()->addNewNode(unique_uid);
+        HealtManager::getInstance()->addNodeMetricValue(unique_uid,
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
+            
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -248,10 +266,58 @@ void ChaosMetadataService::timeout() {
     }
 }
 
+bool ChaosMetadataService::isNodeAlive(const std::string& uid){
+    ChaosStringVector s;
+    s.push_back(uid);
+    bool alive=areNodeAlive(s)[0];
+    //LCND_LDBG<<"NODE:"<<uid<<" "<<((alive)?"TRUE":"FALSE");
+    return alive;
+    }
+
+std::vector<bool> ChaosMetadataService::areNodeAlive(const ChaosStringVector& uids){
+        int err=0;
+        std::vector<bool> res;
+        CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
+        DataBuffer data_buffer;
+        MultiCacheData multi_cached_data;
+        ChaosStringVector keys;
+        for(ChaosStringVector::const_iterator i=uids.begin();i!=uids.end();i++){
+            keys.push_back((*i)+NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+        }
+        if(keys.size()==0) return res;
+        err = cache_slot.getData(keys,
+                                 multi_cached_data);
+        uint64_t now=chaos::common::utility::TimingUtil::getTimeStamp();
+        for(ChaosStringVectorConstIterator it = keys.begin(),
+            end = keys.end();
+            it != end;
+            it++) {
+            const CacheData& cached_element = multi_cached_data[*it];
+            if(!cached_element ||
+               cached_element->size() == 0) {
+                res.push_back(false);
+            } else {
+                CDataWrapper ca(cached_element->data(),cached_element->size());
+                uint64_t ts=0;
+                if(ca.hasKey(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP)){
+                    ts=ca.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+                } else if(ca.hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
+                    ts=ca.getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+                }
+                 res.push_back((ts>(now-(2*chaos::common::constants::HBTimersTimeoutinMSec))));
+
+            }
+        }
+        return res;
+    
+}
+
 /*
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop() {
+    CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
+
     chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     
     //stop data consumer
@@ -268,6 +334,10 @@ void ChaosMetadataService::stop() {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit() {
+    InizializableService::deinitImplementation(SharedManagedDirecIoDataDriver::getInstance(), "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
+
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealthManager", __PRETTY_FUNCTION__););
+
     InizializableService::deinitImplementation(cron_job::MDSCronusManager::getInstance(),
                                                "MDSConousManager",
                                                __PRETTY_FUNCTION__);

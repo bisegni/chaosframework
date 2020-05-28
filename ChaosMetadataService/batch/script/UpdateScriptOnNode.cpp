@@ -23,6 +23,7 @@
 
 #include "../control_unit/IDSTControlUnitBatchCommand.h"
 #include "../../common/CUCommonUtility.h"
+#include "../../ChaosMetadataService.h"
 
 
 using namespace chaos::common::data;
@@ -110,12 +111,17 @@ void UpdateScriptOnNode::ccHandler() {
                 //copy script in node instance description
                 prepareScriptInstance(sdw().script_description, *current_node_it);
                 
-                
+                #ifdef HEALTH_ON_DB
+  
                 //check if the ndoe is online
                 if((err = getDataAccess<mds_data_access::NodeDataAccess>()->isNodeAlive(*current_node_it,
                                                                                         alive))) {
                     LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error checking the online state for node %1%", %*current_node_it));
                 }
+                #else
+                    alive = ChaosMetadataService::getInstance()->isNodeAlive(*current_node_it);
+
+                #endif
                 if(alive) {
                     //send node
                     node_desc.reset(tmp_ptr);

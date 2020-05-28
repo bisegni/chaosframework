@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include "SendRpcCommand.h"
-
+#include "../../ChaosMetadataService.h"
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::node;
@@ -57,12 +57,18 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
        data->isCDataWrapperValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) {
         rpc_message=data->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
     }
-    
+    #ifdef HEALTH_ON_DB
     if(getDataAccess<mds_data_access::NodeDataAccess>()->isNodeAlive(node_uid, node_alive)) {
         INFO << CHAOS_FORMAT("The node %1% is offline so the rpc message will not be forwarded!", %node_uid);
         BC_END_RUNNING_PROPERTY
         
-    } else {
+    } 
+    #else
+        node_alive = ChaosMetadataService::getInstance()->isNodeAlive(node_uid);
+
+    #endif
+
+    if(node_alive) {
         //node is olnie so we cann proceed
         if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(node_uid, node_description))) {
             LOG_AND_TROW_FORMATTED(ERR, err, "Error loading infomation for node '%1%'", %node_uid)
@@ -77,6 +83,10 @@ void SendRpcCommand::setHandler(CDataWrapper *data) {
                                 rpc_action);
         sendMessage(*request,
                     MOVE(rpc_message));
+    } else {
+        INFO << CHAOS_FORMAT("The node %1% is offline so the rpc message will not be forwarded!", %node_uid);
+        BC_END_RUNNING_PROPERTY
+        
     }
 }
 

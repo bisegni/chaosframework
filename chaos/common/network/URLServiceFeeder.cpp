@@ -152,7 +152,8 @@ uint32_t URLServiceFeeder::addURL(const URL& new_url,
 	std::set<uint32_t>::iterator new_index = available_url.begin();
     void *tmp_srv_ptr = handler->serviceForURL(new_url, (service_index = *new_index));
     if(tmp_srv_ptr == NULL) {throw CException(-1 , "Error allocating service!", __PRETTY_FUNCTION__);}
-    
+    URLServiceFeeder_LDBG << "Add URL :"<<new_url.getURL()<<" prio:"<<priority<< " index:"<<(1+last_round_robin_index);
+
     //service has been succesfully allocated
 	service_list[service_index]->url = new_url;
 	service_list[service_index]->service = tmp_srv_ptr;

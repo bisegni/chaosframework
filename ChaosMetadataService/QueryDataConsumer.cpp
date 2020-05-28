@@ -186,10 +186,14 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
     
     HealthStatSDWrapper attribute_reference_wrapper;
     attribute_reference_wrapper.deserialize(&health_data_pack);
+   #ifdef HEALTH_ON_DB
+   // WE HAVE ALREADY HEALTH INFO IN CACHE
     if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
                                         attribute_reference_wrapper()))) {
         ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
     }
+   #endif
+
     //create channel data with injected mds timestamp
     
     

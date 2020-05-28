@@ -23,7 +23,7 @@
 #include <mongo/client/dbclient.h>
 #include "MongoDBNodeDataAccess.h"
 #include "mongo_db_constants.h"
-
+#include "../../ChaosMetadataService.h"
 #include <chaos/common/utility/TimingUtil.h>
 #include <boost/algorithm/string.hpp>
 
@@ -480,9 +480,10 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
 
         }
     }
-    
+#ifdef HEALTH_ON_DB
+ 
     if(alive_only){bson_find_and << getAliveOption(6);}
-    
+#endif    
     //compose the 'or' condition for all token of unique_id filed
     bson_find_and << BSON("$or" << getSearchTokenOnFiled(criteria, chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     if(impl.size()>0){
@@ -523,6 +524,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                 try {
                     CDataWrapper cd;
                     cd.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid_found = it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
+
                     cd.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, it->getField(chaos::NodeDefinitionKey::NODE_TYPE).String());
                     if(cd.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
                         cd.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, it->getField(chaos::NodeDefinitionKey::NODE_RPC_ADDR).String());
@@ -547,8 +549,23 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                             cd.addCSDataValue("health_stat", health);
                         }
                     }
-                   
+#ifdef HEALTH_ON_DB
                     (*result)->appendCDataWrapperToArray(cd);
+
+#else
+           if(alive_only){
+                bool alive = ChaosMetadataService::getInstance()->isNodeAlive(node_uid_found);
+                if(alive){
+                    (*result)->appendCDataWrapperToArray(cd);
+
+                }
+ 
+           } else {
+                    (*result)->appendCDataWrapperToArray(cd);
+
+           }        
+#endif
+
                 } catch(...) {
                     MDBNDA_ERR << "Exception during scan of found node:" << node_uid_found;
                 }

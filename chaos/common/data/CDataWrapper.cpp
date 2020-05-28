@@ -1231,6 +1231,14 @@ bool CMultiTypeDataArrayWrapper::getBoolElementAtIndex(const int pos) const{
     
     
 }
+int CMultiTypeDataArrayWrapper::removeElementAtIndex(const int pos) {
+    if(pos<values.size()){
+        VectorBsonValues::iterator i=values.begin()+pos;
+        bson_value_destroy(*i);
+        values.erase(i);
+    }
+    return values.size();
+}
 
 int64_t CMultiTypeDataArrayWrapper::getInt64ElementAtIndex(const int pos) const{
     //CHAOS_ASSERT(values[pos]->value_type == BSON_TYPE_INT64);

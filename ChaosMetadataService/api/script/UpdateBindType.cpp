@@ -24,7 +24,7 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 #include <chaos_service_common/data/data.h>
-
+#include "../../ChaosMetadataService.h"
 #define INFO INFO_LOG(UpdateBindType)
 #define DBG  DBG_LOG(UpdateBindType)
 #define ERR  ERR_LOG(UpdateBindType)
@@ -72,12 +72,20 @@ int UpdateBindType::updateBindType(const ScriptBaseDescription& script_base_desc
         
         bool alive = false;
         //check if the node is alive, ini this case we can't change the bind type
+#ifdef HEALTH_ON_DB
         if((err = n_da->isNodeAlive(instance.instance_name,
                                     alive))) {
             LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("Error check the aliveness for instance for %1%[%2%]", %instance.instance_name%instance.instance_seq));
-        } else if(alive) {
+        } 
+ #else
+            alive = ChaosMetadataService::getInstance()->isNodeAlive(instance.instance_name);
+
+ #endif       
+        
+        if(alive) {
             LOG_AND_TROW(ERR, -2, CHAOS_FORMAT("The instance %1%[%2%] is alive and the bind type can't be changed", %instance.instance_name%instance.instance_seq));
         }
+    
     }
     if(instance.bind_type == ScriptBindTypeUnitServer) {
         CDataWrapper *node_description;

@@ -383,7 +383,7 @@ throw chaos::CException(-2, ss.str(), __PRETTY_FUNCTION__);
                 bool isInt32ElementAtIndex(const int) const;
                 bool isInt64ElementAtIndex(const int) const;
                 bool isBoolElementAtIndex(const int) const;
-
+                int removeElementAtIndex(const int);
                 bool isCDataWrapperElementAtIndex(const int) const;
                 template<class T>
                 T getElementAtIndex(const int pos) const{

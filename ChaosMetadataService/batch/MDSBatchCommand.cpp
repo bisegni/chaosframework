@@ -20,7 +20,7 @@
  */
 #include "MDSBatchCommand.h"
 #include "MDSBatchExecutor.h"
-
+#include "../ChaosMetadataService.h"
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::batch_command;
@@ -140,12 +140,23 @@ ChaosUniquePtr<RequestInfo> MDSBatchCommand::sendRequest(const std::string& node
         new_request = createRequest(node_rpc_address,
                                     node_rpc_domain,
                                     rpc_action);
-        if(getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,
-                                                        alive) ||
-           alive == false) {
+        #ifdef HEALTH_ON_DB
+        alive =true;
+
+        getDataAccess<NodeDataAccess>()->isNodeAlive(node_uid,alive);
+        
+        #else
+            alive = ChaosMetadataService::getInstance()->isNodeAlive(node_uid);
+
+            
+        #endif
+
+        if(alive==false){
             new_request->phase = MESSAGE_PHASE_TIMEOUT;
+            MDSBC_DBG<<" command not sent because is not alive:"<<message->getJSONString();
+
         } else {
-            sendRequest(*new_request,
+                sendRequest(*new_request,
                         MOVE(message));
         }
     }catch(...){
