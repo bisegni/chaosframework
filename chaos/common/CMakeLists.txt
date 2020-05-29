@@ -158,6 +158,8 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
   ENDIF()
 ENDIF()
 
+SET(BUILD_LIBRARY ${FrameworkLib})
+
 SET(common_lib_src  ChaosCommon.cpp
                     chaos_errors.cpp
                     log/LogManager.cpp
@@ -345,6 +347,12 @@ SET(common_lib_src ${common_lib_src}
                     message/MessagePublishSubscribeBase.cpp
                     message/MessagePSProducer.cpp)
 
+IF(KAFKA_ENABLE)
+SET(common_lib_src ${common_lib_src}
+message/impl//kafka/MessagePSKafkaProducer.cpp message/impl//kafka/MessagePSRDKafka.cpp)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} rdkafka)
+ENDIF()
+
 SET(common_lib_src ${common_lib_src}
                     network/NetworkBroker.cpp
                     network/PerformanceManagment.cpp
@@ -425,6 +433,9 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
                     rpc/RpcClientMetricCollector.cpp
                     rpc/RpcServerMetricCollector.cpp)
+
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} prometheus-cpp-core prometheus-cpp-pull)
+
 ELSE(CHAOS_PROMETHEUS)
 MESG("Metrics source code is not included")  
 ENDIF(CHAOS_PROMETHEUS)
@@ -486,7 +497,6 @@ ENDIF()
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
 
-SET(BUILD_LIBRARY ${FrameworkLib})
 IF(WIN32)
 MESSAGE("ALEDEBUG CMAKE_INSTALL_PREFIX" ${CMAKE_INSTALL_PREFIX} )
 set (BOOST_LIBPATH  ${CMAKE_INSTALL_PREFIX}/boostinstall/lib )
@@ -506,9 +516,6 @@ IF (WIN32)
 ENDIF(WIN32)
 ENDIF()
 
-IF(CHAOS_PROMETHEUS)
-  SET(BUILD_LIBRARY ${BUILD_LIBRARY} prometheus-cpp-core prometheus-cpp-pull)
-ENDIF(CHAOS_PROMETHEUS)
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${BUILD_LIBRARY})
 
