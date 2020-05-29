@@ -23,6 +23,7 @@
 #include "ChaosMetadataService.h"
 #include "DriverPoolManager.h"
 #include "QueryDataConsumer.h"
+#include "object_storage/object_storage.h"
 
 #include <csignal>
 #include <chaos/common/exception/CException.h>
@@ -57,7 +58,7 @@ uint64_t ChaosMetadataService::timePrecisionMask=0xFFFFFFFFFFFFFFF0ULL;
 #define LCND_LAPP   INFO_LOG(ChaosMetadataService)
 #define LCND_LDBG   DBG_LOG(ChaosMetadataService)
 #define LCND_LERR   ERR_LOG(ChaosMetadataService)
-
+#define log(x) LCND_LDBG<<x
 ChaosMetadataService::ChaosMetadataService(){ingore_unreg_po = true;
 };
 ChaosMetadataService::~ChaosMetadataService(){}
@@ -273,6 +274,92 @@ bool ChaosMetadataService::isNodeAlive(const std::string& uid){
     //LCND_LDBG<<"NODE:"<<uid<<" "<<((alive)?"TRUE":"FALSE");
     return alive;
     }
+using namespace chaos::metadata_service::object_storage::abstraction;
+using namespace chaos::metadata_service::persistence::data_access;
+
+int ChaosMetadataService::removeStorageData(const std::string& control_unit_found,uint64_t start,uint64_t remove_until_ts){
+    int err;
+    auto *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<ObjectStorageDataAccess>();
+
+    if(obj_storage_da==NULL ){
+        LCND_LERR<< " cannot access object storage resources";
+        return -1;
+    }
+    LCND_LDBG<<" deleting node storage "<<control_unit_found<<" from:"<<start<<" to:"<<remove_until_ts;
+      const std::string output_key    = control_unit_found + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
+        const std::string input_key     = control_unit_found + DataPackPrefixID::INPUT_DATASET_POSTFIX;
+        const std::string system_key    = control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
+        const std::string custom_key    = control_unit_found + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
+        const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
+        const std::string dev_alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
+        const std::string cu_alarm_key    = control_unit_found + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+      
+       try {
+            log(CHAOS_FORMAT("Remove data for key %1%", %output_key));
+            
+            if((err = obj_storage_da->deleteObject(output_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %output_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %input_key));
+            if((err = obj_storage_da->deleteObject(input_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %input_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %system_key));
+            if((err = obj_storage_da->deleteObject(system_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %system_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %custom_key));
+            if((err = obj_storage_da->deleteObject(custom_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %custom_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %health_key));
+            if((err = obj_storage_da->deleteObject(health_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %dev_alarm_key));
+            if((err = obj_storage_da->deleteObject(dev_alarm_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %dev_alarm_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove data for key %1%", %cu_alarm_key));
+            if((err = obj_storage_da->deleteObject(cu_alarm_key,
+                                                   start,
+                                                   remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %cu_alarm_key%control_unit_found%err));
+            }
+            
+            log(CHAOS_FORMAT("Remove log for cu %1%", %control_unit_found));
+            if((err = DriverPoolManager::getInstance()->getPersistenceDataAccess<persistence::data_access::LoggingDataAccess>()->eraseLogBeforTS(control_unit_found,
+                                                                                                    remove_until_ts))){
+                log(CHAOS_FORMAT("Error erasing logging for control unit %1% with error %2%", %control_unit_found%err));
+            }
+            }catch(CException& ex){
+            log(ex.what());
+            return -100;
+        }catch(...){
+            log("Undeterminated error during ageing management");
+            return -200;
+        }
+    return err;
+
+}
 
 std::vector<bool> ChaosMetadataService::areNodeAlive(const ChaosStringVector& uids){
         int err=0;

@@ -22,7 +22,7 @@
 #include "MDSHistoryAgeingManagement.h"
 #include "../../DriverPoolManager.h"
 #include "../../object_storage/object_storage.h"
-
+#include "../../ChaosMetadataService.h"
 #include <chaos/common/utility/TimingUtil.h>
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::cron_job;
@@ -49,9 +49,9 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
     uint64_t last_ageing_perform_time = 0;
     uint64_t now = TimingUtil::getTimeStamp();
 
-    auto *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<ObjectStorageDataAccess>();
+//auto *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<ObjectStorageDataAccess>();
     auto *metadata_cu_da = DriverPoolManager::getInstance()->getPersistenceDrv().getDataAccess<ControlUnitDataAccess>();
-    CHAOS_ASSERT(obj_storage_da && metadata_cu_da);
+   // CHAOS_ASSERT(obj_storage_da && metadata_cu_da);
     
     if((err = metadata_cu_da->reserveControlUnitForAgeingManagement(last_sequence_found,
                                                                     control_unit_found,
@@ -59,6 +59,10 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
                                                                     last_ageing_perform_time))){
         log(CHAOS_FORMAT("Error %1% reserving control unit for ageing management", %err));
     } else if(control_unit_found.size()){
+        uint64_t remove_until_ts = now - AGEING_TO_MS(control_unit_ageing_time);
+
+        ChaosMetadataService::getInstance()->removeStorageData(control_unit_found,0,remove_until_ts);
+        /*
         const std::string output_key    = control_unit_found + DataPackPrefixID::OUTPUT_DATASET_POSTFIX;
         const std::string input_key     = control_unit_found + DataPackPrefixID::INPUT_DATASET_POSTFIX;
         const std::string system_key    = control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
@@ -124,11 +128,12 @@ bool MDSHistoryAgeingManagement::execute(const common::cronus_manager::MapKeyVar
                                                                                                     remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing logging for control unit %1% with error %2%", %control_unit_found%err));
             }
+            
         }catch(CException& ex){
             log(ex.what());
         }catch(...){
             log("Undeterminated error during ageing management");
-        }
+        }*/
         getDataAccess<persistence::data_access::ControlUnitDataAccess>()->releaseControlUnitForAgeingManagement(control_unit_found, true);
         
         need_another_step = true;

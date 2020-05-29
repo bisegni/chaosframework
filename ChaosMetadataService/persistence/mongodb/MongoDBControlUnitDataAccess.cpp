@@ -1111,7 +1111,8 @@ int MongoDBControlUnitDataAccess::reserveControlUnitForAgeingManagement(uint64_t
         query_builder << "property_defaults" << BSON("$elemMatch" << BSON("property_g_plist" << BSON("$elemMatch" << BSON("property_name" << DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING << "property_value" << BSON("$gt" << 0)))));
         
         //get all control unit
-        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+        // we want to search everithing
+      ////  query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
         
         //condition on sequence
         query_builder << "seq" << BSON("$gt" << (long long)last_sequence_id);

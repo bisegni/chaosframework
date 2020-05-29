@@ -204,6 +204,7 @@ int IODirectIODriver::storeHealthData(const std::string& key,
     return err;
 }
 
+
 char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  {
     char* result = NULL;
     

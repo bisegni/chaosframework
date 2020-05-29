@@ -205,6 +205,8 @@ namespace chaos{
                                           uint32_t              page      = DEFAULT_PAGE_LEN);
 
                 void releaseQuery(QueryCursor *query_cursor);
+
+
             };
         }
     }

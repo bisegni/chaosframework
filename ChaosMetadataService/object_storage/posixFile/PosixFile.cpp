@@ -735,7 +735,9 @@ std::string SearchWorker::prepareDirectory() {
   } else if (boost::filesystem::exists(fpath + ".lz4.uncomp") || ((boost::filesystem::exists(fpath + ".lz4") && (lz4decomp((fpath + ".lz4"), (fpath + ".lz4.uncomp")) >= 0)))) {
     return fpath + ".lz4.uncomp";
 
-  } else {
+  } 
+  #ifdef MAKE_TEMP_FILES
+  else {
     PosixFile::write_path_t::iterator id = PosixFile::s_lastWriteDir.find(path);
     if (id != PosixFile::s_lastWriteDir.end()) {
       boost::filesystem::path  final_file(path + "/" + POSIX_FINAL_DATA_NAME);
@@ -782,7 +784,8 @@ std::string SearchWorker::prepareDirectory() {
       }
     }
   }
-  ERR << " cannot find directory info " << fpath << " for:" << path;
+  #endif
+  DBG << " Not yet ready " << fpath << " for:" << path;
   return std::string();
 }
 
@@ -1139,15 +1142,15 @@ int PosixFile::getLastObject(const std::string&               key,
 int PosixFile::removeRecursevelyUp(const boost::filesystem::path& p) {
   if (p == basedatapath) {
     return 0;
+  } 
+  uintmax_t ret;
+  if ((ret=remove_all(p)>=0)) {
+      DBG << "REMOVED " << p << " items:"<<ret;
+      if (boost::filesystem::is_empty(p.parent_path())) {
+          return removeRecursevelyUp(p.parent_path());
+      }
   }
-
-  if (boost::filesystem::is_empty(p.parent_path())) {
-    if (remove_all(p.parent_path())) {
-      INFO << "REMOVING " << p.parent_path();
-
-      return removeRecursevelyUp(p.parent_path());
-    }
-  }
+  
   return 0;
 }
 
@@ -1159,20 +1162,37 @@ int PosixFile::deleteObject(const std::string& key,
   char     dir[MAX_PATH_LEN];
   char     f[MAX_PATH_LEN];
 
+  
   DBG << "Searching \"" << key << "\" from: " << chaos::common::utility::TimingUtil::toString(start_timestamp) << " to:" << chaos::common::utility::TimingUtil::toString(end_timestamp);
-  for (uint64_t start = start_aligned; start < end_timestamp; start += (3600 * 1000)) {
+  boost::filesystem::path p(basedatapath+"/"+key);
+  if (!boost::filesystem::exists(p)|| !is_directory(p)) {
+      DBG << "Path \"" << p << "\" does not exist any more"; 
+
+      return 0;
+  } 
+
+ 
+  if(start_timestamp==0 && (end_timestamp>=(chaos::common::utility::TimingUtil::getTimeStamp()-1000))){
+    //remove directly top directory
+      DBG << " FAST REMOVING " << p;
+      uintmax_t ret;
+      if ((ret=remove_all(p)) >= 0) {
+          DBG << " REMOVED :" << ret << " items";
+
+        //removeRecursevelyUp(p);
+      } 
+      return 0;
+  }
+  for (uint64_t start = start_aligned; start < end_timestamp; start += (60 * 1000)) {
     calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
     boost::filesystem::path p(dir);
-    if (boost::filesystem::exists(p) && is_directory(p)) {
-      INFO << "REMOVING " << p;
-      if (remove_all(p) > 0) {
-        removeRecursevelyUp(p);
-      }
-
-      /* std::map<std::string,uint64_t>::iterator id=s_lastDirs.find(dir);
-          if(id!=s_lastDirs.end()){
-            s_lastDirs.erase(id);
-          }*/
+   //  DBG << "LOOKING IN " << p;
+    
+    if (boost::filesystem::exists(p)) {
+      DBG << "REMOVING " << p;
+      removeRecursevelyUp(p);
+    } else if (boost::filesystem::is_empty(p.parent_path())) {
+          return removeRecursevelyUp(p.parent_path());
     }
   }
 

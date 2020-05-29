@@ -19,7 +19,7 @@
  * permissions and limitations under the Licence.
  */
 #include "NodeNewDelete.h"
-
+#include "../../ChaosMetadataService.h"
 #define NS_INFO INFO_LOG(NodeDelete)
 #define NS_DBG  DBG_LOG(NodeDelete)
 #define NS_ERR  ERR_LOG(NodeDelete)
@@ -33,7 +33,7 @@ CHAOS_MDS_DEFINE_API_CLASS_CD(NodeNewDelete, "nodeNewDelete");
 CDWUniquePtr NodeNewDelete::execute(CDWUniquePtr api_data) {
     CHECK_CDW_THROW_AND_LOG(api_data, NS_ERR, -1, "No parameter found")
     GET_DATA_ACCESS(NodeDataAccess, n_da, -4);
-
+    uint64_t start_ts,stop_ts;
     chaos::common::data::CDataWrapper *result=NULL;
     bool remove=api_data->hasKey("reset");
 
@@ -48,6 +48,8 @@ CDWUniquePtr NodeNewDelete::execute(CDWUniquePtr api_data) {
     std::string node_type=api_data->getStringValue(NodeDefinitionKey::NODE_TYPE);
     if(remove){
         NS_DBG<<" delete "<<node_uid<<"("<<node_type<<")";
+        // we have to delete also data.
+        ChaosMetadataService::getInstance()->removeStorageData(node_uid,0,chaos::common::utility::TimingUtil::getTimeStamp());
 
         if (n_da->deleteNode(node_uid,node_type)){
               LOG_AND_TROW(NS_ERR, -5, "Cannot delete node: "+node_uid+" ["+node_type+"]");

@@ -22,6 +22,7 @@
 #include "Delete.h"
 
 #include <chaos/common/chaos_constants.h>
+#include "../../ChaosMetadataService.h"
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
@@ -41,7 +42,8 @@ CDWUniquePtr Delete::execute(CDWUniquePtr api_data) {
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
     const std::string node_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    
+    ChaosMetadataService::getInstance()->removeStorageData(node_uid,0,chaos::common::utility::TimingUtil::getTimeStamp());
+
     if((err = n_da->deleteNode(node_uid,
                               chaos::NodeType::NODE_TYPE_CONTROL_UNIT))){
         LOG_AND_TROW_FORMATTED(CU_D_ERR, err, "Error deleting the control unit %1%", %node_uid);
