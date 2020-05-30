@@ -21,23 +21,18 @@
 #ifndef ChaosFramework_ActionDescriptor_h
 #define ChaosFramework_ActionDescriptor_h
 
-
-#include <string>
-#include <vector>
-#include <boost/thread.hpp>
-#include <boost/thread/locks.hpp>
+#include <chaos/common/chaos_types.h>
 
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/exception.h>
 
-#include <boost/thread.hpp>
 
 namespace chaos {
-    typedef boost::shared_mutex ActionSharedLock;
-    typedef boost::unique_lock< boost::shared_mutex >   ActionWriteLock;
-    typedef boost::shared_lock< boost::shared_mutex >   ActionReadLock;
+    typedef ChaosSharedMutex ActionSharedLock;
+    typedef ChaosWriteLock   ActionWriteLock;
+    typedef ChaosReadLock   ActionReadLock;
     
     /*
      struct for describe a param for an action

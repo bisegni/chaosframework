@@ -22,7 +22,7 @@ ENDIF()
 
 if(NOT "${retcode}" STREQUAL "0")
 
-  ADD_DEFINITIONS(-std=c++11)
+#  ADD_DEFINITIONS(-std=c++11)
 
 ELSE()
   message(STATUS "Force Static C98 compatibility compilation")
