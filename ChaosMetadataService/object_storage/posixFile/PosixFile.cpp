@@ -1154,6 +1154,34 @@ int PosixFile::removeRecursevelyUp(const boost::filesystem::path& p) {
   return 0;
 }
 
+ int PosixFile::removeMinutes(const std::string& key,uint64_t start_ts,uint64_t end_ts){
+  int removed=0;
+  char     dir[MAX_PATH_LEN];
+  char     f[MAX_PATH_LEN];
+
+for (uint64_t start = start_ts; start < end_ts; ) {
+    calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
+    boost::filesystem::path p(dir);
+   //  DBG << "LOOKING IN " << p;
+    
+    if (boost::filesystem::exists(p)) {
+      removed+=removeRecursevelyUp(p);
+    } else if (boost::filesystem::is_empty(p.parent_path())) {
+        //no other minutes in this hour
+        start+=(start%POSIX_HOURS_MS); // jump next hour
+        removed+=removeRecursevelyUp(p.parent_path());
+
+        if(boost::filesystem::is_empty(p.parent_path().parent_path())){
+          // no other hours in day
+            start+=(start%POSIX_DAY_MS); // jump next day
+        }
+      continue;
+    }
+    start += (POSIX_MINUTES_MS);
+  }
+  return removed;
+}
+
 //!delete objects that are contained between intervall (exstreme included)
 int PosixFile::deleteObject(const std::string& key,
                             uint64_t           start_timestamp,
@@ -1170,8 +1198,13 @@ int PosixFile::deleteObject(const std::string& key,
 
       return 0;
   } 
+  if(end_timestamp<start_timestamp){
+    ERR<<" Time specification start mustbe smaller than end";
+    return -1;
+  }
 
- 
+  
+  
   if(start_timestamp==0 && (end_timestamp>=(chaos::common::utility::TimingUtil::getTimeStamp()-1000))){
     //remove directly top directory
       DBG << " FAST REMOVING " << p;
@@ -1183,18 +1216,10 @@ int PosixFile::deleteObject(const std::string& key,
       } 
       return 0;
   }
-  for (uint64_t start = start_aligned; start < end_timestamp; start += (60 * 1000)) {
-    calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
-    boost::filesystem::path p(dir);
-   //  DBG << "LOOKING IN " << p;
-    
-    if (boost::filesystem::exists(p)) {
-      DBG << "REMOVING " << p;
-      removeRecursevelyUp(p);
-    } else if (boost::filesystem::is_empty(p.parent_path())) {
-          return removeRecursevelyUp(p.parent_path());
-    }
-  }
+  
+  
+  int ret=removeMinutes(key,start_timestamp,end_timestamp);
+  DBG << "REMOVING ret: " << ret;
 
   return 0;
 }
