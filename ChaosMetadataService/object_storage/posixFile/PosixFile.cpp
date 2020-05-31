@@ -1162,22 +1162,35 @@ int PosixFile::removeRecursevelyUp(const boost::filesystem::path& p) {
 for (uint64_t start = start_ts; start < end_ts; ) {
     calcFileDir(basedatapath, key, "", start, 0, 0, dir, f);
     boost::filesystem::path p(dir);
-   //  DBG << "LOOKING IN " << p;
-    
+     DBG << "LOOKING IN " << p <<" parent:"<<p.parent_path();
+    try{
     if (boost::filesystem::exists(p)) {
       removed+=removeRecursevelyUp(p);
-    } else if (boost::filesystem::is_empty(p.parent_path())) {
+    } else if ((!boost::filesystem::exists(p.parent_path()))||(boost::filesystem::is_empty(p.parent_path()))) {
+
         //no other minutes in this hour
-        start+=(start%POSIX_HOURS_MS); // jump next hour
+        start+=(POSIX_HOURS_MS-(start%POSIX_HOURS_MS)); // jump next hour
+   //     DBG << "PARENT HOUR EMPTY " << p.parent_path() << " incrementing of:"<<(POSIX_HOURS_MS-(start%POSIX_HOURS_MS));
+
         removed+=removeRecursevelyUp(p.parent_path());
 
-        if(boost::filesystem::is_empty(p.parent_path().parent_path())){
+        if((!boost::filesystem::exists(p.parent_path().parent_path()))||(boost::filesystem::is_empty(p.parent_path().parent_path()))){
+          
           // no other hours in day
-            start+=(start%POSIX_DAY_MS); // jump next day
+          start+=(POSIX_DAY_MS-(start%POSIX_DAY_MS)); // jump next day
+    //      DBG << "PARENT DAY EMPTY " << p.parent_path() << " incrementing of:"<<(POSIX_DAY_MS-(start%POSIX_DAY_MS));
+
         }
       continue;
     }
+    } catch (boost::filesystem::filesystem_error& e) {
+            ERR << " Exception creating directory:" << e.what();
+    } catch(...){
+      ERR<<" error accessing:"<<p;
+
+    }
     start += (POSIX_MINUTES_MS);
+
   }
   return removed;
 }
