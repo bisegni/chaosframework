@@ -1,5 +1,7 @@
 #include "MessagePSProducer.h"
+#ifdef KAFKA_ENABLE
 #include "impl/kafka/MessagePSKafkaProducer.h"
+#endif
 namespace chaos {
     namespace common {
         namespace message {
@@ -13,9 +15,12 @@ namespace chaos {
 
             MessagePSProducer::MessagePSProducer(const std::string& clientid,const std::string& k):MessagePublishSubscribeBase(clientid),defkey(k){
                 impl = NULL;
+                #ifdef KAFKA_ENABLE
+
                 if(clientid=="RDK" || clientid=="rdk"){
                     impl = new MessagePSKafkaProducer();
                 }
+                #endif
 
             };
             MessagePSProducer::~MessagePSProducer(){
