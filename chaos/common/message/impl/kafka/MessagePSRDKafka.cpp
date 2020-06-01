@@ -11,27 +11,27 @@ namespace chaos {
 
             }
 
-            MessagePSRDKafka::MessagePSRDKafka(const std::string& clientid):MessagePublishSubscribeBase(clientid){
+            MessagePSRDKafka::MessagePSRDKafka(){
               conf = rd_kafka_conf_new();
               topic_conf = rd_kafka_topic_conf_new();
 
 
             }
-            MessagePSRDKafka::MessagePSRDKafka(const std::string& clientid,const std::string& k):MessagePublishSubscribeBase(clientid),defkey(k){
-
-            }
-
+            
                 
            
             int MessagePSRDKafka::setOption(const std::string&key,const std::string& value){
               return 0;
             }
 
-            int MessagePSRDKafka::applyConfiguration(){
+            int MessagePSRDKafka::init(std::set<std::string>&servers){
                 char hostname[128];
                 char errstr[512];
 
-
+            if(servers.size()==0){
+                MRDERR_<<" no server specified!";
+                return -4;
+              }
               if (gethostname(hostname, sizeof(hostname))) {
                 MRDERR_<< "Failed to lookup hostname";
                 return -1;
@@ -44,6 +44,7 @@ namespace chaos {
                return -2;
               }
               std::stringstream ss;
+            
               for(std::set<std::string>::iterator i=servers.begin();i!=servers.end();i){
                 ss<<*i;
                 if((++i) != servers.end()){

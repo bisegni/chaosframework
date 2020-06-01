@@ -13,16 +13,19 @@ namespace chaos {
             class MessagePSProducer: public MessagePublishSubscribeBase {
 
                 protected:
-                std::vector<std::string> servers;
                 std::string client_id;
                 std::string defkey;
+                MessagePublishSubscribeBase*impl;
                 public:
+                MessagePSProducer();
 
-                MessagePSProducer(const std::string& clientid):MessagePublishSubscribeBase(clientid){};
-                MessagePSProducer(const std::string& clientid,const std::string& k):MessagePublishSubscribeBase(clientid),defkey(k){};
+                MessagePSProducer(const std::string& clientid,const std::string& k="");
+                ~MessagePSProducer();
+                 virtual int applyConfiguration();
+                virtual void addServer(const std::string&url);
 
-                virtual int pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key)=0;
-                virtual int pushMsg(const chaos::common::data::CDataWrapper&data,const std::string&key)=0;
+                virtual int pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key);
+                virtual int pushMsg(const chaos::common::data::CDataWrapper&data,const std::string&key);
                 inline int pushMsg(const chaos::common::data::CDataWrapper&data){if(defkey!="") return pushMsg(data,defkey);return -1;}
                 inline int pushMsgAsync(const chaos::common::data::CDataWrapper&data){if(defkey!="") return pushMsgAsync(data,defkey);return -1;}
 

@@ -64,7 +64,7 @@ void PosixFileObjectStorageDriver::init(void *init_data) throw (chaos::CExceptio
         }
     }
     if(obj_storage_kvp.count("genroot")){
-        genroot=(strtoul(obj_storage_kvp["genroot"].c_str(),0,0))==1?true:false;
+        genroot=((strtoul(obj_storage_kvp["genroot"].c_str(),0,0))==1)?true:false;
         if(genroot){
             INFO<<"root file are generate as well";
         }

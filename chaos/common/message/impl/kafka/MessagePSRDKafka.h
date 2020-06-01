@@ -10,7 +10,7 @@
 namespace chaos {
     namespace common {
         namespace message {
-            class MessagePSRDKafka: public MessagePublishSubscribeBase {
+            class MessagePSRDKafka {
 
                 protected:
                 rd_kafka_conf_t* conf;
@@ -18,13 +18,12 @@ namespace chaos {
                 std::string defkey;
                 public:
 
-                MessagePSRDKafka(const std::string& clientid);
-                MessagePSRDKafka(const std::string& clientid,const std::string& k);
+                MessagePSRDKafka();
                 ~MessagePSRDKafka();
                 
                 int setOption(const std::string&key,const std::string& value);
 
-                int applyConfiguration();
+                int init(std::set<std::string>&servers);
 
 
 

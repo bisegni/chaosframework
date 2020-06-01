@@ -469,8 +469,9 @@ void GenerateRootJob::processBufferElement(QueueElementShrdPtr element) {
 #endif
 
 static int createFinal(const std::string& dstdir, const std::string& name, bool finalize, bool overwrite = false) {
-  std::string             dstpath = dstdir + "/" + name;
+  std::string             dstpath = dstdir + "/" + name+ ((PosixFile::compress)? ".lz4":"");
   boost::filesystem::path p(dstpath);
+
   FileLock                fl(dstpath + ".lock");
   try {
     fl.lock();
@@ -488,56 +489,36 @@ static int createFinal(const std::string& dstdir, const std::string& name, bool 
         int retw = reorderMulti(fpath, ordered);
         if (retw > 0) {
           if (finalize) {
-            if (PosixFile::compress) {
-              // lz4compression
-              lz4compress(fpath, fpath + ".lz4");
-
-              if (boost::filesystem::exists(dstpath + ".lz4")) {
-                // remove the uncompressed copy
-                boost::filesystem::remove(fpath);
-                DBG << " Create compressed final:" << dstpath + ".lz4"
-                    << " numobj:" << retw;
-              } else {
-                boost::filesystem::rename(dstpath + ".tmp", dstpath);
-              }
-              if (PosixFile::removeTemp) {
-                for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                  DBG << "remove unordered :" << *rd;
-
-                  boost::filesystem::remove(*rd);
-                }
-
-                for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                  DBG << "remove ordered:" << *rd;
-
-                  boost::filesystem::remove(*rd);
-                }
-              }
-
-            } else {
-              boost::filesystem::rename(dstpath + ".tmp", dstpath);
-              if (PosixFile::removeTemp) {
-                for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
-                  DBG << "remove unordered :" << *rd;
-
-                  boost::filesystem::remove(*rd);
-                }
-
-                for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
-                  DBG << "remove ordered:" << *rd;
-
-                  boost::filesystem::remove(*rd);
-                }
-              }
-#ifdef CERN_ROOT
+            #ifdef CERN_ROOT
               if (PosixFile::generateRoot) {
-                createRoot(dstdir, fpath);
+                createRoot(fpath,dstdir );
               }
-#endif
+            #endif
+
+            // create final
+            if (PosixFile::compress) {
+                lz4compress(fpath, dstpath);
+            } else {
+              boost::filesystem::rename(fpath, dstpath);
             }
 
+            if (PosixFile::removeTemp) {
+                for (std::vector<std::string>::iterator rd = unordered.begin(); rd != unordered.end(); rd++) {
+                  DBG << "remove unordered :" << *rd;
+
+                  boost::filesystem::remove(*rd);
+                }
+
+                for (std::vector<std::string>::iterator rd = ordered.begin(); rd != ordered.end(); rd++) {
+                  DBG << "remove ordered:" << *rd;
+
+                  boost::filesystem::remove(*rd);
+                }
+            }
+
+            
           } else {
-            boost::filesystem::rename(dstpath + ".tmp", dstpath);
+            boost::filesystem::rename(fpath, dstpath);
             DBG << " Create final:" << dstpath << " numobj:" << retw;
           }
           // we can remove all resources bounded to this directory
@@ -825,8 +806,9 @@ int SearchWorker::search(const std::string& p, const uint64_t _timestamp_from, c
     DBG << "Starting search thread on path:" << path;
 
     search_th = boost::thread(&SearchWorker::searchJob, this, dir);
+    return 0;
   }
-  return 0;
+  return -1;
 }
 // return number of data or negative if error or timeout
 bool SearchWorker::waitData(int timeo) {
@@ -1272,9 +1254,9 @@ int PosixFile::getFromPath(const std::string& dir, const uint64_t timestamp_from
 
       return ret;
     } else {
-      ERR << " Something wrong in search.. removing";
+      
       searchWorkers.erase(dir);
-      return -1;
+      return 0;
     }
   } else {
     // recalculate if not final
@@ -1439,11 +1421,13 @@ void PosixFile::timeout() {
       // last_access_mutex.unlock();
 
       std::string dstdir = id->first;
-      id->second.writer.close();
 
-      if (boost::filesystem::exists(dstdir + "/" + POSIX_FINAL_DATA_NAME)) {
+      std::string fname=dstdir + "/" + POSIX_FINAL_DATA_NAME + ((PosixFile::compress)? ".lz4":"");
+
+      if (boost::filesystem::exists(fname)) {
         // someone else created and cleaned
-        DBG << "remove resource:" << dstdir;
+        id->second.writer.close();
+        DBG << dstdir << " CLOSE :"<<dstdir<<" OBJS:"<<id->second.writer.nobj();
 
         s_lastWriteDir.erase(id++);
 
