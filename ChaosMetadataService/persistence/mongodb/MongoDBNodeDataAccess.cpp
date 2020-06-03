@@ -18,7 +18,7 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-//#undef DEBUG
+#undef DEBUG
 
 #include <mongo/client/dbclient.h>
 #include "MongoDBNodeDataAccess.h"
