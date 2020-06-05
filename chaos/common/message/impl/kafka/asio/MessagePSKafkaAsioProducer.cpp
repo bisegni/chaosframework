@@ -50,7 +50,7 @@ void MMessagePSKafkaAsioProducer::addServer(const std::string& url) {
 }
 
 int MMessagePSKafkaAsioProducer::applyConfiguration() {
-
+  int ret=0;
   char hostname[128];
   char errstr[512];
 
@@ -65,9 +65,9 @@ int MMessagePSKafkaAsioProducer::applyConfiguration() {
   configuration.auto_connect = true;
   configuration.client_id = hostname;
   configuration.socket_timeout = 10000;
-  configuration.SetBrokerFromString(servers[0]);
+  configuration.SetBrokerFromString(*servers.begin());
   if(connection==NULL){
-    connection = new   Connection connection(ios, configuration);
+    connection = new   Connection(ios, configuration);
 
   }
 
@@ -83,8 +83,9 @@ int MMessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWr
   std::replace(topic.begin(), topic.end(), '/', '.');
   ProduceRequest request;
   
-  request.AddValue("Hello World", "mytopic", 0);
-  
+  request.AddValue(std::string(data.getBSONRawData(),size), topic, 0);
+  connection->AsyncRequest(request, &HandleRequest);
+
   return err;
 }
 void MMessagePSKafkaAsioProducer::poll() {

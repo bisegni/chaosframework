@@ -4,11 +4,16 @@ project(chaos_common)
 MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
 
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-IF(KAFKA_ENABLE)
-MESSAGE("ENABLING KAFKA")
+IF (NOT BUILD_FORCE_STATIC)
+ENDIF ()
+
+
+IF(KAFKA_RDK_ENABLE)
+MESSAGE("ENABLING RDK KAFKA")
 ExternalProject_Add(
-	 jsonCpp
+	 librdkafa
 	 GIT_REPOSITORY https://github.com/edenhill/librdkafka.git
 	 
      GIT_PROGRESS 1
@@ -26,7 +31,7 @@ ExternalProject_Add(
     LOG_INSTALL 1
 	)
 
-ENDIF(KAFKA_ENABLE)
+ENDIF(KAFKA_RDK_ENABLE)
 
 if(WIN32)
 set(CMAKE_SUPPRESS_REGENERATION true)
@@ -114,6 +119,28 @@ ExternalProject_Add(
 
 ENDIF(WIN32)
 
+IF(KAFKA_ASIO_ENABLE)
+MESSAGE("ENABLING ASIO KAFKA")
+ExternalProject_Add(
+	 snappy
+	 GIT_REPOSITORY https://github.com/google/snappy.git
+	 
+     GIT_PROGRESS 1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-build"
+	  
+     CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSNAPPY_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	  
+	 LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+
+ENDIF(KAFKA_ASIO_ENABLE)
 
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
@@ -347,11 +374,15 @@ SET(common_lib_src ${common_lib_src}
                     message/MessagePublishSubscribeBase.cpp
                     message/MessagePSProducer.cpp)
 
-IF(KAFKA_ENABLE)
+IF(KAFKA_ASIO_ENABLE)
+INCLUDE_DIRECTORIES(message/impl/kafka/asio/)
+SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp)
+ENDIF(KAFKA_ASIO_ENABLE)
+IF(KAFKA_RDK_ENABLE)
 SET(common_lib_src ${common_lib_src}
-message/impl//kafka/MessagePSKafkaProducer.cpp message/impl//kafka/MessagePSRDKafka.cpp)
+message/impl//kafka/rdk/MessagePSKafkaProducer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} rdkafka)
-ENDIF()
+ENDIF(KAFKA_RDK_ENABLE)
 
 SET(common_lib_src ${common_lib_src}
                     network/NetworkBroker.cpp
@@ -464,9 +495,7 @@ IF (CLING_VIRTUAL_MACHINE)
         script/cling/ClingRootInterpreter.cpp)
 ENDIF()
 
-IF (NOT DEFINED BUILD_FORCE_STATIC)
 
-ENDIF ()
 IF (WIN32)
 SET(BUILD_FORCE_STATIC 1)
 ENDIF(WIN32)

@@ -1,7 +1,11 @@
 #include "MessagePSProducer.h"
-#ifdef KAFKA_ENABLE
+#ifdef KAFKA_RDK_ENABLE
 #include "impl/kafka/rdk/MessagePSKafkaProducer.h"
 #endif
+#ifdef KAFKA_ASIO_ENABLE
+#include "impl/kafka/rdk/MessagePSKafkaAsioProducer.h"
+#endif
+
 namespace chaos {
     namespace common {
         namespace message {
@@ -15,10 +19,16 @@ namespace chaos {
 
             MessagePSProducer::MessagePSProducer(const std::string& clientid,const std::string& k):MessagePublishSubscribeBase(clientid),defkey(k){
                 impl = NULL;
-                #ifdef KAFKA_ENABLE
+                #ifdef KAFKA_RDK_ENABLE
 
                 if(clientid=="RDK" || clientid=="rdk"){
                     impl = new kafka::rdk::MessagePSKafkaProducer();
+                }
+                #endif
+                #ifdef KAFKA_ASIO_ENABLE
+
+                if(clientid=="ASIO"){
+                    impl = new kafka::asio::MessagePSKafkaAsioProducer();
                 }
                 #endif
 

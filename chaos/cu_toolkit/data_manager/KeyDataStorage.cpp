@@ -376,7 +376,7 @@ void KeyDataStorage::updateConfiguration(CDataWrapper *configuration) {
         KeyDataStorageLDBG <<" configuration to update:"<<((configuration)?configuration->getJSONString():"NULL CONFIGURATION");
         io_data_driver->updateConfiguration(configuration);
     } else {
-        KeyDataStorageLERR <<" NULL IODRIVER configuration to update:"<<(configuration)?configuration->getJSONString():"NULL CONFIGURATION";
+        KeyDataStorageLERR <<" NULL IODRIVER configuration to update:"<<((configuration)?configuration->getJSONString():"NULL CONFIGURATION");
 
     }
     

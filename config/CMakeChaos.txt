@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
+
+IF(NOT CMAKECHAOS)
+SET(CMAKECHAOS TRUE)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeMacroUtils.txt)
 include(ExternalProject)
 
@@ -399,4 +402,5 @@ else()
 #  boostInstall(${BOOST_VERSION} ${BOOST_MINOR_VERSION}  https://sourceforge.net/projects/boost/files/boost/1.${BOOST_VERSION}.${BOOST_MINOR_VERSION} "${CHAOS_BOOST_FLAGS}")
 endif()
 
+ENDIF()
 

@@ -391,7 +391,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
                                    chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
     if(shutting_down || (client_connection==NULL)) {
-        DEBUG_CODE(IODirectIODriver_DLDBG_ << "Shutting down " << " and url" << (client_connection)?client_connection->getURL():"CONNECTION REMOVED";)
+        DEBUG_CODE(IODirectIODriver_DLDBG_ << "Shutting down " << " and url" << ((client_connection)?client_connection->getURL():"CONNECTION REMOVED");)
 
         return;
     }

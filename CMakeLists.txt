@@ -20,6 +20,7 @@ project(chaosframework)
 include(ExternalProject)
 #include(CTest)
 #enable_testing()
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 #find git
 find_package(Git REQUIRED)
@@ -71,10 +72,10 @@ ENDIF()
 
 ###### Required Libraries
 if (NOT WIN32)
-CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
-if(CHAOS_MDS)
-  CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
-ENDIF()
+# CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
+#if(CHAOS_MDS)
+#  CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+#ENDIF()
 endif()
 #########
 
@@ -217,9 +218,10 @@ if(NOT CHAOS_ONLY_DEPENDECY)
   MESG("Configure Chaos Metadata Service Client Library")
   ADD_SUBDIRECTORY(chaos_metadata_service_client)
 
+IF(MICRO_UNIT_TOOLKIT)
   MESG("Configure Chaos Micro Unit Toolkit")
   ADD_SUBDIRECTORY(chaos_micro_unit_toolkit)
-
+endif(MICRO_UNIT_TOOLKIT)
 endif()
 
 IF (CHAOS_AGENT AND NOT CHAOS_ONLY_DEPENDECY)
@@ -273,25 +275,25 @@ IF (CHAOS_ARCHITECTURE_TEST)
 ENDIF()
 
 MESG("Done")
-IF (NOT WIN32)
-    IF( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
-      IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
-            FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
-            MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-           execute_process(
-             COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
-             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-             RESULT_VARIABLE err
-             OUTPUT_VARIABLE out
-             )
-           IF(err)
-             ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-           ELSE()
-            MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-          ENDIF()
-        ENDIF()
-    ENDIF()
-ENDIF()
+# IF (NOT WIN32)
+#     IF( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
+#       IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
+#             FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr)
+#             MESG("linking ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+#            execute_process(
+#              COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
+#              WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#              RESULT_VARIABLE err
+#              OUTPUT_VARIABLE out
+#              )
+#            IF(err)
+#              ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+#            ELSE()
+#             MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+#           ENDIF()
+#         ENDIF()
+#     ENDIF()
+# ENDIF()
 
 IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED.")

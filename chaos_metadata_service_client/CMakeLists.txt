@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(chaos_metadata_service_client)
 
+IF (NOT  BUILD_FORCE_STATIC)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ENDIF ()
 
 
 IF (WIN32)
