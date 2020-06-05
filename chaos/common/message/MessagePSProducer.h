@@ -20,7 +20,7 @@ namespace chaos {
                 MessagePSProducer();
 
                 MessagePSProducer(const std::string& clientid,const std::string& k="");
-                ~MessagePSProducer();
+                virtual ~MessagePSProducer();
                  virtual int applyConfiguration();
                 virtual void addServer(const std::string&url);
 

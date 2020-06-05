@@ -25,6 +25,7 @@ namespace chaos {
                 std::map< eventTypes,msgpshandler> handlers;
                 public:
                 MessagePublishSubscribeBase(const std::string& id):id(id){};
+                virtual ~MessagePublishSubscribeBase(){};
                 virtual void addServer(const std::string&url);
 
                 /**

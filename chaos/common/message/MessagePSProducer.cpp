@@ -1,6 +1,6 @@
 #include "MessagePSProducer.h"
 #ifdef KAFKA_ENABLE
-#include "impl/kafka/MessagePSKafkaProducer.h"
+#include "impl/kafka/rdk/MessagePSKafkaProducer.h"
 #endif
 namespace chaos {
     namespace common {
@@ -18,7 +18,7 @@ namespace chaos {
                 #ifdef KAFKA_ENABLE
 
                 if(clientid=="RDK" || clientid=="rdk"){
-                    impl = new MessagePSKafkaProducer();
+                    impl = new kafka::rdk::MessagePSKafkaProducer();
                 }
                 #endif
 
