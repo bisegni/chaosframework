@@ -51,9 +51,10 @@ AbstractDriver::~AbstractDriver() {}
 // Initialize instance
 void AbstractDriver::init(void *init_param) {
   driver_need_to_deinitialize = false;
+  CDataWrapper parm;
 
   //!try to decode parameter string has json document
-  is_json_param = json_reader.parse(static_cast<const char *>(init_param), json_parameter_document);
+  is_json_param = parm.isJsonValue((const char*)init_param);
 
   ADLAPP_ << "Start in driver thread";
   //start interna thread for the waithing of the message
@@ -124,9 +125,9 @@ const bool AbstractDriver::isDriverParamInJson() const {
   return is_json_param;
 }
 
-const Json::Value &AbstractDriver::getDriverParamJsonRootElement() const {
+/*const Json::Value &AbstractDriver::getDriverParamJsonRootElement() const {
   return json_parameter_document;
-}
+}*/
 
 /*------------------------------------------------------
  

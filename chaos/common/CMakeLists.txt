@@ -34,21 +34,77 @@ ExternalProject_Add(
 ENDIF(KAFKA_RDK_ENABLE)
 
 if(WIN32)
-set(CMAKE_SUPPRESS_REGENERATION true)
+  SET(BUILD_FORCE_STATIC 1)
+
+  set(CMAKE_SUPPRESS_REGENERATION true)
+  ExternalProject_Add(
+	 jsonCpp
+	 GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
+	 
+	 GIT_TAG 1.9.2
+     GIT_PROGRESS 1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
+	  
+     CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	 
+	 LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+  )
+  MESG("Configure libBoost as CMake")
+	ExternalProject_Add(
+	 boost
+	 GIT_REPOSITORY https://github.com/boostorg/boost.git
+	 PREFIX ${CMAKE_CURRENT_BINARY_DIR}/boost
+	GIT_TAG boost-1.70.0
+    GIT_PROGRESS 1
+    BUILD_IN_SOURCE 1
+    UPDATE_COMMAND ""
+    CONFIGURE_COMMAND bootstrap.bat
+    BUILD_COMMAND b2 link=static install --prefix=${CMAKE_INSTALL_PREFIX}/boostinstall
+    INSTALL_COMMAND b2 install --prefix=${CMAKE_INSTALL_PREFIX}/boostinstall
+    LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+
 ELSE(WIN32)
-IF(NOT CHAOS_DISABLE_EVENTFD)
-  CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
-ELSE()
-IF(CHAOS_TARGET)
-## there is the risk that for old targets it selects epoll that is not supported in old kernels
-  MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET} with compilers ${CMAKE_CXX_COMPILER}")
-  SET(ZMQ_FLAGS "--with-poller=select --disable-eventfd --enable-static --enable-force-CXX98-compat --disable-curve --disable-curve-keygen --disable-libunwind")
-#  SET(ZMQ_FLAGS "")
-ELSE()
-  SET(ZMQ_FLAGS "")
-ENDIF()
-ENDIF()
+  ExternalProject_Add(
+	 jsonCpp
+	 GIT_REPOSITORY https://github.com/bisegni/jsoncpp	 
+     GIT_PROGRESS 1
+     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
+	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
+	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
+     CMAKE_ARGS
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	 
+	 LOG_DOWNLOAD 1
+    LOG_UPDATE 1
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+	)
+  IF(NOT CHAOS_DISABLE_EVENTFD)
+    CheckConfigureBuild(event libevent:release-2.1.8-stable "--disable-openssl;--enable-static" https://github.com/amichelotti )
+  ELSE()
+    IF(CHAOS_TARGET)
+    ## there is the risk that for old targets it selects epoll that is not supported in old kernels
+      MESSAGE ("FORCE ZMQ TO USE POLL for ${CHAOS_TARGET} with compilers ${CMAKE_CXX_COMPILER}")
+      SET(ZMQ_FLAGS "--with-poller=select --disable-eventfd --enable-static --enable-force-CXX98-compat --disable-curve --disable-curve-keygen --disable-libunwind")
+    ELSE()
+      SET(ZMQ_FLAGS "")
+    ENDIF()
+  ENDIF()
 ENDIF(WIN32)
+
 IF (CHAOS_TARGET)
   IF(NEW_ZMQ)
       MESG("Configure NEW libzmq with autotools")  
@@ -75,42 +131,22 @@ IF (CHAOS_TARGET)
 	 LOG_BUILD ON)
      ENDIF()
 
-if(WIN32)
-MESG("Configure libBoost as CMake")
-	ExternalProject_Add(
-	 boost
-	 GIT_REPOSITORY https://github.com/boostorg/boost.git
-	 PREFIX ${CMAKE_CURRENT_BINARY_DIR}/boost
-	GIT_TAG boost-1.70.0
-    GIT_PROGRESS 1
-    BUILD_IN_SOURCE 1
-    UPDATE_COMMAND ""
-    CONFIGURE_COMMAND bootstrap.bat
-    BUILD_COMMAND b2 link=static install --prefix=${CMAKE_INSTALL_PREFIX}/boostinstall
-    INSTALL_COMMAND b2 install --prefix=${CMAKE_INSTALL_PREFIX}/boostinstall
-    LOG_DOWNLOAD 1
-    LOG_UPDATE 1
-    LOG_CONFIGURE 1
-    LOG_BUILD 1
-    LOG_INSTALL 1
-	)
 
-ENDIF(WIN32)
 
-MESSAGE("Configure JsonCpp as CMake External Project")
+IF(KAFKA_ASIO_ENABLE)
+MESSAGE("ENABLING ASIO KAFKA")
+
+
 ExternalProject_Add(
-	 jsonCpp
-	 GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
-	 
-	 GIT_TAG 1.9.2
-     GIT_PROGRESS 1
-     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
-	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
-	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
-	  
-     CMAKE_ARGS
+	 zlib
+	 GIT_REPOSITORY https://github.com/madler/zlib.git 
+   GIT_PROGRESS 1
+   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/zlib-prefix"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-src"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-build"
+
+   CMAKE_ARGS
 	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-	 
 	 LOG_DOWNLOAD 1
     LOG_UPDATE 1
     LOG_CONFIGURE 1
@@ -118,12 +154,8 @@ ExternalProject_Add(
     LOG_INSTALL 1
 	)
 
-
-
-IF(KAFKA_ASIO_ENABLE)
-MESSAGE("ENABLING ASIO KAFKA")
 ExternalProject_Add(
-	 snappy-c
+	 snappy
 	 GIT_REPOSITORY https://github.com/google/snappy.git  
    GIT_PROGRESS 1
    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
@@ -377,7 +409,7 @@ IF(KAFKA_ASIO_ENABLE)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp)
 link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
-SET(BUILD_LIBRARY ${BUILD_LIBRARY} snappy)
+#SET(BUILD_LIBRARY ${BUILD_LIBRARY} snappy)
 
 ENDIF(KAFKA_ASIO_ENABLE)
 IF(KAFKA_RDK_ENABLE)
@@ -477,13 +509,16 @@ SET(common_lib_src ${common_lib_src}
                     ChaosCommonWin.cpp)
 #compile lua chaos vm and core files
 if (WIN32)
-INCLUDE_DIRECTORIES( ../../ script/lua/core ${ALL_WINDOWS_INCLUDE_DIR})
+  INCLUDE_DIRECTORIES( ../../ script/lua/core ${ALL_WINDOWS_INCLUDE_DIR})
 
-INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
-link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
+  INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/boostinstall/include/boost-1_70)
+  link_directories(${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib)
+  add_dependencies(${PROJECT_NAME} boost)
+
 else(WIN32)
-INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
+  INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 endif(WIN32)
+
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
@@ -498,9 +533,6 @@ IF (CLING_VIRTUAL_MACHINE)
 ENDIF()
 
 
-IF (WIN32)
-SET(BUILD_FORCE_STATIC 1)
-ENDIF(WIN32)
 
 IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
@@ -516,11 +548,8 @@ IF (CHAOS_PROMETHEUS)
 add_dependencies(${PROJECT_NAME} prometheus)
 endif()
 
-IF (WIN32)
 add_dependencies(${PROJECT_NAME} libzmq)
-add_dependencies(${PROJECT_NAME} boost)
 add_dependencies(${PROJECT_NAME} jsonCpp)
-ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE)
   add_dependencies(${PROJECT_NAME} cling)

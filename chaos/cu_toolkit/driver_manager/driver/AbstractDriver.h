@@ -35,7 +35,7 @@
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 #include <chaos/cu_toolkit/driver_manager/driver/BaseBypassDriver.h>
 
-#include <json/json.h>
+//#include <json/json.h>
 
 namespace chaos_thread_ns = chaos::common::thread;
 
@@ -98,8 +98,8 @@ namespace chaos{
                     
                     //!decode control unit paramete in json if conversion is applicable
                     bool                            is_json_param;
-                    Json::Reader					json_reader;
-                    Json::Value						json_parameter_document;
+                   // Json::Reader					json_reader;
+                   // Json::Value						json_parameter_document;
                     
                     //! command queue used for receive DrvMsg pack
                     //boost::interprocess::message_queue *commandQueue;
@@ -153,7 +153,7 @@ namespace chaos{
                      * */
                     void setBypass(bool val);
 
-                    const Json::Value& getDriverParamJsonRootElement() const;
+                 //   const Json::Value& getDriverParamJsonRootElement() const;
                 public:
 
                     

@@ -74,7 +74,28 @@ ENDIF()
 if (NOT WIN32)
 # CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
 if(CHAOS_MDS)
-#  CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+# ExternalProject_Add(
+# 	 mongo-client
+# 	 GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
+	 
+# 	 GIT_TAG legacy-1.0.0-rc0
+#      GIT_PROGRESS 1
+#      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/mongo-client-legacy-prefix"
+# 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/mongo-client-legacy-src"
+#    BUILD_IN_SOURCE TRUE
+
+#    CONFIGURE_COMMAND "scons CXXFLAGS=${CMAKE_CXX_FLAGS} CFLAGS=${CMAKE_C_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} --extralib=boost_system --disable-warnings-as-errors install-mongoclient"
+#    BUILD_COMMAND make install
+#     # CMAKE_ARGS
+# 	 # -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	 
+# 	 LOG_DOWNLOAD 1
+#     LOG_UPDATE 1
+#     LOG_CONFIGURE 1
+#     LOG_BUILD 1
+#     LOG_INSTALL 1
+#   )
+ CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
 ENDIF()
 endif()
 #########
