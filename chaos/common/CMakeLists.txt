@@ -124,14 +124,14 @@ IF(KAFKA_ASIO_ENABLE)
 MESSAGE("ENABLING ASIO KAFKA")
 ExternalProject_Add(
 	 snappy-c
-	 GIT_REPOSITORY https://github.com/amichelotti/snappy-c.git  
+	 GIT_REPOSITORY https://github.com/google/snappy.git  
    GIT_PROGRESS 1
-   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-c-prefix"
-   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-c-src"
-   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-c-build"
+   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-src"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-build"
 
    CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}/snappy  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 	 LOG_DOWNLOAD 1
     LOG_UPDATE 1
     LOG_CONFIGURE 1
@@ -374,12 +374,15 @@ SET(common_lib_src ${common_lib_src}
                     message/MessagePSProducer.cpp)
 
 IF(KAFKA_ASIO_ENABLE)
-INCLUDE_DIRECTORIES(message/impl/kafka/asio/)
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp)
+link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
+SET(BUILD_LIBRARY ${BUILD_LIBRARY} snappy)
+
 ENDIF(KAFKA_ASIO_ENABLE)
 IF(KAFKA_RDK_ENABLE)
 SET(common_lib_src ${common_lib_src}
-message/impl//kafka/rdk/MessagePSKafkaProducer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)
+message/impl/kafka/rdk/MessagePSKafkaProducer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)
 SET(BUILD_LIBRARY ${BUILD_LIBRARY} rdkafka)
 ENDIF(KAFKA_RDK_ENABLE)
 

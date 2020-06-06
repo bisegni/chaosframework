@@ -73,9 +73,9 @@ ENDIF()
 ###### Required Libraries
 if (NOT WIN32)
 # CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
-#if(CHAOS_MDS)
+if(CHAOS_MDS)
 #  CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
-#ENDIF()
+ENDIF()
 endif()
 #########
 
@@ -90,7 +90,6 @@ IF (CHAOS_ONLY_DEPENDECY OR
     CHAOS_ARCHITECTURE_TEST)
   #google test
    MESG("Add google Test as external project")
-  IF(WIN32)
    ExternalProject_Add(
      googletest
      GIT_REPOSITORY https://github.com/google/googletest.git
@@ -117,36 +116,35 @@ IF (CHAOS_ONLY_DEPENDECY OR
      MESG("${GTEST_LIBRARY_DIR}")
      MESG("${GTEST_LIBRARY_PATH}")
      MESG("${GTEST_LIBRARY}")
-  ELSE(WIN32)
  
-  ExternalProject_Add(
-     googletest
-     GIT_REPOSITORY https://github.com/google/googletest.git
-	 GIT_TAG release-1.8.0
-     PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
-     SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
-     BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
-     CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-     LOG_DOWNLOAD ON
-     LOG_CONFIGURE ON
-     LOG_BUILD ON)
-     # Specify include dir
-     ExternalProject_Get_Property(googletest source_dir)
-     set(GTEST_INCLUDE_DIR ${source_dir}/include)
+  # ExternalProject_Add(
+  #    googletest
+  #    GIT_REPOSITORY https://github.com/google/googletest.git
+	#  GIT_TAG release-1.8.0
+  #    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/googletest-prefix"
+  #    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-src"
+  #    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/googletest-build"
+  #    CMAKE_ARGS
+  #     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  #    LOG_DOWNLOAD ON
+  #    LOG_CONFIGURE ON
+  #    LOG_BUILD ON)
+  #    # Specify include dir
+  #    ExternalProject_Get_Property(googletest source_dir)
+  #    set(GTEST_INCLUDE_DIR ${source_dir}/include)
 
-     # Library
-     ExternalProject_Get_Property(googletest binary_dir)
-     set(GTEST_LIBRARY_DIR ${binary_dir})
-     ExternalProject_Get_Property(googletest binary_dir)
-     set(GTEST_LIBRARY_PATH ${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
+  #    # Library
+  #    ExternalProject_Get_Property(googletest binary_dir)
+  #    set(GTEST_LIBRARY_DIR ${binary_dir})
+  #    ExternalProject_Get_Property(googletest binary_dir)
+  #    set(GTEST_LIBRARY_PATH ${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
 
-     MESG("${GTEST_INCLUDE_DIR}")
-     MESG("${GTEST_LIBRARY_DIR}")
-     MESG("${GTEST_LIBRARY_PATH}")
-     MESG("${GTEST_LIBRARY}")
+  #    MESG("${GTEST_INCLUDE_DIR}")
+  #    MESG("${GTEST_LIBRARY_DIR}")
+  #    MESG("${GTEST_LIBRARY_PATH}")
+  #    MESG("${GTEST_LIBRARY}")
 
-   ENDIF(WIN32)
+  #  ENDIF(WIN32)
 ENDIF()
 
 IF (USE_GPT)
