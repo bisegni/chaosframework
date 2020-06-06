@@ -21,7 +21,6 @@
 
 #ifndef __CHAOSFrameworkShared__MongoDBHAConnectionManager__
 #define __CHAOSFrameworkShared__MongoDBHAConnectionManager__
-
 #include <mongo/client/dbclient.h>
 
 #include <chaos/common/chaos_types.h>

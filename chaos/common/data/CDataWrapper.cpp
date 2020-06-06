@@ -924,12 +924,12 @@ void CDataWrapper::addJsonValue(const std::string& key, const string& val){
     addCSDataValue(key,tmp);
 }
 
-void CDataWrapper::addJsonValue(const std::string& key, Json::Value& val){
+/*void CDataWrapper::addJsonValue(const std::string& key, Json::Value& val){
     Json::FastWriter fastWriter;
     std::string output = fastWriter.write(val);
     addJsonValue(key,output);
 }
-
+*/
 bool CDataWrapper::isStringValue(const std::string& key) const{
     FIND_AND_CHECK(key, BSON_ITER_HOLDS_UTF8){
         return true;

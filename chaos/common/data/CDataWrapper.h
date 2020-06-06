@@ -25,8 +25,6 @@
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataBuffer.h>
-#include <json/json.h>
-
 #include <chaos/common/data/CDataVariant.h>
 
 #include <boost/scoped_ptr.hpp>
@@ -145,7 +143,7 @@ namespace chaos {
                 //add a json value
                 void addJsonValue(const std::string&, const string&);
                 //add a json value
-                void addJsonValue(const std::string&, Json::Value&);
+            //    void addJsonValue(const std::string&, Json::Value&);
                 //add a strin gto array
                 void appendStringToArray(const string &value);
                 void appendInt32ToArray(int32_t value);
