@@ -22,9 +22,6 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Base64Util.h>
 #include <boost/lexical_cast.hpp>
-
-#include <json/json.h>
-
 using namespace chaos;
 using namespace chaos::common::data;
 
@@ -895,11 +892,16 @@ bool CDataWrapper::isDoubleValue(const std::string& key) const{
     return false;
 }
 
-bool  CDataWrapper::isJsonValue(const std::string& key) const{
-    Json::Reader jr;
-    Json::Value v;
-    const char *cptr = getRawValuePtr(key);
-    return jr.parse(cptr, cptr+getValueSize(key), v);
+bool  CDataWrapper::isJsonValue(const std::string& json) const{
+    bool ret=false;
+    try{
+        CDataWrapper tmp;
+        tmp.setSerializedJsonData(json.c_str());
+        ret=true;
+    } catch(...){
+
+    }
+    return ret;
 }
 
 double CDataWrapper::getAsRealValue(const std::string& key) const{
