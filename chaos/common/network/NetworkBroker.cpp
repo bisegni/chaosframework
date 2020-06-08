@@ -715,15 +715,17 @@ chaos::common::message::MultiAddressMessageChannel *NetworkBroker::getRawMultiAd
 void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dispose) {
     if(!message_channel_to_dispose) return;
     
+    std::string uid=message_channel_to_dispose->getChannelUUID();
     //deallocate it
     CHAOS_NOT_THROW(message_channel_to_dispose->deinit(););
-    
-    boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
     //check if the channel is active
-    if(active_rpc_channel.count(message_channel_to_dispose->getChannelUUID()) == 0) return;
+
+    if(active_rpc_channel.count(uid) == 0) return;
+
+    boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
     
     //remove the channel as active
-    active_rpc_channel.erase(message_channel_to_dispose->getChannelUUID());
+    active_rpc_channel.erase(uid);
     
     //dispose it
     delete(message_channel_to_dispose);

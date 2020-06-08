@@ -2170,10 +2170,11 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         push_tot_size+=psiz;
         int retry=10;
         do{
-            err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, MOVE(output_attribute_dataset));
+
+            err = key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
             if(err!=0){
                 push_errors++;
-                ERR<<push_errors<<"] ERROR pushing runid:"<<run_id<<" seq:"<<output_attribute_dataset->getInt64Value(DataPackCommonKey::DPCK_SEQ_ID);
+                ERR<<push_errors<<"] ERROR pushing runid:"<<run_id;
                 setStateVariableSeverity(StateVariableTypeAlarmCU,"packet_send_error", chaos::common::alarm::MultiSeverityAlarmLevelWarning);
 
                 usleep(10000);
