@@ -163,7 +163,7 @@ ExternalProject_Add(
    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-build"
 
    CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}/snappy  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}/snappy  -DCMAKE_CXX_STANDARD=11 -DSNAPPY_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 	 LOG_DOWNLOAD 1
     LOG_UPDATE 1
     LOG_CONFIGURE 1
@@ -406,6 +406,7 @@ SET(common_lib_src ${common_lib_src}
                     message/MessagePSProducer.cpp)
 
 IF(KAFKA_ASIO_ENABLE)
+SET(CMAKE_CXX_STANDARD 11)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp)
 link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
