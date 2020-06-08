@@ -3,6 +3,10 @@ project(chaos_common)
 #### required libraries
 MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
+option(KAFKA_ASIO_ENABLE "KAFKA ASIO ENABLE" ON)
+
+IF(KAFKA_ASIO_ENABLE)
+ENDIF()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
@@ -16,7 +20,6 @@ ExternalProject_Add(
 	 librdkafa
 	 GIT_REPOSITORY https://github.com/edenhill/librdkafka.git
 
-     GIT_PROGRESS 1
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-prefix"
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-build"
@@ -30,6 +33,7 @@ ExternalProject_Add(
     LOG_BUILD 1
     LOG_INSTALL 1
 	)
+add_definitions(-DKAFKA_RDK_ENABLE)
 
 ENDIF(KAFKA_RDK_ENABLE)
 
@@ -61,7 +65,6 @@ if(WIN32)
 	 GIT_REPOSITORY https://github.com/boostorg/boost.git
 	 PREFIX ${CMAKE_CURRENT_BINARY_DIR}/boost
 	GIT_TAG boost-1.70.0
-    GIT_PROGRESS 1
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND bootstrap.bat
@@ -134,6 +137,7 @@ IF (CHAOS_TARGET)
 IF(KAFKA_ASIO_ENABLE)
 MESSAGE("ENABLING ASIO KAFKA")
 
+add_definitions(-DKAFKA_ASIO_ENABLE)
 
 ExternalProject_Add(
 	 zlib

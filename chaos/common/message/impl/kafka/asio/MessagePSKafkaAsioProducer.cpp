@@ -1,8 +1,8 @@
 #include "MessagePSKafkaAsioProducer.h"
 #include <chaos/common/global.h>
-#define MRDAPP_ INFO_LOG(MMessagePSKafkaAsioProducer)
-#define MRDDBG_ DBG_LOG(MMessagePSKafkaAsioProducer)
-#define MRDERR_ ERR_LOG(MMessagePSKafkaAsioProducer)
+#define MRDAPP_ INFO_LOG(MessagePSKafkaAsioProducer)
+#define MRDDBG_ DBG_LOG(MessagePSKafkaAsioProducer)
+#define MRDERR_ ERR_LOG(MessagePSKafkaAsioProducer)
 
 using libkafka_asio::Connection;
 using libkafka_asio::ProduceRequest;
@@ -29,27 +29,43 @@ void HandleRequest(const Connection::ErrorCodeType& err,
   MRDDBG_<< "Successfully produced message!" << std::endl;
 }
 
-MMessagePSKafkaAsioProducer::~MMessagePSKafkaAsioProducer() {
+MessagePSKafkaAsioProducer::~MessagePSKafkaAsioProducer() {
+  running=false;
+  ios.stop();
+  th.join();
   if(connection){
     delete connection;
   }
 }
 
-MMessagePSKafkaAsioProducer::MMessagePSKafkaAsioProducer():connection(NULL) {
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer():connection(NULL) {
 
   running = false;
 }
-MMessagePSKafkaAsioProducer::MMessagePSKafkaAsioProducer(const std::string& k):connection(NULL) {
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer(const std::string& k):connection(NULL) {
 }
-int MMessagePSKafkaAsioProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key) {
+int MessagePSKafkaAsioProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key) {
   return 0;
 }
 
-void MMessagePSKafkaAsioProducer::addServer(const std::string& url) {
+void MessagePSKafkaAsioProducer::addServer(const std::string& url) {
   MessagePublishSubscribeBase::addServer(url);
 }
 
-int MMessagePSKafkaAsioProducer::applyConfiguration() {
+void MessagePSKafkaAsioProducer::poll(){
+  MRDDBG_<<"starting poll thread";
+  running=true;
+  while(running){
+    MRDDBG_<<"entering run";
+
+    ios.run();
+    MRDDBG_<<"exiting run";
+
+  }
+    MRDDBG_<<"exiting poll thread";
+
+}
+int MessagePSKafkaAsioProducer::applyConfiguration() {
   int ret=0;
   char hostname[128];
   char errstr[512];
@@ -72,10 +88,11 @@ int MMessagePSKafkaAsioProducer::applyConfiguration() {
   }
 
   counter = 0;
+ // th=boost::thread(&MessagePSKafkaAsioProducer::poll,this);
   return ret;
 }
 
-int MMessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key) {
+int MessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key) {
   int err;
   int                 size  = data.getBSONRawSize();
   std::string         topic = key;
@@ -85,11 +102,11 @@ int MMessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWr
   
   request.AddValue(std::string(data.getBSONRawData(),size), topic, 0);
   connection->AsyncRequest(request, &HandleRequest);
+  ios.run();
 
   return err;
 }
-void MMessagePSKafkaAsioProducer::poll() {
-}
+
 }  // namespace rdk
 }  // namespace kafka
 }  // namespace message
