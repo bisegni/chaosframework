@@ -15,7 +15,7 @@ MESSAGE("ENABLING RDK KAFKA")
 ExternalProject_Add(
 	 librdkafa
 	 GIT_REPOSITORY https://github.com/edenhill/librdkafka.git
-	 
+
      GIT_PROGRESS 1
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-prefix"
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/librdkafka-src"
@@ -39,10 +39,9 @@ if(WIN32)
   set(CMAKE_SUPPRESS_REGENERATION true)
   ExternalProject_Add(
 	 jsonCpp
-	 GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
+	 GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp.git
 	 
 	 GIT_TAG 1.9.2
-     GIT_PROGRESS 1
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
@@ -79,7 +78,6 @@ ELSE(WIN32)
   ExternalProject_Add(
 	 jsonCpp
 	 GIT_REPOSITORY https://github.com/bisegni/jsoncpp	 
-     GIT_PROGRESS 1
      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-prefix"
 	 SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-src"
 	 BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libjsoncpp-build"
@@ -140,7 +138,6 @@ MESSAGE("ENABLING ASIO KAFKA")
 ExternalProject_Add(
 	 zlib
 	 GIT_REPOSITORY https://github.com/madler/zlib.git 
-   GIT_PROGRESS 1
    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/zlib-prefix"
    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-src"
    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-build"
@@ -157,7 +154,6 @@ ExternalProject_Add(
 ExternalProject_Add(
 	 snappy
 	 GIT_REPOSITORY https://github.com/google/snappy.git  
-   GIT_PROGRESS 1
    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-src"
    BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-build"
