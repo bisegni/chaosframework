@@ -16,33 +16,33 @@ namespace kafka {
 namespace asio {
 
 
-void HandleRequest(const Connection::ErrorCodeType& err,
+void MessagePSKafkaAsioProducer::HandleRequest(const Connection::ErrorCodeType& err,
                    const ProduceResponse::OptionalType& response)
 {
   if (err)
   {
     MRDERR_
-      << "Error: " << boost::system::system_error(err).what()
-      << std::endl;
+     << "["<<counter<<","<<sentOk<<","<<sentErr<<"]"<< boost::system::system_error(err).what();
+    sentErr++;
     return;
   }
-  MRDDBG_<< "Successfully produced message!" << std::endl;
+  //MRDDBG_<< "["<<counter<<","<<sentOk<<","<<sentErr<<"] Successfully produced message!";
+  sentOk++;
 }
 
 MessagePSKafkaAsioProducer::~MessagePSKafkaAsioProducer() {
   running=false;
-  ios.stop();
   th.join();
   if(connection){
     delete connection;
   }
 }
 
-MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer():connection(NULL) {
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer():connection(NULL),sentOk(0),sentErr(0) {
 
   running = false;
 }
-MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer(const std::string& k):connection(NULL) {
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer(const std::string& k):connection(NULL),sentOk(0),sentErr(0) {
 }
 int MessagePSKafkaAsioProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key) {
   return 0;
@@ -56,13 +56,9 @@ void MessagePSKafkaAsioProducer::poll(){
   MRDDBG_<<"starting poll thread";
   running=true;
   while(running){
-    MRDDBG_<<"entering run";
-
     ios.run();
-    MRDDBG_<<"exiting run";
-
   }
-    MRDDBG_<<"exiting poll thread";
+  MRDDBG_<<"exiting poll thread";
 
 }
 int MessagePSKafkaAsioProducer::applyConfiguration() {
@@ -88,7 +84,7 @@ int MessagePSKafkaAsioProducer::applyConfiguration() {
   }
 
   counter = 0;
- // th=boost::thread(&MessagePSKafkaAsioProducer::poll,this);
+  th=boost::thread(&MessagePSKafkaAsioProducer::poll,this);
   return ret;
 }
 
@@ -101,8 +97,7 @@ int MessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWra
   ProduceRequest request;
   
   request.AddValue(std::string(data.getBSONRawData(),size), topic, 0);
-  connection->AsyncRequest(request, &HandleRequest);
-  ios.run();
+  connection->AsyncRequest(request, boost::bind(&MessagePSKafkaAsioProducer::HandleRequest,this,_1,_2));
 
   return err;
 }

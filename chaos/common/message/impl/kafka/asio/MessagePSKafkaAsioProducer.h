@@ -16,7 +16,7 @@ namespace asio {
 
 class MessagePSKafkaAsioProducer : public chaos::common::message::MessagePSProducer {
  protected:
-  uint64_t    counter;
+  uint64_t    counter,sentOk,sentErr;
   ::libkafka_asio::Connection::Configuration configuration;
   ::libkafka_asio::Connection * connection;
 
@@ -24,7 +24,8 @@ class MessagePSKafkaAsioProducer : public chaos::common::message::MessagePSProdu
   boost::asio::io_service ios;
   boost::thread th;
   void poll();
-  
+  void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::ProduceResponse::OptionalType& response);
+
  public:
   MessagePSKafkaAsioProducer();
   MessagePSKafkaAsioProducer(const std::string& k);
