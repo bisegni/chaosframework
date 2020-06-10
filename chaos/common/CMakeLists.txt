@@ -5,13 +5,8 @@ MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
 option(KAFKA_ASIO_ENABLE "KAFKA ASIO ENABLE" ON)
 
-IF(KAFKA_ASIO_ENABLE)
-ENDIF()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-IF (NOT BUILD_FORCE_STATIC)
-ENDIF ()
 
 
 
@@ -134,7 +129,7 @@ ExternalProject_Add(
 	)
 
 ExternalProject_Add(
-	 snappy
+	 snappylib
 	 GIT_REPOSITORY https://github.com/google/snappy.git  
    PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
    SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-src"
@@ -404,16 +399,18 @@ SET(common_lib_src ${common_lib_src}
                     message/PerformanceNodeChannel.cpp
                     message/MessageRequestDomain.cpp
                     message/MessagePublishSubscribeBase.cpp
-                    message/MessagePSProducer.cpp)
+                    message/MessagePSProducer.cpp
+                    message/MessagePSConsumer.cpp)
 
 IF(KAFKA_ASIO_ENABLE)
 SET(CMAKE_CXX_STANDARD 11)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
-SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp)
-link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
-#SET(BUILD_LIBRARY ${BUILD_LIBRARY} snappy)
+SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp message/impl/kafka/asio/MessagePSKafkaAsio.cpp message/impl/kafka/asio/MessagePSKafkaAsioConsumer.cpp)
+#link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
+SET(BUILD_LIBRARY snappy ${BUILD_LIBRARY} )
 
 ENDIF(KAFKA_ASIO_ENABLE)
+
 IF(KAFKA_RDK_ENABLE)
 SET(common_lib_src ${common_lib_src}
 message/impl/kafka/rdk/MessagePSKafkaProducer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)

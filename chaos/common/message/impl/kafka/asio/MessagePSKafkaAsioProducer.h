@@ -7,6 +7,7 @@
 #include <chaos/common/message/MessagePSProducer.h>
 #include <boost/asio.hpp>
 #include "libkafka_asio/libkafka_asio.h"
+#include "MessagePSKafkaAsio.h"
 
 namespace chaos {
 namespace common {
@@ -14,27 +15,21 @@ namespace message {
 namespace kafka {
 namespace asio {
 
-class MessagePSKafkaAsioProducer : public chaos::common::message::MessagePSProducer {
+class MessagePSKafkaAsioProducer : public chaos::common::message::MessagePSProducer,MessagePSKafkaAsio {
  protected:
-  uint64_t    counter,sentOk,sentErr;
-  ::libkafka_asio::Connection::Configuration configuration;
-  ::libkafka_asio::Connection * connection;
-
-  bool        running;
-  boost::asio::io_service ios;
-  boost::thread th;
-  void poll();
+  
   void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::ProduceResponse::OptionalType& response);
 
  public:
   MessagePSKafkaAsioProducer();
   MessagePSKafkaAsioProducer(const std::string& k);
   ~MessagePSKafkaAsioProducer();
-  int pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key);
-  int pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key);
-
-  void addServer(const std::string& url);
-
+  int pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum);
+  int pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum);
+  int deleteKey(const std::string& key);
+  int waitCompletion(const uint32_t timeout_ms){
+    return MessagePSKafkaAsio::waitCompletion(timeout_ms);
+  }
   int  applyConfiguration();
 };
 }  // namespace rdk

@@ -34,6 +34,7 @@ option(CLING_VIRTUAL_MACHINE_ENABLE "Enable cling for scripting" OFF)
 option(CHAOS_ONLY_DEPENDECY "Download all the dependency" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
 option(CHAOS_PROMETHEUS "Enable Prometheus metrics support" OFF)
+
 if (WIN32)
 option(CHAOS_MDS "Chaos Data Service" OFF)
 option(CHAOS_AGENT "Chaos Agent Service" OFF)
@@ -41,12 +42,7 @@ option(CHAOS_DATA_EXPORT "Chaos Data Export" OFF)
 option(CHAOS_EXAMPLES "Chaos Examples" OFF)
 #warning possibile perdita di dati spento.
 add_definitions(-wd"4267")
-
-
 SET (ALL_WINDOWS_LIBPATH "DbgHelp.lib Netapi32.lib Iphlpapi.lib")
-
-
-
 else (WIN32)
 option(CHAOS_MDS "Chaos Data Service" ON)
 option(CHAOS_AGENT "Chaos Agent Service" ON)

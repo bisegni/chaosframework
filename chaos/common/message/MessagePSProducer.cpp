@@ -44,28 +44,19 @@ namespace chaos {
                 if(impl){delete impl;}
 
             }
-         int MessagePSProducer::pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key){
-             return ((MessagePSProducer*)impl)->pushMsgAsync(data,key);
+         int MessagePSProducer::pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum){
+             stats.counter++;
+             return ((MessagePSProducer*)impl)->pushMsgAsync(data,key,pnum);
          }
-        void MessagePSProducer::addServer(const std::string&url){
-            if(impl==NULL){
-                MRDERR_<<"NOT a valid implementation";
-                return;
+        
+        int MessagePSProducer::pushMsg(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum){
+            stats.counter++;
 
-            }
-            return impl->addServer(url);
+            return ((MessagePSProducer*)impl)->pushMsgAsync(data,key,pnum);
         }
 
-         int MessagePSProducer::applyConfiguration(){
-             if(impl==NULL){
-                MRDERR_<<"NOT a valid implementation";
-                return -5;
+          int MessagePSProducer::deleteKey(const std::string&key){
 
-            }
-             return ((MessagePSProducer*)impl)->applyConfiguration();
-         }
-        int MessagePSProducer::pushMsg(const chaos::common::data::CDataWrapper&data,const std::string&key){
-            return ((MessagePSProducer*)impl)->pushMsgAsync(data,key);
-        }
-              
+            return ((MessagePSProducer*)impl)->deleteKey(key);
+        }     
         }}}

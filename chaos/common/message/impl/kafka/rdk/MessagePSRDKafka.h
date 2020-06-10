@@ -4,8 +4,8 @@
  */
 #ifndef __MESSAGE_PSRDKAFKA_H__
 #define __MESSAGE_PSRDKAFKA_H__
-#include <chaos/common/message/MessagePublishSubscribeBase.h>
-
+#include <set>
+#include <string>
 #include <librdkafka/rdkafka.h>
 
 namespace chaos {
@@ -17,7 +17,6 @@ class MessagePSRDKafka {
  protected:
   rd_kafka_conf_t*       conf;
   rd_kafka_topic_conf_t* topic_conf;
-  std::string            defkey;
 
  public:
   MessagePSRDKafka();
@@ -26,6 +25,7 @@ class MessagePSRDKafka {
   int setOption(const std::string& key, const std::string& value);
 
   int init(std::set<std::string>& servers);
+  int 
 };
 }  // namespace rdk
 }  // namespace kafka

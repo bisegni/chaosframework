@@ -39,12 +39,16 @@ MessagePSKafkaProducer::MessagePSKafkaProducer() {
 }
 MessagePSKafkaProducer::MessagePSKafkaProducer(const std::string& k) {
 }
-int MessagePSKafkaProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key) {
+int MessagePSKafkaProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum) {
   return 0;
 }
+  int MessagePSKafkaProducer::deleteKey(const std::string&key){
+    return 0;
+  }
 
-void MessagePSKafkaProducer::addServer(const std::string& url) {
-  MessagePublishSubscribeBase::addServer(url);
+int MessagePSKafkaProducer::waitCompletion(const uint32_t timeout_ms){
+  return MessagePSKafka::waitCompletion(timeout_ms);
+
 }
 
 int MessagePSKafkaProducer::applyConfiguration() {
@@ -59,15 +63,13 @@ int MessagePSKafkaProducer::applyConfiguration() {
       rd_kafka_conf_set_dr_msg_cb(conf, dr_msg_cb);
     }
   }
-  counter = 0;
   return ret;
 }
 
-int MessagePSKafkaProducer::pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key) {
+int MessagePSKafkaProducer::pushMsgAsync(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum) {
   rd_kafka_resp_err_t err;
   int                 size  = data.getBSONRawSize();
   std::string         topic = key;
-  counter++;
   std::replace(topic.begin(), topic.end(), '/', '.');
 
 //MRDDBG_ << "pushing " << size;

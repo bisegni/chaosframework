@@ -10,10 +10,18 @@
 namespace chaos {
     namespace common {
         namespace message {
+            typedef std::vector<chaos::common::data::CDWUniquePtr> msg_queue_t;
 
             class MessagePublishSubscribeBase {
+
                 public:
-                typedef int (*msgpshandler)(chaos::common::data::CDWUniquePtr&);
+                typedef void (*msgpshandler)(const msg_queue_t&data,const int error_code);
+                typedef struct msgstats {
+                    uint64_t counter;
+                    uint64_t oks;
+                    uint64_t errs;
+                    msgstats():counter(0),oks(0),errs(0){}
+                } msgstats_t;
                 enum eventTypes{
                     ONDELIVERY,
                     ONARRIVE,
@@ -23,8 +31,15 @@ namespace chaos {
                 std::set<std::string> servers;
                 std::string id;
                 std::map< eventTypes,msgpshandler> handlers;
+                msgstats_t stats;
+                MessagePublishSubscribeBase*impl;
+                uint64_t    counter,oks,errs;
+
                 public:
-                MessagePublishSubscribeBase(const std::string& id):id(id){};
+                MessagePublishSubscribeBase(const std::string& id){};
+
+                msgstats_t getStats() const{ return stats;}
+
                 virtual ~MessagePublishSubscribeBase(){};
                 virtual void addServer(const std::string&url);
 
@@ -49,8 +64,15 @@ namespace chaos {
                  * 
                  * @return 0 if success
                  */
-                virtual int applyConfiguration()=0;
+                virtual int applyConfiguration();
 
+                /**
+                 * @brief Wait for the completion of a async operation
+                 * 
+                 * @param timeout timeout in ms
+                 * @return int 0 if success, negative if error
+                 */
+                virtual int waitCompletion(const uint32_t timeout_ms=5000);
 
 
 

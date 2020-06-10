@@ -12,6 +12,12 @@ namespace chaos {
                 void MessagePublishSubscribeBase::addServer(const std::string&url){
                     servers.insert(url);
                     MRDDBG_<<"["<<servers.size()<<"] adding server:"<<url;
+                    if(impl==NULL){
+                        MRDERR_<<"NOT a valid implementation";
+                        return;
+
+                    }
+                    impl->addServer(url);
                 }
 
                 int MessagePublishSubscribeBase::setOption(const std::string&key,const std::string& value){
@@ -23,6 +29,22 @@ namespace chaos {
                 }
 
 
+         int MessagePublishSubscribeBase::applyConfiguration(){
+             if(impl==NULL){
+                MRDERR_<<"NOT a valid implementation";
+                return -5;
+
+            }
+             return impl->applyConfiguration();
+         }
+         int MessagePublishSubscribeBase::waitCompletion(const uint32_t timeout_ms){
+            if(impl==NULL){
+                MRDERR_<<"NOT a valid implementation";
+                return -5;
+
+            }
+             return impl->waitCompletion(timeout_ms);
+         }
 
         }
         }
