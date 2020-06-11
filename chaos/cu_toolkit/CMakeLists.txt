@@ -106,7 +106,7 @@ set (BOOST_LIBPATH  ${CMAKE_INSTALL_PREFIX}/boostinstall/lib )
 
 
 separate_arguments(chaos_cutoolkit_lib)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common ${ALL_WINDOWS_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common jsoncpp ${ALL_WINDOWS_LIBS})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)

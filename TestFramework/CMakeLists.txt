@@ -24,7 +24,7 @@ endif(WIN32)
 
 set_target_properties(ExamplePlugin PROPERTIES PREFIX "" SUFFIX ".chaos_extension")
 
-TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common ${PluginTestLib})
+TARGET_LINK_LIBRARIES(ExamplePlugin chaos_cutoolkit chaos_common pthread ${PluginTestLib})
 
 
 INSTALL(TARGETS ExamplePlugin 
@@ -82,7 +82,7 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-SET(LinkedLibrary $ENV{CHAOS_LINK_LIBRARY})
+SET(LinkedLibrary $ENV{CHAOS_LINK_LIBRARY} pthread dl)
 separate_arguments(LinkedLibrary)
 SET(LinkedLibrary ${LinkedLibrary} chaos_common gtest)
 IF (USE_GPT)
