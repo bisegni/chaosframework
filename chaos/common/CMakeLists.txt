@@ -131,9 +131,9 @@ ExternalProject_Add(
 ExternalProject_Add(
 	 snappylib
 	 GIT_REPOSITORY https://github.com/google/snappy.git  
-   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappy-prefix"
-   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-src"
-   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappy-build"
+   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/snappylib-prefix"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappylib-src"
+   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/snappylib-build"
 
    CMAKE_ARGS
 	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}/snappy  -DCMAKE_CXX_STANDARD=11 -DSNAPPY_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
@@ -406,7 +406,7 @@ IF(KAFKA_ASIO_ENABLE)
 SET(CMAKE_CXX_STANDARD 11)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp message/impl/kafka/asio/MessagePSKafkaAsio.cpp message/impl/kafka/asio/MessagePSKafkaAsioConsumer.cpp)
-#link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
+link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
 SET(BUILD_LIBRARY snappy ${BUILD_LIBRARY} )
 
 ENDIF(KAFKA_ASIO_ENABLE)
