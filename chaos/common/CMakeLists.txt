@@ -175,10 +175,11 @@ IF (CHAOS_PROMETHEUS)
   ExternalProject_Add(
   prometheus
   GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
+  GIT_TAG v0.9.0
   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/prometheus-prefix"
   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
-  CMAKE_ARGS  -DBUILD_SHARED_LIBS=OFF -DENABLE_TESTING=OFF -DUSE_THIRDPARTY_LIBRARIES=ON
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON -DENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
                 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
   LOG_DOWNLOAD ON
   LOG_CONFIGURE ON
@@ -236,10 +237,10 @@ SET(common_lib_src  ChaosCommon.cpp
                     log/LogManager.cpp
                     log/ChaosLoggingBackend.cpp)
 
+
 SET(common_lib_src ${common_lib_src}
-                    additional_lib/mongoose.c
-                    additional_lib/sqlite3.c
-                    additional_lib/base64.cpp)
+                    additional_lib/mongoose.c additional_lib/sqlite3.c additional_lib/base64.cpp)
+
 
 SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp
@@ -424,7 +425,7 @@ SET(CMAKE_CXX_STANDARD 11)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp message/impl/kafka/asio/MessagePSKafkaAsio.cpp message/impl/kafka/asio/MessagePSKafkaAsioConsumer.cpp)
 link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
-SET(BUILD_LIBRARY snappy ${BUILD_LIBRARY} )
+SET(BUILD_LIBRARY snappy z ${BUILD_LIBRARY} )
 
 ENDIF(KAFKA_ASIO_ENABLE)
 
@@ -516,7 +517,7 @@ SET(common_lib_src ${common_lib_src}
                     rpc/RpcClientMetricCollector.cpp
                     rpc/RpcServerMetricCollector.cpp)
 
-SET(BUILD_LIBRARY ${BUILD_LIBRARY} prometheus-cpp-core prometheus-cpp-pull)
+SET(BUILD_LIBRARY prometheus-cpp-pull prometheus-cpp-push prometheus-cpp-core ${BUILD_LIBRARY} )
 
 ELSE(CHAOS_PROMETHEUS)
 MESG("Metrics source code is not included")  
@@ -594,7 +595,7 @@ ENDIF(WIN32)
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE ${BUILD_LIBRARY})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_external ${BUILD_LIBRARY})
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
