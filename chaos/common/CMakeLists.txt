@@ -175,11 +175,10 @@ IF (CHAOS_PROMETHEUS)
   ExternalProject_Add(
   prometheus
   GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
-  GIT_TAG v0.8.0
   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/prometheus-prefix"
   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
-  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=OFF -DENABLE_TESTING=OFF -DUSE_THIRDPARTY_LIBRARIES=ON
                 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
   LOG_DOWNLOAD ON
   LOG_CONFIGURE ON
