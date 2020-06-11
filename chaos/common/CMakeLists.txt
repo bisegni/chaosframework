@@ -169,6 +169,24 @@ add_definitions(-DKAFKA_RDK_ENABLE)
 
 ENDIF(KAFKA_RDK_ENABLE)
 
+IF (CHAOS_PROMETHEUS)
+  #google performance tools
+  MESG("Add Prometheus metrics dependency")
+  ExternalProject_Add(
+  prometheus
+  GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
+  GIT_TAG v0.8.0
+  PREFIX "${CMAKE_BINARY_DIR}/ext_dep/prometheus-prefix"
+  SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
+  BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/prometheus-src"
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON
+                -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  LOG_DOWNLOAD ON
+  LOG_CONFIGURE ON
+  LOG_BUILD ON)
+  # add definition for compilation
+  add_definitions(-DCHAOS_PROMETHEUS=1)
+ENDIF()
 
 IF (CLING_VIRTUAL_MACHINE_ENABLE)
   MESG("Using ${CMAKE_BINARY_DIR}/ext_dep/cling-src for download cling")
@@ -486,6 +504,7 @@ SET(common_lib_src ${common_lib_src}
 
 IF(CHAOS_PROMETHEUS)
 MESG("Add source code for metrics: ${CHAOS_PROMETHEUS}")  
+ADD_DEFINITIONS(-DCHAOS_PROMETHEUS)
 SET(common_lib_src ${common_lib_src}
                     metric/MetricManager.cpp
                     metric/MetricCollector.cpp

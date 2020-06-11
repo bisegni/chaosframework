@@ -10,14 +10,8 @@ namespace chaos {
 
             
                 void MessagePublishSubscribeBase::addServer(const std::string&url){
-                    servers.insert(url);
                     MRDDBG_<<"["<<servers.size()<<"] adding server:"<<url;
-                    if(impl==NULL){
-                        MRDERR_<<"NOT a valid implementation";
-                        return;
-
-                    }
-                    impl->addServer(url);
+                    servers.insert(url);
                 }
 
                 int MessagePublishSubscribeBase::setOption(const std::string&key,const std::string& value){

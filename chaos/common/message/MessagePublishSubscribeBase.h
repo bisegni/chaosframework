@@ -41,7 +41,7 @@ namespace chaos {
                 msgstats_t getStats() const{ return stats;}
 
                 virtual ~MessagePublishSubscribeBase(){};
-                virtual void addServer(const std::string&url);
+                void addServer(const std::string&url);
 
                 /**
                  * @brief Add an handler to the message
