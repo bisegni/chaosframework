@@ -1408,7 +1408,7 @@ int PosixFile::getObjectByIndex(const chaos::common::data::CDWShrdPtr& index,
 void PosixFile::timeout() {
 
   // remove directory write cache
-  for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); id) {
+  for (write_path_t::iterator id = s_lastWriteDir.begin(); id != s_lastWriteDir.end(); ) {
     uint64_t ts = chaos::common::utility::TimingUtil::getTimeStamp();
 
     if ((ts - id->second.ts) > (POSIX_MSEC_QUANTUM)) {

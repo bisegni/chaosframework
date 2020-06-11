@@ -20,7 +20,8 @@ namespace chaos {
                     uint64_t counter;
                     uint64_t oks;
                     uint64_t errs;
-                    msgstats():counter(0),oks(0),errs(0){}
+                    int last_err;
+                    msgstats():counter(0),oks(0),errs(0),last_err(0){}
                 } msgstats_t;
                 enum eventTypes{
                     ONDELIVERY,

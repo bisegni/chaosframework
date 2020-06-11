@@ -24,7 +24,7 @@ MessagePSKafkaAsio::~MessagePSKafkaAsio() {
   }
 }
 
-MessagePSKafkaAsio::MessagePSKafkaAsio():connection(NULL),running(false) {
+MessagePSKafkaAsio::MessagePSKafkaAsio():connection(NULL),running(false),data_ready(false) {
 }
 
 int MessagePSKafkaAsio::setOption(const std::string& key, const std::string& value) {
@@ -34,7 +34,10 @@ int MessagePSKafkaAsio::setOption(const std::string& key, const std::string& val
 void MessagePSKafkaAsio::poll(){
   MRDDBG_<<"starting poll thread";
   running=true;
+  int cnt=0;
   while(running){
+  //  MRDDBG_<<"polling:"<<cnt++;
+
     ios.run();
   }
   MRDDBG_<<"exiting poll thread";
@@ -64,7 +67,7 @@ int MessagePSKafkaAsio::init(std::set<std::string>& servers) {
 
   }
 
-  th=boost::thread(&MessagePSKafkaAsio::poll,this);
+ // th=boost::thread(&MessagePSKafkaAsio::poll,this);
   return ret;
 }
 
@@ -72,7 +75,7 @@ int MessagePSKafkaAsio::init(std::set<std::string>& servers) {
     boost::unique_lock<boost::mutex> guard(mutex_cond);
    //  boost::posix_time::milliseconds timeoutDuration( timeo ); //wait for 10 seconds
     MRDDBG_<<"wating operation";
-
+    if(data_ready) return 0;
     if(!cond.timed_wait(guard,boost::posix_time::milliseconds(timeo))){
       MRDERR_<<"Timeout";
       return -100;

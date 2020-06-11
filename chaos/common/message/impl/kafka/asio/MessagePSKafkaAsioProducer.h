@@ -18,6 +18,7 @@ namespace asio {
 class MessagePSKafkaAsioProducer : public chaos::common::message::MessagePSProducer,MessagePSKafkaAsio {
  protected:
   
+  void HandleMeta(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::MetadataResponse::OptionalType& response);
   void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::ProduceResponse::OptionalType& response);
 
  public:

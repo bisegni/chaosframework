@@ -20,7 +20,7 @@ class MessagePSKafkaAsio {
   boost::asio::io_service ios;
   boost::thread th;
   bool        running;
-    
+  bool        data_ready;
   boost::mutex mutex_cond;
   boost::condition_variable cond;
 
