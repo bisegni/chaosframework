@@ -54,7 +54,6 @@ namespace chaos {
              return ((MessagePSConsumer*)impl)->getMsgAsync(key,off,pnum);
          }
        
-         
-       
+          
               
         }}}    

@@ -23,14 +23,25 @@ namespace chaos {
                 }
 
 
-         int MessagePublishSubscribeBase::applyConfiguration(){
+        /* int MessagePublishSubscribeBase::applyConfiguration(){
              if(impl==NULL){
                 MRDERR_<<"NOT a valid implementation";
                 return -5;
 
             }
              return impl->applyConfiguration();
-         }
+         }*/
+
+          int MessagePublishSubscribeBase::applyConfiguration(){
+                if(impl==NULL){
+                    MRDERR_<<" not a valid implementation";
+                    return -5;
+                }
+                for(std::set<std::string>::iterator i = servers.begin();i!=servers.end();i++){
+                    impl->addServer(*i);
+                }
+                return impl->applyConfiguration();
+            }
          int MessagePublishSubscribeBase::waitCompletion(const uint32_t timeout_ms){
             if(impl==NULL){
                 MRDERR_<<"NOT a valid implementation";

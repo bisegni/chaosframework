@@ -32,6 +32,7 @@ namespace chaos {
                  */
                 virtual int getMsgAsync(const std::string&key,const int32_t pnum=0);
                 virtual int getMsgAsync(const std::string&key,uint32_t offset,const int32_t pnum=0);
+               
                 int msgInQueue(){return msgs.size();}
                 chaos::common::data::CDWUniquePtr getMsg(int index){if(index<msgs.size()){return MOVE(msgs[index]);}  return chaos::common::data::CDWUniquePtr();}
 
