@@ -51,6 +51,27 @@ namespace chaos {
              return impl->waitCompletion(timeout_ms);
          }
 
+        int MessagePublishSubscribeBase::deleteKey(const std::string& key){
+            if(impl==NULL){
+                MRDERR_<<"NOT a valid implementation";
+                return -5;
+
+            }
+             return impl->deleteKey(key);
+         
+        }
+
+               
+         int MessagePublishSubscribeBase::createKey(const std::string& key){
+              if(impl==NULL){
+                MRDERR_<<"NOT a valid implementation";
+                return -5;
+
+            }
+             return impl->createKey(key);
+
+         }
+
         }
         }
         }

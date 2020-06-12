@@ -48,17 +48,14 @@ namespace chaos {
             }
          int MessagePSProducer::pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum){
              stats.counter++;
-             return ((MessagePSProducer*)impl)->pushMsgAsync(data,key,pnum);
+             return (dynamic_cast<MessagePSProducer*>(impl))->pushMsgAsync(data,key,pnum);
          }
         
         int MessagePSProducer::pushMsg(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum){
             stats.counter++;
 
-            return ((MessagePSProducer*)impl)->pushMsgAsync(data,key,pnum);
+            return (dynamic_cast<MessagePSProducer*>(impl))->pushMsgAsync(data,key,pnum);
         }
 
-          int MessagePSProducer::deleteKey(const std::string&key){
-
-            return ((MessagePSProducer*)impl)->deleteKey(key);
-        }     
+              
         }}}

@@ -2,8 +2,8 @@
  * @brief Abstraction for message producer/subscribe
  * 
  */
-#ifndef __MESSAGE_PS_KAFKA_ASIO_PRODUCER_H__
-#define __MESSAGE_PS_KAFKA_ASIO_PRODUCER_H__
+#ifndef __MESSAGE_PS_KAFKA_ASIO_CONSUMER_H__
+#define __MESSAGE_PS_KAFKA_ASIO_CONSUMER_H__
 #include <chaos/common/message/MessagePSConsumer.h>
 #include <boost/asio.hpp>
 #include "libkafka_asio/libkafka_asio.h"
@@ -14,7 +14,7 @@ namespace message {
 namespace kafka {
 namespace asio {
 
-class MessagePSKafkaAsioConsumer : public chaos::common::message::MessagePSConsumer,MessagePSKafkaAsio {
+class MessagePSKafkaAsioConsumer : public chaos::common::message::MessagePSConsumer,public MessagePSKafkaAsio {
  protected:
 
 void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,
@@ -23,14 +23,10 @@ void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,
   MessagePSKafkaAsioConsumer();
   MessagePSKafkaAsioConsumer(const std::string& k);
   ~MessagePSKafkaAsioConsumer();
-  int applyConfiguration();
 
   int getMsgAsync(const std::string&key,const int32_t pnum=0);
   int getMsgAsync(const std::string&key,uint32_t offset,const int32_t pnum=0);
-  int waitCompletion(const uint32_t timeout_ms){
-  return MessagePSKafkaAsio::waitCompletion(timeout_ms);
-
-}
+  
 
 };
 }  // namespace rdk

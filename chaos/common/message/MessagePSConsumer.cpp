@@ -47,11 +47,11 @@ namespace chaos {
 
             }
          int MessagePSConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
-             return ((MessagePSConsumer*)impl)->getMsgAsync(key,pnum);
+             return (dynamic_cast<MessagePSConsumer*>(impl))->getMsgAsync(key,pnum);
          }
 
            int MessagePSConsumer::getMsgAsync(const std::string&key,uint32_t off,const int32_t pnum){
-             return ((MessagePSConsumer*)impl)->getMsgAsync(key,off,pnum);
+             return (dynamic_cast<MessagePSConsumer*>(impl))->getMsgAsync(key,off,pnum);
          }
        
           

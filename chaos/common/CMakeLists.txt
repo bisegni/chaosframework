@@ -230,7 +230,7 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
   ENDIF()
 ENDIF()
 
-SET(BUILD_LIBRARY ${FrameworkLib})
+SET(BUILD_LIBRARY )
 
 SET(common_lib_src  ChaosCommon.cpp
                     chaos_errors.cpp
@@ -595,7 +595,7 @@ ENDIF(WIN32)
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE ${BUILD_LIBRARY})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${FrameworkLib} PRIVATE ${BUILD_LIBRARY})
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)

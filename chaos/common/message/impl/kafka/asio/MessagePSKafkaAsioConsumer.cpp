@@ -57,9 +57,9 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
 MessagePSKafkaAsioConsumer::~MessagePSKafkaAsioConsumer() {
 }
 
-MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer() {
+MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer():chaos::common::message::MessagePublishSubscribeBase("asio") {
 }
-MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& k) {
+MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("asio") {
 }
 int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
   FetchRequest request;
@@ -84,10 +84,6 @@ int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,uint32_t off,c
     return 0;
 }
 
-int MessagePSKafkaAsioConsumer::applyConfiguration() {
-  return MessagePSKafkaAsio::init(servers);
-
-}
 
 }  // namespace rdk
 }  // namespace kafka

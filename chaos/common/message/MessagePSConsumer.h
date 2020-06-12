@@ -10,7 +10,7 @@ namespace chaos {
     namespace common {
         namespace message {
 
-            class MessagePSConsumer: public MessagePublishSubscribeBase {
+            class MessagePSConsumer: public virtual MessagePublishSubscribeBase {
 
                 protected:
 
@@ -34,7 +34,7 @@ namespace chaos {
                 virtual int getMsgAsync(const std::string&key,uint32_t offset,const int32_t pnum=0);
                
                 int msgInQueue(){return msgs.size();}
-                chaos::common::data::CDWUniquePtr getMsg(int index){if(index<msgs.size()){return MOVE(msgs[index]);}  return chaos::common::data::CDWUniquePtr();}
+                chaos::common::data::CDWShrdPtr getMsg(int index){if(index<msgs.size()){return msgs[index];}  return chaos::common::data::CDWShrdPtr();}
 
                // virtual int retriveMsg(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum=0);
 

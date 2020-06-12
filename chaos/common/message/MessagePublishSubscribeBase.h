@@ -10,7 +10,7 @@
 namespace chaos {
     namespace common {
         namespace message {
-            typedef std::vector<chaos::common::data::CDWUniquePtr> msg_queue_t;
+            typedef std::vector<chaos::common::data::CDWShrdPtr> msg_queue_t;
 
             class MessagePublishSubscribeBase {
 
@@ -76,7 +76,21 @@ namespace chaos {
                 virtual int waitCompletion(const uint32_t timeout_ms=5000);
 
 
+                /**
+                 * @brief Delete a key
+                 * 
+                 * @param key key to remove
+                 * @return int 0 on success
+                 */
+                virtual int deleteKey(const std::string& key);
 
+                /**
+                 * @brief Create a key
+                 * 
+                 * @param key key to add
+                 * @return int 0 on success
+                 */
+                virtual int createKey(const std::string& key);
 
             };
         }
