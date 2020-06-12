@@ -57,12 +57,18 @@ int MessagePSKafkaAsioProducer::pushMsgAsync(const chaos::common::data::CDataWra
      ios.run();
   }*/
   ProduceRequest request;
-  
+//    boost::asio::io_service ioss;
+
   request.AddValue(std::string(data.getBSONRawData(),size), topic, pnum);
   MRDDBG_<< "["<<stats.counter<<","<<stats.oks<<","<<stats.errs<<"] Send size:"<<size<<" topic:"<<topic<<" p:"<<pnum;
   data_ready=false;
-
+  //Connection conn(ioss, configuration);
   connection->AsyncRequest(request, boost::bind(&MessagePSKafkaAsioProducer::HandleRequest,this,_1,_2));
+  //if(ios.stopped()){
+     // MRDDBG_<<"resetting ios";
+
+    ios.reset();
+ // }
   ios.run();
   
   err=stats.last_err;

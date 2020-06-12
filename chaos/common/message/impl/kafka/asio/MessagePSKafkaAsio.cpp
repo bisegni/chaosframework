@@ -16,6 +16,16 @@ namespace message {
 namespace kafka {
 namespace asio {
 
+void static_HandleMeta(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::MetadataResponse::OptionalType& response){
+
+ if(err){
+    MRDERR_
+     << " META "<< boost::system::system_error(err).what();
+ } else {
+    MRDDBG_<< "META produced message!";
+  
+ }
+}
 
 void MessagePSKafkaAsio::HandleMeta(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::MetadataResponse::OptionalType& response){
    data_ready=true;
@@ -28,6 +38,17 @@ void MessagePSKafkaAsio::HandleMeta(const ::libkafka_asio::Connection::ErrorCode
     MRDDBG_<< "["<<stats.counter<<","<<stats.oks<<","<<stats.errs<<"] META produced message!";
   stats.oks++;
  }
+}
+void static_HandleRequest(const Connection::ErrorCodeType& err,
+                   const ProduceResponse::OptionalType& response)
+{
+  if (err)
+  {
+    MRDERR_
+     << boost::system::system_error(err).what();
+    return;
+  }
+  MRDDBG_<< "Successfully produced message!";
 }
 
 void MessagePSKafkaAsio::HandleRequest(const Connection::ErrorCodeType& err,
@@ -46,7 +67,7 @@ void MessagePSKafkaAsio::HandleRequest(const Connection::ErrorCodeType& err,
     stats.last_err++;
     return;
   }
-  MRDDBG_<< "["<<stats.counter<<","<<stats.oks<<","<<stats.errs<<"] Successfully produced message!";
+ // MRDDBG_<< "["<<stats.counter<<","<<stats.oks<<","<<stats.errs<<"] Successfully produced message!";
   stats.oks++;
 }
 
@@ -70,7 +91,10 @@ void MessagePSKafkaAsio::poll(){
   int cnt=0;
   while(running){
   //  MRDDBG_<<"polling:"<<cnt++;
-
+  //  ios.reset();
+    if(ios.stopped()){
+      ios.reset();
+    }
     ios.run();
   }
   MRDDBG_<<"exiting poll thread";
@@ -106,10 +130,11 @@ int MessagePSKafkaAsio::applyConfiguration() {
       MRDDBG_<<"connecting...";
 
     connection = new   Connection(ios, configuration);
-    libkafka_asio::MetadataRequest request;
-    connection->AsyncRequest(request,  boost::bind(&MessagePSKafkaAsio::HandleMeta,this,_1,_2));
-    ios.run();
-    ret=waitCompletion();
+    //libkafka_asio::MetadataRequest request;
+   // connection->AsyncRequest(request,  boost::bind(&MessagePSKafkaAsio::HandleMeta,this,_1,_2));
+  // connection->AsyncRequest(request,&static_HandleMeta);
+   // ios.run();
+  // ret=waitCompletion();
   }
 
  // th=boost::thread(&MessagePSKafkaAsio::poll,this);
@@ -131,18 +156,21 @@ int MessagePSKafkaAsio::applyConfiguration() {
   }
 int MessagePSKafkaAsio::createKey(const std::string& key){
   libkafka_asio::MetadataRequest request;
+
   std::string         topic = key;
   std::replace(topic.begin(), topic.end(), '/', '.');
   
   data_ready=false;
 
   stats.last_err=0;
+  boost::asio::io_service ioss;
 
     MRDDBG_<<"create topic:"<<topic;
+  Connection con(ioss, configuration);
 
   request.AddTopicName(topic);
-  connection->AsyncRequest(request,  boost::bind(&MessagePSKafkaAsio::HandleMeta,this,_1,_2));
-  ios.run();
+  con.AsyncRequest(request,  boost::bind(&MessagePSKafkaAsio::HandleMeta,this,_1,_2));
+  ioss.run();
   return waitCompletion();
     
 }
@@ -151,21 +179,22 @@ int MessagePSKafkaAsio::deleteKey(const std::string& key) {
   int err;
   std::string         topic = key;
   std::replace(topic.begin(), topic.end(), '/', '.');
-  ProduceRequest request;
   MRDDBG_<<"deleting key:"<<topic;
+  ProduceRequest request;
 
-  request.ClearTopic(topic);
+  request.ClearTopicPartition(topic,0);
   data_ready=false;
   stats.last_err=0;
-  connection->AsyncRequest(request,boost::bind(&MessagePSKafkaAsio::HandleRequest,this,_1,_2));
-  ios.run();
-  if(request.ResponseExpected()==false){
-      cond.notify_all();
-      data_ready=true;
+  boost::asio::io_service ioss;
 
+  Connection con(ioss, configuration);
 
-  }
-  return waitCompletion();
+  con.AsyncRequest(request,boost::bind(&MessagePSKafkaAsio::HandleRequest,this,_1,_2));
+ // con.AsyncRequest(request,&static_HandleMeta);
+  ioss.run();
+  
+  err=waitCompletion();
+  return err;
 
   
 }
