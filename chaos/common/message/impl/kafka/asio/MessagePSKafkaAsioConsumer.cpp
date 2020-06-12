@@ -41,7 +41,9 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
          MRDDBG_<<"Retrieved:"<<(stats.counter-before);
 
     }
-    cond.notify_all();
+    data_ready=true;
+  cond.notify_all();
+
     
     if(handlers[ONARRIVE]){
        
@@ -70,18 +72,26 @@ MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& k):cha
 }
 int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
   FetchRequest request;
-  request.FetchTopic(key, pnum);
+  std::string         topic = key;
+  std::replace(topic.begin(), topic.end(), '/', '.');
+ 
+  request.FetchTopic(topic, pnum);
   stats.last_err=0;
   // Send the prepared fetch request.
   // The connection will attempt to automatically connect to the broker,
   // specified in the configuration.
   connection->AsyncRequest(request, boost::bind(&MessagePSKafkaAsioConsumer::HandleRequest,this,_1,_2));
+  ios.reset();
+  ios.run();
   return stats.last_err;
 }
 
 int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,uint32_t off,const int32_t pnum){
   FetchRequest request;
-  request.FetchTopic(key, pnum,off);
+  std::string         topic = key;
+  std::replace(topic.begin(), topic.end(), '/', '.');
+ 
+  request.FetchTopic(topic, pnum,off);
   stats.last_err=0;
 
   // Send the prepared fetch request.
