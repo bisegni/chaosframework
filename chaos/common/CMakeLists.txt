@@ -552,27 +552,11 @@ ENDIF()
 
 
 
-IF (BUILD_FORCE_STATIC  )
-  ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
-ELSE (BUILD_FORCE_STATIC)
-  ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
-  set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
-ENDIF (BUILD_FORCE_STATIC)
 
 
 
 
-IF (CHAOS_PROMETHEUS)
-add_dependencies(${PROJECT_NAME} prometheus)
-endif()
 
-add_dependencies(${PROJECT_NAME} libzmq)
-add_dependencies(${PROJECT_NAME} jsonCpp)
-
-IF (CLING_VIRTUAL_MACHINE)
-  add_dependencies(${PROJECT_NAME} cling)
-ENDIF()
-target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
 
 
 IF(WIN32)
@@ -595,7 +579,29 @@ ENDIF(WIN32)
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${FrameworkLib} PRIVATE ${BUILD_LIBRARY})
+
+IF (BUILD_FORCE_STATIC  )
+  ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} ${BUILD_LIBRARY})
+ELSE (BUILD_FORCE_STATIC)
+  ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
+  set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${FrameworkLib} PRIVATE ${BUILD_LIBRARY})
+ENDIF (BUILD_FORCE_STATIC)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})
+
+IF (CHAOS_PROMETHEUS)
+add_dependencies(${PROJECT_NAME} prometheus)
+endif()
+
+add_dependencies(${PROJECT_NAME} libzmq)
+add_dependencies(${PROJECT_NAME} jsonCpp)
+
+IF (CLING_VIRTUAL_MACHINE)
+  add_dependencies(${PROJECT_NAME} cling)
+ENDIF()
+
 
 FILE(GLOB files "external_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/external_unit)
