@@ -53,7 +53,16 @@ namespace chaos {
            int MessagePSConsumer::getMsgAsync(const std::string&key,uint32_t off,const int32_t pnum){
              return (dynamic_cast<MessagePSConsumer*>(impl))->getMsgAsync(key,off,pnum);
          }
-       
+        int MessagePSConsumer::msgInQueue(){return (dynamic_cast<MessagePSConsumer*>(impl))->msgInQueue();}
+        chaos::common::data::CDWShrdPtr MessagePSConsumer::getMsg(int index){
+
+            if(index<msgInQueue()){
+                return (dynamic_cast<MessagePSConsumer*>(impl))->getMsg( index);
+            }  
+            
+        return chaos::common::data::CDWShrdPtr();
+        }
+
           
               
         }}}    
