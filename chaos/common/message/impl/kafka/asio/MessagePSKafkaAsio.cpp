@@ -16,17 +16,37 @@ namespace message {
 namespace kafka {
 namespace asio {
 
-void static_HandleMeta(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::MetadataResponse::OptionalType& response){
 
- if(err){
+
+using libkafka_asio::OffsetRequest;
+using libkafka_asio::OffsetResponse;
+
+void MessagePSKafkaAsio::HandleOffset(const Connection::ErrorCodeType& err,
+                   const OffsetResponse::OptionalType& response)
+{
+  if (err || !response)
+  {
     MRDERR_
-     << " META "<< boost::system::system_error(err).what();
- } else {
-    MRDDBG_<< "META produced message!";
-  
- }
-}
+      << "Error: " << boost::system::system_error(err).what();
+    return;
+  }
+  OffsetResponse::Partition::OptionalType partition =
+    response->TopicPartitionOffset(stats.key, stats.partition);
+  if (!partition || partition->offsets.empty())
+  {
+        MRDERR_<< "Failed to fetch offset!";
+    data_ready=true;
+    cond.notify_all();
+    stats.last_err=1;
+    return;
+  }
+  MRDDBG_
+    << "Received latest offset: " << partition->offsets[0];
+  stats.offset=partition->offsets[0];
+  data_ready=true;
+  cond.notify_all();
 
+}
 void MessagePSKafkaAsio::HandleMeta(const ::libkafka_asio::Connection::ErrorCodeType& err,const ::libkafka_asio::MetadataResponse::OptionalType& response){
    data_ready=true;
   cond.notify_all();
@@ -154,25 +174,38 @@ int MessagePSKafkaAsio::applyConfiguration() {
     return stats.last_err; 
     
   }
+
+
 int MessagePSKafkaAsio::createKey(const std::string& key){
   libkafka_asio::MetadataRequest request;
 
-  std::string         topic = key;
-  std::replace(topic.begin(), topic.end(), '/', '.');
-  
-  data_ready=false;
-
-  stats.last_err=0;
   boost::asio::io_service ioss;
-
-    MRDDBG_<<"create topic:"<<topic;
+  prepareRequest(key);
+    MRDDBG_<<"create topic:"<<stats.key;
   Connection con(ioss, configuration);
 
-  request.AddTopicName(topic);
+  request.AddTopicName(stats.key);
   con.AsyncRequest(request,  boost::bind(&MessagePSKafkaAsio::HandleMeta,this,_1,_2));
   ioss.run();
   return waitCompletion();
     
+}
+int MessagePSKafkaAsio::getOffset(const std::string& key,uint32_t &off,int type,int par){
+  int err;
+  boost::asio::io_service ioss;
+  Connection connection(ioss, configuration);
+  prepareRequest(key,"",0,par);
+
+  // Request the latest offset for partition 1 of topic 'mytopic' on the
+  // configured broker.
+  OffsetRequest request;
+  request.FetchTopicOffset(stats.key, par, type);
+
+  connection.AsyncRequest(request, boost::bind(&MessagePSKafkaAsio::HandleOffset,this,_1,_2));
+  err=waitCompletion();
+  off=stats.offset;
+  return err;
+
 }
 
 int MessagePSKafkaAsio::deleteKey(const std::string& key) {

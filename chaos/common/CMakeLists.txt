@@ -517,7 +517,7 @@ SET(common_lib_src ${common_lib_src}
                     rpc/RpcClientMetricCollector.cpp
                     rpc/RpcServerMetricCollector.cpp)
 
-SET(BUILD_LIBRARY prometheus-cpp-pull prometheus-cpp-push prometheus-cpp-core ${BUILD_LIBRARY} )
+SET(FrameworkLib prometheus-cpp-pull prometheus-cpp-push prometheus-cpp-core ${FrameworkLib} )
 
 ELSE(CHAOS_PROMETHEUS)
 MESG("Metrics source code is not included")  

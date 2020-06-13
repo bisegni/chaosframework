@@ -22,7 +22,7 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
 
     if(err==0){
         int before=stats.counter;
-
+        
         for(FetchResponse::const_iterator i=response->begin();i!=response->end();i++){
           stats.counter++;
           try{
@@ -75,7 +75,7 @@ int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,const int32_t 
   std::string         topic = key;
   std::replace(topic.begin(), topic.end(), '/', '.');
  
-  request.FetchTopic(topic, pnum);
+  request.FetchTopic(topic, pnum,current_offset);
   stats.last_err=0;
   // Send the prepared fetch request.
   // The connection will attempt to automatically connect to the broker,
@@ -90,7 +90,7 @@ int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,uint32_t off,c
   FetchRequest request;
   std::string         topic = key;
   std::replace(topic.begin(), topic.end(), '/', '.');
- 
+  
   request.FetchTopic(topic, pnum,off);
   stats.last_err=0;
 

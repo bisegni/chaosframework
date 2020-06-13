@@ -20,6 +20,7 @@ class MessagePSKafkaAsioConsumer : public chaos::common::message::MessagePSConsu
 void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,
                    const ::libkafka_asio::FetchResponse::OptionalType& response);
  public:
+  
   MessagePSKafkaAsioConsumer();
   MessagePSKafkaAsioConsumer(const std::string& k);
   ~MessagePSKafkaAsioConsumer();

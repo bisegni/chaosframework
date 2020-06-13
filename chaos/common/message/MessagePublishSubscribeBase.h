@@ -21,7 +21,13 @@ namespace chaos {
                     uint64_t oks;
                     uint64_t errs;
                     int last_err;
-                    msgstats():counter(0),oks(0),errs(0),last_err(0){}
+
+                    uint32_t offset;
+                    std::string key;
+                    std::string broker;
+                    uint32_t partition;
+
+                    msgstats():counter(0),oks(0),errs(0),last_err(0),offset(0),partition(0){}
                 } msgstats_t;
                 enum eventTypes{
                     ONDELIVERY,
