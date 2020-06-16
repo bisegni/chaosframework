@@ -13,13 +13,29 @@ namespace rdk {
 MessagePSRDKafka::~MessagePSRDKafka() {
 }
 
-MessagePSRDKafka::MessagePSRDKafka() {
+
+void MessagePSRDKafka::poll(){
+    sleep(1);
+}
+MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("rdk") {
   conf       = rd_kafka_conf_new();
   topic_conf = rd_kafka_topic_conf_new();
 }
 
 int MessagePSRDKafka::setOption(const std::string& key, const std::string& value) {
+  char errstr[512];
+  MRDDBG_<<"set \""<<key<<"\"="<<value;
+  if (rd_kafka_conf_set(conf, key.c_str(), value.c_str(), errstr, sizeof(errstr)) != RD_KAFKA_CONF_OK) {
+    MRDERR_ << "error:" << errstr;
+
+    return -2;
+  }
   return 0;
+}
+int MessagePSRDKafka::setMaxMsgSize(const int size){
+  char sinteger[256];
+  sprintf(sinteger,"%d",size);
+  return setOption("message.max.bytes",sinteger);
 }
 
 int MessagePSRDKafka::init(std::set<std::string>& servers) {
@@ -61,6 +77,23 @@ int MessagePSRDKafka::init(std::set<std::string>& servers) {
   }
   return 0;
 }
+
+
+
+  
+  int MessagePSRDKafka::deleteKey(const std::string& key){
+    return 0;
+
+  }
+  int MessagePSRDKafka::createKey(const std::string& key){
+    return 0;
+
+  }
+  
+  int MessagePSRDKafka::getOffset(const std::string& key,uint32_t &off,int type,int par){
+    return 0;
+
+  }
 
 }  // namespace rdk
 }  // namespace kafka

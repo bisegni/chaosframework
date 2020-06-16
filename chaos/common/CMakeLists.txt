@@ -418,7 +418,8 @@ SET(common_lib_src ${common_lib_src}
                     message/MessageRequestDomain.cpp
                     message/MessagePublishSubscribeBase.cpp
                     message/MessagePSProducer.cpp
-                    message/MessagePSConsumer.cpp)
+                    message/MessagePSConsumer.cpp
+                    message/MessagePSDriver.cpp)
 
 IF(KAFKA_ASIO_ENABLE)
 SET(CMAKE_CXX_STANDARD 11)
@@ -431,7 +432,7 @@ ENDIF(KAFKA_ASIO_ENABLE)
 
 IF(KAFKA_RDK_ENABLE)
 SET(common_lib_src ${common_lib_src}
-message/impl/kafka/rdk/MessagePSKafkaProducer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)
+message/impl/kafka/rdk/MessagePSKafkaProducer.cpp message/impl/kafka/rdk/MessagePSRDKafkaConsumer.cpp message/impl//kafka/rdk/MessagePSRDKafka.cpp)
 SET(BUILD_LIBRARY rdkafka ${BUILD_LIBRARY} )
 ENDIF(KAFKA_RDK_ENABLE)
 

@@ -13,14 +13,17 @@ namespace chaos {
             class MessagePSConsumer: public virtual MessagePublishSubscribeBase {
 
                 protected:
-
                 msg_queue_t msgs;
                 std::string client_id;
                 std::string defkey;
-                public:
-                MessagePSConsumer();
+                std::string groupid;
+                boost::atomic<uint32_t> que_elem;
+                // subscribe list
+                std::set<std::string> keylist;
 
-                MessagePSConsumer(const std::string& clientid,const std::string& k="");
+                public:
+
+                MessagePSConsumer(const std::string& clientid,const std::string& gid,const std::string& k="");
                 virtual ~MessagePSConsumer();
                 
                 /**
@@ -33,10 +36,11 @@ namespace chaos {
                 virtual int getMsgAsync(const std::string&key,const int32_t pnum=0);
                 virtual int getMsgAsync(const std::string&key,uint32_t offset,const int32_t pnum=0);
                
-                virtual int msgInQueue();
-                virtual chaos::common::data::CDWShrdPtr getMsg(int index);
+                int msgInQueue(){return que_elem;}
+                ele_uptr_t getMsg(int timeo=MSG_TIMEOUT_MS);
                // virtual int retriveMsg(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum=0);
 
+                virtual int subscribe(const std::string& key);
 
             };
         }

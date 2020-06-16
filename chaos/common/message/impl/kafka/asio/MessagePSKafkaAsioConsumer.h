@@ -21,15 +21,13 @@ void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,
                    const ::libkafka_asio::FetchResponse::OptionalType& response);
  public:
   
-  MessagePSKafkaAsioConsumer();
-  MessagePSKafkaAsioConsumer(const std::string& k);
+  MessagePSKafkaAsioConsumer(const std::string& gid,const std::string& k);
   ~MessagePSKafkaAsioConsumer();
 
   int getMsgAsync(const std::string&key,const int32_t pnum=0);
   int getMsgAsync(const std::string&key,uint32_t offset,const int32_t pnum=0);
-  int msgInQueue(){return msgs.size();}
-  chaos::common::data::CDWShrdPtr getMsg(int index){if(index<msgs.size()){return msgs[index];}  return chaos::common::data::CDWShrdPtr();}
-
+  int msgInQueue(){return que_elem;}
+  ele_uptr_t getMsg(int timeo);
 
 };
 }  // namespace rdk

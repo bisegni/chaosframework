@@ -76,9 +76,9 @@ void MessagePSKafkaAsio::HandleRequest(const Connection::ErrorCodeType& err,
 {
   data_ready=true;
   cond.notify_all();
-   if(handlers[ONDELIVERY]){
-      handlers[ONDELIVERY](msg_queue_t(),((err)?1:0));
-  }
+  /* if(handlers[ONDELIVERY]){
+      handlers[ONDELIVERY](,((err)?1:0));
+  }*/
   if (err)
   {
     MRDERR_

@@ -7,14 +7,23 @@
 #include <set>
 #include <string>
 #include <chaos/common/data/CDataWrapper.h>
+#include <boost/lockfree/queue.hpp>
+#define  MSG_TIMEOUT_MS 10000
 namespace chaos {
     namespace common {
         namespace message {
-            typedef std::vector<chaos::common::data::CDWShrdPtr> msg_queue_t;
 
+            typedef struct ele {std::string key;uint32_t off;uint32_t par;chaos::common::data::CDWShrdPtr cd;} ele_t;
+            typedef boost::lockfree::queue<ele_t*> msg_queue_t;
+            typedef ChaosUniquePtr<ele_t> ele_uptr_t;
+            //typedef std::vector<chaos::common::data::CDWShrdPtr> msg_queue_t;
+            
             class MessagePublishSubscribeBase {
 
+
                 public:
+                
+                typedef void (*msgHandler)(const std::string&key,chaos::common::data::CDWUniquePtr& ptr);
                 typedef void (*msgpshandler)(const msg_queue_t&data,const int error_code);
                 typedef struct msgstats {
                     uint64_t counter;
@@ -35,19 +44,26 @@ namespace chaos {
                     ONERROR
                 };
                 protected:
+                bool        running;
+                std::string errstr;
                 std::set<std::string> servers;
                 std::string id;
-                std::map< eventTypes,msgpshandler> handlers;
+                std::map< eventTypes,msgHandler> handlers;
                 msgstats_t stats;
-                MessagePublishSubscribeBase*impl;
+                boost::atomic<bool>   data_ready;
+                boost::mutex mutex_cond;
+                boost::condition_variable cond;
+                boost::thread th;
+                void thfunc();
+ 
                 uint64_t    counter,oks,errs;
 
                 public:
-                MessagePublishSubscribeBase(const std::string& id){};
+                MessagePublishSubscribeBase(const std::string& id):data_ready(false){};
 
                 msgstats_t getStats() const{ return stats;}
 
-                virtual ~MessagePublishSubscribeBase(){};
+                virtual ~MessagePublishSubscribeBase();
                 void addServer(const std::string&url);
 
                 /**
@@ -55,7 +71,7 @@ namespace chaos {
                  * 
                  * @param ev 
                  */
-                virtual int addHandler(eventTypes ev,msgpshandler);
+                virtual int addHandler(eventTypes ev,msgHandler);
 
                 /**
                  * @brief library specific options
@@ -79,7 +95,7 @@ namespace chaos {
                  * @param timeout timeout in ms
                  * @return int 0 if success, negative if error
                  */
-                virtual int waitCompletion(const uint32_t timeout_ms=5000);
+                virtual int waitCompletion(const uint32_t timeout_ms=MSG_TIMEOUT_MS);
 
 
                 /**
@@ -98,6 +114,18 @@ namespace chaos {
                  */
                 virtual int createKey(const std::string& key);
 
+                /**
+                 * @brief Set Maximum message size
+                 * 
+                 * @param size set the maximum message size if supported
+                 * @return int 0 on success
+                 */
+                virtual int setMaxMsgSize(const int size);
+
+                void start();
+                void stop();
+                virtual void poll();
+                std::string getLastError(){return errstr;}
             };
         }
         }

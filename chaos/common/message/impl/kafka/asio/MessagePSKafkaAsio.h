@@ -20,9 +20,6 @@ class MessagePSKafkaAsio:public virtual MessagePublishSubscribeBase {
   boost::asio::io_service ios;
   boost::thread th;
   bool        running;
-  bool        data_ready;
-  boost::mutex mutex_cond;
-  boost::condition_variable cond;
   uint32_t last_offset;
   uint32_t first_offset;
   uint32_t current_offset;
@@ -47,7 +44,7 @@ void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,const :
 void poll();
 
  public:
-  MessagePSKafkaAsio():MessagePublishSubscribeBase("asio"),connection(NULL),running(false),data_ready(false),first_offset(0),last_offset(0),current_offset(0) {
+  MessagePSKafkaAsio():MessagePublishSubscribeBase("asio"),connection(NULL),running(false),first_offset(0),last_offset(0),current_offset(0) {
 }
 
   ~MessagePSKafkaAsio();

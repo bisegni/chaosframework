@@ -29,8 +29,12 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
           const MessageAndOffset& msg=*i;
           const libkafka_asio::Bytes& bytes=msg.value();
           
-          chaos::common::data::CDWShrdPtr t(new chaos::common::data::CDataWrapper((const char*) &(*bytes)[0], bytes->size()));
-          msgs.push_back(t);
+          chaos::common::data::CDWUniquePtr t(new chaos::common::data::CDataWrapper((const char*) &(*bytes)[0], bytes->size()));
+        //  msgs.push_back(t);
+          if(handlers[ONARRIVE]){
+       
+            handlers[ONARRIVE](stats.key,t);
+          }
           stats.oks++;
           } catch(...){
                 MRDERR_<<" Not valid bson data";
@@ -45,10 +49,7 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
   cond.notify_all();
 
     
-    if(handlers[ONARRIVE]){
-       
-      handlers[ONARRIVE](msgs,((err)?1:0));
-    }
+    
 
   if (err)
   {
@@ -66,10 +67,14 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
 MessagePSKafkaAsioConsumer::~MessagePSKafkaAsioConsumer() {
 }
 
-MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer():chaos::common::message::MessagePublishSubscribeBase("asio") {
+MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& gid,const std::string& k):chaos::common::message::MessagePublishSubscribeBase("asio"),chaos::common::message::MessagePSConsumer("asio",gid,defkey) {
 }
-MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("asio") {
-}
+
+
+ele_uptr_t MessagePSKafkaAsioConsumer::getMsg(int timeo){
+ return ele_uptr_t();
+  }
+
 int MessagePSKafkaAsioConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
   FetchRequest request;
   std::string         topic = key;

@@ -16,8 +16,11 @@ class MessagePSKafkaProducer : public MessagePSRDKafka, public chaos::common::me
  protected:
   rd_kafka_t* rk;
   bool        running;
+  public:
 
- public:
+  void HandleRequest(rd_kafka_t*               rk,
+                      const rd_kafka_message_t* rkmessage);
+ 
   MessagePSKafkaProducer();
   MessagePSKafkaProducer(const std::string& k);
   ~MessagePSKafkaProducer();
@@ -26,8 +29,9 @@ class MessagePSKafkaProducer : public MessagePSRDKafka, public chaos::common::me
 
   int  applyConfiguration();
   void poll();
+
   int deleteKey(const std::string&key);
-  int waitCompletion(const uint32_t timeout_ms=5000);
+  int flush(const int timeo=10000);
 
 };
 }  // namespace rdk

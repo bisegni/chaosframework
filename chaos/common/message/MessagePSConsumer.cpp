@@ -1,6 +1,6 @@
 #include "MessagePSConsumer.h"
 #ifdef KAFKA_RDK_ENABLE
-//#include "impl/kafka/rdk/MessagePSKafkaConsumer.h"
+#include "impl/kafka/rdk/MessagePSRDKafkaConsumer.h"
 #endif
 
 #ifdef KAFKA_ASIO_ENABLE
@@ -11,58 +11,70 @@
 #define MRDAPP_ INFO_LOG(MessagePSConsumer)
 #define MRDDBG_ DBG_LOG(MessagePSConsumer)
 #define MRDERR_ ERR_LOG(MessagePSConsumer)
-
+#define MAXQUEUELEN 1000
 namespace chaos {
-    namespace common {
-        namespace message {
+namespace common {
+namespace message {
 
-         /*   MessagePSConsumer::MessagePSConsumer(const std::string& clientid):MessagePublishSubscribeBase(clientid){
+/*   MessagePSConsumer::MessagePSConsumer(const std::string& clientid):MessagePublishSubscribeBase(clientid){
                 
             };*/
-            MessagePSConsumer::MessagePSConsumer():MessagePublishSubscribeBase(""),defkey(""){
-                impl=NULL;
-            }
 
-            MessagePSConsumer::MessagePSConsumer(const std::string& clientid,const std::string& k):MessagePublishSubscribeBase(clientid),defkey(k){
-                impl = NULL;
-                #ifdef KAFKA_RDK_ENABLE
+MessagePSConsumer::MessagePSConsumer(const std::string& clientid, const std::string& gid, const std::string& k)
+    : MessagePublishSubscribeBase(clientid), groupid(gid), defkey(k), msgs(MAXQUEUELEN),que_elem(0)
+{
 
-                if(clientid=="RDK" || clientid=="rdk"){
-                   //x impl = new kafka::rdk::MessagePSKafkaConsumer();
-                }
-                #endif
-                #ifdef KAFKA_ASIO_ENABLE
-                if(clientid=="ASIO"||clientid=="asio"){
-                    impl = new kafka::asio::MessagePSKafkaAsioConsumer();
-                }
-                #endif
+                                                                      };
 
-                if(impl==NULL){
-                    throw chaos::CException(-5,"cannot find a Kafka driver for:"+clientid,__PRETTY_FUNCTION__);
-                }
 
-            };
-            MessagePSConsumer::~MessagePSConsumer(){
-                if(impl){delete impl;}
 
-            }
-         int MessagePSConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
-             return (dynamic_cast<MessagePSConsumer*>(impl))->getMsgAsync(key,pnum);
-         }
+static void removeElement(ele_t*p){
+    delete p;
+}
+MessagePSConsumer::~MessagePSConsumer() {
 
-           int MessagePSConsumer::getMsgAsync(const std::string&key,uint32_t off,const int32_t pnum){
-             return (dynamic_cast<MessagePSConsumer*>(impl))->getMsgAsync(key,off,pnum);
-         }
-        int MessagePSConsumer::msgInQueue(){return (dynamic_cast<MessagePSConsumer*>(impl))->msgInQueue();}
-        chaos::common::data::CDWShrdPtr MessagePSConsumer::getMsg(int index){
-
-            if(index<msgInQueue()){
-                return (dynamic_cast<MessagePSConsumer*>(impl))->getMsg( index);
-            }  
-            
-        return chaos::common::data::CDWShrdPtr();
-        }
-
-          
+     msgs.consume_all(removeElement);
               
-        }}}    
+}
+int MessagePSConsumer::getMsgAsync(const std::string& key, const int32_t pnum) {
+  return 0;
+}
+
+int MessagePSConsumer::getMsgAsync(const std::string& key, uint32_t off, const int32_t pnum) {
+  return 0;
+}
+ele_uptr_t MessagePSConsumer::getMsg(int timeo) {
+  ele_t* ele;
+
+  if (msgs.empty()) {
+    data_ready = false;
+    MRDDBG_ << " no messages yet, waiting..";
+
+    if (waitCompletion(timeo) != 0) {
+      MRDERR_ << " error waiting";
+    }
+  }
+  if (msgs.pop(ele)) {
+      que_elem--;
+    if (ele) {
+      return ele_uptr_t(ele);
+    }
+  }
+  MRDDBG_ << " no messages yet, waiting..";
+
+  return ele_uptr_t();
+}
+
+int MessagePSConsumer::subscribe(const std::string& key) {
+  std::string topic = key;
+  std::replace(topic.begin(), topic.end(), '/', '.');
+
+  keylist.insert(topic);
+  MRDDBG_ <<keylist.size()<< "] subscribed to:"<<topic;
+
+  return 0;
+}
+
+}  // namespace message
+}  // namespace common
+}  // namespace chaos
