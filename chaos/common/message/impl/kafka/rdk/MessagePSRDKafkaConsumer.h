@@ -6,7 +6,6 @@
 #define __MESSAGE_PS_KAFKA_RDK_CONSUMER_H__
 #include <chaos/common/message/MessagePSConsumer.h>
 #include "MessagePSRDKafka.h"
-#include "MessagePSKafkaAsio.h"
 namespace chaos {
 namespace common {
 namespace message {

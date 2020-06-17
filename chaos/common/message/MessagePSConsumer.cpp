@@ -48,7 +48,7 @@ ele_uptr_t MessagePSConsumer::getMsg(int timeo) {
 
   if (msgs.empty()) {
     data_ready = false;
-    MRDDBG_ << " no messages yet, waiting..";
+    MRDDBG_ << que_elem<<"] no messages yet, waiting..";
 
     if (waitCompletion(timeo) != 0) {
       MRDERR_ << " error waiting";
@@ -60,8 +60,6 @@ ele_uptr_t MessagePSConsumer::getMsg(int timeo) {
       return ele_uptr_t(ele);
     }
   }
-  MRDDBG_ << " no messages yet, waiting..";
-
   return ele_uptr_t();
 }
 
