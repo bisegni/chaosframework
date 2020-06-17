@@ -3,7 +3,7 @@ project(chaos_common)
 #### required libraries
 MESSAGE(" CMAKELIST framework/chaos/common")
 MESSAGE ("CHAOS_TARGET:" ${CHAOS_TARGET})
-option(KAFKA_ASIO_ENABLE "KAFKA ASIO ENABLE" ON)
+option(KAFKA_ASIO_ENABLE "KAFKA ASIO ENABLE" OFF)
 
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
