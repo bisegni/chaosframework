@@ -104,6 +104,12 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_METRIC_ENABLE, po::value< bool >()->zero_tokens(), "Enable metric");
         addOption(InitOption::OPT_METRIC_WEB_SERVER_PORT, po::value< std::string >()->default_value("10000"), "Specify the port where publish the prometheus metrics");
 #endif
+        addOption(InitOption::OPT_MSG_BROKER_SERVER, po::value< std::string >()->default_value("localhost:9092"), "Message broker");
+        addOption(InitOption::OPT_MSG_BROKER_DRIVER, po::value< std::string >()->default_value("kafka-rdk"), "Message broker driver");
+
+
+#
+
     } catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }

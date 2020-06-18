@@ -123,7 +123,9 @@ namespace chaos {
         //! optional description of the node
         static const char * const   OPT_NODE_DESC						= "node-desc";
 
-        
+        static const char * const   OPT_MSG_BROKER_SERVER			    = "msg-broker-server";
+        static const char * const   OPT_MSG_BROKER_DRIVER			    = "msg-broker-driver";
+ 
     }
     /** @} */ // end of ParamOption
     
@@ -714,6 +716,8 @@ namespace chaos {
          store another datapack into the live system[uint64]
          */
         static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
+        static const char * const DS_BROKER_ADDRESS_LIST                            = "dsndk_broker_list";
+
         
     }
     /** @} */ // end of DataServiceNodeDefinitionKey

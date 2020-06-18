@@ -67,7 +67,7 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
 MessagePSKafkaAsioConsumer::~MessagePSKafkaAsioConsumer() {
 }
 
-MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& gid,const std::string& k):chaos::common::message::MessagePublishSubscribeBase("asio"),chaos::common::message::MessagePSConsumer("asio",gid,defkey) {
+MessagePSKafkaAsioConsumer::MessagePSKafkaAsioConsumer(const std::string& gid,const std::string& k):chaos::common::message::MessagePublishSubscribeBase("kafka-asio"),chaos::common::message::MessagePSConsumer("kafka-asio",gid,defkey) {
 }
 
 

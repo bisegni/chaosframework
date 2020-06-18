@@ -44,7 +44,7 @@ void HandleRequest(const ::libkafka_asio::Connection::ErrorCodeType& err,const :
 void poll();
 
  public:
-  MessagePSKafkaAsio():MessagePublishSubscribeBase("asio"),connection(NULL),running(false),first_offset(0),last_offset(0),current_offset(0) {
+  MessagePSKafkaAsio():MessagePublishSubscribeBase("kafka-asio"),connection(NULL),running(false),first_offset(0),last_offset(0),current_offset(0) {
 }
 
   ~MessagePSKafkaAsio();

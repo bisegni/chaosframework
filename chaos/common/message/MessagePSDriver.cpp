@@ -19,12 +19,12 @@ namespace chaos {
 
 #ifdef KAFKA_RDK_ENABLE
 
-                if(drvname=="RDK" || drvname=="rdk"){
+                if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
                     return producer_uptr_t(new kafka::rdk::MessagePSKafkaProducer());
                 }
 #endif
 #ifdef KAFKA_ASIO_ENABLE
-                if(drvname=="ASIO"||drvname=="asio"){
+                if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
                     return  producer_uptr_t(new kafka::asio::MessagePSKafkaAsioProducer());
                 }
 #endif
@@ -37,12 +37,12 @@ namespace chaos {
          
    #ifdef KAFKA_RDK_ENABLE
 
-                if(drvname=="RDK" || drvname=="rdk"){
+                if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
                     return  consumer_uptr_t(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
                 }
     #endif
     #ifdef KAFKA_ASIO_ENABLE
-                if(drvname=="ASIO"||drvname=="asio"){
+                if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
                     return consumer_uptr_t(new kafka::asio::MessagePSKafkaAsioConsumer(gid,k));
                 }
     #endif

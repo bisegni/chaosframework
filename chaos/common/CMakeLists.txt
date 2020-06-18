@@ -106,27 +106,27 @@ IF (CHAOS_TARGET)
      ENDIF()
 
 
-
+     ExternalProject_Add(
+      zlib
+      GIT_REPOSITORY https://github.com/madler/zlib.git 
+      PREFIX "${CMAKE_BINARY_DIR}/ext_dep/zlib-prefix"
+      SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-src"
+      BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-build"
+   
+      CMAKE_ARGS
+       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      LOG_DOWNLOAD 1
+       LOG_UPDATE 1
+       LOG_CONFIGURE 1
+       LOG_BUILD 1
+       LOG_INSTALL 1
+     )
+   
 IF(KAFKA_ASIO_ENABLE)
 MESSAGE("ENABLING DEP KAFKA")
 
 add_definitions(-DKAFKA_ASIO_ENABLE)
 
-ExternalProject_Add(
-	 zlib
-	 GIT_REPOSITORY https://github.com/madler/zlib.git 
-   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/zlib-prefix"
-   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-src"
-   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/zlib-build"
-
-   CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-	 LOG_DOWNLOAD 1
-    LOG_UPDATE 1
-    LOG_CONFIGURE 1
-    LOG_BUILD 1
-    LOG_INSTALL 1
-	)
 
 ExternalProject_Add(
 	 snappylib
@@ -396,7 +396,8 @@ SET(common_lib_src ${common_lib_src}
                     direct_io/channel/DirectIOPerformanceServerChannel.cpp
                     direct_io/channel/DirectIOPerformanceClientChannel.cpp
                     direct_io/channel/DirectIOSystemAPIServerChannel.cpp
-                    direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
+                    direct_io/channel/DirectIOSystemAPIClientChannel.cpp
+                    )
 
 SET(common_lib_src ${common_lib_src}
                     io/IODataDriver.cpp
@@ -404,7 +405,7 @@ SET(common_lib_src ${common_lib_src}
                     io/ManagedDirectIODataDriver.cpp
                     io/QueryCursor.cpp
 					          io/QueryIndexCursor.cpp
-                    io/SharedManagedDirecIoDataDriver.cpp)
+                    io/SharedManagedDirecIoDataDriver.cpp io/IODirectIOPSMsgDriver.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     message/DeviceMessageChannel.cpp
@@ -426,7 +427,7 @@ SET(CMAKE_CXX_STANDARD 11)
 INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/snappy/include message/impl/kafka/asio/ )
 SET(common_lib_src ${common_lib_src} message/impl/kafka/asio/MessagePSKafkaAsioProducer.cpp message/impl/kafka/asio/MessagePSKafkaAsio.cpp message/impl/kafka/asio/MessagePSKafkaAsioConsumer.cpp)
 link_directories(${CMAKE_INSTALL_PREFIX}/snappy/lib ${CMAKE_INSTALL_PREFIX}/snappy/lib64)
-SET(BUILD_LIBRARY snappy z ${BUILD_LIBRARY} )
+SET(BUILD_LIBRARY snappy  ${BUILD_LIBRARY} )
 
 ENDIF(KAFKA_ASIO_ENABLE)
 
@@ -583,11 +584,11 @@ ENDIF()
 
 IF (BUILD_FORCE_STATIC  )
   ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${FrameworkLib} ${BUILD_LIBRARY})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} z ${FrameworkLib} ${BUILD_LIBRARY})
 ELSE (BUILD_FORCE_STATIC)
   ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
   set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${FrameworkLib} PRIVATE ${BUILD_LIBRARY})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC z ${FrameworkLib} PRIVATE ${BUILD_LIBRARY})
 ENDIF (BUILD_FORCE_STATIC)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE CLING_VIRTUAL_MACHINE=${CLING_VIRTUAL_MACHINE})

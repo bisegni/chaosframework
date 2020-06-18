@@ -60,10 +60,10 @@ return 0;
 
 }
 
-MessagePSKafkaProducer::MessagePSKafkaProducer():chaos::common::message::MessagePublishSubscribeBase("rdk") {
+MessagePSKafkaProducer::MessagePSKafkaProducer():chaos::common::message::MessagePublishSubscribeBase("kafka-rdk") {
   running = false;
 }
-MessagePSKafkaProducer::MessagePSKafkaProducer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("rdk") {
+MessagePSKafkaProducer::MessagePSKafkaProducer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("kafka-rdk") {
 }
 int MessagePSKafkaProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum) {
   return 0;

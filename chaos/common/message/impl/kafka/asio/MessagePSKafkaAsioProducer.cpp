@@ -34,9 +34,9 @@ static void cb(const Connection::ErrorCodeType& err,
 MessagePSKafkaAsioProducer::~MessagePSKafkaAsioProducer() {
 }
 
-MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer():chaos::common::message::MessagePublishSubscribeBase("asio") {
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer():chaos::common::message::MessagePublishSubscribeBase("kafka-asio") {
 }
-MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("asio"){
+MessagePSKafkaAsioProducer::MessagePSKafkaAsioProducer(const std::string& k):chaos::common::message::MessagePublishSubscribeBase("kafka-asio"){
 }
 int MessagePSKafkaAsioProducer::pushMsg(const chaos::common::data::CDataWrapper& data, const std::string& key,const int32_t pnum) {
   return 0;

@@ -70,7 +70,7 @@ MessagePSRDKafkaConsumer::~MessagePSRDKafkaConsumer() {
 }
 
 
-MessagePSRDKafkaConsumer::MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey):chaos::common::message::MessagePublishSubscribeBase("rdk"), chaos::common::message::MessagePSConsumer("rdk",gid,defkey) {
+MessagePSRDKafkaConsumer::MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey):chaos::common::message::MessagePublishSubscribeBase("kafka-rdk"), chaos::common::message::MessagePSConsumer("kafka-rdk",gid,defkey) {
 }
 int MessagePSRDKafkaConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
   

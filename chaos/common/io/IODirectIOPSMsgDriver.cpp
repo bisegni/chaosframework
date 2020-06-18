@@ -1,0 +1,113 @@
+/*
+ * Copyright 2020 INFN
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they
+ * will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the
+ * Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ * https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in
+ * writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
+ */
+
+
+#include "IODirectIOPSMsgDriver.h"
+#include <chaos/common/configuration/GlobalConfiguration.h>
+#define IODirectIOPSMsgDriver_LINFO_ INFO_LOG(IODirectIOPSMsgDriver)
+#define IODirectIOPSMsgDriver_DLDBG_ DBG_LOG(IODirectIOPSMsgDriver)
+#define IODirectIOPSMsgDriver_LERR_ ERR_LOG(IODirectIOPSMsgDriver)
+
+using namespace chaos;
+using namespace chaos::common::io;
+using namespace chaos::common::data;
+using namespace chaos::common::utility;
+using namespace chaos::common::network;
+
+using namespace std;
+using namespace boost;
+
+namespace chaos_data = chaos::common::data;
+namespace chaos_dio = chaos::common::direct_io;
+namespace chaos_dio_channel = chaos::common::direct_io::channel;
+
+DEFINE_CLASS_FACTORY(IODirectIOPSMsgDriver, IODataDriver);
+
+//using namespace memcache;
+IODirectIOPSMsgDriver::IODirectIOPSMsgDriver(const std::string& alias):
+IODirectIODriver(alias){
+    msgbrokerdrv="kafka-rdk";
+    msgbroker="localhost:9092";
+    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_DRIVER)) {
+            msgbrokerdrv = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_DRIVER);
+    }
+     prod = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
+
+}
+
+IODirectIOPSMsgDriver::~IODirectIOPSMsgDriver() {
+    // SO that if used as shared pointer will be called once the object is destroyed
+}
+
+
+void IODirectIOPSMsgDriver::init(void *_init_parameter) {
+    IODirectIODriver::init(_init_parameter);
+
+    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
+        msgbroker= GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
+        prod->addServer(msgbroker);
+    }
+    prod->start();
+    
+}
+
+void IODirectIOPSMsgDriver::deinit() {
+    IODirectIODriver::deinit();
+    prod->stop();
+    IODirectIOPSMsgDriver_DLDBG_<<"Deinitialized";
+}
+
+int IODirectIOPSMsgDriver::storeData(const std::string& key,
+                                CDWShrdPtr data_to_store,
+                                DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                const ChaosStringSet& tag_set)  {
+    int err = 0;
+    if(data_to_store.get()==NULL){
+        IODirectIOPSMsgDriver_LERR_ << "Packet not allocated";
+        return -100;
+    }
+    if((err=prod->pushMsgAsync(*data_to_store.get(), key))!=0){
+        DEBUG_CODE(IODirectIOPSMsgDriver_LERR_ << "Error pushing "<<prod->getLastError());
+
+    }
+   
+    return err;
+}
+
+chaos::common::data::CDataWrapper* IODirectIOPSMsgDriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
+    //lock the feeder access
+    chaos::common::data::CDataWrapper* ret=IODirectIODriver::updateConfiguration(newConfigration);
+    ChaosWriteLock rl(mutext_feeder);
+    //checkif someone has passed us the device indetification
+    if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST)){
+        chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
+        size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
+        for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
+            string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
+            prod->addServer(serverDesc);
+            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Add broker %1% to IODirectIOPSMsgDriver", %serverDesc);
+            
+            //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
+        }
+       
+    }
+    return ret;
+}
