@@ -216,7 +216,9 @@ link_directories(${CMAKE_INSTALL_PREFIX}/lib64)
 SET(cnd_src	main.cpp
             ChaosMetadataService.cpp
             DriverPoolManager.cpp
-            QueryDataConsumer.cpp)
+            QueryDataConsumer.cpp
+            QueryDataMsgPSConsumer.cpp
+            )
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)

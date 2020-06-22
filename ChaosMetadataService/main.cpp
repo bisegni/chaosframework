@@ -30,10 +30,6 @@ using namespace chaos::metadata_service;
 int main(int argc, const char * argv[]) {
     try {
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SYNCTIME_ERROR,"max error in ms expressed as power of 2 (0,1,2,4,8,16,32,64,128,256ms..)",64,&ChaosMetadataService::getInstance()->timeError_opt);
-        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_HA_ZONE_NAME,
-                                                                                                        "Set the zone where mds need to be attached",
-                                                                                                        "default",
-                                                                                                        &ChaosMetadataService::getInstance()->setting.ha_zone_name);
         //archiver
         ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ARCHIVER_NUM,
                                                                                                          "The number of the archiver instance, each instance is an own queue",

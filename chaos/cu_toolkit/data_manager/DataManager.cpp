@@ -78,7 +78,7 @@ CDataWrapper* DataManager::updateConfiguration(CDataWrapper *newConfiguration) {
 
 IODataDriver *DataManager::getDataLiveDriverNewInstance() {
 	IODataDriver *result = NULL;
-	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
+	std::string impl_name =  boost::str( boost::format("%1%") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 	
 	result = common::utility::ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
 	

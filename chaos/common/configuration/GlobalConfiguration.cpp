@@ -67,8 +67,12 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
         addOption(InitOption::OPT_METADATASERVER_AUTO_CONF, po::value< bool >()->zero_tokens(), "Enable auto configuration for metadataserver endpoints");
-        
-        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
+        #if defined(KAFKA_RDK_ENABLE) || defined(KAFKA_ASIO_ENABLE)
+        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirectIOPSMsgDriver"), "Specify the data io implementation");
+
+        #else
+        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirectIODriver"), "Specify the data io implementation");
+        #endif
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");

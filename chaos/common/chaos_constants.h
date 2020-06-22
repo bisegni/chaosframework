@@ -125,6 +125,8 @@ namespace chaos {
 
         static const char * const   OPT_MSG_BROKER_SERVER			    = "msg-broker-server";
         static const char * const   OPT_MSG_BROKER_DRIVER			    = "msg-broker-driver";
+        static const char * const   OPT_HA_ZONE_NAME                    = "ha-zone-name";
+
  
     }
     /** @} */ // end of ParamOption
@@ -895,6 +897,9 @@ namespace chaos {
         static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_VALUE         = "dsndk_history_burst_value";
         //! is the tag associated to the burst
         static const char * const CONTROL_UNIT_DATASET_HISTORY_BURST_TAG           = "dsndk_history_burst_tag";
+        
+        static const char * const CONTROL_UNIT_DATASET_TAG                          = "dsndk_tag";
+
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     

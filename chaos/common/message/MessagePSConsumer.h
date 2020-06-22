@@ -9,7 +9,6 @@
 namespace chaos {
     namespace common {
         namespace message {
-
             class MessagePSConsumer: public virtual MessagePublishSubscribeBase {
 
                 protected:

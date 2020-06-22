@@ -29,11 +29,18 @@ void MessagePSKafkaAsioConsumer::HandleRequest(const Connection::ErrorCodeType& 
           const MessageAndOffset& msg=*i;
           const libkafka_asio::Bytes& bytes=msg.value();
           
-          chaos::common::data::CDWUniquePtr t(new chaos::common::data::CDataWrapper((const char*) &(*bytes)[0], bytes->size()));
         //  msgs.push_back(t);
           if(handlers[ONARRIVE]){
-       
-            handlers[ONARRIVE](stats.key,t);
+            ele_t d;
+            d.key=stats.key;
+            d.off=0;
+            d.par=0;
+            d.cd= chaos::common::data::CDWShrdPtr( new chaos::common::data::CDataWrapper((const char*) &(*bytes)[0], bytes->size()));
+
+
+            handlers[ONARRIVE](d);
+          } else {
+            
           }
           stats.oks++;
           } catch(...){

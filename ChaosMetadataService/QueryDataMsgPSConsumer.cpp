@@ -18,30 +18,10 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  */
-#include "ChaosMetadataService.h"
-#include "QueryDataConsumer.h"
-#include "DriverPoolManager.h"
-#include "worker/DeviceSharedDataWorker.h"
-#include "persistence/persistence.h"
+#include "QueryDataMsgPSConsumer.h"
 
-#if CHAOS_PROMETHEUS
-#include "worker/DeviceSharedDataWorkerMetricCollector.h"
-#endif
-
-#include <chaos/common/network/NetworkBroker.h>
-#include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <chaos/common/utility/endianess.h>
-#include <chaos/common/utility/DataBuffer.h>
-#include <chaos/common/utility/InetUtility.h>
-
-#include <boost/thread.hpp>
-
-using namespace chaos::metadata_service;
-
-using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::worker;
 using namespace chaos::metadata_service::cache_system;
-using namespace chaos::metadata_service::object_storage::abstraction;
 
 using namespace chaos::metadata_service::persistence;
 using namespace chaos::metadata_service::persistence::data_access;
@@ -52,167 +32,82 @@ using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-#define INFO    INFO_LOG(QueryDataConsumer)
-#define DBG     DBG_LOG(QueryDataConsumer)
-#define ERR     ERR_LOG(QueryDataConsumer)
+#define INFO INFO_LOG(QueryDataMsgPSConsumer)
+#define DBG DBG_LOG(QueryDataMsgPSConsumer)
+#define ERR ERR_LOG(QueryDataMsgPSConsumer)
 
 //constructor
-QueryDataConsumer::QueryDataConsumer():
-server_endpoint(NULL),
-device_channel(NULL),
-system_api_channel(NULL),
-device_data_worker_index(0),
-storage_queue_push_timeout(ChaosMetadataService::getInstance()->setting.worker_setting.queue_push_timeout){}
+namespace chaos {
+namespace metadata_service {
 
-QueryDataConsumer::~QueryDataConsumer() {}
+/*QueryDataMsgPSConsumer::QueryDataMsgPSConsumer(){
+ }
 
-void QueryDataConsumer::init(void *init_data)  {
-    //get new chaos direct io endpoint
-    server_endpoint = NetworkBroker::getInstance()->getDirectIOServerEndpoint();
-    if(!server_endpoint) throw chaos::CException(-2, "Invalid server endpoint", __FUNCTION__);
-    INFO << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
-    
-    INFO << "Allocating DirectIODeviceServerChannel";
-    device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
-    if(!device_channel) throw chaos::CException(-3, "Error allocating device server channel", __FUNCTION__);
-    device_channel->setHandler(this);
-    
-    INFO << "Allocating DirectIOSystemAPIServerChannel";
-    system_api_channel = (DirectIOSystemAPIServerChannel*)server_endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
-    if(!system_api_channel) throw chaos::CException(-4, "Error allocating system api server channel", __FUNCTION__);
-    system_api_channel->setHandler(this);
-    
-    //device data worker instances
-    for(int idx = 0;
-        idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances;
-        idx++) {
-        DataWorkerSharedPtr tmp;
-#if CHAOS_PROMETHEUS
-            INFO << "Enable dataset processing worker metric";
-            tmp = ChaosMakeSharedPtr<worker::DeviceSharedDataWorkerMetricCollector>();
-#else
-            tmp = ChaosMakeSharedPtr<chaos::metadata_service::worker::DeviceSharedDataWorker>();
-#endif
-        device_data_worker.push_back(tmp);
-        StartableService::initImplementation(*tmp, NULL, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
-        StartableService::startImplementation(*tmp, "DeviceSharedDataWorker", __PRETTY_FUNCTION__);
-        
-    }
+QueryDataMsgPSConsumer::~QueryDataMsgPSConsumer() {
+}
+*/
+void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t &data) {
+  ChaosStringSetConstSPtr meta_tag_set;
+  uint32_t                st = data.cd->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE);
+
+  if (data.cd->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)) {
+    ChaosStringSet *tag = new ChaosStringSet();
+    tag->insert(data.cd->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG));
+    meta_tag_set.reset(tag);
+  }
+  std::string kp = data.key;
+
+  std::replace(kp.begin(), kp.end(), '.', '/');
+  QueryDataConsumer::consumePutEvent(kp, (uint8_t)st, meta_tag_set, *(data.cd.get()));
 }
 
-void QueryDataConsumer::start()  {}
-
-void QueryDataConsumer::stop()  {}
-
-void QueryDataConsumer::deinit()  {
-    if(server_endpoint) {
-        server_endpoint->releaseChannelInstance(device_channel);
-        NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(server_endpoint);
-    }
-    
-    INFO << "Deallocating device push data worker list";
-    for(int idx = 0; idx < ChaosMetadataService::getInstance()->setting.worker_setting.instances; idx++) {
-        INFO << "Release device worker "<< idx;
-        device_data_worker[idx]->stop();
-        device_data_worker[idx]->deinit();
-    }
+void QueryDataMsgPSConsumer::init(void *init_data) {
+  QueryDataConsumer::init(init_data);
+  if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
+    msgbroker = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
+    cons->addServer(msgbroker);
+  }
+  cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE, boost::bind(&QueryDataMsgPSConsumer::messageHandler, this, _1));
+  if (cons->applyConfiguration() != 0) {
+    throw chaos::CException(-1, "cannot initialize Publish Subscribe:" + cons->getLastError(), __PRETTY_FUNCTION__);
+  }
 }
 
-int QueryDataConsumer::consumePutEvent(const std::string& key,
-                                const uint8_t hst_tag,
-                                const ChaosStringSetConstSPtr meta_tag_set,
-                                chaos::common::data::CDataWrapper& data_pack){
-
-int err=0;
- data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp()&ChaosMetadataService::timePrecisionMask);
-    BufferSPtr channel_data_injected(data_pack.getBSONDataBuffer().release());
-
-    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);
-    //! if tag is == 1 the datapack is in liveonly
-    
-    if(storage_type & DataServiceNodeDefinitionType::DSStorageTypeLive) {
-        //protected access to cached driver
-        CacheDriver& cache_slot = DriverPoolManager::getInstance()->getCacheDrv();
-        err = cache_slot.putData(key,
-                                 channel_data_injected);
-        
-    }
-   if(storage_type &DataServiceNodeDefinitionType::DSStorageLogHisto) {
-        //protected access to cached driver
-        ObjectStorageDataAccess *log_slot  = DriverPoolManager::getInstance()->getLogDrv().getDataAccess<ObjectStorageDataAccess>();
-
-         // CDataWrapper data_pack((char *)channel_data->data());
-            //push received datapack into object storage
-            if((err = log_slot->pushObject(key,
-                                                 MOVE(meta_tag_set),
-                                                 data_pack))) {
-                ERR << "Error pushing datapack into logstorage driver";
-            }
-      
-        
-    } 
-    if(!err &&
-       (storage_type & (DataServiceNodeDefinitionType::DSStorageTypeHistory|DataServiceNodeDefinitionType::DSStorageTypeFile))) {
-        //compute the index to use for the data worker
-        uint32_t index_to_use = device_data_worker_index++ % ChaosMetadataService::getInstance()->setting.worker_setting.instances;
-        CHAOS_ASSERT(device_data_worker[index_to_use].get())
-        //create storage job information
-        auto job = ChaosMakeSharedPtr<DeviceSharedWorkerJob>();
-        job->key = key;
-        job->key_tag = hst_tag;
-        job->data_pack = channel_data_injected;
-        job->meta_tag = MOVE(meta_tag_set);
-        if((err = device_data_worker[index_to_use]->submitJobInfo(job,
-                                                                  storage_queue_push_timeout))) {
-            DEBUG_CODE(DBG << "Error pushing data into worker queue");
-        }
-    }
-    
-    return err;
-    }
-#pragma mark DirectIODeviceServerChannelHandler
-int QueryDataConsumer::consumePutEvent(const std::string& key,
-                                       const uint8_t hst_tag,
-                                       const ChaosStringSetConstSPtr meta_tag_set,
-                                       BufferSPtr channel_data) {
-    CHAOS_ASSERT(channel_data)
-    int err = 0;
-    CDataWrapper data_pack((char *)channel_data->data());
-   return consumePutEvent(key,hst_tag,meta_tag_set,data_pack);
+void QueryDataMsgPSConsumer::start() {
+  DBG << "Starting Msg consumer";
+  cons->start();
 }
 
-int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
-                                              const uint8_t hst_tag,
-                                              const ChaosStringSetConstSPtr meta_tag_set,
-                                              BufferSPtr channel_data) {
-    int err = 0;
-    
-    CDataWrapper health_data_pack((char *)channel_data->data());
-    health_data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, TimingUtil::getTimeStamp());
-    
-    NodeDataAccess *s_da = DriverPoolManager::getInstance()->getPersistenceDataAccess<NodeDataAccess>();
-    
-    HealthStatSDWrapper attribute_reference_wrapper;
-    attribute_reference_wrapper.deserialize(&health_data_pack);
-   #ifdef HEALTH_ON_DB
-   // WE HAVE ALREADY HEALTH INFO IN CACHE
-    if((err = s_da->setNodeHealthStatus(attribute_reference_wrapper().node_uid,
-                                        attribute_reference_wrapper()))) {
-        ERR << "error storing health data into database for key " << attribute_reference_wrapper().node_uid;
-    }
-   #endif
-
-    //create channel data with injected mds timestamp
-    
-    
-    BufferSPtr channel_data_injected(health_data_pack.getBSONDataBuffer().release());
-    return consumePutEvent(key,
-                           hst_tag,
-                           MOVE(meta_tag_set),
-                           channel_data_injected);
+void QueryDataMsgPSConsumer::stop() {
+  DBG << "Stopping Msg consumer";
+  cons->stop();
 }
 
-int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+void QueryDataMsgPSConsumer::deinit() {
+  QueryDataConsumer::deinit();
+}
+
+int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &           key,
+                                                   const uint8_t                 hst_tag,
+                                                   const ChaosStringSetConstSPtr meta_tag_set,
+                                                   BufferSPtr                    channel_data) {
+  int err        = 0;
+  alive_map[key] = TimingUtil::getTimeStamp();
+  if (alive_map.find(key) == alive_map.end()) {
+    if (cons->subscribe(key) != 0) {
+      ERR << " cannot subscribe to :" << cons->getLastError();
+    } else {
+      DEBUG_CODE(DBG << "Subscribing to:" << key);
+
+      alive_map[key] = TimingUtil::getTimeStamp();
+    }
+  } else {
+    alive_map[key] = TimingUtil::getTimeStamp();
+  }
+  return QueryDataConsumer::consumeHealthDataEvent(key, hst_tag, meta_tag_set, channel_data);
+}
+/*
+int QueryDataMsgPSConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                              const std::string& search_key,
                                              const ChaosStringSet& meta_tags,
                                              const ChaosStringSet& projection_keys,
@@ -238,7 +133,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 }
 
 
-int QueryDataConsumer::consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+int QueryDataMsgPSConsumer::consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                                   const std::string& search_key,
                                                   const ChaosStringSet& meta_tags,
                                                   const ChaosStringSet& projection_keys,
@@ -264,7 +159,7 @@ int QueryDataConsumer::consumeDataIndexCloudQuery(opcode_headers::DirectIODevice
     return err;
 }
 
-int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
+int QueryDataMsgPSConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
                                        uint32_t key_len,
                                        opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
                                        chaos::common::data::BufferSPtr& result_value) {
@@ -286,7 +181,7 @@ int QueryDataConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
     return err;
 }
 
-int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
+int QueryDataMsgPSConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
                                        const ChaosStringVector& keys,
                                        opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
                                        BufferSPtr& result_value,
@@ -328,7 +223,7 @@ int QueryDataConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHead
     return err;
 }
 
-int QueryDataConsumer::getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexes,
+int QueryDataMsgPSConsumer::getDataByIndex(const chaos::common::data::VectorCDWShrdPtr& indexes,
                                       chaos::common::data::VectorCDWShrdPtr& found_data) {
     
     ObjectStorageDataAccess *obj_storage_da = DriverPoolManager::getInstance()->getObjectStorageDrv().getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
@@ -344,7 +239,7 @@ int QueryDataConsumer::getDataByIndex(const chaos::common::data::VectorCDWShrdPt
     return 0;
 }
 
-int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
+int QueryDataMsgPSConsumer::consumeDataCloudDelete(const std::string& search_key,
                                               uint64_t start_ts,
                                               uint64_t end_ts){
     int err = 0;
@@ -357,7 +252,7 @@ int QueryDataConsumer::consumeDataCloudDelete(const std::string& search_key,
     }
     return err;
 }
-int QueryDataConsumer::countDataCloud(const std::string& search_key,
+int QueryDataMsgPSConsumer::countDataCloud(const std::string& search_key,
                                        uint64_t start_ts,
                                        uint64_t end_ts,
                                        uint64_t& count){
@@ -374,7 +269,7 @@ int QueryDataConsumer::countDataCloud(const std::string& search_key,
             
 #pragma mark DirectIOSystemAPIServerChannelHandler
 // Return the dataset for a producerkey ona specific snapshot
-int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
+int QueryDataMsgPSConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
                                                       const std::string& producer_id,
                                                       chaos::common::data::BufferSPtr& channel_found_data,
                                                       DirectIOSystemAPISnapshotResultHeader &result_header) {
@@ -420,7 +315,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     return err;
 }
 
-int QueryDataConsumer::consumeLogEntries(const std::string& node_name,
+int QueryDataMsgPSConsumer::consumeLogEntries(const std::string& node_name,
                                          const ChaosStringVector& log_entries) {
     int err = 0;
     for(ChaosStringVectorConstIterator it = log_entries.begin(),
@@ -434,3 +329,6 @@ int QueryDataConsumer::consumeLogEntries(const std::string& node_name,
     }
     return err;
 }
+*/
+}  // namespace metadata_service
+}  // namespace chaos

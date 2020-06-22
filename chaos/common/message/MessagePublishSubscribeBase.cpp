@@ -22,10 +22,6 @@ namespace chaos {
 
                     return 0;
                 }
-                int MessagePublishSubscribeBase::addHandler(eventTypes ev,msgHandler cb){
-                    handlers[ev]=cb;
-                    return 0;
-                }
 
 
         /* int MessagePublishSubscribeBase::applyConfiguration(){

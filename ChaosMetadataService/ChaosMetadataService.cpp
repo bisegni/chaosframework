@@ -23,6 +23,8 @@
 #include "ChaosMetadataService.h"
 #include "DriverPoolManager.h"
 #include "QueryDataConsumer.h"
+#include "QueryDataMsgPSConsumer.h"
+
 #include "object_storage/object_storage.h"
 
 #include <csignal>
@@ -160,8 +162,13 @@ void ChaosMetadataService::init(void *init_data)  {
         //api system
         api_managment_service.reset(new ApiManagment(), "ApiManagment");
         api_managment_service.init(NULL, __PRETTY_FUNCTION__);
-        
+#if defined(KAFKA_RDK_ENABLE) || defined(KAFKA_ASIO_ENABLE)
+#warning "CDS NEEDS KAFKA"
+        data_consumer.reset(new QueryDataMsgPSConsumer(), "QueryDataMsgPSConsumer");
+
+#else     
         data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
+#endif
         if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
         

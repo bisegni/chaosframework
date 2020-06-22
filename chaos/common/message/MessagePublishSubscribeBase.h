@@ -18,13 +18,20 @@ namespace chaos {
             typedef ChaosUniquePtr<ele_t> ele_uptr_t;
             //typedef std::vector<chaos::common::data::CDWShrdPtr> msg_queue_t;
             
+          /*  template <class T>
+            struct funchandler{
+                typedef void (T::*msgHandler)(const chaos::common::message::ele_t&) ;
+
+            };
+*/
+            typedef  boost::function<void(const chaos::common::message::ele_t&)> msgHandler;
+
             class MessagePublishSubscribeBase {
 
 
                 public:
                 
-                typedef void (*msgHandler)(const std::string&key,chaos::common::data::CDWUniquePtr& ptr);
-                typedef void (*msgpshandler)(const msg_queue_t&data,const int error_code);
+           //     typedef void (*msgHandler)(const ele_t&);
                 typedef struct msgstats {
                     uint64_t counter;
                     uint64_t oks;
@@ -71,7 +78,10 @@ namespace chaos {
                  * 
                  * @param ev 
                  */
-                virtual int addHandler(eventTypes ev,msgHandler);
+                 int addHandler(eventTypes ev,msgHandler cb){
+                    handlers[ev]=cb;
+                    return 0;
+                }
 
                 /**
                  * @brief library specific options

@@ -65,6 +65,9 @@ void IODirectIOPSMsgDriver::init(void *_init_parameter) {
         msgbroker= GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
         prod->addServer(msgbroker);
     }
+     if(prod->applyConfiguration()!=0){
+        throw chaos::CException(-1,"cannot initialize Publish Subscribe:"+prod->getLastError(),__PRETTY_FUNCTION__);
+    }
     prod->start();
     
 }
@@ -83,6 +86,10 @@ int IODirectIOPSMsgDriver::storeData(const std::string& key,
     if(data_to_store.get()==NULL){
         IODirectIOPSMsgDriver_LERR_ << "Packet not allocated";
         return -100;
+    }
+    data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+    if(tag_set.size()){
+        data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
     }
     if((err=prod->pushMsgAsync(*data_to_store.get(), key))!=0){
         DEBUG_CODE(IODirectIOPSMsgDriver_LERR_ << "Error pushing "<<prod->getLastError());

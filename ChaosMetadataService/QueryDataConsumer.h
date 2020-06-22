@@ -66,6 +66,12 @@ namespace chaos{
             DataWorkerVec	device_data_worker;
             
             //---------------- DirectIODeviceServerChannelHandler -----------------------
+            protected:
+             int consumePutEvent(const std::string& key,
+                                const uint8_t hst_tag,
+                                const ChaosStringSetConstSPtr meta_tag_set,
+                                chaos::common::data::CDataWrapper& channel_data);
+           
             int consumePutEvent(const std::string& key,
                                 const uint8_t hst_tag,
                                 const ChaosStringSetConstSPtr meta_tag_set,

@@ -202,9 +202,13 @@ void MessagePSRDKafkaConsumer::poll(){
         try{
         //  msgs.push_back(t);
           if(handlers[ONARRIVE]){
-            chaos::common::data::CDWUniquePtr t(new chaos::common::data::CDataWrapper((const char*) rkm->payload, rkm->len));
+            ele_t d;
+            d.key=rd_kafka_topic_name(rkm->rkt);
+            d.off=rkm->offset;
+            d.par=rkm->partition;
+            d.cd= chaos::common::data::CDWShrdPtr( new chaos::common::data::CDataWrapper((const char*) rkm->payload, rkm->len));
 
-            handlers[ONARRIVE](rd_kafka_topic_name(rkm->rkt),t);
+            handlers[ONARRIVE](d);
           } else {
             ele_t *ele =new ele_t();
             ele->key=rd_kafka_topic_name(rkm->rkt);
