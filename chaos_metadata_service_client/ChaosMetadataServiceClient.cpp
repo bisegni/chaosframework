@@ -205,7 +205,7 @@ chaos::common::io::IODataDriverShrdPtr ChaosMetadataServiceClient::getDataProxyC
 
 	if(iopool.size()<poolsize){
 		chaos::common::io::IODataDriver *result = NULL;
-		    const std::string impl_name =  CHAOS_FORMAT("%1%IODriver",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
+		    const std::string impl_name =  CHAOS_FORMAT("%1%",%GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 		    result = ObjectFactoryRegister<chaos::common::io::IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
 
 		    if(result) {

@@ -164,7 +164,7 @@ void ChaosMetadataService::init(void *init_data)  {
         api_managment_service.init(NULL, __PRETTY_FUNCTION__);
 #if defined(KAFKA_RDK_ENABLE) || defined(KAFKA_ASIO_ENABLE)
 #warning "CDS NEEDS KAFKA"
-        data_consumer.reset(new QueryDataMsgPSConsumer(), "QueryDataMsgPSConsumer");
+        data_consumer.reset(new QueryDataMsgPSConsumer("cds"), "QueryDataMsgPSConsumer");
 
 #else     
         data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");

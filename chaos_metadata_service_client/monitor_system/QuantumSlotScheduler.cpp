@@ -52,7 +52,7 @@ QuantumSlotScheduler::~QuantumSlotScheduler() {}
 void QuantumSlotScheduler::init(void *init_data)  {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
-    CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
+    //CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
 }
 
 void QuantumSlotScheduler::start()  {
@@ -240,7 +240,7 @@ uint64_t QuantumSlotScheduler::_checkRemoveAndAddNewConsumer(uint64_t start_time
 void QuantumSlotScheduler::addNewfetcherThread() {
     QSS_INFO<< "start the allocation of a new fetcher Thread";
     IODataDriver *data_driver = NULL;
-    data_driver = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(boost::str(boost::format("%1%IODriver")%data_driver_impl));
+    data_driver = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(boost::str(boost::format("%1%")%data_driver_impl));
     CHAOS_LASSERT_EXCEPTION(data_driver, QSS_ERR, -1, "Error allocating new data driver")
     
     //set the information

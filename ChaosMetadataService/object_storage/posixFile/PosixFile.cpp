@@ -998,7 +998,7 @@ int PosixFile::pushObject(const std::string&                       key,
   int64_t        seq, runid;
   std::string    tag;
   try {
-    if (meta_tags->size() > 0) {
+    if ((meta_tags.get())&& (meta_tags->size() > 0)) {
       //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
       tag = boost::algorithm::join(*meta_tags.get(), "_");
     }
@@ -1303,7 +1303,7 @@ int PosixFile::findObject(const std::string&                                    
   try {
     std::string tag;
 
-    if (meta_tags.size() > 0) {
+    if ((meta_tags.size() > 0)) {
       //tag=std::accumulate(meta_tags.begin(),meta_tags.end(),std::string("_"));
       tag = boost::algorithm::join(meta_tags, "_");
     }

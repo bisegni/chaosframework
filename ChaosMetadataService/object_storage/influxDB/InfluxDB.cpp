@@ -105,7 +105,7 @@ int InfluxDB::pushObject(const std::string&                       key,
       return -1;
   }
   measurements << stored_object.getStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID);
-  if (meta_tags->size() > 0) {
+  if ((meta_tags.get())&&(meta_tags->size() > 0)) {
     //tag=std::accumulate(meta_tags->begin(),meta_tags->end(),std::string("_"));
     measurements << ",tag=" << *(meta_tags->begin());
   }

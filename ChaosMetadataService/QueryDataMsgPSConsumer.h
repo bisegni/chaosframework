@@ -22,54 +22,103 @@
 #ifndef __CHAOSFramework__QueryDataMsgPSConsumer__
 #define __CHAOSFramework__QueryDataMsgPSConsumer__
 
-#include "QueryDataConsumer.h"
 #include <chaos/common/message/MessagePSConsumer.h>
 #include <chaos/common/message/MessagePSDriver.h>
+#include "QueryDataConsumer.h"
 
+namespace chaos {
+namespace metadata_service {
 
-namespace chaos{
-    namespace metadata_service {
-        
-        class QueryDataMsgPSConsumer: public QueryDataConsumer {
-            std::string msgbrokerdrv;
-            std::string msgbroker;
-            std::string groupid;
-            std::map<std::string,uint64_t> alive_map;
-            chaos::common::message::consumer_uptr_t cons;
-            void messageHandler(const chaos::common::message::ele_t&data);
-            //---------------- DirectIODeviceServerChannelHandler -----------------------
-            int consumePutEvent(const std::string& key,
-                                const uint8_t hst_tag,
-                                const ChaosStringSetConstSPtr meta_tag_set,
-                                chaos::common::data::BufferSPtr channel_data);
-            
-            int consumeHealthDataEvent(const std::string& key,
-                                       const uint8_t hst_tag,
-                                       const ChaosStringSetConstSPtr meta_tag_set,
-                                       chaos::common::data::BufferSPtr channel_data);
-            
-        public:
-            QueryDataMsgPSConsumer():msgbrokerdrv("kafka-rdk"),msgbroker("localhost:9092"),groupid("cds") {
-                 
-  if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_HA_ZONE_NAME)) {
+class QueryDataMsgPSConsumer : public QueryDataConsumer {
+  std::string                             msgbrokerdrv;
+  std::string                             msgbroker;
+  std::string                             groupid;
+  std::map<std::string, uint64_t>         alive_map;
+  chaos::common::message::consumer_uptr_t cons;
+  void                                    messageHandler(const chaos::common::message::ele_t& data);
+  //---------------- DirectIODeviceServerChannelHandler -----------------------
+  
+ public:
+  QueryDataMsgPSConsumer(const std::string& id):groupid(id) {
+    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_HA_ZONE_NAME)) {
     groupid = groupid + "_" + GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_HA_ZONE_NAME);
   }
 
-  if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_DRIVER)) {
-    msgbrokerdrv = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_DRIVER);
+    msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
+
+    cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv, groupid);
   }
-  cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv, groupid);
-
-
-            }
-            ~QueryDataMsgPSConsumer();
-            void init(void *init_data);
-            void start();
-            void stop();
-            void deinit();
+  ~QueryDataMsgPSConsumer(){}
+  void init(void* init_data);
+  void start();
+  void stop();
+  void deinit();
+ /* int consumePutEvent(const std::string&              key,
+                      const uint8_t                   hst_tag,
+                      const ChaosStringSetConstSPtr   meta_tag_set,
+                      chaos::common::data::BufferSPtr channel_data);
+*/
+  int consumeHealthDataEvent(const std::string&              key,
+                             const uint8_t                   hst_tag,
+                             const ChaosStringSetConstSPtr   meta_tag_set,
+                             chaos::common::data::BufferSPtr channel_data);
+  /*int consumePutEvent(const std::string& key,
+                                const uint8_t hst_tag,
+                                const ChaosStringSetConstSPtr meta_tag_set,
+                                chaos::common::data::CDataWrapper& channel_data);
+           
+    */        
+  int consumeGetEvent(chaos::common::data::BufferSPtr key_data,
+                                uint32_t key_len,
+                                opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value);
             
-        };
-    }
-}
+  int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
+                                const ChaosStringVector& keys,
+                                opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value,
+                                uint32_t& result_value_len);
+            
+  int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                      const std::string& search_key,
+                                      const ChaosStringSet& meta_tags,
+                                      const ChaosStringSet& projection_keys,
+                                      const uint64_t search_start_ts,
+                                      const uint64_t search_end_ts,
+                                      opcode_headers::SearchSequence& last_element_found_seq,
+                                      opcode_headers::QueryResultPage& page_element_found);
+            
+  int consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                           const std::string& search_key,
+                                           const ChaosStringSet& meta_tags,
+                                           const ChaosStringSet& projection_keys,
+                                           const uint64_t search_start_ts,
+                                           const uint64_t search_end_ts,
+                                           opcode_headers::SearchSequence& last_element_found_seq,
+                                           opcode_headers::QueryResultPage& page_element_found);
+            
+            
+  int consumeDataCloudDelete(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts);
+
+  int countDataCloud(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts,
+                                       uint64_t& count);
+            
+            
+            //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
+    int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
+                                               const std::string& producer_id,
+                                               chaos::common::data::BufferSPtr& channel_found_data,
+                                               DirectIOSystemAPISnapshotResultHeader &result_header);
+            
+    int consumeLogEntries(const std::string& node_name,
+                                  const ChaosStringVector& log_entries);
+
+};
+}  // namespace metadata_service
+}  // namespace chaos
 
 #endif /* defined(__CHAOSFramework__QueryDataMsgPSConsumer__) */

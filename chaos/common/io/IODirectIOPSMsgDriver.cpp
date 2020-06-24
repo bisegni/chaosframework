@@ -45,10 +45,8 @@ DEFINE_CLASS_FACTORY(IODirectIOPSMsgDriver, IODataDriver);
 IODirectIOPSMsgDriver::IODirectIOPSMsgDriver(const std::string& alias):
 IODirectIODriver(alias){
     msgbrokerdrv="kafka-rdk";
-    msgbroker="localhost:9092";
-    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_DRIVER)) {
-            msgbrokerdrv = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_DRIVER);
-    }
+    msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
+    
      prod = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
 
 }
@@ -61,10 +59,9 @@ IODirectIOPSMsgDriver::~IODirectIOPSMsgDriver() {
 void IODirectIOPSMsgDriver::init(void *_init_parameter) {
     IODirectIODriver::init(_init_parameter);
 
-    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
-        msgbroker= GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
-        prod->addServer(msgbroker);
-    }
+    msgbroker=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_SERVER);
+    prod->addServer(msgbroker);
+
      if(prod->applyConfiguration()!=0){
         throw chaos::CException(-1,"cannot initialize Publish Subscribe:"+prod->getLastError(),__PRETTY_FUNCTION__);
     }

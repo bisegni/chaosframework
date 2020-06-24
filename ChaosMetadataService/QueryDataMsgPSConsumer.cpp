@@ -49,7 +49,7 @@ QueryDataMsgPSConsumer::~QueryDataMsgPSConsumer() {
 void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t &data) {
   ChaosStringSetConstSPtr meta_tag_set;
   uint32_t                st = data.cd->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE);
-
+  //DBG<<"data from:"<<data.key;
   if (data.cd->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)) {
     ChaosStringSet *tag = new ChaosStringSet();
     tag->insert(data.cd->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG));
@@ -63,11 +63,15 @@ void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t 
 
 void QueryDataMsgPSConsumer::init(void *init_data) {
   QueryDataConsumer::init(init_data);
-  if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
-    msgbroker = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
-    cons->addServer(msgbroker);
-  }
+  msgbroker=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_SERVER);
+  
+  cons->addServer(msgbroker);
+
   cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE, boost::bind(&QueryDataMsgPSConsumer::messageHandler, this, _1));
+  if(cons->setOption("auto.offset.reset", "earliest")!=0){
+    throw chaos::CException(-1, "cannot set offset:" + cons->getLastError(), __PRETTY_FUNCTION__);
+
+  }
   if (cons->applyConfiguration() != 0) {
     throw chaos::CException(-1, "cannot initialize Publish Subscribe:" + cons->getLastError(), __PRETTY_FUNCTION__);
   }
@@ -92,20 +96,124 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
                                                    const ChaosStringSetConstSPtr meta_tag_set,
                                                    BufferSPtr                    channel_data) {
   int err        = 0;
-  alive_map[key] = TimingUtil::getTimeStamp();
   if (alive_map.find(key) == alive_map.end()) {
-    if (cons->subscribe(key) != 0) {
-      ERR << " cannot subscribe to :" << cons->getLastError();
-    } else {
-      DEBUG_CODE(DBG << "Subscribing to:" << key);
+    std::string rootname=key;
+    size_t pos = key.find(NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    if (pos != std::string::npos)
+    {
+        // If found then erase it from string
+        rootname.erase(pos,strlen(NodeHealtDefinitionKey::HEALT_KEY_POSTFIX));
+        
+        std::vector<std::string> tosub = {
+          DataPackPrefixID::OUTPUT_DATASET_POSTFIX,
+          DataPackPrefixID::INPUT_DATASET_POSTFIX,
+          DataPackPrefixID::CUSTOM_DATASET_POSTFIX,
+          DataPackPrefixID::SYSTEM_DATASET_POSTFIX,
+          DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX,
+          DataPackPrefixID::CU_ALARM_DATASET_POSTFIX
+        };
 
-      alive_map[key] = TimingUtil::getTimeStamp();
+      for(auto i:tosub){
+        std::string keysub=rootname+i;
+        if (cons->subscribe(keysub) != 0) {
+            ERR << " cannot subscribe to :" << cons->getLastError();
+        } else {
+          DEBUG_CODE(DBG << "Subscribing to:" << keysub);
+
+        }
+      }
     }
-  } else {
-    alive_map[key] = TimingUtil::getTimeStamp();
   }
+  alive_map[key] = TimingUtil::getTimeStamp();
   return QueryDataConsumer::consumeHealthDataEvent(key, hst_tag, meta_tag_set, channel_data);
 }
+
+
+int QueryDataMsgPSConsumer::consumeGetEvent(chaos::common::data::BufferSPtr key_data,
+                                uint32_t key_len,
+                                opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value){
+                                  return QueryDataConsumer::consumeGetEvent(key_data,key_len,result_header,result_value);
+                                }
+            
+  int QueryDataMsgPSConsumer::consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcode& header,
+                                const ChaosStringVector& keys,
+                                opcode_headers::DirectIODeviceChannelHeaderMultiGetOpcodeResult& result_header,
+                                chaos::common::data::BufferSPtr& result_value,
+                                uint32_t& result_value_len){
+                                  return QueryDataConsumer::consumeGetEvent(header,keys,result_header,result_value,result_value_len);
+                                }
+            
+  int QueryDataMsgPSConsumer::consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                      const std::string& search_key,
+                                      const ChaosStringSet& meta_tags,
+                                      const ChaosStringSet& projection_keys,
+                                      const uint64_t search_start_ts,
+                                      const uint64_t search_end_ts,
+                                      opcode_headers::SearchSequence& last_element_found_seq,
+                                      opcode_headers::QueryResultPage& page_element_found){
+                                        return QueryDataConsumer::consumeDataCloudQuery(query_header,
+                                       search_key,
+                                      meta_tags,
+                                      projection_keys,
+                                      search_start_ts,
+                                      search_end_ts,
+                                      last_element_found_seq,
+                                      page_element_found);
+                                      }
+            
+  int QueryDataMsgPSConsumer::consumeDataIndexCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
+                                           const std::string& search_key,
+                                           const ChaosStringSet& meta_tags,
+                                           const ChaosStringSet& projection_keys,
+                                           const uint64_t search_start_ts,
+                                           const uint64_t search_end_ts,
+                                           opcode_headers::SearchSequence& last_element_found_seq,
+                                           opcode_headers::QueryResultPage& page_element_found){
+                                            return QueryDataConsumer::consumeDataIndexCloudQuery(query_header,
+                                           search_key,
+                                           meta_tags,
+                                           projection_keys,
+                                           search_start_ts,
+                                           search_end_ts,
+                                           last_element_found_seq,
+                                           page_element_found);
+                                           }
+            
+            
+  int QueryDataMsgPSConsumer::consumeDataCloudDelete(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts){
+                                         return QueryDataConsumer::consumeDataCloudDelete(search_key,
+                                        start_ts,
+                                        end_ts);
+                                       }
+
+  int QueryDataMsgPSConsumer::countDataCloud(const std::string& search_key,
+                                       uint64_t start_ts,
+                                       uint64_t end_ts,
+                                       uint64_t& count){
+                                         return QueryDataConsumer::countDataCloud(search_key,
+                                       start_ts,end_ts,count);
+                                       }
+            
+            
+            //---------------- DirectIOSystemAPIServerChannelHandler -----------------------
+    int QueryDataMsgPSConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader& header,
+                                               const std::string& producer_id,
+                                               chaos::common::data::BufferSPtr& channel_found_data,
+                                               DirectIOSystemAPISnapshotResultHeader &result_header){
+                                                 return QueryDataConsumer::consumeGetDatasetSnapshotEvent(header,
+                                               producer_id,
+                                               channel_found_data,
+                                               result_header);
+                                               }
+            
+    int QueryDataMsgPSConsumer::consumeLogEntries(const std::string& node_name,
+                                  const ChaosStringVector& log_entries){
+                                    return QueryDataConsumer::consumeLogEntries(node_name,log_entries);
+                                  }
+
 /*
 int QueryDataMsgPSConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud& query_header,
                                              const std::string& search_key,

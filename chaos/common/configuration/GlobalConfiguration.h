@@ -84,7 +84,7 @@ x = hasOption(y);
     public chaos::common::utility::Singleton<GlobalConfiguration> {
         //for program option
         po::variables_map vm;
-        po::options_description desc;
+        po::options_description* desc;
         //for contain program option value and other usefull think
         ChaosUniquePtr<chaos_data::CDataWrapper> configuration;
         chaos_data::CDataWrapper build_info;
@@ -171,7 +171,7 @@ x = hasOption(y);
                        const char* description)   {
             try{//po::value<T>(&timeout)->default_value(2000)
                 const po::value_semantic* s = po::value<T>();
-                desc.add_options()(name, s, description);
+                desc->add_options()(name, s, description);
             }catch (po::error &e) {
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
@@ -187,7 +187,7 @@ x = hasOption(y);
                        bool multivalue = false)   {
             try{//po::value<T>(&timeout)->default_value(2000)
                 const po::value_semantic* s = multivalue?po::value<T>()->default_value(default_value)->multitoken():po::value<T>()->default_value(default_value);
-                desc.add_options()(name, s, description);
+                desc->add_options()(name, s, description);
             }catch (po::error &e) {
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
@@ -203,7 +203,7 @@ x = hasOption(y);
                        bool multivalue = false)   {
             try{
                 const po::value_semantic* s = multivalue?po::value<T>(default_variable)->default_value(default_value)->multitoken():po::value<T>(default_variable)->default_value(default_value);
-                desc.add_options()(name, s, description);
+                desc->add_options()(name, s, description);
             }catch (po::error &e) {
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
@@ -226,7 +226,7 @@ x = hasOption(y);
                        bool multivalue = false)   {
             try{
                 const po::value_semantic* s = multivalue?po::value<T>(default_variable)->multitoken():po::value<T>(default_variable);
-                desc.add_options()(name, s, description);
+                desc->add_options()(name, s, description);
             }catch (po::error &e) {
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }
@@ -240,7 +240,7 @@ x = hasOption(y);
                                 const char* description)   {
             try{
                 const po::value_semantic* s = po::value<T>()->zero_tokens();
-                desc.add_options()(name, s, description);
+                desc->add_options()(name, s, description);
             }catch (po::error &e) {
                 throw CException(0, e.what(), "GlobalConfiguration::addOption");
             }

@@ -100,7 +100,11 @@ MESG("Install lz4 compression library")
 
      # 
 
-
+  IF(KAFKA_RDK_ENABLE)
+     #  message(STATUS "ENABLING KAFKA ASIO on ${PROJECT_NAME}")
+       ADD_DEFINITIONS(-DKAFKA_RDK_ENABLE)
+  ENDIF(KAFKA_RDK_ENABLE)
+     
 IF (COMPILE_HAZELCAST_LIVE_DRIVER)
   MESG("Install hazelcast c++ client")
   ExternalProject_Add(

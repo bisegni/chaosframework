@@ -46,8 +46,10 @@ namespace ext_unt = chaos::common::external_unit;
 #define _DIRECT_IO_SERVICE_PORT		30175
 
 GlobalConfiguration::GlobalConfiguration():
-desc("!CHAOS Framework Allowed options"){}
-GlobalConfiguration::~GlobalConfiguration(){}
+desc(new  po::options_description("!CHAOS Framework Allowed options")){}
+GlobalConfiguration::~GlobalConfiguration(){
+    if(desc) delete desc;
+}
 
 void GlobalConfiguration::preParseStartupParameters()  {
     try{
@@ -68,12 +70,12 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
         addOption(InitOption::OPT_METADATASERVER_AUTO_CONF, po::value< bool >()->zero_tokens(), "Enable auto configuration for metadataserver endpoints");
         #if defined(KAFKA_RDK_ENABLE) || defined(KAFKA_ASIO_ENABLE)
-        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirectIOPSMsgDriver"), "Specify the data io implementation");
+        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value(std::string("IODirectIOPSMsgDriver")), "Specify the data io implementation");
 
         #else
-        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirectIODriver"), "Specify the data io implementation");
+        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value(std::string("IODirectIODriver")), "Specify the data io implementation");
         #endif
-        addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
+        addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value(std::string("ZMQ")), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<uint32_t>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<uint32_t>()->default_value(1),"DirectIO server thread number");
@@ -108,8 +110,8 @@ void GlobalConfiguration::preParseStartupParameters()  {
         addOption(InitOption::OPT_METRIC_ENABLE, po::value< bool >()->zero_tokens(), "Enable metric");
         addOption(InitOption::OPT_METRIC_WEB_SERVER_PORT, po::value< std::string >()->default_value("10000"), "Specify the port where publish the prometheus metrics");
 #endif
-        addOption(InitOption::OPT_MSG_BROKER_SERVER, po::value< std::string >()->default_value("localhost:9092"), "Message broker");
-        addOption(InitOption::OPT_MSG_BROKER_DRIVER, po::value< std::string >()->default_value("kafka-rdk"), "Message broker driver");
+        addOption(InitOption::OPT_MSG_BROKER_SERVER, po::value< std::string >()->default_value(std::string("localhost:9092")), "Message broker");
+        addOption(InitOption::OPT_MSG_BROKER_DRIVER, po::value< std::string >()->default_value(std::string("kafka-rdk")), "Message broker driver");
 
 
 #
@@ -120,15 +122,15 @@ void GlobalConfiguration::preParseStartupParameters()  {
 }
 
 void GlobalConfiguration::parseStartupParametersAllowingUnregistered(int argc, const char* argv[])  {
-    parseParameter(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run());
+    parseParameter(po::command_line_parser(argc, argv).options(*desc).allow_unregistered().run());
 }
 
 void GlobalConfiguration::parseStartupParameters(int argc, const char* argv[])  {
-    parseParameter(po::parse_command_line(argc, argv, desc));
+    parseParameter(po::parse_command_line(argc, argv, *desc));
 }
 
 void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions)  {
-    parseParameter(po::parse_config_file(sStreamOptions, desc));
+    parseParameter(po::parse_config_file(sStreamOptions, *desc));
 }
 
 CDataWrapper& GlobalConfiguration::getBuildInfoRef() {
@@ -160,7 +162,7 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr)  {
 void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
     try{
         //
-        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::store(po::parse_command_line(argc, argv, *desc), vm);
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
@@ -172,7 +174,7 @@ void GlobalConfiguration::loadStartupParameter(int argc, const char* argv[])  {
 void GlobalConfiguration::loadStartupParameterFromEnv()  {
     try{
         //
-        po::store(po::parse_environment(desc, "CHAOS-"), vm);
+        po::store(po::parse_environment(*desc, "CHAOS-"), vm);
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
@@ -184,7 +186,7 @@ void GlobalConfiguration::loadStartupParameterFromEnv()  {
 void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
     try{
         //
-        po::store(po::parse_config_file(config_file, desc), vm);
+        po::store(po::parse_config_file(config_file, *desc), vm);
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
@@ -196,12 +198,18 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)   {
 void GlobalConfiguration::scanOption()   {
     try {
         if (hasOption(InitOption::OPT_HELP)) {
-            std::cout << desc;
+            std::cout << *desc;
+            delete desc;
+            desc=NULL;
             exit(0);
+
             return;
         }
         if (hasOption(InitOption::OPT_VERSION)) {
             std::cout <<"Version:"<< CSLIB_VERSION_MAJOR<<"."<<CSLIB_VERSION_MINOR<<"."<<CSLIB_VERSION_NUMBER<< " BuildID:"<<CSLIB_BUILD_ID<< " BuildDate:"<<__DATE__ <<" " <<__TIME__<<"\n";
+            delete desc;
+            desc=NULL;
+
             exit(0);
             return;
             
@@ -376,7 +384,7 @@ void GlobalConfiguration::checkDefaultOption()  {
 void GlobalConfiguration::addOption(const char* name,
                                     const char* description) {
     try{
-        desc.add_options()(name, description);
+        desc->add_options()(name, description);
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::addOption");
     }
@@ -389,7 +397,8 @@ void GlobalConfiguration::addOption(const char* name,
                                     const po::value_semantic* s,
                                     const char* description) {
     try {
-        desc.add_options()(name, s, description);
+        desc->add_options()(name, s, description);
+    
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::addOption");
     }
