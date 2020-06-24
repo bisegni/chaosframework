@@ -46,6 +46,15 @@ namespace metadata_service {
 QueryDataMsgPSConsumer::~QueryDataMsgPSConsumer() {
 }
 */
+QueryDataMsgPSConsumer::QueryDataMsgPSConsumer(const std::string& id):groupid(id) {
+    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_HA_ZONE_NAME)) {
+    groupid = groupid + "_" + GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_HA_ZONE_NAME);
+  }
+
+    msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
+
+    cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv, groupid);
+  }
 void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t &data) {
   ChaosStringSetConstSPtr meta_tag_set;
   uint32_t                st = data.cd->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE);

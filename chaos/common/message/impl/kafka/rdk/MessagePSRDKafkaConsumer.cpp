@@ -166,6 +166,12 @@ int MessagePSRDKafkaConsumer::subscribe(const std::string& key){
 
 void MessagePSRDKafkaConsumer::poll(){
   rd_kafka_message_t *rkm;
+  if(rk==NULL){
+      MRDERR_ << "Not applied configuration" << errstr;
+      errstr="Not applied configuration";
+      sleep(1);
+      return;
+  }
   rkm = rd_kafka_consumer_poll(rk, 100);
       if (!rkm)
               return; /* Timeout: no message within 100ms,

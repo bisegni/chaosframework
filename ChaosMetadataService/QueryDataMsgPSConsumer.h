@@ -39,15 +39,7 @@ class QueryDataMsgPSConsumer : public QueryDataConsumer {
   //---------------- DirectIODeviceServerChannelHandler -----------------------
   
  public:
-  QueryDataMsgPSConsumer(const std::string& id):groupid(id) {
-    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_HA_ZONE_NAME)) {
-    groupid = groupid + "_" + GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_HA_ZONE_NAME);
-  }
-
-    msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
-
-    cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv, groupid);
-  }
+  QueryDataMsgPSConsumer(const std::string& id);
   ~QueryDataMsgPSConsumer(){}
   void init(void* init_data);
   void start();

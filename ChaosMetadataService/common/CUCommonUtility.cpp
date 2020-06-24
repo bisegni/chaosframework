@@ -205,7 +205,11 @@ void CUCommonUtility::addDataServicePack(ChaosUniquePtr<chaos::common::data::CDa
         //update cache on first call after ten seconds
         nu_cache_ts = now + 10000;
     }
-    
+    std::string msgbroker=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_SERVER);
+
+    result->appendStringToArray(msgbroker);
+    result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
+      
     //constructs the result
     //result.reset(new CDataWrapper());
     if(data_services.size()==0){

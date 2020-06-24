@@ -2051,9 +2051,10 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         pg_sdw.serialization_key = "property";
         pg_sdw.deserialize(update_pack.get());
         ACULDBG_<<"properties "<< DatasetDB::getDeviceID()<<" :"<<pg_sdw.serialize()->getJSONString();
+        key_data_storage->updateConfiguration(update_pack.get());
+
         //update the property
         PropertyCollector::applyValue(pg_sdw());
-        key_data_storage->updateConfiguration(update_pack.get());
         //mark all cache as changed
         attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
         

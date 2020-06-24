@@ -1422,6 +1422,9 @@ namespace chaos {
         static const char * const DPCK_HIGH_RESOLUTION_TIMESTAMP       = "dpck_hr_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
                                                                                        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) - ....others int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
+
+        static const char * const NODE_MDS_TIMEDIFF                     = "dpck_ts_diff";
+
         //!define the list of tags associated to the datapack
         static const char * const DPCK_DATASET_TAGS                    = "dpck_ds_tag";
         //! the constant that represent the output dataset type

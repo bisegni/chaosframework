@@ -58,14 +58,17 @@ IODirectIOPSMsgDriver::~IODirectIOPSMsgDriver() {
 
 void IODirectIOPSMsgDriver::init(void *_init_parameter) {
     IODirectIODriver::init(_init_parameter);
+    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
+        msgbroker = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
+        prod->addServer(msgbroker);
 
-    msgbroker=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_SERVER);
-    prod->addServer(msgbroker);
-
-     if(prod->applyConfiguration()!=0){
-        throw chaos::CException(-1,"cannot initialize Publish Subscribe:"+prod->getLastError(),__PRETTY_FUNCTION__);
+        if(prod->applyConfiguration()!=0){
+            throw chaos::CException(-1,"cannot initialize Publish Subscribe:"+prod->getLastError(),__PRETTY_FUNCTION__);
+        }
+        prod->start();
+   
     }
-    prod->start();
+
     
 }
 
@@ -98,20 +101,30 @@ int IODirectIOPSMsgDriver::storeData(const std::string& key,
 
 chaos::common::data::CDataWrapper* IODirectIOPSMsgDriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
     //lock the feeder access
-    chaos::common::data::CDataWrapper* ret=IODirectIODriver::updateConfiguration(newConfigration);
-    ChaosWriteLock rl(mutext_feeder);
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST)){
         chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
         size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
         for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
+
             string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
-            prod->addServer(serverDesc);
-            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Add broker %1% to IODirectIOPSMsgDriver", %serverDesc);
+            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Adding broker %1% to IODirectIOPSMsgDriver", %serverDesc);
+
+            if(msgbroker.size()==0){
+                prod->addServer(serverDesc);
+                if(prod->applyConfiguration()!=0){
+                    throw chaos::CException(-1,"cannot initialize Publish Subscribe:"+prod->getLastError(),__PRETTY_FUNCTION__);
+                }
+                prod->start();
+                msgbroker=serverDesc;
+            }
+            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Added broker %1% to IODirectIOPSMsgDriver", %serverDesc);
             
             //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
         }
        
     }
+    chaos::common::data::CDataWrapper* ret=IODirectIODriver::updateConfiguration(newConfigration);
+
     return ret;
 }

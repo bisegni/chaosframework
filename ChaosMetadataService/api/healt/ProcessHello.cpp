@@ -74,5 +74,10 @@ CDWUniquePtr ProcessHello::execute(CDWUniquePtr api_data) {
         }
     }
     result->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+    std::string msgbroker=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_SERVER);
+
+    result->appendStringToArray(msgbroker);
+    result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
+  
     return result;
 }
