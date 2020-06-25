@@ -13,8 +13,6 @@ namespace kafka {
 namespace rdk {
 
 class MessagePSRDKafkaConsumer : public chaos::common::message::MessagePSConsumer,public MessagePSRDKafka {
- protected:
-  rd_kafka_t* rk;
  public:
   
   MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey);

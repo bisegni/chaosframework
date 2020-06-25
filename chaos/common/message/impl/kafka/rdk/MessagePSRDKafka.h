@@ -18,6 +18,8 @@ class MessagePSRDKafka:public virtual MessagePublishSubscribeBase {
  protected:
   rd_kafka_conf_t*       conf;
   rd_kafka_topic_conf_t* topic_conf;
+  rd_kafka_t* rk;
+
   public:
   MessagePSRDKafka();
   ~MessagePSRDKafka();

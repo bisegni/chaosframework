@@ -1,6 +1,7 @@
 #include "MessagePSKafkaProducer.h"
 #include <chaos/common/global.h>
 #include <librdkafka/rdkafka.h>
+#include <signal.h>
 #define MRDAPP_ INFO_LOG(MessagePSKafkaProducer)
 #define MRDDBG_ DBG_LOG(MessagePSKafkaProducer)
 #define MRDERR_ ERR_LOG(MessagePSKafkaProducer)
@@ -40,22 +41,33 @@ void MessagePSKafkaProducer::HandleRequest(rd_kafka_t*               rk,
   /* The rkmessage is destroyed automatically by librdkafka */
 }
 MessagePSKafkaProducer::~MessagePSKafkaProducer() {
-  flush();
+  MessagePublishSubscribeBase::stop();
+  flush(60*1000);
   /* If the output queue is still not empty there is an issue
          * with producing messages to the clusters. */
-  
+    rd_kafka_abort_transaction(rk,60*1000);
+
   /* Destroy the producer instance */
+  /*char tmp[16];
+   snprintf(tmp, sizeof(tmp), "%i", SIGIO);  
+   setOption("internal.termination.signal",tmp);
+*/
   rd_kafka_destroy(rk);
 }
 int MessagePSKafkaProducer::flush(const int timeo){
   MRDDBG_ << "Flushing... ";
+  boost::mutex::scoped_lock ll(io);
 
     rd_kafka_flush(rk, timeo);
 if (rd_kafka_outq_len(rk) > 0){
-    fprintf(stderr, "%% %d message(s) were not delivered\n", rd_kafka_outq_len(rk));
+    std::stringstream ss;
+    ss<<rd_kafka_outq_len(rk)<<" messages were not delivered";
+    errstr=ss.str();
 
     return -1;
 }
+  MRDDBG_ << "Flushing...done ";
+
 return 0;
 
 }
@@ -76,6 +88,12 @@ int MessagePSKafkaProducer::pushMsg(const chaos::common::data::CDataWrapper& dat
 int MessagePSKafkaProducer::applyConfiguration() {
   int  ret = 0;
   char ers[512];
+  boost::mutex::scoped_lock ll(io);
+  if(rk!=NULL){
+      MRDDBG_ << "Already applied ";
+      return 0;
+
+  }
   if ((ret = MessagePSRDKafka::init(servers)) == 0) {
     setMaxMsgSize(1024*1024);
 
@@ -102,6 +120,8 @@ int MessagePSKafkaProducer::pushMsgAsync(const chaos::common::data::CDataWrapper
       errstr="Not applied configuration";
       return -11;
   }
+  boost::mutex::scoped_lock ll(io);
+
 //MRDDBG_ << "pushing " << size;
 retry:
 

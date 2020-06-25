@@ -47,7 +47,7 @@ IODirectIODriver(alias){
     msgbrokerdrv="kafka-rdk";
     msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
     
-     prod = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
+    prod = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
 
 }
 

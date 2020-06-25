@@ -62,11 +62,11 @@ namespace chaos {
                 boost::condition_variable cond;
                 boost::thread th;
                 void thfunc();
- 
+                boost::mutex io;
                 uint64_t    counter,oks,errs;
 
                 public:
-                MessagePublishSubscribeBase(const std::string& id):data_ready(false){};
+                MessagePublishSubscribeBase(const std::string& _id):data_ready(false),running(false),id(_id){};
 
                 msgstats_t getStats() const{ return stats;}
 

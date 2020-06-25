@@ -14,18 +14,32 @@
 namespace chaos {
     namespace common {
         namespace message {
-        
-    producer_uptr_t MessagePSDriver::getProducerDriver(const std::string&drvname,const std::string& k){
 
+   boost::mutex MessagePSDriver::io;
+   std::map<std::string,producer_uptr_t> MessagePSDriver::producer_drv_m;
+   std::map<std::string,consumer_uptr_t> MessagePSDriver::consumer_drv_m;
+      
+    producer_uptr_t MessagePSDriver::getProducerDriver(const std::string&drvname,const std::string& k){
+    boost::mutex::scoped_lock ll(io);
+    std::map<std::string,producer_uptr_t>::iterator i=producer_drv_m.find(drvname);
+    if(i!=producer_drv_m.end()){
+        return i->second;
+    }
+producer_uptr_t ret;
 #ifdef KAFKA_RDK_ENABLE
 
                 if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
-                    return producer_uptr_t(new kafka::rdk::MessagePSKafkaProducer());
+                    ret.reset(new kafka::rdk::MessagePSKafkaProducer());
+                    producer_drv_m["kafka-rdk"]=ret;
+                    return ret;
                 }
 #endif
 #ifdef KAFKA_ASIO_ENABLE
                 if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
-                    return  producer_uptr_t(new kafka::asio::MessagePSKafkaAsioProducer());
+                    ret.reset(new kafka::asio::MessagePSKafkaAsioProducer());
+                    producer_drv_m["kafka-asio"]=ret;
+
+                    return  ret;
                 }
 #endif
 
@@ -34,16 +48,25 @@ namespace chaos {
                 
     }
      consumer_uptr_t MessagePSDriver::getConsumerDriver(const std::string&drvname,const std::string& gid,const std::string& k){
-         
+             std::map<std::string,consumer_uptr_t>::iterator i=consumer_drv_m.find(drvname);
+
+         consumer_uptr_t ret;
+          if(i!=consumer_drv_m.end()){
+                return i->second;
+        }
    #ifdef KAFKA_RDK_ENABLE
 
                 if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
-                    return  consumer_uptr_t(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
+                    ret.reset(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
+                    consumer_drv_m["kafka-rdk"]=ret;
+                    return  ret;
                 }
     #endif
     #ifdef KAFKA_ASIO_ENABLE
                 if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
-                    return consumer_uptr_t(new kafka::asio::MessagePSKafkaAsioConsumer(gid,k));
+                    ret.reset(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
+                    consumer_drv_m["kafka-asio"]=ret;
+                    return  ret;
                 }
     #endif
 

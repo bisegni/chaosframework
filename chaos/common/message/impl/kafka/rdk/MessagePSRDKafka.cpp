@@ -17,7 +17,7 @@ MessagePSRDKafka::~MessagePSRDKafka() {
 void MessagePSRDKafka::poll(){
     sleep(1);
 }
-MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("kafka-rdk") {
+MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("kafka-rdk"),rk(NULL) {
   conf       = rd_kafka_conf_new();
   topic_conf = rd_kafka_topic_conf_new();
 }

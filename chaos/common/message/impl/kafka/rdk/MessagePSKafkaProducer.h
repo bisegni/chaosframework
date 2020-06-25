@@ -14,7 +14,6 @@ namespace rdk {
 
 class MessagePSKafkaProducer : public MessagePSRDKafka, public chaos::common::message::MessagePSProducer {
  protected:
-  rd_kafka_t* rk;
   bool        running;
   public:
 

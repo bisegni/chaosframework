@@ -32,6 +32,7 @@ static void removeElement(ele_t*p){
     delete p;
 }
 MessagePSConsumer::~MessagePSConsumer() {
+    MRDDBG_ << que_elem<<"] consuming all messages";
 
      msgs.consume_all(removeElement);
               

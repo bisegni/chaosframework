@@ -9,10 +9,14 @@ namespace chaos {
         namespace message {
 
             MessagePublishSubscribeBase::~MessagePublishSubscribeBase(){
+                MRDDBG_ << "destroying";
+                th.interrupt();
                 stop();
             
             }
                 void MessagePublishSubscribeBase::addServer(const std::string&url){
+                    boost::mutex::scoped_lock ll(io);
+
                     MRDDBG_<<"["<<servers.size()<<"] adding server:"<<url;
                     servers.insert(url);
                 }
@@ -83,11 +87,25 @@ namespace chaos {
          }
 
          void MessagePublishSubscribeBase::start(){
+             boost::mutex::scoped_lock ll(io);
+            if(running==true){
+                 MRDDBG_<<"Already running";
+                return;
+            }
              running=true;
              boost::thread(&MessagePublishSubscribeBase::thfunc,this);
 
          }
         void MessagePublishSubscribeBase::stop(){
+            boost::mutex::scoped_lock ll(io);
+            if(running==false){
+                MRDDBG_<<"Already stopped";
+
+                th.join();
+                return;
+            }
+            MRDDBG_<<"Stopping";
+
             running=false;
             th.join();
         }

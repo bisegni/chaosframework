@@ -23,7 +23,7 @@ namespace chaos {
                 public:
 
                 MessagePSConsumer(const std::string& clientid,const std::string& gid,const std::string& k="");
-                virtual ~MessagePSConsumer();
+                ~MessagePSConsumer();
                 
                 /**
                  * @brief Retrive a message with the given topic name

@@ -21,6 +21,7 @@ namespace chaos {
            
 
             MessagePSProducer::~MessagePSProducer(){
+                    MRDDBG_ << "destroying";
 
             }
          int MessagePSProducer::pushMsgAsync(const chaos::common::data::CDataWrapper&data,const std::string&key,const int32_t pnum){
