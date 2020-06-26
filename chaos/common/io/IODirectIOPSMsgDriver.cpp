@@ -87,6 +87,8 @@ int IODirectIOPSMsgDriver::storeData(const std::string& key,
         IODirectIOPSMsgDriver_LERR_ << "Packet not allocated";
         return -100;
     }
+    
+
     data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
     if(tag_set.size()){
         data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());

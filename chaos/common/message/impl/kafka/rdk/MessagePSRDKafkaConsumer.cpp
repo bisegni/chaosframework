@@ -195,7 +195,7 @@ void MessagePSRDKafkaConsumer::poll(){
       }
       stats.counter++;
 
-      MRDDBG_<<" message from:"<<rd_kafka_topic_name(rkm->rkt)<<" par:"<<rkm->partition<<" off:"<<rkm->offset;
+    //  MRDDBG_<<" message from:"<<rd_kafka_topic_name(rkm->rkt)<<" par:"<<rkm->partition<<" off:"<<rkm->offset;
      
       /* Print the message key. */
     /*  if (rkm->key && is_printable(rkm->key, rkm->key_len))
