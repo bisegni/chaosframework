@@ -4,8 +4,6 @@
 
 class BsonFStream{
 
-    boost::iostreams::mapped_file mf;
-    std::mutex wmutex;
     bson_writer_t *writer;
     std::string name;
     uint32_t objs;
@@ -15,6 +13,8 @@ class BsonFStream{
     public:
     BsonFStream(const std::string&fname,int inital_size=1024*1024);
     BsonFStream();
+    boost::iostreams::mapped_file mf;
+    boost::mutex wmutex;
 
     ~BsonFStream();
     int open(const std::string&fname,int initial_size=1024*1024);
@@ -23,5 +23,6 @@ class BsonFStream{
     int close();
     int write(const std::string&key,const chaos::common::data::CDataWrapper&);
     int write(const std::string&key,const bson_value_t*);
+    std::string getName()const {return name;}
 
 };

@@ -121,7 +121,8 @@ IF (CHAOS_TARGET)
        LOG_BUILD 1
        LOG_INSTALL 1
      )
-   
+
+     
 IF(KAFKA_ASIO_ENABLE)
 MESSAGE("ENABLING DEP KAFKA")
 
@@ -231,6 +232,19 @@ IF (CLING_VIRTUAL_MACHINE_ENABLE)
 ENDIF()
 
 SET(BUILD_LIBRARY )
+#add_subdirectory(libbson)
+
+# ExternalProject_Add(
+#   libbson
+#   GIT_REPOSITORY https://github.com/mongodb/mongo-c-driver.git
+#   PREFIX "${CMAKE_BINARY_DIR}/ext_dep/libbson-driver-prefix"
+#   SOURCE_DIR "${CMAKE_BINARY_DIR}/ext_dep/libbson-driver-src"
+#   SOURCE_SUBDIR "src/libbson"
+#   BINARY_DIR "${CMAKE_BINARY_DIR}/ext_dep/libbson-driver-build"
+#   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=OFF -DENABLE_EXAMPLES=OFF -DENABLE_STATIC=ON
+#    LOG_DOWNLOAD ON
+#    LOG_CONFIGURE ON
+#    LOG_BUILD ON)
 
 SET(common_lib_src  ChaosCommon.cpp
                     chaos_errors.cpp

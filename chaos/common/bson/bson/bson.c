@@ -142,6 +142,8 @@ _bson_impl_inline_grow (bson_impl_inline_t *impl, /* IN */
       alloc->realloc_func_ctx = NULL;
 
       return true;
+   } else {
+      printf("ATTEMPT to ALLOCATE:%u original size:%u curr size:%u",req,size,impl->len);
    }
 
    return false;
@@ -169,7 +171,7 @@ static bool
 _bson_impl_alloc_grow (bson_impl_alloc_t *impl, /* IN */
                        size_t size)             /* IN */
 {
-   size_t req;
+   size_t req,req2;
 
    /*
     * Determine how many bytes we need for this document in the buffer
@@ -181,12 +183,17 @@ _bson_impl_alloc_grow (bson_impl_alloc_t *impl, /* IN */
       return true;
    }
 
-   req = bson_next_power_of_two (req);
-
-   if ((req <= INT32_MAX) && impl->realloc) {
-      *impl->buf = impl->realloc (*impl->buf, req, impl->realloc_func_ctx);
-      *impl->buflen = req;
+   req2 = bson_next_power_of_two (req);
+   if((req2>INT32_MAX) && (req<=INT32_MAX)){
+      req2=INT32_MAX;
+   }
+   if ((req2 <= INT32_MAX) && impl->realloc) {
+      *impl->buf = impl->realloc (*impl->buf, req2, impl->realloc_func_ctx);
+      *impl->buflen = req2;
       return true;
+   } else {
+      printf("ATTEMPT to ALLOCATE:%u original size:%u curr size:%u, offset:%u depth:%u, sum:%u",req,size,impl->len,impl->offset,impl->depth,(impl->offset + impl->len + size + impl->depth));
+   
    }
 
    return false;
@@ -397,11 +404,15 @@ _bson_append (bson_t *bson,              /* IN */
     * does.
     */
    if (BSON_UNLIKELY (n_bytes > (BSON_MAX_SIZE - bson->len))) {
+      printf("CANNOT APPEND:%d\n",n_bytes);
       return false;
    }
 
    va_start (args, first_data);
    ok = _bson_append_va (bson, n_bytes, n_pairs, first_len, first_data, args);
+   if (ok==false) {
+      printf("CANNOT APPEND2:%d first_len:%d\n",n_bytes,first_len);
+   }
    va_end (args);
 
    return ok;

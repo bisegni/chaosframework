@@ -89,7 +89,9 @@ int InfluxDB::pushObject(const std::string&                       key,
   }
   const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
 
-  const uint64_t ts = stored_object.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+  //
+  const int64_t ts = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);//TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
+
   uint8_t*       buf;
   size_t         buflen;
   int64_t        seq, runid;

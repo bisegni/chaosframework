@@ -400,8 +400,7 @@ static int createRoot(const std::string& srcpath, const std::string& dstpath) {
 
       iseq   = cd.getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
       irunid = cd.getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-      tim    = cd.getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
-
+      tim    = cd.getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
       if (oldrunid < 0) {
         oldrunid = irunid;
       }
@@ -666,7 +665,7 @@ void SearchWorker::pathToCache(const std::string& final_file) {
         uint64_t iseq, irunid, ts;
         iseq                              = pd->getInt64Value(chaos::DataPackCommonKey::DPCK_SEQ_ID);
         irunid                            = pd->getInt64Value(chaos::ControlUnitDatapackCommonKey::RUN_ID);
-        ts                                = pd->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+        ts= pd->getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
         chaos::common::data::CDWShrdPtr d = chaos::common::data::CDWShrdPtr(pd);
 
         if (first_seq < 0) {
@@ -709,6 +708,9 @@ std::string SearchWorker::prepareDirectory() {
   std::string             fpath = path + "/" + POSIX_FINAL_DATA_NAME;
   boost::filesystem::path final_file(fpath);
   // check if exists uncompressed
+  PosixFile::write_path_t::iterator id;
+  bool completed=false;
+  do{
   if (boost::filesystem::exists(final_file)) {
     istemp = false;
     return final_file.string();
@@ -766,7 +768,14 @@ std::string SearchWorker::prepareDirectory() {
     }
   }
   #endif
-  DBG << " Not yet ready " << fpath << " for:" << path;
+  id= PosixFile::s_lastWriteDir.find(path);
+  completed=(id == PosixFile::s_lastWriteDir.end());
+  if (!completed) {
+    DBG << " Not yet ready " << fpath << " for:" << path;
+
+    usleep(100000);
+  }
+  } while(!completed);
   return std::string();
 }
 
@@ -990,7 +999,8 @@ int PosixFile::pushObject(const std::string&                       key,
   }
   const uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
 
-  const uint64_t ts = stored_object.getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP);
+  const int64_t ts = stored_object.getInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP);//TimingUtil::getTimeStamp() & 0xFFFFFFFFFFFFFF00ULL;
+ 
   char           dir[MAX_PATH_LEN];
   char           f[MAX_PATH_LEN];
   uint8_t*       buf;
@@ -1035,7 +1045,7 @@ int PosixFile::pushObject(const std::string&                       key,
         ChaosWriteLock ll(s_lastWriteDir[dir].devio_mutex);
         s_lastWriteDir[dir].fname = path;
         s_lastWriteDir[dir].ts    = now;
-        if (s_lastWriteDir[dir].writer.open(path) != 0) {
+        if (s_lastWriteDir[dir].writer.open(path,16*1024*1024) != 0) {
           ERR << "cannot open "
               << " mapped file:" << path;
           // last_access_mutex.unlock();
@@ -1049,7 +1059,7 @@ int PosixFile::pushObject(const std::string&                       key,
 
     //BsonFStream& writer = s_lastWriteDir[dir].writer;
     bool ok;
-    int  retry = 2;
+    int  retry = 0;
     do {
       char key[32];
       snprintf(key, sizeof(key), "%010lu_%010lu", runid, seq);
@@ -1066,7 +1076,7 @@ int PosixFile::pushObject(const std::string&                       key,
 #endif
         id->second.unordered_ts = now;
       } else {
-        ERR << " CANNOT WRITE:" << dir << " seq:" << seq << " runid:" << runid << " retry:" << retry;
+        ERR << " CANNOT WRITE:" << dir << " seq:" << seq << " runid:" << runid << "pckt size:"<<stored_object.getBSONRawSize()<<" retry:" << retry;
 
         boost::filesystem::path p(dir);
         if ((boost::filesystem::exists(p) == false)) {

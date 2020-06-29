@@ -7,10 +7,16 @@
 #define ERR ERR_LOG(BsonFStream)
 static void*
 test_bson_writer_custom_realloc_helper(void* mem, size_t num_bytes, void* ctx) {
-  boost::iostreams::mapped_file* mf = (boost::iostreams::mapped_file*)ctx;
-  mf->resize(num_bytes);
+  BsonFStream* f= (BsonFStream*)ctx;
+  void *ptr;
+  //boost::mutex::scoped_lock lock(f->wmutex);
 
-  return mf->data();
+  //boost::iostreams::mapped_file* mf = (boost::iostreams::mapped_file*)f.mf;;
+  
+  f->mf.resize(num_bytes);
+  ptr=f->mf.data();;
+  DBG<<"name:"<<f->getName()<<" allocated: "<<num_bytes<<"nobj:"<<f->nobj()<<" size:"<<f->mf.size()<<" ptr:"<<std::hex<<ptr;
+  return ptr;
 }
 BsonFStream::BsonFStream():writer(NULL),objs(0),fsize(0),open_ts(0),close_ts(0){
 
@@ -26,7 +32,7 @@ BsonFStream::~BsonFStream(){
   close();
 }
 int BsonFStream::open(const std::string&fname,int size){
-        std::lock_guard<std::mutex> lock(wmutex);
+        boost::mutex::scoped_lock lock(wmutex);
 
         boost::iostreams::mapped_file_params params;
         params.path          = fname;
@@ -45,7 +51,7 @@ int BsonFStream::open(const std::string&fname,int size){
           buf                        = (uint8_t*)mf.data();
           buflen                     = params.new_file_size;
           name=fname;
-          writer = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, (void*)&mf);
+          writer = bson_writer_new(&buf, &buflen, 0, test_bson_writer_custom_realloc_helper, (void*)this);
           if(writer==NULL){
             ERR<<" cannot open a new writer for:"<<name;
             return -4;
@@ -56,7 +62,7 @@ int BsonFStream::open(const std::string&fname,int size){
         return -1;
 }
     size_t BsonFStream::size(){
-        std::lock_guard<std::mutex> lock(wmutex);
+        boost::mutex::scoped_lock lock(wmutex);
 
         if(writer)
           return bson_writer_get_length(writer);
@@ -69,7 +75,7 @@ int BsonFStream::open(const std::string&fname,int size){
 
     int BsonFStream::close(){
        // DBG<<" Closing:"<<name;
-      std::lock_guard<std::mutex> lock(wmutex);
+      boost::mutex::scoped_lock lock(wmutex);
       try{
       if(writer){
         fsize=bson_writer_get_length(writer);
@@ -93,14 +99,19 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const chaos::common::data::CDataWrapper&ptr){
           bson_t* b = NULL;
-        std::lock_guard<std::mutex> lock(wmutex);
+          boost::mutex::scoped_lock lock(wmutex);
 
           if(writer==NULL){
             ERR<<"attempt to write not open or close:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms"<< std::hex<<" x"<<this;
             return -1;
           }
           if (bson_writer_begin(writer, &b)) {
-             bson_append_document(b, key.c_str(), -1, ptr.getBSON());
+             if(!bson_append_document(b, key.c_str(), -1, ptr.getBSON())){
+              bson_writer_end(writer);
+              ERR<<"cannot append objn:"<<objs<< " to:"<<name<<" fs size:"<<mf.size()<<" obj size:"<<ptr.getBSONRawSize();
+
+              return 0;
+             }
              objs++;
              bson_writer_end(writer);
             return objs;
@@ -109,7 +120,7 @@ int BsonFStream::open(const std::string&fname,int size){
     }
     int BsonFStream::write(const std::string&key,const bson_value_t*ptr){
         bson_t* b = NULL;
-          std::lock_guard<std::mutex> lock(wmutex);
+          boost::mutex::scoped_lock lock(wmutex);
 
            if(writer==NULL){
             ERR<<"attempt to write after close:"<<name<< " open time:"<<chaos::common::utility::TimingUtil::toString(open_ts)<<" close time:"<<chaos::common::utility::TimingUtil::toString(close_ts)<<" live:"<<(close_ts-open_ts)<<" ms";
@@ -118,10 +129,14 @@ int BsonFStream::open(const std::string&fname,int size){
           }
 
           if (bson_writer_begin(writer, &b)) {
-             bson_append_value(b, key.c_str(), -1, ptr);
+             if(!bson_append_value(b, key.c_str(), -1, ptr)){
+                bson_writer_end(writer);
+                ERR<<"cannot append objn:"<<objs<< " to:"<<name<< " fs size:"<<mf.size();
+
+                return 0;
+               }
              objs++;
              bson_writer_end(writer);
-            return objs;
-          }
+            return objs;          }
       return 0;
     }
