@@ -300,6 +300,8 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     ChaosWriteLock rl(mutext_feeder);
     if(newConfigration->hasKey(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY)){
         chaos::common::utility::TimingUtil::timestamp_uncertenty_mask=newConfigration->getInt64Value(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY);
+        IODirectIODriver_DLDBG_ <<"Appling TIMING ERROR MASK:"<<std::hex<<chaos::common::utility::TimingUtil::timestamp_uncertenty_mask;
+
     }
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){

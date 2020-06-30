@@ -158,7 +158,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
                 if((chaos::common::utility::TimingUtil::timestamp_uncertenty_mask)&&(abs(diff)>chaos::common::utility::TimingUtil::timestamp_uncertenty_mask/2)){
                     DIODCCLDBG_ <<"CALIBRATING healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt;
 
-                    chaos::common::utility::TimingUtil::timestamp_calibration_offset=diff;
+                    chaos::common::utility::TimingUtil::mds_calibration_offset=diff;
 
                 } else {
                  //   DIODCCLDBG_ <<"healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt;

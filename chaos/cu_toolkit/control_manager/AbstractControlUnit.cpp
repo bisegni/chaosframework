@@ -668,7 +668,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 //init on shared cache the all the dataaset with the default value
                 //set first timestamp for simulate the run step
                 int err;
-                *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
+                *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeCorStamp();
                 attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
                 /*
                  *if ((err = pushSystemDataset()) != 0) {
@@ -1788,6 +1788,11 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                         output_ds_rate);
+        
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_TSOFF,
+                                                        chaos::common::utility::TimingUtil::getTimestampWithDelay);
+                                                       
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_SIZE,
                                                         output_size_rate);
@@ -2209,7 +2214,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         if (input_attribute_dataset.get()) {
             input_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
             //input dataset timestamp is added only when pushed on cache
-            input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
+            input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeCorStamp());
             input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
             //fill the dataset
             fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
@@ -2235,7 +2240,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
             if (custom_attribute_dataset.get()) {
                 custom_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
                 //input dataset timestamp is added only when pushed on cache
-                custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
+                custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeCorStamp());
                 custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
                 
                 //fill the dataset
@@ -2266,7 +2271,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         if (system_attribute_dataset.get()) {
             system_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
             //input dataset timestamp is added only when pushed on cache
-            system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, cur_us / 1000);
+            system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeCorStamp());
             system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, cur_us);
             //fill the dataset
             fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
@@ -2287,7 +2292,7 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
         if (attribute_dataset) {
             //fill datapack with
             //! the dataaset can be pushed also in other moment
-            attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+            attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeCorStamp());
             attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
             //scan all alarm ad create the datapack
             size_t alarm_size = catalog.size();

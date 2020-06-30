@@ -98,6 +98,7 @@ namespace chaos {
             public:
                 static int64_t      timestamp_calibration_offset;
                 static int32_t      timestamp_uncertenty_mask;
+                static int64_t      mds_calibration_offset;
 
                 void enableTimestampCalibration();
                 void disableTimestampCalibration();
@@ -112,7 +113,19 @@ namespace chaos {
                     }
                     
                 }
-                
+                static inline uint64_t getTimeCorStamp() {
+                    try{
+                        if(timestamp_uncertenty_mask==0){
+                            return (boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds();
+                        }
+                        return ((boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds())&timestamp_uncertenty_mask;
+
+                    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
+                        TU_LERR << "Bad day exception";
+                        return 0;
+                    }
+                    
+                }
                 //!Return the current timestamp in milliseconds
                 static inline uint64_t getTimeStampInMicroseconds() {
                     try{

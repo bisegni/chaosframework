@@ -78,6 +78,7 @@ CDWUniquePtr ProcessHello::execute(CDWUniquePtr api_data) {
 
     result->appendStringToArray(msgbroker);
     result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
-  
+    result->addInt64Value(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY,(uint64_t)ChaosMetadataService::timePrecisionMask);
+
     return result;
 }

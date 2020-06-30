@@ -33,6 +33,8 @@ using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
 int64_t TimingUtil::timestamp_calibration_offset = 0;
+int64_t TimingUtil::mds_calibration_offset = 0;
+
 int32_t TimingUtil::timestamp_uncertenty_mask=0;
 const char* TimingUtil::formats[]={
     "%Y-%m-%dT%H:%M:%S.%fZ",

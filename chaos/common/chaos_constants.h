@@ -449,6 +449,7 @@ namespace chaos {
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_ERROR  = "cuh_dso_prerr";
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_LOST   = "cuh_dso_plost";
         static const char * const CU_HEALT_OUTPUT_TOT_PUSH_KSIZE   = "cuh_dso_tksize";
+        static const char * const CU_HEALT_OUTPUT_DATASET_TSOFF  = "cuh_dso_tsoff";
 
         
     }

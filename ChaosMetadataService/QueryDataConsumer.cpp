@@ -125,9 +125,9 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
 
 int err=0;
 uint64_t now=TimingUtil::getTimeStamp();
- if(data_pack.hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
-     int32_t lat=now-data_pack.getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
-      data_pack.addInt32Value(DataPackCommonKey::NODE_MDS_TIMEDIFF, lat);
+ if(data_pack.hasKey(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP)){
+     int32_t lat=TimingUtil::getTimeStampInMicroseconds()-data_pack.getInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP);
+     data_pack.addInt32Value(DataPackCommonKey::NODE_MDS_TIMEDIFF, lat);
  }
 
   data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, now);

@@ -100,6 +100,10 @@ namespace driver{
             HealtManager::getInstance()->addNodeMetricValue(uid,
                                                             chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                             output_ds_rate,true);
+            HealtManager::getInstance()->addNodeMetricValue(uid,
+                                                            chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_TSOFF,
+                                                            chaos::common::utility::TimingUtil::mds_calibration_offset,true);
+
             
             //keep track of acquire timestamp
             last_push_rate_grap_ts = rate_acq_ts;
@@ -282,6 +286,10 @@ namespace driver{
             HealtManager::getInstance()->addNodeMetric(uid,
                                                        chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                        chaos::DataType::TYPE_DOUBLE);
+            
+            HealtManager::getInstance()->addNodeMetric(uid,
+                                                       chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_TSOFF,
+                                                       chaos::DataType::TYPE_INT64);
             
             HealtManager::getInstance()->addNodeMetricValue(uid,
                                                             chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS,

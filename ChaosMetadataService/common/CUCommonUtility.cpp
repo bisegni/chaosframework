@@ -209,7 +209,8 @@ void CUCommonUtility::addDataServicePack(ChaosUniquePtr<chaos::common::data::CDa
 
     result->appendStringToArray(msgbroker);
     result->finalizeArrayForKey(chaos::DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
-      
+    result->addInt64Value(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY,(uint64_t)ChaosMetadataService::timePrecisionMask);
+  
     //constructs the result
     //result.reset(new CDataWrapper());
     if(data_services.size()==0){
