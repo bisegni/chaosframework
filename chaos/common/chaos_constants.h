@@ -719,6 +719,7 @@ namespace chaos {
          */
         static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
         static const char * const DS_BROKER_ADDRESS_LIST                            = "dsndk_broker_list";
+        static const char * const DS_TIMESTAMP_UNCERTENTY                           = "dsndk_ts_unc";
 
         
     }

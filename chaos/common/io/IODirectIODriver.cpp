@@ -298,6 +298,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
     //lock the feeder access
     chaos::common::data::CDataWrapper*ret=NULL;
     ChaosWriteLock rl(mutext_feeder);
+    if(newConfigration->hasKey(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY)){
+        chaos::common::utility::TimingUtil::timestamp_uncertenty_mask=newConfigration->getInt64Value(chaos::DataServiceNodeDefinitionKey::DS_TIMESTAMP_UNCERTENTY);
+    }
     //checkif someone has passed us the device indetification
     if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
         chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);

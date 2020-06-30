@@ -128,10 +128,9 @@ uint64_t now=TimingUtil::getTimeStamp();
  if(data_pack.hasKey(DataPackCommonKey::DPCK_TIMESTAMP)){
      int32_t lat=now-data_pack.getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
       data_pack.addInt32Value(DataPackCommonKey::NODE_MDS_TIMEDIFF, lat);
-
  }
 
-  data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, now&ChaosMetadataService::timePrecisionMask);
+  data_pack.addInt64Value(NodeHealtDefinitionKey::NODE_HEALT_MDS_TIMESTAMP, now);
   BufferSPtr channel_data_injected(data_pack.getBSONDataBuffer().release());
 
     DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(hst_tag);

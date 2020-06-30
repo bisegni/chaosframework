@@ -159,7 +159,8 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderGetOpcodeResult,
                     *DirectIODeviceChannelHeaderGetOpcodeResultPtr;
                     
-                    //! Header for DirectIODeviceChannelHeaderMultiGetOpcode asynchronous result
+
+                       //! Header for DirectIODeviceChannelHeaderMultiGetOpcode asynchronous result
                     /*!
                      the header contains the number for result that are found
                      every result in encoded in a bson way sso every record as the lent at the start,
@@ -171,6 +172,15 @@ namespace chaos {
                         uint32_t number_of_result;
                     } DirectIODeviceChannelHeaderMultiGetOpcodeResult,
                     *DirectIODeviceChannelHeaderMultiGetOpcodeResultPtr;
+                    //! Header for DeviceChannelOpcodePutHeathData synchronous result
+                    /*!
+                        Contain the timestamp of the mds, sent back, to tune timestamps of other nodes
+                     */
+                    typedef struct DeviceChannelOpcodePutHeathData {
+                        //! timestamp of mds
+                        uint64_t mds_ts;
+                    } DeviceChannelOpcodePutHeathDataResult,
+                    *DeviceChannelOpcodePutHeathDataResultPtr;
                     
                     //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 4
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode

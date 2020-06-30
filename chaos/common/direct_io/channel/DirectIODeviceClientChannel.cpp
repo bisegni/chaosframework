@@ -26,6 +26,7 @@
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <boost/format.hpp>
+#include <chaos/common/utility/TimingUtil.h>
 
 #include <string.h>
 
@@ -116,7 +117,7 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
     if(key.size() > 250) return -1;
     DataBuffer data_buffer;
     DirectIODataPackSPtr answer;
-    
+    uint64_t start_msg=chaos::common::utility::TimingUtil::getTimeStamp();
     //write mode and tags number
     data_buffer.writeInt8((int8_t) _put_mode);
     data_buffer.writeInt16(tag_set.size());
@@ -147,6 +148,24 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
         if((err = sendPriorityData(MOVE(data_pack), answer))) {
             //error getting last value
             DIODCCLERR_ << "Error storing value for key:" << key << " with error:" <<err;
+        } else {
+            if(answer->channel_header_data.get()&&answer->channel_header_data->data()){
+                uint64_t end_msg=chaos::common::utility::TimingUtil::getTimeStamp();
+                int64_t rtt=end_msg-start_msg;
+
+                uint64_t mds_ts=answer->channel_header_data->data<opcode_headers::DeviceChannelOpcodePutHeathData>()->mds_ts;
+                int64_t diff=chaos::common::utility::TimingUtil::getTimeStamp()-mds_ts -(rtt/2);
+                if((chaos::common::utility::TimingUtil::timestamp_uncertenty_mask)&&(abs(diff)>chaos::common::utility::TimingUtil::timestamp_uncertenty_mask/2)){
+                    DIODCCLDBG_ <<"CALIBRATING healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt;
+
+                    chaos::common::utility::TimingUtil::timestamp_calibration_offset=diff;
+
+                } else {
+                 //   DIODCCLDBG_ <<"healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt;
+
+                }
+            }
+            
         }
     } else {
         err = sendPriorityData(MOVE(data_pack));

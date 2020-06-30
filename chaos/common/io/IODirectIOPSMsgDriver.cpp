@@ -88,10 +88,18 @@ int IODirectIOPSMsgDriver::storeData(const std::string& key,
         return -100;
     }
     
-
-    data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+    if(!data_to_store->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
+        data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+    } else {
+        data_to_store->setValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+    }
     if(tag_set.size()){
-        data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
+        if(!data_to_store->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)){
+            data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
+        } else {
+            data_to_store->setValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
+
+        }
     }
     if((err=prod->pushMsgAsync(*data_to_store.get(), key))!=0){
         DEBUG_CODE(IODirectIOPSMsgDriver_LERR_ << "Error pushing "<<prod->getLastError());

@@ -23,7 +23,7 @@
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/utility/DataBuffer.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
-
+#include <chaos/common/utility/TimingUtil.h>
 #define INFO    INFO_LOG(DirectIODeviceServerChannel)
 #define DBG     DBG_LOG(DirectIODeviceServerChannel)
 #define ERR     ERR_LOG(DirectIODeviceServerChannel)
@@ -96,10 +96,19 @@ int DirectIODeviceServerChannel::consumeDataPack(chaos::common::direct_io::Direc
             while(meta_tag_num--){
                 meta_tag_set->insert(data_buffer.readStringUntilNull());
             }
+            BufferSPtr result_data;
+
             err = handler->consumeHealthDataEvent(key,
                                                   hst_tag,
                                                   MOVE(meta_tag_set),
                                                   data_pack->channel_data);
+            if(err == 0){
+                BufferSPtr result_header = ChaosMakeSharedPtr<Buffer>(sizeof(DeviceChannelOpcodePutHeathData));
+                
+                //set the result header and data
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, (uint32_t)result_header->size())
+                result_header->data<opcode_headers::DeviceChannelOpcodePutHeathData>()->mds_ts = TO_LITTEL_ENDNS_NUM(uint64_t,chaos::common::utility::TimingUtil::getTimeStamp());
+            }
             break;
         }
             

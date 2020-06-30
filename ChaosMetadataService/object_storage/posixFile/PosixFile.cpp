@@ -531,6 +531,8 @@ static int createFinal(const std::string& dstdir, const std::string& name, bool 
     }
   } catch (boost::filesystem::filesystem_error& err) {
     ERR << " FS Error:" << err.what();
+  } catch(...){
+    ERR<<" Uknown exception occured creating:"<<dstpath;
   }
   fl.unlock();
   // cannot be still created

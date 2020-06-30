@@ -307,8 +307,8 @@ case "$cmd" in
                 devel)
                     start_mds
                     start_ui
-                    load_config
                     start_agent
+                    load_config
         		    
                     sleep 1
                     start_us

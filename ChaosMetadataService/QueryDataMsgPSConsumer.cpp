@@ -58,7 +58,6 @@ QueryDataMsgPSConsumer::QueryDataMsgPSConsumer(const std::string& id):groupid(id
 void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t &data) {
   ChaosStringSetConstSPtr meta_tag_set;
   uint32_t                st = data.cd->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE);
-  //DBG<<"data from:"<<data.key;
   if (data.cd->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)) {
     ChaosStringSet *tag = new ChaosStringSet();
     tag->insert(data.cd->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG));
@@ -67,6 +66,8 @@ void QueryDataMsgPSConsumer::messageHandler(const chaos::common::message::ele_t 
   std::string kp = data.key;
 
   std::replace(kp.begin(), kp.end(), '.', '/');
+    //DBG<<"data from:"<<kp<<" size:"<<data.cd->getBSONRawSize();
+
   QueryDataConsumer::consumePutEvent(kp, (uint8_t)st, meta_tag_set, *(data.cd.get()));
 }
 

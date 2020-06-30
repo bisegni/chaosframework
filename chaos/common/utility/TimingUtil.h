@@ -53,7 +53,6 @@ namespace chaos {
                 const uint32_t      calibration_offset_bound;
                 const bool          calibration_enable_status;
                 const std::string   remote_ntp_server;
-                static int64_t      timestamp_calibration_offset;
                 static const char* formats[];
                 static const size_t formats_n;
                 
@@ -97,7 +96,9 @@ namespace chaos {
                 void getNTPTS(uint64_t& ntp_received_ts,
                               uint64_t& ntp_reansmitted_ts);
             public:
-                
+                static int64_t      timestamp_calibration_offset;
+                static int32_t      timestamp_uncertenty_mask;
+
                 void enableTimestampCalibration();
                 void disableTimestampCalibration();
                 
