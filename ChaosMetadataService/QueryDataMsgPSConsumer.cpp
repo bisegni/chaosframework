@@ -134,7 +134,9 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
       }
     }
   }
-  alive_map[key] = TimingUtil::getTimeStamp();
+  if(channel_data.get()){
+    alive_map[key] = TimingUtil::getTimeStamp();
+  }
   return QueryDataConsumer::consumeHealthDataEvent(key, hst_tag, meta_tag_set, channel_data);
   
 }
