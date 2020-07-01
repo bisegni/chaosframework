@@ -2119,9 +2119,10 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
             return err;
         }
         output_attribute_dataset->addInt64Value(ControlUnitDatapackCommonKey::RUN_ID, run_id);
-        output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeCorStamp()/* *timestamp_acq_cached_value->getValuePtr<uint64_t>()*/);
+        uint64_t tscor=TimingUtil::getTimeCorStamp();
+        output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, tscor/* *timestamp_acq_cached_value->getValuePtr<uint64_t>()*/);
         output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_HIGH_RESOLUTION_TIMESTAMP, *timestamp_hw_acq_cached_value->getValuePtr<uint64_t>());
-        
+        ACULDBG_<<"TS:"<<tscor;
         //add all other output channel
         for (int idx = 0;
              idx < ((int)cache_output_attribute_vector.size()) - 1;  //the device id and timestamp in added out of this list
