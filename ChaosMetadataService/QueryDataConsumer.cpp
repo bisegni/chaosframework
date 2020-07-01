@@ -182,7 +182,10 @@ int QueryDataConsumer::consumePutEvent(const std::string& key,
                                        const uint8_t hst_tag,
                                        const ChaosStringSetConstSPtr meta_tag_set,
                                        BufferSPtr channel_data) {
-    CHAOS_ASSERT(channel_data)
+
+    if(channel_data.get()==NULL){
+        return 0;
+    }
     int err = 0;
     CDataWrapper data_pack((char *)channel_data->data());
    return consumePutEvent(key,hst_tag,meta_tag_set,data_pack);

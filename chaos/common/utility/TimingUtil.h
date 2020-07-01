@@ -97,7 +97,7 @@ namespace chaos {
                               uint64_t& ntp_reansmitted_ts);
             public:
                 static int64_t      timestamp_calibration_offset;
-                static int32_t      timestamp_uncertenty_mask;
+                static uint64_t     timestamp_uncertenty_mask;
                 static int64_t      mds_calibration_offset;
 
                 void enableTimestampCalibration();
@@ -115,10 +115,11 @@ namespace chaos {
                 }
                 static inline uint64_t getTimeCorStamp() {
                     try{
+                        uint64_t ret=(boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(mds_calibration_offset)).total_milliseconds();
                         if(timestamp_uncertenty_mask==0){
-                            return (boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds();
+                            return ret;
                         }
-                        return ((boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(timestamp_calibration_offset)).total_milliseconds())&timestamp_uncertenty_mask;
+                        return (ret&timestamp_uncertenty_mask);
 
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";

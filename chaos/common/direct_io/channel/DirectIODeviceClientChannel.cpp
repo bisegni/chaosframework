@@ -155,8 +155,8 @@ int DirectIODeviceClientChannel::storeAndCacheHealthData(const std::string& key,
 
                 uint64_t mds_ts=answer->channel_header_data->data<opcode_headers::DeviceChannelOpcodePutHeathData>()->mds_ts;
                 int64_t diff=chaos::common::utility::TimingUtil::getTimeStamp()-mds_ts -(rtt/2);
-                if((chaos::common::utility::TimingUtil::timestamp_uncertenty_mask)&&(abs(diff)>chaos::common::utility::TimingUtil::timestamp_uncertenty_mask/2)){
-                    DIODCCLDBG_ <<"CALIBRATING healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt;
+                if((chaos::common::utility::TimingUtil::timestamp_uncertenty_mask)&&(abs(diff)>(~chaos::common::utility::TimingUtil::timestamp_uncertenty_mask)/2)){
+                    DIODCCLDBG_ <<"CALIBRATING healt answ:"<<mds_ts<<" diff:"<<diff<<" rtt:"<<rtt<<" sync err:"<<((~chaos::common::utility::TimingUtil::timestamp_uncertenty_mask));
 
                     chaos::common::utility::TimingUtil::mds_calibration_offset=diff;
 

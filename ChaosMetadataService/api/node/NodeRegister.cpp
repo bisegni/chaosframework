@@ -314,7 +314,7 @@ CDWUniquePtr NodeRegister::controlUnitRegistration(CDWUniquePtr api_data) {
     const std::string cu_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     
     USRA_INFO << "Register control unit " << cu_uid;
-    
+    ChaosMetadataService::getInstance()->notifyNewNode(cu_uid); 
     //set cu id to the batch command datapack
     ack_command->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
                                 cu_uid);

@@ -190,6 +190,11 @@ void ChaosMetadataService::init(void *init_data)  {
     //start data manager
 }
 
+int ChaosMetadataService::notifyNewNode(const std::string& nodeuid){
+    return data_consumer->consumeHealthDataEvent(nodeuid, 0, ChaosStringSetConstSPtr(),  ChaosMakeSharedPtr<Buffer>());
+
+}
+
 /*
  *
  */

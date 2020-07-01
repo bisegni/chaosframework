@@ -56,7 +56,7 @@ namespace chaos{
         protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
         public StartableService {
             friend class ChaosDataService;
-            
+            friend class ChaosMetadataService;
             DirectIOServerEndpoint					*server_endpoint;
             DirectIODeviceServerChannel				*device_channel;
             DirectIOSystemAPIServerChannel			*system_api_channel;

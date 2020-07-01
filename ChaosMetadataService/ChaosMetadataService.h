@@ -65,6 +65,7 @@ namespace chaos {
                                  const std::vector<std::string>& multitoken_param);
             //inherited by chaos::common::async_central::TimerHandler
             void timeout();
+            
         public:
             static uint64_t timePrecisionMask;
             static  std::string mdsName;
@@ -101,6 +102,14 @@ namespace chaos {
              * 
              */
             int removeStorageData(const std::string& nodeuid,uint64_t start,uint64_t end);
+
+            /**
+             * @brief used to notify a new registration on the data consumer logic( i.e. on registration the cds subscribe to it)
+             * 
+             * @param nodeuid 
+             * @return int 
+             */
+            int notifyNewNode(const std::string& nodeuid);
         };
     }
 }
