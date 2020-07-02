@@ -130,7 +130,7 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
             ERR << " cannot subscribe to :" << cons->getLastError();
         } else {
           DBG << "Subscribed to:" << keysub;
-          alive_map[key] = TimingUtil::getTimeStamp();
+        //  alive_map[key] = TimingUtil::getTimeStamp();
 
         }
      /* bool ok=true;
@@ -151,7 +151,10 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
       }*/
     }
   } else {
-    alive_map[key] = TimingUtil::getTimeStamp();
+    if(channel_data.get()){
+      // real health
+      alive_map[key] = TimingUtil::getTimeStamp();
+    }
 
   }
  
