@@ -156,6 +156,7 @@ int MessagePSRDKafkaConsumer::subscribe(const std::string& key){
           rd_kafka_destroy(rk);
           return -20;
         }
+
         MRDDBG_<<" subscribed to "<<subscription->cnt;
       
 
