@@ -106,6 +106,8 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
                                                    const ChaosStringSetConstSPtr meta_tag_set,
                                                    BufferSPtr                    channel_data) {
   int err        = 0;
+  {
+    boost::mutex::scoped_lock ll(map_m);
   if (alive_map.find(key) == alive_map.end()) {
     std::string rootname=key;
     size_t pos = key.find(NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
@@ -114,28 +116,45 @@ int QueryDataMsgPSConsumer::consumeHealthDataEvent(const std::string &          
         // If found then erase it from string
         rootname.erase(pos,strlen(NodeHealtDefinitionKey::HEALT_KEY_POSTFIX));
         
-        std::vector<std::string> tosub = {
+      /*  std::vector<std::string> tosub = {
           DataPackPrefixID::OUTPUT_DATASET_POSTFIX,
           DataPackPrefixID::INPUT_DATASET_POSTFIX,
           DataPackPrefixID::CUSTOM_DATASET_POSTFIX,
           DataPackPrefixID::SYSTEM_DATASET_POSTFIX,
           DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX,
           DataPackPrefixID::CU_ALARM_DATASET_POSTFIX
-        };
+        };*/
 
+        std::string keysub=rootname+".*";
+        if (cons->subscribe(keysub) != 0) {
+            ERR << " cannot subscribe to :" << cons->getLastError();
+        } else {
+          DBG << "Subscribed to:" << keysub;
+          alive_map[key] = TimingUtil::getTimeStamp();
+
+        }
+     /* bool ok=true;
       for(auto i:tosub){
         std::string keysub=rootname+i;
         if (cons->subscribe(keysub) != 0) {
             ERR << " cannot subscribe to :" << cons->getLastError();
+            ok=false;
         } else {
-          DEBUG_CODE(DBG << "Subscribing to:" << keysub);
-
+          DBG << "Subscribing to:" << keysub;
         }
-      }
+      }*
+      if(ok){
+          DBG << "Subscribing to all :" << rootname;
+
+          alive_map[key] = TimingUtil::getTimeStamp();
+
+      }*/
     }
-  }
-  if(channel_data.get()){
+  } else {
     alive_map[key] = TimingUtil::getTimeStamp();
+
+  }
+ 
   }
   return QueryDataConsumer::consumeHealthDataEvent(key, hst_tag, meta_tag_set, channel_data);
   
