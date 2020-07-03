@@ -120,7 +120,7 @@ int MessagePSKafkaProducer::pushMsgAsync(const chaos::common::data::CDataWrapper
       errstr="Not applied configuration";
       return -11;
   }
-  boost::mutex::scoped_lock ll(io);
+ // boost::mutex::scoped_lock ll(io);
 
 //MRDDBG_ << "pushing: " << size;
 retry:

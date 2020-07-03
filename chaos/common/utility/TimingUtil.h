@@ -117,11 +117,12 @@ namespace chaos {
                     try{
                         uint64_t ret=(boost::posix_time::microsec_clock::universal_time()- EPOCH + boost::posix_time::milliseconds(mds_calibration_offset)).total_milliseconds();
                         if(timestamp_uncertenty_mask==0){
+                    ///    TU_LERR << "NO TIME ERROR CONFIGURED";
+
                             return ret;
                         }
                         
                     //    TU_LDBG << "tscor:"<<(ret&timestamp_uncertenty_mask)<<" mask:"<<std::hex<<timestamp_uncertenty_mask<<" tscor:"<<(ret&timestamp_uncertenty_mask);
-
                         return (ret&timestamp_uncertenty_mask);
 
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
