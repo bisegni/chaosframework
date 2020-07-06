@@ -48,7 +48,7 @@ BSON_BEGIN_DECLS
 #define __BSON_NEED_ATOMIC_32
 #endif
 #ifdef BSON_HAVE_ATOMIC_64_ADD_AND_FETCH
-#if BSON_GNUC_IS_VERSION(4, 1)
+#if BSON_GNUC_IS_VERSION(4, 1) || defined(CHAOS_TARGET)
 /*
  * GCC 4.1 on i386 can generate buggy 64-bit atomic increment.
  * So we will work around with a fallback.
