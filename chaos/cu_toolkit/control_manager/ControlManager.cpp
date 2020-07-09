@@ -84,7 +84,7 @@ void ControlManager::init(void *initParameter) {
     AbstActionDescShrPtr actionDescription;
     
     //check if we need to start the unit server
-    use_unit_server = GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+    use_unit_server = GlobalConfiguration::getInstance()->hasOption(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
     
     //check for execution pools
     use_execution_pools = GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_EXECUTION_POOLS);
@@ -97,7 +97,7 @@ void ControlManager::init(void *initParameter) {
     if(use_unit_server) {
         LCMAPP_  << "Enable unit server";
         
-        if(!GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
+        if(!GlobalConfiguration::getInstance()->hasOption(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
             throw CException(-1, "No server alias param found", __PRETTY_FUNCTION__);
         }
         
@@ -121,7 +121,7 @@ void ControlManager::init(void *initParameter) {
             
         }
         
-        unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+        unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
         
         //init CU action
         actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,

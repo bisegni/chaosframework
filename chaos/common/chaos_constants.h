@@ -125,7 +125,9 @@ namespace chaos {
 
         static const char * const   OPT_MSG_BROKER_SERVER			    = "msg-broker-server";
         static const char * const   OPT_MSG_BROKER_DRIVER			    = "msg-broker-driver";
+
         static const char * const   OPT_HA_ZONE_NAME                    = "ha-zone-name";
+        static const char * const   CONTROL_MANAGER_UNIT_SERVER_ALIAS   = "unit-server-alias";
 
  
     }
@@ -720,6 +722,8 @@ namespace chaos {
          */
         static const char * const DS_STORAGE_LIVE_TIME                              = "dsndk_storage_live_time";
         static const char * const DS_BROKER_ADDRESS_LIST                            = "dsndk_broker_list";
+        static const char * const DS_SUBSCRIBE_KEY_LIST                             = "dsndk_subkey_list";
+
         static const char * const DS_TIMESTAMP_UNCERTENTY                           = "dsndk_ts_unc";
 
         
@@ -1598,6 +1602,8 @@ namespace chaos {
      */
     //! Namespace for the domain for the unique identification key
     namespace DataPackPrefixID {
+        static const char * const COMMAND_DATASET_POSTFIX    = "_cmd";
+
         static const char * const OUTPUT_DATASET_POSTFIX    = "_o";
         static const char * const INPUT_DATASET_POSTFIX     = "_i";
         static const char * const CUSTOM_DATASET_POSTFIX    = "_c";

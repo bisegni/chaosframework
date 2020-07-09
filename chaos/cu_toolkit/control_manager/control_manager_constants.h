@@ -31,7 +31,7 @@ namespace chaos {
 #define CONTROL_MANAGER_UNIT_SERVER_ENABLE							"unit-server-enable"
 #define CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc						"Enable the unit server on this instance of process"
             
-#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit-server-alias"
+//#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit-server-alias"
 #define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
 #define CONTROL_MANAGER_UNIT_SERVER_KEY								"unit-server-file-key"
 #define CONTROL_MANAGER_UNIT_SERVER_KEY_desc						"the path to the file that contains the rsa public key for the unit server alias"

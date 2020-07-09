@@ -524,3 +524,4 @@ void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     }
     delete query_cursor;
 }
+

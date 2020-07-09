@@ -11,15 +11,30 @@ namespace kafka {
 namespace rdk {
 
 MessagePSRDKafka::~MessagePSRDKafka() {
+
+  MRDDBG_<<" DESTROY KAFKA";
+  if(conf){
+    rd_kafka_conf_destroy(conf);
+    conf=NULL;
+  }
+  if(topic_conf){
+    rd_kafka_topic_conf_destroy(topic_conf);
+    topic_conf=NULL;
+  }
+
 }
 
 
 void MessagePSRDKafka::poll(){
     sleep(1);
 }
-MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("kafka-rdk"),rk(NULL) {
+
+MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("kafka-rdk"),rk(NULL),init_done(false) {
   conf       = rd_kafka_conf_new();
   topic_conf = rd_kafka_topic_conf_new();
+  if(conf==NULL || topic_conf==NULL){
+    throw chaos::CException(-5,"cannot allocate RDK config",__PRETTY_FUNCTION__);
+  }
 }
 
 int MessagePSRDKafka::setOption(const std::string& key, const std::string& value) {
@@ -50,7 +65,11 @@ int MessagePSRDKafka::init(std::set<std::string>& servers) {
     MRDERR_ << "Failed to lookup hostname";
     return -1;
   }
+  if(init_done){
+        MRDDBG_ << "Already initialized";
 
+    return 0;
+  }
   if (rd_kafka_conf_set(conf, "client.id", hostname, errstr, sizeof(errstr)) != RD_KAFKA_CONF_OK) {
     MRDERR_ << "error:" << errstr;
 
@@ -75,6 +94,7 @@ int MessagePSRDKafka::init(std::set<std::string>& servers) {
 
     return -5;
   }
+  init_done=true;
   return 0;
 }
 

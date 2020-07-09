@@ -19,7 +19,7 @@ class MessagePSRDKafka:public virtual MessagePublishSubscribeBase {
   rd_kafka_conf_t*       conf;
   rd_kafka_topic_conf_t* topic_conf;
   rd_kafka_t* rk;
-
+  bool init_done;
   public:
   MessagePSRDKafka();
   ~MessagePSRDKafka();

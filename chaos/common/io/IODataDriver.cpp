@@ -76,3 +76,13 @@ ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  {
 CDataWrapper* IODataDriver::updateConfiguration(CDataWrapper*){
     return NULL;
 }
+int IODataDriver::subscribe(const std::string&key){
+    IODataDriverLERR << "Not implemented";
+    return 0;
+
+}
+int IODataDriver::addHandler(chaos::common::message::msgHandler cb){
+    IODataDriverLERR << "Not implemented";
+
+    return 0;
+}

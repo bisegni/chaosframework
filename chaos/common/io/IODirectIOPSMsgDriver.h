@@ -51,6 +51,8 @@ namespace chaos{
               std::string msgbroker;
               std::string msgbrokerdrv;
               chaos::common::message::producer_uptr_t prod;
+              chaos::common::message::consumer_uptr_t cons;
+
             public:
                 
                 IODirectIOPSMsgDriver(const std::string& alias);
@@ -84,7 +86,11 @@ namespace chaos{
                 
                 */
                chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper* newConfigration);
+                int subscribe(const std::string&key);
+  
+                int addHandler(chaos::common::message::msgHandler cb);
 
+                void defaultHandler(const chaos::common::message::ele_t& data);
 
             };
         }

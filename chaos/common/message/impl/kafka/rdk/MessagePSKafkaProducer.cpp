@@ -41,6 +41,8 @@ void MessagePSKafkaProducer::HandleRequest(rd_kafka_t*               rk,
   /* The rkmessage is destroyed automatically by librdkafka */
 }
 MessagePSKafkaProducer::~MessagePSKafkaProducer() {
+    MRDDBG_<<" DESTROY PRODUCER";
+
   MessagePublishSubscribeBase::stop();
   flush(60*1000);
   /* If the output queue is still not empty there is an issue
@@ -88,23 +90,26 @@ int MessagePSKafkaProducer::pushMsg(const chaos::common::data::CDataWrapper& dat
 int MessagePSKafkaProducer::applyConfiguration() {
   int  ret = 0;
   char ers[512];
+          
+  MRDDBG_ << "Apply configuration";
+        
+
   boost::mutex::scoped_lock ll(io);
-  if(rk!=NULL){
-      MRDDBG_ << "Already applied ";
-      return 0;
-
-  }
+  
   if ((ret = MessagePSRDKafka::init(servers)) == 0) {
-    setMaxMsgSize(1024*1024);
+    if(rk==NULL){
+      MRDDBG_ << "create new producer";
 
-    if (!(rk = rd_kafka_new(RD_KAFKA_PRODUCER, conf, ers, sizeof(ers)))) {
-      errstr=ers;
-      MRDERR_ << "Failed to create new producer: " << errstr;
-      return -10;
+      if (!(rk = rd_kafka_new(RD_KAFKA_PRODUCER, conf, ers, sizeof(ers)))) {
+        errstr=ers;
+        MRDERR_ << "Failed to create new producer: " << errstr;
+        return -10;
+      }
+      if (handlers.size()) {
+       rd_kafka_conf_set_dr_msg_cb(conf, dr_msg_cb);
+      }
     }
-    if (handlers.size()) {
-      rd_kafka_conf_set_dr_msg_cb(conf, dr_msg_cb);
-    }
+    
   }
   return ret;
 }

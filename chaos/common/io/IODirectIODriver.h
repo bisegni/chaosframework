@@ -40,9 +40,6 @@
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 
-#include <boost/thread.hpp>
-#include <boost/atomic.hpp>
-
 namespace chaos_data = chaos::common::data;
 namespace chaos_utility = chaos::common::utility;
 namespace chaos_direct_io = chaos::common::direct_io;
@@ -206,6 +203,8 @@ namespace chaos{
 
                 void releaseQuery(QueryCursor *query_cursor);
 
+             
+                
 
             };
         }

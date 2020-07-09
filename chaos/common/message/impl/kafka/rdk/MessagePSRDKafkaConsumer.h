@@ -12,7 +12,7 @@ namespace message {
 namespace kafka {
 namespace rdk {
 
-class MessagePSRDKafkaConsumer : public chaos::common::message::MessagePSConsumer,public MessagePSRDKafka {
+class MessagePSRDKafkaConsumer : public MessagePSRDKafka,public chaos::common::message::MessagePSConsumer {
  public:
   
   MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey);

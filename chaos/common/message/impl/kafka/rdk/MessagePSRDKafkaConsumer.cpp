@@ -60,6 +60,7 @@ void MessagePSRDKafkaConsumer::HandleRequest(const Connection::ErrorCodeType& er
 */
 
 MessagePSRDKafkaConsumer::~MessagePSRDKafkaConsumer() {
+  MRDDBG_<<" DESTROY CONSUMER";
   if(rk){
     rd_kafka_consumer_close(rk);
 
@@ -70,7 +71,7 @@ MessagePSRDKafkaConsumer::~MessagePSRDKafkaConsumer() {
 }
 
 
-MessagePSRDKafkaConsumer::MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey):chaos::common::message::MessagePublishSubscribeBase("kafka-rdk"), chaos::common::message::MessagePSConsumer("kafka-rdk",gid,defkey) {
+MessagePSRDKafkaConsumer::MessagePSRDKafkaConsumer(const std::string& gid,const std::string& defkey): chaos::common::message::MessagePSConsumer("kafka-rdk",gid,defkey),chaos::common::message::MessagePublishSubscribeBase("kafka-rdk") {
 }
 int MessagePSRDKafkaConsumer::getMsgAsync(const std::string&key,const int32_t pnum){
   
@@ -86,14 +87,6 @@ int MessagePSRDKafkaConsumer::applyConfiguration() {
   int  ret = 0;
    if ((ret = MessagePSRDKafka::init(servers)) == 0) {
     
-    if (rd_kafka_conf_set(conf, "group.id", groupid.c_str(),
-                              ers, sizeof(ers)) != RD_KAFKA_CONF_OK) {
-
-                MRDERR_<<ers;
-                errstr=ers;
-                rd_kafka_conf_destroy(conf);
-                return -1;
-    }
 
         /* If there is no previously committed offset for a partition
          * the auto.offset.reset strategy will be used to decide where
@@ -106,15 +99,24 @@ int MessagePSRDKafkaConsumer::applyConfiguration() {
                 rd_kafka_conf_destroy(conf);
         return -2;
     }*/
-    if (!(rk = rd_kafka_new(RD_KAFKA_CONSUMER, conf, ers, sizeof(ers)))) {
-      MRDERR_ << "Failed to create new consumer: " << ers;
-      errstr=ers;
+    if(rk==NULL){
+      if(groupid!=""){
+      if (rd_kafka_conf_set(conf, "group.id", groupid.c_str(),
+                                ers, sizeof(ers)) != RD_KAFKA_CONF_OK) {
 
-      return -10;
+                  MRDERR_<<ers;
+                  errstr=ers;
+                // rd_kafka_conf_destroy(conf);
+                  return -1;
+      }
     }
-    conf = NULL; /* Configuration object is now owned, and freed,
-                      * by the rd_kafka_t instance. */
+      if (!(rk = rd_kafka_new(RD_KAFKA_CONSUMER, conf, ers, sizeof(ers)))) {
+        MRDERR_ << "Failed to create new consumer: " << ers;
+        errstr=ers;
 
+        return -10;
+      }
+    }
 
         /* Redirect all messages from per-partition queues to
          * the main queue so that messages can be consumed with one

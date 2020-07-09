@@ -1,4 +1,8 @@
 #include "MessagePSDriver.h"
+#define MRDAPP_ INFO_LOG(MessagePSDriver)
+#define MRDDBG_ DBG_LOG(MessagePSDriver)
+#define MRDERR_ ERR_LOG(MessagePSDriver)
+
 #ifdef KAFKA_RDK_ENABLE
 #include "impl/kafka/rdk/MessagePSKafkaProducer.h"
 #include "impl/kafka/rdk/MessagePSRDKafkaConsumer.h"
@@ -23,19 +27,20 @@ namespace chaos {
     boost::mutex::scoped_lock ll(io);
     std::map<std::string,producer_uptr_t>::iterator i=producer_drv_m.find(drvname);
     if(i!=producer_drv_m.end()){
+        MRDDBG_<<drvname<<"] returning allocated producer:"<<std::hex<<i->second.get();
         return i->second;
     }
 producer_uptr_t ret;
 #ifdef KAFKA_RDK_ENABLE
 
-                if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
+                if((drvname=="KAFKA-RDK") || (drvname=="kafka-rdk")){
                     ret.reset(new kafka::rdk::MessagePSKafkaProducer());
                     producer_drv_m["kafka-rdk"]=ret;
                     return ret;
                 }
 #endif
 #ifdef KAFKA_ASIO_ENABLE
-                if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
+                if((drvname=="KAFKA-ASIO")||(drvname=="kafka-asio")){
                     ret.reset(new kafka::asio::MessagePSKafkaAsioProducer());
                     producer_drv_m["kafka-asio"]=ret;
 
@@ -52,18 +57,20 @@ producer_uptr_t ret;
 
          consumer_uptr_t ret;
           if(i!=consumer_drv_m.end()){
+                MRDDBG_<<drvname<<"] returning allocated consumer:"<<std::hex<<i->second.get();
+
                 return i->second;
         }
    #ifdef KAFKA_RDK_ENABLE
 
-                if(drvname=="KAFKA-RDK" || drvname=="kafka-rdk"){
+                if((drvname=="KAFKA-RDK") || (drvname=="kafka-rdk")){
                     ret.reset(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
                     consumer_drv_m["kafka-rdk"]=ret;
                     return  ret;
                 }
     #endif
     #ifdef KAFKA_ASIO_ENABLE
-                if(drvname=="KAFKA-ASIO"||drvname=="kafka-asio"){
+                if((drvname=="KAFKA-ASIO")||(drvname=="kafka-asio")){
                     ret.reset(new kafka::rdk::MessagePSRDKafkaConsumer(gid,k));
                     consumer_drv_m["kafka-asio"]=ret;
                     return  ret;

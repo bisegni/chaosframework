@@ -124,6 +124,8 @@ namespace chaos {
                 
                 //!return a command description for a determinate uid
                 ChaosUniquePtr<chaos::common::batch_command::CommandState> getStateForCommandID(uint64_t command_id);
+                void consumerHandler(const chaos::common::message::ele_t& data);
+
                 
             public:
                 
@@ -163,6 +165,7 @@ namespace chaos {
                                     unsigned int sandbox = 0);
                 
                 bool waitOnCommandID(uint64_t& cmd_id);
+
             };
         }
     }

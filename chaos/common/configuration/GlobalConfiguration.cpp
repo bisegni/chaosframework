@@ -112,6 +112,7 @@ void GlobalConfiguration::preParseStartupParameters()  {
 #endif
         addOption(InitOption::OPT_MSG_BROKER_SERVER, po::value< std::string >()->default_value(std::string("localhost:9092")), "Message broker");
         addOption(InitOption::OPT_MSG_BROKER_DRIVER, po::value< std::string >()->default_value(std::string("kafka-rdk")), "Message broker driver");
+        addOption(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS, po::value< std::string >()->default_value(std::string("NONAME")),"UID of the node");
 
 
 #

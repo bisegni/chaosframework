@@ -733,9 +733,12 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                     throw CException(err, "cannot initialize custom dataset (check live services)", __PRETTY_FUNCTION__);
                 }
                 break;
+              
             }
         }
         CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
+        std::string command_queue=getDeviceID()+DataPackPrefixID::COMMAND_DATASET_POSTFIX;
+        DataManager::getInstance()->getDataLiveDriverNewInstance()->subscribe(command_queue);
     }
     void AbstractControlUnit::doInitSMCheckList() {
         //rpc initialize service
@@ -1608,7 +1611,11 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     AbstractSharedDomainCache* AbstractControlUnit::_getAttributeCache() {
         return attribute_value_shared_cache;
     }
-    
+    int AbstractControlUnit::incomingMessage(const std::string &key,const chaos::common::data::CDWShrdPtr& data){
+        ACULDBG_ << "message from :"<<key<<" data:"<<(data.get()?data->getJSONString():"NONE");
+        return 0;
+    }
+
     void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
         AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
         
@@ -2584,3 +2591,10 @@ if (attributeInfo.maxRange.size() && v > attributeInfo.maxRange) throw MetadataL
                         log_level,
                         message);
     }
+
+
+    void AbstractControlUnit::consumerHandler(const chaos::common::message::ele_t& data){
+
+      incomingMessage(data.key,data.cd);     
+}
+

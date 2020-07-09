@@ -40,6 +40,9 @@ MessagePSConsumer::~MessagePSConsumer() {
 int MessagePSConsumer::getMsgAsync(const std::string& key, const int32_t pnum) {
   return 0;
 }
+void MessagePSConsumer::setGroupID(const std::string& str){
+  groupid=str;
+}
 
 int MessagePSConsumer::getMsgAsync(const std::string& key, uint32_t off, const int32_t pnum) {
   return 0;

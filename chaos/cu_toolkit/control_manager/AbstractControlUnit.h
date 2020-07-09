@@ -47,7 +47,7 @@
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/utility/SWEService.h>
-
+#include <chaos/common/message/MessagePublishSubscribeBase.h>
 #include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/control_manager/ControlUnitTypes.h>
 #include <chaos/cu_toolkit/control_manager/handler/handler.h>
@@ -528,6 +528,8 @@ class AbstractControlUnit : public DeclareAction,
   void _setBypassState(bool bypass_stage,
                        bool high_priority = false);
 
+  virtual void consumerHandler(const chaos::common::message::ele_t& data);
+
  protected:
   void useCustomHigResolutionTimestamp(bool _use_custom_high_resolution_timestamp);
   void setHigResolutionAcquistionTimestamp(uint64_t high_resolution_timestamp);
@@ -622,6 +624,15 @@ class AbstractControlUnit : public DeclareAction,
                  the parent one and the check if the CDataWrapper contains something usefull for it.
                  */
   virtual chaos::common::data::CDWUniquePtr updateConfiguration(chaos::common::data::CDWUniquePtr data);
+
+  /**
+   * @brief a message from node we subscribed for
+   * 
+   * @param key subscibed key
+   * @param data pack
+   * @return int return 0 if succefully handled
+   */
+  virtual int incomingMessage(const std::string &key,const chaos::common::data::CDWShrdPtr& data);
 
   //!callback for put a veto on property value change request
   virtual bool propertyChangeHandler(const std::string&                       group_name,

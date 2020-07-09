@@ -226,6 +226,25 @@ void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
                                        slow_command_pack,
                                        command_id);
 }
+void SCAbstractControlUnit::consumerHandler(const chaos::common::message::ele_t& data){
+      std::string rootname = data.key;
+      size_t      pos      = rootname.find(DataPackPrefixID::COMMAND_DATASET_POSTFIX);
+      if (pos != std::string::npos) {
+        //command queue
+        uint64_t         command_id;
+        if(data.cd->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)){
+          std::string bc_alias=data.cd->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
+          
+          SCACU_LDBG_ << "Submitting command:"<<bc_alias<<" data:"<<data.cd->getJSONString();
+
+          slow_command_executor->submitCommand(bc_alias,
+                                       data.cd->clone().release(),
+                                       command_id);
+          }
+          return;
+      }
+     SCAbstractControlUnit::consumerHandler(data);
+}
 
 void SCAbstractControlUnit::submitBatchCommand(const std::string&        batch_command_alias,
                                                chaos_data::CDataWrapper* command_data,

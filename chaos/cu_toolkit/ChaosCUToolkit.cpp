@@ -59,9 +59,7 @@ ChaosCUToolkit::ChaosCUToolkit() {
                                                       CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc,
                                                       true);
 
-  GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS,
-                                                             CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc);
-
+  
   GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_KEY,
                                                              CONTROL_MANAGER_UNIT_SERVER_KEY_desc);
 
@@ -134,8 +132,8 @@ void ChaosCUToolkit::init(void* init_data) {
     InizializableService::initImplementation(SharedManagedDirecIoDataDriver::getInstance(), NULL, "SharedManagedDirecIoDataDriver", __PRETTY_FUNCTION__);
 
     if (GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_LOG_ON_MDS) &&
-        GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
-      chaos::common::log::LogManager::getInstance()->addMDSLoggingBackend(GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS));
+        GlobalConfiguration::getInstance()->hasOption(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
+      chaos::common::log::LogManager::getInstance()->addMDSLoggingBackend(GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS));
     }
 
     //force first allocation of metadata logging
