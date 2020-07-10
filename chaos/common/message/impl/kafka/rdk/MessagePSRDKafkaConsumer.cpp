@@ -233,7 +233,7 @@ void MessagePSRDKafkaConsumer::poll(){
           stats.oks++;
         } catch(...){
           stats.errs++;
-          MRDERR_<<" invalid chaos packet";
+          MRDERR_<<" invalid chaos packet from:"<<rd_kafka_topic_name(rkm->rkt)<< " len:"<<rkm->len<<" string:"<<std::string((const char*)rkm->payload, rkm->len);
 
         }
         } 

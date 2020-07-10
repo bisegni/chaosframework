@@ -67,7 +67,7 @@ namespace chaos{
                 const std::string health_key;
                 const std::string cu_alarm_key;
                 const std::string dev_alarm_key;
-                
+
                 //!is the sequence if
                 DSSeqIDMap map_seq_id;
                 

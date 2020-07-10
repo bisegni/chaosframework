@@ -739,6 +739,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
         CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
         std::string command_queue=getDeviceID()+DataPackPrefixID::COMMAND_DATASET_POSTFIX;
         DataManager::getInstance()->getDataLiveDriverNewInstance()->subscribe(command_queue);
+        DataManager::getInstance()->getDataLiveDriverNewInstance()->addHandler(command_queue,boost::bind(&AbstractControlUnit::consumerHandler, this, _1));
     }
     void AbstractControlUnit::doInitSMCheckList() {
         //rpc initialize service

@@ -161,7 +161,7 @@ namespace chaos{
 
                 virtual void releaseQuery(QueryCursor *query) = 0;
                    virtual int subscribe(const std::string&key);
-                virtual int addHandler(chaos::common::message::msgHandler cb);
+                virtual int addHandler(const std::string&,chaos::common::message::msgHandler cb);
 
             };
             

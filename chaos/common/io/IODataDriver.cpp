@@ -81,7 +81,7 @@ int IODataDriver::subscribe(const std::string&key){
     return 0;
 
 }
-int IODataDriver::addHandler(chaos::common::message::msgHandler cb){
+int IODataDriver::addHandler(const std::string &k,chaos::common::message::msgHandler cb){
     IODataDriverLERR << "Not implemented";
 
     return 0;

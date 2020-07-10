@@ -1447,6 +1447,9 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_DEV_ALARM          = 5;
         //! the constant that represent the alarm dataset type
         static const unsigned int DPCK_DATASET_TYPE_CU_ALARM           = 6;
+        //! the command dataset
+        static const unsigned int DPCK_DATASET_TYPE_COMMAND            = 7;
+
         //!define tags associated to the dataset[array of string]
         static const char * const DPCK_DATASET_TAG                    = "dpck_ds_tag";
 
@@ -1610,6 +1613,7 @@ namespace chaos {
         static const char * const SYSTEM_DATASET_POSTFIX    = "_s";
         static const char * const DEV_ALARM_DATASET_POSTFIX = "_a";
         static const char * const CU_ALARM_DATASET_POSTFIX  = "_w";
+
         static const char * const HEALTH_DATASET_POSTFIX    = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
       namespace DataPackID {
@@ -1648,6 +1652,10 @@ namespace chaos {
                 //!Integer 64 bit length
             case DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM:
                 return DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
+                 //!Integer 64 bit length
+            case DataPackCommonKey::DPCK_DATASET_TYPE_COMMAND:
+                return DataPackPrefixID::COMMAND_DATASET_POSTFIX;
+           
             default:
                 return "";
         }
@@ -1662,6 +1670,8 @@ namespace chaos {
         if(ds_postfix.compare(DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_DEV_ALARM;}
         if(ds_postfix.compare(DataPackPrefixID::CU_ALARM_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_CU_ALARM;}
         if(ds_postfix.compare(DataPackPrefixID::HEALTH_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH;}
+        if(ds_postfix.compare(DataPackPrefixID::COMMAND_DATASET_POSTFIX) == 0){return DataPackCommonKey::DPCK_DATASET_TYPE_COMMAND;}
+
         return -1;
     }
     

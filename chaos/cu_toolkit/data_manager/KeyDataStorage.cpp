@@ -101,7 +101,8 @@ std::string KeyDataStorage::getDomainString(const KeyDataStorageDomain dataset_d
             break;
         case DataPackCommonKey::DPCK_DATASET_TYPE_HEALTH:
             return health_key;
-            break;
+       /* case DataPackCommonKey::DPCK_DATASET_TYPE_COMMAND:
+            return command_key;*/
     }
     return "";
 }

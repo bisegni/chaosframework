@@ -39,6 +39,11 @@ MessagePSRDKafka::MessagePSRDKafka():MessagePublishSubscribeBase("kafka-rdk"),rk
 
 int MessagePSRDKafka::setOption(const std::string& key, const std::string& value) {
   char errstr[512];
+  if(init_done){
+        MRDDBG_ << "Cannot set option on already initialized";
+
+    return -3;
+  }
   MRDDBG_<<"set \""<<key<<"\"="<<value;
   if (rd_kafka_conf_set(conf, key.c_str(), value.c_str(), errstr, sizeof(errstr)) != RD_KAFKA_CONF_OK) {
     MRDERR_ << "error:" << errstr;

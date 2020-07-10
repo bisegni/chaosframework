@@ -19,7 +19,6 @@
  * permissions and limitations under the Licence.
  */
 
-
 #include "IODirectIOPSMsgDriver.h"
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #define IODirectIOPSMsgDriver_LINFO_ INFO_LOG(IODirectIOPSMsgDriver)
@@ -35,167 +34,163 @@ using namespace chaos::common::network;
 using namespace std;
 using namespace boost;
 
-namespace chaos_data = chaos::common::data;
-namespace chaos_dio = chaos::common::direct_io;
+namespace chaos_data        = chaos::common::data;
+namespace chaos_dio         = chaos::common::direct_io;
 namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
+std::map<std::string,chaos::common::message::msgHandler> IODirectIOPSMsgDriver::handler_map;
+boost::mutex IODirectIOPSMsgDriver::hmutex;
 DEFINE_CLASS_FACTORY(IODirectIOPSMsgDriver, IODataDriver);
 
 //using namespace memcache;
-IODirectIOPSMsgDriver::IODirectIOPSMsgDriver(const std::string& alias):
-IODirectIODriver(alias){
-    msgbrokerdrv="kafka-rdk";
-    msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
-    
-    prod = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
-    std::string gid=GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
-    if(gid==""){
-        gid="IODirectIODriver";
-    }
-    cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv,gid);
-    cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE, boost::bind(&IODirectIOPSMsgDriver::defaultHandler, this, _1));
+IODirectIOPSMsgDriver::IODirectIOPSMsgDriver(const std::string& alias)
+    : IODirectIODriver(alias) {
+  msgbrokerdrv = "kafka-rdk";
+  msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
 
+  prod            = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
+  std::string gid = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+  if (gid == "") {
+    gid = "IODirectIODriver";
+  }
+  cons = chaos::common::message::MessagePSDriver::getConsumerDriver(msgbrokerdrv, gid);
+  cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE, boost::bind(&IODirectIOPSMsgDriver::defaultHandler, this, _1));
+  cons->setOption("allow.auto.create.topics", "true");
 }
 
 IODirectIOPSMsgDriver::~IODirectIOPSMsgDriver() {
-    // SO that if used as shared pointer will be called once the object is destroyed
+  // SO that if used as shared pointer will be called once the object is destroyed
 }
 
+void IODirectIOPSMsgDriver::init(void* _init_parameter) {
+  IODirectIODriver::init(_init_parameter);
+  if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
+    msgbroker = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
+    prod->addServer(msgbroker);
 
-void IODirectIOPSMsgDriver::init(void *_init_parameter) {
-    IODirectIODriver::init(_init_parameter);
-    if (GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_MSG_BROKER_SERVER)) {
-        msgbroker = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_MSG_BROKER_SERVER);
-        prod->addServer(msgbroker);
-
-        if(prod->applyConfiguration()!=0){
-            throw chaos::CException(-1,"cannot initialize Publish Subscribe Producer:"+prod->getLastError(),__PRETTY_FUNCTION__);
-        }
-        prod->start();
-   
+    if (prod->applyConfiguration() != 0) {
+      throw chaos::CException(-1, "cannot initialize Publish Subscribe Producer:" + prod->getLastError(), __PRETTY_FUNCTION__);
     }
-
-    
+    prod->start();
+  }
 }
-void IODirectIOPSMsgDriver::defaultHandler(const chaos::common::message::ele_t& data){
-    IODirectIOPSMsgDriver_DLDBG_<<" message from:"<<data.key;
+void IODirectIOPSMsgDriver::defaultHandler(const chaos::common::message::ele_t& data) {
+  std::map<std::string, chaos::common::message::msgHandler>::iterator i,end;
+  {
+    boost::mutex::scoped_lock ll(hmutex);
+    i= handler_map.find(data.key);
+    end=handler_map.end();
+  }
+  if (i != end) {
+    IODirectIOPSMsgDriver_DLDBG_ << "calling handler associated to:" << data.key;
 
-    return;
+    i->second(data);
+  }
+IODirectIOPSMsgDriver_DLDBG_ << " message from:" << data.key<< " no handler found among:"<<handler_map.size();
+
+  return;
 }
 
-int IODirectIOPSMsgDriver::subscribe(const std::string&key){
-    int ret=-1;
-    if(cons.get()!=NULL){
-        ret=cons->subscribe(key);
-        if(ret==0){
-            cons->start();
-        }
-
-  
+int IODirectIOPSMsgDriver::subscribe(const std::string& key) {
+  int ret = -1;
+  if (cons.get() != NULL) {
+    ret = cons->subscribe(key);
+    if (ret == 0) {
+      cons->start();
     }
+  }
 
-    return ret;
-
+  return ret;
 }
-int IODirectIOPSMsgDriver::addHandler(chaos::common::message::msgHandler cb){
-    if(cons.get()){
-        return cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE, cb);
-    }
-    IODirectIOPSMsgDriver_LERR_<<" Consumer not yet created, broker server:"<<msgbrokerdrv;
+int IODirectIOPSMsgDriver::addHandler(const std::string& key, chaos::common::message::msgHandler cb) {
+  std::string topic = key;
+  std::replace(topic.begin(), topic.end(), '/', '.');
+  boost::mutex::scoped_lock ll(hmutex);
+  handler_map[topic] = cb;
+  IODirectIOPSMsgDriver_DLDBG_ <<handler_map.size()<< "] adding handler for:" << topic;
 
-    return -1;
+  return 0;
 }
 
 void IODirectIOPSMsgDriver::deinit() {
-    IODirectIODriver::deinit();
-    prod->stop();
-    if(cons.get()){
-        cons->stop();
-    }
-    IODirectIOPSMsgDriver_DLDBG_<<"Deinitialized";
+  IODirectIODriver::deinit();
+  prod->stop();
+  if (cons.get()) {
+    cons->stop();
+  }
+  IODirectIOPSMsgDriver_DLDBG_ << "Deinitialized";
 }
 
-int IODirectIOPSMsgDriver::storeData(const std::string& key,
-                                CDWShrdPtr data_to_store,
-                                DataServiceNodeDefinitionType::DSStorageType storage_type,
-                                const ChaosStringSet& tag_set)  {
-    int err = 0;
-    if(data_to_store.get()==NULL){
-        IODirectIOPSMsgDriver_LERR_ << "Packet not allocated";
-        return -100;
-    }
-    
-    if(!data_to_store->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
-        data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+int IODirectIOPSMsgDriver::storeData(const std::string&                           key,
+                                     CDWShrdPtr                                   data_to_store,
+                                     DataServiceNodeDefinitionType::DSStorageType storage_type,
+                                     const ChaosStringSet&                        tag_set) {
+  int err = 0;
+  if (data_to_store.get() == NULL) {
+    IODirectIOPSMsgDriver_LERR_ << "Packet not allocated";
+    return -100;
+  }
+
+  if (!data_to_store->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
+    data_to_store->addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, storage_type);
+  } else {
+    data_to_store->setValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, storage_type);
+  }
+  if (tag_set.size()) {
+    if (!data_to_store->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)) {
+      data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG, *tag_set.begin());
     } else {
-        data_to_store->setValue(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,storage_type);
+      data_to_store->setValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG, *tag_set.begin());
     }
-    if(tag_set.size()){
-        if(!data_to_store->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG)){
-            data_to_store->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
-        } else {
-            data_to_store->setValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TAG,*tag_set.begin());
+  }
+  if ((err = prod->pushMsgAsync(*data_to_store.get(), key)) != 0) {
+    DEBUG_CODE(IODirectIOPSMsgDriver_LERR_ << "Error pushing " << prod->getLastError());
+  }
 
-        }
-    }
-    if((err=prod->pushMsgAsync(*data_to_store.get(), key))!=0){
-        DEBUG_CODE(IODirectIOPSMsgDriver_LERR_ << "Error pushing "<<prod->getLastError());
-
-    }
-   
-    return err;
+  return err;
 }
 
 chaos::common::data::CDataWrapper* IODirectIOPSMsgDriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
-    //lock the feeder access
-    //checkif someone has passed us the device indetification
-    if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST)){
-        chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
-        size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
-        for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
+  //lock the feeder access
+  //checkif someone has passed us the device indetification
+  if (newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST)) {
+    chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig               = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_BROKER_ADDRESS_LIST);
+    size_t                                     numerbOfserverAddressConfigured = liveMemAddrConfig->size();
+    for (int idx = 0; idx < numerbOfserverAddressConfigured; idx++) {
+      string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
+      IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Adding broker %1% to IODirectIOPSMsgDriver", % serverDesc);
 
-            string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
-            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Adding broker %1% to IODirectIOPSMsgDriver", %serverDesc);
+      if (msgbroker.size() == 0) {
+        prod->addServer(serverDesc);
 
-            if(msgbroker.size()==0){
-                prod->addServer(serverDesc);
-                
-                if(prod->applyConfiguration()!=0){
-                    throw chaos::CException(-1,"cannot initialize Publish Subscribe Producer:"+prod->getLastError(),__PRETTY_FUNCTION__);
-                }
-                prod->start();
-                msgbroker=serverDesc;
-                if(cons.get()!=NULL){
-                    cons->addServer(msgbroker);
-                    if(cons->applyConfiguration()!=0){
-                        throw chaos::CException(-1,"cannot initialize Publish Subscribe Consumer:"+prod->getLastError(),__PRETTY_FUNCTION__);
-
-                    }
-
-                }
-
-            }
-            IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Added broker %1% to IODirectIOPSMsgDriver", %serverDesc);
-            
-            //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
+        if (prod->applyConfiguration() != 0) {
+          throw chaos::CException(-1, "cannot initialize Publish Subscribe Producer:" + prod->getLastError(), __PRETTY_FUNCTION__);
         }
-       
+        prod->start();
+        msgbroker = serverDesc;
+        if (cons.get() != NULL) {
+          cons->addServer(msgbroker);
+          if (cons->applyConfiguration() != 0) {
+            throw chaos::CException(-1, "cannot initialize Publish Subscribe Consumer:" + prod->getLastError(), __PRETTY_FUNCTION__);
+          }
+        }
+      }
+      IODirectIOPSMsgDriver_DLDBG_ << CHAOS_FORMAT("Added broker %1% to IODirectIOPSMsgDriver", % serverDesc);
+
+      //add new url to connection feeder, thi method in case of failure to allocate service will throw an eception
     }
-    if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_SUBSCRIBE_KEY_LIST)){
-
-        if(cons.get()){
-         chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_SUBSCRIBE_KEY_LIST);
-        size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
-        for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
-            string key = liveMemAddrConfig->getStringElementAtIndex(idx);
-            cons->subscribe(key);
-
-        }
-
-        }
-
+  }
+  if (newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_SUBSCRIBE_KEY_LIST)) {
+    if (cons.get()) {
+      chaos_data::CMultiTypeDataArrayWrapperSPtr liveMemAddrConfig               = newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_SUBSCRIBE_KEY_LIST);
+      size_t                                     numerbOfserverAddressConfigured = liveMemAddrConfig->size();
+      for (int idx = 0; idx < numerbOfserverAddressConfigured; idx++) {
+        string key = liveMemAddrConfig->getStringElementAtIndex(idx);
+        cons->subscribe(key);
+      }
     }
-    chaos::common::data::CDataWrapper* ret=IODirectIODriver::updateConfiguration(newConfigration);
+  }
+  chaos::common::data::CDataWrapper* ret = IODirectIODriver::updateConfiguration(newConfigration);
 
-    return ret;
+  return ret;
 }
