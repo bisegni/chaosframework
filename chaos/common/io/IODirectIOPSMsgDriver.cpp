@@ -49,7 +49,10 @@ IODirectIOPSMsgDriver::IODirectIOPSMsgDriver(const std::string& alias)
   msgbrokerdrv = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_MSG_BROKER_DRIVER);
 
   prod            = chaos::common::message::MessagePSDriver::getProducerDriver(msgbrokerdrv);
-  std::string gid = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+  std::string gid;
+  if(GlobalConfiguration::getInstance()->hasOption(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS)){
+    gid= GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+  }
   if (gid == "") {
     gid = "IODirectIODriver";
   }
