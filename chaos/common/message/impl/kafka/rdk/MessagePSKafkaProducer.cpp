@@ -127,7 +127,7 @@ int MessagePSKafkaProducer::pushMsgAsync(const chaos::common::data::CDataWrapper
   }
  // boost::mutex::scoped_lock ll(io);
 
-//MRDDBG_ << "pushing: " << size;
+//MRDDBG_ << "pushing: " << size<<" d:"<<data.getJSONString();
 retry:
 
   err = rd_kafka_producev(

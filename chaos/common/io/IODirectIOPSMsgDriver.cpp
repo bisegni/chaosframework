@@ -114,6 +114,10 @@ int IODirectIOPSMsgDriver::addHandler(const std::string& key, chaos::common::mes
 
   return 0;
 }
+int IODirectIOPSMsgDriver::addHandler(chaos::common::message::msgHandler cb){
+    cons->addHandler(chaos::common::message::MessagePublishSubscribeBase::ONARRIVE,cb);
+    return 0;
+}
 
 void IODirectIOPSMsgDriver::deinit() {
   IODirectIODriver::deinit();
@@ -125,7 +129,7 @@ void IODirectIOPSMsgDriver::deinit() {
 }
 
 int IODirectIOPSMsgDriver::storeData(const std::string&                           key,
-                                     CDWShrdPtr                                   data_to_store,
+                                     CDWShrdPtr&                                   data_to_store,
                                      DataServiceNodeDefinitionType::DSStorageType storage_type,
                                      const ChaosStringSet&                        tag_set) {
   int err = 0;

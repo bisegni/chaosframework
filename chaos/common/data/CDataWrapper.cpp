@@ -329,7 +329,9 @@ int32_t CDataWrapper::getInt32Value(const std::string& key) const{
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
-
+ if(isStringValue(key)){
+        return atoi(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(int32);
 }
 //add a integer value
@@ -337,6 +339,9 @@ uint32_t CDataWrapper::getUInt32Value(const std::string& key) const{
     INIT_ITERATOR(key);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+    if(isStringValue(key)){
+        return atoi(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(uint32);
 }
 //add a integer value
@@ -347,6 +352,9 @@ int64_t CDataWrapper::getInt64Value(const std::string& key) const{
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+    if(isStringValue(key)){
+        return atoll(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(int64);
 }
 //add a integer value
@@ -357,6 +365,9 @@ uint64_t CDataWrapper::getUInt64Value(const std::string& key) const{
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(double,BSON_ITER_HOLDS_DOUBLE);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+     if(isStringValue(key)){
+        return atoll(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(uint64);
 }
 //add a integer value
@@ -366,6 +377,9 @@ double CDataWrapper::getDoubleValue(const std::string& key) const{
     GET_VALUE(int64,BSON_ITER_HOLDS_INT64);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
+    if(isStringValue(key)){
+        return atof(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(double);
 }
 
@@ -374,6 +388,9 @@ bool  CDataWrapper::getBoolValue(const std::string& key) const{
     INIT_ITERATOR(key);
     GET_VALUE(bool,BSON_ITER_HOLDS_BOOL);
     GET_VALUE(int32,BSON_ITER_HOLDS_INT32);
+     if(isStringValue(key)){
+        return (bool)atoi(getStringValue(key).c_str());
+    }
     CW_CAST_EXCEPTION(bool);
 }
 

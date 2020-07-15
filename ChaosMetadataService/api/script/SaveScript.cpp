@@ -48,7 +48,7 @@ CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
   ScriptBaseDescriptionSDWrapper script_bs_result_dw;
   //fetch dataaccess for the script managment
   GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
-#if 0
+#if 1
   //call dataaccesso for insert new script and get the sequence value
   if (import) {
     /*  if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
@@ -74,7 +74,7 @@ CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
       }
     }
   }
-#endif
+#else
     if ((err = s_da->insertNewScript(api_data))) {
         // try to update
         DBG<<CHAOS_FORMAT("Error creating new script %1%[%2%] try to update", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id);
@@ -83,6 +83,7 @@ CDWUniquePtr SaveScript::execute(CDWUniquePtr api_data) {
             LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", % script_dw.dataWrapped().script_description.name % script_dw.dataWrapped().script_description.unique_id));
         }
     }
+#endif
   //return the script base description
   script_bs_result_dw.dataWrapped() = script_dw.dataWrapped().script_description;
   return script_bs_result_dw.serialize();

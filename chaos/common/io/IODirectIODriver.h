@@ -135,7 +135,7 @@ namespace chaos{
                  * storeRawData
                  */
                 int storeData(const std::string& key,
-                               chaos_data::CDWShrdPtr data_to_store,
+                               chaos_data::CDWShrdPtr& data_to_store,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                const ChaosStringSet& tag_set = ChaosStringSet());
                 /**

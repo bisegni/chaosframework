@@ -100,6 +100,7 @@ int MessagePSRDKafkaConsumer::applyConfiguration() {
         return -2;
     }*/
     if(rk==NULL){
+      MRDDBG_<<"Consumer apply configuration, groupid:"<<groupid;
       if(groupid!=""){
       if (rd_kafka_conf_set(conf, "group.id", groupid.c_str(),
                                 ers, sizeof(ers)) != RD_KAFKA_CONF_OK) {

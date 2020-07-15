@@ -71,7 +71,7 @@ namespace chaos{
                  * \return 0 if success, error otherwise
                  */
                 virtual int storeData(const std::string& key,
-                                       chaos_data::CDWShrdPtr dataToStore,
+                                       chaos_data::CDWShrdPtr& dataToStore,
                                        DataServiceNodeDefinitionType::DSStorageType storage_type,
                                        const ChaosStringSet& tag_set = ChaosStringSet()) = 0;
                 
@@ -161,7 +161,14 @@ namespace chaos{
 
                 virtual void releaseQuery(QueryCursor *query) = 0;
                    virtual int subscribe(const std::string&key);
+                   /**
+                    * @brief per key handler
+                    * 
+                    * @param cb 
+                    * @return int 
+                    */
                 virtual int addHandler(const std::string&,chaos::common::message::msgHandler cb);
+                virtual int addHandler(chaos::common::message::msgHandler cb);
 
             };
             

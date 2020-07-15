@@ -76,7 +76,7 @@ namespace chaos{
                  * storeRawData
                  */
                 int storeData(const std::string& key,
-                               chaos_data::CDWShrdPtr data_to_store,
+                               chaos_data::CDWShrdPtr& data_to_store,
                                DataServiceNodeDefinitionType::DSStorageType storage_type,
                                const ChaosStringSet& tag_set = ChaosStringSet());
                 /**
@@ -91,6 +91,7 @@ namespace chaos{
                 int subscribe(const std::string&key);
   
                 int addHandler(const std::string&key,chaos::common::message::msgHandler cb);
+                int addHandler(chaos::common::message::msgHandler cb);
 
 
             };
