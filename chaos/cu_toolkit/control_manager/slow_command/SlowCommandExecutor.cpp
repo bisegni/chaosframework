@@ -176,7 +176,8 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                 if(type==BatchCommandEventType::EVT_FATAL_FAULT){
                     CFatalException ex(code, message, domain);
                     //async go into recoverable error
-                    boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                   // boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+                    boost::thread(boost::bind(&AbstractControlUnit::_goInFatalError, control_unit_instance, ex)).detach();
                 }
             }
             sys_cache.getValueSettingByName(ControlUnitDatapackSystemKey::RUNNING_COMMAND_ALIAS)->setStringValue("");

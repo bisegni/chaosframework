@@ -58,6 +58,10 @@ bool DriverAccessor::send(DrvMsgPtr cmd,
     command_queue->push(cmd, base_opcode_priority + inc_priority);
     //whait the answer
     accessor_sync_mq.wait_and_pop(answer_message);
+    if((*cmd->err_msg!=0) && (*cmd->err_dom!=0)&& (cmd->ret!=0)){
+        LDBG_<<"Launch Exception msg:"<<cmd->err_msg<<" dom:"<<cmd->err_dom<<" ret:"<<cmd->ret;
+        throw chaos::CFatalException(cmd->ret,cmd->err_msg,cmd->err_dom);
+    }
     //check result
     return (answer_message == MsgManagmentResultType::MMR_EXECUTED);
 }

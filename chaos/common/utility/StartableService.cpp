@@ -163,8 +163,10 @@ bool StartableService::stopImplementation(StartableService *impl, const string &
 			}
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STOPPED;
         }else {
-			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
-            throw CException(0, "Service cant be stopped", domainString);
+			//DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
+            //throw CException(0, "Service cant be stopped", domainString);
+            SS_LERR << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];
+            return false;
         }
         SS_LDBG  << implName << " Stopped";
     } catch (CException& ex) {

@@ -25,9 +25,9 @@
 using namespace chaos::common::utility;
 
 using namespace std;
-#define SWE_LAPP LAPP_ << "["<<impl_name<<"]- "
-#define SWE_LDBG LDBG_ << "["<<impl_name<<"]- "
-#define SWE_LERR LERR_ << "["<<impl_name<<"]- "
+#define SWE_LAPP LAPP_ << "[SWEService-"<<impl_name<<"]- "
+#define SWE_LDBG LDBG_ << "[SWEService-"<<impl_name<<"]- "
+#define SWE_LERR LERR_ << "[SWEService-"<<impl_name<<"]- "
 
 SWEService::SWEService():
 last_state(-1){}

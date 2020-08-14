@@ -135,12 +135,12 @@ void SlowCommand::metadataLogging(const StandardLoggingChannel::LogLevel log_lev
 
 void SlowCommand::startHandler() {
     BatchCommand::startHandler();
-    SCLAPP_ << "Starting command";
+    SCLDBG_ << "Starting command";
     for(common::batch_command::BCInstantiationAttributeMapIterator it = instance_custom_attribute.begin(),
         end = instance_custom_attribute.end();
         it != end;
         it++) {
-        SCLAPP_ << CHAOS_FORMAT("Custom property:%1% - Value:%2%", %it->first%it->second.asString());
+        SCLDBG_ << CHAOS_FORMAT("Custom property:%1% - Value:%2%", %it->first%it->second.asString());
     }
     
     if(isAutoBusy()) {
@@ -153,5 +153,5 @@ void SlowCommand::endHandler() {
         abstract_control_unit->setBusyFlag(false);
     }
     BatchCommand::endHandler();
-    SCLAPP_ << "Finish command";
+    SCLDBG_ << "Finish command";
 }

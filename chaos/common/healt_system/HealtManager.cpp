@@ -145,6 +145,7 @@ void HealtManager::addNewNode(const std::string& node_uid) {
 
 void HealtManager::removeNode(const std::string& node_uid) {
     boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
+    HM_DBG<<"Healt removing node:"<<node_uid;
     if(map_node.count(node_uid) == 0) return;
     //remove node from map
     map_node.erase(node_uid);

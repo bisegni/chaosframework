@@ -895,7 +895,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) {
         CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "start") {
             CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER) {
-                //remove timer for push statistic
+                //remove timer for push statistics
                 CHEK_IF_NEED_TO_THROW(throw_exception, chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);)
             }
         }
@@ -1468,6 +1468,23 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     //! State machine is gone into an unrecoverable error
     void AbstractControlUnit::fatalErrorFromState(int last_state, chaos::CException& ex) {
         ACULERR_ << "fatalErrorFromState with state:" << last_state;
+        // signal before  
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR,
+                                                        false);
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                                        ex.errorCode,
+                                                        false);
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                                        ex.errorMessage,
+                                                        false);
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                                        ex.errorDomain,
+                                                        true);
         switch (last_state) {
             case CUStateKey::INIT:
                 //deinit
@@ -1485,8 +1502,8 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                 CHAOS_NOT_THROW(redoStartRpCheckList(false);)
                 //deinit
                 //CHAOS_NOT_THROW(redoInitSMCheckList(false);)
-                deinit();
-                CHAOS_NOT_THROW(redoInitRpCheckList(false);)
+    /*            deinit();
+                CHAOS_NOT_THROW(redoInitRpCheckList(false);)*/
                 break;
             case CUStateKey::STOP:
                 break;
@@ -1507,6 +1524,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
                                                         NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
                                                         ex.errorDomain,
                                                         true);
+
     }
     
     void AbstractControlUnit::fillCachedValueVector(AttributeCache&               attribute_cache,
@@ -1827,7 +1845,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     //!put abstract control unit state machine in recoverable error
     void AbstractControlUnit::_goInRecoverableError(chaos::CException recoverable_exception) {
         //change state machine
-        if (SWEService::goInRecoverableError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
+        if (SWEService::goInRecoverableError(this, recoverable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
             //update healt the status to report recoverable error
         }
     }
@@ -1835,7 +1853,7 @@ bool PushStorageBurst::active(void* data __attribute__((unused))) {
     //!put abstract control unit state machine in fatal error
     void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exception) {
         //change state machine
-        if (SWEService::goInFatalError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
+        if (SWEService::goInFatalError(this, recoverable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
         }
     }
     

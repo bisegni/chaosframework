@@ -287,8 +287,11 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
             return;
         }
             
-        case BatchCommandEventType::EVT_FAULT: {
-            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command FAULT" << " command id -> "<<command_id);
+        case BatchCommandEventType::EVT_FATAL_FAULT:
+        clearCommandQueue(chaos::common::data::CDWUniquePtr());
+        case BatchCommandEventType::EVT_FAULT: 
+        {
+            DEBUG_CODE(BCELDBG_ << "Received event of type-> Command "<<((type==BatchCommandEventType::EVT_FATAL_FAULT)?"FATAL FAULT":"FAULT") << " command id -> "<<command_id);
             
             if(command_info != NULL) {
                 ReadLock lock(command_state_rwmutex);

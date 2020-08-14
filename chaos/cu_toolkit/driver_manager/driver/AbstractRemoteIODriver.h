@@ -538,8 +538,14 @@ namespace chaos {
                             message_response = request_future.get();
                             return AR_ERROR_OK;
                         } else {
-                            AbstractRemoteIODriver_ERR<<" Timeout Arised!";
-                            return AR_ERROR_TIMEOUT;
+                            std::stringstream ss;
+                            ss<<current_connection_identifier()<<"] Remote Connection Timeout on message:"<<message_data->getJSONString()<<", check remote server and unload/load CU";
+                            AbstractRemoteIODriver_ERR<<ss.str();
+                            conn_phase=RDConnectionPhaseDisconnected;
+
+                            throw chaos::CException(AR_ERROR_TIMEOUT, ss.str(),__PRETTY_FUNCTION__);
+                            //   return AR_ERROR_TIMEOUT;
+
                         }
                     }
                     int _sendRawMessage(chaos::common::data::CDWUniquePtr message_data){

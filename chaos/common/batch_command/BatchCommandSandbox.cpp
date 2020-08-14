@@ -172,36 +172,36 @@ void BatchCommandSandbox::stop()  {
     //we ned to get the lock on the scheduler
     
     //se the flag to the end o fthe scheduler
-    SCSLAPP_ << "Set scheduler work flag to false";
+    SCSLDBG_ << "Set scheduler work flag to false";
     schedule_work_flag = false;
     
-    SCSLAPP_ << "Notify pauseCondition variable";
+    SCSLDBG_ << "Notify pauseCondition variable";
     thread_scheduler_pause_condition.unlock();
     whait_for_next_check.unlock();
     
     if (thread_scheduler->joinable()) {
-        SCSLAPP_ << "Join on schedulerThread";
+        SCSLDBG_ << "Join on schedulerThread";
         
         thread_scheduler->join();
     }
     if (thread_next_command_checker->joinable()) {
-        SCSLAPP_ << "Join on thread_next_command_checker";
+        SCSLDBG_ << "Join on thread_next_command_checker";
         thread_next_command_checker->join();
     }
-    SCSLAPP_ << "schedulerThread terminated";
+    SCSLDBG_ << "schedulerThread terminated";
 }
 
 void BatchCommandSandbox::deinit()  {
     PRIORITY_ELEMENT(CommandInfoAndImplementation) nextAvailableCommand;
     
-    SCSLAPP_ << "Delete scheduler thread";
+    SCSLDBG_ << "Delete scheduler thread";
     thread_scheduler.reset();
     thread_next_command_checker.reset();
-    SCSLAPP_ << "Scheduler thread deleted";
+    SCSLDBG_ << "Scheduler thread deleted";
     
-    SCSLAPP_ << "clean all paused and waiting command";
+    SCSLDBG_ << "clean all paused and waiting command";
     if (current_executing_command && (current_executing_command->element->cmdImpl->sticky == false) ) {
-        SCSLAPP_ << "Clear the executing command :"<<current_executing_command->element->cmdImpl->command_alias;
+        SCSLDBG_ << "Clear the executing command :"<<current_executing_command->element->cmdImpl->command_alias;
         
         if(event_handler) {
             event_handler->handleCommandEvent(current_executing_command->element->cmdImpl->command_alias,
@@ -215,7 +215,7 @@ void BatchCommandSandbox::deinit()  {
     }
     
     //free the remained commands into the stack
-    SCSLAPP_ << "Remove paused command into the stack - size:" << command_stack.size();
+    SCSLDBG_ << "Remove paused command into the stack - size:" << command_stack.size();
     while (!command_stack.empty()) {
         nextAvailableCommand = command_stack.top();
         command_stack.pop();
@@ -231,9 +231,9 @@ void BatchCommandSandbox::deinit()  {
         }
         nextAvailableCommand.reset();
     }
-    SCSLAPP_ << "Paused command into the stack removed";
+    SCSLDBG_ << "Paused command into the stack removed";
     
-    SCSLAPP_ << "Remove waiting command into the queue - size:" << command_submitted_queue.size();
+    SCSLDBG_ << "Remove waiting command into the queue - size:" << command_submitted_queue.size();
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
         command_submitted_queue.pop();
@@ -489,8 +489,14 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                      cmd_stat);
                                 break;
                             }
+                            case RunningPropertyType::RP_FATAL_FAULT:
+                                SCSLDBG_ << "Fatal fault stop schedule1";
+                                schedule_work_flag = false;
+                                thread_scheduler_pause_condition.unlock();
+                                whait_for_next_check.unlock();
+
                             case RunningPropertyType::RP_FAULT:
-                            case RunningPropertyType::RP_FATAL_FAULT:{
+                            {
                                 ChaosUniquePtr<chaos::common::data::CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                                         command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
@@ -531,8 +537,14 @@ void BatchCommandSandbox::checkNextCommand() {
                                                                                      cmd_stat);
                                 break;
                             }
+                            case RunningPropertyType::RP_FATAL_FAULT:
+                                SCSLDBG_ << "Fatal fault stop schedule2";
+                                schedule_work_flag = false;
+                                thread_scheduler_pause_condition.unlock();
+                                whait_for_next_check.unlock();
+
                             case RunningPropertyType::RP_FAULT:
-                            case RunningPropertyType::RP_FATAL_FAULT:{
+                            {
                                 ChaosUniquePtr<chaos::common::data::CDataWrapper> command_and_fault = flatErrorInformationInCommandInfo(command_to_delete->element->cmdInfo,
                                                                                                                                         command_to_delete->element->cmdImpl->fault_description);
                                 if (event_handler &&
@@ -719,7 +731,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         DEBUG_CODE(SCSLDBG_ << "Installing command :\""<<tmp_impl->getAlias()<<"\"");
-        
+
         uint8_t handlerMask = tmp_impl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
@@ -743,6 +755,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
                 tmp_impl->already_setupped = true;
             } catch (chaos::CFatalException& ex) {
                 SET_NAMED_FAULT(SCSLERR_, tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FATAL_FAULT);
+                stop();// no more commands
             } catch (chaos::CException& ex) {
                 SET_NAMED_FAULT(SCSLERR_, tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain,RunningPropertyType::RP_FAULT)
             } catch (std::exception& ex) {

@@ -262,8 +262,8 @@ void AbstractDriver::scanForMessage() {
       }
     } catch (CException &ex) {
       //chaos exception
+      
       ADLERR_ << "an error has been catched code: " << ex.errorCode << " msg:" << ex.errorMessage.c_str() << " dom:" << ex.errorDomain.c_str() << " executing opcode:" << current_message_ptr->opcode;
-      ;
       current_message_ptr->ret = ex.errorCode;
       strncpy(current_message_ptr->err_msg, ex.errorMessage.c_str(), DRVMSG_ERR_MSG_SIZE);
       strncpy(current_message_ptr->err_dom, ex.errorDomain.c_str(), DRVMSG_ERR_DOM_SIZE);
