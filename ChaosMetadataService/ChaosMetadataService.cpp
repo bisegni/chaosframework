@@ -302,7 +302,7 @@ int ChaosMetadataService::removeStorageData(const std::string& control_unit_foun
         const std::string input_key     = control_unit_found + DataPackPrefixID::INPUT_DATASET_POSTFIX;
         const std::string system_key    = control_unit_found + DataPackPrefixID::SYSTEM_DATASET_POSTFIX;
         const std::string custom_key    = control_unit_found + DataPackPrefixID::CUSTOM_DATASET_POSTFIX;
-        const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
+       // const std::string health_key    = control_unit_found + NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
         const std::string dev_alarm_key    = control_unit_found + DataPackPrefixID::DEV_ALARM_DATASET_POSTFIX;
         const std::string cu_alarm_key    = control_unit_found + DataPackPrefixID::CU_ALARM_DATASET_POSTFIX;
       
@@ -336,13 +336,13 @@ int ChaosMetadataService::removeStorageData(const std::string& control_unit_foun
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %custom_key%control_unit_found%err));
             }
             
-            log(CHAOS_FORMAT("Remove data for key %1%", %health_key));
+          /*  log(CHAOS_FORMAT("Remove data for key %1%", %health_key));
             if((err = obj_storage_da->deleteObject(health_key,
                                                    start,
                                                    remove_until_ts))){
                 log(CHAOS_FORMAT("Error erasing key %1% for control unit %2% with error %3%", %health_key%control_unit_found%err));
             }
-            
+            */
             log(CHAOS_FORMAT("Remove data for key %1%", %dev_alarm_key));
             if((err = obj_storage_da->deleteObject(dev_alarm_key,
                                                    start,

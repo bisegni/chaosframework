@@ -214,7 +214,6 @@ int QueryDataConsumer::consumeHealthDataEvent(const std::string& key,
 
     //create channel data with injected mds timestamp
     
-    
     BufferSPtr channel_data_injected(health_data_pack.getBSONDataBuffer().release());
     return consumePutEvent(key,
                            hst_tag,

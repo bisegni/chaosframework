@@ -43,6 +43,8 @@ int MemcachedCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 }
 
 int MemcachedCacheDriver::deleteData(const std::string& key){
+	LDBG_<<"delete key:"<<key;
+
 	return 0;
 }
 

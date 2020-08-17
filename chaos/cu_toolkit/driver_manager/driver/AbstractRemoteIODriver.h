@@ -539,11 +539,11 @@ namespace chaos {
                             return AR_ERROR_OK;
                         } else {
                             std::stringstream ss;
-                            ss<<current_connection_identifier()<<"] Remote Connection Timeout on message:"<<message_data->getJSONString()<<", check remote server and unload/load CU";
+                            ss<<remote_uri<<","<<remote_uri_instance<<"] Remote Connection Timeout, check remote server and unload/load CU";
                             AbstractRemoteIODriver_ERR<<ss.str();
                             conn_phase=RDConnectionPhaseDisconnected;
 
-                            throw chaos::CException(AR_ERROR_TIMEOUT, ss.str(),__PRETTY_FUNCTION__);
+                            throw chaos::CException(AR_ERROR_TIMEOUT, ss.str(),__FUNCTION__);
                             //   return AR_ERROR_TIMEOUT;
 
                         }

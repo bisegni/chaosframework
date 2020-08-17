@@ -174,6 +174,7 @@ int CouchbaseCacheDriver::putData(const std::string& key,
 }
 
 int CouchbaseCacheDriver::deleteData(const std::string& key){
+    CCDLDBG_<<"delete key:"<<key;
 return 0;
 }
 
